@@ -1,3 +1,5 @@
+<img src=../wall.png>
+
 # Squared Studio: Crafting VLSI Excellence
 
 
