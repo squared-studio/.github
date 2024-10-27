@@ -1,6 +1,6 @@
 <img src=../wall.png>
 
-# Squared Studio: Crafting VLSI Excellence
+# squared-studio: Crafting VLSI Excellence
 
 
 Welcome to Squared Studio! As an open-source platform, Squared Studio covers everything from RTL design to verification. This is the perfect space to learn, grow, master, innovate, and share ideas while developing skills in VLSI Frontend RTL Design & Verification. We are committed to building a community where we can collaborate and share ideas to innovate and improve these technologies beyond what is currently possible.
