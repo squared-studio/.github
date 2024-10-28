@@ -15,8 +15,3 @@ Welcome to Squared Studio! As an open-source platform, Squared Studio covers eve
 🤝 **Join Us:** Whether you want to showcase your unique VLSI design or are simply curious to learn more about VLSI, Squared Studio is open to you. Your interest in VLSI is the only prerequisite.
 
 Feel free to reach out at foez.official@gmail.com, and let's collaborate to revolutionize the VLSI landscape for tomorrow.
-
-
-
-
-
