@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contact — Squared Studio</title>
+  <link rel="icon" type="image/png" href="SkillVerse/logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --bg:#080808;--surface:#0f0f0f;--card:#111418;--border:#1e2d4a;
+      --text:#cdd9f0;--muted:#5a7090;--accent1:#00ccff;--accent2:#00ffcc;
+      --font-body:"Inter",sans-serif;--font-mono:"JetBrains Mono",monospace;
+    }
+    html{scroll-behavior:smooth}
+    body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:16px;line-height:1.7;min-height:100vh}
+    body::before{content:"";position:fixed;inset:0;background:
+      radial-gradient(ellipse 70% 50% at 10% 5%,rgba(0,204,255,.08) 0%,transparent 65%),
+      radial-gradient(ellipse 60% 40% at 90% 90%,rgba(0,255,204,.07) 0%,transparent 65%);
+      pointer-events:none;z-index:0}
+    .shell{position:relative;z-index:1;display:flex;flex-direction:column;min-height:100vh}
+
+    nav{display:flex;align-items:center;gap:16px;padding:14px 40px;border-bottom:1px solid var(--border);background:rgba(8,8,8,.88);backdrop-filter:blur(14px);position:sticky;top:0;z-index:100}
+    .nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;flex-shrink:0}
+    .nav-icon{width:32px;height:32px;border-radius:8px;object-fit:contain}
+    .nav-title{font-size:1.05rem;font-weight:700;letter-spacing:-.01em;background:linear-gradient(90deg,var(--accent1),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .nav-links{display:flex;align-items:center;gap:4px;margin-left:auto}
+    .nav-links a{padding:6px 14px;border-radius:6px;font-size:.82rem;font-weight:500;color:var(--muted);text-decoration:none;transition:color .15s,background .15s;letter-spacing:.01em}
+    .nav-links a:hover{color:var(--text);background:rgba(255,255,255,.05)}
+    .nav-links a.active{color:var(--accent1)}
+    .nav-links a.cta{color:var(--bg);background:linear-gradient(90deg,var(--accent1),var(--accent2));font-weight:600;padding:6px 16px}
+    .nav-links a.cta:hover{opacity:.9}
+
+    .page-hero{padding:80px 40px 60px;max-width:860px;margin:0 auto;width:100%}
+    .page-hero .eyebrow{font-family:var(--font-mono);font-size:.72rem;letter-spacing:.18em;color:var(--accent2);text-transform:uppercase;margin-bottom:14px}
+    .page-hero h1{font-size:clamp(2rem,5vw,3rem);font-weight:800;letter-spacing:-.025em;line-height:1.15;background:linear-gradient(135deg,#fff 0%,var(--accent1) 60%,var(--accent2) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:18px}
+    .page-hero p{font-size:1rem;color:var(--muted);max-width:580px;line-height:1.75}
+
+    main{flex:1;max-width:860px;width:100%;margin:0 auto;padding:0 40px 80px}
+    hr.divider{border:none;height:1px;background:linear-gradient(90deg,transparent,var(--border),transparent);margin:0 0 56px}
+    .section-tag{font-family:var(--font-mono);font-size:.68rem;letter-spacing:.16em;color:var(--accent2);text-transform:uppercase;margin-bottom:8px}
+    .section-title{font-size:1.4rem;font-weight:700;letter-spacing:-.015em;color:var(--text);margin-bottom:24px}
+
+    /* Contact channels grid */
+    .channels{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px;margin-bottom:56px}
+    .channel-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:26px 22px;text-decoration:none;display:block;transition:border-color .2s,box-shadow .2s,transform .2s;position:relative;overflow:hidden}
+    .channel-card::before{content:"";position:absolute;inset:0;background:linear-gradient(135deg,rgba(0,204,255,.03) 0%,transparent 60%);pointer-events:none}
+    .channel-card:hover{border-color:rgba(0,204,255,.35);box-shadow:0 0 28px rgba(0,204,255,.07);transform:translateY(-2px)}
+    .channel-icon{font-size:1.6rem;margin-bottom:12px}
+    .channel-name{font-size:.92rem;font-weight:600;color:var(--text);margin-bottom:5px}
+    .channel-handle{font-family:var(--font-mono);font-size:.72rem;color:var(--accent1);margin-bottom:8px;word-break:break-all}
+    .channel-desc{font-size:.8rem;color:var(--muted);line-height:1.6}
+    .channel-arrow{position:absolute;top:22px;right:20px;font-size:.8rem;color:var(--muted);transition:color .2s}
+    .channel-card:hover .channel-arrow{color:var(--accent1)}
+
+    /* FAQ / info section */
+    .faq{display:flex;flex-direction:column;gap:14px;margin-bottom:56px}
+    .faq-item{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:20px 22px}
+    .faq-item h3{font-size:.9rem;font-weight:600;color:var(--accent1);margin-bottom:6px}
+    .faq-item p{font-size:.84rem;color:var(--muted);line-height:1.65}
+    .faq-item p a{color:var(--accent1);text-decoration:none;border-bottom:1px solid rgba(0,204,255,.3)}
+    .faq-item p a:hover{color:var(--accent2)}
+
+    footer{text-align:center;padding:22px 40px;border-top:1px solid var(--border);font-size:.76rem;color:var(--muted);position:relative;z-index:1}
+    footer span{background:linear-gradient(90deg,var(--accent1),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-weight:600}
+    footer .footer-links{display:flex;justify-content:center;gap:20px;margin-bottom:10px}
+    footer .footer-links a{color:var(--muted);text-decoration:none;font-size:.76rem;transition:color .15s}
+    footer .footer-links a:hover{color:var(--accent1)}
+
+    @media(max-width:640px){
+      nav{padding:12px 20px}
+      .nav-links a{padding:5px 9px;font-size:.78rem}
+      .page-hero{padding:56px 20px 40px}
+      main{padding:0 20px 60px}
+    }
+  </style>
+</head>
+<body>
+<div class="shell">
+
+  <nav>
+    <a class="nav-logo" href="index.html">
+      <img class="nav-icon" src="SkillVerse/logo.png" alt="Squared Studio" />
+      <span class="nav-title">squared-studio</span>
+    </a>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="about.html">About</a>
+      <a href="people.html">People</a>
+      <a href="SkillVerse/index.html">SkillVerse</a>
+      <a href="contact.html" class="active cta">Contact</a>
+    </div>
+  </nav>
+
+  <div class="page-hero">
+    <p class="eyebrow">Contact</p>
+    <h1>Get in Touch</h1>
+    <p>Have a question, found a bug, want to contribute, or just want to say hello? Reach us through any of the channels below.</p>
+  </div>
+
+  <main>
+    <hr class="divider" />
+
+    <!-- CHANNELS -->
+    <p class="section-tag">Channels</p>
+    <h2 class="section-title">Where to Find Us</h2>
+    <div class="channels">
+
+      <a class="channel-card" href="https://github.com/squared-studio" target="_blank" rel="noopener">
+        <span class="channel-arrow">↗</span>
+        <div class="channel-icon">⚙️</div>
+        <div class="channel-name">GitHub Organisation</div>
+        <div class="channel-handle">github.com/squared-studio</div>
+        <div class="channel-desc">Browse all repositories, open issues, and contribute via pull requests.</div>
+      </a>
+
+      <a class="channel-card" href="https://github.com/squared-studio/SkillVerse/issues" target="_blank" rel="noopener">
+        <span class="channel-arrow">↗</span>
+        <div class="channel-icon">🐛</div>
+        <div class="channel-name">Issue Tracker</div>
+        <div class="channel-handle">SkillVerse Issues</div>
+        <div class="channel-desc">Report content errors, broken links, or suggest new topics for SkillVerse.</div>
+      </a>
+
+      <a class="channel-card" href="https://github.com/squared-studio/SkillVerse/discussions" target="_blank" rel="noopener">
+        <span class="channel-arrow">↗</span>
+        <div class="channel-icon">💬</div>
+        <div class="channel-name">Discussions</div>
+        <div class="channel-handle">GitHub Discussions</div>
+        <div class="channel-desc">Ask questions, share ideas, or start a conversation with the community.</div>
+      </a>
+
+      <a class="channel-card" href="https://github.com/squared-studio/SkillVerse/pulls" target="_blank" rel="noopener">
+        <span class="channel-arrow">↗</span>
+        <div class="channel-icon">🔀</div>
+        <div class="channel-name">Pull Requests</div>
+        <div class="channel-handle">Contribute Content</div>
+        <div class="channel-desc">Submit fixes, improvements, or entirely new chapters via pull requests.</div>
+      </a>
+
+    </div>
+
+    <hr class="divider" />
+
+    <!-- FAQ -->
+    <p class="section-tag">FAQ</p>
+    <h2 class="section-title">Common Questions</h2>
+    <div class="faq">
+
+      <div class="faq-item">
+        <h3>How do I report a mistake in the content?</h3>
+        <p>Open an issue on the relevant repository on <a href="https://github.com/squared-studio" target="_blank" rel="noopener">GitHub</a>. Please include the file name, a description of the error, and the correct information if you know it.</p>
+      </div>
+
+      <div class="faq-item">
+        <h3>How do I contribute new content?</h3>
+        <p>Fork the repository, make your changes in a new branch, then open a pull request. Check the <code>README.md</code> of the relevant repository for contribution guidelines.</p>
+      </div>
+
+      <div class="faq-item">
+        <h3>Can I use this content for my own courses or materials?</h3>
+        <p>Yes — all content is open-source. Check the <code>LICENSE</code> file in each repository for the specific terms. Generally, attribution is appreciated.</p>
+      </div>
+
+      <div class="faq-item">
+        <h3>Is there a roadmap for future topics?</h3>
+        <p>Planned topics are tracked in each repository's <code>plan.md</code> files and GitHub Issues. You can also suggest new topics by opening an issue or starting a Discussion.</p>
+      </div>
+
+      <div class="faq-item">
+        <h3>Who maintains this platform?</h3>
+        <p>Squared Studio is maintained by its contributors. See the <a href="people.html">People</a> page for the core team, and the GitHub organisation for all contributors.</p>
+      </div>
+
+    </div>
+
+  </main>
+
+  <footer>
+    <div class="footer-links">
+      <a href="index.html">Home</a>
+      <a href="about.html">About</a>
+      <a href="people.html">People</a>
+      <a href="SkillVerse/index.html">SkillVerse</a>
+      <a href="contact.html">Contact</a>
+      <a href="https://github.com/squared-studio" target="_blank" rel="noopener">GitHub</a>
+    </div>
+    <p>Copyright &copy; 2026 <span>squared-studio</span> &mdash; All content open-source under their respective licences.</p>
+  </footer>
+
+</div>
+</body>
+</html>

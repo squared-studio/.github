@@ -1,0 +1,26 @@
+name: Update All
+
+on:
+  push:
+
+jobs:
+  update_all:
+    runs-on: [self-hosted]
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.ISSUE_MAINTAIN }}
+
+      - name: run
+        shell: bash
+        run: |
+          pushd SkillVerse
+          bash ../.github/update.sh
+          popd
+          git config --global user.email "foez.official@gmail.com"
+          git config --global user.name "Foez Ahmed"
+          git add . || echo "Already added"
+          git commit -m "AUTO" || echo "Nothing to commit"
+          git pull || echo "Already up to data"
+          git push || echo "Nothing to push"
