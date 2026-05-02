@@ -7,7 +7,10 @@
   <link rel="icon" type="image/png" href="logo.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/github-dark.min.css" />
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/languages/verilog.min.js"></script>
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
     :root{
@@ -55,7 +58,8 @@
     .md ul ul li a,.md ol li a{display:inline;padding:0;font-weight:400;color:var(--accent1);border-bottom:1px solid rgba(0,204,255,.3)}
     .md code{font-family:var(--font-mono);font-size:.85em;background:rgba(0,204,255,.08);color:var(--accent2);padding:2px 6px;border-radius:4px}
     .md pre{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px;overflow-x:auto;margin:18px 0}
-    .md pre code{background:none;padding:0;color:var(--text);font-size:.83rem}
+    .md pre code{background:none;padding:0;color:inherit;font-size:.83rem}
+    .md pre code.hljs{background:transparent;padding:0}
     .md blockquote{border-left:3px solid var(--accent1);padding:10px 18px;margin:18px 0;background:rgba(0,204,255,.04);border-radius:0 8px 8px 0;color:var(--muted);font-style:italic}
     .md hr{border:none;height:1px;background:linear-gradient(90deg,transparent,var(--border),transparent);margin:28px 0}
     .md table{width:100%;border-collapse:collapse;margin:18px 0;font-size:.86rem}
@@ -136,6 +140,18 @@
     });
   }
 
+  function highlightCode(container){
+    if(!window.hljs) return;
+    container.querySelectorAll("pre code").forEach(code => {
+      if(!code.className.includes("language-")) return;
+      hljs.highlightElement(code);
+    });
+  }
+
+  if(window.hljs && hljs.getLanguage("verilog")){
+    hljs.registerAliases(["systemverilog", "sv"], { languageName: "verilog" });
+  }
+
   async function load(file){
     const el = document.getElementById("content");
     el.innerHTML = "<div class=\"state\">Loading&#8230;</div>";
@@ -147,6 +163,7 @@
       const raw = await res.text();
       const md = raw.replace(/^#{1,6}\s.*Copyright.*squared-studio.*$/m, "").trimEnd();
       el.innerHTML = "<div class=\"md\">" + marked.parse(md) + "</div>";
+      highlightCode(el);
       interceptLinks(el, file);
     } catch(err){
       el.innerHTML = "<div class=\"state\"><p>Could not load <span class=\"c\">" + file + "</span></p><p style=\"margin-top:8px;font-size:.8rem\">" + err.message + "</p></div>";
