@@ -147,7 +147,7 @@ This chapter introduces the Universal Verification Methodology (UVM), the indust
             - `value`: Output argument to store the retrieved configuration value.
         - **Getting Configuration in `build_phase` or later phases:** Configuration values are typically retrieved in the `build_phase` or later phases of the component that needs the configuration.
     *   **Example (Configuration Database Usage):**
-        ```SV
+        ```systemverilog
         // In test class (or environment) - Setting configuration
         function void build_phase(uvm_phase phase);
             super.build_phase(phase);

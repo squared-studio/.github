@@ -23,7 +23,7 @@ SystemVerilog mailboxes offer a set of methods for sending and receiving message
 
 ### Creating Mailbox Instances: Bounded and Unbounded
 
-```SV
+```systemverilog
 mailbox data_mbox;                  // Unbounded mailbox (default size)
 mailbox #(packet_type) pkt_mbox;    // Unbounded mailbox for 'packet_type'
 mailbox #(integer) bounded_mbox = new(10); // Bounded mailbox for integers, capacity 10
@@ -37,7 +37,7 @@ end
 
 ### Example: Producer-Consumer Model with a Bounded Mailbox
 
-```SV
+```systemverilog
 module producer_consumer_example;
   typedef struct packed {         // Define a packet structure
     int data_id;
@@ -108,7 +108,7 @@ A semaphore is a synchronization primitive that controls access to shared resour
 
 ### Example: Protecting a Shared Resource with a Semaphore
 
-```SV
+```systemverilog
 module shared_resource_protection;
   semaphore resource_semaphore = new(1); // Binary semaphore (mutex) - 1 key available
   integer shared_data = 0;
@@ -183,7 +183,7 @@ Events in SystemVerilog are lightweight synchronization objects used to signal o
 
 ### Example: Event-Based Process Synchronization
 
-```SV
+```systemverilog
 module event_synchronization_example;
   event config_ready_event; // Declare an event
   event data_processed_event;

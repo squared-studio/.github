@@ -24,7 +24,7 @@ Modules are defined using the `module` keyword, followed by the module name, an 
 
 ### Basic Module Structure
 
-```SV
+```systemverilog
 module module_name [(port_list)]; // Optional port list for interface definition
   // Module Item Declarations:
   //  - Port declarations (if port_list is not used in module header)
@@ -47,7 +47,7 @@ endmodule // End of module definition
 
 ### Example: A Minimalist Module with Internal Storage
 
-```SV
+```systemverilog
 module sensor_interface_module; // Module name: 'sensor_interface_module' (using '_module' suffix for clarity)
   // No ports - this module is self-contained and doesn't directly interact with other modules through ports
 
@@ -96,7 +96,7 @@ Modules communicate with their environment through ports, which are declared in 
 
 ### Parameterized Module Example: Configurable Smart Buffer
 
-```SV
+```systemverilog
 module smart_buffer_module #( // Module name with '_module' suffix
   parameter integer DATA_WIDTH = 64,   // Parameter for data bus width, default 64 bits
   parameter integer BUFFER_DEPTH = 8    // Parameter for buffer depth (number of entries), default 8
@@ -169,7 +169,7 @@ To use a module in a design, you need to instantiate it within another module. S
 
 1.  **Positional Connection** (Less Recommended - prone to errors and harder to maintain)
 
-    ```SV
+    ```systemverilog
     // Example: Instantiating a d_flipflop module (assumed to be defined elsewhere)
     d_flipflop uut (clk, rst_n, data_input, data_output); // Order of ports in instantiation MUST match definition
     // 'uut' is the instance name
@@ -184,7 +184,7 @@ To use a module in a design, you need to instantiate it within another module. S
 
 2.  **Named Connection** (Recommended - more robust, readable, and maintainable)
 
-    ```SV
+    ```systemverilog
     // Example: Instantiating the parameterized 'smart_buffer_module' using named connections
     smart_buffer_module #( // Parameter value overrides (optional)
       .DATA_WIDTH(128),    // Override DATA_WIDTH parameter to 128 bits
@@ -213,7 +213,7 @@ To use a module in a design, you need to instantiate it within another module. S
 
 **Submodule: Data Processor (for Calibration)**
 
-```SV
+```systemverilog
 module data_processor_module #(parameter integer PRECISION = 16) ( // Parameterized data processor
   input  logic clk,                    // Clock input
   input  logic reset_n,                // Reset input (active low)
@@ -239,7 +239,7 @@ endmodule // End of 'data_processor_module'
 
 **Top-Level Module: Sensor Subsystem (Integrating Submodules)**
 
-```SV
+```systemverilog
 module sensor_subsystem_module ( // Top-level module for sensor subsystem
   input  logic core_system_clk,     // Input clock from the main system
   input  logic system_reset_n,      // System-level reset (active low)
@@ -283,7 +283,7 @@ Testbenches are essential for verifying the functionality of SystemVerilog modul
 
 ### Basic Testbench Structure: Clock and Reset Generation, DUT Instantiation
 
-```SV
+```systemverilog
 module sensor_subsystem_tb; // Testbench module for 'sensor_subsystem_module' (using '_tb' suffix)
   // 1. Declare testbench signals (wires or logic) to drive DUT inputs and observe outputs
   logic tb_clk_100MHz;      // Testbench clock signal (100MHz)
@@ -356,7 +356,7 @@ This is a basic example, and real-world testbenches can be significantly more co
 
     -   **ANSI Style (Port declaration in module header)**: Declare ports directly within the module header for a more compact and readable syntax, especially for modules with many ports. This style improves code locality and reduces verbosity.
 
-        ```SV
+        ```systemverilog
         module uart_tx_module ( // ANSI style port declaration
           input  logic clk_50MHz,
           input  logic [7:0] tx_data,
@@ -369,7 +369,7 @@ This is a basic example, and real-world testbenches can be significantly more co
 
     -   **Non-ANSI Style (Separate port declaration)**: Declare ports inside the module body, separate from the module header. While valid, this style is often less preferred for new SystemVerilog code as it is more verbose and less compact than ANSI style.
 
-        ```SV
+        ```systemverilog
         module uart_tx_module_non_ansi; // Non-ANSI style - ports declared inside module
           input  logic clk_50MHz;
           input  logic [7:0] tx_data;
@@ -388,7 +388,7 @@ This is a basic example, and real-world testbenches can be significantly more co
     -   **`$error` and `$fatal` System Tasks**: Use `$error` to report parameter validation failures and `$fatal` to terminate the simulation immediately when a critical parameter error is detected. This helps catch configuration errors early in the design cycle.
     -   **Informative Error Messages**: Provide clear and informative error messages that specify the parameter name, the invalid value, and the acceptable range or conditions. This makes it easier for users to understand and correct parameter settings.
 
-    ```SV
+    ```systemverilog
     module parameterized_module #(parameter integer BUFFER_SIZE = 1024) (/* ports */);
       initial begin
         if (BUFFER_SIZE <= 0) begin

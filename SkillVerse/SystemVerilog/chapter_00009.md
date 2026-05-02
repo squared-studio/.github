@@ -18,7 +18,7 @@ Procedural blocks are the engines of behavioral modeling in SystemVerilog. They 
     -   **Signal Stimulation**: Generating initial stimulus or sequences of input patterns to drive the design under test (DUT).
     -   **One-Time Configuration**: Loading configuration data, setting up simulation parameters, and opening output files.
 
-```SV
+```systemverilog
 module testbench;
   logic clk;
   logic rst_n;
@@ -61,7 +61,7 @@ endmodule
     -   **File Closing**: Closing log files, output data files, and any other files opened during simulation.
     -   **Resource Cleanup**: Releasing any simulation-specific resources or memory allocations (though typically handled automatically by the simulator).
 
-```SV
+```systemverilog
 module verification_environment;
   integer transaction_count = 0;
   integer error_count = 0;
@@ -98,7 +98,7 @@ endmodule
 -   **Continuous, Unconditional Execution**: A general `always` block, when combined with timing control statements (like `#delay`), creates a continuously running process.
 -   **Primary Testbench Use**:  In RTL design, general `always` blocks without sensitivity lists are **rarely synthesizable**. They are primarily used in testbenches for tasks like clock generation and background processes.
 
-```SV
+```systemverilog
 module clock_generator;
   output logic clk_out;
 
@@ -116,7 +116,7 @@ endmodule
 -   **Single Execution at Time 0**:  `always_comb` blocks are also evaluated once at the beginning of simulation (time 0) to establish initial output values.
 -   **Blocking Assignments (`=`)**: Use **blocking assignments** inside `always_comb` blocks. This ensures that the logic is evaluated and updated immediately when inputs change, reflecting the behavior of combinational circuits.
 
-```SV
+```systemverilog
 module combinational_adder(
   input  logic [7:0] input_a,
   input  logic [7:0] input_b,
@@ -134,7 +134,7 @@ endmodule
 -   **Explicit Sensitivity List Required**:  `always_ff` **requires an explicit sensitivity list** that specifies the events that trigger the block's execution. This list typically includes the clock edge (e.g., `posedge clk`) and any asynchronous control signals like reset (e.g., `negedge rst_n`).
 -   **Non-Blocking Assignments (`<=`)**:  **Use non-blocking assignments (`<=`)** inside `always_ff` blocks. This is crucial for correctly modeling the behavior of flip-flops, where outputs are updated only at the clock edge and all updates within a clock cycle happen concurrently.
 
-```SV
+```systemverilog
 module d_flip_flop(
   input logic clk,
   input logic rst_n,
@@ -157,7 +157,7 @@ endmodule
 -   **Conditional Assignments for Latch Behavior**: Latches are typically inferred when a signal is assigned a value conditionally within an `always_latch` (or sometimes `always_comb`) block, and there is no `else` clause or default assignment to cover all conditions.
 -   **Use Sparingly in RTL**: Latches are often **undesirable in synchronous digital designs** because they can introduce timing hazards and make timing analysis more complex.  Avoid intentional latch inference in most RTL designs unless specifically required by the architecture.
 
-```SV
+```systemverilog
 module level_sensitive_latch(
   input logic enable,
   input logic data_in,
@@ -183,7 +183,7 @@ The type of assignment used within procedural blocks (`always`, `initial`, `fina
     -   **Inside `always_comb` blocks** to model combinational logic accurately.
     -   **In `initial` and `final` blocks** and in testbench procedures where sequential, step-by-step execution is desired.
 
-```SV
+```systemverilog
 module blocking_assignment_example;
   integer variable_x, variable_y;
 
@@ -201,7 +201,7 @@ endmodule
 -   **Delayed Value Update**: The actual update of the variable on the left-hand side of a non-blocking assignment happens **only after all statements in the current procedural block (and potentially other concurrently executing blocks) have been evaluated for the current time step.**  The right-hand side expression is evaluated at the time the non-blocking assignment is encountered, but the result is not assigned until later.
 -   **Sequential Logic Modeling**: Non-blocking assignments are **essential for modeling sequential logic** (flip-flops, registers) correctly, particularly within `always_ff` blocks. They ensure that all register updates triggered by the same clock edge happen concurrently, reflecting real hardware behavior.
 
-```SV
+```systemverilog
 module non_blocking_assignment_example;
   logic [1:0] register_a, register_b;
 
@@ -235,7 +235,7 @@ endmodule
 2.  **Latch Prevention - Completeness in Combinational Logic**:
     -   **Problem: Incomplete `if` or `case` in `always_comb` can infer latches.** If not all possible conditions are explicitly handled in an `always_comb` block, and a signal is assigned a value only under certain conditions, the synthesizer may infer a latch to "hold" the previous value when none of the specified conditions are met.
 
-    ```SV
+    ```systemverilog
     // BAD - Latch Inferred (incomplete conditional assignment)
     always_comb begin
       if (enable)

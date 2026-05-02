@@ -29,7 +29,7 @@ SystemVerilog offers several types of random variables, each designed to address
 
 ### Class-Based Example: Modeling Network Packets with Random Variables
 
-```SV
+```systemverilog
 class network_packet;
   rand bit [31:0] source_ip;    // 32-bit source IP address (uniform random)
   randc bit [15:0] packet_id;   // 16-bit packet ID (cyclic random - ensures unique IDs)
@@ -68,7 +68,7 @@ Constraints are the rules that define the valid and relevant stimulus space for 
 
 ### Common Constraint Types in SystemVerilog
 
-```SV
+```systemverilog
 class ethernet_frame;
   rand bit [11:0] length;      // Frame length in bytes
   rand bit [7:0]  payload[];     // Payload data (dynamic array)
@@ -114,7 +114,7 @@ endclass
 
 1.  **Soft Constraints: Overridable Constraints for Flexibility**
 
-    ```SV
+    ```systemverilog
     class ethernet_frame;
       rand bit [11:0] length;
       rand bit [7:0]  payload[];
@@ -146,7 +146,7 @@ endclass
 
 2.  **Implication Constraints: Conditional Enforcement of Constraints**
 
-    ```SV
+    ```systemverilog
     class ethernet_frame;
       rand bit [11:0] length;
       rand bit [7:0]  payload[];
@@ -173,7 +173,7 @@ SystemVerilog provides specific methods and system tasks to initiate and manage 
 
 ### Core Randomization Control Methods
 
-```SV
+```systemverilog
 class test_generator;
   rand ethernet_frame frame; // Declare a random ethernet_frame object
   int seed;                // Seed for random number generator
@@ -247,7 +247,7 @@ Randomization is most effective when integrated into a comprehensive verificatio
 
 ### Typical Testbench Structure with Randomization
 
-```SV
+```systemverilog
 module tb; // Testbench module
   test_generator gen;       // Instance of the test generator class
   int test_count = 1000;   // Number of random test cases to run
@@ -289,7 +289,7 @@ endmodule
 
 ### Coverage-Driven Verification Example: Integrating Coverage Collection
 
-```SV
+```systemverilog
 class coverage_collector;
   ethernet_frame frame; // Class property to hold the frame object for coverage sampling
 
@@ -364,7 +364,7 @@ To maximize the benefits of SystemVerilog randomization and CRV, follow these be
     -   **Log Random Seeds for Reproducibility**: Always log the random seed used for each simulation run. This is crucial for debugging and regression testing. If a test case fails, you need to be able to reproduce the exact same random stimulus sequence to debug the issue effectively. Logging the seed allows you to rerun the simulation with the same seed and recreate the failing scenario.
     -   **Use `+plusarg` for Seed Configuration**: Make your testbench configurable to accept a seed value as a command-line argument using the `+plusarg` mechanism. This allows users to easily control the random seed from the simulation command line, enabling both repeatable runs (by providing a specific seed) and varied runs (by using different seeds or a default random seed).
 
-        ```SV
+        ```systemverilog
         module tb;
           int seed;
           initial begin
@@ -384,7 +384,7 @@ To maximize the benefits of SystemVerilog randomization and CRV, follow these be
     -   **Print Constraint Information with `constraint_mode()`**: Use `object.constraint_mode()` to get information about the active constraints for an object. This can help you verify which constraints are currently enabled and their status.
     -   **Embed Debug Messages in Constraints**: For complex constraints, you can temporarily embed `$display` statements directly within the constraint blocks to print out intermediate values or conditions during constraint solving. This can provide valuable insights into how the constraint solver is working and help you identify constraint conflicts or unexpected behavior.
 
-        ```SV
+        ```systemverilog
         class debug_class;
           rand int var;
           constraint debug_constraint {

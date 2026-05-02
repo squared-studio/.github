@@ -25,7 +25,7 @@ Packages are defined using the `package` keyword, followed by the package name a
 
 ### Example: Structure of a Basic Utility Package
 
-```SV
+```systemverilog
 package math_utils_pkg; // Package name with '_pkg' suffix for convention
 
   // 1. Type Definition: Custom data type for words
@@ -67,7 +67,7 @@ To use the declarations defined within a package, you need to *import* the packa
 
 ### Example: Selective and Wildcard Package Imports
 
-```SV
+```systemverilog
 package type_pkg;
   typedef logic [7:0] byte_t;
 endpackage : type_pkg
@@ -116,7 +116,7 @@ Even without using `import` statements, you can always access members of a packa
 
 ### Example: Accessing Package Members with Explicit Scope Resolution
 
-```SV
+```systemverilog
 package config_pkg;
   parameter int DATA_WIDTH = 32; // Parameter for data width
   const string VERSION_STRING = "1.0"; // Constant version string
@@ -157,7 +157,7 @@ The `export` mechanism in SystemVerilog packages allows you to re-export items t
 
 ### Example: Building Hierarchical Packages with Export
 
-```SV
+```systemverilog
 // 1. Base Package: 'data_types_pkg' - Defines basic data types
 package data_types_pkg;
   typedef logic [7:0] byte_t; // Basic byte type
@@ -227,7 +227,7 @@ To leverage the full benefits of SystemVerilog packages and maintain a clean and
     -   **Benefit of Explicit Imports (`import pkg::item, pkg::item2, ...`)**: Explicit imports promote code clarity and maintainability by clearly stating which items from a package are being used in the current scope. This reduces ambiguity and makes it easier to understand dependencies.
     -   **Best Practice**:  Favor explicit imports (`import pkg::item;`) for better code organization, reduced namespace pollution, and improved long-term maintainability. Only use wildcard imports (`import pkg::*`) sparingly in small, well-contained packages where naming conflicts are highly unlikely and convenience is a significant factor (e.g., in small utility modules or test cases).
 
-    ```SV
+    ```systemverilog
     // Example showing preference for explicit imports:
 
     // Instead of wildcard import (less preferred for larger projects):
@@ -245,7 +245,7 @@ To leverage the full benefits of SystemVerilog packages and maintain a clean and
     -   **Prefixing with Project/Organization Name**: A common and effective practice is to prefix package names with a project-specific or organization-specific identifier (e.g., `acme_`, `companyXYZ_`, `projectABC_`). This creates a clear namespace hierarchy and reduces the chance of name clashes.
     -   **Suffixing with `_pkg`**:  Using the `_pkg` suffix (e.g., `math_utils_pkg`, `memory_model_pkg`) is a widely adopted SystemVerilog convention to clearly distinguish package names from other identifiers (like modules, interfaces, or classes).
 
-    ```SV
+    ```systemverilog
     // Good, unique package names:
     package acme_verification_utils_pkg; // Project-specific prefix and '_pkg' suffix
     package companyXYZ_bus_protocol_pkg; // Organization-specific prefix and '_pkg' suffix
@@ -272,7 +272,7 @@ To leverage the full benefits of SystemVerilog packages and maintain a clean and
     -   **File Organization within a Package**:  Create separate `\`include` files for different categories of declarations within the package (e.g., types, functions, tasks, classes, constants).
     -   **Example Package File Structure**:
 
-    ```SV
+    ```systemverilog
     // File: usb_pkg.sv
     package usb_pkg;
       `include "usb_types.svh"     // Contains typedefs and struct/enum definitions

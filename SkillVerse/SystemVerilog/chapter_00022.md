@@ -20,7 +20,7 @@ It is the most commonly used task for ending a simulation gracefully.
 
 **Example:**
 
-```SV
+```systemverilog
 module finish_example;
 
   initial begin
@@ -60,7 +60,7 @@ The `$stop` task pauses the simulation and leaves the simulator in an interactiv
 
 **Example:**
 
-```SV
+```systemverilog
 module stop_example;
 
   reg [7:0] data = 8'hAA;
@@ -101,7 +101,7 @@ The `$exit` task is a more abrupt way to terminate simulation compared to `$fini
 
 **Example:**
 
-```SV
+```systemverilog
 module exit_example;
 
   parameter MAX_CYCLES = 100;
@@ -163,7 +163,7 @@ The `$time` function returns the current simulation time as a 32-bit unsigned in
 
 **Example Demonstrating `$realtime`, `$stime`, and `$time`**
 
-```SV
+```systemverilog
 `timescale 1ns / 1ps
 
 module time_functions_example;
@@ -247,7 +247,7 @@ The `$printtimescale` task is used to display the timescale and time precision i
 
 **Example:**
 
-```SV
+```systemverilog
 `timescale 10ns / 1ns
 
 module module_a;
@@ -310,7 +310,7 @@ A call to `$timeformat` affects subsequent display task calls in the current sco
 
 **Example:**
 
-```SV
+```systemverilog
 `timescale 1us / 100ns
 
 module time_format_example;
@@ -364,7 +364,7 @@ Functions for converting between different data types, such as real to bits and 
 
 **Example:**
 
-```SV
+```systemverilog
 module real_bits_conversion;
 
   real my_real_value = 3.14159;
@@ -402,7 +402,7 @@ The example demonstrates converting a `real` number (pi) into its 64-bit binary 
 
 **Example:**
 
-```SV
+```systemverilog
 module shortreal_bits_conversion;
 
   shortreal my_shortreal_value = 2.718f; // 'f' suffix for shortreal literal
@@ -440,7 +440,7 @@ This example is analogous to the `$bitstoreal`/`$realtobits` example but uses `s
 
 **Example:**
 
-```SV
+```systemverilog
 module int_real_conversion;
 
   integer my_integer = 123;
@@ -479,7 +479,7 @@ This example shows how `$itor` converts the integer `123` into the real value `1
 
 **Example:**
 
-```SV
+```systemverilog
 module signed_unsigned_example;
 
   logic [7:0] byte_data = 8'hFF; // Represents 255 unsigned or -1 signed
@@ -528,7 +528,7 @@ The `$cast` system function attempts to convert a source expression or handle to
 
 **Example (Value Casting):**
 
-```SV
+```systemverilog
 module cast_example;
 
   real r_val = 123.45;
@@ -583,7 +583,7 @@ The `$bits` function returns the total number of bits required to store a given 
 
 **Example:**
 
-```SV
+```systemverilog
 module bits_example;
 
   logic my_bit;
@@ -658,7 +658,7 @@ The `$isunbounded` function returns a boolean value (1 for true, 0 for false) in
 
 **Example:**
 
-```SV
+```systemverilog
 module isunbounded_example;
 
   initial begin
@@ -701,7 +701,7 @@ The `$typename` function returns a string containing the name of the data type o
 
 **Example:**
 
-```SV
+```systemverilog
 module typename_example;
 
   logic [15:0] address;
@@ -756,7 +756,7 @@ This function is valuable for introspection and dynamic behavior based on data t
 Functions to obtain information about arrays, including dimensions, bounds, and size.
 Consider the following SystemVerilog array declarations to illustrate these functions:
 
-```SV
+```systemverilog
 module array_query_example;
 
   // 1D Packed array (vector)
@@ -997,7 +997,7 @@ These functions adjust a real number to the nearest integer value based on diffe
 
 **Example:**
 
-```SV
+```systemverilog
 module rounding_example;
 
   real val1 = 3.14;
@@ -1043,7 +1043,7 @@ These functions handle powers and logarithms.
 
 **Example:**
 
-```SV
+```systemverilog
 module exp_log_example;
 
   real base_val = 2.0;
@@ -1100,7 +1100,7 @@ These functions perform standard trigonometric and hyperbolic calculations, alon
 
 **Example:**
 
-```SV
+```systemverilog
 module trig_hyper_example;
 
   // Use pi for trigonometric examples (M_PI is a common constant in C/C++)
@@ -1222,7 +1222,7 @@ The `$isunknown(expression)` function checks if any bit in the `expression` has 
 
 ### Example Demonstrating Bit Vector Functions
 
-```SV
+```systemverilog
 module bit_vector_functions_example;
 
   logic [7:0] data1 = 8'b1011_0010; // 4 ones, 4 zeros
@@ -1337,7 +1337,7 @@ The `$info` task reports an informational message. This is the lowest severity l
 
 ### Example Demonstrating Severity Tasks
 
-```SV
+```systemverilog
 module severity_tasks_example;
 
   reg clock = 0;

@@ -12,7 +12,7 @@ SystemVerilog excels in handling complex, multidimensional arrays, incorporating
 
 Let's consider a complex array structure as an example to illustrate indexing:
 
-```SV
+```systemverilog
 logic [127:0][7:0] my_array [8][64][32];
 ```
 
@@ -38,7 +38,7 @@ logic [127:0][7:0] my_array [8][64][32];
 
 SystemVerilog's `foreach` loop is ideal for iterating through multidimensional arrays:
 
-```SV
+```systemverilog
 foreach (my_array[i,j,k]) begin // Iterating over unpacked dimensions (banks, rows, cols)
   foreach (my_array[i][j][k][byte_index]) begin // Iterating over packed byte dimensions
     $display("Bank %0d, Row %0d, Col %0d, Byte %0d: %h",
@@ -98,7 +98,7 @@ SystemVerilog provides a suite of powerful built-in methods to manipulate array 
 
 ### 1. Filtering with `find()` for Temperature Data
 
-```SV
+```systemverilog
 int temperatures[] = {-5, 12, 23, -3, 42, 18};
 int below_freezing[] = temperatures.find(x) with (x < 0);
 $display("Temperatures below freezing: %p", below_freezing);
@@ -107,7 +107,7 @@ $display("Temperatures below freezing: %p", below_freezing);
 
 ### 2. Sorting Strings by Length using `sort()` with `with` Clause
 
-```SV
+```systemverilog
 string names[] = {"Alice", "Bob", "Charlie"};
 names.sort() with (x.len()); // Sort names based on string length
 $display("Sorted by length: %p", names);
@@ -116,7 +116,7 @@ $display("Sorted by length: %p", names);
 
 ### 3. Bitwise AND Reduction on a Packed Array of Masks
 
-```SV
+```systemverilog
 bit [3:0] masks[] = {4'b1010, 4'b1100, 4'b1111};
 bit [3:0] combined_mask = masks.and();
 $display("Combined AND mask: %b", combined_mask);
@@ -125,7 +125,7 @@ $display("Combined AND mask: %b", combined_mask);
 
 ### 4. Finding Unique Indices with `unique_index()`
 
-```SV
+```systemverilog
 int data_stream[] = {5, 2, 5, 7, 2, 9};
 int unique_indices[] = data_stream.unique_index();
 $display("Indices of first unique values: %p", unique_indices);
@@ -134,7 +134,7 @@ $display("Indices of first unique values: %p", unique_indices);
 
 ### 5. Method Chaining for Concise Operations
 
-```SV
+```systemverilog
 int sample_values[] = {8, 3, 5, 8, 2, 5};
 int unique_sum = sample_values.unique().sum(); // Chain unique() and sum()
 $display("Sum of unique values: %0d", unique_sum);
@@ -147,7 +147,7 @@ $display("Sum of unique values: %0d", unique_sum);
 2.  **Method Applicability**: Built-in array manipulation methods are primarily designed for dynamic arrays, queues, and associative arrays. They are not directly applicable to fixed-size arrays.
 3.  **Flexibility of `with` Clause**: The `with` clause offers powerful customization for filtering and sorting. It can incorporate complex expressions and even access struct members for sophisticated data manipulation:
 
-    ```SV
+    ```systemverilog
     typedef struct packed { int age; string name; } person_t;
     person_t people[] = ...;
     people.sort() with (x.age); // Sort an array of structs based on the 'age' field
@@ -168,7 +168,7 @@ $display("Sum of unique values: %0d", unique_sum);
 
 1.  **Combined Indexing and Method Application**: SystemVerilog allows for powerful combinations of indexing and array methods. For example, to extract a slice of bytes from all elements of a multidimensional array concisely:
 
-    ```SV
+    ```systemverilog
     // Extract bytes 64-127 (upper half) from all elements of 'my_array'
     foreach (my_array[i, j, k]) begin
         upper_bytes[i][j][k] = my_array[i][j][k][127:64];
@@ -177,7 +177,7 @@ $display("Sum of unique values: %0d", unique_sum);
 
 2.  **Efficient Condition-Based Searching**: Leverage the `with` clause for highly efficient searches within arrays, especially for complex conditions:
 
-    ```SV
+    ```systemverilog
     // Find the first element in a 2D matrix that falls within the range [10:20]
     int matrix[10][20]; // Example 2D dynamic array
     int found_element = matrix.find_first() with (item inside {[10:20]});
@@ -185,7 +185,7 @@ $display("Sum of unique values: %0d", unique_sum);
 
 3.  **Conditional Summation for Targeted Aggregation**: Use the `with` clause within `.sum()` to perform conditional summations, allowing you to aggregate only specific elements based on criteria:
 
-    ```SV
+    ```systemverilog
     // Calculate the sum of only positive values in an array
     int all_values[] = ...;
     int positive_sum = all_values.sum() with (item > 0 ? item : 0);
@@ -193,7 +193,7 @@ $display("Sum of unique values: %0d", unique_sum);
 
 4.  **RTL Design with Packed Arrays and Bitwise Methods**: For synthesis-friendly RTL code, utilize packed arrays and bitwise reduction methods for efficient hardware implementations:
 
-    ```SV
+    ```systemverilog
     // Example: Register file parity calculation using packed array and .xor()
     logic [7:0][31:0] register_file; // Packed array representing a register file
     assign parity_bit = register_file[3].xor(); // Calculate parity of register 3

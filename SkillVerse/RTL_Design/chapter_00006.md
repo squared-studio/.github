@@ -73,7 +73,7 @@ This chapter focuses on Finite State Machines (FSMs), a fundamental concept in d
     *   **General FSM RTL Structure:**
         - State register:  `reg [STATE_BITS-1:0] current_state, next_state;` (or `logic state_t current_state, next_state;` using enumerated types).
         - Sequential `always_ff` block: For state register update at clock edge.
-            ```SV
+            ```systemverilog
             always_ff @(posedge clk) begin
                 if (rst) begin
                     current_state <= initial_state;
@@ -85,7 +85,7 @@ This chapter focuses on Finite State Machines (FSMs), a fundamental concept in d
         - Combinational `always_comb` block: For next state logic and output logic.
             - For Moore FSM: Output logic is based on `current_state` only.
             - For Mealy FSM: Output logic is based on `current_state` and inputs.
-            ```SV
+            ```systemverilog
             always_comb begin
                 next_state = current_state; // Default next state (state retention)
                 output_signal = ... ;       // Output logic (Moore or Mealy)

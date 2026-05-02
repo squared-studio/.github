@@ -21,7 +21,7 @@ The `` `define `` directive is used to create a macro, associating a name with a
 
 **Syntax:**
 
-```SV
+```systemverilog
 `define MACRO_NAME macro_text
 ```
 
@@ -31,7 +31,7 @@ The `` `define `` directive is used to create a macro, associating a name with a
 
 **Example: Defining a Macro for Data Width**
 
-```SV
+```systemverilog
 `define DATA_WIDTH 32
 
 module macro_example;
@@ -51,7 +51,7 @@ The `` `undef `` directive is used to remove a macro definition, effectively mak
 
 **Syntax:**
 
-```SV
+```systemverilog
 `undef MACRO_NAME
 ```
 
@@ -60,7 +60,7 @@ The `` `undef `` directive is used to remove a macro definition, effectively mak
 
 **Example: Undefining the DATA_WIDTH Macro**
 
-```SV
+```systemverilog
 `define DATA_WIDTH 32
 
 module undef_example;
@@ -90,7 +90,7 @@ These are the most basic type of macros, primarily used for replacing a macro na
 
 **Example: Defining Macros for Clock Period and Reset Value**
 
-```SV
+```systemverilog
 `define CLK_PERIOD 10ns
 `define RST_VAL 1'b0
 
@@ -119,7 +119,7 @@ SystemVerilog macros can also accept arguments, making them behave like simple f
 
 **Syntax:**
 
-```SV
+```systemverilog
 `define MACRO_NAME(parameter1, parameter2, ...) macro_text_using_parameters
 ```
 
@@ -128,7 +128,7 @@ SystemVerilog macros can also accept arguments, making them behave like simple f
 
 **Example: Defining a Parameterized Macro for Assertions**
 
-```SV
+```systemverilog
 `define ASSERT_TRUE(condition, message) \
   if (!(condition)) begin \
     $error("Assertion Failed: %s at line %0d in file %s", message, `__LINE__, `__FILE__); \
@@ -155,7 +155,7 @@ Macros are extensively used for conditional compilation, allowing you to include
 
 **Syntax:**
 
-```SV
+```systemverilog
 `ifdef MACRO_NAME
   // Code to be compiled if MACRO_NAME is defined
 `else
@@ -170,7 +170,7 @@ Macros are extensively used for conditional compilation, allowing you to include
 
 **Example: Conditional Compilation for Debug Mode**
 
-```SV
+```systemverilog
 `define DEBUG_MODE // Define DEBUG_MODE macro to enable debug code
 
 module conditional_compilation;
@@ -206,7 +206,7 @@ Macro definitions in SystemVerilog have a file-level scope. Once a macro is defi
 
 **Example: Macro Scope Demonstration**
 
-```SV
+```systemverilog
 // file1.sv
 `define MSG_FILE1 "Message from file1.sv"
 
@@ -248,7 +248,7 @@ SystemVerilog provides several predefined macros that are automatically availabl
 
 **Example: Using Predefined Macros for Version and Timestamp Information**
 
-```SV
+```systemverilog
 module predefined_macros_example;
   initial begin
     $display("--- Compilation Information ---");
@@ -295,7 +295,7 @@ Redefining a macro without undefining it first can lead to warnings or errors, a
 
 **Example: Safe Macro Redefinition**
 
-```SV
+```systemverilog
 `define VERSION_MAJOR 1
 `define VERSION_MINOR 0
 
@@ -319,7 +319,7 @@ Using a macro that has not been defined will result in a preprocessing error. En
 
 **Example: Conditional Usage of a Macro**
 
-```SV
+```systemverilog
 module undefined_macro_check;
   initial begin
     `ifdef FEATURE_ENABLED // Check if FEATURE_ENABLED is defined
@@ -344,7 +344,7 @@ Macros perform simple textual substitution, which can sometimes lead to unintend
 
 **Example: Preventing Operator Precedence Issues**
 
-```SV
+```systemverilog
 `define CALC_SUM(a, b) a + b // Macro without parentheses
 
 module precedence_issue_example;
@@ -412,7 +412,7 @@ In the `precedence_issue_example`, without parentheses, the macro substitution l
     -   Use the macros defined in `macros.svh` across different files.
     -   Modify the macro definitions in `macros.svh` and recompile to observe the changes reflected in all files that include this header.
 
-```SV
+```systemverilog
 // Sample Solution for Exercise 2: Conditional Feature Compilation (Logging)
 `define FEATURE_LOGGING // Define FEATURE_LOGGING to enable logging
 

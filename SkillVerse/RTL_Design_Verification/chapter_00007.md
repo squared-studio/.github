@@ -89,7 +89,7 @@ This chapter focuses on essential verification skills: debugging and coverage an
             - **Coverage Points:**  Specific conditions, values, or events in the design or testbench that you want to cover. Coverage points are defined using SystemVerilog expressions.
             - **Coverage Options:**  Options to control coverage collection (e.g., name, weight, at-least hits).
             - **Example (Coverage Group for FIFO Status):**
-                ```SV
+                ```systemverilog
                 class fifo_coverage extends uvm_subscriber #(fifo_transaction);
                     `uvm_component_utils(fifo_coverage)
 

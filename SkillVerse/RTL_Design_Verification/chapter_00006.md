@@ -24,7 +24,7 @@ This chapter introduces Assertion-Based Verification (ABV), a powerful verificat
                 - **Simulation Termination:** Stop the simulation.
                 - **Breakpoints:**  Halt simulation for debugging.
             - **Example (Immediate Assertion):**
-                ```SV
+                ```systemverilog
                 always @(posedge clk) begin
                     if (enable_flag) begin
                         assert (data_valid) else
@@ -45,7 +45,7 @@ This chapter introduces Assertion-Based Verification (ABV), a powerful verificat
                 - **Logging to Waveforms:**  Mark assertion failure in waveforms for post-simulation analysis.
                 - **Coverage Collection:**  Assertion coverage metrics can be collected.
             - **Example (Concurrent Assertion):**
-                ```SV
+                ```systemverilog
                 property data_request_ack;
                     @(posedge clk)
                     request |-> ##1 acknowledge; // If 'request' is high, then 'acknowledge' should be high in the next cycle
@@ -60,7 +60,7 @@ This chapter introduces Assertion-Based Verification (ABV), a powerful verificat
         - **Evaluation:** Evaluated procedurally in the flow of simulation, like a conditional statement.
         - **Action Blocks:**  Optional `else` action block is executed if the assertion fails. Action blocks can contain SystemVerilog procedural statements (e.g., `$error`, `$fatal`, `$display`, `$stop`).
         - **Example (Immediate Assertion with Action Block):**
-            ```SV
+            ```systemverilog
             always @(posedge clk) begin
                 if (state == STATE_IDLE) begin
                     assert (req_rdy) else begin
@@ -92,7 +92,7 @@ This chapter introduces Assertion-Based Verification (ABV), a powerful verificat
                 - **`until`:** Specifies that a property must be true *until* another property becomes true.
                 - **`s_until` (Strong Until):** Similar to `until`, but also handles the case where the second property never becomes true.
             - **Example (Concurrent Assertion with Property and Sequence Operators):**
-                ```SV
+                ```systemverilog
                 property request_grant_sequence;
                     @(posedge clk)
                     (req ##1 gnt) |-> ##1 data_valid; // If req then grant in next cycle, then data_valid in the cycle after grant
@@ -112,7 +112,7 @@ This chapter introduces Assertion-Based Verification (ABV), a powerful verificat
         - **State Machine Invariants:**  Use assertions to verify properties that must always hold true for a state machine (e.g., mutually exclusive states, valid state transitions).
         - **Data Integrity Invariants:**  Use assertions to ensure data integrity throughout the design (e.g., data consistency across pipeline stages, data preservation during transformations).
     *   **Example (Interface Protocol Assertion - Request/Grant):**
-        ```SV
+        ```systemverilog
         interface bus_if (input bit clk);
             logic req;
             logic gnt;
@@ -129,7 +129,7 @@ This chapter introduces Assertion-Based Verification (ABV), a powerful verificat
         endinterface
         ```
     *   **Example (Design Assumption Assertion - FIFO Not Overflowing):**
-        ```SV
+        ```systemverilog
         module fifo (input logic clk, rst, wr_en, rd_en, input logic [7:0] data_in, output logic [7:0] data_out, output logic full, empty);
             // ... FIFO implementation ...
             property fifo_not_overflowing;
@@ -152,7 +152,7 @@ This chapter introduces Assertion-Based Verification (ABV), a powerful verificat
         - **Assertions in UVM Monitors and Scoreboards:** Assertions can also be integrated into UVM testbench components, particularly monitors and scoreboards.
         - **Environment-Level Verification:** Testbench assertions provide *environment-level verification*. They check properties related to the interaction between the DUT and the testbench environment, or properties that are best checked at the transaction level after monitoring.
         - **Example (Assertion in UVM Monitor - Checking Transaction Properties):**
-            ```SV
+            ```systemverilog
             class fifo_monitor extends uvm_monitor;
                 // ... monitor code ...
                 property valid_data_range;

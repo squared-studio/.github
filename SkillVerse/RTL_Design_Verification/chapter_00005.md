@@ -12,7 +12,7 @@ This chapter builds upon the foundational UVM concepts introduced in earlier and
         - **Parameterization:**  Sequences can be parameterized to make them more flexible and reusable. Parameters can control aspects like data values, transaction types, delays, and repetition counts.
         - **`parameter` Declarations in Sequences:** SystemVerilog `parameter` declarations can be used within sequence classes to define configurable parameters.
         - **Example (Parameterized Sequence):**
-            ```SV
+            ```systemverilog
             class read_burst_sequence extends uvm_sequence #(mem_transaction);
                 `uvm_object_utils(read_burst_sequence)
 
@@ -39,7 +39,7 @@ This chapter builds upon the foundational UVM concepts introduced in earlier and
         - **Base Sequences and Derived Sequences:**  Start with base sequences that represent basic operations. Create derived sequences that extend or compose base sequences to create more complex scenarios.
         - **``uvm_do`, ``uvm_do_with`, ``uvm_do_on`, ``uvm_do_on_with` Macros:** UVM provides macros to simplify sequence layering and execution of sub-sequences within a sequence.
         - **Example (Sequence Layering):**
-            ```SV
+            ```systemverilog
             // Base sequence - single read transaction
             class single_read_seq extends uvm_sequence #(mem_transaction); ... endclass
 
@@ -69,7 +69,7 @@ This chapter builds upon the foundational UVM concepts introduced in earlier and
         - **Starting Sequences on Agents' Sequencers:**  Virtual sequences use methods like `p_sequencer.m_sequencer.run_sequence()` to start sequences on sequencers within agents.
         - **Top-Level Test Control:** Virtual sequences are typically run from the top-level test component to control the overall test scenario involving multiple agents.
         - **Example (Virtual Sequence for Multi-Agent Coordination):**
-            ```SV
+            ```systemverilog
             class bus_virtual_sequence extends uvm_sequence;
                 `uvm_object_utils(bus_virtual_sequence)
 
@@ -107,7 +107,7 @@ This chapter builds upon the foundational UVM concepts introduced in earlier and
     *   **Dynamic Interface Binding (Configuration):**  Virtual interfaces allow you to dynamically connect testbench components to different interface instances during testbench configuration. This is essential for verifying designs with multiple instances of the same interface or for adapting the testbench to different design configurations.
     *   **Reusability and Portability:**  Testbench components using virtual interfaces become more reusable and portable because they are not tied to specific interface instantiations. They can be reused with different DUT interfaces as long as they conform to the same interface protocol (defined by the virtual interface).
     *   **Example (Virtual Interface Usage in UVM Agent and Environment):**
-        ```SV
+        ```systemverilog
         // Interface definition (e.g., bus_if) - defined outside UVM components
 
         // Agent parameterized with virtual interface
@@ -182,7 +182,7 @@ This chapter builds upon the foundational UVM concepts introduced in earlier and
         - **Abstract Register Operations:** Use RAL methods like `reg.read()`, `reg.write()`, `reg.peek()`, `reg.poke()` to perform abstract register operations on register models.
         - **Automatic Bus Cycle Generation:** RAL automatically translates these abstract operations into physical bus cycles using the adapter.
         - **Example (RAL Register Access):**
-            ```SV
+            ```systemverilog
             // Assume 'my_reg_model' is an instance of a register model class
             task test_register_access();
                 uvm_status_e status;
@@ -243,7 +243,7 @@ This chapter builds upon the foundational UVM concepts introduced in earlier and
         - **Hierarchical Paths:**  Instance names in `uvm_config_db::set()` can be hierarchical paths (e.g., `"env.agent0.sequencer"`) to target components deep within the testbench hierarchy.
         - **Configuration Propagation:** Configuration settings propagate down the component hierarchy. A setting set at a higher level can be inherited by components at lower levels unless overridden by a more specific setting at a lower level.
         - **Example (Hierarchical Configuration):**
-            ```SV
+            ```systemverilog
             // In test class
             function void build_phase(uvm_phase phase);
                 super.build_phase(phase);
@@ -291,7 +291,7 @@ This chapter builds upon the foundational UVM concepts introduced in earlier and
             - **Debugging and Analysis:**  Replace components with debug versions that provide extra logging or tracing capabilities.
             - **Configuration Variations:**  Create testbench configurations with different component implementations without code changes.
         - **Example (Factory Type Override):**
-            ```SV
+            ```systemverilog
             // Original driver class
             class my_driver extends uvm_driver #(transaction); ... endclass
 
@@ -315,7 +315,7 @@ This chapter builds upon the foundational UVM concepts introduced in earlier and
             - **Protocol Adaptation:**  Adapting standard drivers or monitors to slightly different protocols or interface variations.
             - **Coverage Extension:**  Adding custom coverage collection logic to standard components.
         - **Example (Callback for Adding Debug Prints to Driver):**
-            ```SV
+            ```systemverilog
             // Callback class
             class driver_debug_callback extends uvm_callback;
                 `uvm_object_utils(driver_debug_callback)
@@ -355,7 +355,7 @@ This chapter builds upon the foundational UVM concepts introduced in earlier and
             - **Synchronization of Parallel Activities:**  Ensure that all parallel activities in the testbench (e.g., sequences running on multiple agents) complete before the test ends.
             - **Handling Asynchronous Events:**  Manage test completion in scenarios with asynchronous events or responses.
         - **Example (Objection Mechanism in Sequence and Test):**
-            ```SV
+            ```systemverilog
             // In sequence - Raise and drop objection around transaction generation
             class my_sequence extends uvm_sequence #(transaction);
                 task body();

@@ -22,7 +22,7 @@ SystemVerilog's built-in types are the fundamental building blocks for represent
 | **`logic`**    | Modern 4-state type, versatile replacement   | RTL design, replacing `reg` and `wire` | `logic [15:0] data_bus;`      |
 | **`integer`**  | 4-state, 32-bit signed integer               | Counters, loop indices, general-purpose integers in RTL | `integer loop_count = 0;`    |
 
-```SV
+```systemverilog
 module rtl_module;
   logic [7:0] address;   // 'logic' for address bus
   wire chip_select;     // 'wire' for control signal
@@ -52,7 +52,7 @@ endmodule
 | **`time`**      | 2-state, 64-bit unsigned time value          | Storing simulation timestamps          | `time event_time;`              |
 | **`realtime`**  | 2-state, Real-number time                     | Representing delays, time intervals    | `realtime delay_time = 3.14e-9;`|
 
-```SV
+```systemverilog
 module verification_env;
   bit reset_flag;             // 2-state 'bit' for reset
   int packet_count;           // 2-state 'int' for counters
@@ -79,7 +79,7 @@ These types are used to model situations where multiple sources can drive a sign
 | **`wand`**     | Wired-AND resolution (dominant 0)              | Multiple drivers ANDed together           | `wand arbitration_grant;`    |
 | **`wor`**      | Wired-OR resolution (dominant 1)               | Multiple drivers ORed together            | `wor data_available;`        |
 
-```SV
+```systemverilog
 module multi_driver_example;
   tri1 [7:0] address_bus; // 'tri1' for pull-up on address bus
   wand control_line;      // 'wand' for wired-AND control
@@ -97,7 +97,7 @@ User-defined data types allow you to create custom types, improving code readabi
 
 `typedef` lets you define a new name (alias) for an existing data type. This enhances code clarity by using descriptive names and simplifies code modifications.
 
-```SV
+```systemverilog
 typedef logic [63:0] address_t; // Define 'address_t' as 64-bit logic vector
 typedef enum {READ, WRITE} access_mode_t; // Define 'access_mode_t' enum
 
@@ -110,7 +110,7 @@ access_mode_t current_access;   // Use 'access_mode_t' for access mode
 
 `enum` (enumeration) is ideal for creating state machines and representing a fixed set of named values. It improves code readability and prevents magic numbers.
 
-```SV
+```systemverilog
 typedef enum logic [2:0] { // Optional: specify underlying type
   STATE_IDLE = 3'b000,
   STATE_FETCH = 3'b001,
@@ -133,7 +133,7 @@ endcase
 
 `struct` (structure) allows you to group related variables together under a single name, similar to structures in C. This is useful for creating data packets, transaction objects, or any composite data structure.
 
-```SV
+```systemverilog
 typedef struct packed { // 'packed' for bit-level access
   logic [7:0] address;
   logic [31:0] data;
@@ -151,7 +151,7 @@ current_transaction.read_write = 1;
 
 `union` allows multiple variables to share the same memory storage. Only one member of a union can hold a valid value at any given time. Unions are useful for memory optimization or when you need to interpret the same bits in different ways.
 
-```SV
+```systemverilog
 typedef union packed { // 'packed' for bit-level overlay
   int integer_val;
   shortreal float_val;
@@ -174,7 +174,7 @@ SystemVerilog arrays come in two flavors, packed and unpacked, which differ sign
 
 Packed arrays are declared with the packed dimensions **before** the variable name. They represent a contiguous block of bits, essentially forming a single, multi-dimensional vector. Packed arrays are efficient for bit-level operations and hardware modeling.
 
-```SV
+```systemverilog
 logic [7:0] data_byte;           // Packed 1D array (8 bits)
 logic [3:0][7:0] byte_array_packed; // Packed 2D array (4 bytes, 32 bits total)
 
@@ -187,7 +187,7 @@ $display("Byte 0 (packed): %h", byte_array_packed[0]); // Access as bit vector
 
 Unpacked arrays are declared with dimensions **after** the variable name. They are collections of individual elements of a specified data type. Unpacked arrays are memory-efficient for large arrays and are commonly used in verification testbenches for data storage and manipulation.
 
-```SV
+```systemverilog
 int integer_array_unpacked [0:1023]; // Unpacked array of 1024 integers
 bit flag_array [64];               // Unpacked array of 64 bits
 
@@ -214,14 +214,14 @@ flag_array[5] = 1;
 Test your knowledge of SystemVerilog data types with these exercises. Solutions are provided below to check your work.
 
 1. **Declare and Initialize a `reg`**:
-   ```SV
+   ```systemverilog
    reg [15:0] config_reg;
    initial config_reg = 16'hABCD;
    // Solution: Declares a 16-bit reg named 'config_reg' and initializes it to hexadecimal value ABCD.
    ```
 
 2. **Connect a `wire` to a `logic` signal**:
-   ```SV
+   ```systemverilog
    logic data_enable_logic;
    wire data_enable_wire;
    assign data_enable_wire = data_enable_logic;
@@ -229,7 +229,7 @@ Test your knowledge of SystemVerilog data types with these exercises. Solutions 
    ```
 
 3. **Perform Arithmetic with `integer` Types**:
-   ```SV
+   ```systemverilog
    integer count_start = 50;
    integer count_end = 150;
    integer count_range = count_end - count_start;
@@ -237,20 +237,20 @@ Test your knowledge of SystemVerilog data types with these exercises. Solutions 
    ```
 
 4. **Declare and Assign a `real` Value**:
-   ```SV
+   ```systemverilog
    real frequency_GHz = 2.4;
    // Solution: Declares a real variable 'frequency_GHz' and assigns it the floating-point value 2.4.
    ```
 
 5. **Capture Simulation Time in a `time` Variable**:
-   ```SV
+   ```systemverilog
    time event_timestamp;
    initial event_timestamp = $time;
    // Solution: 'event_timestamp' will store the simulation time at the beginning of the initial block.
    ```
 
 6. **Perform Bitwise AND on `logic` Vectors**:
-   ```SV
+   ```systemverilog
    logic [7:0] pattern = 8'b1011_0101;
    logic [7:0] mask_logic = 8'b1111_0000;
    logic [7:0] masked_pattern = pattern & mask_logic; // Bitwise AND operation
@@ -258,7 +258,7 @@ Test your knowledge of SystemVerilog data types with these exercises. Solutions 
    ```
 
 7. **Define and Instantiate a `struct`**:
-   ```SV
+   ```systemverilog
    typedef struct packed { logic [7:0] opcode; logic [23:0] operand; } instruction_t;
    instruction_t current_instruction;
    current_instruction.opcode = 8'h01;
@@ -267,20 +267,20 @@ Test your knowledge of SystemVerilog data types with these exercises. Solutions 
    ```
 
 8. **Use `enum` for State Machine States**:
-   ```SV
+   ```systemverilog
    typedef enum {STATE_RESET, STATE_WAIT, STATE_PROCESS} control_state_t;
    control_state_t current_control_state = STATE_RESET;
    // Solution: Defines an enum 'control_state_t' with states and initializes 'current_control_state' to 'STATE_RESET'.
    ```
 
 9. **Initialize a Packed Array with Literal Values**:
-   ```SV
+   ```systemverilog
    logic [1:0][3:0] nibble_matrix = {4'h3, 4'h6, 4'h9, 4'hC};
    // Solution: Initializes a 2x4 packed array 'nibble_matrix' with hexadecimal nibble values.
    ```
 
 10. **Iterate Through an Unpacked Array and Display Elements**:
-    ```SV
+    ```systemverilog
     int data_values [5] = '{10, 20, 30, 40, 50};
     initial foreach (data_values[i]) $display("Element [%0d] = %0d", i, data_values[i]);
     // Solution Output:

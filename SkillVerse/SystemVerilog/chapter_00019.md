@@ -36,7 +36,7 @@ Immediate assertions are embedded within procedural blocks (`always`, `initial`,
 
 ### Syntax and Basic Usage
 
-```SV
+```systemverilog
 assert (expression)
   [action_block] // Optional block executed on assertion success (not commonly used)
 else
@@ -49,7 +49,7 @@ else
 
 ### Enhanced Example: Parameterized Range Checker with Immediate Assertion
 
-```SV
+```systemverilog
 module parameterized_range_checker #(
   parameter integer MIN_VALUE = 0,      // Parameter for minimum allowed value (default 0)
   parameter integer MAX_VALUE = 255     // Parameter for maximum allowed value (default 255)
@@ -93,7 +93,7 @@ Concurrent assertions *must* be associated with a clock signal to define the tim
 
 1.  **Explicit Clock in Property Definition**:  Specify the clock edge directly within each `property` definition using the `@(posedge clk)` or `@(negedge clk)` construct. This is useful when you have different clock domains or want to associate specific assertions with particular clocks.
 
-    ```SV
+    ```systemverilog
     property request_grant_sequence_explicit_clock;
       @(posedge clk_a)  // Explicit clock 'clk_a' for this property
       request_a |-> ##[1:5] grant_a; // Sequence: request_a followed by grant_a within 1-5 cycles of clk_a
@@ -102,7 +102,7 @@ Concurrent assertions *must* be associated with a clock signal to define the tim
 
 2.  **Default Clocking Block**: Define a `default clocking` block to specify a default clock and input/output sampling behavior for all concurrent assertions within a scope (e.g., module, interface). This simplifies assertion syntax when most assertions use the same clock.
 
-    ```SV
+    ```systemverilog
     default clocking main_clocking_block @(posedge clk_main); // Default clocking block named 'main_clocking_block' for posedge 'clk_main'
       default input  #1step; // Default input sampling: 1-step delay from clock edge
       default output #0;     // Default output skew: 0 delay from clock edge
@@ -119,7 +119,7 @@ Concurrent assertions *must* be associated with a clock signal to define the tim
 
 In real-world designs, assertions often need to be disabled or qualified during reset conditions. SystemVerilog provides the `disable iff (reset_condition)` clause within properties to make assertions reset-aware.
 
-```SV
+```systemverilog
 property data_transfer_valid_reset_aware;
   @(posedge clk)  // Clocked property
   disable iff (reset_n == 1'b0) // Assertion disabled when reset_n is low (active low reset)
@@ -164,7 +164,7 @@ SystemVerilog provides a hierarchy of severity levels for assertion failure mess
 
 ### Severity Level Usage Example: Traffic Light Controller Verification
 
-```SV
+```systemverilog
 module traffic_light_controller_checker(
   input logic clk,
   input logic rst,
@@ -199,13 +199,13 @@ SystemVerilog provides three main types of coverage properties:
 
 1.  **Event Coverage**: `cover (event_expression)` - Tracks the occurrence of a simple boolean event or condition. Useful for counting how many times a specific event happens.
 
-    ```SV
+    ```systemverilog
     cover (enable_signal); // Count how many times 'enable_signal' becomes true
     ```
 
 2.  **Sequence Coverage**: `cover sequence (sequence_expression)` - Tracks the occurrence of a defined temporal sequence. Useful for verifying that specific sequences of events in a protocol or state machine are exercised.
 
-    ```SV
+    ```systemverilog
     sequence req_ack_seq;
       request ##[1:3] acknowledge; // Sequence: request followed by acknowledge within 1-3 cycles
     endsequence : req_ack_seq
@@ -215,7 +215,7 @@ SystemVerilog provides three main types of coverage properties:
 
 3.  **Property Coverage**: `cover property (property_expression)` - Tracks whether a defined property (which can be complex temporal property) holds true during simulation. Useful for measuring the coverage of design properties and ensuring that assertions are actually being triggered and tested.
 
-    ```SV
+    ```systemverilog
     property valid_address_range;
       address >= MIN_ADDR && address <= MAX_ADDR; // Property: address within valid range
     endproperty : valid_address_range
@@ -229,7 +229,7 @@ SystemVerilog covergroups can be used in conjunction with assertion coverage to 
 
 **Example: Cross-Coverage of Protocol State Transitions and Completion Status**
 
-```SV
+```systemverilog
 module protocol_coverage_example;
   logic clk;
   logic start_transaction;
@@ -283,7 +283,7 @@ SystemVerilog allows for **recursive properties**, where a property can refer to
 
 **Example: Checking for a Maximum Number of Consecutive '1's in a Data Stream**
 
-```SV
+```systemverilog
 property consecutive_ones_limit(integer max_ones);
   int consecutive_count; // Local variable to track consecutive ones
 
@@ -312,7 +312,7 @@ SystemVerilog's `bind` construct allows you to **externally bind** assertions to
 
 **Example: Binding Assertions to a FIFO Module Externally**
 
-```SV
+```systemverilog
 // 1. FIFO Module (Assume this is pre-existing IP you cannot modify)
 module fifo #(parameter DEPTH = 8) (
   input logic clk, rst_n, wr_en, rd_en;
@@ -388,7 +388,7 @@ These system tasks provide runtime control over assertion behavior, useful for d
 
 **Example: Disabling and Enabling Assertions During Simulation**
 
-```SV
+```systemverilog
 initial begin
   // Initially disable all assertions within the 'top.dut.arbiter' hierarchy
   $assertoff(0, "top.dut.arbiter");
@@ -410,7 +410,7 @@ end
 
 **Example: Using `$info` to Add Debugging Context to Assertions**
 
-```SV
+```systemverilog
 property memory_write_acknowledgement_check;
   @(posedge clk)
   write_enable |-> ##[1:2] ( // Write enable followed by acknowledgement within 1-2 cycles
@@ -466,7 +466,7 @@ Implement concurrent assertions to check the following:
 -   **Stop Bit Verification**: After the 8 data bits and parity bit, assert that the `stop_bit` is asserted for exactly one clock cycle.
 -   **No Overlap**: Assert that `start_bit`, `data`, `parity_bit`, and `stop_bit` are not asserted simultaneously (mutually exclusive in time, except for the intended sequence).
 
-```SV
+```systemverilog
 module packet_protocol_checker(
   input logic clk,
   input logic rst_n,
@@ -544,7 +544,7 @@ These exercises provide a progressive path to learning and applying SystemVerilo
 | **`$isunknown(expression)`**   | Checks if `expression` contains any X or Z (unknown or high-impedance) bits. | `$isunknown(data_bus)`                                                     | System function to detect X or Z values, often used for error or undefined state detection.                                                                                                                                                            |
 | **`disable iff (condition)`** | Conditional disable clause for properties. Assertion is disabled when `condition` is true. | `property p_reset_aware; @(clk) disable iff (rst) ... endproperty`    | Used to make assertions reset-aware or conditionally disable them based on any boolean condition. Essential for handling reset and other exceptional conditions.                                                                                              |
 
-```SV
+```systemverilog
 // Sample Solution for Exercise 1: Packet Protocol Assertions (Example - Start Bit Detection)
 module packet_protocol_checker(
   input logic clk,

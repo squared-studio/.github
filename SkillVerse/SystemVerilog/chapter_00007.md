@@ -19,7 +19,7 @@ Arithmetic operators are fundamental for performing mathematical computations wi
 
 ### Real-World Example: Address Calculation Unit
 
-```SV
+```systemverilog
 module address_calculation_unit;
   input logic [31:0] base_address;
   input logic [5:0]  index;
@@ -74,7 +74,7 @@ Bitwise operators perform bit-by-bit operations on vector operands. They are ess
 
 **Illustrating Shift Operator Differences (Logical vs. Arithmetic):**
 
-```SV
+```systemverilog
 module shift_example;
   initial begin
     logic [3:0] logical_val = 4'b1001;
@@ -109,7 +109,7 @@ Reduction operators are unary operators that operate on all bits of a vector and
 
 **Practical Application: Parity Bit Generation**
 
-```SV
+```systemverilog
 module parity_generator;
   input logic [7:0] data_byte;
   output logic parity_even;
@@ -148,7 +148,7 @@ Case equality operators (`===`, `!==`) perform bit-by-bit comparison, including 
 
 **Illustrating the Difference: Handling X and Z States**
 
-```SV
+```systemverilog
 module comparison_example;
   initial begin
     logic [3:0] val_x = 4'b10xx; // Value with unknowns
@@ -192,7 +192,7 @@ While understanding precedence is important, **always use parentheses `()` to ex
 
 **Example: Precedence and Parentheses**
 
-```SV
+```systemverilog
 module precedence_example;
   initial begin
     integer result_no_paren, result_paren;
@@ -210,7 +210,7 @@ endmodule
 
 1.  **Confusing Bitwise and Logical Operators**: A frequent source of errors is using bitwise operators when logical operators are intended, and vice versa.
 
-    ```SV
+    ```systemverilog
     module logical_bitwise_pitfall;
       input logic enable;
       input logic reset;
@@ -228,7 +228,7 @@ endmodule
 
 2.  **Misunderstanding Shift Operator Types**:  Forgetting the difference between logical and arithmetic right shifts can lead to incorrect results when working with signed numbers.
 
-    ```SV
+    ```systemverilog
     module shift_pitfall;
       initial begin
         logic signed [7:0] signed_value = -8; // 8-bit signed -8 (11111000 in 2's complement)
@@ -243,7 +243,7 @@ endmodule
 
 3.  **Incorrectly Comparing with X Values using Standard Equality**: Standard equality operators (`==`, `!=`) will result in `X` (unknown) if any operand is `X` or `Z`. For explicitly checking for X or Z, use case equality (`===`, `!==`).
 
-    ```SV
+    ```systemverilog
     module x_comparison_pitfall;
       initial begin
         logic unknown_signal; // Initialized to 'x' by default

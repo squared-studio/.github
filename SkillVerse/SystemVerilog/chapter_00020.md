@@ -28,7 +28,7 @@ SystemVerilog simulators typically support the collection of several types of co
 
 **Example Illustrating Statement Coverage:**
 
-```SV
+```systemverilog
 module statement_coverage_example;
   logic [1:0] operation_mode = 2'b00; // Default mode is '00'
 
@@ -55,7 +55,7 @@ endmodule
 
 **Example Illustrating Branch Coverage:**
 
-```SV
+```systemverilog
 module branch_coverage_example;
   logic [1:0] current_state = 2'b01; // Initial state
 
@@ -83,7 +83,7 @@ endmodule
 
 **Example Illustrating Toggle Coverage:**
 
-```SV
+```systemverilog
 module toggle_coverage_example;
   logic clock_signal; // Typically excluded from toggle coverage analysis
   logic enable_flag = 1'b0; // Initial value
@@ -122,7 +122,7 @@ Functional coverage is a **user-defined** metric that directly addresses the que
 
 **Example Covergroup for Address Range and Read/Write Operation Cross-Coverage:**
 
-```SV
+```systemverilog
 module functional_coverage_example;
   covergroup address_operation_coverage @(posedge clock); // Sampled on positive clock edge
     option.per_instance = 1; // Collect coverage data for each instance
@@ -189,7 +189,7 @@ endmodule : functional_coverage_example
 
 **Example Covergroup with Data Value Coverpoint and Various Bins:**
 
-```SV
+```systemverilog
 covergroup data_coverage_group;
   // Coverpoint for an 8-bit data signal
   data_value_cp: coverpoint data_signal {
@@ -214,7 +214,7 @@ endgroup : data_coverage_group
 
     **Example of Automatic Bin Creation:**
 
-    ```SV
+    ```systemverilog
     module automatic_bins_example;
       logic [2:0] state_reg; // 3-bit variable, values 0-7
 
@@ -262,7 +262,7 @@ endgroup : data_coverage_group
 
 **Example Cross Coverage for Operation Mode and Speed Combinations:**
 
-```SV
+```systemverilog
 covergroup protocol_mode_speed_coverage;
   mode_cp: coverpoint operation_mode { // Coverpoint for operation mode
     bins low_power_mode = {2'b00, 2'b01};
@@ -309,7 +309,7 @@ SystemVerilog provides built-in methods to query functional coverage results *du
 
     **Example Illustrating `get_coverage()`:**
 
-    ```SV
+    ```systemverilog
     // Assume my_transaction_covergroup is defined as shown previously
     covergroup my_transaction_covergroup @(posedge vif.clk);
       // ... coverpoints and crosses ...
@@ -438,7 +438,7 @@ Implementing a successful coverage-driven verification (CDV) strategy involves m
 | **`covergroup_instance.get_inst_coverage()`** | A method called on a specific covergroup instance to return its individual coverage percentage (0-100).      | `int instance_cov = my_cg_instance.get_inst_coverage();`                      | Provides the coverage percentage for a single, specific instance of a covergroup. Useful when using `option.per_instance = 1`.                                                                                                                                                                                              |
 | **Code Coverage Metrics** | Metrics (Statement, Branch, Toggle, etc.) automatically collected by the simulator based on RTL execution. | (Enabled via simulator command-line options like `-cm` in VCS)              | Provides structural coverage information about the RTL code. Collected automatically without explicit SystemVerilog constructs in the design/testbench (except for potential pragmas for exclusion).                                                                                                                     |
 
-```SV
+```systemverilog
 // Refined Sample Solution for Exercise 4: Functional Coverage - 8-bit Data Bus Bins
 module data_bus_coverage_example;
   // Define the covergroup for the 8-bit data bus

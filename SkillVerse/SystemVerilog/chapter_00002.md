@@ -8,7 +8,7 @@ When SystemVerilog code is developed, it describes electronic hardware. However,
 
 Consider the following fundamental testbench structure:
 
-```SV
+```systemverilog
 // This is a single-line comment.
 /*
 This is a multi-line comment.
@@ -50,7 +50,7 @@ In SystemVerilog, the **semicolon (`;`)** functions as a statement terminator. I
 * **Analogy**: The semicolon is analogous to the period at the end of a sentence in natural language. It signifies the conclusion of a complete thought or instruction.
 
 **Examples**:
-```SV
+```systemverilog
 logic my_signal;        // Declaration terminates with a semicolon.
 my_signal = 1;          // Assignment terminates with a semicolon.
 $display("Message");    // System task invocation terminates with a semicolon.
@@ -64,14 +64,14 @@ Comments are textual annotations within the code that are disregarded by the Sys
 
 * **Single-Line Comments (`//`)**:
     A single-line comment commences with two forward slashes (`//`). All text from the `//` to the end of that specific line is considered a comment.
-    ```SV
+    ```systemverilog
     // This entire line is a comment.
     logic my_signal; // This is a comment at the end of a code line.
     ```
 
 * **Multi-Line Comments (`/* ... */`)**:
     A multi-line comment begins with `/*` and concludes with `*/`. All text positioned between these markers, potentially spanning multiple lines, is treated as a comment.
-    ```SV
+    ```systemverilog
     /*
     This is a block comment.
     It can span multiple lines
@@ -138,7 +138,7 @@ In SystemVerilog, certain constructs, such as the **`initial`** block, contain m
 **`begin`** and **`end`** function as delimiters for a "compound statement" or a "block," enabling multiple individual statements to be treated as a singular unit. In SystemVerilog, **`begin`** and **`end`** are utilized for this purpose; curly braces `{}` (as seen in some other programming languages like C++, Java, or for data structures in Python) are **not** used for block grouping.
 
 **Example**:
-```SV
+```systemverilog
 initial begin // Start of the block
   statement1; // This statement will execute first.
   statement2; // Subsequently, this statement will execute.

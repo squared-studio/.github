@@ -21,7 +21,7 @@ The `$value$plusargs` system function is used to retrieve the value associated w
 
 **Syntax:**
 
-```SV
+```systemverilog
 integer result;
 result = $value$plusargs("<argument_format_string>", <variable1>, <variable2>, ...);
 ```
@@ -38,7 +38,7 @@ result = $value$plusargs("<argument_format_string>", <variable1>, <variable2>, .
 
 **Example: Retrieving Test Case Name and Iteration Count**
 
-```SV
+```systemverilog
 module command_line_example;
   string test_name;
   integer iterations;
@@ -80,7 +80,7 @@ The `$test$plusargs` system function is simpler than `$value$plusargs`. It only 
 
 **Syntax:**
 
-```SV
+```systemverilog
 integer found;
 found = $test$plusargs("<argument_format_string>");
 ```
@@ -94,7 +94,7 @@ found = $test$plusargs("<argument_format_string>");
 
 **Example: Using Flag Arguments for Verbosity Control**
 
-```SV
+```systemverilog
 module verbosity_control;
   bit verbose_mode;
 
@@ -142,7 +142,7 @@ Command line arguments can directly override `parameter` values defined within S
 
 **Example: Overriding Module Parameter `DATA_WIDTH`**
 
-```SV
+```systemverilog
 module parameterized_module #(parameter DATA_WIDTH = 8) (
   input logic [DATA_WIDTH-1:0] data_in,
   output logic [DATA_WIDTH-1:0] data_out
@@ -195,7 +195,7 @@ Error handling for command line arguments is essential to ensure simulation robu
 
 ### Argument Presence and Value Validation
 
-```SV
+```systemverilog
 module robust_command_line;
   string test_name;
   integer iterations;
@@ -296,7 +296,7 @@ endmodule
     - If an invalid `VERBOSITY` value is provided, display an informative error message using `$error` and terminate the simulation using `$fatal`.
     - Ensure that the error message clearly indicates the allowed values for the `VERBOSITY` argument and guides the user on correct usage.
 
-```SV
+```systemverilog
 // Sample Solution for Exercise 2: Test Case Selection (Improved)
 module test_case_selector;
   string test_case_name;

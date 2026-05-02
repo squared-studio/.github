@@ -29,7 +29,7 @@ Tasks in SystemVerilog are procedural blocks designed to encapsulate sequences o
 
 ### Basic Task Structure
 
-```SV
+```systemverilog
 task [automatic] task_name ( [argument_direction] [data_type] argument_name, ... );
   // Argument directions: input, output, inout, ref
   // Data types: logic, bit, integer, real, etc.
@@ -55,7 +55,7 @@ endtask
 
 ### Example: Testbench Transaction Generation Task
 
-```SV
+```systemverilog
 module bus_interface_tb;
   interface bus_if vif; // Virtual interface to connect to DUT
   logic clk;
@@ -112,7 +112,7 @@ Functions in SystemVerilog are primarily intended for modeling combinational log
 
 ### Basic Function Structure
 
-```SV
+```systemverilog
 function [automatic] [return_data_type] function_name ( [input] [data_type] argument_name, ... );
   // Argument direction: input (default, can be omitted)
   // Data types: logic, bit, integer, real, etc.
@@ -135,7 +135,7 @@ endfunction
 
 ### Example: RTL Parity Calculation Function
 
-```SV
+```systemverilog
 module data_processing_unit;
   input  logic [7:0] data_bus;
   output logic parity_bit;
@@ -178,7 +178,7 @@ SystemVerilog tasks and functions can have two storage classes: `static` (defaul
 
 ### Pitfall of `static` Variables: Shared State and Concurrency Issues
 
-```SV
+```systemverilog
 task static_counter_task ();
   static integer call_count = 0; // Static variable - shared across all calls
 
@@ -208,7 +208,7 @@ endmodule
 
 ### `automatic` Tasks and Functions: Reentrancy and Recursion
 
-```SV
+```systemverilog
 function automatic integer recursive_factorial (input integer n);
   if (n <= 1) begin
     return 1;
@@ -256,7 +256,7 @@ SystemVerilog provides several advanced features to make tasks and functions mor
 -   **Functions for Side Effects**:  While functions are primarily designed to return values, SystemVerilog allows you to declare functions with a `void` return type. `void` functions do not return a value and are typically used for performing actions or side effects, such as displaying messages, updating global variables (though generally discouraged for good coding practice in RTL functions), or triggering events.
 -   **Verification Utilities**: `void` functions are more commonly used in verification testbenches for utility procedures that perform actions without needing to return a value directly.
 
-```SV
+```systemverilog
 class verification_utils;
   static function void print_test_banner (input string test_name);
     $display("\n=======================================");
@@ -282,7 +282,7 @@ SystemVerilog provides flexible argument directions to control how data is passe
 -   **`inout`**: Data flows both into and out of the task/function. The task/function can modify the original variable, and the modified value is reflected in the caller's scope.
 -   **`ref` (Pass by Reference)**:  Passes a reference (pointer) to the original variable.  The task/function directly operates on the original variable in the calling scope.  This is efficient for passing large data structures as it avoids copying data.
 
-```SV
+```systemverilog
 task automatic data_manipulation_task (input integer input_val, output integer output_val, inout integer inout_val, ref integer ref_val);
   begin
     output_val = input_val * 2;     // Calculate output value
@@ -314,7 +314,7 @@ endmodule
 
 SystemVerilog allows you to specify default values for function arguments. If a caller omits an argument with a default value, the default value is used. This enhances function flexibility and reduces code duplication when certain argument values are commonly used.
 
-```SV
+```systemverilog
 function automatic integer calculate_timeout (input integer base_time, input integer multiplier = 2, input integer offset = 5);
   // Function to calculate timeout with optional multiplier and offset
   calculate_timeout = base_time * multiplier + offset;
@@ -343,7 +343,7 @@ endmodule
 3.  **Debugging and Verification**:
     -   **`$debug` System Function for Function Debugging**: SystemVerilog provides the `$debug` system function, similar to `$display`, but often handled differently by simulation tools (e.g., may be conditionally compiled or have different verbosity levels).  Use `$debug` strategically within functions to print intermediate values or trace execution flow during debugging without cluttering standard output in normal simulation runs.
 
-    ```SV
+    ```systemverilog
     function automatic integer calculate_checksum(input bit [63:0] data);
       calculate_checksum = data ^ (data >> 32);
       $debug("Checksum Calculation: Input Data = 0x%h, Checksum = 0x%h", data, calculate_checksum); // Debug message

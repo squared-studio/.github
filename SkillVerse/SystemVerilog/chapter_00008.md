@@ -17,7 +17,7 @@ The `if-else` statement is the cornerstone of conditional logic. It executes one
 -   **`else if` for Mutually Exclusive Choices**: Use `else if` to efficiently handle a series of conditions where only one branch should execute.
 -   **Braces for Clarity**: While optional for single-line blocks following `if`, `else if`, and `else`, using `begin` and `end` braces consistently enhances readability and avoids potential errors when modifying code.
 
-```SV
+```systemverilog
 module if_else_example;
   parameter  THRESHOLD_HIGH = 50;
   parameter  THRESHOLD_MID  = 30;
@@ -44,7 +44,7 @@ endmodule
 -   **Strict Equality**: The standard `case` statement performs exact value matching. It compares the case expression against each case item, and a match occurs only when they are identical bit-for-bit.
 -   **`default` Case Essential**: Always include a `default` case in synthesizable `case` statements.  Omitting it can unintentionally create latches in hardware, as the synthesizer must infer behavior for non-matched cases.
 
-```SV
+```systemverilog
 module case_example;
   enum logic [2:0] { MONDAY=1, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY, INVALID_DAY } day_e;
   day_e current_day = WEDNESDAY; // Assuming WEDNESDAY maps to 3'd3
@@ -69,7 +69,7 @@ endmodule
 -   **'z' and '?' as Wildcards**: The `casez` statement treats `z` (high-impedance) and `?` as don't-care values in case items.  This is useful for pattern matching where certain bits are irrelevant.
 -   **Verification and Protocol Decoding**:  `casez` is commonly used in verification for decoding instruction opcodes or protocol messages where some bits can be flexible.
 
-```SV
+```systemverilog
 module casez_example;
   logic [3:0] instruction_opcode = 4'b10xz; // 'x' and 'z' represent don't-cares
 
@@ -88,7 +88,7 @@ endmodule
 -   **'x', 'z', and '?' as Wildcards**:  The `casex` statement extends don't-care matching to include `x` (unknown) in addition to `z` and `?`.
 -   **Cautious RTL Use**: While flexible, `casex` should be used with caution in RTL design. Its aggressive wildcard matching can sometimes lead to unintended behavior in synthesis if not carefully managed.  It's more frequently used in verification for flexible pattern matching.
 
-```SV
+```systemverilog
 module casex_example;
   logic [3:0] status_flags = 4'b10x1; // 'x' represents an unknown flag state
 
@@ -116,7 +116,7 @@ Loop constructs in SystemVerilog enable you to execute code blocks repeatedly, a
 
 -   **Predefined Iterations**: The `repeat` loop executes a block of code a fixed, predetermined number of times, specified at compile time.
 
-```SV
+```systemverilog
 module repeat_example;
   parameter NUM_REPEATS = 4;
 
@@ -134,7 +134,7 @@ endmodule
 
 -   **Condition-Controlled Execution**: The `while` loop continues to execute its code block as long as a specified condition remains true.
 
-```SV
+```systemverilog
 module while_example;
   integer counter = 0;
   parameter LIMIT = 5;
@@ -154,7 +154,7 @@ endmodule
 
 -   **Combined Loop Control**: The `for` loop provides a concise syntax for loop control, combining initialization, a loop condition, and an increment/decrement step in a single statement.
 
-```SV
+```systemverilog
 module for_example;
   parameter ITERATIONS = 3;
 
@@ -174,7 +174,7 @@ endmodule
 
 **Syntax**: `foreach (array_name[index_variable]) begin ... end`
 
-```SV
+```systemverilog
 module foreach_example;
   integer data_values[5] = '{15, 25, 35, 45, 55};
 
@@ -193,7 +193,7 @@ endmodule
 -   **Infinite Loop**: The `forever` loop executes its code block indefinitely, creating an infinite loop.  It is primarily used in testbenches to generate continuous stimuli or to model systems that run continuously.
 -   **Timing Control and Exit Mechanisms**:  **Crucially, always include a timing control (`#delay`) or a loop exit mechanism (like `disable`) within a `forever` loop to prevent simulation from hanging indefinitely.**
 
-```SV
+```systemverilog
 module forever_example;
   initial begin : forever_block // Named block for disabling
     integer cycle_count = 0;

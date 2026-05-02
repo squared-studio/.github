@@ -20,7 +20,7 @@ Interfaces are created using the `interface` keyword, defining a named block tha
 
 ### Basic Interface Structure
 
-```SV
+```systemverilog
 // Example: Simple bus interface definition
 interface simple_bus_if; // 'if' suffix is a common naming convention for interfaces
   logic clk;         // System clock signal
@@ -53,7 +53,7 @@ To use an interface, modules declare interface instances as ports in their port 
 
 ### Module Connection Syntax with Interfaces
 
-```SV
+```systemverilog
 module data_producer(simple_bus_if bus_intf); // Interface instance 'bus_intf' as a port
   // 'simple_bus_if' is the interface type, 'bus_intf' is the port name (instance handle)
 
@@ -81,7 +81,7 @@ endmodule
 
 In a top-level module or testbench, you instantiate the interface itself and then connect it to the module instances.
 
-```SV
+```systemverilog
 module top_level_design;
   simple_bus_if bus_instance(); // Instantiate the interface - 'bus_instance' is the interface instance name
 
@@ -119,7 +119,7 @@ Modports (Module Ports within Interfaces) are a powerful feature of SystemVerilo
 
 ### Advanced Modport Implementation Example: AXI-Stream Interface with Modports
 
-```SV
+```systemverilog
 interface axi_stream_if; // Interface for AXI Streaming protocol
   logic aclk;     // Clock signal
   logic aresetn;  // Reset signal (active low)
@@ -213,7 +213,7 @@ endmodule
 
 **Objective**: Design a simple memory interface and connect a memory controller and a memory module using this interface.
 
-```SV
+```systemverilog
 interface memory_if; // Define the memory interface
   logic clk;      // Clock
   logic cs_n;     // Chip Select (active low)
@@ -249,7 +249,7 @@ endmodule
 
 **Task**: Implement a UART (Universal Asynchronous Receiver/Transmitter) interface using modports to define directions for DTE (Data Terminal Equipment) and DCE (Data Communication Equipment) connections.
 
-```SV
+```systemverilog
 interface uart_if;
   logic clk;    // Clock
   logic rx;     // Receive data line
@@ -297,7 +297,7 @@ endmodule
 
 **Challenge**: Design a parameterized AXI-Lite interface to support configurable address and data widths.
 
-```SV
+```systemverilog
 interface axi_lite_if #(parameter ADDR_WIDTH = 32, parameter DATA_WIDTH = 32);
   // AXI-Lite Write Address Channel
   logic [ADDR_WIDTH-1:0] awaddr;
@@ -393,7 +393,7 @@ As you advance in SystemVerilog design and verification, it is crucial to explor
 
 By embracing SystemVerilog interfaces and consistently applying best practices in interface design, you will be well-positioned to tackle the challenges of modern hardware design and verification, creating more modular, robust, and maintainable digital systems.
 
-```SV
+```systemverilog
 // Final Example: A Complete Smart Bus Interface System with Reset Task
 interface smart_bus_if #(parameter DATA_WIDTH = 8);
   logic clk, rst_n;

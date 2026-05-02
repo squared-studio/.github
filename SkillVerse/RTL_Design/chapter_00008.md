@@ -70,7 +70,7 @@ This chapter introduces the critical domain of verification in RTL design. Verif
         - Inter-process communication mechanisms for coordinating testbench components.
     *   **Basic Testbench Structure (Conceptual):**
 
-        ```SV
+        ```systemverilog
         module testbench;
 
             // 1. Interface Declarations (if using interfaces - optional for basic testbenches)
@@ -119,14 +119,14 @@ This chapter introduces the critical domain of verification in RTL design. Verif
     *   **Clock Generation:**
         - Using `always` blocks to generate clock signals with specific periods and duty cycles.
         - Example:
-            ```SV
+            ```systemverilog
             reg clk = 0;
             always #(`CLOCK_PERIOD/2) clk = ~clk; // Clock period defined as a parameter
             ```
     *   **Reset Generation:**
         - Using `initial` blocks to generate reset signals. Typically, reset is asserted at the beginning of simulation and then de-asserted after a certain time.
         - Example:
-            ```SV
+            ```systemverilog
             initial begin
                 rst = 1; // Assert reset
                 #(`RESET_PULSE_WIDTH); // Wait for reset pulse width
@@ -137,7 +137,7 @@ This chapter introduces the critical domain of verification in RTL design. Verif
         - Instantiating the RTL module (DUT) within the testbench module.
         - Connecting the DUT's ports to signals declared in the testbench.
         - Example:
-            ```SV
+            ```systemverilog
             adder DUT (
                 .a(input_a),
                 .b(input_b),
@@ -149,7 +149,7 @@ This chapter introduces the critical domain of verification in RTL design. Verif
         - Can be simple `initial` or `always` blocks for basic stimulus.
         - For more complex stimulus, can use tasks, functions, or classes to create reusable and organized driver components.
         - Example (simple driver in `initial` block):
-            ```SV
+            ```systemverilog
             initial begin
                 input_a = 0; input_b = 0;
                 #(`CYCLE_TIME); input_a = 5; input_b = 3;
@@ -162,7 +162,7 @@ This chapter introduces the critical domain of verification in RTL design. Verif
         - Can be simple `always` blocks that monitor outputs and compare them to expected values.
         - For more complex checking, can use scoreboards, checkers, or assertion components.
         - Example (simple monitor in `always` block):
-            ```SV
+            ```systemverilog
             always @(posedge clk) begin
                 if (output_valid) begin
                     if (output_result == expected_result) begin
@@ -209,7 +209,7 @@ This chapter introduces the critical domain of verification in RTL design. Verif
         - **Formal Verification Readiness:** Assertions written for simulation can often be reused or adapted for formal verification tools.
         - **Documentation of Design Intent:** Assertions document expected design behavior in a formal and executable way, improving design understanding and maintainability.
     *   **Basic Assertion Example (Immediate Assertion):**
-        ```SV
+        ```systemverilog
         always @(posedge clk) begin
             if (enable) begin
                 data_reg <= data_in;
@@ -218,7 +218,7 @@ This chapter introduces the critical domain of verification in RTL design. Verif
         end
         ```
     *   **Basic Assertion Example (Concurrent Assertion - Property):**
-        ```SV
+        ```systemverilog
         property valid_output_after_enable;
             @(posedge clk)
             enable |-> ##1 output_valid; // If 'enable' is high, then 'output_valid' should be high in the next clock cycle

@@ -37,7 +37,7 @@ This chapter is crucial for learning how to write effective Register-Transfer Le
             - Sensitivity list: Implicitly sensitive to all input signals read within the block. Avoid explicit sensitivity lists in `always_comb`.
             - Use blocking assignments (`=`) within `always_comb`.
             - Example:
-                ```SV
+                ```systemverilog
                 always_comb begin
                     y = (sel == 1'b1) ? a : b;
                 end
@@ -47,7 +47,7 @@ This chapter is crucial for learning how to write effective Register-Transfer Le
             - Sensitivity list: Must include the clock edge event (e.g., `@(posedge clk)`). Can optionally include reset events.
             - Use non-blocking assignments (`<=`) within `always_ff`.
             - Example (D flip-flop with synchronous reset):
-                ```SV
+                ```systemverilog
                 always_ff @(posedge clk) begin
                     if (rst) begin
                         q <= 1'b0;
@@ -64,7 +64,7 @@ This chapter is crucial for learning how to write effective Register-Transfer Le
         - Continuous assignment:  Used for describing combinational logic where the output is a direct function of the inputs.
         - Implicitly sensitive to all signals on the right-hand side.
         - Example:
-            ```SV
+            ```systemverilog
             assign sum = a + b;
             assign carry_out = carry_in & a | carry_in & b | a & b;
             ```
@@ -73,7 +73,7 @@ This chapter is crucial for learning how to write effective Register-Transfer Le
         - Hierarchical design:  Creating modules and instantiating them within other modules to build complex systems.
         - Instantiating user-defined modules and library primitives (e.g., flip-flops, gates from technology libraries).
         - Example:
-            ```SV
+            ```systemverilog
             module top_module;
                 wire internal_wire;
                 sub_module instance1 (
@@ -94,7 +94,7 @@ This chapter is crucial for learning how to write effective Register-Transfer Le
         - Non-blocking assignments (`<=`) are essential within `always_ff` for correct sequential behavior.
         - Reset implementation: Include reset logic (synchronous or asynchronous) within `always_ff` to initialize registers.
         - Example (Synchronous Reset Counter):
-            ```SV
+            ```systemverilog
             always_ff @(posedge clk) begin
                 if (rst) begin
                     count <= 4'b0;
@@ -109,7 +109,7 @@ This chapter is crucial for learning how to write effective Register-Transfer Le
         - Use `case` statement for state transitions in `always_comb` block.
         - Include a `default` case in the `case` statement to handle unexpected states (for robustness).
         - Example (Moore FSM):
-            ```SV
+            ```systemverilog
             typedef enum logic [1:0] {S_IDLE, S_STATE1, S_STATE2} state_t;
             state_t current_state, next_state;
 
@@ -143,7 +143,7 @@ This chapter is crucial for learning how to write effective Register-Transfer Le
         - Instantiation of memory primitives provided by FPGA/ASIC vendors.
         - Refer to vendor-specific documentation for memory instantiation templates and parameters (e.g., Xilinx Block RAM, Intel on-chip memory).
         - Example (Conceptual - vendor-specific instantiation will vary):
-            ```SV
+            ```systemverilog
             // Conceptual example - not actual vendor-specific code
             memory_block #(
                 .DATA_WIDTH(32),
@@ -165,7 +165,7 @@ This chapter is crucial for learning how to write effective Register-Transfer Le
         - Using parameters to make modules configurable and reusable for different data widths, memory sizes, etc.
         - Overriding parameters during module instantiation.
         - Example:
-            ```SV
+            ```systemverilog
             module parameterized_adder #(parameter DATA_WIDTH = 8) (
                 input logic [DATA_WIDTH-1:0] a, b,
                 output logic [DATA_WIDTH-1:0] sum
@@ -182,7 +182,7 @@ This chapter is crucial for learning how to write effective Register-Transfer Le
         - Conditional generation (`if-generate`):  Generate code blocks based on parameter values or conditions.
         - Loop generation (`for-generate`):  Generate repetitive code structures, useful for arrays of instances or parameterized logic.
         - Example (`for-generate` for array of adders):
-            ```SV
+            ```systemverilog
             module generate_example #(parameter NUM_ADDERS = 4) (
                 input logic [7:0] in [NUM_ADDERS],
                 output logic [7:0] out [NUM_ADDERS]
@@ -236,7 +236,7 @@ This chapter is crucial for learning how to write effective Register-Transfer Le
     *   **Unintentional Latches:**
         - Incomplete `if-else` or `case` statements in `always_comb` blocks where outputs are not assigned in all conditions.
         - Example (Latch Inference - Avoid):
-            ```SV
+            ```systemverilog
             always_comb begin
                 if (enable) begin
                     q = d; // Latch inferred if 'enable' is not true
@@ -292,7 +292,7 @@ This chapter is crucial for learning how to write effective Register-Transfer Le
         - Rewrite the code snippet to improve readability, synthesizability, and correctness, applying the best practices learned in the chapter.
         - Explain the improvements made and why the rewritten code is better.
     *   **Example Snippet (Poor):**
-        ```SV
+        ```systemverilog
         module bad_mux(input a, b, sel, output q);
             reg q;
             always @ (a or b or sel)
@@ -303,7 +303,7 @@ This chapter is crucial for learning how to write effective Register-Transfer Le
         endmodule
         ```
     *   **Rewritten (Improved):**
-        ```SV
+        ```systemverilog
         module good_mux(input logic a, b, sel, output logic q);
             always_comb begin
                 if (sel) begin

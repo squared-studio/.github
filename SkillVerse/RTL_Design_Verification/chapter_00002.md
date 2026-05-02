@@ -32,7 +32,7 @@ This chapter dives into the practical aspects of building verification environme
         - **Input and Output Clocking:**  Clocking blocks can define input clocking (for driving signals into the DUT synchronized to a clock edge) and output clocking (for sampling signals from the DUT synchronized to a clock edge).
         - **Synchronization and Race Condition Prevention:** Clocking blocks help prevent race conditions and ensure that testbench actions are correctly synchronized with the DUT's clocking scheme, leading to more reliable and repeatable simulations.
         - **Example:**
-            ```SV
+            ```systemverilog
             clocking drv_cb @(posedge clk); // Clocking block synchronized to posedge of clk
                 output data; // Output signals driven in this clocking block
             endclocking
@@ -54,7 +54,7 @@ This chapter dives into the practical aspects of building verification environme
             - **Using `initial` and `always` Blocks:**  Directly writing procedural code within `initial` or `always` blocks to generate stimulus sequences.
             - **Directed Stimulus:**  Manually crafting specific input sequences to test particular functionalities or scenarios.
             - **Example (`initial` block for directed stimulus):**
-                ```SV
+                ```systemverilog
                 initial begin
                     input_data = 0; #10; // Apply input 0, wait 10 time units
                     input_data = 5; #10; // Apply input 5, wait 10 time units
@@ -63,11 +63,11 @@ This chapter dives into the practical aspects of building verification environme
                 end
                 ```
             - **Example (`always` block for repetitive stimulus):**
-                ```SV
+                ```systemverilog
                 always #5 input_valid = ~input_valid; // Toggle input_valid every 5 time units
                 ```
             - **Tasks and Functions for Reusable Stimulus:**  Defining tasks and functions to encapsulate stimulus generation sequences, making testbench code more organized and reusable.
-                ```SV
+                ```systemverilog
                 task send_data (input integer data_value);
                     input_data = data_value;
                     input_valid = 1;
@@ -91,7 +91,7 @@ This chapter dives into the practical aspects of building verification environme
     *   **Response Monitoring:**
         - **Observing DUT Outputs:**  Monitoring signals at the output ports of the DUT to capture its responses to the applied stimuli.
         - **Using `always` Blocks for Monitoring:**  `always` blocks triggered by events (e.g., clock edges, output signal changes) can be used to sample and record DUT outputs.
-            ```SV
+            ```systemverilog
             always @(posedge clk) begin
                 if (output_valid) begin
                     monitored_output <= output_data;
@@ -107,7 +107,7 @@ This chapter dives into the practical aspects of building verification environme
             - **Scoreboards (Introduction):**  Using data structures (like queues) to store expected transactions and compare them with actual transactions observed from the DUT. Scoreboards are essential for verifying complex, pipelined, or out-of-order designs.
             - **Assertions (Introduction):**  Using SystemVerilog Assertions to formally specify design properties and automatically check them during simulation. Assertions can check for both functional correctness and protocol compliance.
         - **Example (Procedural Checking - Direct Comparison):**
-            ```SV
+            ```systemverilog
             reg [DATA_WIDTH-1:0] expected_sum;
 
             always @(posedge clk) begin
@@ -137,7 +137,7 @@ This chapter dives into the practical aspects of building verification environme
         - **Improved Reusability:**  TLM components can be reused across different testbenches and projects.
         - **Early Verification:**  TLM can be used for early architectural verification and system-level modeling even before RTL is fully developed.
     *   **Example (Conceptual TLM):**
-        ```SV
+        ```systemverilog
         // Transaction class
         class bus_transaction;
             rand bit [31:0] addr;
@@ -198,7 +198,7 @@ This chapter dives into the practical aspects of building verification environme
         - **Parameterization and Configuration:**  Virtual interfaces can be parameterized and configured to adapt to different interface configurations or modes of operation.
         - **Example Use Case: Layered Testbench Connectivity:** In a layered testbench, higher layers (e.g., transaction layer, verification core layer) can use virtual interfaces to access and control interfaces in lower layers (e.g., protocol layer, signal layer) without being directly tied to specific interface instances. This allows for flexibility and reusability.
     *   **Example (Virtual Interface Concept):**
-        ```SV
+        ```systemverilog
         interface bus_if (input logic clk); // Define an interface
             logic [31:0] addr;
             logic [31:0] data;

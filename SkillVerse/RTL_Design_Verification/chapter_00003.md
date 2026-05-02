@@ -11,7 +11,7 @@ This chapter introduces constrained-random verification, a powerful methodology 
         - **`rand` Keyword:** Declares a class property or variable as *random*.  When `randomize()` is called on an object of the class, `rand` variables are assigned new random values that satisfy any defined constraints.
         - **`randc` Keyword (Random-Cyclic):** Declares a class property or variable as *random-cyclic*.  `randc` variables also get randomized, but they cycle through all possible values in a random permutation before repeating any value. Useful for ensuring all possible values are eventually covered in a sequence of randomizations.
         - **Example:**
-            ```SV
+            ```systemverilog
             class packet;
                 rand bit [7:0] source_address;
                 randc bit [2:0] priority_level; // randc variable
@@ -37,7 +37,7 @@ This chapter introduces constrained-random verification, a powerful methodology 
             - **Equality and Inequality Constraints:** `variable == value`, `variable != value`, `variable < value`, etc.
             - **Relational Constraints:** Constraints relating multiple random variables.
             - **Example:**
-                ```SV
+                ```systemverilog
                 class packet;
                     rand bit [7:0] source_address;
                     rand bit [7:0] destination_address;
@@ -54,7 +54,7 @@ This chapter introduces constrained-random verification, a powerful methodology 
         - **Constraint Ordering:**  `solve...before` is used to specify the order in which constraints are solved by the constraint solver.
         - **Dependency Management:**  Useful when the value of one random variable depends on the value of another.  Variables listed in `solve` are solved *before* variables listed in `before`.
         - **Example:**
-            ```SV
+            ```systemverilog
             class transaction;
                 rand bit [7:0] address;
                 rand bit [7:0] offset;
@@ -75,7 +75,7 @@ This chapter introduces constrained-random verification, a powerful methodology 
             - **Value Distribution:** `variable dist {value1 := weight1, value2 := weight2, ...};`  Assigns weights to specific values.
             - **Range Distribution:** `variable dist {[range1] := weight1, [range2] := weight2, ...};` Assigns weights to ranges of values.
             - **Example:**
-                ```SV
+                ```systemverilog
                 class packet;
                     rand bit [2:0] packet_type;
 
@@ -115,7 +115,7 @@ This chapter introduces constrained-random verification, a powerful methodology 
         - **Grouping Related Coverage Points:** `covergroup` is a SystemVerilog construct used to group related coverage points together. This helps organize functional coverage specifications and makes coverage reports more structured.
         - **Sampling Events:**  Coverage groups are sampled at specific events in the simulation (e.g., clock edges, transaction boundaries, state transitions).  The `sample` function within a coverage group specifies the signals to be sampled and the event that triggers sampling.
         - **Example:**
-            ```SV
+            ```systemverilog
             covergroup address_coverage @(posedge clk); // Coverage group sampled on posedge of clk
                 coverpoint address { // Coverage point for address
                     bins low_addr = { [0:63] };
@@ -135,7 +135,7 @@ This chapter introduces constrained-random verification, a powerful methodology 
         - **Bins:** `bins` are used within a `coverpoint` to define ranges or specific values of interest for coverage measurement. Each bin represents a specific coverage bucket. When a sampled value falls into a bin, that bin is considered "covered."
         - **Automatic Bins:** If `bins` are not explicitly defined, the coverage tool may automatically create bins based on the range of the signal being covered.
         - **Example (Bins within a coverpoint):**
-            ```SV
+            ```systemverilog
             covergroup instruction_coverage @(transaction_end_event);
                 coverpoint opcode {
                     bins arithmetic_ops = {ADD, SUB, MUL};
@@ -147,7 +147,7 @@ This chapter introduces constrained-random verification, a powerful methodology 
     *   **Cross Coverage:**
         - **Covering Combinations of Coverage Points:** `cross` coverage is used to measure coverage of combinations of values from two or more coverage points. It helps verify interactions between different design features.
         - **Example:**  Cross coverage of `opcode` and `address_mode` to ensure all relevant combinations of instruction types and addressing modes are tested.
-            ```SV
+            ```systemverilog
             covergroup instruction_coverage @(transaction_end_event);
                 coverpoint opcode { ... };
                 coverpoint address_mode { ... };
@@ -162,7 +162,7 @@ This chapter introduces constrained-random verification, a powerful methodology 
             - `comment`: Add comments to coverage groups and points for documentation.
             - `ignore_bins`, `illegal_bins`: Define bins to be ignored or considered illegal (not to be covered).
         - **Example (Coverage Options):**
-            ```SV
+            ```systemverilog
             covergroup address_coverage @(posedge clk);
                 option.goal = 95; // Set goal to 95% coverage for this group
                 coverpoint address {
@@ -217,7 +217,7 @@ This chapter introduces constrained-random verification, a powerful methodology 
     *   **`unique` Constraint:**
         - **Ensuring Unique Random Values:** The `unique` constraint ensures that a random variable takes on a unique value within a set of random objects. Useful for generating unique IDs, addresses, or transaction tags.
         - **Example:**
-            ```SV
+            ```systemverilog
             class transaction_set;
                 rand bit [7:0] id[4]; // Array of 5 IDs
                 constraint unique_ids {
@@ -230,7 +230,7 @@ This chapter introduces constrained-random verification, a powerful methodology 
     *   **`foreach` Constraint:**
         - **Applying Constraints to Array Elements:** The `foreach` constraint allows you to apply constraints to each element of an array or to iterate over array elements and apply constraints based on index or element value.
         - **Example:**
-            ```SV
+            ```systemverilog
             class memory_transaction;
                 rand bit [31:0] address[8]; // Array of 8 addresses
 
@@ -243,7 +243,7 @@ This chapter introduces constrained-random verification, a powerful methodology 
     *   **Implication Constraints (`->` operator):**
         - **Conditional Constraints:** Implication constraints (`if-then` constraints) use the `->` operator to specify that a constraint should be active *only if* a certain condition is true.
         - **Example:**  Constrain packet length to be greater than 64 bytes only if the packet type is DATA_PACKET.
-            ```SV
+            ```systemverilog
             class packet;
                 rand packet_type_enum packet_type;
                 rand bit [15:0] packet_length;
@@ -257,7 +257,7 @@ This chapter introduces constrained-random verification, a powerful methodology 
         - **Enabling/Disabling Constraints Dynamically:** `constraint_mode()` allows you to enable or disable constraint blocks at runtime, providing flexibility to control which constraints are active for different test scenarios.
         - **Inline Constraints with `randomize() with { ... }`:** You can add or override constraints directly within the `randomize()` call using `with { ... }`. These inline constraints are applied only for that specific randomization call and do not permanently modify the class constraints.
         - **Example (Dynamic Constraints):**
-            ```SV
+            ```systemverilog
             class packet;
                 rand bit [7:0] address;
                 constraint base_addr_range { address inside {[0:255]}; }

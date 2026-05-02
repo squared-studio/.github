@@ -19,7 +19,7 @@ The `$fopen` system function is used to open a file and obtain a **file descript
 
 **Syntax:**
 
-```SV
+```systemverilog
 int file_descriptor;
 file_descriptor = $fopen("<filename>", "<mode>");
 ```
@@ -55,7 +55,7 @@ SystemVerilog provides several system functions for reading data from files, eac
 
 **Syntax:**
 
-```SV
+```systemverilog
 int result;
 string line_buffer; // String variable to store the read line
 result = $fgets(line_buffer, file_descriptor);
@@ -68,7 +68,7 @@ result = $fgets(line_buffer, file_descriptor);
 
 **Example: Reading and Displaying Lines from a Text File**
 
-```SV
+```systemverilog
 module file_line_reader;
   int file_descriptor;
   string line_of_text;
@@ -97,7 +97,7 @@ endmodule
 
 **Syntax:**
 
-```SV
+```systemverilog
 int items_read;
 <variable_declarations>; // Variables to store read values
 items_read = $fscanf(file_descriptor, "<format_string>", <variable1>, <variable2>, ...);
@@ -111,7 +111,7 @@ items_read = $fscanf(file_descriptor, "<format_string>", <variable1>, <variable2
 
 **Example: Reading Formatted Integer Values from a File**
 
-```SV
+```systemverilog
 module formatted_data_reader;
   int file_descriptor;
   integer read_value; // Variable to store the integer value read
@@ -147,7 +147,7 @@ These functions are used to write data to files pointed to by a file descriptor.
 
 **Syntax:**
 
-```SV
+```systemverilog
 $fwrite(file_descriptor, "<format_string>", <arguments>); // No automatic newline
 $fdisplay(file_descriptor, "<format_string>", <arguments>); // Automatic newline after each call
 $fstrobe(file_descriptor, "<format_string>", <arguments>); // Automatic newline, postponed execution (non-blocking)
@@ -163,7 +163,7 @@ $fstrobe(file_descriptor, "<format_string>", <arguments>); // Automatic newline,
 
 **Example: Writing Simulation Information to a Log File**
 
-```SV
+```systemverilog
 module file_writer;
   int log_file_descriptor;
 
@@ -195,7 +195,7 @@ To write binary data to a file, you should open the file in a binary write mode 
 
 **Example: Writing and Reading Binary Data**
 
-```SV
+```systemverilog
 module binary_file_operations;
   int binary_file_descriptor;
   byte binary_data[]; // Dynamic array of bytes
@@ -232,7 +232,7 @@ SystemVerilog allows writing to multiple output channels simultaneously using a 
 
 **Example: Writing to Both Log File and Console**
 
-```SV
+```systemverilog
 module multi_channel_logger;
   int log_file_descriptor, console_output_channel;
 
@@ -275,7 +275,7 @@ Error handling is crucial for reliable file operations. Always check for potenti
 
 ### Comprehensive File Operation Error Checking
 
-```SV
+```systemverilog
 module safe_file_writer;
   int file_descriptor;
 
@@ -377,7 +377,7 @@ endmodule
     -   The wrapper module should provide tasks or functions that higher-level modules can call to perform file operations without needing to directly handle low-level file operations and error checking.
     -   *(Note: Full implementation of error recovery might be simulator-dependent and could involve more advanced techniques beyond basic SystemVerilog file I/O.)*
 
-```SV
+```systemverilog
 // Sample Solution for Exercise 2: Timestamped Data Logger (Improved)
 module timestamp_data_logger;
   int log_file_descriptor;

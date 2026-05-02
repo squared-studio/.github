@@ -24,7 +24,7 @@ Classes are defined using the `class` keyword, followed by the class name and th
 
 ### Example: A Simple Class Definition
 
-```SV
+```systemverilog
 // Define a class named 'SimpleClass'
 class SimpleClass;
   int data;         // Public property (integer data) - accessible from anywhere
@@ -49,7 +49,7 @@ Objects are concrete instances of classes.  Think of a class as a cookie cutter 
 
 ### Example: Instantiating and Using a Class Object
 
-```SV
+```systemverilog
 module class_example_module;
 
   initial begin
@@ -80,7 +80,7 @@ Inheritance is a fundamental OOP principle that allows you to create new classes
 
 ### Example: Base Class `Animal` and Derived Class `Dog`
 
-```SV
+```systemverilog
 // Base class: Animal
 class Animal;
   string name; // Public property: animal's name
@@ -147,7 +147,7 @@ Polymorphism, specifically through **virtual methods**, is a powerful OOP featur
 
 ### Example: Polymorphism with `Shape`, `Circle`, and `Square` Classes
 
-```SV
+```systemverilog
 // Base class: Shape
 class Shape;
   // Virtual function: to be overridden by derived classes
@@ -226,7 +226,7 @@ Encapsulation is crucial for:
 
 ### Example: Encapsulation with `BankAccount` Class
 
-```SV
+```systemverilog
 class BankAccount;
   local int balance; // Private property: 'balance' - only accessible within BankAccount class
 
@@ -301,7 +301,7 @@ Classes are the foundation for randomization in SystemVerilog verification.  You
 
 ### Example: Random Packet Generation with Constraints
 
-```SV
+```systemverilog
 class Packet;
   rand bit [7:0] address;   // Randomizable address property
   rand bit [7:0] data_byte; // Randomizable data byte property
