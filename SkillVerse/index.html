@@ -140,6 +140,15 @@
     });
   }
 
+  function rewriteImageSources(container, base){
+    container.querySelectorAll("img[src]").forEach(img => {
+      const src = img.getAttribute("src");
+      const resolved = resolveHref(src, base);
+      if(!resolved) return;
+      img.setAttribute("src", resolved);
+    });
+  }
+
   function highlightCode(container){
     if(!window.hljs) return;
     container.querySelectorAll("pre code").forEach(code => {
@@ -163,6 +172,7 @@
       const raw = await res.text();
       const md = raw.replace(/^#{1,6}\s.*Copyright.*squared-studio.*$/m, "").trimEnd();
       el.innerHTML = "<div class=\"md\">" + marked.parse(md) + "</div>";
+      rewriteImageSources(el, file);
       highlightCode(el);
       interceptLinks(el, file);
     } catch(err){
