@@ -19,15 +19,21 @@
     body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:16px;line-height:1.7;min-height:100vh}
     body::before{content:"";position:fixed;inset:0;background:radial-gradient(ellipse 60% 40% at 15% 10%,rgba(0,204,255,.07) 0%,transparent 70%),radial-gradient(ellipse 50% 35% at 85% 85%,rgba(0,255,204,.06) 0%,transparent 70%);pointer-events:none;z-index:0}
     .shell{position:relative;z-index:1;display:flex;flex-direction:column;min-height:100vh}
-    nav{display:flex;align-items:center;gap:12px;padding:14px 28px;border-bottom:1px solid var(--border);background:rgba(8,12,24,.85);backdrop-filter:blur(12px);position:sticky;top:0;z-index:100}
-    .nav-logo{display:flex;align-items:center;gap:10px;cursor:pointer;user-select:none}
+    nav{display:flex;align-items:center;gap:12px;padding:14px 28px;border-bottom:1px solid var(--border);background:rgba(8,12,24,.85);backdrop-filter:blur(12px);position:sticky;top:0;z-index:100;flex-wrap:wrap}
+    .nav-logo{display:flex;align-items:center;gap:10px;cursor:pointer;user-select:none;flex-shrink:0}
     .nav-icon{width:32px;height:32px;border-radius:8px;object-fit:contain;flex-shrink:0}
-    .nav-title{font-size:1.1rem;font-weight:700;letter-spacing:-.01em;background:linear-gradient(90deg,var(--accent1),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-    .nav-bc{display:flex;align-items:center;gap:6px;font-size:.78rem;color:var(--muted);margin-left:4px}
+    .nav-shell{display:flex;align-items:center;gap:8px;min-width:0;flex-wrap:wrap}
+    .nav-title{font-size:1.1rem;font-weight:700;letter-spacing:-.01em;background:linear-gradient(90deg,var(--accent1),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;cursor:pointer;user-select:none}
+    .nav-bc{display:flex;align-items:center;gap:6px;font-size:.78rem;color:var(--muted);min-width:0;flex-wrap:wrap}
     .nav-bc .sep{opacity:.4}
     .nav-bc .crumb{color:var(--accent2);font-family:var(--font-mono);font-size:.72rem}
     .nav-bc .bc-link{cursor:pointer;text-decoration:underline;text-underline-offset:2px}
     .nav-bc .bc-link:hover{color:var(--accent1)}
+    @media (max-width:640px){
+      nav{padding:12px 18px}
+      .nav-title{font-size:1rem}
+      .nav-bc{font-size:.72rem}
+    }
     main{flex:1;max-width:860px;width:100%;margin:0 auto;padding:48px 28px 80px}
     .state{text-align:center;padding:80px 0;color:var(--muted)}
     .state .c{font-family:var(--font-mono);color:var(--accent1)}
@@ -64,11 +70,14 @@
 <body>
 <div class="shell">
   <nav>
-    <div class="nav-logo" id="home-btn">
-      <img class="nav-icon" src="logo.png" alt="SkillVerse" />
-      <span class="nav-title">SkillVerse</span>
+    <div class="nav-logo" id="studio-btn" aria-label="squared-studio home">
+      <img class="nav-icon" src="logo.png" alt="squared-studio" />
     </div>
-    <div class="nav-bc" id="breadcrumb"></div>
+    <div class="nav-shell">
+      <span class="nav-bc"><span class="sep">&gt;</span></span>
+      <span class="nav-title" id="home-btn">SkillVerse</span>
+      <div class="nav-bc" id="breadcrumb"></div>
+    </div>
   </nav>
   <main id="content"><div class="state">Loading&#8230;</div></main>
   <footer><p>Copyright &copy; 2026 <span>squared-studio</span></p></footer>
@@ -95,14 +104,14 @@
     if(file === HOME){ bc.innerHTML = ""; return; }
     const parts = file.split("/");
     if(parts.length === 1){
-      bc.innerHTML = "<span class=\"sep\">/</span><span class=\"crumb\">" + label(parts[0]) + "</span>";
+      bc.innerHTML = "<span class=\"sep\">&gt;</span><span class=\"crumb\">" + label(parts[0]) + "</span>";
     } else {
       const parentFile = parts[0] + ".md";
       const rest = parts.slice(1).join("/");
       bc.innerHTML =
-        "<span class=\"sep\">/</span>" +
+        "<span class=\"sep\">&gt;</span>" +
         "<span class=\"crumb bc-link\" data-file=\"" + parentFile + "\">" + parts[0] + "</span>" +
-        "<span class=\"sep\">/</span>" +
+        "<span class=\"sep\">&gt;</span>" +
         "<span class=\"crumb\">" + label(rest) + "</span>";
       bc.querySelector(".bc-link").addEventListener("click", () => { navigate(parentFile); window.scrollTo(0,0); });
     }
@@ -144,6 +153,7 @@
     }
   }
 
+  document.getElementById("studio-btn").addEventListener("click", () => { window.location.href = "https://squared-studio.cc/"; });
   document.getElementById("home-btn").addEventListener("click", () => { navigate(HOME); window.scrollTo(0,0); });
   window.addEventListener("hashchange", () => load(currentFile()));
   load(currentFile());
