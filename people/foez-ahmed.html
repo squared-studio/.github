@@ -3,16 +3,18 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Foez Ahmed — Squared Studio</title>
+  <meta name="description" content="Foez Ahmed — founder and lead engineer specializing in RTL design, SoC architecture, UVM verification, and ASIC/FPGA front-end delivery." />
+  <title>Foez Ahmed — Founder &amp; Lead Engineer</title>
   <link rel="icon" type="image/png" href="../SkillVerse/logo.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
     :root{
-      --bg:#080808;--surface:#0f0f0f;--card:#111418;--border:#1e2d4a;
-      --text:#cdd9f0;--muted:#5a7090;--accent1:#00ccff;--accent2:#00ffcc;
-      --font-body:"Inter",sans-serif;--font-mono:"JetBrains Mono",monospace;
+      --bg:#080808;--card:#111418;--border:#1e2d4a;--text:#cdd9f0;--muted:#5a7090;
+      --accent1:#00ccff;--accent2:#00ffcc;--font-body:"Inter",sans-serif;
+      --font-mono:"JetBrains Mono",monospace;
     }
     html{scroll-behavior:smooth}
     body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:16px;line-height:1.7;min-height:100vh}
@@ -22,8 +24,6 @@
       linear-gradient(135deg,rgba(5,19,29,.75) 0%,rgba(8,8,8,0) 42%,rgba(0,255,204,.06) 100%);
       pointer-events:none;z-index:0}
     .shell{position:relative;z-index:1;display:flex;flex-direction:column;min-height:100vh}
-
-    /* ── NAV ── */
     nav{display:flex;align-items:center;gap:16px;padding:14px 40px;border-bottom:1px solid var(--border);background:rgba(8,8,8,.88);backdrop-filter:blur(14px);position:sticky;top:0;z-index:100}
     .nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;flex-shrink:0}
     .nav-icon{width:32px;height:32px;border-radius:8px;object-fit:contain}
@@ -34,261 +34,308 @@
     .nav-links a.active{color:var(--accent1)}
     .nav-links a.cta{color:var(--bg);background:linear-gradient(90deg,var(--accent1),var(--accent2));font-weight:600;padding:6px 16px}
     .nav-links a.cta:hover{opacity:.9}
-
-    /* ── PROFILE HERO ── */
-    .profile-hero{max-width:1040px;margin:0 auto;width:100%;padding:52px 40px 32px}
+    .profile-hero{max-width:1100px;margin:0 auto;width:100%;padding:52px 40px 32px}
     .profile-panel{position:relative;display:grid;grid-template-columns:auto minmax(0,1fr);gap:34px;padding:34px;border:1px solid rgba(0,204,255,.18);border-radius:28px;background:linear-gradient(180deg,rgba(10,14,20,.92) 0%,rgba(10,14,20,.72) 100%);box-shadow:0 26px 70px rgba(0,0,0,.28);overflow:hidden}
     .profile-panel::before{content:"";position:absolute;inset:-1px;background:linear-gradient(135deg,rgba(0,204,255,.22),rgba(0,255,204,.08),transparent 55%);pointer-events:none;mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);padding:1px;-webkit-mask-composite:xor;mask-composite:exclude}
     .profile-panel::after{content:"";position:absolute;right:-90px;bottom:-90px;width:260px;height:260px;border-radius:50%;background:radial-gradient(circle,rgba(0,255,204,.16) 0%,rgba(0,255,204,0) 68%);pointer-events:none}
     .profile-avatar-wrap{position:relative;display:flex;align-items:flex-start;justify-content:center}
     .profile-avatar-wrap::after{content:"";position:absolute;inset:auto 12px -14px 12px;height:28px;background:radial-gradient(circle,rgba(0,204,255,.28) 0%,rgba(0,204,255,0) 72%);filter:blur(10px);z-index:-1}
     .profile-avatar{width:148px;height:148px;border-radius:24px;object-fit:cover;border:2px solid rgba(255,255,255,.08);box-shadow:0 18px 40px rgba(0,0,0,.32);flex-shrink:0}
-    .profile-meta{flex:1;min-width:0}
-    .profile-meta .eyebrow{font-family:var(--font-mono);font-size:.68rem;letter-spacing:.18em;color:var(--accent2);text-transform:uppercase;margin-bottom:10px}
-    .profile-meta h1{font-size:clamp(1.8rem,4vw,2.6rem);font-weight:800;letter-spacing:-.025em;line-height:1.1;background:linear-gradient(135deg,#fff 0%,var(--accent1) 55%,var(--accent2) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:6px}
-    .profile-meta .role{font-size:1rem;color:var(--muted);margin-bottom:14px}
-    .profile-lead{max-width:640px;font-size:.96rem;color:#9bb0cc;line-height:1.85;margin-bottom:22px}
+    .profile-meta{min-width:0}
+    .eyebrow{font-family:var(--font-mono);font-size:.68rem;letter-spacing:.18em;color:var(--accent2);text-transform:uppercase;margin-bottom:10px}
+    .profile-meta h1{font-size:clamp(1.9rem,4vw,2.75rem);font-weight:800;letter-spacing:-.025em;line-height:1.05;background:linear-gradient(135deg,#fff 0%,var(--accent1) 55%,var(--accent2) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:8px}
+    .role{font-size:1rem;color:var(--muted);margin-bottom:14px}
+    .profile-lead{max-width:700px;font-size:.96rem;color:#9bb0cc;line-height:1.85;margin-bottom:22px}
     .profile-highlights{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:22px}
     .highlight-card{padding:14px 16px;border:1px solid rgba(255,255,255,.06);border-radius:16px;background:rgba(255,255,255,.025);backdrop-filter:blur(10px)}
     .highlight-value{display:block;font-size:1rem;font-weight:700;color:var(--text);letter-spacing:-.02em}
     .highlight-label{display:block;margin-top:4px;font-family:var(--font-mono);font-size:.63rem;letter-spacing:.14em;color:var(--accent2);text-transform:uppercase}
     .profile-links{display:flex;flex-wrap:wrap;gap:10px}
-    .profile-links a{display:inline-flex;align-items:center;gap:6px;font-family:var(--font-mono);font-size:.72rem;padding:5px 12px;border-radius:6px;border:1px solid var(--border);color:var(--muted);text-decoration:none;transition:color .15s,border-color .15s,background .15s;white-space:nowrap}
+    .profile-links a{display:inline-flex;align-items:center;justify-content:center;gap:6px;font-family:var(--font-mono);font-size:.72rem;padding:7px 14px;border-radius:8px;border:1px solid var(--border);color:var(--muted);text-decoration:none;transition:color .15s,border-color .15s,background .15s;white-space:nowrap}
     .profile-links a:hover{color:var(--accent1);border-color:rgba(0,204,255,.4);background:rgba(0,204,255,.05)}
-
-    /* ── MAIN ── */
-    main{flex:1;max-width:1040px;width:100%;margin:0 auto;padding:0 40px 80px;display:grid;grid-template-columns:minmax(0,1.45fr) minmax(280px,.8fr);gap:28px;align-items:start}
+    .profile-links a.primary{color:var(--bg);background:linear-gradient(90deg,var(--accent1),var(--accent2));border-color:transparent;font-weight:600}
+    .profile-links a.primary:hover{opacity:.92;color:var(--bg);background:linear-gradient(90deg,var(--accent1),var(--accent2))}
+    main{flex:1;max-width:1100px;width:100%;margin:0 auto;padding:0 40px 80px;display:grid;grid-template-columns:minmax(0,1.6fr) minmax(290px,.85fr);gap:28px;align-items:start}
     hr.divider{border:none;height:1px;background:linear-gradient(90deg,transparent,var(--border),transparent);margin:0 0 8px;grid-column:1/-1}
-    .section-tag{font-family:var(--font-mono);font-size:.66rem;letter-spacing:.16em;color:var(--accent2);text-transform:uppercase;margin-bottom:6px}
-    .section-title{font-size:1.15rem;font-weight:700;letter-spacing:-.01em;color:var(--text);margin-bottom:16px}
-
-    /* left column */
-    .content-card{position:relative;background:linear-gradient(180deg,rgba(17,20,24,.96) 0%,rgba(17,20,24,.82) 100%);border:1px solid var(--border);border-radius:22px;padding:28px 30px;box-shadow:0 18px 48px rgba(0,0,0,.2);overflow:hidden}
+    .col-left{min-width:0}
+    .col-right{display:flex;flex-direction:column;gap:20px;position:sticky;top:92px}
+    .content-card,.sidebar-card{position:relative;background:linear-gradient(180deg,rgba(17,20,24,.96) 0%,rgba(17,20,24,.84) 100%);border:1px solid var(--border);border-radius:22px;box-shadow:0 18px 48px rgba(0,0,0,.2);overflow:hidden}
+    .content-card{padding:28px 30px}
+    .sidebar-card{padding:22px 20px}
     .content-card::before{content:"";position:absolute;inset:0;background:linear-gradient(135deg,rgba(0,204,255,.06) 0%,transparent 45%);pointer-events:none}
     .content-card + .content-card{margin-top:22px}
-    .bio-block{margin-bottom:0}
-    .bio-block p{font-size:.9rem;color:var(--muted);line-height:1.8;margin-bottom:14px}
-    .bio-block p:last-child{margin-bottom:0}
-    .bio-block a{color:var(--accent1);text-decoration:none;border-bottom:1px solid rgba(0,204,255,.28);transition:color .15s,border-color .15s}
-    .bio-block a:hover{color:#7fe9ff;border-color:rgba(127,233,255,.55)}
     .section-heading{display:flex;align-items:flex-end;justify-content:space-between;gap:18px;padding-bottom:16px;margin-bottom:20px;border-bottom:1px solid rgba(255,255,255,.05)}
-    .section-heading-copy{max-width:440px;font-size:.86rem;color:#7f93b3;line-height:1.7}
-
-    /* experience */
-    .timeline{display:flex;flex-direction:column;gap:16px;margin-bottom:0}
+    .section-tag{font-family:var(--font-mono);font-size:.66rem;letter-spacing:.16em;color:var(--accent2);text-transform:uppercase;margin-bottom:6px}
+    .section-title{font-size:1.15rem;font-weight:700;letter-spacing:-.01em;color:var(--text)}
+    .section-heading-copy{max-width:470px;font-size:.86rem;color:#7f93b3;line-height:1.7}
+    .timeline{display:flex;flex-direction:column;gap:16px}
     .tl-item{display:block;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.05);border-radius:16px;padding:20px 20px 20px 24px;position:relative;transition:border-color .2s,transform .2s,background .2s;color:inherit;text-decoration:none}
     .tl-item::before{content:"";position:absolute;left:0;top:18px;bottom:18px;width:3px;border-radius:999px;background:linear-gradient(180deg,var(--accent1),var(--accent2))}
     .tl-item:hover{border-color:rgba(0,204,255,.28);background:rgba(0,204,255,.04);transform:translateY(-1px)}
-    .tl-item .tl-period{display:inline-flex;align-items:center;gap:8px;font-family:var(--font-mono);font-size:.68rem;color:var(--accent2);letter-spacing:.06em;margin-bottom:8px;padding:5px 10px;border-radius:999px;background:rgba(0,255,204,.06);border:1px solid rgba(0,255,204,.12)}
-    .tl-item .tl-title{font-size:.9rem;font-weight:600;color:var(--text);margin-bottom:2px}
-    .tl-item .tl-org{font-size:.8rem;color:var(--muted)}
-
-    /* right sidebar */
-    .col-right{display:flex;flex-direction:column;gap:20px;position:sticky;top:92px}
-    .sidebar-card{background:linear-gradient(180deg,rgba(17,20,24,.96) 0%,rgba(17,20,24,.86) 100%);border:1px solid var(--border);border-radius:18px;padding:22px 20px;box-shadow:0 16px 42px rgba(0,0,0,.18)}
+    .tl-period{display:inline-flex;align-items:center;gap:8px;font-family:var(--font-mono);font-size:.68rem;color:var(--accent2);letter-spacing:.06em;margin-bottom:8px;padding:5px 10px;border-radius:999px;background:rgba(0,255,204,.06);border:1px solid rgba(0,255,204,.12)}
+    .tl-title{font-size:.92rem;font-weight:600;color:var(--text);margin-bottom:3px}
+    .tl-org{font-size:.8rem;color:var(--muted);margin-bottom:8px}
+    .tl-copy{font-size:.82rem;color:#8ea4c2;line-height:1.75}
+    .detail-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+    .detail-card{padding:18px;border:1px solid rgba(255,255,255,.06);border-radius:16px;background:rgba(255,255,255,.025)}
+    .detail-card h3{font-size:.9rem;font-weight:600;color:var(--text);margin-bottom:10px;letter-spacing:-.01em}
+    .detail-card p{font-size:.82rem;color:#8ea4c2;line-height:1.72}
+    .detail-card ul{padding-left:18px}
+    .detail-card li{font-size:.82rem;color:#8ea4c2;line-height:1.72}
+    .detail-card li+li{margin-top:5px}
+    .detail-card-client{font-family:var(--font-mono);font-size:.66rem;letter-spacing:.08em;text-transform:uppercase;color:var(--accent2);margin-bottom:10px}
+    .prose p{font-size:.9rem;color:var(--muted);line-height:1.82;margin-bottom:14px}
+    .prose p:last-child{margin-bottom:0}
+    .prose a,.info-val a{color:var(--accent1);text-decoration:none;transition:color .15s,border-color .15s}
+    .prose a{border-bottom:1px solid rgba(0,204,255,.28)}
+    .prose a:hover,.info-val a:hover{color:#7fe9ff;border-color:rgba(127,233,255,.55)}
     .sidebar-card h3{font-family:var(--font-mono);font-size:.66rem;letter-spacing:.14em;color:var(--accent2);text-transform:uppercase;margin-bottom:14px}
     .skill-group{margin-bottom:14px}
     .skill-group:last-child{margin-bottom:0}
     .skill-group-label{font-size:.75rem;font-weight:600;color:var(--accent1);margin-bottom:7px}
-    .skill-chips{display:flex;flex-wrap:wrap;gap:5px}
+    .skill-chips{display:flex;flex-wrap:wrap;gap:6px}
     .chip{font-family:var(--font-mono);font-size:.67rem;padding:4px 10px;border-radius:999px;border:1px solid rgba(255,255,255,.06);color:#9ab0cc;background:rgba(255,255,255,.03)}
     .info-list{display:flex;flex-direction:column;gap:8px}
     .info-row{display:flex;align-items:flex-start;gap:8px;font-size:.8rem}
-    .info-row .info-icon{color:var(--accent1);flex-shrink:0;width:14px;text-align:center;margin-top:2px}
-    .info-row .info-val{color:var(--muted);word-break:break-all}
-    .info-row .info-val a{color:var(--muted);text-decoration:none;transition:color .15s}
-    .info-row .info-val a:hover{color:var(--accent1)}
-
-    /* education sidebar */
+    .info-icon{color:var(--accent1);flex-shrink:0;width:16px;text-align:center;margin-top:2px}
+    .info-val{color:var(--muted);word-break:break-word}
     .edu-item{margin-bottom:12px}
     .edu-item:last-child{margin-bottom:0}
-    .edu-item .edu-degree{font-size:.8rem;font-weight:600;color:var(--text);line-height:1.4}
-    .edu-item .edu-school{font-size:.76rem;color:var(--muted);margin-top:2px}
-    .edu-item .edu-year{font-family:var(--font-mono);font-size:.65rem;color:var(--accent2);margin-top:3px}
-
-    /* ── FOOTER ── */
+    .edu-degree{font-size:.8rem;font-weight:600;color:var(--text);line-height:1.4}
+    .edu-school{font-size:.76rem;color:var(--muted);margin-top:2px}
+    .edu-year{font-family:var(--font-mono);font-size:.65rem;color:var(--accent2);margin-top:3px}
+    .cta-card{display:flex;align-items:center;justify-content:space-between;gap:20px}
+    .cta-copy{max-width:520px}
+    .cta-copy p{font-size:.9rem;color:var(--muted);line-height:1.82}
+    .cta-action{display:inline-flex;align-items:center;justify-content:center;padding:10px 18px;border-radius:10px;background:linear-gradient(90deg,var(--accent1),var(--accent2));color:var(--bg);font-family:var(--font-mono);font-size:.72rem;font-weight:600;text-decoration:none;white-space:nowrap}
     footer{text-align:center;padding:22px 40px;border-top:1px solid var(--border);font-size:.76rem;color:var(--muted);position:relative;z-index:1}
     footer span{background:linear-gradient(90deg,var(--accent1),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-weight:600}
     footer .footer-links{display:flex;justify-content:center;gap:20px;margin-bottom:10px}
     footer .footer-links a{color:var(--muted);text-decoration:none;font-size:.76rem;transition:color .15s}
     footer .footer-links a:hover{color:var(--accent1)}
-
-    @media(max-width:900px){
+    @media(max-width:980px){
       .profile-highlights{grid-template-columns:repeat(2,minmax(0,1fr))}
       main{grid-template-columns:1fr}
       .col-right{position:static}
     }
-
-    @media(max-width:700px){
+    @media(max-width:720px){
       nav{padding:12px 20px}
       .nav-links a{padding:5px 9px;font-size:.78rem}
       .profile-hero{padding:32px 20px 22px}
       .profile-panel{grid-template-columns:1fr;padding:24px 20px 22px;gap:22px;border-radius:22px}
       .profile-avatar-wrap{justify-content:flex-start}
       .profile-avatar{width:96px;height:96px;border-radius:18px}
-      .profile-lead{font-size:.9rem}
-      .profile-highlights{grid-template-columns:1fr 1fr;gap:10px}
-      .highlight-card{padding:12px 13px}
       main{padding:0 20px 60px}
       .content-card{padding:22px 18px;border-radius:18px}
       .section-heading{display:block;padding-bottom:14px}
       .section-heading-copy{margin-top:10px}
-      hr.divider{grid-column:unset}
+      .detail-grid{grid-template-columns:1fr}
+      .cta-card{display:block}
+      .cta-action{margin-top:16px}
     }
-
     @media(max-width:480px){
       .profile-highlights{grid-template-columns:1fr}
-      .profile-links a{width:100%;justify-content:center}
+      .profile-links a{width:100%}
     }
   </style>
 </head>
 <body>
 <div class="shell">
-
-  <!-- NAV (populated by common.js) -->
   <nav></nav>
 
-  <!-- PROFILE HERO -->
-  <div class="profile-hero">
+  <section class="profile-hero">
     <div class="profile-panel">
       <div class="profile-avatar-wrap">
         <img class="profile-avatar" src="foez-ahmed.png" alt="Foez Ahmed" />
       </div>
       <div class="profile-meta">
-        <p class="eyebrow">Core Contributor · Founder</p>
+        <p class="eyebrow">Founder · Lead Engineer</p>
         <h1>Foez Ahmed</h1>
         <p class="role">Senior RTL Design &amp; Verification Engineer</p>
-        <p class="profile-lead">Designing and verifying complex digital systems while building open-source learning resources that make advanced hardware engineering more accessible.</p>
+        <p class="profile-lead">Senior RTL and verification engineer with 4+ years of hands-on experience across high-speed ASIC design, cache controllers, complex bus fabric, and SoC integration. Foez works end-to-end, from micro-architecture definition through lint-clean, CDC-safe synthesis handoff, embedding directly into demanding client teams.</p>
         <div class="profile-highlights">
-          <div class="highlight-card"><span class="highlight-value">4+ Years</span><span class="highlight-label">Industry Experience</span></div>
-          <div class="highlight-card"><span class="highlight-value">RISC-V SoC</span><span class="highlight-label">Core Focus</span></div>
-          <div class="highlight-card"><span class="highlight-value">AMBA + OBI</span><span class="highlight-label">Protocols</span></div>
-          <div class="highlight-card"><span class="highlight-value">Bangladesh</span><span class="highlight-label">Based In</span></div>
+          <div class="highlight-card"><span class="highlight-value">4+ Years</span><span class="highlight-label">Hands-On Delivery</span></div>
+          <div class="highlight-card"><span class="highlight-value">ASIC + FPGA</span><span class="highlight-label">Front-End Flow</span></div>
+          <div class="highlight-card"><span class="highlight-value">UVM + SVA</span><span class="highlight-label">Verification Focus</span></div>
+          <div class="highlight-card"><span class="highlight-value">RISC-V SoC</span><span class="highlight-label">Architecture Depth</span></div>
         </div>
         <div class="profile-links">
-          <a href="https://github.com/foez-ahmed" target="_blank" rel="noopener">⚙ github.com/foez-ahmed</a>
-          <a href="https://www.linkedin.com/in/foez-ahmed-84636b137" target="_blank" rel="noopener">in linkedin</a>
-          <a href="mailto:foez.official@gmail.com">✉ foez.official@gmail.com</a>
-          <a href="tel:+8801746468041">✆ +880 1746-468041</a>
+          <a class="primary" href="../contact.html">Work With Foez</a>
+          <a href="https://github.com/foez-ahmed" target="_blank" rel="noopener">github.com/foez-ahmed</a>
+          <a href="https://www.linkedin.com/in/foez-ahmed-84636b137" target="_blank" rel="noopener">linkedin</a>
+          <a href="mailto:foez.official@gmail.com">foez.official@gmail.com</a>
+          <a href="tel:+8801746468041">+880 1746-468041</a>
         </div>
       </div>
     </div>
-  </div>
+  </section>
 
-  <!-- MAIN CONTENT -->
   <main>
-
     <hr class="divider" />
 
-    <!-- LEFT COLUMN -->
     <div class="col-left">
-
       <section class="content-card">
         <div class="section-heading">
           <div>
             <p class="section-tag">Experience</p>
             <h2 class="section-title">Career</h2>
           </div>
-          <p class="section-heading-copy">Progression from protocol-focused verification work into senior frontend design and verification leadership.</p>
+          <p class="section-heading-copy">Progression from protocol-driven verification into senior ownership of architecture, integration, and delivery across complex ASIC and FPGA programs.</p>
         </div>
         <div class="timeline">
           <a class="tl-item" href="https://adnsemicon.com" target="_blank" rel="noopener">
             <div class="tl-period">Jan 2026 — Present</div>
             <div class="tl-title">Senior Engineer — RTL Design &amp; Verification</div>
             <div class="tl-org">ADN Semiconductor · Mohakhali, Dhaka</div>
+            <p class="tl-copy">Driving advanced front-end design and verification work across high-complexity silicon programs, with emphasis on robust RTL architecture, clean handoff quality, and scalable verification execution.</p>
           </a>
           <a class="tl-item" href="https://dsinnovators.com" target="_blank" rel="noopener">
             <div class="tl-period">Jan 2022 — Jan 2026</div>
             <div class="tl-title">Engineer — RTL Design &amp; Verification</div>
             <div class="tl-org">Dynamic Solution Innovator Ltd. (DSi) · Mohakhali DoHS, Dhaka</div>
+            <p class="tl-copy">Built deep expertise in AMBA-based system interconnects, SoC verification strategy, and reusable IP development while contributing to RV64G-based platform delivery.</p>
           </a>
         </div>
       </section>
-      
-        <!-- BIO -->
-        <section class="content-card bio-block">
-          <div class="section-heading">
-            <div>
-              <p class="section-tag">About</p>
-            </div>
+
+      <section class="content-card">
+        <div class="section-heading">
+          <div>
+            <p class="section-tag">Areas Of Expertise</p>
+            <h2 class="section-title">Technical Depth</h2>
           </div>
-          <p>Born in Bangladesh's dynamic metropolis of Sylhet, where modern innovation coexists with historic heritage. I have always been interested in the invisible forces that influence our world. For me, subjects like computer architecture, digital technology, and electronics were more than simply academic subjects; they were the things that stoked my imagination and piqued my interest. </p>
-          <p>Later on in my journey, I obtained a Bachelor of Science in Electrical and Electronic Engineering from <a href="https://www.sust.edu" target="_blank" rel="noopener">Shahjalal University of Science and Technology</a>. University evolved into a hive of ideas where theory became practice, not merely a place to listen to lectures and study textbooks. I jumped right into difficult tasks because I was constantly curious to see what else might be accomplished and to come up with original answers to difficult problems.</p>
-          <p>I started a new chapter in my life in 2022 when I became an RTL Design &amp; Verification Engineer at <a href="https://dsinnovators.com" target="_blank" rel="noopener">Dynamic Solution Innovators</a>. Being hired for the first time was an exciting and humbling experience. I thoroughly studied the subtleties of AMBA system connection protocols, which provided me with the assurance I needed to successfully negotiate challenging technical situations.</p>
-          <p>My motivation has always been to take on challenges. I assumed leadership of a group tasked with developing and confirming a System-on-Chip (SoC) based on RV64G. Being the team leader meant more than just meeting goals; it meant fostering a culture of cooperation where creativity could flourish. Together, we not only accomplished our goals but also raised the bar for productivity and innovation throughout the organisation.</p>
-          <p>In January 2026, I began another important chapter by joining <a href="https://adnsemicon.com" target="_blank" rel="noopener">ADN Semiconductor</a> as a Senior Engineer in RTL Design &amp; Verification. This role has given me the opportunity to keep pushing my boundaries in VLSI frontend design and verification while contributing to more advanced and meaningful engineering work.</p>
-          <p>I really think that teaching is the best way to learn outside of the workplace. Not only does sharing my knowledge help others, but it also strengthens my own comprehension. My personal values are centred on mentoring and education, and I get great satisfaction from seeing the development of people I assist.</p>
-          <p>Nevertheless, I am aware that this path is not without its difficulties. It has been a challenging learning experience to juggle a hard profession with my personal life. I now see how crucial it is to take pauses and look after my own health. I immerse myself in different worlds through my interests, particularly gaming, which helps me decompress and see problems from new perspectives.</p>
-          <p>My aspirations are both ambitious and intimate: to consistently advance both professionally and spiritually. I think that real success involves more than just moving up the professional ladder; it also involves personal growth and fulfillment. This all-encompassing strategy encourages me to pursue knowledge constantly, welcome novel experiences, and exercise empathy.</p>
-          <p>Helping others in need is something I truly appreciate at my core. This altruistic way of thinking has improved my life and made my relationships with the community stronger. My goal is to leave a legacy of kindness, wisdom, and inspiration, characterized by the positive influence I've had on others.</p>
-          <p>My experience serves as evidence that amazing achievements can result from combining passion, effort, and a giving heart. I'm determined to pursue my goals with bravery and moral rectitude, constantly aiming to significantly impact the lives of others.</p>
-          <p>In my opinion, the relationships we make and the lives we impact along the road define our journeys more so than the things we accomplish. I welcome you to join me if my tale speaks to you; together, we can set off on a path of creativity, development, and collective achievement.</p>
-        </section>
+          <p class="section-heading-copy">Coverage across the full front-end flow, from micro-architecture and SoC integration through verification closure and synthesis-ready handoff.</p>
+        </div>
+        <div class="detail-grid">
+          <article class="detail-card">
+            <h3>RTL Design</h3>
+            <ul>
+              <li>Micro-architecture definition and refinement</li>
+              <li>SystemVerilog and Verilog RTL development</li>
+              <li>FSM, datapath, and control logic design</li>
+              <li>Reusable, parameterized IP implementation</li>
+            </ul>
+          </article>
+          <article class="detail-card">
+            <h3>Computer Architecture &amp; SoC</h3>
+            <ul>
+              <li>RISC-V processor and SoC architecture</li>
+              <li>Memory subsystem and cache design</li>
+              <li>System integration and bring-up strategy</li>
+              <li>Firmware-oriented hardware validation flows</li>
+            </ul>
+          </article>
+          <article class="detail-card">
+            <h3>Functional Verification</h3>
+            <ul>
+              <li>UVM environments from scratch</li>
+              <li>Constrained-random and coverage-driven verification</li>
+              <li>Assertion-based verification with SVA</li>
+              <li>Formal property checking and regression closure</li>
+            </ul>
+          </article>
+          <article class="detail-card">
+            <h3>Protocols &amp; Interfaces</h3>
+            <ul>
+              <li>AMBA AXI, AHB, and APB design and VIP work</li>
+              <li>OBI and Wishbone interconnect understanding</li>
+              <li>UART, I2C, SPI, and peripheral verification</li>
+              <li>Bus fabric, crossbar, and NoC integration</li>
+            </ul>
+          </article>
+          <article class="detail-card">
+            <h3>Design Quality &amp; Signoff</h3>
+            <ul>
+              <li>Lint-clean RTL as a delivery baseline</li>
+              <li>CDC and RDC analysis with closure discipline</li>
+              <li>STA collaboration and synthesis-ready handoff</li>
+              <li>Low-power aware design coordination</li>
+            </ul>
+          </article>
+          <article class="detail-card">
+            <h3>Automation &amp; Tooling</h3>
+            <ul>
+              <li>Python, Bash, and Makefile automation</li>
+              <li>Regression orchestration and coverage merge flows</li>
+              <li>VCS, Questa, Vivado, and simulation tooling</li>
+              <li>Practical CI-oriented hardware workflows</li>
+            </ul>
+          </article>
+        </div>
+      </section>
 
-    </div><!-- /col-left -->
+      <section class="content-card prose">
+        <div class="section-heading">
+          <div>
+            <p class="section-tag">Personal Story</p>
+            <h2 class="section-title">The Journey</h2>
+          </div>
+        </div>
+        <p>Born in Bangladesh's dynamic metropolis of Sylhet, Foez developed an early fascination with the invisible systems that shape the modern world. Computer architecture, digital technology, and electronics were never just academic subjects. They were the ideas that kept pulling him toward deeper technical work.</p>
+        <p>He completed a Bachelor of Science in Electrical and Electronic Engineering at <a href="https://www.sust.edu/" target="_blank" rel="noopener">Shahjalal University of Science and Technology</a>, where theory quickly turned into practice. That period built the habit of stepping directly into difficult problems rather than orbiting around them.</p>
+        <p>In 2022, he started his professional career in RTL design and verification, building a strong base in AMBA system interconnect protocols and high-discipline verification work. That foundation created the confidence to navigate increasingly complex technical programs.</p>
+        <p>His growth accelerated through leadership on an RV64G-based SoC effort, where the responsibility extended beyond execution into coordination, technical direction, and creating an environment where good engineering decisions could scale across a team.</p>
+        <p>In January 2026, he joined <a href="https://adnsemicon.com" target="_blank" rel="noopener">ADN Semiconductor</a> as a Senior Engineer in RTL Design &amp; Verification, continuing to push deeper into advanced front-end design and meaningful silicon delivery.</p>
+        <p>Outside client and product work, teaching remains central to how he learns. Sharing knowledge sharpens understanding, and mentoring is treated as part of engineering practice rather than a separate activity.</p>
+        <p>His long-term aim is straightforward: continue growing technically and personally while leaving behind work that is useful, rigorous, and genuinely helpful to other engineers.</p>
+      </section>
 
-    <!-- RIGHT SIDEBAR -->
-    <div class="col-right">
+    </div>
 
-      <!-- CONTACT INFO -->
+    <aside class="col-right">
       <div class="sidebar-card">
         <h3>Contact</h3>
         <div class="info-list">
           <div class="info-row"><span class="info-icon">✉</span><span class="info-val"><a href="mailto:foez.official@gmail.com">foez.official@gmail.com</a></span></div>
           <div class="info-row"><span class="info-icon">✆</span><span class="info-val"><a href="tel:+8801746468041">+880 1746-468041</a></span></div>
           <div class="info-row"><span class="info-icon">⚙</span><span class="info-val"><a href="https://github.com/foez-ahmed" target="_blank" rel="noopener">github.com/foez-ahmed</a></span></div>
-          <div class="info-row"><span class="info-icon">in</span><span class="info-val"><a href="https://www.linkedin.com/in/foez-ahmed-84636b137" target="_blank" rel="noopener">foez-ahmed-84636b137</a></span></div>
+          <div class="info-row"><span class="info-icon">in</span><span class="info-val"><a href="https://www.linkedin.com/in/foez-ahmed-84636b137" target="_blank" rel="noopener">linkedin.com/in/foez-ahmed-84636b137</a></span></div>
           <div class="info-row"><span class="info-icon">◎</span><span class="info-val">Bashundhara R/A, Dhaka-1229, Bangladesh</span></div>
         </div>
       </div>
 
-      <!-- TECHNICAL SKILLS -->
       <div class="sidebar-card">
-        <h3>Technical Skills</h3>
+        <h3>Focus Areas</h3>
         <div class="skill-group">
-          <div class="skill-group-label">Computer Architecture</div>
+          <div class="skill-group-label">Architecture &amp; SoC</div>
           <div class="skill-chips">
-            <span class="chip">RISC-V SoC</span>
-            <span class="chip">RV64G Core</span>
+            <span class="chip">RISC-V</span>
+            <span class="chip">SoC</span>
+            <span class="chip">NoC</span>
+            <span class="chip">Cache</span>
             <span class="chip">AXI</span>
             <span class="chip">AHB</span>
             <span class="chip">APB</span>
             <span class="chip">OBI</span>
             <span class="chip">Wishbone</span>
-            <span class="chip">UART</span>
-            <span class="chip">I2C</span>
-            <span class="chip">I2S</span>
-            <span class="chip">SPI</span>
-            <span class="chip">Cache Memory</span>
           </div>
         </div>
         <div class="skill-group">
-          <div class="skill-group-label">RTL Verification</div>
+          <div class="skill-group-label">Verification &amp; Signoff</div>
           <div class="skill-chips">
             <span class="chip">SystemVerilog</span>
-            <span class="chip">SVA</span>
             <span class="chip">UVM</span>
-            <span class="chip">CoCoTB</span>
-            <span class="chip">VCS</span>
-            <span class="chip">Vivado</span>
-            <span class="chip">Questa</span>
-            <span class="chip">Icarus</span>
-            <span class="chip">FPGA Emulation</span>
+            <span class="chip">SVA</span>
+            <span class="chip">Formal</span>
+            <span class="chip">CDC</span>
+            <span class="chip">RDC</span>
             <span class="chip">STA</span>
+            <span class="chip">FPGA Emulation</span>
           </div>
         </div>
         <div class="skill-group">
-          <div class="skill-group-label">Programming &amp; Scripting</div>
+          <div class="skill-group-label">Automation &amp; Tools</div>
           <div class="skill-chips">
-            <span class="chip">C</span>
             <span class="chip">Python</span>
             <span class="chip">Bash</span>
-            <span class="chip">GNU Makefile</span>
+            <span class="chip">Makefile</span>
+            <span class="chip">VCS</span>
+            <span class="chip">Questa</span>
+            <span class="chip">Vivado</span>
           </div>
         </div>
       </div>
 
-      <!-- EDUCATION -->
       <div class="sidebar-card">
         <h3>Education</h3>
         <div class="edu-item">
@@ -298,22 +345,18 @@
         </div>
       </div>
 
-      <!-- OPEN SOURCE -->
       <div class="sidebar-card">
-        <h3>Open Source</h3>
+        <h3>Strength</h3>
         <div class="info-list">
-          <div class="info-row"><span class="info-icon">⚙</span><span class="info-val"><a href="https://github.com/foez-ahmed" target="_blank" rel="noopener">github.com/foez-ahmed</a></span></div>
-          <div class="info-row"><span class="info-icon">★</span><span class="info-val"><a href="https://github.com/squared-studio" target="_blank" rel="noopener">squared-studio org</a></span></div>
+          <div class="info-row"><span class="info-icon">→</span><span class="info-val">Strong across RTL design, verification, and integration-heavy silicon programs.</span></div>
+          <div class="info-row"><span class="info-icon">→</span><span class="info-val">Comfortable working inside established client toolchains, review flows, and reporting structures.</span></div>
+          <div class="info-row"><span class="info-icon">→</span><span class="info-val">Brings direct communication, explicit risk tracking, and measurable closure discipline.</span></div>
         </div>
       </div>
-
-    </div><!-- /col-right -->
-
+    </aside>
   </main>
 
-  <!-- FOOTER (populated by common.js) -->
   <footer></footer>
-
 </div>
 <script src="../common.js"></script>
 </body>
