@@ -67,6 +67,11 @@
     .md td{padding:8px 13px;border:1px solid var(--border);color:var(--text)}
     .md tr:nth-child(even) td{background:rgba(255,255,255,.02)}
     .md img{max-width:100%;border-radius:8px;border:1px solid var(--border)}
+    .code-wrap{position:relative}
+    .copy-btn{position:absolute;top:10px;right:10px;background:rgba(0,204,255,.1);color:var(--accent1);border:1px solid rgba(0,204,255,.25);border-radius:6px;padding:4px 10px;font-family:var(--font-mono);font-size:.72rem;cursor:pointer;opacity:0;transition:opacity .15s,background .15s,color .15s;line-height:1.6}
+    .code-wrap:hover .copy-btn{opacity:1}
+    .copy-btn:hover{background:rgba(0,204,255,.2)}
+    .copy-btn.copied{color:var(--accent2);border-color:rgba(0,255,204,.35);background:rgba(0,255,204,.1)}
     footer{text-align:center;padding:18px 28px;border-top:1px solid var(--border);font-size:.76rem;color:var(--muted);position:relative;z-index:1}
     footer span{background:linear-gradient(90deg,var(--accent1),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-weight:600}
   </style>
@@ -157,6 +162,30 @@
     });
   }
 
+  function addCopyButtons(container){
+    container.querySelectorAll("pre").forEach(pre => {
+      const wrap = document.createElement("div");
+      wrap.className = "code-wrap";
+      pre.parentNode.insertBefore(wrap, pre);
+      wrap.appendChild(pre);
+      const btn = document.createElement("button");
+      btn.className = "copy-btn";
+      btn.textContent = "copy";
+      btn.addEventListener("click", () => {
+        const text = pre.querySelector("code") ? pre.querySelector("code").innerText : pre.innerText;
+        navigator.clipboard.writeText(text).then(() => {
+          btn.textContent = "copied!";
+          btn.classList.add("copied");
+          setTimeout(() => { btn.textContent = "copy"; btn.classList.remove("copied"); }, 2000);
+        }).catch(() => {
+          btn.textContent = "error";
+          setTimeout(() => { btn.textContent = "copy"; }, 2000);
+        });
+      });
+      wrap.appendChild(btn);
+    });
+  }
+
   if(window.hljs && hljs.getLanguage("verilog")){
     hljs.registerAliases(["systemverilog", "sv"], { languageName: "verilog" });
   }
@@ -174,6 +203,7 @@
       el.innerHTML = "<div class=\"md\">" + marked.parse(md) + "</div>";
       rewriteImageSources(el, file);
       highlightCode(el);
+      addCopyButtons(el);
       interceptLinks(el, file);
     } catch(err){
       el.innerHTML = "<div class=\"state\"><p>Could not load <span class=\"c\">" + file + "</span></p><p style=\"margin-top:8px;font-size:.8rem\">" + err.message + "</p></div>";
