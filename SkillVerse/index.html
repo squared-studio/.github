@@ -93,6 +93,10 @@
 </div>
 <script>
   const HOME = "README.md";
+  const VIEW_ROOT = new URL("./", location.href);
+  let activeLoadId = 0;
+  let activeController = null;
+
   marked.setOptions({gfm:true,breaks:false});
 
   function currentFile(){
@@ -101,8 +105,18 @@
   }
 
   function navigate(file){
-    if(file === HOME){ history.pushState(null,"",location.pathname); }
-    else { location.hash = encodeURIComponent(file); }
+    if(file === HOME){
+      history.pushState(null,"",location.pathname);
+      load(file);
+      return;
+    }
+
+    const nextHash = "#" + encodeURIComponent(file);
+    if(location.hash !== nextHash){
+      location.hash = encodeURIComponent(file);
+      return;
+    }
+
     load(file);
   }
 
@@ -127,16 +141,20 @@
   }
 
   function resolveHref(href, base){
-    if(/^https?:\/\//.test(href) || href.startsWith("#")) return null;
-    const dir = base.includes("/") ? base.split("/").slice(0,-1).join("/")+"/" : "";
-    return (dir+href).replace(/\/\.\//, "/");
+    if(!href || /^(?:[a-z]+:|\/\/)/i.test(href) || href.startsWith("#")) return null;
+
+    const baseUrl = new URL(base, VIEW_ROOT);
+    const resolvedUrl = new URL(href, baseUrl);
+    if(resolvedUrl.origin !== VIEW_ROOT.origin || !resolvedUrl.pathname.startsWith(VIEW_ROOT.pathname)) return null;
+
+    return decodeURIComponent(resolvedUrl.pathname.slice(VIEW_ROOT.pathname.length)) + resolvedUrl.search + resolvedUrl.hash;
   }
 
   function interceptLinks(container, base){
     container.querySelectorAll("a[href]").forEach(a => {
       const href = a.getAttribute("href");
       const resolved = resolveHref(href, base);
-      if(!resolved) return;
+      if(!resolved || !/\.md(?:$|[?#])/i.test(resolved)) return;
       a.addEventListener("click", e => {
         e.preventDefault();
         window.scrollTo(0,0);
@@ -192,13 +210,19 @@
 
   async function load(file){
     const el = document.getElementById("content");
+    const loadId = ++activeLoadId;
+
+    if(activeController) activeController.abort();
+    activeController = new AbortController();
+
     el.innerHTML = "<div class=\"state\">Loading&#8230;</div>";
     updateBreadcrumb(file);
     document.title = file === HOME ? "SkillVerse" : file.replace(/\.md$/,"") + " — SkillVerse";
     try {
-      const res = await fetch(file + "?t=" + Date.now());
+      const res = await fetch(file + "?t=" + Date.now(), { signal: activeController.signal });
       if(!res.ok) throw new Error("HTTP " + res.status);
       const raw = await res.text();
+      if(loadId !== activeLoadId) return;
       const md = raw.replace(/^#{1,6}\s.*Copyright.*squared-studio.*$/m, "").trimEnd();
       el.innerHTML = "<div class=\"md\">" + marked.parse(md) + "</div>";
       rewriteImageSources(el, file);
@@ -206,7 +230,10 @@
       addCopyButtons(el);
       interceptLinks(el, file);
     } catch(err){
+      if(err.name === "AbortError" || loadId !== activeLoadId) return;
       el.innerHTML = "<div class=\"state\"><p>Could not load <span class=\"c\">" + file + "</span></p><p style=\"margin-top:8px;font-size:.8rem\">" + err.message + "</p></div>";
+    } finally {
+      if(loadId === activeLoadId) activeController = null;
     }
   }
 
