@@ -179,3 +179,5 @@ Previous: [Chapter 5: Scoreboard, Coverage, and What the Tests Prove](05-scorebo
 ## Back to Index
 
 Return to [Tutorial Index](../readme.md)
+##### Copyright (c) 2026 squared-studio
+

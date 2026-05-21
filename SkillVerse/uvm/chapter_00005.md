@@ -228,3 +228,5 @@ That is the quality-assurance core of the environment.
 Previous: [Chapter 4: Agents, Sequences, and End-to-End Data Paths](04-agents-sequences-and-end-to-end-data-paths.md)
 
 Next: [Chapter 6: Extending the Environment as a New Verification Engineer](06-extending-the-environment-as-a-new-verification-engineer.md)
+##### Copyright (c) 2026 squared-studio
+

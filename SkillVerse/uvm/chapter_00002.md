@@ -266,3 +266,5 @@ That is the structural foundation for the rest of the tutorial.
 Previous: [Chapter 1: Understanding the Problem and the Language](01-understanding-the-problem-and-the-language.md)
 
 Next: [Chapter 3: UVM Phases, Objections, and the Base Test](03-uvm-phases-objections-and-the-base-test.md)
+##### Copyright (c) 2026 squared-studio
+

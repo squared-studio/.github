@@ -250,3 +250,5 @@ That is the execution backbone of the environment.
 Previous: [Chapter 2: Testbench Architecture and Top-Level Flow](02-testbench-architecture-and-top-level-flow.md)
 
 Next: [Chapter 4: Agents, Sequences, and End-to-End Data Paths](04-agents-sequences-and-end-to-end-data-paths.md)
+##### Copyright (c) 2026 squared-studio
+

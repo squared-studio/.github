@@ -237,3 +237,5 @@ If you can explain those flows clearly, you are already thinking like a verifica
 Previous: [Chapter 3: UVM Phases, Objections, and the Base Test](03-uvm-phases-objections-and-the-base-test.md)
 
 Next: [Chapter 5: Scoreboard, Coverage, and What the Tests Prove](05-scoreboard-coverage-and-what-the-tests-prove.md)
+##### Copyright (c) 2026 squared-studio
+

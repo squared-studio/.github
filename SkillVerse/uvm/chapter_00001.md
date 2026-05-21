@@ -162,3 +162,5 @@ If not, go back to the APB and UART descriptions and the two main verification q
 ## Next Chapter
 
 Continue to [Chapter 2: Testbench Architecture and Top-Level Flow](02-testbench-architecture-and-top-level-flow.md).
+##### Copyright (c) 2026 squared-studio
+
