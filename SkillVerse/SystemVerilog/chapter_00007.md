@@ -88,8 +88,8 @@ endmodule
 
 **Key Differences and Use Cases:**
 
--   **Logical Operators ( `&&`, `\|\|`, `!` )**: Used for control flow, condition checking, and assertions. They produce 1-bit Boolean results.
--   **Bitwise Operators ( `&`, `\|`, `^`, `~`, `<<`, `>>`, `<<<`, `>>>` )**: Used for data manipulation, bit-level processing, and implementing hardware logic. They operate on vectors and maintain the vector width in the result.
+-   **Logical Operators ( `&&`, `||`, `!` )**: Used for control flow, condition checking, and assertions. They produce 1-bit Boolean results.
+-   **Bitwise Operators ( `&`, `|`, `^`, `~`, `<<`, `>>`, `<<<`, `>>>` )**: Used for data manipulation, bit-level processing, and implementing hardware logic. They operate on vectors and maintain the vector width in the result.
 -   **Shift Operators**:
     -   **Logical Shifts (`<<`, `>>`)**: Fill vacated bit positions with zeros. Used for unsigned data and general bit manipulation.
     -   **Arithmetic Shifts (`<<<`, `>>>`)**:  Preserve the sign bit during right shifts (sign extension). Crucial for signed arithmetic operations to maintain the correct sign of negative numbers. Left arithmetic shift behaves the same as logical left shift.
@@ -173,7 +173,7 @@ Operator precedence determines the order in which operators are evaluated in an 
 **SystemVerilog Operator Precedence (Highest to Lowest):**
 
 1.  **Grouping and Scope**: `()`, `[]`, `::`
-2.  **Unary Operators**: `!`, `~`, `+`, `-`, `&`, `~&`, `\|`, `~\|`, `^`, `~^` (unary plus and minus, and reduction operators)
+2.  **Unary Operators**: `!`, `~`, `+`, `-`, `&`, `~&`, `|`, `~|`, `^`, `~^` (unary plus and minus, and reduction operators)
 3.  **Multiplication, Division, Modulus, Exponentiation**: `*`, `/`, `%`, `**`
 4.  **Addition and Subtraction**: `+`, `-` (binary addition and subtraction)
 5.  **Shift Operators**: `<<`, `>>`, `<<<`, `>>>`
@@ -181,9 +181,9 @@ Operator precedence determines the order in which operators are evaluated in an 
 7.  **Equality Operators**: `==`, `!=`, `===`, `!==`
 8.  **Bitwise AND**: `&` (binary bitwise AND)
 9.  **Bitwise XOR, XNOR**: `^`, `~^`
-10. **Bitwise OR**: `\|`
+10. **Bitwise OR**: `|`
 11. **Logical AND**: `&&`
-12. **Logical OR**: `\|\|`
+12. **Logical OR**: `||`
 13. **Conditional Operator (Ternary)**: `?:`
 
 **Best Practice: Use Parentheses for Clarity**
@@ -224,7 +224,7 @@ endmodule
     endmodule
     ```
 
-    **Explanation**:  In control logic, you typically want to use logical AND (`&&`), logical OR (`\|\|`), and logical NOT (`!`) to combine Boolean conditions. Bitwise operators are for vector data manipulation.
+    **Explanation**:  In control logic, you typically want to use logical AND (`&&`), logical OR (`||`), and logical NOT (`!`) to combine Boolean conditions. Bitwise operators are for vector data manipulation.
 
 2.  **Misunderstanding Shift Operator Types**:  Forgetting the difference between logical and arithmetic right shifts can lead to incorrect results when working with signed numbers.
 
