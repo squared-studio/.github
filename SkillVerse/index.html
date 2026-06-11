@@ -16,7 +16,7 @@
     :root{
       --bg:#080808;--surface:#0f0f0f;--card:#141414;--border:#1e2d4a;
       --text:#cdd9f0;--muted:#5a7090;--accent1:#00ccff;--accent2:#00ffcc;
-      --font-body:"Inter",sans-serif;--font-mono:"JetBrains Mono",monospace;
+      --font-body:"Inter",sans-serif;--font-mono:"Consolas","SFMono-Regular","Liberation Mono","Menlo","Courier New",monospace;
     }
     html{scroll-behavior:smooth}
     body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:16px;line-height:1.7;min-height:100vh}
@@ -56,7 +56,8 @@
     .md ul ul,.md ol{list-style:disc;padding-left:22px;margin-bottom:10px}
     .md ul ul li,.md ol li{margin-bottom:3px;font-size:.88rem;color:var(--text)}
     .md ul ul li a,.md ol li a{display:inline;padding:0;font-weight:400;color:var(--accent1);border-bottom:1px solid rgba(0,204,255,.3)}
-    .md code{font-family:var(--font-mono);font-size:.85em;background:rgba(0,204,255,.08);color:var(--accent2);padding:2px 6px;border-radius:4px}
+    .md code,.md pre,.md pre code,.md pre code.hljs,.copy-btn{font-family:var(--font-mono);font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+    .md code{font-size:.85em;background:rgba(0,204,255,.08);color:var(--accent2);padding:2px 6px;border-radius:4px}
     .md pre{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px;overflow-x:auto;margin:18px 0}
     .md pre code{background:none;padding:0;color:inherit;font-size:.83rem}
     .md pre code.hljs{background:transparent;padding:0}
