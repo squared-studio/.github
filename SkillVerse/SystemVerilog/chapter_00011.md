@@ -70,7 +70,7 @@ module producer_consumer_example;
       if (packet_mailbox.try_get(received_packet)) begin // Non-blocking get attempt
         $display("[%0t] Consumer: Received packet ID %0d, Payload 0x%h", $time, received_packet.data_id, received_packet.payload);
       end else begin
-        $display("[%0t] Consumer: Mailbox EMPTY! Waiting for packets...");
+        $display("[%0t] Consumer: Mailbox EMPTY! Waiting for packets...", $time);
       end
       #($urandom_range(8, 20)); // Random delay before next receive attempt
       if (received_packet.data_id == 4) break; // Simple exit condition after receiving packet ID 4
