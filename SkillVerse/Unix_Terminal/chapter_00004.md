@@ -1,4 +1,4 @@
-# Chapter 4: Streams, Pipes, and Text Tools
+# Streams, Pipes, and Text Tools
 
 ## What You Will Learn
 - Redirect input/output and chain commands with pipelines.

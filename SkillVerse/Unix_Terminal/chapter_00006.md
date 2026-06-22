@@ -1,4 +1,4 @@
-# Chapter 6: Shell Scripting Essentials
+# Shell Scripting Essentials
 
 ## What You Will Learn
 - Write portable shell scripts with safe defaults.

@@ -1,4 +1,4 @@
-# Chapter 7: Environment and Customization
+# Environment and Customization
 
 ## What You Will Learn
 - Understand shell startup files and when they run.

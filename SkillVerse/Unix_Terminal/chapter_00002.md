@@ -1,4 +1,4 @@
-# Chapter 2: Navigation and Discovery
+# Navigation and Discovery
 
 ## What You Will Learn
 - Move confidently with absolute and relative paths (., .., ~).

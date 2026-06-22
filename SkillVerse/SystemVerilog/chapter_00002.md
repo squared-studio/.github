@@ -30,11 +30,11 @@ endmodule // End of module declaration
 Each component of this structure will now be examined in detail, commencing with general SystemVerilog concepts.
 
 
-## I. Basic SystemVerilog Syntax Fundamentals
+## Basic SystemVerilog Syntax Fundamentals
 
 Prior to delving into the testbench structure, it is imperative to comprehend certain fundamental elements of the SystemVerilog language itself.
 
-### 1. SystemVerilog File Naming
+### SystemVerilog File Naming
 
 SystemVerilog code is stored in plain text files. The conventional file extensions are:
 * **.sv**: The recommended extension for SystemVerilog files.
@@ -42,7 +42,7 @@ SystemVerilog code is stored in plain text files. The conventional file extensio
 
 Upon developing your testbench code, it is typically saved as `testbench.sv` or `testbench.v`. These files are then provided to the simulator for compilation and execution.
 
-### 2. The Semicolon (`;`): Statement Terminator
+### The Semicolon (`;`): Statement Terminator
 
 In SystemVerilog, the **semicolon (`;`)** functions as a statement terminator. It signals to the compiler that a complete instruction has been provided.
 
@@ -58,7 +58,7 @@ $display("Message");    // System task invocation terminates with a semicolon.
 ```
 Omission of a semicolon is a common error for new users, which will result in a syntax error during compilation. Blocks of statements, such as those delimited by **`begin`** and **`end`**, do not require a semicolon after the **`end`** keyword, unless that **`end`** is part of a larger statement (e.g., `end else;`).
 
-### 3. Comments: Documenting Code
+### Comments: Documenting Code
 
 Comments are textual annotations within the code that are disregarded by the SystemVerilog compiler and simulator. Their primary purpose is to enhance code readability and provide explanations for human comprehension.
 
@@ -80,14 +80,14 @@ Comments are textual annotations within the code that are disregarded by the Sys
     ```
     Effective utilization of comments is a professional practice that significantly improves code comprehension and maintainability.
 
-### 4. Case Sensitivity
+### Case Sensitivity
 
 SystemVerilog is a **case-sensitive** language. This implies that uppercase and lowercase letters are interpreted as distinct characters.
 
 * **Impact**: `myVariable` is differentiated from `myvariable` or `MyVariable`. Keywords such as **`module`**, **`initial`**, **`begin`**, and **`end`** must be written in lowercase precisely as defined.
 * **Best Practice**: Consistent capitalization for module names, signal names, and other identifiers is crucial to prevent errors and enhance code readability.
 
-### 5. Whitespace and Indentation
+### Whitespace and Indentation
 
 Whitespace (spaces, tabs, newlines) and indentation (the leading empty space on a line) are generally ignored by the SystemVerilog compiler. However, their importance for human readability and code clarity is paramount.
 
@@ -95,7 +95,7 @@ Whitespace (spaces, tabs, newlines) and indentation (the leading empty space on 
 * **Best Practice**: Employ consistent indentation (e.g., 2 or 4 spaces per level) to ensure professional and easily decipherable code.
 
 
-## II. The `module` Construct: Testbench Encapsulation
+## The `module` Construct: Testbench Encapsulation
 
 In SystemVerilog, the **`module`** construct serves as the primary unit for design encapsulation and hierarchical organization. It defines a self-contained block of code that represents either a hardware component or, in this context, a testbench environment.
 
@@ -128,7 +128,7 @@ When assigning a name to a module (or any other identifier, such as a signal or 
 **Examples of Invalid Module Names**: `1st_test` (starts with a digit), `$my_module` (starts with a dollar sign), `begin_test` (uses a keyword).
 
 
-## III. Procedural Blocks: `begin` and `end` for Grouping Statements
+## Procedural Blocks: `begin` and `end` for Grouping Statements
 
 In SystemVerilog, certain constructs, such as the **`initial`** block, contain multiple statements that require sequential execution. To group these statements, the keywords **`begin`** and **`end`** are employed.
 
@@ -148,7 +148,7 @@ end // End of the block
 In this example, `statement1`, `statement2`, and `statement3` will all execute in sequential order because they are enclosed by **`begin`** and **`end`**. Each statement within the block is terminated by a semicolon. Without **`begin`** and **`end`**, a procedural block (such as **`initial`**) would only execute the very first statement immediately following it.
 
 
-## IV. The `initial` Block: Simulation Initialization
+## The `initial` Block: Simulation Initialization
 
 The **`initial`** block is a procedural construct designed to execute its contained statements precisely **once at the commencement of simulation (time 0)**.
 
@@ -158,11 +158,11 @@ The **`initial`** block is a procedural construct designed to execute its contai
 The **`initial`** block is indispensable for tasks necessitating one-time execution at simulation startup. Statements within an **`initial`** block are processed sequentially from top to bottom. Upon completion of all statements within an **`initial`** block, that specific block becomes inactive and does not re-execute during the remainder of the simulation. It commonly orchestrates initial setup routines and defines the primary sequence of simulation events within a testbench.
 
 
-## V. System Tasks for Simulation Control and Output
+## System Tasks for Simulation Control and Output
 
 **System tasks** are pre-defined commands provided by the SystemVerilog language, invariably prefixed with a dollar sign (`$`). These tasks are built-in functions supplied by the simulator tool itself and facilitate essential functionalities for interacting with and controlling the simulation environment. Users are not required to define these tasks; they are ready for direct use.
 
-### 1. `$display`: Simulation Output Task
+### `$display`: Simulation Output Task
 
 **`$display`** is a **system task** employed to output information to the simulation console (the text-based interface where your simulator operates).
 
@@ -175,7 +175,7 @@ The **`$display`** task is highly valuable for:
 
 Execution of **`$display`** results in immediate output to the console when the corresponding line of code is encountered during simulation. The phrase "Hello World!" serves as a conventional initial program in many programming languages, simply demonstrating the capability to produce output.
 
-### 2. `$finish`: Simulation Termination Task
+### `$finish`: Simulation Termination Task
 
 **`$finish`** is a critical **system task** employed for controlling the simulation flow.
 

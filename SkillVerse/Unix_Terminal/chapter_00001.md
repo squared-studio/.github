@@ -1,4 +1,4 @@
-# Chapter 1: Terminal Foundations
+# Terminal Foundations
 
 ## What You Will Learn
 - Distinguish shell vs. terminal emulator and how they connect to a TTY/PTY.

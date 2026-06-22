@@ -1,4 +1,4 @@
-# Chapter 9: Troubleshooting and Diagnostics
+# Troubleshooting and Diagnostics
 
 ## What You Will Learn
 - Diagnose PATH and command resolution issues.
