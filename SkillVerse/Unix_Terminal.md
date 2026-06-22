@@ -1,5 +1,5 @@
 # Unix Terminal
-## 1. [Chapter 1](Unix_Terminal/chapter_00001.md)
+## 1. [Terminal Foundations](Unix_Terminal/chapter_00001.md)
   - What You Will Learn
   - Key Concepts
   - Essential Commands
@@ -8,7 +8,7 @@
   - Check Your Understanding
   - Common Pitfalls
   - Prep for Next Chapter
-## 2. [Chapter 2](Unix_Terminal/chapter_00002.md)
+## 2. [Navigation and Discovery](Unix_Terminal/chapter_00002.md)
   - What You Will Learn
   - Key Concepts
   - Essential Commands
@@ -17,7 +17,7 @@
   - Check Your Understanding
   - Common Pitfalls
   - Prep for Next Chapter
-## 3. [Chapter 3](Unix_Terminal/chapter_00003.md)
+## 3. [File Management and Permissions](Unix_Terminal/chapter_00003.md)
   - What You Will Learn
   - Key Concepts
   - Essential Commands
@@ -26,7 +26,7 @@
   - Check Your Understanding
   - Common Pitfalls
   - Prep for Next Chapter
-## 4. [Chapter 4](Unix_Terminal/chapter_00004.md)
+## 4. [Streams, Pipes, and Text Tools](Unix_Terminal/chapter_00004.md)
   - What You Will Learn
   - Key Concepts
   - Essential Commands and Patterns
@@ -35,7 +35,7 @@
   - Check Your Understanding
   - Common Pitfalls
   - Prep for Next Chapter
-## 5. [Chapter 5](Unix_Terminal/chapter_00005.md)
+## 5. [Processes and Job Control](Unix_Terminal/chapter_00005.md)
   - What You Will Learn
   - Key Concepts
   - Essential Commands
@@ -44,7 +44,7 @@
   - Check Your Understanding
   - Common Pitfalls
   - Prep for Next Chapter
-## 6. [Chapter 6](Unix_Terminal/chapter_00006.md)
+## 6. [Shell Scripting Essentials](Unix_Terminal/chapter_00006.md)
   - What You Will Learn
   - Key Concepts
   - Script Skeleton
@@ -53,7 +53,7 @@
   - Check Your Understanding
   - Common Pitfalls
   - Prep for Next Chapter
-## 7. [Chapter 7](Unix_Terminal/chapter_00007.md)
+## 7. [Environment and Customization](Unix_Terminal/chapter_00007.md)
   - What You Will Learn
   - Key Concepts
   - Essential Snippets
@@ -62,7 +62,7 @@
   - Check Your Understanding
   - Common Pitfalls
   - Prep for Next Chapter
-## 8. [Chapter 8](Unix_Terminal/chapter_00008.md)
+## 8. [Networking and Remote Workflows](Unix_Terminal/chapter_00008.md)
   - What You Will Learn
   - Key Concepts
   - Essential Commands and Snippets
@@ -71,7 +71,7 @@
   - Check Your Understanding
   - Common Pitfalls
   - Prep for Next Chapter
-## 9. [Chapter 9](Unix_Terminal/chapter_00009.md)
+## 9. [Troubleshooting and Diagnostics](Unix_Terminal/chapter_00009.md)
   - What You Will Learn
   - Key Concepts
   - Essential Commands
@@ -80,7 +80,7 @@
   - Check Your Understanding
   - Common Pitfalls
   - Prep for Next Chapter
-## 10. [Chapter 10](Unix_Terminal/chapter_00010.md)
+## 10. [Putting It Together](Unix_Terminal/chapter_00010.md)
   - What You Will Learn
   - Capstone Ideas (Pick One)
   - Suggested Workflow
