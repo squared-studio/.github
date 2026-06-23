@@ -1,44 +1,50 @@
 # SystemVerilog
 ## 1. [SystemVerilog Foundations](SystemVerilog/chapter_00001.md)
-  - Demystifying SystemVerilog
-  - A Brief History of SystemVerilog
-  - Why Use SystemVerilog? Key Applications
-  - The Winning Advantages of SystemVerilog
-  - Core Features That Set SystemVerilog Apart
+  - 1. What Is SystemVerilog?
+  - 2. A Brief History
+  - 3. Why Use SystemVerilog? (Key Applications)
+  - 4. The Winning Advantages
+  - 5. Core Features That Make SystemVerilog Stand Out
+  - 6. Putting It All Together – A Mini‑Example
+  - 7. Next Steps
 ## 2. [Basics](SystemVerilog/chapter_00002.md)
-  - Basic SystemVerilog Syntax Fundamentals
+  - What is Simulation? (The Virtual Test Lab)
+  - Core Syntax
   - The module Construct
-  - Procedural Blocks
+  - Grouping Statements
   - The initial Block
-  - System Tasks for Simulation Control and Output
+  - System Tasks
+  - Key Takeaways
 ## 3. [SystemVerilog Built-in Tasks and Functions](SystemVerilog/chapter_00003.md)
   - Display Tasks
   - Wavedump Tasks
   - Time-Related Functions
   - Simulation Control Tasks
-  - Hands-on Exercises with Solutions
+  - Hands-On Exercises
+  - Why This Matters
 ## 4. [SystemVerilog Data Types](SystemVerilog/chapter_00004.md)
-  - Built-in Data Types
-  - Advanced Built-in Types
-  - User-Defined Data Types
-  - Packed vs. Unpacked Arrays
-  - Exercises to Solidify Your Understanding
+  - Core Concept
+  - Advanced Types
+  - User-Defined Types
+  - Arrays
+  - Exercises
+  - Key Takeaways
 ## 5. [Arrays in SystemVerilog](SystemVerilog/chapter_00005.md)
-  - Introduction to SystemVerilog Arrays
-  - Packed vs. Unpacked Arrays
-  - Fixed-Size Arrays
-  - Dynamic Arrays
-  - Associative Arrays
-  - Queues
-  - Exercises to Practice Array Concepts
+  - 1. Why Arrays Matter in SystemVerilog
+  - 2. Packed vs. Unpacked Arrays
+  - 3. Fixed‑Size Arrays – Compile‑Time Length with Handy Methods
+  - 4. Dynamic Arrays – Size Can Change at Run‑Time
+  - 5. Associative Arrays – Key‑Value Look‑Up (Sparse Storage)
+  - 6. Queues – Ordered Lists with Fast Push/Pop
+  - 7. Quick‑Reference Cheat Sheet
+  - 8. Exercises (with Solutions)
+  - 9. Wrap‑Up
 ## 6. [SystemVerilog Array Manipulation](SystemVerilog/chapter_00006.md)
-  - Introduction
-  - Array Indexing
-  - Array Manipulation Methods
-  - Illustrative Examples with Expected Outputs
-  - Important Considerations for Array Manipulation
-  - Practical Exercises to Enhance Your Skills
-  - Pro-Level Tips for Array Mastery
+  - 1. Indexing
+  - 2. Beyond Indexing
+  - 3. Worked Examples with Expected Output
+  - 4. Practical Exercises
+  - 5. Pro‑Level Tips
 ## 7. [SystemVerilog Operators](SystemVerilog/chapter_00007.md)
   - Introduction
   - Arithmetic Operators
@@ -46,22 +52,23 @@
   - Reduction Operators
   - Comparison Operators
   - Operator Precedence
-  - Common Pitfalls to Avoid
-  - Practical Exercises to Solidify Operator Skills
+  - Common Pitfalls
+  - Exercises
+  - Why This Matters
 ## 8. [Control Flow in SystemVerilog](SystemVerilog/chapter_00008.md)
   - Introduction
   - Conditional Statements
-  - Case Statements
   - Loop Constructs
-  - Exercises to Solidify Control Flow Understanding
+  - Exercises
+  - Why This Matters
 ## 9. [Procedural Blocks in SystemVerilog](SystemVerilog/chapter_00009.md)
   - Introduction
   - Initial Blocks
   - Final Blocks
   - Always Blocks
-  - Assignment Types within Procedural Blocks
-  - Best Practices and Common Pitfalls with Procedural Blocks
-  - Exercises to Practice Procedural Blocks
+  - Blocking vs. Non-Blocking Assignments
+  - Best Practices
+  - Exercises
 ## 10. [Tasks and Functions in SystemVerilog](SystemVerilog/chapter_00010.md)
   - Introduction
   - Key Differences
@@ -69,16 +76,16 @@
   - Function Implementation
   - Storage Classes
   - Advanced Features
-  - Best Practices for Tasks and Functions
-  - Exercises to Solidify Task and Function Concepts
+  - Best Practices
+  - Exercises
 ## 11. [Interprocess Communication (IPC) in SystemVerilog](SystemVerilog/chapter_00011.md)
   - Introduction
   - Mailboxes
   - Semaphores
   - Events
-  - Comparison
+  - Choosing the Right IPC Mechanism
   - Exercises
-  - Best Practices for Effective IPC
+  - Best Practices
 ## 12. [SystemVerilog Modules](SystemVerilog/chapter_00012.md)
   - Introduction
   - Module Definition
