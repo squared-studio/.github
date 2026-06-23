@@ -4,14 +4,14 @@ _Arrays are the workhorse of any SystemVerilog testbench or RTL design. Masterin
 
 ---
 
-## 1. Indexing: Getting to the Right Bit
+## Indexing: Getting to the Right Bit
 
 Before we dive into the fancy methods, we need to understand how SystemVerilog lays out arrays in memory. Think of an array as a **multidimensional spreadsheet**:
 
 - **Unpacked dimensions** (`[A][B][C]`) are the _rows, columns, sheets_ that tell the simulator how many separate elements exist.
 - **Packed dimensions** (`[M:0]`) live _inside_ each element and describe how the element’s bits are arranged—like the cells inside a spreadsheet column that hold a multi‑digit number.
 
-### 1.1 Example: A 3‑D Bank of Registers
+### Example: A 3‑D Bank of Registers
 
 ```systemverilog
 logic [127:0][7:0] my_array [8][64][32];
@@ -50,13 +50,13 @@ foreach (my_array[i,j,k])               // i = floor, j = aisle, k = shelf
 
 ---
 
-## 2. Beyond Indexing: Built‑In Array Methods
+## Beyond Indexing: Built‑In Array Methods
 
 SystemVerilog supplies a toolbox of methods that work **directly on dynamic arrays, queues, and associative arrays**. They let you search, sort, reduce, and transform data without writing explicit loops.
 
 > **Note:** Fixed‑size arrays (e.g., `logic [7:0] mem[0:3]`) do **not** have these methods. Convert to a dynamic array (`logic [7:0] mem[]`) if you need them.
 
-### 2.1 Searching & Filtering
+### Searching & Filtering
 
 | Method                           | What it returns                                            | Typical use                                    |
 | -------------------------------- | ---------------------------------------------------------- | ---------------------------------------------- |
@@ -75,7 +75,7 @@ $display("Below zero: %p", below_zero);
 // Output: Below zero: '{-5, -8}
 ```
 
-### 2.2 Sorting & Reordering
+### Sorting & Reordering
 
 | Method       | Effect                      | Example              |
 | ------------ | --------------------------- | -------------------- |
@@ -93,7 +93,7 @@ $display("Sorted by length: %p", names);
 // Output: Sorted by length: '{"Bob","Alice","Christopher"}
 ```
 
-### 2.3 Reduction (Sum, Product, Min, Max)
+### Reduction (Sum, Product, Min, Max)
 
 | Method                        | Returns                                    | When to use                           |
 | ----------------------------- | ------------------------------------------ | ------------------------------------- |
@@ -110,7 +110,7 @@ logic parity = data_bytes.xor();   // XOR of all bytes → parity bit
 $display("Parity = %b", parity);
 ```
 
-### 2.4 Method Chaining
+### Method Chaining
 
 Because most methods return a queue, you can string them together:
 
@@ -122,9 +122,9 @@ $display("Sum of unique values: %0d", sum_unique);
 
 ---
 
-## 3. Worked Examples with Expected Output
+## Worked Examples with Expected Output
 
-### 3.1 Filtering Transaction Amounts
+### Filtering Transaction Amounts
 
 ```systemverilog
 class transaction;
@@ -146,7 +146,7 @@ end
 // Output: Over $600: '{'{amount: 750}, '{amount: 1000}}
 ```
 
-### 3.2 Bitwise AND Reduction on a Mask Array
+### Bitwise AND Reduction on a Mask Array
 
 ```systemverilog
 bit [3:0] mask[] = {4'b1100, 4'b1010, 4'b1111};
@@ -155,7 +155,7 @@ $display("Combined mask: %b", combined);
 // Output: Combined mask: 1000
 ```
 
-### 3.3 Unique Index Extraction
+### Unique Index Extraction
 
 ```systemverilog
 int ids[] = {10,20,10,30,20,40};
@@ -166,7 +166,7 @@ $display("First occurrence indices: %p", first_idx);
 
 ---
 
-## 4. Practical Exercises
+## Practical Exercises
 
 1. **Byte Extraction** – Using the `my_array[8][64][32]` structure, extract bytes 64‑127 from `my_array[0][0][0]` and print them as hex.
 
@@ -180,7 +180,7 @@ $display("First occurrence indices: %p", first_idx);
 
 ---
 
-## 5. Pro‑Level Tips
+## Pro‑Level Tips
 
 | Tip                                   | Why it helps                                                                                                                                      | Example                                                                                                              |
 | ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |

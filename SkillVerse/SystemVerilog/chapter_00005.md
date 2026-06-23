@@ -4,7 +4,7 @@ _Arrays let you store collections of data—whether a handful of bits in a hardw
 
 ---
 
-## 1. Why Arrays Matter in SystemVerilog
+## Why Arrays Matter in SystemVerilog
 
 | Analogy                                                                                                                         | SystemVerilog Concept                                                                                 |
 | ------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
@@ -17,9 +17,9 @@ The rest of this chapter walks through each array type, shows how to declare and
 
 ---
 
-## 2. Packed vs. Unpacked Arrays
+## Packed vs. Unpacked Arrays
 
-### 2.1 Packed Arrays – Bit‑Contiguous Storage
+### Packed Arrays – Bit‑Contiguous Storage
 
 _Think of a packed array as a single hardware register: all its bits live next to each other in memory, just like the bits in a CPU register._
 
@@ -44,7 +44,7 @@ high_byte = register_file[1][15:8];
 
 **Why it matters**: Because the bits are contiguous, SystemVerilog can perform bit‑wise operations (e.g., `&`, `|`, `^`, shifts) on the whole array as if it were a single integer. This maps directly to hardware and yields optimal synthesis results.
 
-### 2.2 Unpacked Arrays – Element‑Based Storage
+### Unpacked Arrays – Element‑Based Storage
 
 _An unpacked array is like a conventional software array: each element occupies its own slot in memory, and you access them with an index._
 
@@ -69,11 +69,11 @@ int mid_val = transaction_ids[512];
 
 ---
 
-## 3. Fixed‑Size Arrays – Compile‑Time Length with Handy Methods
+## Fixed‑Size Arrays – Compile‑Time Length with Handy Methods
 
 A fixed‑size array’s length is known when the code is compiled. This lets the tool allocate storage upfront and provides a rich set of built‑in methods for common tasks (sorting, summing, searching, etc.).
 
-### 3.1 Declaration & Basic Use
+### Declaration & Basic Use
 
 ```systemverilog
 // 5‑element array of signed integers
@@ -89,7 +89,7 @@ sorted_scores.sort();
 int max_score = sorted_scores[sorted_scores.size() - 1];
 ```
 
-### 3.2 Frequently Used Built‑In Methods
+### Frequently Used Built‑In Methods
 
 | Method                           | What it does                                             | Example                                           |
 | -------------------------------- | -------------------------------------------------------- | ------------------------------------------------- |
@@ -107,11 +107,11 @@ int max_score = sorted_scores[sorted_scores.size() - 1];
 
 ---
 
-## 4. Dynamic Arrays – Size Can Change at Run‑Time
+## Dynamic Arrays – Size Can Change at Run‑Time
 
 When you don’t know how many items you’ll need until the simulation runs (e.g., variable‑length packets), a **dynamic array** is the right choice. You must explicitly allocate storage with `new[]`; you can later resize or free it.
 
-### 4.1 Basic Workflow
+### Basic Workflow
 
 ```systemverilog
 // Declaration – no size yet
@@ -130,7 +130,7 @@ packet_payload = new[12] (packet_payload);
 packet_payload.delete();
 ```
 
-### 4.2 Core Methods
+### Core Methods
 
 | Method                                                                         | Purpose                                        | Example                                      |
 | ------------------------------------------------------------------------------ | ---------------------------------------------- | -------------------------------------------- |
@@ -144,11 +144,11 @@ packet_payload.delete();
 
 ---
 
-## 5. Associative Arrays – Key‑Value Look‑Up (Sparse Storage)
+## Associative Arrays – Key‑Value Look‑Up (Sparse Storage)
 
 _An associative array works like a dictionary or hash table: you store a value and retrieve it later by supplying a key. The key can be any type—string, enum, even a struct—making this ideal for sparse memories, configuration tables, or error‑message look‑ups._
 
-### 5.1 Declaration & Simple Operations
+### Declaration & Simple Operations
 
 ```systemverilog
 // Mapping from error code (string) to message (string)
@@ -176,7 +176,7 @@ if (err_msg.first(key)) begin
 end
 ```
 
-### 5.2 Essential Methods
+### Essential Methods
 
 | Method            | What it does                                           | Example                         |
 | ----------------- | ------------------------------------------------------ | ------------------------------- |
@@ -193,11 +193,11 @@ end
 
 ---
 
-## 6. Queues – Ordered Lists with Fast Push/Pop
+## Queues – Ordered Lists with Fast Push/Pop
 
 _A queue behaves like a line at a coffee shop: new customers join the back (`push_back`) and the person at the front is served first (`pop_front`). SystemVerilog queues also let you add or remove from the front (`push_front` / `pop_back`) and provide indexing, sorting, and reversal._
 
-### 6.1 Basic Example
+### Basic Example
 
 ```systemverilog
 // Queue of transaction IDs (int)
@@ -220,7 +220,7 @@ txn_q.push_front(999);
 $display("Queue size = %0d", txn_q.size());
 ```
 
-### 6.2 Core Queue Methods
+### Core Queue Methods
 
 | Method                   | Action                       | Example                          |
 | ------------------------ | ---------------------------- | -------------------------------- |
@@ -238,7 +238,7 @@ $display("Queue size = %0d", txn_q.size());
 
 ---
 
-## 7. Quick‑Reference Cheat Sheet
+## Quick‑Reference Cheat Sheet
 
 | Array Type      | When to Use                                          | Declaration Example          | Key Methods                                                        |
 | --------------- | ---------------------------------------------------- | ---------------------------- | ------------------------------------------------------------------ |
@@ -251,7 +251,7 @@ $display("Queue size = %0d", txn_q.size());
 
 ---
 
-## 8. Exercises (with Solutions)
+## Exercises (with Solutions)
 
 > **Tip:** Try to solve each problem on your own before peeking at the answer.
 
@@ -317,7 +317,7 @@ $display("Queue size = %0d", txn_q.size());
 
 ---
 
-## 9. Wrap‑Up
+## Wrap‑Up
 
 SystemVerilog’s array families give you the flexibility to model anything from a single hardware register to a vast, sparsely populated memory map. By matching the array type to the problem—packed for bit‑wise hardware, unpacked for element‑wise test‑benches, dynamic for variable‑sized data, associative for keyed look‑ups, and queues for ordered streams—you write code that is **clearer**, **more efficient**, and **easier to maintain**.
 

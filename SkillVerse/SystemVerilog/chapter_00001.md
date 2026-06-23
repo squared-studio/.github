@@ -4,7 +4,7 @@ _Designed for newcomers, this chapter explains what SystemVerilog is, why it mat
 
 ---
 
-## 1. What Is SystemVerilog?
+## What Is SystemVerilog?
 
 **SystemVerilog** is a **Hardware Description and Verification Language (HDVL)**—a single language that lets you both **describe** hardware (what it does) and **verify** it (whether it behaves correctly).
 
@@ -14,7 +14,7 @@ SystemVerilog builds on Verilog HDL but adds powerful constructs for verificatio
 
 ---
 
-## 2. A Brief History
+## A Brief History
 
 | Year     | Milestone                                  | Why It Matters                                                                    |
 | -------- | ------------------------------------------ | --------------------------------------------------------------------------------- |
@@ -27,7 +27,7 @@ Each revision kept the language **backward‑compatible** with Verilog, so exist
 
 ---
 
-## 3. Why Use SystemVerilog? (Key Applications)
+## Why Use SystemVerilog? (Key Applications)
 
 | Application              | What It Enables                                                                          | Real‑World Benefit                                                             |
 | ------------------------ | ---------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
@@ -38,13 +38,13 @@ Each revision kept the language **backward‑compatible** with Verilog, so exist
 
 ---
 
-## 4. The Winning Advantages
+## The Winning Advantages
 
-### 4.1 One Language, Two Worlds
+### One Language, Two Worlds
 
 SystemVerilog merges **design** and **verification** into a single codebase. No more juggling Verilog for RTL and a separate language (e.g., e, Vera, or C++) for testbenches. Teams speak the same dialect, which cuts misunderstandings and accelerates integration.
 
-### 4.2 Built‑In Verification Power‑Tools
+### Built‑In Verification Power‑Tools
 
 | Feature                                      | What It Does                                                        | Why It Helps                                                                              |
 | -------------------------------------------- | ------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
@@ -54,23 +54,23 @@ SystemVerilog merges **design** and **verification** into a single codebase. No 
 | **Object‑Oriented Programming (OOP)**        | Classes, inheritance, polymorphism.                                 | Enables modular, reusable verification components (e.g., drivers, monitors, scoreboards). |
 | **Interfaces**                               | Bundle related signals with modports, clocking blocks, and methods. | Simplifies module connections and makes protocol changes localized.                       |
 
-### 4.3 Backward Compatibility & Industry Support
+### Backward Compatibility & Industry Support
 
 - **Verilog Compatibility:** Existing Verilog files compile unchanged; you can mix SystemVerilog and Verilog in the same project.
 - **IEEE Standard (1800):** Guarantees that a SystemVerilog construct behaves the same way in any compliant EDA tool (Cadence, Synopsys, Mentor, Aldec, etc.).
 - **Vast Ecosystem:** Libraries (UVM), tutorials, forums, and IP cores are readily available.
 
-### 4.4 Scalability
+### Scalability
 
 Whether you’re verifying a 10‑bit counter or a multi‑core processor, the same language features scale up. You start small, then add layers (e.g., UVM testbenches) as complexity grows—without rewriting the foundation.
 
 ---
 
-## 5. Core Features That Make SystemVerilog Stand Out
+## Core Features That Make SystemVerilog Stand Out
 
 Below is a concise tour of the most impactful features, each paired with a simple analogy or code snippet to illustrate the concept.
 
-### 5.1 Data Types – From Bits to Rich Structures
+### Data Types – From Bits to Rich Structures
 
 | Type                                          | Description                                                                                                | Example / Analogy                                                                                                                         |
 | --------------------------------------------- | ---------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
@@ -86,7 +86,7 @@ typedef enum logic [1:0] { IDLE, READ, WRITE } state_t;
 state_t current_state;
 ```
 
-### 5.2 Control Flow – Clearer Intent
+### Control Flow – Clearer Intent
 
 - **`unique case` / `priority case`** – Guarantees that only one branch matches (or defines a priority if multiple match).
 - **`foreach` loop** – Iterates over array dimensions without manual indexing.
@@ -103,7 +103,7 @@ foreach (mem[i]) begin
 end
 ```
 
-### 5.3 Procedural Blocks – Explicit Intent for Synthesis
+### Procedural Blocks – Explicit Intent for Synthesis
 
 | Block                                   | Use                                               | Why It Matters                                                                    |
 | --------------------------------------- | ------------------------------------------------- | --------------------------------------------------------------------------------- |
@@ -122,7 +122,7 @@ always_ff @(posedge clk) begin
 end
 ```
 
-### 5.4 Tasks & Functions – Reusable, Modular Code
+### Tasks & Functions – Reusable, Modular Code
 
 - **Functions** return a value and cannot consume simulation time (no `#delay`, `wait`, etc.).
 - **Tasks** can consume time, drive multiple outputs, and are ideal for sequences or complex operations.
@@ -138,7 +138,7 @@ task automatic drive_bus (input logic [7:0] data);
 endtask
 ```
 
-### 5.5 Interfaces – Clean, Protocol‑Centric Connections
+### Interfaces – Clean, Protocol‑Centric Connections
 
 An interface bundles signals, defines **modports** (different views for master/slave), and can contain **methods** or **clocking blocks**. This abstraction reduces the spaghetti of individual signal lists in module instantiations.
 
@@ -166,7 +166,7 @@ endmodule
 
 _Analogy:_ An interface is like a **standardized USB‑C connector**—instead of worrying about each pin, you plug the whole connector in and the protocol handles the rest.
 
-### 5.6 Object‑Oriented Programming – The Verification Game‑Changer
+### Object‑Oriented Programming – The Verification Game‑Changer
 
 - **Encapsulation:** Data and methods are bundled inside a class, hiding internal details.
 - **Inheritance:** Create specialized versions of a base class (e.g., a base `driver` and an `axi_driver`).
@@ -190,7 +190,7 @@ class driver #(type T = logic [7:0]);
 endclass
 ```
 
-### 5.7 Assertions – Executable Design Intent
+### Assertions – Executable Design Intent
 
 Assertions are statements that the simulator (or formal tool) continuously checks.
 
@@ -209,7 +209,7 @@ assert property (no_stuck_grant);
 
 _Analogy:_ Think of an assertion as a **guardrail on a highway**—if a car (design behavior) tries to cross it, an alarm goes off immediately.
 
-### 5.8 Coverage – Measuring Verification Thoroughness
+### Coverage – Measuring Verification Thoroughness
 
 | Coverage Type                 | What It Measures                                                   | Typical Use                                                |
 | ----------------------------- | ------------------------------------------------------------------ | ---------------------------------------------------------- |
@@ -221,7 +221,7 @@ You collect coverage during simulation and aim for a target (often >90 % funct
 
 ---
 
-## 6. Putting It All Together – A Mini‑Example
+## Putting It All Together – A Mini‑Example
 
 Below is a tiny SystemVerilog module that models a **two‑input AND gate** with a testbench that uses constrained‑random stimulus, an assertion, and functional coverage.
 
@@ -278,7 +278,7 @@ endmodule
 
 ---
 
-## 7. Next Steps
+## Next Steps
 
 - **Try it:** Install a free SystemVerilog simulator (e.g., **Verilator**, **EDA Playground**, or your university’s license) and run the example above.
 - **Explore UVM:** Once comfortable with classes and interfaces, look at the Universal Verification Methodology—a library that builds on these concepts to create scalable testbenches.
