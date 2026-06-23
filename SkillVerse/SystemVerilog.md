@@ -178,28 +178,22 @@
   - Best Practices Checklist for SystemVerilog Macros
   - Practical Exercises to Solidify Macro Skills
 ## 22. [SystemVerilog Built-in System Tasks and Functions](SystemVerilog/chapter_00022.md)
-  - Simulation Control Tasks
-  - Simulation Time Functions
-  - Timescale Tasks
-  - Conversion Functions
-  - Data Query Functions
-  - Array Query Functions
-  - Math Functions
-  - Bit Vector System Functions
-  - Severity Tasks
-  - Assertion Control Tasks
-  - Sampled Value System Functions
-  - Coverage Control Functions
-  - Probabilistic Distribution Functions
-  - Stochastic Analysis Tasks and Functions
-  - PLA Modeling Tasks
-  - Miscellaneous Tasks and Functions
-  - Display Tasks
-  - File I/O Tasks and Functions
-  - Memory Load Tasks
-  - Memory Dump Tasks
-  - Command Line Input
-  - VCD Tasks
+  - ⏱️ Simulation Control
+  - ⏳ Time Functions
+  - 🔢 Data Conversion
+  - 🔍 Array Inquiry
+  - 🧮 Math Functions
+  - 📊 Bit Vector Analysis
+  - 📢 Messaging
+  - 📋 Assertion Control
+  - 📊 Coverage Collection
+  - 🎲 Randomization
+  - 💾 File Operations
+  - 💾 Memory Operations
+  - ⚡ Command Line Arguments
+  - 📺 Waveform Dumping
+  - 🎯 Best Practices & Tips
+  - 🔚 Conclusion
 
 ##### Copyright (c) 2026 squared-studio
 
