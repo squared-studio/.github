@@ -1,284 +1,389 @@
-# Procedural Blocks in SystemVerilog: Behavioral Modeling Core
+# Procedural Blocks in SystemVerilog: The Behavioral Modeling Engine
 
 ## Introduction
 
-Procedural blocks are the engines of behavioral modeling in SystemVerilog. They allow you to describe the dynamic behavior of your hardware designs, create testbench environments, and control simulation flow. Unlike continuous assignments that react instantly to input changes, procedural blocks execute **sequentially**, step-by-step, making them essential for modeling sequential logic, state machines, memory elements, and complex control algorithms. Understanding and effectively using procedural blocks is fundamental for both RTL design and robust verification.
+Imagine designing a hardware system where you need to describe not just static connections (like wires), but **how things change over time**—such as a counter incrementing on each clock pulse, a state machine transitioning between modes, or a testbench generating stimulus patterns. This is where **procedural blocks** shine. They are the behavioral modeling constructs in SystemVerilog that let you describe sequential, step-by-step logic execution—much like writing software—but for hardware description and verification.
 
-## Initial Blocks: Simulation Setup and Initialization
+Unlike continuous assignments (which update instantly when inputs change, like a direct wire connection), procedural blocks execute **in sequence** over simulated time. This makes them indispensable for:
 
-`initial` blocks are executed **once at the very beginning of simulation**, at time 0. Their primary role is to set up the simulation environment, initialize signals and variables, and kickstart simulation activities.
+- Modeling sequential elements (flip-flops, registers, memories)
+- Creating complex control logic (state machines, FSMs)
+- Building verification environments (testbenches, stimulus generators)
+- Controlling simulation flow (initialization, cleanup)
 
-**Key Characteristics and Usage:**
+Whether you're writing synthesizable RTL or verification code, mastering procedural blocks is fundamental to effective SystemVerilog design.
 
--   **Single Execution**:  Code within an `initial` block runs only once, sequentially from top to bottom, at the start of the simulation.
--   **Concurrent Execution of Multiple Blocks**: If you have multiple `initial` blocks in your design, they all begin execution concurrently at time 0. The order in which they complete is non-deterministic.
--   **Testbench Focus**: `initial` blocks are **not synthesizable** and are exclusively used in testbenches and simulation environments.
--   **Common Use Cases**:
-    -   **Testbench Initialization**: Setting initial values for input signals, design variables, and memory contents.
-    -   **Signal Stimulation**: Generating initial stimulus or sequences of input patterns to drive the design under test (DUT).
-    -   **One-Time Configuration**: Loading configuration data, setting up simulation parameters, and opening output files.
+---
+
+## Initial Blocks: Setting the Stage
+
+Think of an `initial` block as the **opening scene of a play**—it runs exactly once when the simulation begins (at time 0) to set up the initial state, load configurations, and kick off the first actions.
+
+### Key Characteristics
+
+- **One-Time Execution**: Code runs top-to-bottom only once at simulation start.
+- **Concurrent Start**: Multiple `initial` blocks begin simultaneously at time 0, but their completion order is **non-deterministic** (depends on simulator scheduling—like actors starting scenes at the same curtain rise but finishing at different times).
+- **Testbench-Only**: Not synthesizable; used exclusively in simulation environments for setup and stimulus.
+
+### Common Uses
+
+- Initializing DUT inputs, internal signals, and memory contents
+- Generating the first stimulus vectors or configuration sequences
+- Opening log files or displaying simulation banners
+- Setting up simulation termination conditions (e.g., `#1000 $finish;`)
+
+### Example: Testbench Initialization
 
 ```systemverilog
-module testbench;
+module tb_uart;
   logic clk;
   logic rst_n;
-  logic [7:0] data_in;
-  logic start_transaction;
+  logic [7:0] tx_data;
+  logic tx_start;
 
-  initial begin // Initialization block 1
-    clk = 0;          // Initialize clock
-    rst_n = 0;        // Assert reset
-    data_in = 0;
-    start_transaction = 0;
+  initial begin  // Setup block
+    clk = 0;
+    rst_n = 0;   // Assert reset
+    tx_data = 8'h00;
+    tx_start = 0;
 
-    $display("Testbench: Simulation starting at time %0t", $time);
-    #20 rst_n = 1;     // De-assert reset after 20 time units
-    #50 start_transaction = 1; // Start transaction after reset
-    #100 start_transaction = 0;
+    $display("[%0t] Testbench: Initializing UART simulation...", $time);
+    #20 rst_n = 1;    // De-assert reset after 20 time units
+    #10 tx_data = 8'h55; // Load test data
+    #5 tx_start = 1;   // Start transmission
   end
 
-  initial begin // Initialization block 2 (runs concurrently with block 1)
-    #1000 $finish;     // End simulation after 1000 time units
+  initial begin  // Termination block (runs concurrently)
+    #200 $finish; // End simulation after 200 time units
   end
 
-  always #5 clk = ~clk; // Clock generation (runs continuously)
-
-  // ... (DUT instantiation and other testbench logic) ...
-
+  // Clock generator (always block, covered later)
+  always #5 clk = ~clk;
 endmodule
 ```
 
-## Final Blocks: Simulation Wrap-up and Reporting
+**Why this works**: The first `initial` block configures the DUT and sends a stimulus. The second independently manages simulation duration. Both start at time 0 but operate independently—like two crew members preparing different parts of a stage before the show begins.
 
-`final` blocks are executed **once when the simulation is about to terminate**. They provide a mechanism to perform cleanup tasks, report simulation results, and generate summary information at the end of a simulation run.
+---
 
-**Key Characteristics and Usage:**
+## Final Blocks: The Curtain Call
 
--   **End-of-Simulation Execution**: Code in a `final` block executes only once, after all other simulation activity has ceased (including `initial` blocks and any ongoing `always` blocks that are not explicitly stopped).
--   **Non-Synthesizable**: Like `initial` blocks, `final` blocks are **not synthesizable** and are used exclusively in simulation and verification environments.
--   **Reporting and Cleanup**:
-    -   **Result Reporting**: Displaying simulation statistics, error counts, coverage metrics, and overall test status.
-    -   **File Closing**: Closing log files, output data files, and any other files opened during simulation.
-    -   **Resource Cleanup**: Releasing any simulation-specific resources or memory allocations (though typically handled automatically by the simulator).
+If `initial` blocks are the opening scene, `final` blocks are the **closing curtain**—they run exactly once when the simulation is about to end, perfect for reporting results, cleaning up resources, and summarizing outcomes.
+
+### Key Characteristics
+
+- **Single Execution**: Runs once after all simulation activity completes (no ongoing processes).
+- **Simulation-Exclusive**: Not synthesifiable; used only in testbenches for verification cleanup.
+- **Critical for Verification**: Ensures you capture final statistics before the simulator exits.
+
+### Common Uses
+
+- Displaying simulation summary (transaction counts, error rates, coverage)
+- Closing log files, waveform dumps, or output data streams
+- Reporting pass/fail status based on verification goals
+- Releasing simulation-specific resources (handled automatically by most simulators, but good practice to explicitize)
+
+### Example: Simulation Report Generator
 
 ```systemverilog
-module verification_environment;
-  integer transaction_count = 0;
+module tb_verification;
+  integer pkt_count = 0;
   integer error_count = 0;
-  integer log_file_desc;
+  integer log_fd;
 
   initial begin
-    log_file_desc = $fopen("simulation_log.txt", "w"); // Open log file
-    // ... (rest of testbench and simulation setup) ...
+    log_fd = $fopen("sim.log", "w");
+    $display("[%0t] Verification started.", $time);
+    // ... testbench logic that increments pkt_count and error_count ...
   end
 
-  // ... (simulation logic, transaction processing, error checking, incrementing transaction_count and error_count) ...
+  // ... (testbench stimulus, DUT, checkers) ...
 
   final begin
-    $display("\n--- Simulation Summary ---");
-    $display("Total Transactions Processed: %0d", transaction_count);
-    $display("Total Errors Detected: %0d", error_count);
+    $display("\n=== SIMULATION SUMMARY ===");
+    $display("[%0t] Total Packets Processed: %0d", $time, pkt_count);
+    $display("[%0t] Total Errors Detected: %0d", $time, error_count);
+
     if (error_count > 0) begin
-      $display("SIMULATION FAILED!");
+      $display("[%0t] RESULT: FAILED (%0d errors)", $time, error_count);
     end else begin
-      $display("SIMULATION PASSED!");
+      $display("[%0t] RESULT: PASSED", $time);
     end
-    $fclose(log_file_desc); // Close the log file
-    $display("Log file 'simulation_log.txt' closed.");
+
+    $fclose(log_fd);
+    $display("[%0t] Log file closed.", $time);
   end
 endmodule
 ```
 
-## Always Blocks: Continuous, Reactive Behavior
+**Analogy**: Like a stage manager turning off lights and tallying ticket sales after the final bow, `final` blocks ensure you capture the simulation's outcome before the virtual theater empties.
 
-`always` blocks are the workhorses of SystemVerilog behavioral modeling, especially for RTL design. They describe blocks of code that execute **repeatedly** in response to events or conditions defined by their sensitivity lists or timing controls.
+---
 
-### 1. General `always` Block: Continuous Processes (Testbench Clock Generation)
+## Always Blocks: The Reactive Workhorses
 
--   **Continuous, Unconditional Execution**: A general `always` block, when combined with timing control statements (like `#delay`), creates a continuously running process.
--   **Primary Testbench Use**:  In RTL design, general `always` blocks without sensitivity lists are **rarely synthesizable**. They are primarily used in testbenches for tasks like clock generation and background processes.
+`always` blocks describe **continuously active processes** that react to events or time delays. They are the backbone of RTL design for modeling both combinational and sequential logic. Think of them as diligent workers who constantly monitor specific signals (their _sensitivity list_) and spring into action whenever those signals change.
+
+### Choosing the Right `always` Variant
+
+SystemVerilog provides specialized `always` blocks to prevent common mistakes and clarify intent—like using the right tool for a job (wrench vs. screwdriver).
+
+#### 1. General `always` Block: Time-Driven Processes (Testbenches)
+
+- **Use Case**: Creating free-running signals (clocks, reset sequences) or background tasks in testbenches.
+- **How It Works**: Combined with timing controls (`#delay`), it loops continuously, executing statements step-by-step after each delay.
+- **Synthesizability**: Rarely synthesizable in RTL (lacks clear event sensitivity); reserve for testbenches.
 
 ```systemverilog
-module clock_generator;
-  output logic clk_out;
+module clock_gen;
+  output logic clk;
 
-  initial clk_out = 0; // Initialize clock
-
-  always #5 clk_out = ~clk_out; // Toggle clock every 5 time units (period = 10)
-                                 // Creates a free-running clock signal
+  initial clk = 0;  // Initialize
+  always #5 clk = ~clk;  // Toggle every 5 time units → 100MHz clock (period=10)
 endmodule
 ```
 
-### 2. `always_comb` Block: Combinational Logic Inference
+**Why `#5`?** Each toggle happens after 5 time units. Low for 5 units, high for 5 units → 50% duty cycle. Total period = 10 units.
 
--   **Combinational Logic Description**: `always_comb` blocks are specifically designed to model combinational logic. They infer combinational circuits based on the code within the block.
--   **Automatic Sensitivity List**:  The key feature of `always_comb` is its **automatic sensitivity list**. The simulator automatically infers all input signals that the output depends on. Whenever any of these input signals change value, the `always_comb` block is re-evaluated, ensuring the output is always up-to-date with the inputs.
--   **Single Execution at Time 0**:  `always_comb` blocks are also evaluated once at the beginning of simulation (time 0) to establish initial output values.
--   **Blocking Assignments (`=`)**: Use **blocking assignments** inside `always_comb` blocks. This ensures that the logic is evaluated and updated immediately when inputs change, reflecting the behavior of combinational circuits.
+#### 2. `always_comb`: Pure Combinational Logic
 
-```systemverilog
-module combinational_adder(
-  input  logic [7:0] input_a,
-  input  logic [7:0] input_b,
-  output logic [7:0] sum
-);
-  always_comb begin // Combinational logic block
-    sum = input_a + input_b; // Sum is re-calculated whenever input_a or input_b changes
-  end
-endmodule
-```
-
-### 3. `always_ff` Block: Sequential Logic (Flip-Flop) Inference
-
--   **Sequential Logic Modeling**: `always_ff` blocks are specifically for modeling sequential logic elements, primarily flip-flops and registers.
--   **Explicit Sensitivity List Required**:  `always_ff` **requires an explicit sensitivity list** that specifies the events that trigger the block's execution. This list typically includes the clock edge (e.g., `posedge clk`) and any asynchronous control signals like reset (e.g., `negedge rst_n`).
--   **Non-Blocking Assignments (`<=`)**:  **Use non-blocking assignments (`<=`)** inside `always_ff` blocks. This is crucial for correctly modeling the behavior of flip-flops, where outputs are updated only at the clock edge and all updates within a clock cycle happen concurrently.
+- **Use Case**: Modeling logic where outputs depend _only_ on current inputs (no memory)—like adders, multiplexers, or decoders.
+- **Key Feature**: **Automatic sensitivity list**. The simulator watches _all_ signals read in the block and re-evaluates instantly when any change.
+- **Critical Rule**: Use **blocking assignments (`=`)**. This ensures immediate output updates, mimicking real combinational gates (no delay between input change and output update).
 
 ```systemverilog
-module d_flip_flop(
-  input logic clk,
-  input logic rst_n,
-  input logic data_in,
-  output logic data_out
+module priority_encoder (
+  input  logic [3:0] req,
+  output logic [1:0] grant,
+  output logic       valid
 );
-  always_ff @(posedge clk or negedge rst_n) begin // Sequential logic block
-    if (!rst_n) begin // Asynchronous reset (active low)
-      data_out <= 1'b0; // Reset output to 0
-    end else begin      // Clocked behavior
-      data_out <= data_in; // Update output on positive clock edge
+  always_comb begin
+    // Blocking assignments for immediate combinational response
+    if (req[3]) begin
+      grant = 2'b11; valid = 1'b1;
+    end else if (req[2]) begin
+      grant = 2'b10; valid = 1'b1;
+    end else if (req[1]) begin
+      grant = 2'b01; valid = 1'b1;
+    end else if (req[0]) begin
+      grant = 2'b00; valid = 1'b1;
+    end else begin
+      grant = 2'bxx; valid = 1'b0;  // Default case prevents latches
     end
   end
 endmodule
 ```
 
-### 4. `always_latch` Block: Latch Inference (Use with Caution)
+**Analogy**: Like a room full of people shouting requests—`always_comb` instantly points to the highest-priority requester the moment anyone speaks up.
 
--   **Latch Modeling**: `always_latch` blocks are intended to model latches. Latches are level-sensitive memory elements, unlike flip-flops which are edge-triggered.
--   **Conditional Assignments for Latch Behavior**: Latches are typically inferred when a signal is assigned a value conditionally within an `always_latch` (or sometimes `always_comb`) block, and there is no `else` clause or default assignment to cover all conditions.
--   **Use Sparingly in RTL**: Latches are often **undesirable in synchronous digital designs** because they can introduce timing hazards and make timing analysis more complex.  Avoid intentional latch inference in most RTL designs unless specifically required by the architecture.
+#### 3. `always_ff`: Sequential Logic (Flip-Flops & Registers)
+
+- **Use Case**: Modeling memory elements that update only on specific events (clock edges), like counters, shift registers, or state registers.
+- **Key Feature**: **Requires explicit sensitivity list**—must include the clock edge (`posedge clk`/`negedge clk`) and any asynchronous resets/set.
+- **Critical Rule**: Use **non-blocking assignments (`<=`)**. This models true hardware parallelism: all flip-flops update _simultaneously_ at the clock edge, preventing race conditions.
 
 ```systemverilog
-module level_sensitive_latch(
-  input logic enable,
-  input logic data_in,
-  output logic data_out
+module sync_reset_counter (
+  input  logic clk,
+  input  logic rst_n,  // Active-low async reset
+  output logic [3:0] count
 );
-  always_latch begin // Latch inference block
+  always_ff @(posedge clk or negedge rst_n) begin
+    if (!rst_n) begin
+      count <= 4'b0000;  // Async reset: immediate override
+    end else begin
+      count <= count + 1'b1;  // Sync update: happens ONLY at clock edge
+    end
+  end
+endmodule
+```
+
+**Why non-blocking?** Imagine a line of people passing a baton. Non-blocking assignments ensure everyone grabs the baton _from the previous person's position at the start of the step_—not from someone who already updated mid-step. This mirrors how real flip-flops sample inputs at the clock edge.
+
+#### 4. `always_latch`: Level-Sensitive Latches (Use Sparingly)
+
+- **Use Case**: Modeling latches (transparent when enabled, holding when disabled)—_rarely recommended in synchronous RTL_.
+- **Key Feature**: Infers a latch if outputs aren't assigned in _all_ code paths (e.g., missing `else` in an `if`).
+- **Critical Warning**: Latches can cause timing hazards in clocked designs. Prefer `always_ff` for most sequential logic unless your architecture specifically requires level-sensitive behavior.
+
+```systemverilog
+module gated_latch (
+  input  logic enable,
+  input  logic data,
+  output logic q
+);
+  always_latch begin
     if (enable) begin
-      data_out = data_in; // Latch is transparent when enable is high
-    end // No 'else' - latch holds previous value when enable is low
+      q = data;  // Transparent: follows input when enabled
+    end
+    // MISSING ELSE: When enable=0, q holds previous value (latch behavior)
+    // Without explicit hold, synthesis may still infer a latch—but it's unclear!
   end
 endmodule
 ```
 
-## Assignment Types within Procedural Blocks: Blocking vs. Non-Blocking
-
-The type of assignment used within procedural blocks (`always`, `initial`, `final`) significantly impacts the behavior of your SystemVerilog code, especially in RTL design.
-
-### Blocking Assignments (`=`): Sequential Execution
-
--   **Sequential Execution**: Blocking assignments (`=`) execute in the order they appear within the procedural block. When a blocking assignment is encountered, the assignment is performed **immediately**, and the procedural block execution **pauses** until the assignment is complete.
--   **Immediate Value Update**: The variable on the left-hand side of a blocking assignment is updated with the new value **before** the execution proceeds to the next statement in the block.
--   **Combinational Logic and Testbenches**: Blocking assignments are primarily used:
-    -   **Inside `always_comb` blocks** to model combinational logic accurately.
-    -   **In `initial` and `final` blocks** and in testbench procedures where sequential, step-by-step execution is desired.
+**Better Practice**: Explicitly show the hold behavior for clarity and to avoid synthesis mismatches:
 
 ```systemverilog
-module blocking_assignment_example;
-  integer variable_x, variable_y;
-
-  initial begin
-    variable_x = 5;          // Line 1: variable_x becomes 5 immediately
-    variable_y = variable_x + 3; // Line 2: variable_y becomes 5 + 3 = 8 (using the updated value of variable_x)
-    $display("variable_x = %0d, variable_y = %0d", variable_x, variable_y); // Output: variable_x = 5, variable_y = 8
-  end
-endmodule
+always_latch begin
+  if (enable)
+    q = data;
+  else
+    q = q;  // Explicit hold (though q=q is redundant, it documents intent)
+end
 ```
 
-### Non-Blocking Assignments (`<=`): Concurrent Updates
+> 💡 **Pro Tip**: In 95% of synchronous designs, you’ll use `always_ff` for sequential logic and `always_comb` for combinational logic. Reserve `always_latch` for rare cases like asynchronous FIFO control logic—and always verify with your team’s coding guidelines.
 
--   **Concurrent Scheduling**: Non-blocking assignments (`<=`) schedule assignments to occur at the **end of the current simulation time step**. When a non-blocking assignment is encountered, the assignment is scheduled, but the procedural block execution **does not pause**. It continues to the next statement.
--   **Delayed Value Update**: The actual update of the variable on the left-hand side of a non-blocking assignment happens **only after all statements in the current procedural block (and potentially other concurrently executing blocks) have been evaluated for the current time step.**  The right-hand side expression is evaluated at the time the non-blocking assignment is encountered, but the result is not assigned until later.
--   **Sequential Logic Modeling**: Non-blocking assignments are **essential for modeling sequential logic** (flip-flops, registers) correctly, particularly within `always_ff` blocks. They ensure that all register updates triggered by the same clock edge happen concurrently, reflecting real hardware behavior.
+---
+
+## Blocking vs. Non-Blocking Assignments: The Timing Detail
+
+The assignment type (`=` vs. `<=`) inside procedural blocks controls _when_ updates take effect—critical for modeling hardware accurately.
+
+### Blocking Assignments (`=`): "Do It Now, Then Move On"
+
+- **Behavior**: Execute immediately in sequence. The next statement waits for this to finish.
+- **Use Case**:
+  - Combinational logic (`always_comb`)
+  - Sequential testbench steps (`initial`/`final` blocks)
+  - Temporary variables in algorithms
+- **Analogy**: Like following a recipe step-by-step—you must finish chopping onions before you can start sautéing them.
 
 ```systemverilog
-module non_blocking_assignment_example;
-  logic [1:0] register_a, register_b;
-
-  initial begin
-    register_a <= 2'b10; // Line 1: Schedule update for register_a at the end of the time step
-    register_b <= register_a; // Line 2: Schedule update for register_b at the end of the time step, using the *original* value of register_a (before update)
-
-    #1 $display("register_a = %b, register_b = %b", register_a, register_b);
-    // Output at time 1: register_a = 10, register_b = 00
-    // register_a gets updated to 2'b10 as scheduled.
-    // register_b gets the *old* value of register_a (which was 0 at the start of the time step)
-  end
-endmodule
+initial begin
+  integer a, b, temp;
+  a = 5;      // a is 5 immediately
+  b = a + 3;  // b becomes 8 (using a's *current* value)
+  temp = a;   // temp = 5
+  a = b;      // a = 8
+  b = temp;   // b = 5 → SWAPPED!
+end
 ```
 
-**Key Rules for Assignment Types:**
+### Non-Blocking Assignments (`<=`): "Schedule It, Then Keep Going"
 
--   **`always_comb`**: **Blocking assignments (`=`)** - for combinational logic.
--   **`always_ff`**: **Non-blocking assignments (`<=`)** - for sequential logic (flip-flops, registers).
--   **`initial` and `final` blocks**: **Blocking assignments (`=`)** - for sequential, step-by-step initialization and reporting.
--   **General `always` blocks (testbench)**: Typically **blocking assignments (`=`)** unless modeling specific concurrent behavior.
--   **Never mix blocking and non-blocking assignments to the same variable within the same procedural block.** This can lead to unpredictable and simulation-dependent behavior.
+- **Behavior**: Schedule the update to occur at the _end_ of the current time step. The procedural block continues immediately.
+- **Use Case**:
+  - Sequential logic (`always_ff`)—models concurrent register updates
+  - When you need to preserve old values during calculation (e.g., swaps, pipelines)
+- **Analogy**: Like placing orders at a drive-through—you tell the speaker what you want (schedule), drive to the window (continue), then get your food (update) after everyone ahead has been served.
 
-## Best Practices and Common Pitfalls with Procedural Blocks
+```systemverilog
+initial begin
+  logic [1:0] x, y;
+  x <= 2'b01;  // Schedule x=01
+  y <= x;      // Schedule y=OLD x (which was 00 at start of step), NOT new x!
+  #1;
+  // After delay: x=01, y=00 → NOT swapped!
+end
+```
 
-1.  **Synthesis Guidelines for `always` Blocks**:
-    -   **`always_comb` for Combinational**:  Use `always_comb` for all combinational logic descriptions. It provides automatic sensitivity lists and helps prevent latches.
-    -   **`always_ff` for Sequential**: Use `always_ff` exclusively for flip-flop and register modeling. Always include the clock and relevant reset signals in the sensitivity list.
-    -   **Avoid General `always` in RTL**:  Minimize the use of general `always` blocks in synthesizable RTL designs, as they can be less clear about the intended logic type (combinational or sequential) and may lead to synthesis issues. Reserve general `always` for testbench clock generation or specific, well-understood cases.
+**Key Insight**: In `always_ff`, non-blocking assignments ensure all flip-flops update based on _pre-clock_ values—exactly how real hardware works.
 
-2.  **Latch Prevention - Completeness in Combinational Logic**:
-    -   **Problem: Incomplete `if` or `case` in `always_comb` can infer latches.** If not all possible conditions are explicitly handled in an `always_comb` block, and a signal is assigned a value only under certain conditions, the synthesizer may infer a latch to "hold" the previous value when none of the specified conditions are met.
+### Assignment Cheat Sheet
 
-    ```systemverilog
-    // BAD - Latch Inferred (incomplete conditional assignment)
-    always_comb begin
-      if (enable)
-        output_signal = input_data; // What happens to output_signal when 'enable' is false? - Latch!
-    end
+| Block Type        | Recommended Assignment | Why                                                              |
+| ----------------- | ---------------------- | ---------------------------------------------------------------- |
+| `always_comb`     | Blocking (`=`)         | Needs immediate output response to input changes                 |
+| `always_ff`       | Non-blocking (`<=`)    | Models concurrent register updates at clock edge                 |
+| `initial`/`final` | Blocking (`=`)         | Sequential step-by-step execution (like software)                |
+| General `always`  | Context-dependent      | Testbenches often use `=`; avoid in RTL unless timing-controlled |
 
-    // GOOD - Full Combinational Logic (using conditional operator)
-    always_comb begin
-      output_signal = enable ? input_data : 1'b0; // Explicitly define output for both 'enable' true and false
-    end
+> ⚠️ **Critical Rule**: **Never mix `=` and `<=` for the same variable in one procedural block.** This creates simulation-dependent races (e.g., scheduling an update then immediately overwriting it).
 
-    // GOOD - Full Combinational Logic (using if-else)
-    always_comb begin
-      if (enable) begin
-        output_signal = input_data;
-      end else begin
-        output_signal = 1'b0; // Explicit 'else' branch prevents latch
-      end
-    end
-    ```
-    -   **Solution**: Ensure that within `always_comb` blocks, for every output signal, you have a **complete assignment** that covers all possible input conditions. Use `else` clauses in `if` statements and `default` cases in `case` statements to explicitly define the output value in all scenarios.
+---
 
-3.  **Sensitivity Lists in `always_ff`**:
-    -   **Include Clock and Asynchronous Resets**:  For `always_ff` blocks modeling flip-flops, the sensitivity list **must include the clock edge** (e.g., `posedge clk`) and **any asynchronous reset signals** (e.g., `negedge rst_n`).
-    -   **Complete Sensitivity**: Ensure all signals that can cause a change in the flip-flop's state are in the sensitivity list.  Missing signals can lead to simulation mismatches with synthesized hardware.
+## Best Practices: Writing Clear, Synthesizable, and Reliable Code
 
-4.  **Avoid Mixing Assignment Types**:
-    -   **Never mix blocking and non-blocking assignments to the same variable within a single `always`, `initial`, or `final` block.** This is a common source of subtle errors and unpredictable simulation behavior.
-    -   **Consistent Assignment Style**:  Choose the appropriate assignment type (blocking or non-blocking) for each procedural block based on whether you are modeling combinational or sequential logic, and stick to that type consistently within the block.
+Follow these guidelines to avoid common pitfalls and ensure your code simulates and synthesizes as intended.
 
-## Exercises to Practice Procedural Blocks
+### 1. Match Block Type to Intent
 
-1.  **Initial Block Message**: Create a testbench module with an `initial` block that displays the message "System Initialization Started..." at the beginning of the simulation.
-2.  **Final Block Simulation Time Report**: Write a testbench module that uses a `final` block to report the total simulation time elapsed using the `$time` system function at the end of the simulation.
-3.  **100MHz Clock Generator**: Design a clock generator module using a general `always` block to produce a 100MHz clock signal with a 50% duty cycle.
-4.  **Combinational 8-bit Multiplier**: Implement a combinational 8-bit multiplier module using an `always_comb` block. The module should take two 8-bit inputs and output their 16-bit product.
-5.  **4-bit Synchronous Counter with Asynchronous Reset**: Design a 4-bit synchronous counter module using an `always_ff` block. The counter should have a clock input, an active-low asynchronous reset input, and a 4-bit count output.
-6.  **Transparent Latch**: Create a module that implements a transparent latch using an `always_latch` block. The latch should be enabled by an `enable` input and pass the `data_in` to `data_out` when enabled, holding the last value when disabled.
-7.  **Blocking vs. Non-blocking Assignment Value Swap**: Write two separate modules to demonstrate value swapping between two variables:
-    -   One module using **blocking assignments** to swap the values.
-    -   Another module using **non-blocking assignments** to attempt to swap the values (and observe the outcome). Display the variable values after the assignments in both modules to illustrate the difference in behavior.
+- **Combinational logic? → `always_comb`**  
+  _Why_: Automatic sensitivity prevents forgotten latches; blocking assignments model real gates.
+- **Sequential logic? → `always_ff`**  
+  _Why_: Explicit sensitivity + non-blocking assignments = accurate flip-flop modeling.
+- **Avoid generic `always` in RTL**  
+  _Why_: It’s ambiguous (is it comb or seq?) and often unsynthesizable without careful timing controls.
 
-By working through these exercises and carefully considering the best practices, you will develop a strong foundation in using SystemVerilog procedural blocks effectively for both RTL design and verification.
+### 2. Prevent Latches in Combinational Logic
+
+Always cover **every possible input condition** for outputs in `always_comb`:
+
+```systemverilog
+// BAD: Missing 'else' infers latch when enable=0
+always_comb if (enable) out = in;
+
+// GOOD: Explicitly defined for all cases
+always_comb out = enable ? in : 1'b0;  // Using ternary operator
+// OR
+always_comb begin
+  if (enable) out = in;
+  else        out = 1'b0;              // Explicit else
+end
+```
+
+### 3. Complete Sensitivity Lists for `always_ff`
+
+Include **all** asynchronous triggers (clock edge + resets/set):
+
+```systemverilog
+// GOOD: Captures clock and async reset
+always_ff @(posedge clk or negedge rst_n)
+
+// BAD: Missing reset → sim mismatch if reset changes asynchronously
+always_ff @(posedge clk)
+```
+
+### 4. Consistent Assignment Style Per Block
+
+Pick one assignment type per block and stick to it—especially in `always_ff`/`always_comb`. Mixing causes confusion and bugs.
+
+### 5. Use `default` in `case` Statements
+
+Prevents latch inference in `always_comb`:
+
+```systemverilog
+always_comb begin
+  case (state)
+    S0: next = S1;
+    S1: next = S2;
+    default: next = S0;  // Covers all unspecified states
+  end
+end
+```
+
+---
+
+## Exercises: Build Your Intuition
+
+1. **Initial Block Ping**  
+   Create a testbench with an `initial` block that prints `"Testbench alive!"` at time 0 and `"Testbench signing off!"` at time 50 using `#delay`.
+
+2. **Final Block Calculator**  
+   Write a testbench that uses a `final` block to compute and display the average packet latency (sum of latencies / packet count) after simulation ends.
+
+3. **50MHz Clock with Variable Duty Cycle**  
+   Design a clock generator using a general `always` block that outputs a 50MHz clock (20ns period) with 30% duty cycle (high for 6ns, low for 14ns).
+
+4. **Combinational Priority MUX**  
+   Implement a 4-input priority mux using `always_comb`: `always_comb`` where input 3 has highest priority, input 0 lowest. Output the selected 2-bit data.
+
+5. **Shift Register with Synchronous Enable**  
+   Build a 4-bit shift register using `always_ff`: shifts left on `posedge clk` when `enable=1`, holds when `enable=0`. Include synchronous active-high reset.
+
+6. **Enable-Controlled Latch (with Caveats)**  
+   Model a latch using `always_latch` that passes `data` to `q` when `enable=1`, holds when `enable=0`. Add a comment explaining why this might be problematic in a clocked design.
+
+7. **Assignment Swap Showdown**  
+   Create two modules:
+   - **Module A**: Swap two 32-bit variables using blocking assignments in an `initial` block.
+   - **Module B**: Attempt the same swap using non-blocking assignments.  
+     Display values before/after to observe the behavioral difference.
+
+---
+
+By internalizing these concepts—especially the _why_ behind `always_comb`/`always_ff` and blocking/non-blocking assignments—you’ll write SystemVerilog that’s not only correct but also clear, synthesizable, and verification-friendly. Remember: procedural blocks are your toolkit for describing _behavior over time_. Use them wisely, and your hardware will do exactly what you intend.
 
 ##### Copyright (c) 2026 squared-studio
-

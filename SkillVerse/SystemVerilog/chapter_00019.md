@@ -1,3 +1,5 @@
+@ai double check the following chapter and try to improve it. Make sure the content is clear, concise, and engaging. Add examples or analogies where appropriate to enhance understanding. Ensure that technical terms are explained for readers who may be new to SystemVerilog.
+
 # SystemVerilog Assertions (SVA): Formalizing and Automating Verification
 
 ## Introduction to Assertion-Based Verification: Specifying and Validating Design Behavior

@@ -1,3 +1,5 @@
+@ai double check the following chapter and try to improve it. Make sure the content is clear, concise, and engaging. Add examples or analogies where appropriate to enhance understanding. Ensure that technical terms are explained for readers who may be new to SystemVerilog.
+
 # SystemVerilog File Operations: Interacting with External Data
 
 ## Introduction: Bridging Simulation and the External World

@@ -1,3 +1,5 @@
+@ai double check the following chapter and try to improve it. Make sure the content is clear, concise, and engaging. Add examples or analogies where appropriate to enhance understanding. Ensure that technical terms are explained for readers who may be new to SystemVerilog.
+
 # SystemVerilog Built-in System Tasks and Functions
 
 SystemVerilog provides a rich set of built-in system tasks and functions, identifiable by the '$' prefix. These constructs offer essential capabilities for simulation control, data manipulation, querying information, mathematical operations, assertion handling, coverage, file I/O, and much more, significantly enhancing the power and flexibility of the language for RTL design and verification.
