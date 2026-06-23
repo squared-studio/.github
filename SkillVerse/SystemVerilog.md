@@ -1,12 +1,12 @@
 # SystemVerilog
 ## 1. [SystemVerilog Foundations](SystemVerilog/chapter_00001.md)
-  - 1. What Is SystemVerilog?
-  - 2. A Brief History
-  - 3. Why Use SystemVerilog? (Key Applications)
-  - 4. The Winning Advantages
-  - 5. Core Features That Make SystemVerilog Stand Out
-  - 6. Putting It All Together – A Mini‑Example
-  - 7. Next Steps
+  - What Is SystemVerilog?
+  - A Brief History
+  - Why Use SystemVerilog? (Key Applications)
+  - The Winning Advantages
+  - Core Features That Make SystemVerilog Stand Out
+  - Putting It All Together – A Mini‑Example
+  - Next Steps
 ## 2. [Basics](SystemVerilog/chapter_00002.md)
   - What is Simulation? (The Virtual Test Lab)
   - Core Syntax
@@ -30,21 +30,21 @@
   - Exercises
   - Key Takeaways
 ## 5. [Arrays in SystemVerilog](SystemVerilog/chapter_00005.md)
-  - 1. Why Arrays Matter in SystemVerilog
-  - 2. Packed vs. Unpacked Arrays
-  - 3. Fixed‑Size Arrays – Compile‑Time Length with Handy Methods
-  - 4. Dynamic Arrays – Size Can Change at Run‑Time
-  - 5. Associative Arrays – Key‑Value Look‑Up (Sparse Storage)
-  - 6. Queues – Ordered Lists with Fast Push/Pop
-  - 7. Quick‑Reference Cheat Sheet
-  - 8. Exercises (with Solutions)
-  - 9. Wrap‑Up
+  - Why Arrays Matter in SystemVerilog
+  - Packed vs. Unpacked Arrays
+  - Fixed‑Size Arrays – Compile‑Time Length with Handy Methods
+  - Dynamic Arrays – Size Can Change at Run‑Time
+  - Associative Arrays – Key‑Value Look‑Up (Sparse Storage)
+  - Queues – Ordered Lists with Fast Push/Pop
+  - Quick‑Reference Cheat Sheet
+  - Exercises (with Solutions)
+  - Wrap‑Up
 ## 6. [SystemVerilog Array Manipulation](SystemVerilog/chapter_00006.md)
-  - 1. Indexing
-  - 2. Beyond Indexing
-  - 3. Worked Examples with Expected Output
-  - 4. Practical Exercises
-  - 5. Pro‑Level Tips
+  - Indexing
+  - Beyond Indexing
+  - Worked Examples with Expected Output
+  - Practical Exercises
+  - Pro‑Level Tips
 ## 7. [SystemVerilog Operators](SystemVerilog/chapter_00007.md)
   - Introduction
   - Arithmetic Operators
