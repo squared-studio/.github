@@ -130,22 +130,21 @@
 ## 17. [SystemVerilog Command Line Arguments](SystemVerilog/chapter_00017.md)
   - Introduction
   - Accessing Command Line Arguments
-  - Parameter Overriding with Command Line Arguments
-  - Best Practices for Command Line Arguments
-  - Comprehensive Function Reference Table
-  - Robust Error Handling for Command Line Arguments
-  - Best Practices Checklist for SystemVerilog Command Line Arguments
-  - Practical Exercises to Solidify Command Line Argument Skills
-## 18. [SystemVerilog File Operations](SystemVerilog/chapter_00018.md)
+  - Parameter Overriding via Command Line
+  - Best Practices for Robust Command Line Handling
+  - Error Handling
+  - Practical Exercises
+  - Summary
+## 18. [](SystemVerilog/chapter_00018.md)
   - Introduction
   - File Handling Fundamentals
-  - Reading Data from Files
-  - Writing Data to Files
-  - Advanced File Output
-  - Comprehensive Function Reference Table
-  - Robust Error Handling Techniques
-  - Best Practices Checklist for SystemVerilog File Operations
-  - Practical Exercises to Solidify File Operation Skills
+  - Reading Data
+  - Writing Data
+  - Advanced Technique
+  - Robust Error Handling
+  - Best Practices Checklist
+  - Practical Exercises
+  - Key Takeaways
 ## 19. [SystemVerilog Assertions (SVA)](SystemVerilog/chapter_00019.md)
   - Introduction to Assertion-Based Verification
   - Assertion Types
