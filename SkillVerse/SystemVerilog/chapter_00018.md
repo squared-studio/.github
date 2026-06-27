@@ -1,4 +1,4 @@
-#SystemVerilog File Operations: Bridging Simulation and the Real World
+# SystemVerilog File Operations: Bridging Simulation and the Real World
 
 ## Introduction: Why File Operations Matter in Verification
 
