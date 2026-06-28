@@ -135,7 +135,7 @@
   - Error Handling
   - Practical Exercises
   - Summary
-## 18. [](SystemVerilog/chapter_00018.md)
+## 18. [SystemVerilog File Operations](SystemVerilog/chapter_00018.md)
   - Introduction
   - File Handling Fundamentals
   - Reading Data
@@ -166,6 +166,25 @@
   - Best Practices for Effective Coverage-Driven Verification
   - Comprehensive Reference Table
 ## 21. [SystemVerilog Macros](SystemVerilog/chapter_00021.md)
+  - Introduction
+  - Defining and Using Macros
+  - Types and Applications of Macros
+  - Scope of Macro Definitions
+  - Predefined Macros
+  - Best Practices for Macros
+  - Common Pitfalls and How to Avoid Them
+  - Practical Exercises
+  - Summary
+  - Introduction
+  - Defining and Using Macros
+  - Types and Applications of Macros
+  - Scope of Macro Definitions
+  - Predefined Macros
+  - Best Practices for Macros
+  - Common Pitfalls and How to Avoid Them
+  - Practical Exercises
+  - Summary
+  - Introduction
   - Introduction
   - Defining and Using Macros
   - Types and Applications of Macros
