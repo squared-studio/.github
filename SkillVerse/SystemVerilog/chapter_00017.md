@@ -4,12 +4,21 @@
 
 Command line arguments in SystemVerilog provide a powerful mechanism to control and customize simulation runs without modifying the source code. This capability is crucial for creating flexible and reusable verification environments, enabling users to:
 
--   **Parameterize Simulations**: Modify design parameters, testbench configurations, and simulation settings directly from the command line. This eliminates the need to recompile code for different scenarios, streamlining the verification process.
+-   **Parameterize Simulations**: Modify testbench configurations and simulation settings directly from the command line. Elaboration-time design parameters can be overridden with simulator-specific options, but changing them normally requires a new elaboration and may require recompilation depending on the flow.
 -   **Test Case Selection**: Choose specific test cases or test suites to execute during a simulation run. This allows for focused verification and regression testing, targeting specific functionalities or bug fixes.
 -   **Control Verbosity and Debugging**: Adjust the level of simulation output, enable or disable debug messages, and configure logging options through command line flags. This enhances debugging efficiency and allows for tailored output based on verification needs.
 -   **Environment Configuration**: Specify paths to configuration files, input data files, and output directories via command line arguments. This improves portability and organization of simulation environments.
 
 By leveraging command line arguments, verification engineers can create highly adaptable simulations that can be easily configured and executed for various verification tasks, promoting efficiency and reusability.
+
+### Learning Goals
+
+By the end of this chapter, you should be able to:
+
+- Parse value and flag plusargs with the correct SystemVerilog system functions.
+- Apply defaults and validate command-line values before using them.
+- Distinguish runtime plusargs from elaboration-time parameter overrides.
+- Build reproducible, tool-aware simulation commands and document their options.
 
 ## Accessing Command Line Arguments
 
@@ -22,18 +31,18 @@ The `$value$plusargs` system function is used to retrieve the value associated w
 **Syntax:**
 
 ```systemverilog
-integer result;
-result = $value$plusargs("<argument_format_string>", <variable1>, <variable2>, ...);
+int result;
+result = $value$plusargs("<argument_format_string>", variable);
 ```
 
 **Argument Format String:** The `<argument_format_string>` is a string that specifies the format of the command line argument to search for. It can include format specifiers to extract values into variables.
 
--   **Simple Keyword Matching**: If the format string contains only a keyword (e.g., `"TESTCASE"`), `$value$plusargs` checks for the presence of `+TESTCASE` on the command line. It returns `1` if found, `0` otherwise.
+-   **Flag Matching**: For a keyword with no value, use `$test$plusargs("TESTCASE")` to check for `+TESTCASE`. `$value$plusargs` is used when a value is extracted with a conversion specifier.
 -   **Value Extraction**: To extract a value associated with an argument, use format specifiers within the format string. For example, `"TESTCASE=%s"` will match `+TESTCASE=test_name` and extract `"test_name"` into a string variable.
 
 **Return Value:**
 
--   Returns the number of variables successfully assigned values from the command line arguments.
+-   Returns `1` when a matching plusarg is found and its value is assigned to the variable; it returns `0` when no match is found or the value cannot be assigned. The standard form takes one destination variable per call.
 -   Returns `0` if the specified argument format string is not found on the command line.
 
 **Example: Retrieving Test Case Name and Iteration Count**
@@ -124,21 +133,21 @@ endmodule
 **Simulation Command Examples:**
 
 ```bash
-// Verbose mode disabled
+# Verbose mode disabled
 vcs verbosity_control.sv
 
-// Verbose mode enabled
+# Verbose mode enabled
 vcs +VERBOSE verbosity_control.sv
 ```
 
 ## Parameter Overriding with Command Line Arguments
 
-Command line arguments can directly override `parameter` values defined within SystemVerilog modules. This is a powerful feature for configuring module behavior without code modification.
+Standard SystemVerilog plusargs are read at runtime and cannot directly override `parameter` values, which are resolved during elaboration. Simulators commonly provide tool-specific elaboration options for parameter overrides; alternatively, expose a runtime configuration variable when changing the parameter would require a rebuild.
 
 **Mechanism:**
 
--   When a simulator encounters a command line argument that matches a module parameter name (prefixed with `+`), it attempts to override the parameter's default value with the value provided in the argument.
--   Parameter overriding is typically done using the `+parameter_name=value` format.
+-   **Runtime plusargs**: Use `+NAME=value` with `$value$plusargs` for values that the testbench reads during simulation. This does not change widths, array sizes, or other elaborated structure.
+-   **Elaboration-time overrides**: Use the selected simulator's documented parameter-override option, often qualified by the top-level hierarchy and instance path. The syntax is tool-specific and is not standardized as a `+parameter=value` plusarg.
 
 **Example: Overriding Module Parameter `DATA_WIDTH`**
 
@@ -165,14 +174,14 @@ endmodule
 **Simulation Command Examples:**
 
 ```bash
-// Using default DATA_WIDTH for instance3
+# Using default DATA_WIDTH for instance3
 vcs top_module.sv
 
-// Overriding DATA_WIDTH for instance3 to 32
-vcs +parameterized_module.DATA_WIDTH=32 top_module.sv
+# VCS-specific elaboration override for instance3
+vcs -pvalue+top_module.instance3.DATA_WIDTH=32 top_module.sv
 ```
 
-In the second example, the command line argument `+parameterized_module.DATA_WIDTH=32` overrides the default `DATA_WIDTH` parameter of `instance3` in `top_module`. Instances `instance1` and `instance2` retain their original parameter values.
+In the second example, the VCS-specific `-pvalue+top_module.instance3.DATA_WIDTH=32` option overrides the `DATA_WIDTH` parameter of `instance3` during elaboration. Instances `instance1` and `instance2` retain their original parameter values. Other simulators use different options, so consult the tool documentation before copying this command.
 
 ## Best Practices for Command Line Arguments
 
@@ -263,7 +272,7 @@ endmodule
 1.  **Parameterized DUT Simulation**:
     - Create a simple DUT module with parameters for data width and address width.
     - Instantiate this DUT in a testbench module.
-    - Use command line arguments to override the `DATA_WIDTH` and `ADDR_WIDTH` parameters of the DUT instance.
+    - Use the simulator's documented elaboration options to override the `DATA_WIDTH` and `ADDR_WIDTH` parameters of the DUT instance; standard `+NAME=value` plusargs cannot change elaborated widths.
     - Display the parameter values used in the DUT instance at the start of the simulation to verify the override.
     - Simulate with different values for `DATA_WIDTH` and `ADDR_WIDTH` provided via the command line.
 
@@ -299,6 +308,8 @@ endmodule
 ```systemverilog
 // Sample Solution for Exercise 2: Test Case Selection (Improved)
 module test_case_selector;
+  timeunit 1ns;
+  timeprecision 1ps;
   string test_case_name;
 
   initial begin

@@ -17,6 +17,15 @@ SystemVerilog randomization is a transformative feature that underpins **constra
 2.  **Constraints**: Constraints are the rules that govern the randomization process. They define the *legal* and *relevant* ranges, distributions, and relationships for the random variables. Constraints ensure that the generated random stimulus is not just arbitrary noise, but rather meaningful and targeted towards verifying specific design behaviors.
 3.  **Control Methods**: SystemVerilog provides a rich set of methods and system functions to *control* the randomization process. These mechanisms allow you to seed the random number generator for reproducibility, trigger randomization, apply dynamic constraints, and manage the overall randomization flow within your testbench.
 
+### Learning Goals
+
+By the end of this chapter, you should be able to:
+
+- Declare `rand` and `randc` properties and explain the scope of their randomization guarantees.
+- Write hard, soft, implication, distribution, and ordering constraints.
+- Check randomization results, diagnose solver failures, and apply inline constraints safely.
+- Connect randomized stimulus to functional coverage while preserving reproducible seeds.
+
 ## Random Variable Types: Tailoring Randomness to Verification Needs
 
 SystemVerilog offers several types of random variables, each designed to address specific verification scenarios and stimulus generation requirements. Choosing the appropriate random variable type is crucial for effective CRV.
@@ -59,8 +68,8 @@ endmodule
 In this example:
 
 -   `source_ip` is declared as `rand`, meaning each time a `network_packet` object is randomized, the `source_ip` will get a new, uniformly distributed random 32-bit value.
--   `packet_id` is declared as `randc`, ensuring that across multiple randomizations of `network_packet` objects, the `packet_id` values will be unique and cycle through all possible 16-bit values before repeating.
--   `payload` is a dynamic array declared as `rand`.  The size and contents of the `payload` array can be further randomized and constrained.
+-   `packet_id` is declared as `randc`, ensuring that repeated randomizations of this object's `packet_id` cycle through values without repetition until the object's cycle is exhausted. A separate object has its own `randc` cycle, so global uniqueness requires an additional constraint or registry.
+-   `payload` is a dynamic array declared as `rand`. Its contents can be randomized, and its size can be randomized when a size constraint or other legal size control is provided; this example does not constrain the size.
 
 ## Constraint Specification: Guiding Randomization for Targeted Verification
 
@@ -185,7 +194,7 @@ class test_generator;
 
   function void configure();
     // 1. Seed Management: Setting the seed for reproducibility
-    srandom(seed); // Set the seed for the random number generator
+    frame.srandom(seed); // Set the seed for the object whose fields are randomized
 
     // 2. Randomization Invocation: Triggering randomization of the 'frame' object
     if(!frame.randomize()) begin // Call randomize() method on the object
@@ -194,7 +203,7 @@ class test_generator;
     $display("Randomized frame length: %0d, CRC Error: %0d", frame.length, frame.crc_error);
 
     // 3. Partial Randomization with Inline Constraints: Randomizing specific variables with temporary constraints
-    if(!frame.randomize(length)) with { length > 1000; } begin // Randomize only 'length' with inline constraint
+    if(!frame.randomize(length) with { length > 1000; }) begin // Randomize only 'length' with inline constraint
       $error("Partial randomization failed!");
     end
     $display("Partially randomized frame length ( > 1000): %0d", frame.length);
@@ -217,7 +226,7 @@ endmodule
 
 **Explanation of Core Methods:**
 
--   **`srandom(seed)`**: This system task seeds the random number generator (RNG). Setting a specific seed ensures that the randomization sequence is repeatable. Using the same seed will always produce the same sequence of random values, which is crucial for debugging and regression testing. If no seed is explicitly set, SystemVerilog uses a default seed, which might vary between simulation runs, making results less predictable.
+-   **`srandom(seed)`**: This method seeds the RNG associated with an object or process. Setting a specific seed makes a sequence reproducible within the same simulator and configuration; exact solver choices and sequences are not guaranteed to match across different tools or versions. If no seed is explicitly set, the starting seed may vary between simulation runs.
 -   **`object.randomize()`**: This method is called on a class object that contains `rand` or `randc` variables. It triggers the constraint solver to find a valid set of random values for all `rand` variables in the object, while satisfying all defined constraints. The `randomize()` method returns 1 if randomization is successful (a valid solution is found) and 0 if it fails (constraints are unsatisfiable, no valid solution exists). It's essential to check the return value and handle potential randomization failures.
 -   **`object.randomize(variable_list) with { inline_constraints }`**: This is a powerful form of partial randomization. It allows you to randomize only a *subset* of the `rand` variables within an object, and optionally apply *inline constraints* that are specific to this particular randomization call. Inline constraints are temporary and only apply to the current `randomize()` call; they do not permanently modify the class's constraints. This is useful for targeting specific scenarios or overriding default constraints for certain test cases.
 
@@ -238,8 +247,8 @@ SystemVerilog provides callback methods that are automatically executed *before*
         -   Sampling coverage points or logging randomized values for analysis.
         -   Performing any actions that need to happen *after* the random values have been generated and assigned.
 
-3.  **`randomize(null)`**: This special syntax of the `randomize()` method, when called with `null` as an argument (e.g., `object.randomize(null);`), attempts to randomize *all* `rand` properties of the object, but *ignores all defined constraints*.
-    -   **Purpose**: `randomize(null)` is primarily used for debugging or specific scenarios where you want to generate unconstrained random values, bypassing the normal constraint solving process. It can be helpful for quickly generating random data without constraint enforcement, for example, in early stages of testbench development or for stress testing without specific protocol rules. However, it should be used cautiously, as it defeats the purpose of constrained random verification in most cases.
+3.  **`randomize(null)`**: Passing `null` as the variable list is not a portable way to request unconstrained random values. In object randomization, use `rand_mode(0)` to disable selected random properties temporarily, or use explicit inline constraints and a separate debug configuration. `randomize(null)` has specialized variable-list semantics and should not be presented as a constraint bypass.
+  -   **Purpose**: For unconstrained debugging, disable only the intended random properties with `object.property.rand_mode(0)` or `object.rand_mode(0)`, randomize as needed, and restore the modes with `rand_mode(1)`. This should be temporary because bypassing protocol constraints can produce illegal stimulus.
 
 ## Verification Integration: Building Coverage-Driven Random Testbenches
 
@@ -251,14 +260,16 @@ Randomization is most effective when integrated into a comprehensive verificatio
 module tb; // Testbench module
   test_generator gen;       // Instance of the test generator class
   int test_count = 1000;   // Number of random test cases to run
+  int iteration;
 
   initial begin
     gen = new();            // Create an instance of the test generator
     gen.seed = $urandom(); // Initialize seed with a non-deterministic random value for each simulation run
+    gen.frame.srandom(gen.seed); // Apply the seed to the object whose fields are randomized
 
-    repeat (test_count) begin // Loop to run multiple random test cases
+    for (iteration = 0; iteration < test_count; iteration++) begin // Loop to run multiple random test cases
       if (!gen.frame.randomize()) begin // Randomize a frame object using the generator
-        $fatal("Test randomization failed in iteration %0d", test_count); // Fatal error if randomization fails
+        $fatal("Test randomization failed in iteration %0d", iteration); // Fatal error if randomization fails
       end
 
       send_frame_to_dut(gen.frame); // Function to send the randomized frame to the DUT (implementation not shown)
@@ -316,15 +327,17 @@ module tb_with_coverage;
   test_generator    gen;
   coverage_collector cov;
   int test_count = 1000;
+  int iteration;
 
   initial begin
     gen = new();
     cov = new(gen.frame); // Pass the frame object from generator to coverage collector
     gen.seed = $urandom();
+    gen.frame.srandom(gen.seed);
 
-    repeat (test_count) begin
+    for (iteration = 0; iteration < test_count; iteration++) begin
       if (!gen.frame.randomize()) begin
-        $fatal("Test randomization failed in iteration %0d", test_count);
+        $fatal("Test randomization failed in iteration %0d", iteration);
       end
       send_frame_to_dut(gen.frame);
       wait_for_response();
@@ -380,19 +393,24 @@ To maximize the benefits of SystemVerilog randomization and CRV, follow these be
 
 3.  **Debugging Randomization Issues**:
 
-    -   **Use `rand_mode(0)` to Disable Constraints**: If you encounter issues with constraint solving or unexpected randomization behavior, temporarily disable constraints using `object.rand_mode(0);`. This will cause the `randomize()` method to generate unconstrained random values, which can help you isolate whether the problem is with the constraints themselves or with other parts of your verification environment. Remember to re-enable constraints with `object.rand_mode(1);` after debugging.
-    -   **Print Constraint Information with `constraint_mode()`**: Use `object.constraint_mode()` to get information about the active constraints for an object. This can help you verify which constraints are currently enabled and their status.
-    -   **Embed Debug Messages in Constraints**: For complex constraints, you can temporarily embed `$display` statements directly within the constraint blocks to print out intermediate values or conditions during constraint solving. This can provide valuable insights into how the constraint solver is working and help you identify constraint conflicts or unexpected behavior.
+    -   **Use `rand_mode(0)` to Disable Random Variables**: If you encounter issues with constraint solving or unexpected randomization behavior, temporarily disable selected random properties with `object.property.rand_mode(0);` or all properties with `object.rand_mode(0);`. This does not disable constraints on variables that remain enabled, so use it only to isolate a problem and restore the modes with `rand_mode(1)` afterward.
+    -   **Use `constraint_mode()` for Constraints**: Enable or disable a named constraint with `object.constraint_name.constraint_mode(0)` or `constraint_mode(1)`. Querying the return value of `constraint_mode()` reports whether that constraint is currently enabled; it does not print solver diagnostics.
+    -   **Use Callbacks for Debug Messages**: Constraint blocks contain declarative expressions and cannot contain `$display` statements or other procedural side effects. Put diagnostics in `pre_randomize()` and `post_randomize()` callbacks, or print the values after checking that `randomize()` succeeded.
 
         ```systemverilog
         class debug_class;
-          rand int var;
+          rand int value;
           constraint debug_constraint {
-            $display("Randomizing value of var..."); // Debug message at start of constraint solving
-            $display("Current value of var before constraint: %0d", var);
-            var inside {[1:10]}; // Example constraint
-            $display("Value of var after constraint: %0d", var);
+            value inside {[1:10]}; // Example constraint
           }
+
+          function void pre_randomize();
+            $display("Randomizing value of var...");
+          endfunction
+
+          function void post_randomize();
+            $display("Value after constraint: %0d", value);
+          endfunction
         endclass
         ```
 
@@ -470,7 +488,7 @@ To maximize the benefits of SystemVerilog randomization and CRV, follow these be
         -   After the loop, use system tasks (e.g., `$display`, `$fwrite`) to:
             -   Report the total number of test cases run.
             -   Report the coverage statistics from the `coverage_collector` (coverage percentage for each coverpoint and overall coverage).
-            -   Implement a check to verify that all defined constraints were exercised at least once during the 1000 random test cases. You can achieve this by adding a flag or counter in each constraint block that is set when the constraint is satisfied during randomization, and then check these flags after the simulation.
+            -   Implement a check to verify that the intended scenarios were observed at least once during the 1000 random test cases. Constraints are declarative and cannot update flags during solving; track observed values with coverpoints, counters, or post-randomization code, then check those measurements after the simulation.
         -   Use `$finish` to end the simulation.
     -   **Run Simulation and Analyze Coverage**: Run the simulation and analyze the generated coverage report. Verify that the coverage goals are met and that all constraints have been exercised. If coverage is not sufficient, refine the constraints, add more coverpoints, or increase the number of test cases.
 

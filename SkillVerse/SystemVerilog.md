@@ -1,38 +1,50 @@
 # SystemVerilog
 ## 1. [SystemVerilog Foundations](SystemVerilog/chapter_00001.md)
+  - Learning Goals
   - Demystifying SystemVerilog
   - A Brief History of SystemVerilog
   - Why Use SystemVerilog? Key Applications
   - The Winning Advantages of SystemVerilog
   - Core Features That Set SystemVerilog Apart
+  - Design and Verification Boundaries
+  - A Small Verification Example
+  - Practical Study Path
+  - Exercises
 ## 2. [Basics](SystemVerilog/chapter_00002.md)
+  - Learning Goals
   - I. Basic SystemVerilog Syntax Fundamentals
   - II. The module Construct
   - III. Procedural Blocks
   - IV. The initial Block
   - V. System Tasks for Simulation Control and Output
 ## 3. [SystemVerilog Built-in Tasks and Functions](SystemVerilog/chapter_00003.md)
+  - Learning Goals
   - Display Tasks
   - Wavedump Tasks
   - Time-Related Functions
   - Simulation Control Tasks
   - Hands-on Exercises with Solutions
 ## 4. [SystemVerilog Data Types](SystemVerilog/chapter_00004.md)
+  - Learning Goals
   - Built-in Data Types
   - Advanced Built-in Types
   - User-Defined Data Types
   - Packed vs. Unpacked Arrays
+  - A Practical Type-Selection Checklist
   - Exercises to Solidify Your Understanding
 ## 5. [Arrays in SystemVerilog](SystemVerilog/chapter_00005.md)
   - Introduction to SystemVerilog Arrays
+  - Learning Goals
   - Packed vs. Unpacked Arrays
   - Fixed-Size Arrays
   - Dynamic Arrays
   - Associative Arrays
   - Queues
+  - Choosing an Array Kind
   - Exercises to Practice Array Concepts
 ## 6. [SystemVerilog Array Manipulation](SystemVerilog/chapter_00006.md)
   - Introduction
+  - Learning Goals
   - Array Indexing
   - Array Manipulation Methods
   - Illustrative Examples with Expected Outputs
@@ -41,6 +53,7 @@
   - Pro-Level Tips for Array Mastery
 ## 7. [SystemVerilog Operators](SystemVerilog/chapter_00007.md)
   - Introduction
+  - Learning Goals
   - Arithmetic Operators
   - Logical vs. Bitwise Operators
   - Reduction Operators
@@ -50,12 +63,14 @@
   - Practical Exercises to Solidify Operator Skills
 ## 8. [Control Flow in SystemVerilog](SystemVerilog/chapter_00008.md)
   - Introduction
+  - Learning Goals
   - Conditional Statements
   - Case Statements
   - Loop Constructs
   - Exercises to Solidify Control Flow Understanding
 ## 9. [Procedural Blocks in SystemVerilog](SystemVerilog/chapter_00009.md)
   - Introduction
+  - Learning Goals
   - Initial Blocks
   - Final Blocks
   - Always Blocks

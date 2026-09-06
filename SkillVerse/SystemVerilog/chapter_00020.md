@@ -118,13 +118,13 @@ Functional coverage is a **user-defined** metric that directly addresses the que
 
 ### 1. Covergroups: Organizing Functional Coverage Definitions
 
-**Covergroups** are the foundational elements of functional coverage in SystemVerilog. They are user-defined, class-like containers that encapsulate coverage points, cross-coverage specifications, options, and methods related to a particular functional aspect or feature of the design. Covergroups must be instantiated and sampled to collect coverage data.
+**Covergroups** are the foundational elements of functional coverage in SystemVerilog. They are user-defined, class-like containers that encapsulate coverage points, cross-coverage specifications, options, and methods related to a particular functional aspect or feature of the design. Covergroups must be instantiated to collect coverage data. They can sample automatically on a declared event or explicitly through `sample()`; choose one strategy deliberately to avoid counting the same transaction twice.
 
 **Example Covergroup for Address Range and Read/Write Operation Cross-Coverage:**
 
 ```systemverilog
 module functional_coverage_example;
-  covergroup address_operation_coverage @(posedge clock); // Sampled on positive clock edge
+  covergroup address_operation_coverage; // This example uses explicit sample() calls
     option.per_instance = 1; // Collect coverage data for each instance
 
     // Coverpoint for 6-bit Address Ranges
@@ -132,7 +132,7 @@ module functional_coverage_example;
       bins low_range  = {[0:15]};   // Addresses 0 to 15
       bins mid_range  = {[16:31]};  // Addresses 16 to 31
       bins high_range = {[32:63]};  // Addresses 32 to 63
-      bins other_ranges default;    // Catch any other address values
+      bins other_ranges = default;  // Catch any other address values
     }
 
     // Cross-coverage between address_range_cp and read_write_operation
@@ -178,8 +178,8 @@ endmodule : functional_coverage_example
 * **Bins (`bins`)**: Defined within coverpoints, bins categorize or group the values or sequences that constitute the coverage targets. Different types of bins include:
     * **Value Lists**: `bins specific_vals = {1, 5, 10};`
     * **Value Ranges**: `bins addr_range = {[0:255]};`
-    * **`default` Bin**: `bins rest default;` (Captures any values not explicitly covered by other bins).
-    * **`illegal_bins`**: `illegal_bins err_vals = {0};` (Identifies values that should trigger a coverage error if hit).
+    * **`default` Bin**: `bins rest = default;` (Captures any values not explicitly covered by other bins).
+    * **`illegal_bins`**: `illegal_bins err_vals = {0};` (Identifies values that the coverage model considers illegal; simulator reporting may be configurable).
     * **`ignore_bins`**: `ignore_bins ignore_vals = {3, 4};` (Excludes specific values from contributing to coverage).
 * **Cross Coverage (`cross`)**: This powerful feature allows the measurement of coverage for simultaneous occurrences or combinations of values from two or more defined coverpoints.
 
@@ -210,7 +210,7 @@ endgroup : data_coverage_group
 * **`default` Bin**: Ensures that any values not captured by other explicit bins are accounted for in the coverage report, highlighting potentially unexpected or unbinned values.
 * **`illegal_bins`**: Used to mark values that represent an invalid or erroneous state according to the design specification. A hit in an `illegal_bin` indicates a verification failure or a design bug.
 * **`ignore_bins`**: Used to exclude values from coverage calculations. This is useful for "don't care" states or values that are not relevant to the current verification objective.
-* **Automatic Bins**: If no explicit bins are defined for a coverpoint, or if specific syntaxes like `bins name[] = {[0:$]};` or `bins name[] = default;` are used, SystemVerilog can **automatically create bins** for all possible values of the coverpoint's expression. This is a convenient way to ensure comprehensive coverage of all states without manually listing every single value, particularly for wider data types.
+* **Automatic Bins**: If no explicit bins are defined for a coverpoint, the simulator creates automatic bins according to the language rules and tool configuration; it is not always one bin for every possible value. Array-bin syntax such as `bins name[] = {[0:$]};` requests a bin for each value in the range, while `bins name[] = default;` creates automatic bins for values not otherwise covered where supported. Explicit bin limits are often preferable for wide data types.
 
     **Example of Automatic Bin Creation:**
 
@@ -320,6 +320,7 @@ SystemVerilog provides built-in methods to query functional coverage results *du
     // In a UVM environment or test
     class my_env extends uvm_env;
       // ... components ...
+      real current_total_coverage;
 
       // Even with multiple instances, get_coverage() gives a cumulative view
       my_transaction_covergroup transaction_cg_inst1 = new();
@@ -332,8 +333,8 @@ SystemVerilog provides built-in methods to query functional coverage results *du
         // Periodically check and report the cumulative coverage
         repeat (10) begin
           #100; // Wait for simulation time to pass
-          int current_total_coverage = my_transaction_covergroup::get_coverage();
-          $display("[%0t] Cumulative coverage for my_transaction_covergroup: %0d%%", $time, current_total_coverage);
+          current_total_coverage = my_transaction_covergroup::get_coverage();
+          $display("[%0t] Cumulative coverage for my_transaction_covergroup: %0.2f%%", $time, current_total_coverage);
 
           // Example: CDV logic based on total coverage
           if (current_total_coverage < 75) begin
@@ -350,7 +351,7 @@ SystemVerilog provides built-in methods to query functional coverage results *du
     ```
     In this scenario, `my_transaction_covergroup::get_coverage()` aggregates coverage from both `transaction_cg_inst1` and `transaction_cg_inst2` to provide a single overall percentage for that covergroup type.
 
-* **`covergroup_instance.get_inst_coverage()`**: This method is called on a specific *instance* of a covergroup and returns the coverage percentage (0-100) achieved by that individual instance only. This is particularly useful when `option.per_instance` is set to 1, allowing you to track coverage per specific block or agent instance.
+* **`covergroup_instance.get_inst_coverage()`**: This method is called on a specific *instance* of a covergroup and returns the coverage percentage (0-100) achieved by that individual instance only. This is particularly useful when `option.per_instance` is set to 1, which also requests that per-instance results be retained and reported separately.
 
     **Contrast:**
     * `get_coverage()`: `covergroup_type::get_coverage()` -> **Cumulative coverage for the covergroup type.**
@@ -434,8 +435,8 @@ Implementing a successful coverage-driven verification (CDV) strategy involves m
 | **`illegal_bins bin_name = {value_list or range};`** | Defines values for a coverpoint that are considered illegal according to the specification. Hitting an illegal bin signifies a coverage failure. | `illegal_bins invalid_state = {3'b111};`                                      | Used to detect erroneous or forbidden states/values during simulation. Triggers an error or warning in the coverage report.                                                                                                                                                                                                  |
 | **`ignore_bins bin_name = {value_list or range};`** | Defines values for a coverpoint that should be excluded from coverage consideration.                        | `ignore_bins unused_codes = {[200:255]};`                                     | Used to exclude "don't care" values, testbench artifacts, or irrelevant scenarios from the reported coverage percentage.                                                                                                                                                                                                 |
 | **`covergroup_instance.sample();`** | A method called on a covergroup instance to explicitly trigger the collection of coverage data at that point. | `my_cg_instance.sample();`                                                    | Used for procedural sampling of covergroups, typically in response to specific events or at strategic points in the testbench sequence.                                                                                                                                                                                      |
-| **`covergroup_type::get_coverage()`** | A static method that returns the overall coverage percentage (0-100) for all instances of the covergroup type. | `int total_cov = my_covergroup::get_coverage();`                            | Provides the cumulative coverage for a given covergroup definition across all its instantiated and sampled instances. Useful for tracking overall progress at a high level or for CDV.                                                                                                                                  |
-| **`covergroup_instance.get_inst_coverage()`** | A method called on a specific covergroup instance to return its individual coverage percentage (0-100).      | `int instance_cov = my_cg_instance.get_inst_coverage();`                      | Provides the coverage percentage for a single, specific instance of a covergroup. Useful when using `option.per_instance = 1`.                                                                                                                                                                                              |
+| **`covergroup_type::get_coverage()`** | A type-level method that returns the overall coverage percentage (0-100) for the covergroup type. | `real total_cov = my_covergroup::get_coverage();`                            | Provides aggregate coverage for a given covergroup definition according to the simulator's coverage model. Useful for tracking overall progress at a high level or for CDV.                                                                                                                                  |
+| **`covergroup_instance.get_inst_coverage()`** | A method called on a specific covergroup instance to return its individual coverage percentage (0-100).      | `real instance_cov = my_cg_instance.get_inst_coverage();`                      | Provides the coverage percentage for a single, specific instance. `option.per_instance = 1` requests separate per-instance reporting.                                                                                                                                                                                              |
 | **Code Coverage Metrics** | Metrics (Statement, Branch, Toggle, etc.) automatically collected by the simulator based on RTL execution. | (Enabled via simulator command-line options like `-cm` in VCS)              | Provides structural coverage information about the RTL code. Collected automatically without explicit SystemVerilog constructs in the design/testbench (except for potential pragmas for exclusion).                                                                                                                     |
 
 ```systemverilog
@@ -446,8 +447,8 @@ module data_bus_coverage_example;
     data_bus_cp: coverpoint data_bus_in {
       bins zero_bin = {8'h00}; // Use hex notation for clarity
       bins powers_of_two_bin = {8'h01, 8'h02, 8'h04, 8'h08, 8'h10, 8'h20, 8'h40, 8'h80}; // Powers of two
-      bins prime_numbers_bin = {2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97, 101, 103, 107, 109, 113, 127, 131, 137, 139, 149, 151, 157, 163, 167, 173, 179, 181, 191, 193, 197, 199, 211, 223, 227, 229, 233, 239, 241, 251}; // A good set of primes < 256
-      bins default_bin default; // Catch all other values
+      bins prime_numbers_bin = {3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97, 101, 103, 107, 109, 113, 127, 131, 137, 139, 149, 151, 157, 163, 167, 173, 179, 181, 191, 193, 197, 199, 211, 223, 227, 229, 233, 239, 241, 251}; // Primes < 256; 2 is covered by powers_of_two_bin
+      bins default_bin = default; // Catch all other values
     }
   endgroup : data_bus_cg
 
@@ -472,7 +473,7 @@ module data_bus_coverage_example;
 
     // Drive random values to increase coverage probability for remaining bins
     repeat (193) begin // Total samples = 7 (above) + 193 = 200
-      data_bus_in = $urandom_range(0, 255); // Drive random 8-bit values
+      data_bus_in = $urandom_range(255, 0); // Drive random 8-bit values (max, min)
       db_coverage.sample(); // Sample the covergroup
       sample_count++;
     end

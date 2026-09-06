@@ -11,6 +11,16 @@ Macros in SystemVerilog are preprocessor directives that enable textual substitu
 
 By effectively utilizing macros, verification engineers and designers can create more modular, adaptable, and maintainable SystemVerilog code, leading to improved design quality and development efficiency.
 
+### Learning Goals
+
+By the end of this chapter, you should be able to:
+
+- Define, invoke, and undefine object-like and parameterized macros.
+- Explain preprocessing order, compilation-unit visibility, and conditional compilation.
+- Use predefined source-location macros correctly in diagnostics.
+- Avoid precedence, dangling-`else`, and multi-statement hazards in macro expansions.
+- Recognize when parameters, constants, functions, or packages are safer than textual macros.
+
 ## Defining and Using Macros
 
 SystemVerilog macros are defined using the `` `define `` directive and undefined using the `` `undef `` directive. They are invoked by preceding the macro name with a backtick `` ` `` (grave accent).
@@ -27,7 +37,7 @@ The `` `define `` directive is used to create a macro, associating a name with a
 
 -   **`\`define**: The directive keyword that initiates macro definition.
 -   **`MACRO_NAME`**: The identifier chosen as the name of the macro. Macro names typically follow uppercase convention for better readability and to distinguish them from SystemVerilog identifiers.
--   **`macro_text`**: The text or code snippet that will be substituted wherever `MACRO_NAME` is used in the code. This can be any valid SystemVerilog code, including expressions, statements, or even module declarations.
+-   **`macro_text`**: The preprocessing tokens that will be substituted wherever `MACRO_NAME` is used in the code. The replacement must form valid SystemVerilog in its context; a macro has no type checking or scope of its own, even when it expands to an expression, statement, or declaration.
 
 **Example: Defining a Macro for Data Width**
 
@@ -78,7 +88,7 @@ module undef_example;
 endmodule
 ```
 
-After `` `undef DATA_WIDTH ``, any subsequent use of `` `DATA_WIDTH `` will result in a preprocessing error because the macro is no longer defined.
+After `` `undef DATA_WIDTH ``, any subsequent use of `` `DATA_WIDTH `` will result in a preprocessing error because the macro is no longer defined. Preprocessing directives are handled before simulation begins, so placing `` `undef `` inside an `initial` block still affects the remaining source text rather than waiting until runtime.
 
 ## Types and Applications of Macros
 
@@ -109,6 +119,7 @@ module simple_macros;
   initial begin
     #5ns rst = ~`RST_VAL;
     #20ns rst = `RST_VAL;
+    #10ns $finish;
   end
 endmodule
 ```
@@ -130,10 +141,12 @@ SystemVerilog macros can also accept arguments, making them behave like simple f
 
 ```systemverilog
 `define ASSERT_TRUE(condition, message) \
-  if (!(condition)) begin \
-    $error("Assertion Failed: %s at line %0d in file %s", message, `__LINE__, `__FILE__); \
-    $fatal; \
-  end
+  do begin \
+    if (!(condition)) begin \
+      $error("Assertion Failed: %s at line %0d in file %s", message, `__LINE__, `__FILE__); \
+      $fatal(1); \
+    end \
+  end while (0)
 
 module parameterized_macro_example;
   logic a, b;
@@ -165,7 +178,7 @@ Macros are extensively used for conditional compilation, allowing you to include
 
 -   **`\`ifdef MACRO_NAME`**: Checks if `MACRO_NAME` is currently defined.
 -   **`\`else`**:  Optional clause; code within `` `else `` is compiled if the condition in `` `ifdef `` is false.
--   **`\`elsif (condition)`**: Optional clause for nested conditional compilation.
+-   **`\`elsif MACRO_NAME`**: Optional clause that checks another macro when the preceding conditional branch was false.
 -   **`\`endif`**: Marks the end of the conditional compilation block.
 
 **Example: Conditional Compilation for Debug Mode**
@@ -198,11 +211,11 @@ In this example, the debug display statements are only compiled and executed if 
 
 ## Scope of Macro Definitions
 
-Macro definitions in SystemVerilog have a file-level scope. Once a macro is defined using `` `define ``, it is effective from that point onwards in the current file.
+Macro definitions are processed in order and are visible from the definition onward within the current compilation unit. A compilation unit may contain one source file or several files, depending on the simulator's compilation options.
 
--   **File Scope**: Macros are only visible and applicable within the file where they are defined. If you need to use a macro in multiple files, you must define it in each file or include a common header file containing the macro definitions.
+-   **Compilation-Unit Scope**: A macro can be visible in later source text in the same compilation unit. For predictable reuse across files or compilation commands, define it in a guarded common header and include it explicitly, or pass it through the simulator's documented macro-definition option.
 -   **Definition Order**: The order of macro definitions matters. If you redefine a macro with the same name later in the same file, the new definition will override the previous one from that point forward.
--   **No Module or Package Scope**: Macros are not scoped to modules, packages, or any other SystemVerilog constructs. They are strictly preprocessor directives operating at the file level.
+-   **No Module or Package Scope**: Macros are not scoped to modules, packages, or any other SystemVerilog constructs. They are preprocessor directives operating before those language scopes are compiled.
 
 **Example: Macro Scope Demonstration**
 
@@ -212,7 +225,7 @@ Macro definitions in SystemVerilog have a file-level scope. Once a macro is defi
 
 module module1;
   initial begin
-    $display("Module 1: `%MSG_FILE1`"); // Macro MSG_FILE1 is defined here
+    $display("Module 1: %s", `MSG_FILE1); // Macro MSG_FILE1 is defined here
   end
 endmodule
 
@@ -224,7 +237,7 @@ module module2;
   initial begin
     // $display("Module 2: `%MSG_FILE1`"); // This would cause an error in file2.sv if MSG_FILE1 is not defined in file2.sv or included file.
     `ifdef MSG_FILE2
-      $display("Module 2: `%MSG_FILE2`"); // Macro MSG_FILE2 is conditionally used
+      $display("Module 2: %s", `MSG_FILE2); // Macro MSG_FILE2 is conditionally used
     `else
       $display("Module 2: MSG_FILE2 is not defined in this file.");
     `endif
@@ -232,7 +245,7 @@ module module2;
 endmodule
 ```
 
-In this example, `MSG_FILE1` is defined in `file1.sv` and can be used within `module1`. If `module2` in `file2.sv` attempts to use `MSG_FILE1` without it being defined in `file2.sv` or included, it will result in an error. `MSG_FILE2` is conditionally used in `file2.sv` and will only display a message if `MSG_FILE2` is defined in `file2.sv`.
+In this example, `MSG_FILE1` is defined before `module1` in `file1.sv`. Whether it is visible while compiling `file2.sv` depends on whether both files are in the same compilation unit; separate compilation units do not share preprocessor state. `MSG_FILE2` is conditionally used and will only display a message if it is defined before that conditional block.
 
 ## Predefined Macros
 
@@ -242,7 +255,7 @@ SystemVerilog provides several predefined macros that are automatically availabl
 | :-------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `` `__LINE__ ``                                             | Expands to the current line number in the source code file as an integer. Useful for error reporting and debugging messages to indicate the location of an event.                                                                                                                                                                                                                                                                                                                                                                                                                                     | `42`                                                                                                                                                                                                       |
 | `` `__FILE__ ``                                             | Expands to the current file name as a string. Useful for logging and error messages to identify the source file.                                                                                                                                                                                                                                                                                                                                                                                                                                   | `"my_module.sv"`                                                                                                                                                                                                       |
-| `` `__TIME__ ``                                             | Expands to the current simulation time as a string in `hh:mm:ss` format. Useful for timestamping simulation events and messages.                                                                                                                                                                                                                                                                                                                                                                       | `"09:30:15"`                                                                                                                                                                                                       |
+ | `` `__TIME__ ``                                             | Expands to the compilation time as a string in `hh:mm:ss` format. It is source metadata, not the current simulation time.                                                                                                                                                                                                                                                                                                                                                                       | `"09:30:15"`                                                                                                                                                                                                       |
 | `` `__DATE__ ``                                             | Expands to the current date of compilation as a string in `Mmm dd yyyy` format (e.g., "Mar 06 2025"). Useful for version control and build identification.                                                                                                                                                                                                                                                                                                                                                                 | `"Mar 06 2025"`                                                                                                                                                                                                       |
 | `` `__SYSTEMVERILOG__ ``                                 | A version number indicating SystemVerilog support by the simulator. Can be used for conditional compilation to handle different SystemVerilog language feature support levels.                                                                                                                                                                                                                                                                                                                                                                       | `201800` (Example - YearMonth * 100)                                                                                                                                                                                                       |
 
@@ -262,6 +275,8 @@ endmodule
 ```
 
 These predefined macros are invaluable for adding contextual information to simulation outputs, assertions, and log messages, making debugging and tracking easier.
+
+`__TIME__` and `__DATE__` describe when the source was compiled, not the current simulation time; use `$time` for simulation timestamps. `__SYSTEMVERILOG__` is not a portable IEEE-defined predefined macro, so treat it as simulator-specific and guard its use with the relevant tool documentation or a user-defined build macro.
 
 ## Best Practices for Macros
 
@@ -417,14 +432,17 @@ In the `precedence_issue_example`, without parentheses, the macro substitution l
 `define FEATURE_LOGGING // Define FEATURE_LOGGING to enable logging
 
 module feature_conditional_compilation;
+  timeunit 1ns;
+  timeprecision 1ps;
   logic clk;
-  logic [7:0] data_in, data_out;
+  logic [7:0] data_in = '0;
+  logic [7:0] data_out = '0;
 
   always @(posedge clk) begin
     data_out <= data_in;
 
     `ifdef FEATURE_LOGGING
-      $display("LOG: At time %0t, data_in = %h, data_out = %h", $time, data_in, data_out); // Conditional logging
+      $strobe("LOG: At time %0t, data_in = %h, data_out = %h", $time, data_in, data_out); // Conditional logging after NBA updates
     `endif
   end
 

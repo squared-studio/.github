@@ -4,6 +4,16 @@
 
 SystemVerilog elevates array manipulation beyond basic indexing, offering powerful built-in methods for dynamic arrays, queues, and associative arrays. While these methods are primarily for dynamic and associative types, a solid grasp of array indexing is fundamental across all array types in SystemVerilog. This guide explores both essential indexing techniques and advanced manipulation methods, optimized for efficient verification and robust RTL design.
 
+## Learning Goals
+
+By the end of this chapter, you should be able to:
+
+- Read and write packed and unpacked dimensions in multidimensional declarations.
+- Use `foreach` and array locator methods to inspect, filter, sort, and reduce collections.
+- Distinguish methods that mutate an array from methods that return a queue or value.
+- Handle empty search results, dynamic-array initialization, and queue return types safely.
+- Separate simulation-oriented array methods from synthesis-friendly packed-vector operations.
+
 ## Array Indexing: Precision Access to Multidimensional Data
 
 SystemVerilog excels in handling complex, multidimensional arrays, incorporating both packed and unpacked dimensions. Mastering indexing is key to effectively model hardware and process data.
@@ -50,12 +60,12 @@ end
 ### Key Indexing Considerations
 
 1.  **Packed Dimension Order**: In packed dimensions (e.g., `[7:0]`), the **rightmost dimension is the least significant and changes fastest** during linear memory traversal.
-2.  **Memory Footprint**: Packed arrays offer memory efficiency due to contiguous bit storage. Unpacked arrays, using pointers, might have a larger memory footprint, especially for very large arrays.
-3.  **Synthesis Implications**: Unpacked arrays often imply block RAM implementations in hardware, while packed arrays are typically synthesized into registers or register files.
+2.  **Memory Footprint**: Packed arrays provide a contiguous bit representation, while the storage and overhead of unpacked arrays depend on the element type, array kind, and implementation. Do not assume that an unpacked array uses pointers or has a particular physical layout.
+3.  **Synthesis Implications**: Synthesis results depend on access patterns, dimensions, timing constraints, and tool directives. An unpacked memory array may infer block RAM, registers, or another structure; a packed array may also infer memories when used as part of a larger storage model. Verify the result with synthesis reports.
 
 ## Array Manipulation Methods: Beyond Basic Indexing
 
-SystemVerilog provides a suite of powerful built-in methods to manipulate array data efficiently.  These methods are primarily applicable to dynamic arrays, queues, and associative arrays, enabling complex data processing and verification tasks.
+SystemVerilog provides a suite of powerful built-in methods to manipulate array data efficiently. These methods apply to several unpacked array kinds, including fixed-size and dynamic arrays and queues; associative arrays support a relevant but smaller method set. Always check the method's return type and the array kind before composing operations.
 
 ### Searching and Filtering
 
@@ -63,8 +73,8 @@ SystemVerilog provides a suite of powerful built-in methods to manipulate array 
 | ------------------ | ----------------------------------------------------------- | ---------------------------------------- |
 | **`.find()`**       | Returns a queue containing all elements that satisfy a condition. | `array.find(x) with (x > threshold)`   |
 | **`.find_index()`** | Returns a queue of indices for elements meeting a condition. | `array.find_index(x) with (x % 2 != 0)` |
-| **`.find_first()`** | Returns the first element that matches a condition.         | `array.find_first(x) with (x < min_val)`|
-| **`.find_last()`**  | Returns the last element that matches a condition.          | `array.find_last(x) with (x == target)`  |
+| **`.find_first()`** | Returns a queue containing the first element that matches a condition. | `array.find_first(x) with (x < min_val)`|
+| **`.find_last()`**  | Returns a queue containing the last element that matches a condition.  | `array.find_last(x) with (x == target)`  |
 | **`.unique()`**     | Returns a queue of unique values from the array.           | `array.unique()`                         |
 | **`.unique_index()`**| Returns indices of the first occurrence of each unique value. | `array.unique_index()`                   |
 
@@ -94,13 +104,23 @@ SystemVerilog provides a suite of powerful built-in methods to manipulate array 
 | **`.or()`**       | Performs bitwise OR reduction across all array elements.      | Combining flag bits, checking if any flag is set. |
 | **`.xor()`**      | Performs bitwise XOR reduction across all array elements.     | Parity bit calculation across a data array.     |
 
+Locator methods return queues, even when the queue contains zero or one element. For example, a safe first-match check is:
+
+```systemverilog
+int matches[$] = temperatures.find(x) with (x < 0);
+if (matches.size() != 0)
+    $display("First matching value: %0d", matches[0]);
+```
+
+The `with` expression is evaluated for each element. Use an explicit iterator name consistently, and remember that a locator method does not change the source array.
+
 ## Illustrative Examples with Expected Outputs
 
 ### 1. Filtering with `find()` for Temperature Data
 
 ```systemverilog
-int temperatures[] = {-5, 12, 23, -3, 42, 18};
-int below_freezing[] = temperatures.find(x) with (x < 0);
+int temperatures[] = '{-5, 12, 23, -3, 42, 18};
+int below_freezing[$] = temperatures.find(x) with (x < 0);
 $display("Temperatures below freezing: %p", below_freezing);
 // Output: Temperatures below freezing: '{-5, -3}
 ```
@@ -108,7 +128,7 @@ $display("Temperatures below freezing: %p", below_freezing);
 ### 2. Sorting Strings by Length using `sort()` with `with` Clause
 
 ```systemverilog
-string names[] = {"Alice", "Bob", "Charlie"};
+string names[] = '{"Alice", "Bob", "Charlie"};
 names.sort() with (x.len()); // Sort names based on string length
 $display("Sorted by length: %p", names);
 // Output: Sorted by length: '{"Bob", "Alice", "Charlie"}
@@ -117,7 +137,7 @@ $display("Sorted by length: %p", names);
 ### 3. Bitwise AND Reduction on a Packed Array of Masks
 
 ```systemverilog
-bit [3:0] masks[] = {4'b1010, 4'b1100, 4'b1111};
+bit [3:0] masks[] = '{4'b1010, 4'b1100, 4'b1111};
 bit [3:0] combined_mask = masks.and();
 $display("Combined AND mask: %b", combined_mask);
 // Output: Combined AND mask: 1000 (1010 & 1100 & 1111 = 1000)
@@ -126,8 +146,8 @@ $display("Combined AND mask: %b", combined_mask);
 ### 4. Finding Unique Indices with `unique_index()`
 
 ```systemverilog
-int data_stream[] = {5, 2, 5, 7, 2, 9};
-int unique_indices[] = data_stream.unique_index();
+int data_stream[] = '{5, 2, 5, 7, 2, 9};
+int unique_indices[$] = data_stream.unique_index();
 $display("Indices of first unique values: %p", unique_indices);
 // Output: Indices of first unique values: '{0, 1, 3, 5} (indices of 5, 2, 7, 9)
 ```
@@ -135,7 +155,7 @@ $display("Indices of first unique values: %p", unique_indices);
 ### 5. Method Chaining for Concise Operations
 
 ```systemverilog
-int sample_values[] = {8, 3, 5, 8, 2, 5};
+int sample_values[] = '{8, 3, 5, 8, 2, 5};
 int unique_sum = sample_values.unique().sum(); // Chain unique() and sum()
 $display("Sum of unique values: %0d", unique_sum);
 // Output: Sum of unique values: 18 (unique values are {8, 3, 5, 2}, sum is 18)
@@ -148,8 +168,8 @@ $display("Sum of unique values: %0d", unique_sum);
 3.  **Flexibility of `with` Clause**: The `with` clause offers powerful customization for filtering and sorting. It can incorporate complex expressions and even access struct members for sophisticated data manipulation:
 
     ```systemverilog
-    typedef struct packed { int age; string name; } person_t;
-    person_t people[] = ...;
+    typedef struct { int age; string name; } person_t;
+    person_t people[]; // Populate this dynamic array before sorting.
     people.sort() with (x.age); // Sort an array of structs based on the 'age' field
     ```
 
@@ -179,15 +199,15 @@ $display("Sum of unique values: %0d", unique_sum);
 
     ```systemverilog
     // Find the first element in a 2D matrix that falls within the range [10:20]
-    int matrix[10][20]; // Example 2D dynamic array
-    int found_element = matrix.find_first() with (item inside {[10:20]});
+    int matrix[10][20]; // Example 2D fixed-size array
+    int found_elements[$] = matrix.find_first() with (item inside {[10:20]});
     ```
 
 3.  **Conditional Summation for Targeted Aggregation**: Use the `with` clause within `.sum()` to perform conditional summations, allowing you to aggregate only specific elements based on criteria:
 
     ```systemverilog
     // Calculate the sum of only positive values in an array
-    int all_values[] = ...;
+    int all_values[]; // Populate this dynamic array before reducing it.
     int positive_sum = all_values.sum() with (item > 0 ? item : 0);
     ```
 
@@ -196,7 +216,8 @@ $display("Sum of unique values: %0d", unique_sum);
     ```systemverilog
     // Example: Register file parity calculation using packed array and .xor()
     logic [7:0][31:0] register_file; // Packed array representing a register file
-    assign parity_bit = register_file[3].xor(); // Calculate parity of register 3
+    logic parity_bit;
+    assign parity_bit = ^register_file[3]; // Calculate parity of register 3
     ```
 
 By deeply understanding and practicing these array manipulation techniques, you will significantly enhance your SystemVerilog proficiency, enabling you to tackle complex verification challenges and design sophisticated hardware architectures with greater efficiency and precision.

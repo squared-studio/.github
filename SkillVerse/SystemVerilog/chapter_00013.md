@@ -14,6 +14,15 @@ SystemVerilog interfaces represent a significant advancement in hardware design 
 
 In essence, SystemVerilog interfaces promote a more abstract, modular, and robust approach to hardware design, shifting the focus from individual signal wiring to protocol-level communication contracts.
 
+### Learning Goals
+
+By the end of this chapter, you should be able to:
+
+- Define interfaces that group protocol signals and optional protocol-related methods.
+- Connect interface instances to modules and use modports to express each module's permitted view.
+- Apply ready/valid handshake rules so payloads remain stable until a transfer occurs.
+- Distinguish synthesizable interface-based RTL from testbench tasks, clocking, and virtual-interface usage.
+
 ## Defining Interfaces: Creating Communication Contracts
 
 Interfaces are created using the `interface` keyword, defining a named block that encapsulates signals, parameters, and optional methods (tasks and functions) that represent a communication protocol.
@@ -30,7 +39,7 @@ interface simple_bus_if; // 'if' suffix is a common naming convention for interf
 
   // Optional: Interface methods (functions and tasks) to encapsulate protocol behavior
   function automatic bit is_active(); // Example function within the interface
-    return valid && !rst_n;
+    return valid && rst_n;
   endfunction
 
   task automatic reset_bus(); // Example task within the interface
@@ -112,7 +121,7 @@ Modports (Module Ports within Interfaces) are a powerful feature of SystemVerilo
 
 ### The Importance of Modports: Clarity, Error Prevention, and Reusability
 
--   **Preventing Signal Contention and Errors**: Modports are crucial for preventing accidental signal contention and wiring errors. By explicitly defining signal directions (input or output) for each type of module connecting to the interface, SystemVerilog's compiler and simulator can detect and flag potential conflicts where multiple drivers might attempt to drive the same signal.
+-   **Preventing Signal Contention and Errors**: Modports restrict what a module may read or drive through its formal interface view, which helps tools detect direction mistakes. They do not by themselves prevent contention if multiple permitted drivers are connected to the same interface signal, so ownership must still be designed explicitly.
 -   **Clarifying Design Intent and Improving Readability**: Modports significantly enhance design clarity by clearly documenting the intended direction of signals for different modules interacting through the interface. This makes the code self-documenting and easier to understand, especially in complex designs with multiple interfaces and modules.
 -   **Enabling Interface Reuse with Different Connection Paradigms**: Modports make interfaces more versatile and reusable. A single interface definition can be used to connect different types of modules (e.g., masters and slaves, producers and consumers) by providing different modport views tailored to each module's role in the communication protocol.
 -   **Facilitating Verification and Protocol Checking**: Modports, when combined with clocking blocks and assertions within interfaces, are essential for building robust verification environments. They allow you to define clear protocol boundaries and enforce protocol rules at the interface level, making it easier to verify correct communication between modules.
@@ -153,28 +162,28 @@ module axi_stream_data_source(axi_stream_if.source_port stream_intf); // Using '
       stream_intf.tdata  <= 0;
       stream_intf.tvalid <= 0;
     end else begin
-      stream_intf.tdata  <= stream_intf.tdata + 1;
-      stream_intf.tvalid <= 1;
+      if (!stream_intf.tvalid || stream_intf.tready) begin
+        stream_intf.tdata  <= stream_intf.tdata + 1;
+        stream_intf.tvalid <= 1;
+      end
     end
   end
 endmodule
 
 module axi_stream_data_sink(axi_stream_if.sink_port stream_intf); // Using 'sink_port' modport
   always_ff @(posedge stream_intf.aclk) begin
-    if (stream_intf.tvalid) begin
+    if (stream_intf.tvalid && stream_intf.tready) begin
       $display("[%0t] Sink received data: 0x%08h", $time, stream_intf.tdata);
-      stream_intf.tready <= 1; // Assert ready to accept data
-    end else begin
-      stream_intf.tready <= 0;
     end
+    stream_intf.tready <= 1; // This simple sink is always ready
   end
 endmodule
 
 module top_axi_stream_example;
   axi_stream_if axi_stream_bus(); // Instantiate AXI-Stream interface
 
-  axi_stream_data_source source_unit (.stream_intf(axi_stream_bus.source_port)); // Connect source using 'source_port' modport
-  axi_stream_data_sink   sink_unit   (.stream_intf(axi_stream_bus.sink_port));   // Connect sink using 'sink_port' modport
+  axi_stream_data_source source_unit (.stream_intf(axi_stream_bus)); // Formal port selects 'source_port'
+  axi_stream_data_sink   sink_unit   (.stream_intf(axi_stream_bus)); // Formal port selects 'sink_port'
   // A monitor could be connected using 'monitor_port' modport
 
   // Clock and reset generation
@@ -194,10 +203,10 @@ endmodule
     -   `source_port`: For modules acting as data sources (e.g., masters, producers). From the source's perspective, `tdata` and `tvalid` are outputs (driven by the source), while `tready`, `aclk`, and `aresetn` are inputs (received by the source).
     -   `sink_port`: For modules acting as data sinks (e.g., slaves, consumers). From the sink's perspective, `tdata` and `tvalid` are inputs (received by the sink), and `tready` is an output (driven by the sink).
     -   `monitor_port`: For passive monitor modules that only observe the interface signals. All signals are declared as `input` in the `monitor_port` as the monitor only samples or observes the signals without driving them.
--   **Enforced Directionality**: When you connect modules to an interface using a specific modport (e.g., `axi_stream_data_source` using `axi_stream_if.source_port`), the SystemVerilog compiler enforces the signal directions defined in that modport.  Attempting to drive an `input` signal or read an `output` signal from within a module connected through a modport will result in a compilation error, preventing common connectivity mistakes.
--   **Modport-Specific Instantiation**: In the module instantiations in `top_axi_stream_example`, note how the modport view is specified when connecting the interface:
-    -   `axi_stream_data_source source_unit (.stream_intf(axi_stream_bus.source_port));`
-    -   `axi_stream_data_sink   sink_unit   (.stream_intf(axi_stream_bus.sink_port));`
+  -   **Enforced Directionality**: When a module declares an interface port with a specific modport (e.g., `axi_stream_data_source` using `axi_stream_if.source_port`), tools enforce the signal directions visible through that formal port. Attempting to drive an `input` signal through the view is an error. The actual connection is normally the interface instance; the formal port selects the modport view.
+  -   **Modport-Specific Module Ports**: In the module declarations in `top_axi_stream_example`, note how the modport view is specified on each formal interface port:
+    -   `axi_stream_data_source source_unit (.stream_intf(axi_stream_bus));`
+    -   `axi_stream_data_sink   sink_unit   (.stream_intf(axi_stream_bus));`
     This syntax explicitly associates each module instance with the appropriate modport view of the `axi_stream_bus` interface.
 
 ### Modport Best Practices for Robust Interface Design
@@ -281,8 +290,8 @@ endmodule
 module top_uart_system;
   uart_if uart_bus(); // Instantiate UART interface
 
-  uart_transmitter tx_unit (.uart_dte_intf(uart_bus.DTE_port)); // Connect transmitter using DTE modport
-  uart_receiver    rx_unit (.uart_dce_intf(uart_bus.DCE_port)); // Connect receiver using DCE modport
+  uart_transmitter tx_unit (.uart_dte_intf(uart_bus)); // Formal port selects DTE_port
+  uart_receiver    rx_unit (.uart_dce_intf(uart_bus)); // Formal port selects DCE_port
 
   // ... (Testbench and clock generation) ...
 endmodule
@@ -309,10 +318,21 @@ interface axi_lite_if #(parameter ADDR_WIDTH = 32, parameter DATA_WIDTH = 32);
   logic wvalid;
   logic wready;
 
-  // AXI-Lite Write Response Channel (add signals for read channels as well)
-  logic bresp; // Example: Write response signal (adjust width as needed)
+  // AXI-Lite Write Response Channel
+  logic [1:0] bresp; // AXI-Lite write response: OKAY, EXOKAY, SLVERR, or DECERR
   logic bvalid;
   logic bready;
+
+  // AXI-Lite Read Address Channel
+  logic [ADDR_WIDTH-1:0] araddr;
+  logic arvalid;
+  logic arready;
+
+  // AXI-Lite Read Data Channel
+  logic [DATA_WIDTH-1:0] rdata;
+  logic [1:0] rresp;
+  logic rvalid;
+  logic rready;
 
   // Clock and Reset (common to all channels)
   logic aclk;
@@ -320,16 +340,14 @@ interface axi_lite_if #(parameter ADDR_WIDTH = 32, parameter DATA_WIDTH = 32);
 
   // Modport for AXI-Lite Master
   modport master_port ( // Master modport view
-    output awaddr, awvalid, wdata, wvalid, bready, // Outputs from master
-    input  awready, wready, bresp, bvalid, aclk, aresetn // Inputs to master
-    // ... (Include signals for read channels in master modport) ...
+    output awaddr, awvalid, wdata, wvalid, bready, araddr, arvalid, rready, // Outputs from master
+    input  awready, wready, bresp, bvalid, arready, rdata, rresp, rvalid, aclk, aresetn
   );
 
   // Modport for AXI-Lite Slave
   modport slave_port ( // Slave modport view
-    input  awaddr, awvalid, wdata, wvalid, bready, aclk, aresetn, // Inputs to slave
-    output awready, wready, bresp, bvalid                     // Outputs from slave
-    // ... (Include signals for read channels in slave modport) ...
+    input  awaddr, awvalid, wdata, wvalid, bready, araddr, arvalid, rready, aclk, aresetn, // Inputs to slave
+    output awready, wready, bresp, bvalid, arready, rdata, rresp, rvalid
   );
 endinterface
 
@@ -345,8 +363,8 @@ module top_axi_lite_system;
   // Instantiate AXI-Lite interface with specific parameter values (e.g., 32-bit address, 64-bit data)
   axi_lite_if #(.ADDR_WIDTH(32), .DATA_WIDTH(64)) axi_lite_bus();
 
-  axi_lite_master_unit master_inst (.axi_master_intf(axi_lite_bus.master_port)); // Connect master
-  axi_lite_slave_unit  slave_inst  (.axi_slave_intf(axi_lite_bus.slave_port));  // Connect slave
+  axi_lite_master_unit master_inst (.axi_master_intf(axi_lite_bus)); // Formal port selects master_port
+  axi_lite_slave_unit  slave_inst  (.axi_slave_intf(axi_lite_bus));  // Formal port selects slave_port
 
   // ... (Testbench and clock/reset generation) ...
 endmodule
@@ -402,22 +420,26 @@ interface smart_bus_if #(parameter DATA_WIDTH = 8);
 
   // Modport for Transmitter (Source)
   modport transmitter_port (
-    output logic [DATA_WIDTH-1:0] data, valid,
-    input  logic clk, rst_n, ready
+    output logic [DATA_WIDTH-1:0] data,
+    output logic valid,
+    input logic clk, rst_n, ready
   );
 
   // Modport for Receiver (Sink)
   modport receiver_port (
-    input  logic [DATA_WIDTH-1:0] data, valid, clk, rst_n,
+    input logic [DATA_WIDTH-1:0] data,
+    input logic valid, clk, rst_n,
     output logic ready
   );
 
-  // Reset Task encapsulated within the interface
+  // Reset Task encapsulated within the interface; call from a testbench that owns these signals
   task automatic reset_interface();
-    @(negedge rst_n); // Wait for reset to be asserted
+    rst_n <= 1'b0; // Assert active-low reset
     data  <= '0;
     valid <= 0;
     ready <= 0;
+    #1;
+    rst_n <= 1'b1; // Deassert reset
     $display("[%0t] Interface %m: Reset complete", $time); // %m for interface instance name
   endtask
 endinterface

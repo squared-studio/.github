@@ -4,6 +4,16 @@
 
 Operators are the verbs of SystemVerilog, enabling you to describe hardware behavior and verification logic concisely and effectively.  A deep understanding of SystemVerilog operators is not just about syntax; it's about grasping how these operators translate into actual hardware implementations. This guide provides a detailed exploration of essential operators, emphasizing their hardware implications and practical applications in both RTL design and verification.
 
+## Learning Goals
+
+By the end of this chapter, you should be able to:
+
+- Choose arithmetic, logical, bitwise, reduction, comparison, and shift operators by intent.
+- Predict width, signedness, overflow, and `X`/`Z` behavior in common expressions.
+- Distinguish combinational propagation delay from cycles added by a sequential implementation.
+- Use parentheses to make precedence explicit and avoid accidental expression changes.
+- Recognize when an operator is synthesizable in a particular tool flow rather than assuming that syntax alone determines hardware.
+
 ## Arithmetic Operators: The Foundation of Datapath Design
 
 Arithmetic operators are fundamental for performing mathematical computations within your SystemVerilog designs. They are the core of datapath implementations and numerical algorithms.
@@ -13,17 +23,18 @@ Arithmetic operators are fundamental for performing mathematical computations wi
 | `+`      | Addition             | Combinational Adder             | Supports both signed and unsigned arithmetic. Latency depends on bit-width. |
 | `-`      | Subtraction          | Combinational Subtractor        | Implemented using 2's complement for signed numbers.    |
 | `*`      | Multiplication       | Multiplier Block                | Resource-intensive in FPGA/ASIC synthesis. Consider latency and area trade-offs. |
-| `/`      | Division             | Complex Sequential Divider Logic | Generally **non-synthesizable** for RTL. Primarily for testbenches. Simulation errors on division by zero. |
+| `/`      | Division             | Divider or optimized constant operation | May synthesize, especially for constants or supported widths, but can be expensive or slow. Simulation behavior for division by zero must be handled explicitly. |
 | `%`      | Modulus (Remainder) | Remainder Logic                 | Useful for tasks like address wrapping, modulo counters. Can be complex for synthesis. |
-| `**`     | Exponentiation       | Combinational/Sequential Logic  | Highly resource-intensive and often **non-synthesizable** in typical RTL contexts. Primarily for verification. |
+| `**`     | Exponentiation       | Tool-dependent arithmetic logic | A constant, simple exponent may synthesize in some flows; variable exponents are usually expensive and often unsuitable for RTL. Commonly used in verification and reference models. |
 
 ### Real-World Example: Address Calculation Unit
 
 ```systemverilog
-module address_calculation_unit;
-  input logic [31:0] base_address;
-  input logic [5:0]  index;
-  output logic [31:0] effective_address;
+module address_calculation_unit (
+  input  logic [31:0] base_address,
+  input  logic [5:0]  index,
+  output logic [31:0] effective_address
+);
 
   parameter BYTE_OFFSET_FACTOR = 2; // Example: word addressing (2^2 = 4 bytes per word)
 
@@ -37,10 +48,10 @@ endmodule
 **Key Hardware and Synthesis Considerations for Arithmetic Operators:**
 
 -   **Synthesis Complexity**:  Operators like `*`, `/`, `%`, and `**` can lead to complex and resource-intensive hardware, especially for larger bit-widths. Be mindful of synthesis implications and target technology constraints. Division and exponentiation are often avoided in performance-critical RTL.
--   **Latency**: Arithmetic operations introduce latency. Adders and subtractors have relatively low latency, while multipliers and dividers can have significant latency, impacting clock speeds and throughput.
+-   **Delay and Latency**: A combinational operator contributes propagation delay; it does not automatically add a clock cycle. A sequential or pipelined implementation can add latency in cycles. Adders and subtractors are often shorter than multipliers and dividers, but the result depends on width, architecture, target technology, and synthesis options.
 -   **Signed vs. Unsigned**: SystemVerilog arithmetic operators handle both signed and unsigned data types correctly. Be explicit about signedness using `signed` and `unsigned` keywords to avoid ambiguity.
 -   **Overflow/Underflow**: Be aware of potential overflow and underflow in addition and subtraction.  Consider using larger data types or saturation arithmetic if necessary.
--   **Division by Zero**: Division by zero results in simulation errors. Ensure your design handles potential division by zero conditions gracefully, especially in testbenches.
+-   **Division by Zero**: Division by zero produces an invalid or tool-dependent result and may generate a warning or error. Guard the denominator and define the required behavior, especially in testbenches and reference models.
 -   **Combinational vs. Sequential**: For purely combinational arithmetic logic, use `always_comb` blocks for clarity and synthesis optimization.
 
 ## Logical vs. Bitwise Operators: Boolean vs. Vector Operations
@@ -49,13 +60,13 @@ SystemVerilog distinguishes between logical operators (for Boolean conditions) a
 
 ### Logical Operators: Evaluating Boolean Conditions
 
-Logical operators work on single-bit operands (or treat multi-bit operands as Boolean true if non-zero) and return a 1-bit Boolean result (`1` for true, `0` for false). They are primarily used in conditional statements (`if`, `else`, `case`) and assertions.
+Logical operators treat a scalar as Boolean and a multi-bit operand as true when it contains a nonzero value. They return a one-bit 4-state result (`1`, `0`, or `X` when the operands do not determine the answer). They are primarily used in conditional statements (`if`, `else`, `case`) and assertions. `&&` and `||` can short-circuit evaluation; bitwise operators evaluate and combine corresponding bits.
 
 | Operator | Description     | Example                   | Result Type |
 | -------- | --------------- | ------------------------- | ----------- |
-| `&&`     | Logical AND     | `(enable && ready)`       | 1-bit `bit` |
-| `\|\|`   | Logical OR      | `(error_flag \|\| timeout)` | 1-bit `bit` |
-| `!`      | Logical NOT     | `!valid_data`            | 1-bit `bit` |
+| `&&`     | Logical AND     | `(enable && ready)`       | 1-bit 4-state result |
+| `\|\|`   | Logical OR      | `(error_flag \|\| timeout)` | 1-bit 4-state result |
+| `!`      | Logical NOT     | `!valid_data`            | 1-bit 4-state result |
 
 ### Bitwise Operators: Operating on Vectors
 
@@ -88,7 +99,7 @@ endmodule
 
 **Key Differences and Use Cases:**
 
--   **Logical Operators ( `&&`, `||`, `!` )**: Used for control flow, condition checking, and assertions. They produce 1-bit Boolean results.
+-   **Logical Operators ( `&&`, `||`, `!` )**: Used for control flow, condition checking, and assertions. They produce a one-bit 4-state result and express Boolean intent.
 -   **Bitwise Operators ( `&`, `|`, `^`, `~`, `<<`, `>>`, `<<<`, `>>>` )**: Used for data manipulation, bit-level processing, and implementing hardware logic. They operate on vectors and maintain the vector width in the result.
 -   **Shift Operators**:
     -   **Logical Shifts (`<<`, `>>`)**: Fill vacated bit positions with zeros. Used for unsigned data and general bit manipulation.
@@ -197,10 +208,10 @@ module precedence_example;
   initial begin
     integer result_no_paren, result_paren;
 
-    result_no_paren = 3 + 4 << 2;     // Left shift has higher precedence than addition
+    result_no_paren = 3 + 4 << 2;     // Addition has higher precedence than left shift
     result_paren = (3 + 4) << 2;       // Parentheses force addition to happen first
 
-    $display("Result without parentheses: %0d (3 + (4 << 2))", result_no_paren);   // Output: 19 (3 + 16)
+    $display("Result without parentheses: %0d ((3 + 4) << 2)", result_no_paren);   // Output: 28 (7 << 2)
     $display("Result with parentheses: %0d ((3 + 4) << 2)", result_paren);     // Output: 28 (7 << 2)
   end
 endmodule
@@ -217,15 +228,14 @@ endmodule
       output logic system_active_bitwise_wrong;
       output logic system_active_logical_correct;
 
-      assign system_active_bitwise_wrong = enable & reset;   // Bitwise AND - incorrect for boolean logic
-      assign system_active_logical_correct = enable && reset; // Logical AND - correct for boolean condition
+      assign system_active_bitwise_wrong = enable & reset;   // Bitwise AND - same hardware for clean 1-bit inputs
+      assign system_active_logical_correct = enable && reset; // Logical AND - expresses Boolean intent
 
       // ... (rest of the module) ...
     endmodule
     ```
 
-    **Explanation**:  In control logic, you typically want to use logical AND (`&&`), logical OR (`||`), and logical NOT (`!`) to combine Boolean conditions. Bitwise operators are for vector data manipulation.
-`
+    **Explanation**: In control logic, you typically want to use logical AND (`&&`), logical OR (`||`), and logical NOT (`!`) to combine Boolean conditions. Bitwise operators are for vector data manipulation. For clean 1-bit inputs, `&` and `&&` often synthesize to equivalent hardware; the logical form communicates intent and has different behavior for vectors, unknowns, and short-circuit evaluation.
 2.  **Misunderstanding Shift Operator Types**:  Forgetting the difference between logical and arithmetic right shifts can lead to incorrect results when working with signed numbers.
 
     ```systemverilog

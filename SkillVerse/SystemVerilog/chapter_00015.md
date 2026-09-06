@@ -18,6 +18,17 @@ By leveraging these OOP principles, SystemVerilog classes empower verification e
 *   **Maintainable**:  Well-structured, object-oriented code is generally easier to understand, modify, and maintain compared to procedural or flat code.
 *   **Extensible**: Inheritance and polymorphism make it straightforward to extend and adapt existing verification components to new requirements or design changes.
 
+Classes are primarily used in simulation and verification; they are not synthesizable RTL hardware structures. A class variable is an object handle, and it must refer to an object created with `new()` before the object's members can be accessed.
+
+### Learning Goals
+
+By the end of this chapter, you should be able to:
+
+- Define classes with properties, methods, constructors, and controlled visibility.
+- Create and use object handles safely, including recognizing a `null` handle.
+- Apply inheritance and virtual methods for runtime polymorphism.
+- Use class-based randomization while distinguishing object lifetime from hardware storage.
+
 ## Defining Classes: Blueprints for Objects
 
 Classes are defined using the `class` keyword, followed by the class name and the class body enclosed within `endclass`.  By default, class members (properties and methods) have **public** access, meaning they can be accessed from anywhere. To control access and implement encapsulation, SystemVerilog provides the `local` and `protected` keywords.
@@ -40,12 +51,12 @@ endclass : SimpleClass // Named class end for clarity (optional but recommended)
 In this `SimpleClass` example:
 
 *   `class SimpleClass; ... endclass : SimpleClass` declares a class named `SimpleClass`. The `: SimpleClass` after `endclass` is optional but improves readability, especially for longer classes.
-*   `int data;` declares a public property named `data` of type `int`.  Since no access modifier (`local`, `protected`, `automatic`, `static`) is specified, it defaults to `public` access.
+*   `int data;` declares a public property named `data` of type `int`. Since no access modifier (`local` or `protected`) is specified, it defaults to `public` access. `automatic` and `static` describe lifetime/storage behavior, not visibility.
 *   `function void display_data(); ... endfunction : display_data` defines a public method named `display_data`. It's a `function` that returns `void` (no return value) and uses `$display` to print the value of the `data` property.  The `: display_data` after `endfunction` is also optional but enhances readability.
 
 ## Creating Objects: Instances of Classes
 
-Objects are concrete instances of classes.  Think of a class as a cookie cutter and objects as the cookies created using that cutter.  Objects are dynamically created at runtime using the `new()` constructor.  Memory for objects is allocated dynamically, and objects are accessed and manipulated through object handles (pointers).
+Objects are concrete instances of classes. Think of a class as a cookie cutter and objects as the cookies created using that cutter. Objects are dynamically created at runtime using the `new()` constructor. Objects are accessed and manipulated through object handles, which are references to class objects rather than synthesizable hardware pointers. A handle may be `null`; dereferencing a null handle is a runtime error.
 
 ### Example: Instantiating and Using a Class Object
 
@@ -69,10 +80,12 @@ endmodule : class_example_module
 In this example:
 
 *   `SimpleClass my_object;` declares a variable `my_object` that can hold a handle to an object of type `SimpleClass`.  At this point, `my_object` is just a handle and does not yet point to an actual object (it's initially `null`).
-*   `my_object = new();`  This is the crucial step of object instantiation. `new()` is the constructor for the `SimpleClass`. It dynamically allocates memory to create a new object of type `SimpleClass` and returns a handle (a pointer or reference) to this newly created object. This handle is then assigned to the `my_object` variable.
+*   `my_object = new();`  This is the crucial step of object instantiation. `new()` is the constructor for the `SimpleClass`. It dynamically creates an object of type `SimpleClass` and returns a handle (a reference) to it. This handle is then assigned to the `my_object` variable.
 *   `my_object.data = 42;` uses the object handle `my_object` and the dot operator (`.`) to access the `public` property `data` of the object and assign the value `42` to it.
 *   `my_object.display_data();` similarly uses the handle to call the `public` method `display_data()` on the object. This method then executes, printing the value of `data` to the simulation console.
 *   `$display(...)` demonstrates accessing and displaying the `data` property directly after it has been set and displayed by the method.
+
+Assigning one class handle to another copies the handle, not the object. For example, `SimpleClass second_handle = my_object;` makes both handles refer to the same object, so a change through either handle is visible through the other. Use `new()` and copy the properties explicitly when an independent object is required.
 
 ## Inheritance: Creating Class Hierarchies for Code Reusability
 
@@ -97,7 +110,7 @@ class Dog extends Animal;
   // Inherits 'name' property and 'speak()' method from Animal
 
   // Override the 'speak()' method to provide Dog-specific behavior
-  function virtual void speak(); // Override base class method - still 'virtual' for further derivation
+  function virtual void speak(); // Override base class method; repeating 'virtual' is optional
     super.speak();          // Optional: Call the base class's speak() method first
     $display("%0s barks: Woof!", name); // Then add Dog-specific barking behavior
   endfunction : speak
@@ -203,7 +216,7 @@ endmodule : polymorphism_example_module
 
 In this polymorphism example:
 
-*   `virtual function void draw();` in the `Shape` class declares `draw()` as a virtual method. This makes it eligible for overriding and dynamic dispatch in derived classes.
+*   `virtual function void draw();` in the `Shape` class declares `draw()` as a virtual method. This makes it eligible for overriding and dynamic dispatch in derived classes. An override remains virtual even if the derived declaration omits the keyword.
 *   `Circle` and `Square` classes `extends Shape` and override the `draw()` method with their specific implementations.
 *   `Shape shape_obj;` declares a handle of the base class type `Shape`. This handle can point to objects of `Shape`, `Circle`, or `Square` types (or any other class derived from `Shape`).
 *   `shape_obj = circle_obj;` and `shape_obj = square_obj;` demonstrate **upcasting**, where handles of derived classes (`Circle`, `Square`) are assigned to a handle of the base class (`Shape`). Upcasting is always safe and allowed in OOP.
@@ -229,6 +242,10 @@ Encapsulation is crucial for:
 ```systemverilog
 class BankAccount;
   local int balance; // Private property: 'balance' - only accessible within BankAccount class
+
+  function new();
+    balance = 0;
+  endfunction : new
 
   // Public method: to deposit money into the account
   function void deposit(int amount);
@@ -361,7 +378,7 @@ In this randomization example:
     *   Add the following *public* properties:
         - `string model;` (to store the car model name)
         - `int speed;` (to store the current speed of the car, initially 0)
-    *   Implement a *public* method `function void accelerate();` that increases the `speed` property of the `Car` object by 10.
+    *   Implement a *public virtual* method `function void accelerate();` that increases the `speed` property of the `Car` object by 10. Declaring it virtual enables the override and dynamic dispatch in later exercises.
     *   In a module, instantiate a `Car` object, set its `model` property to "Sedan", call the `accelerate()` method twice, and then display the final `speed` of the car.
 
 2.  **Object Usage and Interaction**:
@@ -373,7 +390,7 @@ In this randomization example:
 3.  **Inheritance: `ElectricCar` Derived Class**:
 
     *   Create a new class `ElectricCar` that *inherits* from the `Car` class (Exercise 1).
-    *   *Override* the `accelerate()` method in the `ElectricCar` class so that it increases the `speed` by 20 instead of 10 (as in the base `Car` class).  Inside the overridden `accelerate()` method of `ElectricCar`, you can optionally call `super.accelerate()` to also execute the base class's acceleration behavior *before* adding the electric car specific acceleration.
+    *   *Override* the `accelerate()` method in the `ElectricCar` class so that it increases the `speed` by 20 instead of 10 (as in the base `Car` class). You can either implement the 20-unit behavior directly, or call `super.accelerate()` and add only 10 more units; doing both with an additional 20-unit increment would produce 30, not 20.
     *   In a module, create objects of both `Car` and `ElectricCar` classes. Call the `accelerate()` method on both objects and display their speeds to demonstrate that the overridden method in `ElectricCar` is executed.
 
 4.  **Polymorphism: Virtual `start_engine()` Method**:

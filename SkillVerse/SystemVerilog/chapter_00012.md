@@ -18,6 +18,15 @@ Modules are the cornerstone of hardware description in SystemVerilog, serving as
 
 In essence, SystemVerilog modules are the fundamental organizational unit in hardware design, enabling a structured, hierarchical, and reusable approach to building digital systems of any complexity.
 
+### Learning Goals
+
+By the end of this chapter, you should be able to:
+
+- Define a module with clear ANSI-style ports, parameters, and internal implementation items.
+- Instantiate modules using named port connections and parameter overrides.
+- Distinguish synthesizable RTL from simulation-only testbench behavior.
+- Build and verify a small hierarchy while accounting for reset polarity, clocking, and parameter validity.
+
 ## Module Definition: Structuring Hardware Functionality
 
 Modules are defined using the `module` keyword, followed by the module name, an optional port list, and the module body enclosed within `endmodule`.
@@ -35,7 +44,7 @@ module module_name [(port_list)]; // Optional port list for interface definition
 
   // Module Body:
   //  - Concurrent statements (processes):
-  //    - initial blocks (for testbench initialization, non-synthesizable)
+  //    - initial blocks (commonly testbench-only; synthesis support is device/tool dependent)
   //    - always blocks (for sequential and combinational logic, synthesizable)
   //  - Module instantiations (hierarchical composition)
   //  - Continuous assignments (assign statements for combinational logic)
@@ -105,6 +114,7 @@ module smart_buffer_module #( // Module name with '_module' suffix
   input  logic rst_n,           // Active-low reset input
   input  logic [DATA_WIDTH-1:0] write_data_in, // Data input for writing, width parameterized
   input  logic write_enable,      // Write enable signal
+  input logic read_enable,       // Read enable signal
   output logic [DATA_WIDTH-1:0] read_data_out,  // Data output for reading, width parameterized
   output logic buffer_full,        // Output flag indicating buffer full status
   output logic buffer_empty        // Output flag indicating buffer empty status
@@ -116,30 +126,39 @@ module smart_buffer_module #( // Module name with '_module' suffix
   integer current_count;        // Counter to track the number of items in the buffer
 
   // Functionality implementation: FIFO buffer logic (write, read, status flags)
+  logic do_write;
+  logic do_read;
+
+  always_comb begin
+    buffer_full  = (current_count == BUFFER_DEPTH);
+    buffer_empty = (current_count == 0);
+    do_write     = write_enable && !buffer_full;
+    do_read      = read_enable && !buffer_empty;
+  end
+
   always_ff @(posedge clk or negedge rst_n) begin
     if (!rst_n) begin
       // Reset logic: initialize pointers, counter, and status flags
       write_pointer <= 0;
       read_pointer  <= 0;
       current_count <= 0;
-      buffer_full   <= 0;
-      buffer_empty  <= 1; // Initially empty
       read_data_out <= '0;
     end else begin
-      buffer_full  <= (current_count == BUFFER_DEPTH); // Update full flag
-      buffer_empty <= (current_count == 0);          // Update empty flag
-
-      if (write_enable && (current_count < BUFFER_DEPTH)) begin // Write operation
+      if (do_write) begin // Write operation
         data_buffer[write_pointer] <= write_data_in; // Write data to buffer
         write_pointer <= (write_pointer == BUFFER_DEPTH-1) ? 0 : write_pointer + 1; // Increment/wrap write pointer
-        current_count <= current_count + 1; // Increment item count
       end
 
-      // Example read logic (simplified - add read enable and full/empty handling in real FIFO)
-      if (!buffer_empty) begin
-        read_data_out <= data_buffer[read_pointer]; // Read data from buffer (output always reflects current read pointer)
-        // In a real FIFO, read pointer increment and count decrement would be on read enable
+      if (do_read) begin // Read operation
+        read_data_out <= data_buffer[read_pointer]; // Registered read data
+        read_pointer <= (read_pointer == BUFFER_DEPTH-1) ? 0 : read_pointer + 1; // Increment/wrap read pointer
       end
+
+      case ({do_write, do_read})
+        2'b10: current_count <= current_count + 1;
+        2'b01: current_count <= current_count - 1;
+        default: current_count <= current_count;
+      endcase
     end
   end
 
@@ -193,6 +212,7 @@ To use a module in a design, you need to instantiate it within another module. S
       .clk(system_clock),      // Connect module port 'clk' to signal 'system_clock'
       .rst_n(main_reset_n),    // Connect 'rst_n' port to 'main_reset_n' signal
       .write_data_in(network_data_payload), // Connect 'write_data_in' to 'network_data_payload'
+      .read_enable(processor_read_enable), // Connect read control to the FIFO
       .read_data_out(processor_data_input), // Connect 'read_data_out' to 'processor_data_input'
       .write_enable(data_ready_flag),     // Connect 'write_enable' to 'data_ready_flag'
       .buffer_full(),           // Connect 'buffer_full' port (leave unconnected - output only, if not needed)
@@ -285,6 +305,8 @@ Testbenches are essential for verifying the functionality of SystemVerilog modul
 
 ```systemverilog
 module sensor_subsystem_tb; // Testbench module for 'sensor_subsystem_module' (using '_tb' suffix)
+  timeunit 1ns;
+  timeprecision 1ps;
   // 1. Declare testbench signals (wires or logic) to drive DUT inputs and observe outputs
   logic tb_clk_100MHz;      // Testbench clock signal (100MHz)
   logic tb_system_reset;     // Testbench reset signal

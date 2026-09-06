@@ -11,6 +11,16 @@ Arrays are fundamental data structures in SystemVerilog, designed to efficiently
 - **Associative Arrays**: Powerful key-value lookup structures, perfect for sparse memories or configuration tables where data is accessed by name or ID.
 - **Queues**: Specialized ordered lists (FIFO-like), designed for efficient data insertion and removal at both ends, commonly used in testbenches and communication channels.
 
+## Learning Goals
+
+By the end of this chapter, you should be able to:
+
+- Distinguish packed, fixed-size unpacked, dynamic, associative, and queue arrays.
+- Declare dimensions in the correct position and access elements safely.
+- Allocate, resize, search, sort, reduce, and delete array data deliberately.
+- Choose an array kind based on index shape, lifetime, ordering, and verification use.
+- Recognize which operations return a new collection and which operations modify an array in place.
+
 ## Packed vs. Unpacked Arrays: Memory Layout and Usage
 
 The distinction between packed and unpacked arrays is fundamental in SystemVerilog and affects how they are stored in memory and how they are used.
@@ -23,13 +33,13 @@ The distinction between packed and unpacked arrays is fundamental in SystemVeril
 
 ```systemverilog
 logic [2:0][15:0] register_file;  // 3x16-bit register file (48 bits total)
-register_file = 64'h1234_5678_9ABC_DEF0; // Initialize as a contiguous bit vector
+register_file = 48'h2345_6789_ABCD; // Initialize all 48 bits as a contiguous vector
 
 logic [7:0] byte_slice;
 byte_slice = register_file[1][15:8]; // Extract a byte slice from the 2D packed array
 ```
 
-**Explanation**: `register_file` is a 2D packed array representing a small register file. The initialization and byte slice extraction highlight the bit-contiguous nature and suitability for hardware-like operations.
+**Explanation**: `register_file` is a 2D packed array representing three 16-bit elements, for 48 bits total. The 48-bit literal matches its width; assigning a wider literal would discard the excess most-significant bits. The initialization and byte slice extraction highlight the bit-contiguous nature and suitability for hardware-like operations.
 
 ### Unpacked Arrays: Element-Based Storage
 
@@ -48,10 +58,12 @@ transaction_data[512] = 999;    // Access and modify individual elements
 
 **Key Difference**: Packed arrays are for bit-level hardware modeling; unpacked arrays are for element-level data storage, especially in verification.
 
+An unpacked dimension such as `[1024]` is shorthand for an index range `[0:1023]`. A declaration such as `[7:0]` instead has descending indices from 7 through 0. The declared index range is part of the type, so `array[0]` is not always the leftmost or highest-order element.
+
 ## Fixed-Size Arrays: Compile-Time Dimensions with Built-in Methods
 
 - **Static Size**: Fixed-size arrays have their size determined at compile time, making them efficient and predictable in terms of memory allocation and performance.
-- **Built-in Methods**: SystemVerilog provides a rich set of built-in methods for fixed-size arrays, simplifying common array operations like sorting, summing, and reversing.
+- **Built-in Methods**: SystemVerilog provides a rich set of built-in methods for fixed-size arrays, simplifying common array operations like sorting, summing, and reversing. Many array methods also apply to dynamic arrays and queues, while associative arrays have a different supported-method set.
 
 ```systemverilog
 int scores [5] = '{95, 88, 76, 99, 82}; // Fixed-size array of scores
@@ -76,12 +88,12 @@ $display("Sum of scores: %0d", scores.sum());    // Output: Sum of scores: 440
 | **`.sum()`**        | Calculates and returns the sum of all elements      | `int total_score = scores.sum();`                       |
 | **`.min()`**        | Returns the minimum element value                   | `int min_val = scores.min();`                           |
 | **`.max()`**        | Returns the maximum element value                   | `int max_val = scores.max();`                           |
-| **`.unique()`**     | Removes duplicate elements, returns unique array    | `int unique_scores[$] = scores.unique();`               |
+| **`.unique()`**     | Returns a queue containing one instance of each value; does not remove source elements | `int unique_scores[$] = scores.unique();`               |
 | **`.find()`**       | Returns a queue of indices where condition is true  | `int indices[$] = scores.find(x) with (x > 90);`        |
 | **`.find_index()`** | Returns a queue of indices where condition is true  | `int indices[$] = scores.find_index(x) with (x > 90);`  |
 | **`.find_first()`** | Returns the first element where condition is true   | `int first_score = scores.find_first(x) with (x > 90);` |
 | **`.find_last()`**  | Returns the last element where condition is true    | `int last_score = scores.find_last(x) with (x > 90);`   |
-| **`.reduce()`**     | Applies reduction operation (sum, product, etc.)    | `int product = scores.reduce(*);`                       |
+| **`.reduce()`**     | General reduction notation is tool/methodology dependent; use named reductions for portable code | `int product = scores.product();`                       |
 
 ## Dynamic Arrays: Runtime Resizable Flexibility
 
@@ -106,6 +118,8 @@ initial begin
 end
 ```
 
+Before indexing a dynamic array, ensure it has been allocated and that the index is within `0` through `packet_buffer.size()-1`. Assigning a new dynamic array replaces the old array handle; resizing with `new[size](old_array)` copies the overlapping prefix and initializes any newly added elements to their type's default value. If no copy is requested, the old contents are not preserved.
+
 ### Methods for Dynamic Arrays
 
 | Method           | Description                                      | Example                                        |
@@ -126,6 +140,8 @@ end
 - **Key-Value Pairs**: Associative arrays store elements as key-value pairs, where the index (key) can be of any data type (string, integer, etc.), not just sequential integers.
 - **Sparse Data Storage**: They are highly efficient for storing sparse data, where only a small fraction of possible indices are actually used. Think of them as hash tables or dictionaries.
 - **Lookup Tables and Configuration**: Associative arrays are excellent for implementing lookup tables, memory models with non-contiguous addresses, and configuration settings indexed by names.
+
+Associative arrays do not have a conventional contiguous range. Use `.exists(key)` before reading a key when a missing entry is possible; reading a missing entry can create or return a default value depending on the access context and type. The ordering used by `.first()`, `.last()`, `.next()`, and `.prev()` is the associative index ordering defined by the language, not insertion order.
 
 ```systemverilog
 string error_messages [string]; // Associative array with string keys and string values
@@ -167,6 +183,7 @@ end
 
 - **FIFO Data Structure**: Queues are ordered collections of elements, behaving like FIFO (First-In, First-Out) queues. They allow efficient addition and removal of elements from both the front and back.
 - **Dynamic Sizing**: Queues automatically resize as elements are added or removed, making them convenient for managing data streams of varying lengths.
+- **Optional Bounds**: An unbounded queue uses `[$]`; a bounded queue can use `[$:N]` and must be handled when its capacity is reached.
 - **Testbench Communication**: Queues are frequently used in verification testbenches for communication between different components, such as passing transaction objects between generators, monitors, and scoreboards.
 
 <figure>
@@ -192,6 +209,8 @@ initial begin
 end
 ```
 
+For an unbounded queue, `push_front` and `push_back` change its size. `pop_front` and `pop_back` remove and return an element, so they should only be called when the queue is nonempty. `insert` uses a zero-based queue position. A queue is ordered storage; it is not automatically a synchronization primitive between concurrent processes.
+
 ### Methods for Queues
 
 | Method                     | Description                                             | Example                                               |
@@ -207,9 +226,25 @@ end
 | **`.sort()`**              | Sorts the elements in the queue (in-place)              | `transaction_q.sort();`                               |
 | **`.reverse()`**           | Reverses the order of elements in the queue (in-place)  | `transaction_q.reverse();`                            |
 
+## Choosing an Array Kind
+
+Use the simplest array that matches the requirement:
+
+| Requirement | Suitable choice |
+|-------------|-----------------|
+| One contiguous bit vector or hardware field | Packed array |
+| Known element count and stable indices | Fixed-size unpacked array |
+| Runtime-known count with integer indices | Dynamic array |
+| Sparse or key-based lookup | Associative array |
+| Ordered data with insertion/removal at either end | Queue |
+
+Array methods such as `.sort()`, `.reverse()`, and `.shuffle()` modify the receiver in place. Query methods such as `.find()`, `.find_index()`, and `.unique()` return a queue and leave the source unchanged. Reduction methods such as `.sum()`, `.product()`, `.and()`, `.or()`, and `.xor()` return a value; check the result type and width when overflow matters.
+
 ## Exercises to Practice Array Concepts
 
 Test your understanding of SystemVerilog arrays with these exercises. Solutions are provided to help you check your work.
+
+The snippets are focused examples. Place procedural statements inside a module, program, class, or other legal procedural context before compiling them, and use a SystemVerilog language mode. For every dynamic array or queue operation, consider the empty and boundary cases as well as the nominal case.
 
 1. **Packed Array Initialization**: Declare a 12-bit packed array named `config_bits` and initialize it with the hexadecimal value `0xA3C`.
 

@@ -11,9 +11,20 @@ SystemVerilog packages are fundamental building blocks for creating well-organiz
 -   **Modular Code Organization and Improved Readability**: Packages encourage a modular approach to verification code organization. By grouping related items into logical packages based on functionality or domain (e.g., a package for bus protocol definitions, a package for common utility functions), you create a more structured and understandable codebase. This improves readability, simplifies navigation, and makes it easier for engineers to locate and understand specific parts of the verification environment.
 -   **Enhanced Team Collaboration and Standardized Interfaces**: Packages promote team collaboration by establishing standardized interfaces for verification components. When teams agree on packages for common data structures, utility functions, or communication protocols, it becomes easier for different engineers to work on different parts of the verification environment and integrate their work seamlessly. Packages act as contracts, defining clear boundaries and interfaces between modules and components, fostering efficient teamwork.
 
+### Learning Goals
+
+By the end of this chapter, you should be able to:
+
+- Define packages containing shared types, constants, routines, and class declarations.
+- Import names selectively, use explicit scope resolution, and avoid namespace collisions.
+- Distinguish imported names from names deliberately re-exported with `export`.
+- Organize package source files and compile package dependencies in the required order.
+
 ## Defining Packages: Creating Namespaces for Declarations
 
 Packages are defined using the `package` keyword, followed by the package name and the package body enclosed within `endpackage`.  Packages can encapsulate a wide range of SystemVerilog declarations, making them versatile containers for verification code.
+
+Package source must be compiled before modules or other packages that use its declarations. A package may import another package only after that dependency is available, so organize compilation order explicitly and avoid circular package dependencies. Packages contain declarations; modules, interfaces, and programs remain separate design-unit scopes and are not declared inside a package.
 
 **Elements that can be declared within a SystemVerilog Package:**
 
@@ -86,7 +97,7 @@ module import_example_module;
   import function_pkg::increment_byte;
 
   // Uncomment to see wildcard import example:
-  // import function_pkg::*; // Wildcard import from 'function_pkg' - also imports 'byte_t' indirectly because 'function_pkg' imports it
+  // import function_pkg::*; // Wildcard import from 'function_pkg' imports its exported/public declarations only
 
   initial begin
     byte_t my_byte = 8'h0F; // Use 'byte_t' type directly (imported)
@@ -95,9 +106,8 @@ module import_example_module;
     incremented_byte = increment_byte(my_byte); // Call 'increment_byte' function directly (imported)
     $display("Original byte: %h, Incremented byte: %h", my_byte, incremented_byte);
 
-    // If using wildcard import for 'function_pkg', you can still use 'byte_t' because 'function_pkg' imports it.
-    // If NOT using wildcard import for 'function_pkg', and 'import type_pkg::byte_t;' is commented out,
-    // then 'byte_t' would be unresolved unless you use explicit scope resolution (type_pkg::byte_t).
+    // An import made inside function_pkg is not automatically re-exported.
+    // Keep the explicit type_pkg import above, or use type_pkg::byte_t directly.
   end
 endmodule : import_example_module
 ```
@@ -108,7 +118,7 @@ In this import example:
 -   `package function_pkg` imports `type_pkg::byte_t` specifically and defines a function `increment_byte` that uses `byte_t`.
 -   `module import_example_module` demonstrates:
     -   **Specific imports**: `import type_pkg::byte_t;` and `import function_pkg::increment_byte;` import only the `byte_t` type and the `increment_byte` function directly into the `import_example_module` scope. You can then use them directly without package qualification.
-    -   **(Commented out) Wildcard import**: `import function_pkg::*` shows how a wildcard import from `function_pkg` would bring all *visible* items from `function_pkg` (including `increment_byte` and indirectly `byte_t` because `function_pkg` itself imports `byte_t`) into the current scope.
+    -   **(Commented out) Wildcard import**: `import function_pkg::*` would bring declarations from `function_pkg` into the current scope. An import made inside `function_pkg` is not automatically re-exported, so `byte_t` would not become available through this wildcard import unless `function_pkg` also used `export type_pkg::byte_t;`.
 
 ## Package Scope Resolution: Explicitly Accessing Package Members
 
@@ -268,7 +278,7 @@ To leverage the full benefits of SystemVerilog packages and maintain a clean and
 
 4.  **Combine Packages with `\`include` for Large Packages**:
 
-    -   **Splitting Large Packages**: For very large packages that contain many declarations, consider splitting the package definition into multiple files using the `\`include` directive. This improves file organization, makes it easier to navigate and edit the package code, and can enhance compilation efficiency in some cases.
+    -   **Splitting Large Packages**: For very large packages that contain many declarations, consider splitting the package definition into multiple files using the `\`include` directive. This improves file organization, makes it easier to navigate and edit the package code, but textual inclusion does not inherently make compilation faster: changes generally require recompiling the package and its dependents.
     -   **File Organization within a Package**:  Create separate `\`include` files for different categories of declarations within the package (e.g., types, functions, tasks, classes, constants).
     -   **Example Package File Structure**:
 
@@ -286,8 +296,8 @@ To leverage the full benefits of SystemVerilog packages and maintain a clean and
     // (Inside usb_types.svh)
     typedef enum logic [2:0] { USB_IDLE, USB_SOF, USB_DATA, USB_HANDSHAKE } usb_state_e;
     typedef struct packed {
-      rand usb_state_e state;
-      rand bit [7:0] data_payload;
+      usb_state_e state;
+      bit [7:0] data_payload;
     } usb_transaction_t;
     // ... more type definitions ...
 
@@ -303,7 +313,7 @@ To leverage the full benefits of SystemVerilog packages and maintain a clean and
 
     -   **Benefits of Splitting**:
         -   Improved file organization and easier navigation within large packages.
-        -   Potentially faster compilation as only modified `\`include` files might need recompilation in some flows.
+        -   Includes are textual insertion, so a change to an included file generally requires recompiling the package and its dependents. Splitting files improves organization and parallel editing, but does not inherently make compilation faster.
         -   Better support for version control and parallel development when different engineers work on different parts of a large package.
 
 ## Exercises to Practice SystemVerilog Packages
@@ -351,9 +361,9 @@ To leverage the full benefits of SystemVerilog packages and maintain a clean and
     -   Create two packages: `package_A_pkg` and `package_B_pkg`.
     -   In both `package_A_pkg` and `package_B_pkg`, define a function with the **same name**, for example, `function void print_message();`.  Make each `print_message()` function display a different message (e.g., "Message from Package A" vs. "Message from Package B").
     -   Create a top-level module. In this module:
-        -   Attempt to **import all items** from **both** `package_A_pkg` and `package_B_pkg` using wildcard imports (`import package_A_pkg::*`, `import package_B_pkg::*`).  Try to call `print_message()` directly. Observe the naming conflict error during compilation or simulation.
+        -   Attempt to **import all items** from **both** `package_A_pkg` and `package_B_pkg` using wildcard imports (`import package_A_pkg::*`, `import package_B_pkg::*`). Try to call `print_message()` directly; the ambiguity is typically diagnosed when the name is referenced, not necessarily when the imports are written.
         -   **Resolve the name conflict using explicit scope resolution**.  Modify the module to call `package_A_pkg::print_message()` and `package_B_pkg::print_message()` explicitly to differentiate between the two functions with the same name.
-        -   **Resolve the name conflict using renaming imports (if supported by your SystemVerilog simulator)**.  If your simulator supports renaming imports (some older simulators might not fully support this feature), try to import the `print_message()` function from one of the packages with a different name (alias), for example: `import package_A_pkg::print_message as print_message_A;`. Then, call both `print_message_A()` and `package_B_pkg::print_message()` to demonstrate calling both functions without conflict.
+        -   **Resolve the name conflict using a portable wrapper or a simulator extension**. Standard SystemVerilog does not define `import package_A_pkg::print_message as print_message_A;`; some tools may accept a non-portable alias extension. A portable alternative is to define a local wrapper such as `function void print_message_A(); package_A_pkg::print_message(); endfunction`, then call `print_message_A()` and `package_B_pkg::print_message()` explicitly.
 
 These exercises will provide practical experience in defining, importing, using, and organizing SystemVerilog packages, as well as handling namespace management and conflict resolution, which are crucial skills for developing robust and maintainable verification environments.
 

@@ -2,13 +2,24 @@
 
 SystemVerilog's strength in both hardware design and verification comes, in part, from its rich and versatile set of **data types**. Choosing the right data type is crucial for accurately modeling hardware behavior and building efficient verification environments. This section provides a comprehensive guide to SystemVerilog data types, categorized for easy understanding and illustrated with practical examples.
 
+## Learning Goals
+
+By the end of this chapter, you should be able to:
+
+- Distinguish 2-state and 4-state values and choose between them deliberately.
+- Distinguish a variable data type such as `logic` from a net type such as `wire` or `tri`.
+- Explain signedness, width, and the difference between packed and unpacked dimensions.
+- Use `typedef`, `enum`, `struct`, and `union` to express intent without losing type safety.
+- Choose types appropriate for synthesizable RTL, testbench data, time values, and multi-driver signals.
+- Identify where a declaration is legal SystemVerilog but still depends on simulator or synthesis-tool support.
+
 ## **Built-in Data Types: The Foundation**
 
-SystemVerilog's built-in types are the fundamental building blocks for representing data. They are broadly divided into **2-state** and **4-state** types, each serving distinct purposes in hardware design and verification.
+SystemVerilog's built-in types are the fundamental building blocks for representing data. They are broadly divided into **2-state** and **4-state** types, each serving distinct purposes in hardware design and verification. It is also useful to separate a signal's **value type** from its **net or variable kind**: `logic`, `bit`, `int`, and `time` describe values, while `wire`, `tri`, `wand`, and `wor` describe connections and driver resolution. A declaration can combine these ideas, and the distinction matters when multiple sources drive a signal.
 
 ### **4-State Types: Modeling Hardware Reality (RTL Design)**
 
-4-state types are essential for Register Transfer Level (RTL) design because they accurately reflect the physical behavior of hardware signals. They account for four possible states:
+4-state value types are important for Register Transfer Level (RTL) design and verification because they expose unknown and high-impedance behavior in simulation. They account for four possible states:
 
 - **0**: Logical zero, false condition.
 - **1**: Logical one, true condition.
@@ -17,9 +28,9 @@ SystemVerilog's built-in types are the fundamental building blocks for represent
 
 | Type         | Description                                  | Use Case                               | Example                       |
 |--------------|----------------------------------------------|----------------------------------------|-------------------------------|
-| **`reg`**      | 4-state storage element (legacy from Verilog) | Modeling flip-flops, registers, memory | `reg [31:0] instruction_reg;` |
-| **`wire`**     | 4-state connection (default bit width: 1)     | Interconnecting modules, signals       | `wire interrupt_line;`       |
-| **`logic`**    | Modern 4-state type, versatile replacement   | RTL design, replacing `reg` and `wire` | `logic [15:0] data_bus;`      |
+| **`reg`**      | 4-state variable (legacy Verilog name)       | Modeling flip-flops, registers, memory | `reg [31:0] instruction_reg;` |
+| **`wire`**     | 4-state net with driver resolution           | Interconnecting modules, signals       | `wire interrupt_line;`       |
+| **`logic`**    | 4-state variable data type                   | RTL design, commonly replacing `reg`   | `logic [15:0] data_bus;`      |
 | **`integer`**  | 4-state, 32-bit signed integer               | Counters, loop indices, general-purpose integers in RTL | `integer loop_count = 0;`    |
 
 ```systemverilog
@@ -31,11 +42,11 @@ module rtl_module;
   // ... design logic using address, chip_select, error_count ...
 endmodule
 ```
-**Explanation**: In `rtl_module`, `logic` is used for the `address` bus as it's a modern, versatile type suitable for signals. `wire` is used for `chip_select` to represent a simple connection. `integer` is used for `error_count`, a general-purpose counter within the RTL design.
+**Explanation**: In `rtl_module`, `logic` is used for the `address` bus as it is a modern, versatile variable type suitable for RTL signals with a controlled driver. `wire` is used for `chip_select` to represent a net connection. `integer` is used for `error_count`, a 4-state, signed, 32-bit integer. In modern RTL, an explicitly sized `logic` or `int unsigned` is often clearer for a hardware counter.
 
 ### **2-State Types: Speed and Efficiency (Verification)**
 
-2-state types are optimized for verification environments where the **X** and **Z** states are typically not needed and can slow down simulation. By excluding these states, 2-state types enable faster, more efficient simulations, crucial for complex testbenches. They can only represent:
+2-state types are often useful in verification environments where the **X** and **Z** states are intentionally not needed. By excluding these states, they can reduce simulation work, although the performance benefit depends on the simulator and workload. They can only represent:
 
 - **0**: Logical zero, false condition.
 - **1**: Logical one, true condition.
@@ -49,7 +60,7 @@ endmodule
 | **`longint`**   | 2-state, 64-bit signed integer               | Large integers, counters               | `longint memory_address;`        |
 | **`shortreal`** | 2-state, 32-bit floating-point               | Single-precision floating-point values | `shortreal tolerance = 0.01;`   |
 | **`real`**      | 2-state, 64-bit floating-point               | Double-precision floating-point values | `real simulation_time = 12.5;`  |
-| **`time`**      | 2-state, 64-bit unsigned time value          | Storing simulation timestamps          | `time event_time;`              |
+| **`time`**      | 4-state, unsigned time value                | Storing simulation timestamps          | `time event_time;`              |
 | **`realtime`**  | 2-state, Real-number time                     | Representing delays, time intervals    | `realtime delay_time = 3.14e-9;`|
 
 ```systemverilog
@@ -61,11 +72,26 @@ module verification_env;
   // ... verification logic using 2-state types for efficiency ...
 endmodule
 ```
-**Explanation**: In `verification_env`, 2-state types like `bit`, `int`, and `real` are used to optimize simulation speed. Since verification often deals with ideal conditions and abstract models, the 4-state complexity is often unnecessary and can be avoided for performance gains.
+**Explanation**: In `verification_env`, 2-state types like `bit`, `int`, and `real` are used where unknown and high-impedance values are not meaningful. This can optimize simulation speed, but using 2-state values can also hide an `X` or `Z` that would reveal an initialization, reset, or connectivity problem. Use 4-state types at boundaries where those conditions matter.
+
+### Signedness and Width
+
+Integral types have both a width and a signedness. `byte`, `shortint`, `int`, and `longint` are signed by default; `bit`, `logic`, `reg`, and `integer` have rules that depend on the declaration and form, so explicit `signed` or `unsigned` is often clearer. Packed vectors such as `logic [7:0]` are unsigned unless declared `signed`. Unsized literals and mixed signed/unsigned expressions can extend or compare differently than expected.
+
+```systemverilog
+logic [7:0] unsigned_value = 8'hFF;
+logic signed [7:0] signed_value = -1;
+
+initial begin
+   $display("unsigned=%0d signed=%0d", unsigned_value, signed_value);
+end
+```
+
+For hardware interfaces, prefer explicitly sized vectors. For counters and arithmetic in verification code, use a named integer type with intentional signedness. Do not rely on an implicit width or sign when the result affects a protocol, address, comparison, or array index.
 
 ## **Advanced Built-in Types: Specialized Hardware Modeling**
 
-SystemVerilog includes advanced built-in types designed to model specific hardware scenarios, particularly those involving multiple drivers or wired connections.
+SystemVerilog includes advanced net types designed to model specific hardware scenarios, particularly those involving multiple drivers or wired connections. These are connection semantics rather than replacements for ordinary single-driver `logic` variables.
 
 ### **Tri-State and Multi-Driver Resolution Types**
 
@@ -87,7 +113,7 @@ module multi_driver_example;
   // ... logic driving address_bus and control_line ...
 endmodule
 ```
-**Explanation**: `tri1 address_bus` models a bus that defaults to a known high state when no driver is actively driving it. `wand control_line` represents a control signal where multiple sources can drive it low to assert control (wired-AND behavior).
+**Explanation**: `tri1 address_bus` models a net with a weak pull-up when no stronger driver is active; it does not guarantee a high value against every possible driver. `wand control_line` represents a control signal where multiple sources can drive it low to assert control (wired-AND behavior). Multi-driver nets should be used only when the physical or protocol model requires them.
 
 ## **User-Defined Data Types: Enhancing Readability and Abstraction**
 
@@ -127,7 +153,7 @@ case (current_state)
   // ...
 endcase
 ```
-**Benefit**: `enum` makes state machine code much more readable and less error-prone than using raw integer values for states. The optional type declaration (`logic [2:0]`) specifies the underlying data type for the enum, allowing type-safe operations.
+**Benefit**: `enum` makes state machine code much more readable and less error-prone than using raw integer values for states. The optional type declaration (`logic [2:0]`) specifies the underlying packed representation for the enum, allowing type-aware operations. Assigning arbitrary integer values to an enum may require an explicit cast, which helps expose accidental invalid states.
 
 ### 3. **`struct`**: Grouping Related Data
 
@@ -145,11 +171,11 @@ current_transaction.address = 8'h40;    // Access struct members using dot notat
 current_transaction.data = 32'h1234_5678;
 current_transaction.read_write = 1;
 ```
-**Benefit**: `struct` organizes related data into logical units, improving code structure and making it easier to pass complex data as arguments to tasks and functions. The `packed` keyword ensures that the struct members are laid out contiguously in memory, useful for bit-level manipulation.
+**Benefit**: `struct` organizes related data into logical units, improving code structure and making it easier to pass complex data as arguments to tasks and functions. The `packed` keyword makes the members a contiguous, integral bit representation, useful for bit-level manipulation and interfaces. A packed struct's total width is the sum of its packed members; its field ordering follows the declared packed layout and should be checked when mapping to a protocol.
 
 ### 4. **`union`**: Sharing Memory Space
 
-`union` allows multiple variables to share the same memory storage. Only one member of a union can hold a valid value at any given time. Unions are useful for memory optimization or when you need to interpret the same bits in different ways.
+`union` allows multiple variables to share the same storage. Writing one member changes the shared bits viewed through the other members; the union does not remember which member is currently intended to be valid. Unions are useful when you need to interpret the same bits in different ways, but they require a clear discriminator or protocol rule.
 
 ```systemverilog
 typedef union packed { // 'packed' for bit-level overlay
@@ -181,7 +207,7 @@ logic [3:0][7:0] byte_array_packed; // Packed 2D array (4 bytes, 32 bits total)
 assign byte_array_packed = 32'h1122_3344; // Assign a 32-bit value
 $display("Byte 0 (packed): %h", byte_array_packed[0]); // Access as bit vector
 ```
-**Key Feature**: Packed arrays are treated as a single vector. Indexing into packed arrays accesses bit or bit ranges within this contiguous vector. They are ideal for representing hardware signals, registers, and memory where bit-level manipulation is common.
+**Key Feature**: Packed arrays are treated as a single vector. Indexing into packed arrays accesses bit or bit ranges within this contiguous vector. They are ideal for representing hardware signals, registers, and fields where bit-level manipulation is common. For `logic [3:0][7:0] byte_array_packed`, `byte_array_packed[0]` is the low-index packed slice, not necessarily the first byte in a protocol's printed or wire-order convention.
 
 ### **Unpacked Arrays: Collections of Elements**
 
@@ -194,7 +220,7 @@ bit flag_array [64];               // Unpacked array of 64 bits
 integer_array_unpacked[0] = 123;     // Access individual integer elements
 flag_array[5] = 1;
 ```
-**Key Feature**: Unpacked arrays are collections of individual elements. Indexing accesses elements, not bits. They are more memory-efficient for large arrays because elements are not necessarily stored contiguously in memory like packed arrays.
+**Key Feature**: Unpacked arrays are collections of individual elements. Indexing accesses elements, not bits. Their storage layout and memory efficiency are implementation-dependent, so choose them for element-level modeling rather than assuming a particular physical layout.
 
 **Choosing Between Packed and Unpacked Arrays**:
 
@@ -207,11 +233,32 @@ flag_array[5] = 1;
     - Verification testbenches.
     - Large data storage (memories, lookup tables).
     - Element-wise access and manipulation.
-    - When memory efficiency for large arrays is a priority.
+   - When element-level access and variable-shaped data are more important than bit-level packing. Memory efficiency depends on the type and tool implementation.
+
+## A Practical Type-Selection Checklist
+
+When declaring a new signal or variable, ask these questions in order:
+
+1. Is this an electrical connection with potentially multiple drivers? If so, consider a net such as `wire`, `tri`, `wand`, or `wor`; otherwise, a variable such as `logic` is usually clearer.
+2. Must simulation preserve `X` and `Z` values? Use a 4-state type at RTL and at verification boundaries where unknowns reveal bugs. Use a 2-state type only when collapsing unknowns is intentional.
+3. What width and signedness does the specification require? State them explicitly for buses, addresses, counters, and arithmetic operands.
+4. Is the data one packed bit representation or a collection of elements? Put packed dimensions before the identifier and unpacked dimensions after it.
+5. Would a named `typedef`, `enum`, or `struct` communicate the protocol or state-machine meaning better than a raw vector?
+
+For example, an 8-bit hardware field and a list of eight independent bytes are different models:
+
+```systemverilog
+logic [7:0] packed_field;       // One 8-bit value
+logic [7:0] byte_list [8];      // Eight 8-bit elements
+```
+
+Both declarations contain 64 bits of element data, but their indexing, assignment, concatenation, and interface behavior are different. This distinction becomes central in the next chapter on arrays.
 
 ## **Exercises to Solidify Your Understanding**
 
 Test your knowledge of SystemVerilog data types with these exercises. Solutions are provided below to check your work.
+
+The examples below are small declarations intended to illustrate type syntax. When compiling them as a single file, place declarations inside an appropriate module, package, or procedural block, and use a SystemVerilog compilation mode. Declaration-time initialization is simulation initialization; it should not be confused with a hardware reset requirement.
 
 1. **Declare and Initialize a `reg`**:
    ```systemverilog

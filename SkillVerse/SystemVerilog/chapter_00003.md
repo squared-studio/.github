@@ -2,6 +2,18 @@
 
 SystemVerilog equips designers with a set of built-in **system tasks and system functions** that are indispensable for effective debugging, precise simulation control, and in-depth waveform analysis. These utilities are your allies in understanding and verifying your designs. Let's explore these powerful tools with clear explanations, practical examples, and hands-on exercises.
 
+## Learning Goals
+
+By the end of this chapter, you should be able to:
+
+- Select an appropriate display task for immediate, continuous, or end-of-time-step reporting.
+- Generate and inspect a VCD waveform while recognizing simulator-specific limitations.
+- Distinguish `$time`, `$stime`, and `$realtime`, including the effect of `timeunit` and `timeprecision`.
+- End a simulation normally, pause it for interactive debugging, and recognize why forceful termination is non-portable.
+- Read simulation output critically by accounting for unknown values, scheduling regions, and accumulated delays.
+
+System tasks are simulator services, so their exact formatting, command-line behavior, and supported options can vary. Prefer IEEE-defined behavior where possible and verify implementation-specific features with the simulator documentation.
+
 ## **Display Tasks: Your Simulation's Voice**
 
 Display tasks are your primary means of communication with the simulator. They allow you to print messages and inspect variable values during simulation, making debugging a more transparent process.
@@ -9,6 +21,8 @@ Display tasks are your primary means of communication with the simulator. They a
 ### 1. **`$display`**: Immediate Output to Console
 
 `$display` acts like a print statement, instantly outputting formatted text to your simulation console the moment it's executed. It's perfect for logging events, checking values at specific points in time, and providing immediate feedback during simulation.
+
+`$display` appends a newline after the formatted message. Related tasks such as `$write` and `$sformatf` are useful when a message must be assembled without an automatic newline; they are covered in more detail in later system-task material.
 
 - **Format Specifiers**:  Control how your output is displayed. Key specifiers include:
     - `%t`:  Displays the current simulation time, crucial for time-annotated debugging.
@@ -25,7 +39,7 @@ module display_example;
   end
 endmodule
 ```
-**Explanation**: This example demonstrates `$display` printing the simulation time (`%0t`), a decimal value (`%0d`), and its binary (`%b`) and hexadecimal (`%h`) representations, all in a single line for clear, informative output.
+**Explanation**: This example demonstrates `$display` printing the simulation time (`%0t`), a decimal value (`%0d`), and its binary (`%b`) and hexadecimal (`%h`) representations, all in a single line for clear, informative output. The literal `ns` in the format string is only a label; use the module's declared time unit and a consistent `%t` format policy when reporting time.
 
 ### 2. **`$monitor`**:  Real-time Variable Tracking
 
@@ -33,6 +47,8 @@ endmodule
 
 - **Single Active Monitor**: Remember, only **one `$monitor` task can be actively monitoring** at any given time in your simulation. If you call `$monitor` again, it replaces the previous one.
 - **Controlling Monitoring**: Use `$monitoron` to start monitoring and `$monitoroff` to temporarily disable it without losing the monitor setup. This is useful for focusing on specific simulation phases.
+
+`$monitor` normally produces an initial report when it is enabled and then reports when one of its arguments changes. At time 0, values may still be `X` until initialization statements execute. The exact number and ordering of messages can depend on scheduling, so treat the output below as representative rather than as a promise that every simulator prints exactly these lines.
 
 ```systemverilog
 module monitor_example;
@@ -58,7 +74,7 @@ Time=10 ns: a=5, b=10
 
 ### 3. **`$strobe`**:  Stable Value Sampling
 
-`$strobe` is similar to `$display` but with a crucial timing difference. It prints values **at the very end of the current simulation time step**, specifically after all active assignments within that time step have been fully executed and settled.
+`$strobe` is similar to `$display` but with a crucial timing difference. It prints values in the simulator's postponed region, after updates scheduled earlier in the current time slot, including nonblocking assignments, have been processed. It does not mean that every possible future delta cycle or later timed event has completed.
 
 - **Capturing Stable Values**:  `$strobe` is invaluable when you have concurrent assignments within the same time step and need to ensure you're capturing the final, stable values after all updates have propagated.
 
@@ -76,7 +92,7 @@ module strobe_example;
   end
 endmodule
 ```
-**Explanation**: At the same simulation time step, `a` is first set to `42` via a blocking assignment, then scheduled to update to `65` via a non-blocking assignment (`<=`). `$display` executes immediately and captures the current value `42`, before the non-blocking assignment settles. `$strobe`, however, fires at the very end of the time step, after all non-blocking assignments have resolved, and correctly prints the final stable value `65`.
+**Explanation**: At the same simulation time step, `a` is first set to `42` via a blocking assignment, then scheduled to update to `65` via a non-blocking assignment (`<=`). `$display` executes immediately and captures the current value `42`, before the non-blocking assignment settles. `$strobe`, however, reports in the postponed region after that nonblocking update, and prints `65` for this example.
 
 **Choosing the Right Display Task**:
 
@@ -136,18 +152,18 @@ SystemVerilog provides functions to access the current simulation time in differ
 
 ### 1. **`$time`**: High-Precision 64-bit Time
 
-`$time` returns the current simulation time as a **64-bit integer**. This offers the highest precision and is generally preferred for most time-related operations in SystemVerilog.
+`$time` returns the current simulation time as an integer time value, commonly represented with 64-bit precision. Its value is quantized to the active `timeprecision` and scaled according to the current scope's time unit. It is generally preferred over `$stime` when an integer time value is sufficient.
 
 ```systemverilog
 module time_example;
   initial begin
     #7.5ns;
     $display("64-bit Time: %0t ns", $time);
-    // Output: "64-bit Time: 7 ns" (Time unit depends on `timescale directive`)
+    // Output depends on timeprecision and the simulator's %t formatting policy.
   end
 endmodule
 ```
-**Explanation**: Even though we used a fractional delay `#7.5ns`, `$time` returns the integer part, `7`. The time unit (`ns` in the output example) is determined by the timescale directive set for the module or design.
+**Explanation**: Even though we used a fractional delay `#7.5ns`, `$time` returns an integer value after the delay has been rounded or quantized according to the active time precision. It should not be described universally as truncating to `7`. The time unit and precision come from `timeunit`/`timeprecision` declarations or legacy `` `timescale`` settings, and `%t` formatting is simulator- and configuration-dependent.
 
 ### 2. **`$stime`**:  32-bit Time (Potentially Limited Range)
 
@@ -166,7 +182,7 @@ endmodule
 
 ### 3. **`$realtime`**: Real Number Time for Fractional Steps
 
-`$realtime` returns the current simulation time as a **real number (floating-point)**. This is essential when your simulation involves **fractional time steps**, allowing you to accurately represent and display time with decimal precision.
+`$realtime` returns the current simulation time as a **real number (floating-point)**. This is useful when your simulation involves **fractional time steps**, allowing you to display a fractional value after the simulator has quantized the delay to its active time precision.
 
 ```systemverilog
 module realtime_example;
@@ -177,7 +193,7 @@ module realtime_example;
   end
 endmodule
 ```
-**Explanation**: `$realtime` correctly displays the fractional time step `3.75`, making it suitable for simulations where precise fractional delays are important.
+**Explanation**: With a sufficiently fine time precision, `$realtime` displays the fractional time step `3.75`, making it suitable for simulations where fractional delays are important. No time query can recover precision that was discarded when the delay was scheduled.
 
 ## **Simulation Control Tasks: Guiding Simulation Flow**
 
@@ -185,7 +201,7 @@ Simulation control tasks allow you to manage the execution of your simulation, p
 
 ### 1. **`$finish`**:  Ending the Simulation Gracefully
 
-`$finish` is used to **terminate the simulation** and typically **close the simulator program** entirely. It signals that the simulation has reached a natural conclusion or an error condition that warrants stopping.
+`$finish` is used to **terminate the current simulation run**. It signals that the simulation has reached a natural conclusion or an error condition that warrants stopping. The simulator application or command-line process may remain available for another run.
 
 ```systemverilog
 module finish_example;
@@ -196,7 +212,7 @@ module finish_example;
   end
 endmodule
 ```
-**Explanation**: When `$finish` is executed, the simulator stops, and any code after `$finish` in the same or subsequent blocks will not be executed.
+**Explanation**: When `$finish` is executed, the current simulation stops, and any code after `$finish` in the same or subsequent blocks will not execute. Use a reporting or exit-status convention agreed by the regression flow when the reason is a test failure.
 
 ### 2. **`$stop`**:  Pausing for Inspection
 
@@ -216,26 +232,26 @@ endmodule
 ```
 **Explanation**: The simulation will pause at time 20ns. The message "Simulation Resumed." will only be displayed if you manually instruct the simulator to continue (e.g., using a 'run -continue' command in ModelSim or a similar command in your simulator).
 
-### 3. **`$exit`**: Immediate Simulator Termination
+### 3. **`$exit`**: Program-Block Exit (Tool and Context Dependent)
 
-`$exit` is designed to **immediately terminate the simulator process**.  Its behavior can be tool-dependent, but generally, it forces the simulator to quit abruptly, potentially without completing any cleanup or finalization steps that `$finish` might perform.
+`$exit` is associated with exiting a SystemVerilog `program` block and is not a portable replacement for `$finish` that immediately terminates every simulator process. Support and behavior can vary by simulator and by the context in which it is called. A module-based testbench should normally use `$finish` for normal termination and should consult its simulator documentation before using `$exit`.
 
 ```systemverilog
 module exit_example;
   initial begin
     #5ns $display("Exiting simulator abruptly...");
-    $exit; // Simulator terminates immediately, potentially without full cleanup
-    $display("This line may or may not be printed, depending on the tool.");
+    $exit; // Behavior depends on simulator and calling context
+    $display("This line is not a portable termination test.");
   end
 endmodule
 ```
-**Caution**:  `$exit` should be used sparingly, primarily in situations where you need to force-terminate the simulation due to a critical error or unrecoverable state.  `$finish` is generally the preferred method for ending simulations under normal or expected termination conditions.
+**Caution**: `$exit` should be used sparingly and only when the simulator and testbench context define its behavior. `$finish` is generally the preferred method for ending simulations under normal or expected termination conditions; a fatal reporting task may be more appropriate for an unrecoverable verification error.
 
 **Choosing the Right Control Task**:
 
 - Use **`$finish`** to signal the normal end of a simulation or to gracefully terminate upon encountering a fatal error.
 - Use **`$stop`** for pausing the simulation to interactively debug and examine the design state.
-- Use **`$exit`** with caution, only when a forceful, immediate termination of the simulator is necessary.
+- Use **`$exit`** only when its program-block or tool-specific behavior is understood; do not assume it forcefully terminates the simulator.
 
 ## **Hands-on Exercises with Solutions**
 

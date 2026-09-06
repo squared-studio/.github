@@ -9,25 +9,25 @@ These tasks are used to control the execution flow of a simulation.
 ### `$finish`
 
 **Description:**
-
-The `$finish` task is used to terminate a simulation. When `$finish` is called, the simulator typically cleans up resources, closes files opened with `$fopen`, and then exits. You can optionally provide an argument to specify the level of reporting before exiting.
+The `$realtime` function returns the current simulation time as a `real` number, expressed in the calling scope's time unit. It preserves fractional time when the scope's precision allows it.
+The `$finish` task terminates a simulation after the simulator performs its normal end-of-simulation processing. You can optionally provide an argument to select the amount of termination information reported; exact formatting is simulator-dependent.
 
 -   `$finish;` or `$finish(0);`: Terminates simulation with no additional messages.
 -   `$finish(1);`: Terminates simulation and prints the simulation time and location.
--   `$finish(2);`: Terminates simulation and prints the simulation time, location, and statistics about memory and CPU usage.
+The `$stime` function returns the current simulation time as a 32-bit integer, expressed in the calling scope's time unit. Any fractional part is rounded according to the simulator's time conversion rules, and the result can overflow its 32-bit range.
 
 It is the most commonly used task for ending a simulation gracefully.
 
 **Example:**
-
+The `$time` function returns the current simulation time as a 64-bit integer, expressed in the calling scope's time unit. It differs from `$realtime$ because fractional values are converted to an integer according to the simulator's time conversion rules. The effective time unit comes from the module/program/interface declaration or the applicable `` `timescale`` directive; use an explicit time unit or `` `timescale`` rather than relying on a tool default.
 ```systemverilog
 module finish_example;
 
-  initial begin
+**Return Type:** 32-bit `integer`
     $display("Simulation started at time %0t", $time);
-
+**Return Type:** 64-bit `time`
     #100; // Wait for 100 time units
-    $display("Simulation reached 100 time units.");
+-   `$cast$ is frequently used for casting object handles in object-oriented SystemVerilog (like UVM), but it can also be used for value casting between compatible scalar or aggregate types. For real-to-integral conversion, use `$rtoi$, `$itor$, or an explicit cast when the desired rounding rule must be obvious.
 
     #50;  // Wait for another 50 time units
     $display("Simulation reached 150 time units. Calling $finish.");
@@ -94,10 +94,10 @@ In this example, the simulation starts, prints messages, waits for 50 time units
 
 **Description:**
 
-The `$exit` task is a more abrupt way to terminate simulation compared to `$finish`. It typically terminates the simulation immediately, bypassing the normal simulation cleanup procedures. This can be useful in specific scenarios, but generally `$finish` is preferred for a clean shutdown. You can provide an optional integer argument as an exit code for the simulation process.
+`$exit` is not a portable IEEE SystemVerilog simulation-control task. Some simulators provide it as an extension that terminates the simulation or the simulator process immediately, sometimes with an exit code. Prefer `$finish` for portable, orderly termination and document the simulator requirement when `$exit` is used.
 
--   `$exit;` or `$exit(0);`: Terminates simulation immediately with an exit code of 0 (indicating success).
--   `$exit(code);`: Terminates simulation immediately with the specified exit code.
+-   `$exit;` or `$exit(0);`: In simulators that support this extension, requests immediate termination with a zero exit code.
+-   `$exit(code);`: In simulators that support this extension, requests termination with the specified implementation-defined process status.
 
 **Example:**
 
@@ -141,7 +141,7 @@ Functions to retrieve the current simulation time in various formats.
 
 **Description:**
 
-The `$realtime` function returns the current simulation time as a `real` number. The value is scaled to the simulation's *time unit* as defined by the `timescale` directive. This function provides the most precise representation of the current simulation time, including fractional parts if the precision is finer than the time unit.
+The `$realtime` function returns the current simulation time as a `real` number, expressed in the calling scope's time unit. It preserves fractional time when the scope's precision allows it.
 
 **Return Type:** `real`
 
@@ -149,17 +149,17 @@ The `$realtime` function returns the current simulation time as a `real` number.
 
 **Description:**
 
-The `$stime` function returns the current simulation time as a 32-bit unsigned integer. The value is scaled to the simulation's *time unit* as defined by the `timescale` directive. Any fractional part of the time is truncated.
+The `$stime` function returns the current simulation time as a 32-bit integer, expressed in the calling scope's time unit. Any fractional part is converted according to the simulator's time conversion rules, and the result can overflow its 32-bit range.
 
-**Return Type:** `unsigned integer` (specifically, the least significant 32 bits)
+**Return Type:** 32-bit `integer`
 
 ### `$time`
 
 **Description:**
 
-The `$time` function returns the current simulation time as a 32-bit unsigned integer. This is where it differs from `$realtime` and `$stime`. The value returned by `$time` is scaled *up* to the reference time unit specified in the `timescale` directive (e.g., the '1ns' part in `` `timescale 1ns / 1ps``). If no `timescale` is specified, a default timescale applies (which is simulator-dependent, often 1s / 1s). Similar to `$stime`, any fractional part after scaling is truncated, and the value is limited to the least significant 32 bits.
+The `$time` function returns the current simulation time as a 64-bit integer, expressed in the calling scope's time unit. It differs from `$realtime` because fractional values are converted to an integer according to the simulator's time conversion rules. The effective time unit comes from the module/program/interface declaration or the applicable `` `timescale`` directive; use an explicit time unit or `` `timescale`` rather than relying on a tool default.
 
-**Return Type:** `unsigned integer` (specifically, the least significant 32 bits)
+**Return Type:** 64-bit `time`
 
 **Example Demonstrating `$realtime`, `$stime`, and `$time`**
 
@@ -211,26 +211,26 @@ With `` `timescale 1ns / 1ps``:
     * After `#0.5`: `10.500000` (10.5ns)
     * After `#100ps`: `10.600000` (10.5ns + 0.1ns = 10.6ns)
 
-* **`$stime`**: Returns the time in nanoseconds (the time unit) as an integer, truncated.
+* **`$stime`**: Returns the time in nanoseconds (the time unit) as a 32-bit integer, rounded to the local time unit.
     * At time 0: `0`
     * After `#10`: `10` (10ns)
-    * After `#0.5`: `10` (10.5ns truncated to 10)
-    * After `#100ps`: `10` (10.6ns truncated to 10)
+    * After `#0.5`: approximately `11` (10.5ns rounded to the local time unit)
+    * After `#100ps`: approximately `11` (10.6ns rounded to the local time unit)
 
-* **`$time`**: Returns the time scaled up to the reference unit (1ns in this case) as an integer, truncated. Since the time unit is already 1ns, `$time` behaves the same as `$stime` in this specific example.
+* **`$time`**: Returns the time in the local time unit as a 64-bit integer. Since the time unit is already 1ns, `$time` and `$stime` have the same values here except for their different widths.
     * At time 0: `0`
     * After `#10`: `10` (10ns scaled to 1ns is 10)
-    * After `#0.5`: `10` (10.5ns scaled to 1ns is 10.5, truncated to 10)
-    * After `#100ps`: `10` (10.6ns scaled to 1ns is 10.6, truncated to 10)
+    * After `#0.5`: approximately `11` (10.5ns rounded to the local time unit)
+    * After `#100ps`: approximately `11` (10.6ns rounded to the local time unit)
 
 **Consider what would happen if the timescale was different, e.g., `` `timescale 1us / 1ns``:**
 
 * A delay of `#10` would be 10 microseconds.
 * `$realtime` would return the time in microseconds (e.g., `10.0` after `#10`).
 * `$stime` would return the time in microseconds (e.g., `10` after `#10`).
-* `$time` would return the time scaled to 1 microsecond (the reference unit). So after `#10us`, `$time` would return `10`. If you had a delay of `#1.5us`, `$time` would return `1`. If you had a delay of `#500ns`, `$time` would return `0` (since 500ns scaled to 1us is 0.5, truncated).
+* `$time` would return the time in microseconds. So after `#10us`, `$time` would return `10`. A delay of `#1.5us` would be converted according to the local precision and rounded when returned as an integer.
 
-This illustrates the key difference: `$realtime` and `$stime` scale to the time unit, while `$time` scales to the reference time unit. `$realtime` provides floating-point precision, while `$stime` and `$time` provide integer values.
+This illustrates the key difference: `$realtime`, `$stime`, and `$time` are expressed in the calling scope's time unit; `$realtime` preserves fractional values, while `$stime` and `$time` provide integer values with different widths.
 
 ## Timescale Tasks
 Tasks related to querying or setting timescale information.
@@ -306,7 +306,7 @@ The `$timeformat` task controls how time values are displayed by the standard di
 -   `suffix`: A string to be appended to the time value (e.g., " ns", " us"). Use `""` for no suffix.
 -   `minimum_field_width`: An integer specifying the minimum width of the field for printing the time value. Useful for aligning output. Use 0 for no minimum width.
 
-A call to `$timeformat` affects subsequent display task calls in the current scope or module.
+A call to `$timeformat` affects subsequent time formatting in the simulation; it is a simulator-wide setting rather than a per-module formatting setting. Later calls replace the earlier setting.
 
 **Example:**
 
@@ -436,7 +436,7 @@ This example is analogous to the `$bitstoreal`/`$realtobits` example but uses `s
 **Descriptions:**
 
 -   `$itor(expression)`: Converts an integer expression (e.g., `int`, `integer`, `logic`, `bit`) to a `real` value.
--   `$rtoi(expression)`: Converts a `real` or `shortreal` expression to an integer. The fractional part of the floating-point number is typically truncated (rounded towards zero).
+-   `$rtoi(expression)`: Converts a `real` or `shortreal` expression to an integer by truncating the fractional part toward zero. This differs from an explicit integral cast, which rounds a real value to the nearest integer.
 
 **Example:**
 
@@ -520,7 +520,7 @@ The `logic [7:0]` variable `byte_data` holds the bit pattern `8'hFF`. When treat
 
 **Description:**
 
-The `$cast` system function attempts to convert a source expression or handle to a specified target type. It performs a dynamic cast, meaning the conversion is checked at runtime. If the conversion is successful, it returns 1; otherwise, it returns 0. The converted value is assigned to the variable provided as the first argument. `$cast` is frequently used for casting object handles in object-oriented SystemVerilog (like UVM), but it can also be used for value casting between compatible scalar or aggregate types.
+The `$cast` system function attempts to convert a source expression or handle to a specified target type. It performs a dynamic cast, meaning the conversion is checked at runtime. If the conversion is successful, it returns 1; otherwise, it returns 0. The converted value is assigned to the variable provided as the first argument. `$cast` is frequently used for casting object handles in object-oriented SystemVerilog (like UVM), but it can also be used for value casting between compatible scalar or aggregate types. For real-to-integral conversion, use `$rtoi`, `$itor`, or an explicit cast when the desired rounding rule must be obvious.
 
 **Usage:**
 
@@ -538,9 +538,9 @@ module cast_example;
   initial begin
     $display("Original real value: %f", r_val);
 
-    // Attempt to cast real to integer
+    // An explicit cast rounds a real value; use $rtoi for truncation.
     if ($cast(i_val, r_val)) begin
-      $display("Successfully cast real to integer: %0d", i_val); // Truncates
+      $display("Successfully cast real to integer: %0d", i_val);
     end else begin
       $display("Failed to cast real to integer.");
     end
@@ -564,7 +564,7 @@ endmodule
 
 This example shows `$cast` used for value conversion:
 
--   It attempts to cast a `real` value (`r_val`) to an `integer` (`i_val`). This is a valid conversion for scalar types, and `$cast` will succeed, assigning the truncated integer value (123) to `i_val`.
+-   It attempts to cast a `real` value (`r_val`) to an `integer` (`i_val`). This is a valid scalar conversion, and an explicit integral cast rounds the real value according to SystemVerilog's casting rules.
 -   It attempts to cast a `shortreal` literal (`25.67f`) to a `real` variable (`r_val`). This is also a valid scalar conversion and will succeed, assigning the `shortreal` value converted to `real` format to `r_val`.
 
 While explicit conversions like `$rtoi` are often used for simple scalar conversions, `$cast` provides a more general mechanism, especially powerful for polymorphic object handle assignments where the type is determined at runtime.
@@ -650,7 +650,7 @@ The example shows how `$bits` reports the total number of bits for various data 
 
 **Description:**
 
-The `$isunbounded` function returns a boolean value (1 for true, 0 for false) indicating whether a data type is considered "unbounded". Unbounded data types are those whose size is not fixed by the type declaration itself but can vary based on the value assigned (though typically they have a minimum guaranteed range). In SystemVerilog, this primarily refers to `int`, `integer`, `longint`, `byte`, `shortint`, `real`, and `shortreal`. Sized vectors like `logic [7:0]` are *not* unbounded.
+The `$isunbounded` function returns 1 when its type is an unbounded type and 0 otherwise. In standard SystemVerilog, this is relevant to types whose size is not fixed by the declaration, such as `string`, a queue, or an associative array with an unsized (`[*]`) index. Fixed-width integral types (`int`, `integer`, `longint`, `byte`, and `shortint`), `real`, `shortreal`, vectors, enums, structs, and fixed-size arrays are not unbounded.
 
 **Usage:**
 
@@ -685,9 +685,7 @@ endmodule
 
 **Explanation:**
 
-The example queries whether various data types are unbounded using `$isunbounded`. The output will show:
--   1 for `int`, `integer`, `longint`, `byte`, `shortint`, `real`, and `shortreal`.
--   0 for sized types like `logic [7:0]`, `bit`, enums, structs, and arrays, as their size is defined by the declaration.
+The example queries whether various data types are unbounded using `$isunbounded`. The fixed-width types shown in the example produce 0. To demonstrate a true result, query a `string`, queue, or unsized associative array with a simulator that supports this type query.
 
 ### `$typename`
 
@@ -1283,7 +1281,7 @@ endmodule
 -   **`$onehot0`**: Checks for at most one '1'. It returns 1 for `data2` (zero ones) and `data3` (exactly one '1'). It returns 0 for `data1`, `data4`, and `data5`.
 -   **`$isunknown`**: Checks for 'x' or 'z'. It returns 0 for `data1`, `data2`, `data3`, and `data4` (which contain only 0s and 1s). It returns 1 for `data5` because it contains 'x' and 'z'.
 
-These functions are very useful for checking control signals, state encodings, or detecting the presence of unknown values in a design or testbench.
+These functions are very useful for checking control signals, state encodings, or detecting the presence of unknown values in a design or testbench. When an expression contains X or Z, consult the function's 4-state semantics: `$isunknown` explicitly reports their presence, while one-hot checks are not a substitute for an explicit unknown check.
 
 ## Severity Tasks
 Tasks used to report messages with different severity levels during simulation or elaboration.
@@ -1815,13 +1813,15 @@ These tasks and functions allow you to:
 * Save and load coverage data.
 * Merge coverage results from different simulation runs.
 
-Consider the following example module with a simple `covergroup` to illustrate some of these functions:
+Consider the following example module with a simple `covergroup` to illustrate some of these functions. Coverage database naming, saving, loading, and merging are commonly simulator-specific even when a tool supports similarly named system tasks, so verify the target simulator's syntax.
 
 ```systemverilog
 module coverage_control_example;
 
   logic [1:0] state;
   integer sim_time;
+
+  logic clk = 0; // Clock for covergroup sampling
 
   // Define a simple covergroup
   covergroup state_cg @(posedge clk);
@@ -1835,8 +1835,6 @@ module coverage_control_example;
   endgroup
 
   state_cg cg_inst; // Instance of the covergroup
-
-  logic clk = 0; // Clock for covergroup sampling
 
   // Clock generator
   initial begin
@@ -1859,23 +1857,23 @@ module coverage_control_example;
     $display("Time %0t: Calling $coverage_control(1) - Ensure coverage is ON.", $time);
     $coverage_control(1); // 1 means ENABLE
 
-    #20; state = 0; // @20 (posedge clk) - sample state=0
-    #20; state = 1; // @40 (posedge clk) - sample state=1
-    #20; state = 2; // @60 (posedge clk) - sample state=2
+    #20; state = 0; // @20; sampled at the next posedge
+    #20; state = 1; // @40; sampled at the next posedge
+    #20; state = 2; // @60; sampled at the next posedge
 
     #15; // Between clock edges
     $display("Time %0t: Calling $coverage_control(0) - Disable coverage.", $time);
     $coverage_control(0); // 0 means DISABLE
 
-    #20; state = 3; // @80 (posedge clk) - will NOT be sampled because coverage is off
-    #20; state = 0; // @100 (posedge clk) - will NOT be sampled because coverage is off
+    #20; state = 3; // @95; sampled at the next posedge while coverage is off
+    #20; state = 0; // @115; sampled at the next posedge while coverage is off
 
     #15; // Between clock edges
     $display("Time %0t: Calling $coverage_control(1) - Enable coverage again.", $time);
     $coverage_control(1); // ENABLE
 
-    #20; state = 1; // @120 (posedge clk) - sample state=1 again
-    #20; state = 3; // @140 (posedge clk) - sample state=3
+    #20; state = 1; // @135; sampled at the next posedge
+    #20; state = 3; // @155; sampled at the next posedge
 
     $display("\nTime %0t: Querying coverage...", $time);
 
@@ -1924,7 +1922,7 @@ Let's describe the functions based on the example and general usage:
 * `$coverage_control(0);`: Disables coverage collection.
 * You can optionally specify a specific covergroup instance or scope to control collection more granularly.
 
-**Example Usage (in the code):** Used to turn coverage off between time 75 and 115, demonstrating that samples occurring during this period (`state=3` at @80, `state=0` at @100) are not recorded.
+**Example Usage (in the code):** Used to turn coverage off between time 75 and 115, demonstrating that samples occurring during this period are not recorded. The exact sampled values depend on the clock edge and assignment ordering.
 
 ### `$coverage_get_max`
 
@@ -1944,7 +1942,7 @@ Let's describe the functions based on the example and general usage:
 
 `$coverage_get(covergroup_instance.coverage_point_name)`
 
-**Example Usage (in the code):** Used to query the current hits for `s0` and `s3` bins. `s0` is hit once (@20), `s3` is hit once (@140), as coverage was off at @80.
+**Example Usage (in the code):** Used to query the current hits for `s0` and `s3` bins. The hit count depends on the covergroup sampling edges and whether coverage is enabled at those edges.
 
 ### `$get_coverage`
 
@@ -1954,7 +1952,7 @@ Let's describe the functions based on the example and general usage:
 
 `$get_coverage(covergroup_instance_or_scope_name)`
 
-**Example Usage (in the code):** Used to query the overall coverage percentage for the `cg_inst` covergroup instance. It will calculate the percentage based on how many bins have been hit at least once (3 out of 4 bins are hit in this example).
+**Example Usage (in the code):** Used to query the overall coverage percentage for the `cg_inst` covergroup instance. It calculates the percentage based on the bins hit at least once; do not assume a fixed percentage without checking the simulator's sampling schedule.
 
 ### `$set_coverage_db_name`
 
@@ -2019,13 +2017,13 @@ The `$random` function is the basic built-in random number generator. When calle
 
 **Description:**
 
-The `$dist_uniform(seed, high, low)` function generates a random integer uniformly distributed between `low` and `high`, inclusive. Each integer within the range has an equal probability of being generated.
+The `$dist_uniform(seed, low, high)` function generates a random integer uniformly distributed between `low` and `high`, inclusive. Each integer within the range has an equal probability of being generated. The `seed` argument is an `inout` integer state variable and is updated by the call.
 
 **Parameters:**
 
--   `seed`: An integer used to seed the random sequence for this distribution.
--   `high`: The upper bound of the uniform range (integer).
--   `low`: The lower bound of the uniform range (integer). `low` must be less than or equal to `high`.
+-   `seed`: An integer state variable used to seed and update the random sequence for this distribution.
+-   `low`: The lower bound of the uniform range (integer).
+-   `high`: The upper bound of the uniform range (integer). `low` must be less than or equal to `high`.
 
 **Return Type:** `integer`
 
@@ -2033,28 +2031,28 @@ The `$dist_uniform(seed, high, low)` function generates a random integer uniform
 
 **Description:**
 
-The `$dist_normal(seed, mean, standard_deviation)` function generates a random real number following a normal (Gaussian) distribution with the specified `mean` and `standard_deviation`. Values near the mean are more likely, and the probability decreases as you move further away from the mean.
+The `$dist_normal(seed, mean, standard_deviation)` function generates a random integer following a normal (Gaussian) distribution with the specified integer `mean` and standard deviation. Values near the mean are more likely, and the probability decreases as you move further away from the mean.
 
 **Parameters:**
 
--   `seed`: An integer seed.
--   `mean`: The mean (average) of the distribution (`real`).
--   `standard_deviation`: A measure of the spread of the distribution (`real`, must be non-negative).
+-   `seed`: An integer state variable that is updated by the call.
+-   `mean`: The integer mean (average) of the distribution.
+-   `standard_deviation`: An integer measure of the spread of the distribution (must be non-negative).
 
-**Return Type:** `real`
+**Return Type:** `integer`
 
 ### `$dist_exponential`
 
 **Description:**
 
-The `$dist_exponential(seed, mean)` function generates a random real number following an exponential distribution with the specified `mean`. This distribution is often used to model the time between events in a Poisson process. The mean is also the reciprocal of the rate parameter ($\lambda$).
+The `$dist_exponential(seed, mean)` function generates a random integer following an exponential distribution with the specified integer `mean`. This distribution is often used to model the time between events in a Poisson process. The mean is also the reciprocal of the rate parameter ($\lambda$).
 
 **Parameters:**
 
 -   `seed`: An integer seed.
--   `mean`: The mean of the distribution (`real`, must be positive).
+-   `mean`: The positive integer mean of the distribution.
 
-**Return Type:** `real`
+**Return Type:** `integer`
 
 ### `$dist_poisson`
 
@@ -2065,7 +2063,7 @@ The `$dist_poisson(seed, mean)` function generates a random integer following a 
 **Parameters:**
 
 -   `seed`: An integer seed.
--   `mean`: The mean number of events (`real`, must be positive).
+-   `mean`: The positive integer mean number of events.
 
 **Return Type:** `integer`
 
@@ -2073,41 +2071,41 @@ The `$dist_poisson(seed, mean)` function generates a random integer following a 
 
 **Description:**
 
-The `$dist_chi_square(seed, degrees_of_freedom)` function generates a random real number following a chi-square distribution with the specified `degrees_of_freedom`. This distribution is often used in statistics, particularly in hypothesis testing and confidence interval construction.
+The `$dist_chi_square(seed, degrees_of_freedom)` function generates a random integer following a chi-square distribution with the specified `degrees_of_freedom`. This distribution is often used in statistics, particularly in hypothesis testing and confidence interval construction.
 
 **Parameters:**
 
 -   `seed`: An integer seed.
 -   `degrees_of_freedom`: The number of degrees of freedom (`integer`, must be positive).
 
-**Return Type:** `real`
+**Return Type:** `integer`
 
 ### `$dist_erlang`
 
 **Description:**
 
-The `$dist_erlang(seed, k, mean)` function generates a random real number following an Erlang distribution. The Erlang distribution is related to the exponential distribution; it describes the time until *k* events occur in a Poisson process with a certain mean time between events.
+The `$dist_erlang(seed, k, mean)` function generates a random integer following an Erlang distribution. The Erlang distribution is related to the exponential distribution; it describes the time until *k* events occur in a Poisson process with a certain mean time between events.
 
 **Parameters:**
 
 -   `seed`: An integer seed.
 -   `k`: The shape parameter (number of events) (`integer`, must be positive).
--   `mean`: The mean of the related exponential distribution (`real`, must be positive). Note that the mean of the Erlang distribution itself is $k \times mean$.
+-   `mean`: The positive integer mean of the related exponential distribution. Note that the mean of the Erlang distribution itself is $k \times mean$.
 
-**Return Type:** `real`
+**Return Type:** `integer`
 
 ### `$dist_t`
 
 **Description:**
 
-The `$dist_t(seed, degrees_of_freedom)` function generates a random real number following a Student's t-distribution with the specified `degrees_of_freedom`. The t-distribution is symmetric and bell-shaped, similar to the normal distribution, but has heavier tails. As the degrees of freedom increase, the t-distribution approaches the normal distribution.
+The `$dist_t(seed, degrees_of_freedom)` function generates a random integer following a Student's t-distribution with the specified `degrees_of_freedom`. The t-distribution is symmetric and bell-shaped, similar to the normal distribution, but has heavier tails. As the degrees of freedom increase, the t-distribution approaches the normal distribution.
 
 **Parameters:**
 
 -   `seed`: An integer seed.
 -   `degrees_of_freedom`: The number of degrees of freedom (`integer`, must be positive).
 
-**Return Type:** `real`
+**Return Type:** `integer`
 
 ### Example Demonstrating Distribution Functions
 
@@ -2128,39 +2126,38 @@ module distribution_functions_example;
     $display("$random(): %0d", $random());       // Get next value from reseeded sequence
 
     $display("\n$dist_uniform (integer between 1 and 10):");
-    $display("$dist_uniform: %0d", $dist_uniform(my_seed + 1, 10, 1)); // Seed and get value
-    $display("$dist_uniform: %0d", $dist_uniform(my_seed + 1, 10, 1)); // Same seed -> same first value
-    $display("$dist_uniform: %0d", $dist_uniform(my_seed + 2, 10, 1)); // Different seed
+    $display("$dist_uniform: %0d", $dist_uniform(my_seed, 1, 10)); // Seed and get value
+    $display("$dist_uniform: %0d", $dist_uniform(my_seed, 1, 10)); // Continue the sequence
 
     $display("\n$dist_normal (mean=0.0, std_dev=1.0 - Standard Normal):");
-    $display("$dist_normal: %f", $dist_normal(my_seed + 3, 0.0, 1.0));
-    $display("$dist_normal: %f", $dist_normal(my_seed + 3, 0.0, 1.0)); // Same seed
-    $display("$dist_normal: %f", $dist_normal(my_seed + 4, 5.0, 2.0)); // Different parameters
+    $display("$dist_normal: %0d", $dist_normal(my_seed, 0, 1));
+    $display("$dist_normal: %0d", $dist_normal(my_seed, 0, 1)); // Continue the sequence
+    $display("$dist_normal: %0d", $dist_normal(my_seed, 5, 2)); // Different parameters
 
     $display("\n$dist_exponential (mean=5.0):");
-    $display("$dist_exponential: %f", $dist_exponential(my_seed + 5, 5.0));
-    $display("$dist_exponential: %f", $dist_exponential(my_seed + 5, 5.0));
-    $display("$dist_exponential: %f", $dist_exponential(my_seed + 6, 1.0));
+    $display("$dist_exponential: %0d", $dist_exponential(my_seed, 5));
+    $display("$dist_exponential: %0d", $dist_exponential(my_seed, 5));
+    $display("$dist_exponential: %0d", $dist_exponential(my_seed, 1));
 
     $display("\n$dist_poisson (mean=3.0):");
-    $display("$dist_poisson: %0d", $dist_poisson(my_seed + 7, 3.0));
-    $display("$dist_poisson: %0d", $dist_poisson(my_seed + 7, 3.0));
-    $display("$dist_poisson: %0d", $dist_poisson(my_seed + 8, 0.5));
+    $display("$dist_poisson: %0d", $dist_poisson(my_seed, 3));
+    $display("$dist_poisson: %0d", $dist_poisson(my_seed, 3));
+    $display("$dist_poisson: %0d", $dist_poisson(my_seed, 1));
 
     $display("\n$dist_chi_square (dof=5):");
-    $display("$dist_chi_square: %f", $dist_chi_square(my_seed + 9, 5));
-    $display("$dist_chi_square: %f", $dist_chi_square(my_seed + 9, 5));
-    $display("$dist_chi_square: %f", $dist_chi_square(my_seed + 10, 1));
+    $display("$dist_chi_square: %0d", $dist_chi_square(my_seed, 5));
+    $display("$dist_chi_square: %0d", $dist_chi_square(my_seed, 5));
+    $display("$dist_chi_square: %0d", $dist_chi_square(my_seed, 1));
 
     $display("\n$dist_erlang (k=2, mean=4.0):");
-    $display("$dist_erlang: %f", $dist_erlang(my_seed + 11, 2, 4.0)); // Erlang mean = k * mean_exp = 2 * 4 = 8
-    $display("$dist_erlang: %f", $dist_erlang(my_seed + 11, 2, 4.0));
-    $display("$dist_erlang: %f", $dist_erlang(my_seed + 12, 3, 1.0)); // Erlang mean = 3 * 1 = 3
+    $display("$dist_erlang: %0d", $dist_erlang(my_seed, 2, 4)); // Erlang mean = k * mean_exp = 2 * 4 = 8
+    $display("$dist_erlang: %0d", $dist_erlang(my_seed, 2, 4));
+    $display("$dist_erlang: %0d", $dist_erlang(my_seed, 3, 1)); // Erlang mean = 3 * 1 = 3
 
     $display("\n$dist_t (dof=10):");
-    $display("$dist_t: %f", $dist_t(my_seed + 13, 10));
-    $display("$dist_t: %f", $dist_t(my_seed + 13, 10));
-    $display("$dist_t: %f", $dist_t(my_seed + 14, 2)); // Lower DOF -> heavier tails
+    $display("$dist_t: %0d", $dist_t(my_seed, 10));
+    $display("$dist_t: %0d", $dist_t(my_seed, 10));
+    $display("$dist_t: %0d", $dist_t(my_seed, 2)); // Lower DOF -> heavier tails
 
     $finish;
   end
@@ -2173,7 +2170,7 @@ endmodule
 The example demonstrates how to call each distribution function.
 
 -   For `$random`, it shows how subsequent calls without a seed continue the sequence, while a call with a seed reseeds the generator.
--   For all `$dist_` functions, the first argument is a seed specific to that distribution generator instance. Using the same seed for a given distribution function will produce the same sequence of random numbers from that distribution, allowing for repeatability in simulations. Using different seeds or incrementing the seed (as shown with `my_seed + N`) generates different sequences.
+-   For all `$dist_` functions, the first argument is a mutable integer seed state. Each call updates that variable, so repeated calls continue the sequence. To reproduce a sequence, reinitialize the seed variable to the same value before rerunning the same calls.
 -   The subsequent arguments are the parameters specific to the distribution (e.g., high/low for uniform, mean/std\_dev for normal, etc.).
 -   Notice that `$dist_uniform` and `$dist_poisson` return integers, while the others return `real` values.
 
@@ -2356,7 +2353,7 @@ The example simulates a queue with a capacity of 3.
 These queue modeling functions provide a high-level way to analyze the performance characteristics of queuing systems within your SystemVerilog simulation.
 
 ## PLA Modeling Tasks
-Tasks for modeling Programmable Logic Arrays (PLAs).
+Legacy or simulator-specific tasks for modeling Programmable Logic Arrays (PLAs). These are not portable IEEE SystemVerilog constructs; consult the target simulator's documentation before compiling them.
 The names of these tasks follow a pattern:
 `$async/sync $logic_type $output_type ( outputs, inputs, [control_signals] );`
 
@@ -2368,7 +2365,7 @@ The names of these tasks follow a pattern:
     * `plane`: The outputs represent the individual product terms *from the AND plane*.
     * `array`: The outputs represent the results *from the second stage logic* (the combined "sum of products" or equivalent).
 
-The inputs to these tasks typically define the connectivity of the AND plane (which inputs form which product terms) and the second stage (which product terms connect to which output gates). The exact syntax for defining these connections can be complex and varies slightly between simulators and SystemVerilog versions, often involving concatenated vectors or arrays representing the AND/OR matrices. For simplicity in the examples below, we'll represent the AND/OR plane logic conceptually in comments and focus on the task calls and resulting behavior.
+The inputs to these tasks typically define the connectivity of the AND plane (which inputs form which product terms) and the second stage (which product terms connect to which output gates). The exact syntax is simulator-specific and is not made portable by the SystemVerilog language. For simplicity in the examples below, we'll represent the AND/OR plane logic conceptually in comments and focus on the task calls and resulting behavior.
 
 ### Example Demonstrating PLA Tasks
 
@@ -2867,8 +2864,8 @@ This example first creates and writes to a temporary file. Then it opens the sam
 These functions read data from an opened file.
 
 -   `$fgetc(file_descriptor)`: Reads a single character from the file specified by the descriptor and returns its ASCII value as an integer. Returns EOF (typically -1) if the end of the file is reached or if an error occurs.
--   `$fgets(string_variable, file_descriptor)`: Reads a line of text from the file into `string_variable`. Reading stops at the first newline character, EOF, or when the string variable is full. The newline character is included in the returned string. Returns the `string_variable` on success, `""` on EOF or error.
--   `$fread(data_variable, file_descriptor [, string_format_string])`: Reads data from the file and interprets it according to the optional `string_format_string` or the type of `data_variable`. Similar to `$fscanf`, but designed for binary reads or reads with specific formats.
+-   `$fgets(string_variable, file_descriptor)`: Reads a line of text from the file into `string_variable`. The newline, when present, is included. The function returns the number of characters read, or 0 at EOF or on failure.
+-   `$fread(data_variable, file_descriptor [, start [, count]])`: Reads binary data into an integral variable, memory, or unpacked array. The optional `start` and `count` arguments select array elements; `$fread` does not take a format string.
 -   `$fscanf(file_descriptor, format_string, argument1 [, argument2, ...])`: Reads data from the file, parses it according to the `format_string`, and assigns the results to the specified arguments. Similar to the C `fscanf`. Returns the number of input items successfully matched and assigned, or EOF if the end-of-file is reached before any items are matched.
 
 **Example:**
@@ -2907,10 +2904,8 @@ module file_reading_example;
       if (char != EOF) $display("Time %0t: Read character: %c (%0d)", $time, char, char);
 
       // Read lines using $fgets
-      line = $fgets(line, file_desc);
-      if (line != "") $display("Time %0t: Read line 1: %s", $time, line);
-      line = $fgets(line, file_desc);
-      if (line != "") $display("Time %0t: Read line 2: %s", $time, line);
+      if ($fgets(line, file_desc) != 0) $display("Time %0t: Read line 1: %s", $time, line);
+      if ($fgets(line, file_desc) != 0) $display("Time %0t: Read line 2: %s", $time, line);
 
       // Read formatted data using $fscanf
       if ($fscanf(file_desc, "Integers: %0d %0d", val1, val2) == 2) begin
@@ -2927,10 +2922,9 @@ module file_reading_example;
       end
 
 
-      // $fread example (conceptual - often used for binary, less common for text)
-      // For text, $fscanf or manual parsing is more typical.
-      // integer byte_val;
-      // if ($fread(byte_val, file_desc, "%c") == 1) // Read one character as an integer
+      // $fread reads binary bytes; use $fscanf or $fgets for formatted text.
+      // byte byte_val;
+      // if ($fread(byte_val, file_desc) == 1)
       //    $display("Time %0t: Read byte with $fread: %0d", $time, byte_val);
 
 
@@ -2959,7 +2953,7 @@ These tasks format data into a string variable in memory.
 
 -   `$swrite(string_variable, format_string [, arguments])`: Formats the arguments according to `format_string` and writes the result into `string_variable`. Does **not** append a newline.
 -   `$swriteb`, `$swriteo`, `$swriteh`: Variants of `$swrite` that set the default format for `%v`, `%V` to binary, octal, or hexadecimal.
--   `$sformat(string_variable, format_string [, arguments])`: Similar to `$swrite`, but intended for use within expression contexts (e.g., for arguments to other tasks). It returns an integer indicating success.
+-   `$sformat(string_variable, format_string [, arguments])`: A formatting task that writes into `string_variable`. Use `$sformatf` when a formatted string is needed as an expression result.
 -   `$sformatf(format_string [, arguments])`: Formats the arguments according to `format_string` and returns the result as a `string`. This is very useful for creating strings dynamically.
 
 **Example:**
@@ -2987,9 +2981,9 @@ module string_formatting_example;
     formatted_str = $sformatf("Dynamic message: Time is %0t, Count is %0d", $time, count);
     $display("Formatted string via $sformatf: %s", formatted_str);
 
-    // Using $sformat (often in expressions, here shown for value assignment)
-    integer success = $sformat(message_str, "Another format: %h", count);
-    if (success) $display("Formatted string via $sformat: %s", message_str);
+    // Using $sformat as a task
+    $sformat(message_str, "Another format: %h", count);
+    $display("Formatted string via $sformat: %s", message_str);
 
 
     $display("--- End of String Formatting Example ---");
@@ -3096,7 +3090,7 @@ This example opens a file and uses `$fdisplay` to write formatted messages. Each
 
 These tasks register variables to monitor and write to a file whenever any of the monitored variables change.
 
--   `$fmonitor(multi_channel_descriptor, format_string [, arguments])`: Registers a list of variables/expressions associated with a format string to be monitored. Whenever any of the registered items change value, the formatted message is written to the specified file(s). Like `$monitor`, only one `$fmonitor` list is active globally.
+-   `$fmonitor(multi_channel_descriptor, format_string [, arguments])`: Registers a list of variables/expressions associated with a format string to be monitored. Whenever any of the registered items change value, the formatted message is written to the specified file(s). Like `$monitor`, a new `$fmonitor` call replaces the active monitor list.
 -   `$fmonitorb`, `$fmonitoro`, `$fmonitorh`: Variants of `$fmonitor` that set the default format for `%v`, `%V`.
 
 **Example:**
@@ -3496,9 +3490,8 @@ endmodule
 3.  **`$readmemh` Usage:**
     * `$readmemh("memory_data_h.txt", my_memory_h, 16, 20);` reads hexadecimal data from `memory_data_h.txt`.
     * The `start_address` is specified as 16 (decimal). The `end_address` is 20 (decimal). This means data will be loaded into `my_memory_h[16]` through `my_memory_h[20]`.
-    * The file starts with data without an `@` address. Loading would normally start at address 16. The first four data values (A5, 3C, F0, 0F) are ignored because they fall outside the specified load range (16 to 20).
-    * The `@10` line changes the *file's internal address pointer* to hexadecimal 10 (decimal 16).
-    * The data lines following `@10` (FF, 11, 22, 33, 44) are then considered. Since the *memory* load range is 16 to 20, these values are loaded:
+    * The file starts with data without an `@` address. Those first four values load at addresses 16 through 19, because the specified range starts at address 16.
+    * The `@10` line changes the file address pointer to hexadecimal 10 (decimal 16), so the following values overwrite addresses 16 through 20:
         * FF goes into `my_memory_h[16]` (file address 16)
         * 11 goes into `my_memory_h[17]` (file address 17)
         * 22 goes into `my_memory_h[18]` (file address 18)
@@ -3517,7 +3510,7 @@ Both tasks write the data in a format compatible with the `@` addressing used by
 
 **Description:**
 
-The `$writememb$ task writes the contents of a specified memory array to a text file, with each memory location's value represented as a binary number on a new line.
+The `$writememb` task writes the contents of a specified memory array to a text file, with each memory location's value represented as a binary number on a new line.
 
 **Usage:**
 
@@ -3539,7 +3532,7 @@ The generated file will contain:
 
 **Description:**
 
-The `$writememh$ task writes the contents of a specified memory array to a text file, with each memory location's value represented as a hexadecimal number on a new line.
+The `$writememh` task writes the contents of a specified memory array to a text file, with each memory location's value represented as a hexadecimal number on a new line.
 
 **Usage:**
 
@@ -3610,8 +3603,8 @@ endmodule
 0000000000001011 // Address 5
 0000000000001101 // Address 6
 0000000000001111 // Address 7
-000000010001 // Address 8 (value 17 = 16*1 + 1)
-000000010011 // Address 9 (value 19 = 16*1 + 3)
+0000000000010001 // Address 8 (value 17 = 16*1 + 1)
+0000000000010011 // Address 9 (value 19 = 16*1 + 3)
 @0000000f // Address 15 (hex F)
 1101111010101101 // Value DEAD
 @00000010 // Address 16 (hex 10)
@@ -3663,13 +3656,13 @@ These tasks work with command-line arguments that start with a plus sign (`+`), 
 
 **Description:**
 
-The `$test$plusargs$ task checks if a specific plusarg, or a plusarg matching a given format string, exists on the simulator's command line. It returns a boolean value (1 for true, 0 for false). This is useful for enabling or disabling certain testbench features based on command-line flags.
+The `$test$plusargs` system function checks whether a plusarg whose name begins with the supplied string exists on the simulator's command line. It returns 1 for a match and 0 otherwise. It does not parse a value; use `$value$plusargs` for formatted extraction.
 
 **Usage:**
 
 `$test$plusargs(format_string)`
 
--   `format_string`: A string that specifies the plusarg to look for. This string can include format specifiers (`%s`, `%d`, etc.) to match patterns. A common simple usage is to just provide the name of the plusarg.
+-   `format_string`: A string prefix to look for, commonly just the plusarg name such as `"ENABLE_FEATURE_X"`.
 
 **Command Line Syntax:**
 
@@ -3679,7 +3672,7 @@ Typically `+plusarg_name` or `+plusarg_name=value`. `$test$plusargs` only checks
 
 **Description:**
 
-The `$value$plusargs$ task searches the command line for a plusarg that matches the given `format_string`, extracts the value associated with it, and converts that value into the specified SystemVerilog variable. It returns an integer indicating success (non-zero if a match was found and the value was successfully converted, 0 otherwise).
+The `$value$plusargs` system function searches the command line for a plusarg matching the supplied format string, extracts its value, and converts it into the specified SystemVerilog variable. It returns 1 when a value is found and converted, and 0 otherwise.
 
 **Usage:**
 
@@ -3716,9 +3709,9 @@ module plusargs_example;
       $display("Time %0t: +ENABLE_FEATURE_X plusarg is NOT present.", $time);
     end
 
-     // Check for a plusarg with a value (only checks existence of the pattern)
-    if ($test$plusargs("TEST_CASE=%0d")) begin
-        $display("Time %0t: Pattern 'TEST_CASE=%%0d' found.", $time);
+     // Check for a plusarg with a value by matching its name prefix
+    if ($test$plusargs("TEST_CASE=")) begin
+      $display("Time %0t: TEST_CASE plusarg is present.", $time);
     end else begin
          $display("Time %0t: Pattern 'TEST_CASE=%%0d' NOT found.", $time);
     end
@@ -3881,7 +3874,7 @@ endmodule
 **Explanation:**
 
 1.  `$dumpfile("dump_output.vcd");` sets the output file name to "dump\_output.vcd".
-2.  `$dumpvars(0, clk, count, state);` starts dumping. It specifies to dump `clk`, `count`, and `state`. The `0` indicates to dump the items themselves but not descend into any hierarchy *within* them (relevant if `state` were a struct or array, though `0` levels usually dumps the whole item). If you wanted to dump *all* signals in the current module, you could use `$dumpvars(0, this);` or `$dumpvars(0);` if `this` refers to the current scope. `$dumpvars(1, top);` would dump `top` module signals and signals one level below it.
+2.  `$dumpvars(0, clk, count, state);` starts dumping the listed items. A depth of `0` means unlimited descent below a specified scope; for these scalar and vector items the distinction is not visible. `$dumpvars(1, top);` dumps `top` and the first level below it. Support for an omitted scope or `this` is simulator-dependent.
 3.  As the simulation runs, changes in `clk`, `count`, and `state` are recorded in "dump\_output.vcd".
 4.  `$dumpoff()` pauses the recording.
 5.  `$dumpon()` resumes it.

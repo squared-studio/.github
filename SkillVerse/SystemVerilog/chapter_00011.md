@@ -4,9 +4,18 @@
 
 Interprocess Communication (IPC) is a cornerstone of SystemVerilog, enabling the effective coordination and synchronization of concurrent processes. In both complex testbenches and sophisticated design models, multiple processes often operate in parallel to simulate different aspects of a system or to verify concurrent hardware operations.  To ensure correct and predictable behavior, these processes frequently need to exchange data, signal events, or manage shared resources without creating race conditions or deadlocks. SystemVerilog provides robust IPC mechanisms – **mailboxes**, **semaphores**, and **events** – each designed for specific communication and synchronization needs. Mastering these IPC tools is essential for building advanced verification environments and modeling concurrent hardware designs accurately. This guide explores the purpose, methods, and best practices for each of these IPC mechanisms, illustrating their practical application in SystemVerilog.
 
+### Learning Goals
+
+By the end of this chapter, you should be able to:
+
+- Choose a mailbox, semaphore, or event based on whether you need data transfer, resource ownership, or synchronization.
+- Use blocking and non-blocking operations without accidentally losing messages or waiting forever.
+- Protect shared resources and release semaphore keys reliably.
+- Distinguish an event's same-time notification from persistent state that records an earlier occurrence.
+
 ## Mailboxes: Message Passing for Data Exchange
 
-A mailbox in SystemVerilog acts as a message queue, providing a type-safe channel for processes to exchange data. Think of it as a secure post office for your simulation processes. Mailboxes can be **bounded** (with a fixed capacity) or **unbounded** (dynamically sized), and they are parameterized to enforce the type of data (messages) that can be passed through them, enhancing code reliability.
+A mailbox in SystemVerilog acts as a message queue, providing a channel for processes to exchange data. A parameterized mailbox such as `mailbox #(packet_type)` provides compile-time type checking; an unparameterized `mailbox` is a general, less type-safe mailbox. Mailboxes can be **bounded** (with a fixed capacity) or **unbounded** (dynamically sized), and they are commonly used for testbench communication rather than synthesizable RTL.
 
 ### Mailbox Methods: Sending and Receiving Messages
 
@@ -57,6 +66,8 @@ module producer_consumer_example;
                  pkt.payload);
       end else begin
         $display("[%0t] Producer: Mailbox FULL! Failed to send packet ID %0d", $time, pkt.data_id);
+        packet_mailbox.put(pkt); // Retry with a blocking put so no packet is lost
+        $display("[%0t] Producer: Sent packet ID %0d after waiting for space", $time, pkt.data_id);
       end
       #($urandom_range(5, 15));  // Random delay before next send
     end
@@ -77,11 +88,11 @@ module producer_consumer_example;
       if (packet_mailbox.try_get(received_packet)) begin  // Non-blocking get attempt
         $display("[%0t] Consumer: Received packet ID %0d, Payload 0x%h", $time,
                  received_packet.data_id, received_packet.payload);
+        if (received_packet.data_id == 4) break;  // Exit only after a successful receive
       end else begin
         $display("[%0t] Consumer: Mailbox EMPTY! Waiting for packets...", $time);
       end
       #($urandom_range(12, 20));  // Random delay before next receive attempt
-      if (received_packet.data_id == 4) break;  // Simple exit condition after receiving packet ID 4
     end
     $display("[%0t] Consumer: Finished receiving packets.", $time);
   end
@@ -112,7 +123,7 @@ A semaphore is a synchronization primitive that controls access to shared resour
 | `get([count])`  | **Acquire Keys**: Attempts to acquire `count` keys (default `count` is 1). | **Blocks** if not enough keys are available until they are released. | `count` (int)   | `resource_sem.get(2);`                      |
 | `put([count])`  | **Release Keys**: Releases `count` keys back to the semaphore (default `count` is 1). | **Non-blocking**: Always returns immediately.         | `count` (int)   | `resource_sem.put(1);`                      |
 | `try_get([count])`| **Non-blocking Acquire**: Attempts to acquire `count` keys.              | **Non-blocking**: Returns immediately.              | `count` (int)   | `if (resource_sem.try_get(1)) ...`         |
-| `try_put([count])`| **Non-blocking Release**: Attempts to release `count` keys. (Less common). | **Non-blocking**: Returns immediately.              | `count` (int)   | `if (resource_sem.try_put(1)) ...`         |
+| `try_put([count])`| **Not a standard semaphore method**: Use `put([count])` to release keys. A caller that needs conditional behavior must implement its own policy. | `put()` returns immediately.              | `count` (int)   | `resource_sem.put(1);`         |
 | `num()`         | **Query Available Keys**: Returns the current number of available keys.   | **Non-blocking**: Returns immediately.              | None            | `integer keys_available = resource_sem.num();` |
 
 ### Example: Protecting a Shared Resource with a Semaphore
@@ -187,8 +198,8 @@ Events in SystemVerilog are lightweight synchronization objects used to signal o
 | ----------------------- | --------------------------------------------------------------------------- | ------------------------------------------------- | ------------------------------------------ |
 | `-> event_name;`        | **Trigger Event**: Signals the occurrence of the event.                      | **Non-blocking**: Returns immediately.             | `-> data_available_event;`                 |
 | `@(event_name);`        | **Wait for Event**: Process suspends execution until `event_name` is triggered. | **Blocking**: Process blocks until event is triggered. | `@(data_ready_event);`                    |
-| `wait(event_name.triggered);` | **Check Event Triggered Status**: Checks if `event_name` has been triggered (and remains triggered). | **Blocking**: Process blocks until event is triggered (if not already). | `wait(start_event.triggered);`           |
-| `event_name.triggered`  | **Query Triggered Flag**:  Returns `1` if the event has been triggered at any point, `0` otherwise. | **Non-blocking**: Returns immediately.             | `if (config_done_event.triggered) ...`   |
+| `wait(event_name.triggered);` | **Wait for the Current-Time Trigger**: Waits until the event is triggered in the current simulation time slot, including a trigger that occurred earlier in that same slot. | **Blocking**: Process blocks if the event has not been triggered in the current time slot. | `wait(start_event.triggered);`           |
+| `event_name.triggered`  | **Query Triggered Status**: Returns true only during the simulation time slot in which the event was triggered. It is not persistent history. | **Non-blocking**: Returns immediately.             | `if (config_done_event.triggered) ...`   |
 
 ### Example: Event-Based Process Synchronization
 
@@ -239,8 +250,8 @@ endmodule
 -   **Synchronization Signals**: Events are primarily used as synchronization signals between processes. They indicate that a specific condition has been met or that a certain stage of processing has been completed.
 -   **Triggering (`-> event_name`)**: The `-> event_name;` statement triggers the event, signaling to any processes waiting for this event that it has occurred. Triggering an event is non-blocking.
 -   **Waiting (`@(event_name)`)**: The `@(event_name);` statement causes the process to suspend execution and wait until the specified event is triggered.  This is a blocking wait. Once the event is triggered by another process, the waiting process resumes execution.
--   **`wait(event_name.triggered)` for Robust Waiting**:  `wait(event_name.triggered);` is a more robust waiting mechanism. It checks if the event has already been triggered **at any point in the past**. If the event has already occurred before the `wait()` statement is reached, the process will not block and will continue immediately. If the event has not yet occurred, the process will block until it is triggered. This is crucial for avoiding race conditions where an event might be triggered *before* a process starts waiting for it.
--   **`.triggered` Property**: The `.triggered` property of an event is a non-blocking way to check if an event has been triggered at any point. It returns `1` if the event has been triggered, and `0` otherwise. Useful for conditional logic based on event status.
+-   **`wait(event_name.triggered)` for Same-Time Races**: `wait(event_name.triggered);` can avoid a race when the event was triggered earlier in the **same simulation time slot**. It does not remember a trigger from an earlier simulation time. For persistent completion status, use a separate flag, mailbox, or other state variable.
+-   **`.triggered` Property**: The `.triggered` property of an event is a non-blocking way to check whether the event was triggered in the current simulation time slot. It returns true only for that time slot, so it must not be used as a permanent completion flag.
 -   **No Data Transfer**: Events themselves do not carry data. For data exchange in conjunction with synchronization, mailboxes are the appropriate mechanism.
 
 ## Comparison: Choosing the Right IPC Mechanism
@@ -250,7 +261,7 @@ endmodule
 | **Primary Purpose**   | **Data exchange** between processes        | **Resource access control**, mutual exclusion    | **Process synchronization**, signaling events |
 | **Data Transfer**     | **Yes**, carries messages (type-parameterized) | **No**, manages keys (permits), no data transfer | **No**, just signals occurrence of an event     |
 | **Blocking Methods**  | `put()`, `get()`                           | `get()`                                        | `@(event)`, `wait(event.triggered)`           |
-| **Non-blocking Methods**| `try_put()`, `try_get()`, `peek()`, `num()`| `try_get()`, `try_put()`, `num()`             | `event.triggered`                             |
+| **Non-blocking Methods**| `try_put()`, `try_get()`, `peek()`, `num()`| `try_get()`, `num()`             | `event.triggered`                             |
 | **Type Safety**       | **Yes**, parameterized for data type        | **No**, typeless, manages integer keys          | **No**, typeless, just a signal               |
 | **Synthesizable?**    | **No**, primarily for verification         | **No**, primarily for verification              | **No**, primarily for verification              |
 | **Typical Use Cases** | Producer-consumer patterns, message queues, data streaming, testbench communication | Protecting shared resources, critical sections, mutual exclusion, limiting concurrent access | Testbench phase synchronization, event-driven stimulus, signaling completion, triggering actions |
@@ -262,14 +273,14 @@ endmodule
 3.  **Bounded Mailbox Overflow Handling**: Create a bounded mailbox with a small capacity (e.g., size 2) for integers. Implement a sender process that attempts to send more messages than the mailbox capacity. Use `try_put()` in the sender and demonstrate how it handles mailbox full conditions and reports failures. Implement a receiver process to consume messages.
 4.  **Semaphore for Limited Resource Access**: Simulate a system with a limited resource (e.g., 2 processing units) using a semaphore initialized with 2 keys. Create 4 concurrent processes that each need to acquire the resource (semaphore) to perform some operation. Show how only 2 processes can proceed at a time, while the others wait for a resource to become available.
 5.  **Event-Driven Testbench Phase Synchronization**: Design a testbench with two initial blocks representing different test phases (e.g., "Configuration Phase" and "Verification Phase"). Use an event (`config_phase_done`) to synchronize these phases. The "Configuration Phase" process should simulate configuration tasks and then trigger the `config_phase_done` event. The "Verification Phase" process should wait for `config_phase_done` before starting its verification activities. Display messages to indicate the start and end of each phase and the synchronization point.
-6.  **Event with `wait(event.triggered)` Robustness**: Create a scenario where an event (`early_event`) might be triggered *before* a process starts waiting for it.  Process 1 should trigger `early_event` after a short delay. Process 2 should start after a longer delay and then use `wait(early_event.triggered)` to wait for the event. Demonstrate that Process 2 correctly proceeds even if the event was triggered before it started waiting, highlighting the robustness of `wait(event.triggered)`.
+6.  **Event with `wait(event.triggered)` Robustness**: Create a scenario where an event (`early_event`) might be triggered before a process starts waiting for it. Process 1 should trigger `early_event` after a short delay. Process 2 should start at the same simulation time or in a later delta cycle and use `wait(early_event.triggered)` to demonstrate same-time race protection. Then repeat the experiment with Process 2 starting at a later simulation time and show that an event is not persistent; use a separate flag or mailbox if the notification must be remembered.
 
 ## Best Practices for Effective IPC
 
--   **Deadlock Prevention**: Be mindful of potential deadlocks, especially when using semaphores. Ensure that processes always release semaphores after acquiring them, even in error conditions. Design your IPC logic to avoid circular dependencies in resource acquisition. Use timeouts with blocking `get()` and `put()` methods in critical sections if necessary to prevent indefinite blocking.
+-   **Deadlock Prevention**: Be mindful of potential deadlocks, especially when using semaphores. Ensure that processes always release semaphores after acquiring them, even in error conditions. Design your IPC logic to avoid circular dependencies in resource acquisition. Blocking mailbox operations have no universal timeout argument; use `try_get()`/`try_put()` polling or a separately designed timeout process when the protocol requires a bounded wait.
 -   **Bounded Mailboxes for Flow Control**: In systems with potential for message buildup or resource constraints, prefer bounded mailboxes over unbounded ones. Use `try_put()` and `try_get()` to implement flow control and handle mailbox full/empty conditions explicitly, preventing buffer overflows and ensuring responsiveness.
 -   **Type Parameterization for Mailboxes**: Always parameterize mailboxes with specific data types (`mailbox #(<data_type>)`) to enforce type safety and catch potential data type mismatch errors at compile time. This improves code robustness and maintainability.
--   **Strategic Use of `wait(event.triggered)`**: When waiting for events, especially in scenarios where events might be triggered asynchronously or before the waiting process starts, use `wait(event.triggered)` for a more robust and race-condition-resistant approach.
+-   **Strategic Use of `wait(event.triggered)`**: Use `wait(event.triggered)` to close same-simulation-time races. Do not use it to recover a notification from an earlier simulation time; pair an event with persistent state or use a mailbox when late consumers must observe the occurrence.
 -   **Resource Management with Semaphores**: Initialize semaphores with an appropriate number of keys based on the number of concurrent accesses allowed for the shared resource. Use semaphores to protect critical sections of code that access shared variables or hardware resources. Follow a consistent pattern of `semaphore.get()` before accessing the resource and `semaphore.put()` after finishing to ensure proper mutual exclusion.
 -   **Choosing the Right IPC Mechanism**: Select the IPC mechanism that best suits the communication and synchronization needs of your processes. Use mailboxes for data exchange, semaphores for resource access control, and events for simple synchronization signaling. Avoid using a more complex mechanism than necessary for the task at hand.
 -   **Clear Naming Conventions**: Use descriptive names for mailboxes, semaphores, and events that clearly indicate their purpose and the type of data or resource they are managing. This improves code readability and understanding of the IPC mechanisms in your design or testbench.

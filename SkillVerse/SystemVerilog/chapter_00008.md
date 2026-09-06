@@ -4,6 +4,16 @@
 
 Control flow statements are the traffic directors of SystemVerilog, determining the execution order of your code. They empower you to create dynamic and responsive designs and verification environments.  Mastering these constructs is essential for modeling complex hardware behavior, building sophisticated testbenches, and implementing algorithms within SystemVerilog.  Effective control flow leads to code that is not only functional but also readable, maintainable, and efficient for both simulation and hardware synthesis.
 
+## Learning Goals
+
+By the end of this chapter, you should be able to:
+
+- Select `if`, `case`, and loop constructs based on the behavior being modeled.
+- Account for four-state `X`/`Z` values when conditions and case expressions are evaluated.
+- Use `unique`, `priority`, `default`, and explicit assignment patterns without creating accidental storage.
+- Write bounded loops for RTL and time-controlled loops for testbenches.
+- Exit loops predictably using conditions, `break`, `return`, or named-block control when appropriate.
+
 ## Conditional Statements: Branching Logic
 
 Conditional statements allow your SystemVerilog code to make decisions, executing different code blocks based on whether specific conditions are met.
@@ -15,7 +25,7 @@ The `if-else` statement is the cornerstone of conditional logic. It executes one
 **Key Design and Style Points:**
 
 -   **`else if` for Mutually Exclusive Choices**: Use `else if` to efficiently handle a series of conditions where only one branch should execute.
--   **Braces for Clarity**: While optional for single-line blocks following `if`, `else if`, and `else`, using `begin` and `end` braces consistently enhances readability and avoids potential errors when modifying code.
+-   **Block Delimiters for Clarity**: While optional for single-line statements following `if`, `else if`, and `else`, using `begin` and `end` consistently enhances readability and avoids potential errors when modifying code. In SystemVerilog, `begin`/`end` are block delimiters; `{}` are concatenation or assignment-pattern delimiters, not procedural braces.
 
 ```systemverilog
 module if_else_example;
@@ -35,6 +45,8 @@ module if_else_example;
 endmodule
 ```
 
+In a four-state expression, an `X` or `Z` condition is not the same as a known `1`. An `if` branch executes only when its condition evaluates to `1`; an unknown condition does not execute that branch and reaches the `else` path when one exists. Assertions or explicit case equality can be used when unknown values must be diagnosed rather than treated as non-true.
+
 ## Case Statements: Multi-Way Branching Based on Value
 
 `case` statements provide a structured way to select one execution path from multiple possibilities, based on the value of an expression. SystemVerilog offers three main types of `case` statements, each with distinct matching behaviors.
@@ -46,7 +58,7 @@ endmodule
 
 ```systemverilog
 module case_example;
-  enum logic [2:0] { MONDAY=1, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY, INVALID_DAY } day_e;
+  enum logic [3:0] { MONDAY=1, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY, INVALID_DAY } day_e;
   day_e current_day = WEDNESDAY; // Assuming WEDNESDAY maps to 3'd3
 
   initial begin
@@ -58,7 +70,7 @@ module case_example;
       FRIDAY:    $display("It's Friday");
       SATURDAY:  $display("It's Saturday");
       SUNDAY:    $display("It's Sunday");
-      default:   $display("Invalid day value!"); // Handles unexpected enum values
+      default:   $display("Invalid day value!"); // Handles unexpected or uninitialized values
     endcase
   end
 endmodule
@@ -66,7 +78,7 @@ endmodule
 
 ### 2. `casez`: Don't-Care Matching for `z` and `?`
 
--   **'z' and '?' as Wildcards**: The `casez` statement treats `z` (high-impedance) and `?` as don't-care values in case items.  This is useful for pattern matching where certain bits are irrelevant.
+-   **'z' and '?' as Wildcards**: The `casez` statement treats `z` (high-impedance) and `?` as don't-care values during matching. This is useful for pattern matching where certain bits are irrelevant, but it can hide an unintended high-impedance value in the expression.
 -   **Verification and Protocol Decoding**:  `casez` is commonly used in verification for decoding instruction opcodes or protocol messages where some bits can be flexible.
 
 ```systemverilog
@@ -75,8 +87,8 @@ module casez_example;
 
   initial begin
     casez (instruction_opcode)
-      4'b1??1: $display("Instruction Type A (bits 3 and 0 are significant)"); // '?' matches 'x' or 'z'
-      4'b10??: $display("Instruction Type B (bits 3 and 2 are significant)"); // Matches: opcode '10xz' fits '10??'
+      4'b1??1: $display("Instruction Type A (bits 3 and 0 are significant)"); // '?' matches x or z in this comparison
+      4'b10??: $display("Instruction Type B (bits 3 and 2 are significant)"); // Also matches, but the first matching item wins
       default: $display("Unknown Instruction Type");
     endcase
   end
@@ -94,19 +106,21 @@ module casex_example;
 
   initial begin
     casex (status_flags)
-      4'b101?: $display("Status Case 1: Priority handling (bit 2 and 0 are '1', bit 1 is don't-care)");
-      4'b10x1: $display("Status Case 2: Direct match (bits 3, 2, and 0 are significant)"); // Exact match takes precedence over wildcards
-      default: $display("Default Status Case: No specific pattern matched"); // Executes because Case 2 is a more specific match
+      4'b101?: $display("Status Case 1: First matching pattern");
+      4'b10x1: $display("Status Case 2: Another matching pattern"); // Also matches, but casex does not rank specificity
+      default: $display("Default Status Case: No specific pattern matched");
     endcase
   end
 endmodule
 ```
 
+In this example, both patterns can match `10x1` under `casex`, and the first matching item is selected. `casex` treats `x`, `z`, and `?` as wildcards on both sides of the comparison, so it can conceal unknowns and is generally discouraged in synthesizable RTL. Prefer `case`, `case inside`, or carefully reviewed `casez` patterns when the protocol requires wildcard matching.
+
 **Key `case` Statement Best Practices:**
 
--   **`unique case` for Single Match Enforcement**: Use `unique case` when you want to ensure that only one case branch is executed.  This can improve performance and catch potential design errors if multiple cases could unexpectedly match.
--   **`priority case` for Prioritized Branch Selection**: Use `priority case` when you need to prioritize case branches.  If multiple cases match, the first one in the code order will be executed.  This is important for implementing prioritized logic.
--   **`default` Case Always**: For synthesizable code, always include a `default` case to handle all possible input values and prevent unintended latch inference.
+-   **`unique case` for Single Match Intent**: Use `unique case` when at most one case item should match. The first matching branch still executes, while simulation tools can warn when zero or multiple items match; the keyword is not a replacement for a `default` branch or a formal proof.
+-   **`priority case` for Prioritized Branch Selection**: Use `priority case` when you need to prioritize case branches. If multiple cases match, the first one in code order executes, and tools can warn when no item matches. This is important for implementing prioritized logic.
+-   **`default` Case Always**: In combinational procedural code, include a `default` case or assign safe defaults before the case to handle unmatched values and avoid unintended latch inference. A `default` inside a sequential process does not by itself determine reset behavior or eliminate every possible storage element.
 
 ## Loop Constructs: Repetitive Operations
 
@@ -114,7 +128,7 @@ Loop constructs in SystemVerilog enable you to execute code blocks repeatedly, a
 
 ### 1. `repeat` Loop: Fixed Iteration Count
 
--   **Predefined Iterations**: The `repeat` loop executes a block of code a fixed, predetermined number of times, specified at compile time.
+-   **Predefined Iterations**: The `repeat` loop executes a block of code a fixed number of times. Its count expression is evaluated when the loop starts, so the count can come from a runtime variable; it does not have to be a compile-time constant.
 
 ```systemverilog
 module repeat_example;
@@ -195,14 +209,16 @@ endmodule
 
 ```systemverilog
 module forever_example;
-  initial begin : forever_block // Named block for disabling
+  initial begin : forever_process
     integer cycle_count = 0;
     $display("Starting forever loop (simulating clock)...");
-    forever begin
-      $display("- Cycle %0d", cycle_count);
-      cycle_count++;
-      #10; // Simulate clock period - Delay for 10 time units
-      if (cycle_count >= 5) disable forever_block; // Exit loop after 5 cycles
+    begin : forever_loop // Named loop block for disabling
+      forever begin
+        $display("- Cycle %0d", cycle_count);
+        cycle_count++;
+        #10; // Simulate clock period - Delay for 10 time units
+        if (cycle_count >= 5) disable forever_loop; // Exit loop after 5 cycles
+      end
     end
     $display("Forever loop disabled after 5 cycles.");
   end
@@ -214,6 +230,8 @@ endmodule
 -   **RTL Loops - Static Bounds for Synthesis**: When using loops in RTL designs (within `always` blocks for sequential logic), ensure that loop bounds are statically determinable at compile time (e.g., using parameters or constants).  Synthesizers typically unroll loops with static bounds into combinational or sequential logic.
 -   **Avoid Infinite Loops in RTL Synthesis**:  Do not use `forever` loops or `while(1)` loops directly in synthesizable RTL code, as they represent infinite processes and cannot be directly implemented in hardware.  Use them carefully for initialization or specific modeling scenarios if supported by your synthesis tool.
 -   **`forever` Loops in Testbenches - Timing is Key**:  `forever` loops are invaluable in testbenches for tasks like clock generation, continuous monitoring, and stimulus generation.  Always incorporate delays (`#`) to control simulation time and prevent runaway simulations. Use `disable` statements or event-based control to terminate `forever` loops in testbenches when needed.
+
+For a `while` loop, an `X` or `Z` condition is treated as not true, so the loop terminates rather than repeatedly executing on an unknown condition. Guard loop counters and exit conditions explicitly when an unknown value indicates a testbench or DUT failure. `break` exits the nearest loop, `continue` skips to its next iteration, and `return` exits the current task or function; these are often clearer than disabling a large named block.
 
 ## Exercises to Solidify Control Flow Understanding
 

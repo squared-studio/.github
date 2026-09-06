@@ -13,6 +13,16 @@ SystemVerilog Assertions (SVA) are a cornerstone of modern hardware verification
 -   **Reusable Verification Components and Intellectual Property (IP) Verification**: Assertions, especially when parameterized and organized into packages, become reusable verification IP. These assertion libraries can be applied across different designs or reused when verifying different instances of the same IP. This promotes verification IP reuse and reduces redundant assertion development effort.
 -   **Bridge to Formal Verification**: SVAs serve as a bridge between simulation and formal verification. The same assertions used in simulation can be leveraged by formal verification tools to mathematically prove (or disprove) design properties exhaustively. This integration allows for a more comprehensive verification strategy, combining the strengths of both simulation and formal methods.
 
+### Learning Goals
+
+By the end of this chapter, you should be able to:
+
+- Distinguish immediate assertions from clocked concurrent assertions.
+- Write properties and sequences using implication, delays, repetition, and sampled-value functions.
+- Make assertions reset-aware and avoid vacuous or underconstrained checks.
+- Use assertion coverage and covergroups for complementary coverage goals.
+- Apply, debug, and review assertions while accounting for tool and language limitations.
+
 ## Assertion Types: Immediate vs. Concurrent - Choosing the Right Tool for the Job
 
 SystemVerilog Assertions come in two primary flavors: **Immediate Assertions** and **Concurrent Assertions**. Understanding their differences is crucial for choosing the right type of assertion for a given verification task.
@@ -89,7 +99,7 @@ Concurrent assertions are built upon three core concepts:
 
 ### Clock Declaration Styles for Concurrent Assertions
 
-Concurrent assertions *must* be associated with a clock signal to define the time base for temporal checking. SystemVerilog provides two main ways to specify clocking for concurrent assertions:
+Concurrent assertions that use clock-cycle delays or sampled-value functions need a clocking event to define their time base. A property may also be written with an event expression for an unclocked or event-based check. SystemVerilog provides two common ways to specify clocking for clocked concurrent assertions:
 
 1.  **Explicit Clock in Property Definition**:  Specify the clock edge directly within each `property` definition using the `@(posedge clk)` or `@(negedge clk)` construct. This is useful when you have different clock domains or want to associate specific assertions with particular clocks.
 
@@ -113,7 +123,7 @@ Concurrent assertions *must* be associated with a clock signal to define the tim
     endproperty : data_valid_after_address_default_clock
     ```
 
-    -   `default input #1step;` and `default output #0;` within the `clocking` block define default input sampling and output skew. These are timing parameters that control when input signals are sampled and when output signals are expected to change relative to the clock edge.  `#1step` for input sampling is common for avoiding race conditions.
+    -   `default input #1step;` and `default output #0;` within the `clocking` block define default input sampling and output skew. These are timing parameters that control when clocking-block signals are sampled or driven relative to the clock edge. They do not by themselves change the sampling semantics of a property that directly references ordinary module signals.
 
 ### Reset-Aware Assertions: Handling Asynchronous Reset
 
@@ -127,8 +137,8 @@ property data_transfer_valid_reset_aware;
 endproperty : data_transfer_valid_reset_aware
 ```
 
--   `disable iff (reset_n == 1'b0)`: This clause specifies that the assertion `data_transfer_valid_reset_aware` should be disabled (not evaluated) whenever the condition `(reset_n == 1'b0)` is true (i.e., when reset is active).
--   The assertion will only be active and check the temporal property when `reset_n` is high (reset is inactive).
+-   `disable iff (reset_n == 1'b0)`: This clause aborts active attempts and prevents new attempts while the condition is true. With a 4-state reset signal, an unknown reset value should be handled deliberately rather than assumed to mean inactive.
+-   The assertion is active when `reset_n` is high (reset is inactive), subject to the sampled values and any attempts already in progress.
 
 ## Temporal Operators: Building Blocks for Sequence and Property Definitions
 
@@ -139,14 +149,14 @@ SystemVerilog provides a rich set of temporal operators that allow you to expres
 | **`##n`**             | **Delay**: Delays the sequence by exactly `n` clock cycles.                  | `req ##2 gnt`                                 | `gnt` must be true exactly 2 clock cycles after `req` becomes true.                                                                                                                                                                                                 |
 | **`##[m:n]`**         | **Range Delay**: Delays the sequence by between `m` and `n` clock cycles (inclusive). | `req ##[1:4] gnt`                             | `gnt` must be true between 1 to 4 clock cycles after `req` becomes true.                                                                                                                                                                                          |
 | **`[*n]`**             | **Consecutive Repetition**:  The preceding expression must be true for exactly `n` consecutive clock cycles. | `valid [*3]`                                  | `valid` must be true for exactly 3 consecutive clock cycles.                                                                                                                                                                                   |
-| **`[*m:n]`**         | **Consecutive Repetition Range**: The preceding expression must be true for between `m` and `n` consecutive clock cycles. | `valid [*1:inf]`                             | `valid` must be true for at least 1 or more consecutive clock cycles (up to infinity, meaning it continues to be true). `inf` represents infinity.                                                                                   |
-| **`[->n]`**            | **Non-Consecutive Goto Repetition**: The preceding expression must be true exactly `n` times (not necessarily consecutively) within the sequence. | `req [->3] gnt`                               | `req` must be true exactly 3 times (not necessarily consecutively) before `gnt` becomes true.                                                                                                                                                              |
-| **`[=n]`**            | **Non-Consecutive Occurrence (Repetition)**: The preceding expression must occur exactly `n` times (not necessarily consecutively) within the sequence. | `req [=2] gnt`                               | `req` must be true exactly 2 times (not necessarily consecutively) before or when `gnt` becomes true.                                                                                                                                                               |
+| **`[*m:n]`**         | **Consecutive Repetition Range**: The preceding expression must be true for between `m` and `n` consecutive clock cycles. | `valid [*1:inf]`                             | `valid` must be true for at least 1 consecutive clock cycle, with no finite upper bound. `inf` represents infinity.                                                                                   |
+| **`[->n]`**            | **Non-Consecutive Goto Repetition**: The preceding expression must be true `n` times, not necessarily consecutively, and the sequence ends on the `n`th match. | `req [->3] ##1 gnt`                               | `req` must be true 3 times, possibly with gaps, before the following sequence element is matched.                                                                                                                                                              |
+| **`[=n]`**             | **Non-Consecutive Repetition**: The preceding expression must occur `n` times, not necessarily consecutively; the sequence may remain open for trailing cycles. | `req [=2] ##1 gnt`                               | `req` must be true 2 times, possibly with gaps, before the following sequence element is matched.                                                                                                                                                               |
 | **`throughout`**      | **Condition Maintained Throughout Sequence**:  Ensures a condition is true throughout the duration of a sequence. | `valid_data throughout data_sequence ##1 ack` | `valid_data` must be true for the entire duration of `data_sequence`, and then `ack` must be true 1 cycle after `data_sequence` completes.                                                                                                     |
 | **`within`**          | **Sequence Containment**: Checks if one sequence occurs *within* another sequence. | `sequence s1; ... endsequence <br> sequence s2; s1 within s2; endsequence` | Sequence `s1` must complete entirely within the duration of sequence `s2`.                                                                                                                                                                             |
 | **`and`**             | **Sequence Conjunction**: Both sequences must match and complete at the same time. | `sequence s_combined; s1 and s2; endsequence` | Both sequence `s1` and sequence `s2` must start at the same time and complete successfully at the same time for `s_combined` to succeed.                                                                                                                            |
 | **`or`**              | **Sequence Disjunction**: Either sequence can match.                               | `property p_either_seq; s1 or s2; endproperty` | Property `p_either_seq` passes if either sequence `s1` *or* sequence `s2` matches.                                                                                                                                                                                  |
-| **`intersect`**       | **Sequence Intersection**: Both sequences must match, and they must start at the same time, but they don't necessarily have to end at the same time. The intersection sequence ends when the *shorter* of the two sequences completes. | `sequence s_intersect; s1 intersect s2; endsequence` | Sequence `s_intersect` matches if both `s1` and `s2` start at the same time and both are successful up to the point where the shorter sequence ends. The overall duration is the duration of the shorter sequence. |
+| **`intersect`**       | **Sequence Intersection**: Both sequences must match over the same start time and end time. | `sequence s_intersect; s1 intersect s2; endsequence` | Sequence `s_intersect` matches only when both `s1` and `s2` match and complete on the same cycle. |
 | **Implication `\|->` (Overlapping)** | **Implication (Overlapping)**: If the antecedent sequence (left side) matches, then the consequent property (right side) must also hold, starting in the *same* clock cycle. | `req \|-> gnt`                                 | If `req` becomes true, then `gnt` must also become true in the *same* clock cycle or in subsequent cycles as defined by the property following the implication. Overlapping means the consequent check starts in the *same* cycle as the antecedent. |
 | **Implication `\|=>` (Non-Overlapping)**| **Implication (Non-Overlapping)**: If the antecedent sequence (left side) matches, then the consequent property (right side) must hold, starting in the *next* clock cycle. | `req \|=> gnt`                                 | If `req` becomes true, then `gnt` must become true in the clock cycle *immediately following* the cycle in which `req` became true, or in subsequent cycles as defined by the property following the implication. Non-overlapping means the consequent check starts in the *cycle after* the antecedent. |
 
@@ -160,7 +170,7 @@ SystemVerilog provides a hierarchy of severity levels for assertion failure mess
 | **`$error`**       | **Design Requirement Violations**: Functional errors, protocol violations, incorrect behavior that violates specified design functionality. | **Increments Error Count, Continues Simulation**:  Reports an error message, increments the simulation error count, but allows the simulation to continue running. This is the most common severity level for functional assertions. |
 | **`$warning`**     | **Potential Issues Requiring Review**:  Unexpected or suspicious behavior that might indicate a problem, but not necessarily a functional error.  | **Logs Warning Message, Continues Simulation**: Reports a warning message, but the simulation continues without incrementing the error count. Useful for flagging potential issues that need investigation but are not critical failures. |
 | **`$info`**        | **Diagnostic Information, Status Messages**:  Reporting progress, milestones, or specific design states reached during simulation. | **Logs Informational Message, Continues Simulation**: Reports an informational message. Used for providing feedback on simulation progress or for debugging purposes.                                                                                    |
-| **`$system`**      | **Tool-Specific System Messages**:  For messages intended for specific verification tools or environments. Behavior is tool-dependent. | **Varies by Simulator/Tool Implementation**:  The effect of `$system` severity is not standardized and depends on the specific SystemVerilog simulator or formal verification tool being used.                                             |
+| **`$system`**      | **Not an Assertion Severity**: `$system` invokes a host operating-system command; it is not a standard assertion action severity. | **Tool/Host Dependent**: Avoid using it as a portable assertion response. Use `$fatal`, `$error`, `$warning`, or `$info` for assertion action blocks.                                             |
 
 ### Severity Level Usage Example: Traffic Light Controller Verification
 
@@ -180,10 +190,10 @@ module traffic_light_controller_checker(
 
   // Assertion: Check the 'no_concurrent_red_lights' property. If violated, it's a fatal safety error.
   assert property (no_concurrent_red_lights)
-    else $fatal("!!! SAFETY VIOLATION !!!: Both traffic directions are RED simultaneously! State = %b Time = %0t", light_state, $time);
+    else $fatal(1, "!!! SAFETY VIOLATION !!!: Both traffic directions are RED simultaneously! State = %b Time = %0t", light_state, $time);
 
   // Coverage Property: Track when the "all lights off" state (state '00') is observed (coverage metric)
-  cover property (light_state == 2'b00)
+  cover property (@(posedge clk) light_state == 2'b00)
     $info("INFO: Traffic light 'All Lights Off' state observed at Time = %0t", $time); // Informational message when "all off" state is reached
 
 endmodule : traffic_light_controller_checker
@@ -195,22 +205,22 @@ SystemVerilog assertions are not just for error detection; they are also powerfu
 
 ### Coverage Property Types: Event, Sequence, and Property Coverage
 
-SystemVerilog provides three main types of coverage properties:
+SystemVerilog provides assertion coverage through `cover property`; covergroups provide a separate functional-coverage mechanism. The following patterns show common ways to cover events, sequences, and properties:
 
-1.  **Event Coverage**: `cover (event_expression)` - Tracks the occurrence of a simple boolean event or condition. Useful for counting how many times a specific event happens.
+1.  **Event Coverage**: Use a covergroup coverpoint or a procedural event counter to track a simple boolean event or condition. `cover (event_expression)` is not the portable concurrent-assertion syntax for this purpose.
 
     ```systemverilog
-    cover (enable_signal); // Count how many times 'enable_signal' becomes true
+    cover property (@(posedge clk) enable_signal); // Track an occurrence of 'enable_signal'
     ```
 
-2.  **Sequence Coverage**: `cover sequence (sequence_expression)` - Tracks the occurrence of a defined temporal sequence. Useful for verifying that specific sequences of events in a protocol or state machine are exercised.
+2.  **Sequence Coverage**: Use `cover property (sequence_expression)` to track the occurrence of a defined temporal sequence. Useful for verifying that specific sequences of events in a protocol or state machine are exercised.
 
     ```systemverilog
     sequence req_ack_seq;
       request ##[1:3] acknowledge; // Sequence: request followed by acknowledge within 1-3 cycles
     endsequence : req_ack_seq
 
-    cover sequence (req_ack_seq); // Track coverage of the 'req_ack_seq' sequence
+    cover property (@(posedge clk) req_ack_seq); // Track coverage of the 'req_ack_seq' sequence
     ```
 
 3.  **Property Coverage**: `cover property (property_expression)` - Tracks whether a defined property (which can be complex temporal property) holds true during simulation. Useful for measuring the coverage of design properties and ensuring that assertions are actually being triggered and tested.
@@ -220,7 +230,7 @@ SystemVerilog provides three main types of coverage properties:
       address >= MIN_ADDR && address <= MAX_ADDR; // Property: address within valid range
     endproperty : valid_address_range
 
-    cover property (valid_address_range); // Track coverage of the 'valid_address_range' property
+    cover property (@(posedge clk) valid_address_range); // Track coverage of the 'valid_address_range' property
     ```
 
 ### Cross-Coverage with Covergroups: Analyzing Combined Coverage
@@ -277,30 +287,26 @@ In this cross-coverage example:
 
 ## Advanced Assertion Techniques: Recursion and Binding
 
-### Recursive Properties: Defining Sequences Based on Previous Occurrences
+### Parameterized Properties: Defining Checks Based on Previous Occurrences
 
-SystemVerilog allows for **recursive properties**, where a property can refer to itself in its definition. This is useful for defining sequences that involve counting or repeating patterns.
+SystemVerilog properties can be parameterized and can use sampled-value functions such as `$past` to refer to previous clock cycles. A property that refers to itself recursively is a more specialized construct; the example below uses a repetition operator instead because it expresses the requirement directly and is supported by more tools.
 
 **Example: Checking for a Maximum Number of Consecutive '1's in a Data Stream**
 
 ```systemverilog
-property consecutive_ones_limit(integer max_ones);
-  int consecutive_count; // Local variable to track consecutive ones
-
-  @(posedge clk)
-  (data_input, consecutive_count = (data_input == 1'b1) ? consecutive_count + 1 : 0) // Increment count if 'data_input' is 1, reset to 0 if 0
-  |-> (consecutive_count <= max_ones); // Property: 'consecutive_count' must not exceed 'max_ones'
-endproperty : consecutive_ones_limit
-
 module recursive_assertion_example (input logic clk, input logic data_input);
+  property consecutive_ones_limit(int max_ones);
+    @(posedge clk)
+    not (data_input[* (max_ones + 1)]); // No run may contain more than max_ones consecutive ones
+  endproperty : consecutive_ones_limit
+
   assert property (consecutive_ones_limit(7)); // Assert that there are never more than 7 consecutive '1's
 endmodule : recursive_assertion_example
 ```
 
--   `property consecutive_ones_limit(integer max_ones)`: Defines a parameterized recursive property that takes `max_ones` as a parameter (maximum allowed consecutive ones).
--   `int consecutive_count;`: Declares a local integer variable `consecutive_count` within the property to track the count of consecutive '1's.
--   `(data_input, consecutive_count = ...)`: This part is evaluated at each `posedge clk`. It updates `consecutive_count`: if `data_input` is '1', `consecutive_count` is incremented; otherwise, it's reset to 0.  The comma operator allows both the condition and the variable update to happen in a single expression.
--   `|-> (consecutive_count <= max_ones);`: Implication operator. If the preceding part (updating `consecutive_count`) is evaluated, then the property checks if `consecutive_count` is less than or equal to `max_ones`.
+-   `property consecutive_ones_limit(int max_ones)`: Defines a parameterized property that accepts the maximum permitted run length.
+-   `data_input[* (max_ones + 1)]`: Describes a run of one-valued samples that would violate the limit; `not` rejects such a run.
+-   The repetition form avoids maintaining a mutable local counter. A counter-based or genuinely recursive formulation can be useful for more complex patterns, but it should be introduced only when the requirement cannot be expressed directly with SVA operators.
 
 ### Assertion Bindings: Applying Assertions Externally
 
@@ -315,21 +321,26 @@ SystemVerilog's `bind` construct allows you to **externally bind** assertions to
 ```systemverilog
 // 1. FIFO Module (Assume this is pre-existing IP you cannot modify)
 module fifo #(parameter DEPTH = 8) (
-  input logic clk, rst_n, wr_en, rd_en;
-  input logic [7:0] data_in;
-  output logic [7:0] data_out;
-  output logic full, empty;
+  input logic clk, rst_n, wr_en, rd_en,
+  input logic [7:0] data_in,
+  output logic [7:0] data_out,
+  output logic full, empty
   // ... (FIFO implementation - not shown for brevity) ...
 );
 endmodule : fifo
 
 // 2. Separate Assertion Module for FIFO
-module fifo_assertions #(parameter DEPTH_ASSERT = 8) (input iface fifo_if); // Interface to connect to FIFO signals
+module fifo_assertions #(parameter DEPTH_ASSERT = 8) (
+  input logic clk,
+  input logic rst_n,
+  input logic wr_en,
+  input logic full
+); // Signals sampled by the assertion checker
 
   property fifo_overflow_check; // Property to check for FIFO overflow
-    @(posedge fifo_if.clk)
-    disable iff (!fifo_if.rst_n)
-    fifo_if.wr_en && fifo_if.full; // Condition: write enable asserted when FIFO is full
+    @(posedge clk)
+    disable iff (!rst_n)
+    !(wr_en && full); // Condition: a write must not be accepted while FIFO is full
   endproperty : fifo_overflow_check
 
   assert property (fifo_overflow_check) // Assertion for overflow check
@@ -340,13 +351,12 @@ module fifo_assertions #(parameter DEPTH_ASSERT = 8) (input iface fifo_if); // I
 endmodule : fifo_assertions
 
 // 3. Interface to connect assertions to FIFO signals
-interface fifo_if (input logic clk, rst_n, wr_en, rd_en, full, empty, input logic [7:0] data_in, output logic [7:0] data_out);
-  modport tb (input clk, rst_n, wr_en, rd_en, full, empty, input data_in, output data_out);
-  modport dut (input clk, rst_n, wr_en, rd_en, output full, empty, input data_in, output data_out);
-  logic [7:0] data_out;
-  logic full, empty;
-  logic [7:0] data_in;
-  logic clk, rst_n, wr_en, rd_en;
+interface fifo_if (
+  input logic clk, rst_n, wr_en, rd_en, full, empty,
+  input logic [7:0] data_in, data_out
+);
+  modport tb (input clk, rst_n, wr_en, rd_en, full, empty, data_in, data_out);
+  modport dut (input clk, rst_n, wr_en, rd_en, full, empty, data_in, data_out);
 endinterface : fifo_if
 
 // 4. Top-Level Module Instantiating FIFO and Binding Assertions
@@ -361,7 +371,9 @@ module top_module;
     .data_in(data_in_top), .data_out(data_out_top), .full(full_top), .empty(empty_top)
   );
 
-  bind fifo fifo_instance fifo_assertions #(.DEPTH_ASSERT(16)) fifo_checks (fifo_interface.dut); // **BIND ASSERTIONS TO FIFO INSTANCE**
+  bind fifo fifo_instance fifo_assertions #(.DEPTH_ASSERT(16)) fifo_checks ( // **BIND ASSERTIONS TO FIFO INSTANCE**
+    .clk(clk), .rst_n(rst_n), .wr_en(wr_en), .full(full)
+  );
 
   // ... (Testbench stimulus and clock generation) ...
 
@@ -369,22 +381,22 @@ endmodule : top_module
 ```
 
 -   `bind fifo fifo_instance fifo_assertions #(.DEPTH_ASSERT(16)) fifo_checks (fifo_interface.dut);`: This `bind` statement does the following:
-    -   `bind fifo fifo_instance`: Targets instances of the `fifo` module. Specifically, it targets the instance named `fifo_instance` in the `top_module`.
+    -   `bind fifo fifo_instance`: Targets the instance named `fifo_instance` of module type `fifo` in the `top_module`.
     -   `fifo_assertions #(.DEPTH_ASSERT(16))`: Instantiates the `fifo_assertions` module, parameterizing it with `DEPTH_ASSERT = 16`.
-    -   `fifo_checks (fifo_interface.dut)`:  Connects the interface modport `fifo_interface.dut` to the input interface port `fifo_if` of the `fifo_assertions` instance named `fifo_checks`. This establishes the signal connections between the assertions and the FIFO instance.
+    -   `fifo_checks (...)`: Instantiates the checker as `fifo_checks` and connects signals in the targeted FIFO scope to its checker ports. An interface such as `fifo_if` can also be used when the checker is designed with an interface port, but the direct signal connections shown here make the binding scope explicit.
 
 ## Debugging Methodologies for SystemVerilog Assertions
 
 When assertions fail, effective debugging is crucial. SystemVerilog provides several features to aid in assertion debugging:
 
-### Assertion Control System Tasks: `$asserton`, `$assertoff`, `$assertkill`, `$assertvacuous`
+### Assertion Control System Tasks: `$asserton`, `$assertoff`, `$assertkill`, `$assertvacuouson`, and `$assertvacuousoff`
 
 These system tasks provide runtime control over assertion behavior, useful for debugging and focused verification:
 
--   **`$assertoff(levels, [hierarchy_name])`**: Disables assertions. `levels` specifies the severity levels to disable (0 for all, or a bitmask for specific levels). `hierarchy_name` optionally specifies a hierarchical scope to disable assertions within.
+-   **`$assertoff(levels, [hierarchy_name])`**: Disables assertions. `levels` selects assertion-control levels defined by the language or simulator; it is not a severity selector. `hierarchy_name` optionally specifies a hierarchical scope to disable assertions within.
 -   **`$asserton(levels, [hierarchy_name])`**: Enables assertions that were previously disabled.
--   **`$assertkill(levels, [hierarchy_name])`**: Kills (ignores) assertion failures. Failures are still detected but do not trigger error actions.
--   **`$assertvacuous(levels, [hierarchy_name])`**: Controls vacuity reporting. Vacuity occurs when an assertion's antecedent never becomes true, making the assertion trivially true. `$assertvacuous` can be used to suppress or enable reporting of vacuous assertions.
+-   **`$assertkill(levels, [hierarchy_name])`**: Terminates currently active assertion attempts in the selected scope. It does not permanently disable future attempts.
+-   **`$assertvacuouson(levels, [hierarchy_name])`** and **`$assertvacuousoff(levels, [hierarchy_name])`**: Enable or disable reporting of vacuous successes, where supported by the simulator. Vacuity occurs when an implication's antecedent never becomes true, making the property pass without checking its consequent. Verify exact argument support in the simulator documentation.
 
 **Example: Disabling and Enabling Assertions During Simulation**
 
@@ -433,7 +445,7 @@ assert property (memory_write_acknowledgement_check)
 
 ☐ **Avoid Combinatorial Loops in Assertion Expressions**: Be careful to avoid creating combinatorial loops when writing assertion expressions, especially immediate assertions in `always_comb` blocks. Ensure that assertion expressions are sensitive to inputs and do not create unintended feedback paths.
 
-☐ **Use Coverage Properties to Track Scenario Execution**:  Actively use `cover property`, `cover sequence`, and `cover event` to track verification progress and identify uncovered scenarios. Regularly analyze coverage reports to guide testbench development and improve verification completeness.
+☐ **Use Coverage Properties to Track Scenario Execution**: Actively use `cover property` for temporal scenarios and covergroups for event/value coverage. Regularly analyze coverage reports to guide testbench development and improve verification completeness.
 
 ☐ **Parameterize Assertions for Reuse and Configurability**:  Parameterize assertions (both immediate and concurrent) to make them reusable across different modules, instances, or configurations. This promotes assertion IP reuse and reduces redundancy.
 
@@ -542,7 +554,7 @@ These exercises provide a progressive path to learning and applying SystemVerilo
 | **`$countones(expression)`**   | Counts the number of '1' bits in `expression`.                                | `$countones(control_vector)`                                               | System function usable in assertion expressions to count set bits.                                                                                                                                                                                    |
 | **`$onehot(expression)`**     | Checks if exactly one bit in `expression` is '1' (one-hot encoding).           | `$onehot(state_encoding)`                                                  | System function to verify one-hot encoding.                                                                                                                                                                                                         |
 | **`$isunknown(expression)`**   | Checks if `expression` contains any X or Z (unknown or high-impedance) bits. | `$isunknown(data_bus)`                                                     | System function to detect X or Z values, often used for error or undefined state detection.                                                                                                                                                            |
-| **`disable iff (condition)`** | Conditional disable clause for properties. Assertion is disabled when `condition` is true. | `property p_reset_aware; @(clk) disable iff (rst) ... endproperty`    | Used to make assertions reset-aware or conditionally disable them based on any boolean condition. Essential for handling reset and other exceptional conditions.                                                                                              |
+| **`disable iff (condition)`** | Conditional disable clause for properties. Active attempts are aborted and new attempts are prevented while `condition` is true. | `property p_reset_aware; @(posedge clk) disable iff (rst) ... endproperty`    | Used to make assertions reset-aware or conditionally disable them based on any boolean condition. Essential for handling reset and other exceptional conditions.                                                                                              |
 
 ```systemverilog
 // Sample Solution for Exercise 1: Packet Protocol Assertions (Example - Start Bit Detection)
@@ -557,11 +569,11 @@ module packet_protocol_checker(
   default clocking packet_clk_block @(posedge clk);
   endclocking
 
-  // Assertion 1: Start Bit is asserted for exactly one clock cycle
+  // Assertion 1: A sampled start bit must be low on the next clock cycle
   property start_bit_duration_check;
     @(posedge clk)
     disable iff (!rst_n)
-    $rose(start_bit) |-> ##1 !start_bit; // Start bit rises, then must be low in the next cycle
+    start_bit |=> !start_bit; // A start-bit pulse lasts for one sampled cycle
   endproperty : start_bit_duration_check
 
   assert property (start_bit_duration_check)
