@@ -49,78 +49,128 @@ In a four-state expression, an `X` or `Z` condition is not the same as a known `
 
 ## Case Statements: Multi-Way Branching Based on Value
 
-`case` statements provide a structured way to select one execution path from multiple possibilities, based on the value of an expression. SystemVerilog offers three main types of `case` statements, each with distinct matching behaviors.
+`case` statements select one branch by comparing an expression with a list of items. The first matching item executes, so item order matters whenever patterns overlap. The three common forms differ mainly in how they treat `X`, `Z`, and `?` values.
 
 ### 1. `case`: Exact Value Matching
 
--   **Strict Equality**: The standard `case` statement performs exact value matching. It compares the case expression against each case item, and a match occurs only when they are identical bit-for-bit.
--   **`default` Case Essential**: Always include a `default` case in synthesizable `case` statements.  Omitting it can unintentionally create latches in hardware, as the synthesizer must infer behavior for non-matched cases.
+-   **Four-state matching**: A plain `case` compares all bits, including `X` and `Z`. For example, `4'b10x1` matches `4'b10x1`, but does not match `4'b1011`.
+-   **Use for known encodings**: This is the usual choice for an opcode, state, or enum whose value must be known exactly.
+-   **`default`**: In combinational logic, assign safe defaults and include a `default` branch so every input has a defined output.
 
 ```systemverilog
-module case_example;
-  enum logic [3:0] { MONDAY=1, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY, INVALID_DAY } day_e;
-  day_e current_day = WEDNESDAY; // Assuming WEDNESDAY maps to 3'd3
-
-  initial begin
-    case (current_day)
-      MONDAY:    $display("It's Monday");
-      TUESDAY:   $display("It's Tuesday");
-      WEDNESDAY: $display("It's Wednesday!"); // Matches: current_day is WEDNESDAY
-      THURSDAY:  $display("It's Thursday");
-      FRIDAY:    $display("It's Friday");
-      SATURDAY:  $display("It's Saturday");
-      SUNDAY:    $display("It's Sunday");
-      default:   $display("Invalid day value!"); // Handles unexpected or uninitialized values
+module case_example (
+  input  logic [1:0] opcode,
+  output logic [1:0] result
+);
+  always_comb begin
+    result = 2'b00; // Safe default for unused or invalid opcodes
+    case (opcode)
+      2'b00: result = 2'b01; // add
+      2'b01: result = 2'b10; // subtract
+      2'b10: result = 2'b11; // multiply
+      default: result = 2'b00;
     endcase
   end
 endmodule
 ```
 
-### 2. `casez`: Don't-Care Matching for `z` and `?`
+If `opcode` contains `2'b0x`, none of the three known patterns matches, so the `default` branch is selected. That behavior is often useful because an unknown control value does not silently select a real operation.
 
--   **'z' and '?' as Wildcards**: The `casez` statement treats `z` (high-impedance) and `?` as don't-care values during matching. This is useful for pattern matching where certain bits are irrelevant, but it can hide an unintended high-impedance value in the expression.
--   **Verification and Protocol Decoding**:  `casez` is commonly used in verification for decoding instruction opcodes or protocol messages where some bits can be flexible.
+### 2. `casez`: Wildcards for `Z` and `?`
+
+-   **Pattern matching**: In a case item, `?` means “this bit can be either `0` or `1`.” `casez` also treats `Z` as a wildcard in the expression and in case items.
+-   **Unknown `X` is different**: `casez` does not treat `X` as a wildcard. An `X` in a significant position prevents a match against either `0` or `1`, which helps expose unknown control signals.
+-   **Use for masked encodings**: `casez` is useful when the protocol intentionally ignores some bits, such as address masks or interrupt vectors. Prefer `?` in the case item to document which bits are intentionally ignored.
+-   **Overlapping patterns**: The first matching item wins, so put the more specific pattern first.
 
 ```systemverilog
-module casez_example;
-  logic [3:0] instruction_opcode = 4'b10xz; // 'x' and 'z' represent don't-cares
-
+module casez_example (
+  input  logic [3:0] request,
+  output logic [1:0] source
+);
   initial begin
-    casez (instruction_opcode)
-      4'b1??1: $display("Instruction Type A (bits 3 and 0 are significant)"); // '?' matches x or z in this comparison
-      4'b10??: $display("Instruction Type B (bits 3 and 2 are significant)"); // Also matches, but the first matching item wins
-      default: $display("Unknown Instruction Type");
+    casez (request)
+      4'b1???: source = 2'd3; // Any request beginning with 1
+      4'b01??: source = 2'd2; // Any request from source 01
+      4'b001?: source = 2'd1; // Any request from source 001
+      default: source = 2'd0;
     endcase
   end
 endmodule
 ```
 
-### 3. `casex`: Extensive Don't-Care Matching (`x`, `z`, `?`)
+For example, `request = 4'b0110` selects source 2. `request = 4'b1z00` selects source 3 because the `Z` matches the `?` positions. If the first pattern were `4'b????`, it would match everything and make all later branches unreachable.
 
--   **'x', 'z', and '?' as Wildcards**:  The `casex` statement extends don't-care matching to include `x` (unknown) in addition to `z` and `?`.
--   **Cautious RTL Use**: While flexible, `casex` should be used with caution in RTL design. Its aggressive wildcard matching can sometimes lead to unintended behavior in synthesis if not carefully managed.  It's more frequently used in verification for flexible pattern matching.
+The difference between an intentional wildcard and an unknown signal is important:
+
+| Expression | Case item | `casez` result | Reason |
+| --- | --- | --- | --- |
+| `4'b1010` | `4'b10??` | Match | `?` ignores the last two bits |
+| `4'b10z0` | `4'b10??` | Match | `Z` is treated as a wildcard |
+| `4'b10x0` | `4'b10??` | No match | `X` is not a `casez` wildcard |
+| `4'b10x0` | `4'b10x0` | Match | The `X` values match exactly |
+
+The last row is an exact `X` match, not a wildcard match. It only matches another `X` in that same bit position.
+
+### 3. `casex`: Wildcards for `X`, `Z`, and `?`
+
+-   **Aggressive matching**: `casex` treats `X`, `Z`, and `?` as wildcards in both the expression and the case items. A wildcard is not a statement that the signal is valid; it simply removes that bit from the comparison.
+-   **Why this is risky**: An uninitialized, disconnected, or not-yet-driven signal can match a valid pattern. Simulation may therefore report a valid operation even though the hardware input is unknown.
+-   **No useful distinction between `X` and `Z`**: With `casex`, both unknown (`X`) and high-impedance (`Z`) bits are ignored during matching. This can hide two different classes of wiring or initialization bugs.
+-   **RTL guidance**: Avoid `casex` in synthesizable RTL. Prefer plain `case` when values must be known, or a carefully reviewed `casez` pattern when only `Z`/`?` masking is intentional.
 
 ```systemverilog
 module casex_example;
-  logic [3:0] status_flags = 4'b10x1; // 'x' represents an unknown flag state
+  logic [3:0] status_flags = 4'b10x1;
 
   initial begin
     casex (status_flags)
-      4'b101?: $display("Status Case 1: First matching pattern");
-      4'b10x1: $display("Status Case 2: Another matching pattern"); // Also matches, but casex does not rank specificity
-      default: $display("Default Status Case: No specific pattern matched");
+      4'b1011: $display("Valid status"); // Matches because X is treated as a wildcard
+      default: $display("Unknown status");
     endcase
   end
 endmodule
 ```
 
-In this example, both patterns can match `10x1` under `casex`, and the first matching item is selected. `casex` treats `x`, `z`, and `?` as wildcards on both sides of the comparison, so it can conceal unknowns and is generally discouraged in synthesizable RTL. Prefer `case`, `case inside`, or carefully reviewed `casez` patterns when the protocol requires wildcard matching.
+The `casex` example prints `Valid status` even though bit 2 is unknown. That is the important danger: wildcard matching can turn “I do not know” into “this is valid.”
+
+The same input demonstrates the difference directly:
+
+```systemverilog
+module casez_vs_casex_example;
+  logic [3:0] flags = 4'b10x1;
+
+  initial begin
+    casez (flags)
+      4'b1011: $display("casez: valid status");
+      default: $display("casez: unknown status"); // This branch executes
+    endcase
+
+    casex (flags)
+      4'b1011: $display("casex: valid status"); // This branch executes
+      default: $display("casex: unknown status");
+    endcase
+  end
+endmodule
+```
+
+In `casez`, the `X` in `flags` is significant and does not match `1`. In `casex`, that same `X` is ignored, so the pattern matches. This is why `casex` can conceal bugs that `casez` or plain `case` would reveal.
+
+| Statement | Wildcards | Typical use |
+| --- | --- | --- |
+| `case` | None; `X` and `Z` must match exactly | Known states and opcodes |
+| `casez` | `Z` and `?`; `X` remains significant | Explicit masked patterns |
+| `casex` | `X`, `Z`, and `?` | Usually avoid in RTL |
+
+### `unique case` and `priority case`
+
+These keywords document intent and enable simulation warnings; they do not change the basic first-match rule.
 
 **Key `case` Statement Best Practices:**
 
--   **`unique case` for Single Match Intent**: Use `unique case` when at most one case item should match. The first matching branch still executes, while simulation tools can warn when zero or multiple items match; the keyword is not a replacement for a `default` branch or a formal proof.
--   **`priority case` for Prioritized Branch Selection**: Use `priority case` when you need to prioritize case branches. If multiple cases match, the first one in code order executes, and tools can warn when no item matches. This is important for implementing prioritized logic.
--   **`default` Case Always**: In combinational procedural code, include a `default` case or assign safe defaults before the case to handle unmatched values and avoid unintended latch inference. A `default` inside a sequential process does not by itself determine reset behavior or eliminate every possible storage element.
+-   **`unique case`**: Use when zero or one item should match. Tools can warn if no item or multiple items match. Keep a `default` when invalid values need an explicit response.
+-   **`priority case`**: Use when the first matching item is intentionally highest priority. Tools can warn if no item matches.
+-   **Avoid accidental latches**: In `always_comb`, assign outputs a default before the case or handle every possibility with a `default` branch. A `default` in a clocked process does not create reset behavior; reset must still be modeled explicitly.
 
 ## Loop Constructs: Repetitive Operations
 
