@@ -235,11 +235,13 @@ endmodule
 
 **Key Rules for Assignment Types:**
 
--   **`always_comb`**: **Blocking assignments (`=`)** - for combinational logic.
--   **`always_ff`**: **Non-blocking assignments (`<=`)** - for sequential logic (flip-flops, registers).
--   **`initial` and `final` blocks**: **Blocking assignments (`=`)** - for sequential, step-by-step initialization and reporting.
--   **General `always` blocks (testbench)**: Typically **blocking assignments (`=`)** unless modeling specific concurrent behavior.
--   **Never mix blocking and non-blocking assignments to the same variable within the same procedural block.** This can lead to unpredictable and simulation-dependent behavior.
+-   **Continuous assignments**: In `assign a = b`, `=` is a simple continuous-assignment operator. It is not a blocking assignment because `assign` is not a procedural block.
+-   **Procedural assignments**: Only assignments inside procedural constructs such as `task`, `always`, and `initial` blocks use `=` and `<=` as blocking and non-blocking assignments. A procedural `=` updates immediately and a procedural `<=` schedules an update for the NBA region.
+-   **Driving signals**: Use non-blocking assignments (`<=`) when driving signals, especially clocked signals in `always_ff` and testbench stimulus that must update concurrently.
+-   **Sampling signals**: Use blocking assignments (`=`) when sampling signals into temporary variables or when calculating intermediate values in procedural code. This makes the sampled value available immediately to subsequent statements.
+-   **Combinational procedures**: Use blocking assignments (`=`) for intermediate calculations and combinational outputs in `always_comb`. This is a procedural use of `=`, not a continuous assignment.
+-   **Sequential procedures**: Use non-blocking assignments (`<=`) for registers and other state updated in `always_ff` blocks.
+-   **Do not mix assignment types for the same variable in one procedural block.** Keep each variable's procedural assignment style consistent to avoid race-prone, simulation-dependent behavior.
 
 ## Best Practices and Common Pitfalls with Procedural Blocks
 

@@ -65,59 +65,81 @@ endtask
 ### Example: Testbench Transaction Generation Task
 
 ```systemverilog
-module bus_interface_tb;
-  virtual bus_if vif; // Virtual interface handle to connect to DUT
-  logic clk;
+module task_test;
 
-  task automatic generate_bus_transaction(input logic [31:0] address, input logic [63:0] write_data, output logic success);
-    begin
-      success = 0; // Initialize success flag
-      vif.valid <= 1'b1;
-      vif.addr  <= address;
-      vif.wdata <= write_data;
-      $display("[%0t] TB: Driving bus - Address: 0x%h, Data: 0x%h", $time, address, write_data);
+  logic       clk   = '0;
+  logic [7:0] data  = '0;
+  logic       valid = '0;
+  logic       ready = '0;
 
-      @(posedge clk); // Wait for clock edge
-      #2;             // Small delay
-      vif.valid <= 1'b0;
+  /*
+   * Simple ready/valid handshake between the sender and receiver:
+   *
+   *   sender                 receiver
+   *     data   ------------->
+   *     valid  ------------->  (receiver accepts data when valid is high)
+   *     ready  <-------------  (sender may finish when ready is high)
+   *
+   * The sender holds valid high until the receiver raises ready. The
+   * receiver holds ready high until valid is observed, so neither task
+   * can complete before the other side is ready.
+   */
 
-      wait (vif.ready); // Wait for DUT to acknowledge
-      $display("[%0t] TB: Bus transaction acknowledged for Address: 0x%h", $time, address);
-      success = 1;
-    end
+  // Free-running 10 ns clock used to synchronize the handshake.
+  always #5ns clk = ~clk;
+
+  // Drive one data item and wait until the receiver accepts it.
+  task automatic send_data(input int value);
+    data  <= value;
+    valid <= 1;
+    do @(posedge clk); while (!ready);
+    valid <= 0;
   endtask
 
+  // Announce that the receiver is ready, then capture the data item.
+  task automatic recv_data(output int value);
+    ready <= 1;
+    do @(posedge clk); while (!valid);
+    ready <= 0;
+    value = data;
+  endtask
+
+  // Configure waveform output and stop the simulation after a fixed timeout.
   initial begin
-    clk = 0;
-    fork
-      forever #5 clk = ~clk; // Clock generation
-    join_none
+    $timeformat(-9, 0, "ns");
+    $dumpfile("task_test.vcd");
+    $dumpvars(0, task_test);
 
-    #10; // Initial delay
-    $display("[%0t] TB: Starting bus transactions...", $time);
-
-    generate_bus_transaction(32'h1000, 64'hAABBCCDD_EEFF0011, transaction_status);
-    if (transaction_status) $display("[%0t] TB: Transaction 1 successful", $time);
-    else $display("[%0t] TB: Transaction 1 failed!", $time);
-
-    #20;
-    generate_bus_transaction(32'h2000, 64'h11223344_55667788, transaction_status);
-    if (transaction_status) $display("[%0t] TB: Transaction 2 successful", $time);
-    else $display("[%0t] TB: Transaction 2 failed!", $time);
-
-    #50 $finish;
+    #50ns;
+    $finish;
   end
 
-  logic transaction_status;
+  // Start the sender after 10 ns so the receiver must wait for valid.
+  initial begin
+    #10ns;
+    $display("[%0t] Starting data send...", $time);
+    send_data(8'hA5);
+    $display("[%0t] Sent data: 0x%0h", $time, 8'hA5);
+  end
+
+  // Start the receiver after 20 ns and report the captured value.
+  initial begin
+    int value;
+    #20ns;
+    $display("[%0t] Starting data receive...", $time);
+    recv_data(value);
+    $display("[%0t] Received data: 0x%0h", $time, value);
+  end
+
 endmodule
 ```
 
 **Explanation:**
 
--   The `generate_bus_transaction` task models a sequence of actions to drive a bus interface in a testbench.
--   It includes timing controls (`#delay`, `@(posedge clk)`, `wait(vif.ready)`) to simulate real-world bus protocol timing.
--   Arguments (`address`, `write_data`, `success`) are used to pass data into and out of the task.
--   The `automatic` keyword ensures that each call to the task has its own local variable scope, preventing data corruption if the task is called concurrently.
+-   The `send_data` task drives a data item and holds `valid` high until the receiver raises `ready`.
+-   The `recv_data` task raises `ready`, waits for `valid`, and returns the captured data through its `output` argument.
+-   Both tasks use `@(posedge clk)` inside a `do...while` loop to synchronize the ready/valid handshake.
+-   The `automatic` keyword gives each task invocation its own local storage, making the tasks safe to call concurrently.
 
 ## Function Implementation: Combinational Logic and Calculations
 
