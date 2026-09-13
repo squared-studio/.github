@@ -85,6 +85,11 @@ module sensor_interface_module; // Module name: 'sensor_interface_module' (using
     end
   end
 
+  initial begin
+    #150; // Wait a short time before starting data display
+    $finish;
+  end
+
 endmodule // End of 'sensor_interface_module' module
 ```
 
