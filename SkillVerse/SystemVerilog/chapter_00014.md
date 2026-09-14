@@ -1,498 +1,424 @@
-# SystemVerilog Randomization: Powering Advanced and Efficient Verification
+# SystemVerilog Classes: Object-Oriented Programming for Advanced Verification
 
-## Introduction: Embracing Constrained Random Verification for Design Confidence
+## Introduction: Building Scalable and Reusable Testbenches with OOP
 
-SystemVerilog randomization is a transformative feature that underpins **constrained random verification (CRV)**, a cornerstone of modern hardware verification methodologies.  In today's complex digital designs, exhaustive manual testing is simply infeasible. CRV offers a powerful and efficient alternative, enabling verification engineers to automatically generate a vast array of test scenarios, explore the design's behavior comprehensively, and achieve high levels of verification confidence.
+SystemVerilog classes bring the power of **object-oriented programming (OOP)** to hardware verification, enabling the creation of modular, reusable, and highly scalable testbenches.  Classes serve as blueprints for creating objects, which encapsulate both **data (properties)** and **behavior (methods)**. This object-oriented approach is fundamental to advanced verification methodologies like the Universal Verification Methodology (UVM) and significantly enhances the efficiency and maintainability of verification environments.
 
-**Why is Constrained Random Verification Essential?**
+**Core OOP Principles and Their Benefits in Verification:**
 
--   **Addresses Design Complexity**: Modern SoCs and ASICs are incredibly intricate, with numerous features, operating modes, and potential interactions. Manually crafting test cases to cover all these scenarios is time-consuming, error-prone, and often incomplete. CRV automates stimulus generation, allowing for a much broader and deeper exploration of the design's functionality.
--   **Achieves Comprehensive Coverage**: CRV, when guided by well-defined constraints and coverage metrics, ensures that verification efforts are targeted and effective. By randomizing stimulus within specific boundaries and monitoring coverage, engineers can systematically verify design features and identify areas that require further testing.
--   **Simulates Real-World Environments**: Real-world systems operate under highly variable conditions. Randomization naturally introduces this variability into the verification environment, mimicking real-world stimuli and uncovering potential issues that might only emerge under unpredictable operating conditions. This is crucial for robust design validation.
--   **Reduces Verification Bottlenecks**:  Manual test case writing is a significant bottleneck in the verification process. CRV drastically reduces this effort, allowing verification teams to focus on defining verification strategies, developing constraints, and analyzing coverage results, rather than spending excessive time on manual stimulus creation. This leads to faster verification cycles and reduced time-to-market.
+*   **Encapsulation**: Bundling data (properties) and methods that operate on that data within a single unit (the class). This hides internal implementation details and protects data integrity, promoting modularity and reducing unintended side effects. In verification, encapsulation helps create self-contained, reusable components like transaction objects, monitors, and drivers.
+*   **Inheritance**:  Creating new classes (derived classes) that inherit properties and methods from existing classes (base classes). Inheritance fosters code reuse, reduces redundancy, and establishes a clear hierarchy of components. In verification, inheritance is used to extend and specialize base classes to create variations of components, like different types of transactions or agents, while sharing common functionalities.
+*   **Polymorphism**:  The ability of objects of different classes to respond to the same method call in their own specific way. Polymorphism, particularly through **virtual methods**, enables dynamic method dispatch, where the method executed is determined at runtime based on the actual object type. In verification, polymorphism allows for flexible and adaptable testbenches that can handle different types of components or scenarios through a common interface.
 
-**Key Components of SystemVerilog Randomization for CRV:**
+By leveraging these OOP principles, SystemVerilog classes empower verification engineers to build sophisticated testbenches that are:
 
-1.  **Random Variables**: These are the heart of randomization. They are variables declared with the `rand` or `randc` keywords, instructing the SystemVerilog simulator to generate random values for them during the randomization process. You define *what* aspects of your design's inputs or internal states should be randomized.
-2.  **Constraints**: Constraints are the rules that govern the randomization process. They define the *legal* and *relevant* ranges, distributions, and relationships for the random variables. Constraints ensure that the generated random stimulus is not just arbitrary noise, but rather meaningful and targeted towards verifying specific design behaviors.
-3.  **Control Methods**: SystemVerilog provides a rich set of methods and system functions to *control* the randomization process. These mechanisms allow you to seed the random number generator for reproducibility, trigger randomization, apply dynamic constraints, and manage the overall randomization flow within your testbench.
+*   **Modular**:  Composed of independent, self-contained objects, making it easier to design, implement, and debug individual components.
+*   **Reusable**:  Classes and objects can be reused across different parts of a project or in multiple projects, saving development time and promoting consistency.
+*   **Scalable**:  OOP principles facilitate the creation of large and complex verification environments that can be efficiently managed and extended as design complexity grows.
+*   **Maintainable**:  Well-structured, object-oriented code is generally easier to understand, modify, and maintain compared to procedural or flat code.
+*   **Extensible**: Inheritance and polymorphism make it straightforward to extend and adapt existing verification components to new requirements or design changes.
+
+Classes are primarily used in simulation and verification; they are not synthesizable RTL hardware structures. A class variable is an object handle, and it must refer to an object created with `new()` before the object's members can be accessed.
 
 ### Learning Goals
 
 By the end of this chapter, you should be able to:
 
-- Declare `rand` and `randc` properties and explain the scope of their randomization guarantees.
-- Write hard, soft, implication, distribution, and ordering constraints.
-- Check randomization results, diagnose solver failures, and apply inline constraints safely.
-- Connect randomized stimulus to functional coverage while preserving reproducible seeds.
+- Define classes with properties, methods, constructors, and controlled visibility.
+- Create and use object handles safely, including recognizing a `null` handle.
+- Apply inheritance and virtual methods for runtime polymorphism.
+- Use class-based randomization while distinguishing object lifetime from hardware storage.
 
-## Random Variable Types: Tailoring Randomness to Verification Needs
+## Defining Classes: Blueprints for Objects
 
-SystemVerilog offers several types of random variables, each designed to address specific verification scenarios and stimulus generation requirements. Choosing the appropriate random variable type is crucial for effective CRV.
+Classes are defined using the `class` keyword, followed by the class name and the class body enclosed within `endclass`.  By default, class members (properties and methods) have **public** access, meaning they can be accessed from anywhere. To control access and implement encapsulation, SystemVerilog provides the `local` and `protected` keywords.
 
-| Random Variable Type | Behavior                                                                 | Use Case Examples                                                                                                                                 |
-| -------------------- | ------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **`rand`**           | **Uniform Distribution**: Generates random values with a uniform probability across the defined range. Each value within the allowed range has an equal chance of being selected. | - Generating general-purpose data values for packet payloads, register configurations, or memory contents where no specific value preference is needed. <br> - Randomizing input port values or control signals to broadly explore the design's input space. |
-| **`randc`**          | **Cyclic Permutation**: Generates a sequence of unique random values from the defined range before repeating. It cycles through all possible values in a random order, ensuring each value is used exactly once per cycle. | - Generating unique transaction IDs or packet identifiers to ensure traceability and avoid collisions. <br> - Randomizing through a set of test scenarios or configurations in a cyclic manner to ensure each scenario is tested. <br> - Creating unique address sequences for memory access verification. |
-| **`rand *` (with class fields)** | **Combined with Class Fields**:  When used within classes, `rand` and `randc` properties work together to randomize complex data structures. Constraints applied to these class properties are solved collectively to produce valid, randomized objects. | - Creating complex, structured stimulus objects like network packets, bus transactions, or configuration structures with multiple randomized fields that are inter-dependent and constrained. <br> - Building reusable transaction objects for verification environments, where each transaction instance needs to be randomized according to defined rules. |
-
-### Class-Based Example: Modeling Network Packets with Random Variables
+### Example: A Simple Class Definition
 
 ```systemverilog
-class network_packet;
-  rand bit [31:0] source_ip;    // 32-bit source IP address (uniform random)
-  randc bit [15:0] packet_id;   // 16-bit packet ID (cyclic random - ensures unique IDs)
-  rand bit [7:0] payload[];      // Dynamic array for payload (uniform random size and content)
+// Define a class named 'SimpleClass'
+class SimpleClass;
+  int data;         // Public property (integer data) - accessible from anywhere
 
-  function new(int max_size=64); // Constructor to initialize payload array
-    payload = new[max_size];
-  endfunction
+  // Method to display the value of 'data'
+  function void display_data();
+    $display("Data value is: %0d", data);
+  endfunction : display_data // Named function end for clarity (optional but recommended)
 
-  function void display(); // Function to display packet information
-    $display("Packet ID: %h, Source IP: %h, Payload Size: %0d", packet_id, source_ip, payload.size());
-  endfunction
-endclass
+endclass : SimpleClass // Named class end for clarity (optional but recommended)
+```
 
-module packet_generator;
+In this `SimpleClass` example:
+
+*   `class SimpleClass; ... endclass : SimpleClass` declares a class named `SimpleClass`. The `: SimpleClass` after `endclass` is optional but improves readability, especially for longer classes.
+*   `int data;` declares a public property named `data` of type `int`. Since no access modifier (`local` or `protected`) is specified, it defaults to `public` access. `automatic` and `static` describe lifetime/storage behavior, not visibility.
+*   `function void display_data(); ... endfunction : display_data` defines a public method named `display_data`. It's a `function` that returns `void` (no return value) and uses `$display` to print the value of the `data` property.  The `: display_data` after `endfunction` is also optional but enhances readability.
+
+## Creating Objects: Instances of Classes
+
+Objects are concrete instances of classes. Think of a class as a cookie cutter and objects as the cookies created using that cutter. Objects are dynamically created at runtime using the `new()` constructor. Objects are accessed and manipulated through object handles, which are references to class objects rather than synthesizable hardware pointers. A handle may be `null`; dereferencing a null handle is a runtime error.
+
+### Example: Instantiating and Using a Class Object
+
+```systemverilog
+module class_example_module;
+
   initial begin
-    network_packet pkt = new(); // Create an instance of the network_packet class
+    SimpleClass my_object;          // Declare an object handle 'my_object' of type 'SimpleClass'
+    my_object = new();            // Instantiate an object of 'SimpleClass' using new() and assign its handle to 'my_object'
 
-    repeat (5) begin // Generate and display 5 random packets
-      assert pkt.randomize(); // Randomize the packet object
-      pkt.display();         // Display the randomized packet information
-    end
+    my_object.data = 42;          // Access the 'data' property of the object using the handle and assign the value 42
+    my_object.display_data();    // Call the 'display_data()' method of the object using the handle
+
+    $display("Value of my_object.data: %0d", my_object.data); // Access and display the 'data' property again
+
   end
-endmodule
+
+endmodule : class_example_module
 ```
 
 In this example:
 
--   `source_ip` is declared as `rand`, meaning each time a `network_packet` object is randomized, the `source_ip` will get a new, uniformly distributed random 32-bit value.
--   `packet_id` is declared as `randc`, ensuring that repeated randomizations of this object's `packet_id` cycle through values without repetition until the object's cycle is exhausted. A separate object has its own `randc` cycle, so global uniqueness requires an additional constraint or registry.
--   `payload` is a dynamic array declared as `rand`. Its contents can be randomized, and its size can be randomized when a size constraint or other legal size control is provided; this example does not constrain the size.
+*   `SimpleClass my_object;` declares a variable `my_object` that can hold a handle to an object of type `SimpleClass`.  At this point, `my_object` is just a handle and does not yet point to an actual object (it's initially `null`).
+*   `my_object = new();`  This is the crucial step of object instantiation. `new()` is the constructor for the `SimpleClass`. It dynamically creates an object of type `SimpleClass` and returns a handle (a reference) to it. This handle is then assigned to the `my_object` variable.
+*   `my_object.data = 42;` uses the object handle `my_object` and the dot operator (`.`) to access the `public` property `data` of the object and assign the value `42` to it.
+*   `my_object.display_data();` similarly uses the handle to call the `public` method `display_data()` on the object. This method then executes, printing the value of `data` to the simulation console.
+*   `$display(...)` demonstrates accessing and displaying the `data` property directly after it has been set and displayed by the method.
 
-## Constraint Specification: Guiding Randomization for Targeted Verification
+Assigning one class handle to another copies the handle, not the object. For example, `SimpleClass second_handle = my_object;` makes both handles refer to the same object, so a change through either handle is visible through the other. Use `new()` and copy the properties explicitly when an independent object is required.
 
-Constraints are the rules that define the valid and relevant stimulus space for your verification. They are essential for directing the randomization process towards meaningful test scenarios and preventing the generation of irrelevant or illegal stimulus.
+## Inheritance: Creating Class Hierarchies for Code Reusability
 
-### Common Constraint Types in SystemVerilog
+Inheritance is a fundamental OOP principle that allows you to create new classes (derived or child classes) based on existing classes (base or parent classes).  The derived class automatically inherits all the *accessible* properties and methods of the base class.  SystemVerilog uses the `extends` keyword to establish inheritance.  The `super` keyword allows a derived class to explicitly access members of its parent class, particularly when overriding methods.
 
-```systemverilog
-class ethernet_frame;
-  rand bit [11:0] length;      // Frame length in bytes
-  rand bit [7:0]  payload[];     // Payload data (dynamic array)
-  rand bit        crc_error;     // CRC error flag
-
-  // 1. Range Constraint: Restricting values to a specific range
-  constraint valid_length_range {
-    length inside {[64:1518]}; // Ethernet frame length must be between 64 and 1518 bytes
-  }
-
-  // 2. Conditional Constraint:  Constraints based on conditions
-  constraint payload_size_condition {
-    payload.size() == length - 18; // Payload size is derived from the frame length (Ethernet header overhead)
-  }
-
-  // 3. Probability Distribution Constraint:  Controlling the likelihood of values
-  constraint error_probability_dist {
-    crc_error dist {0 := 95, 1 := 5}; // CRC error is introduced with a 5% probability
-    // 0 (no error) occurs 95% of the time, 1 (error) occurs 5% of the time
-  }
-
-  // 4. Cross-Variable Relationship Constraint:  Defining relationships between random variables
-  constraint frame_consistency_relation {
-    solve length before payload; // Solve 'length' first before determining 'payload' size
-    // Ensures 'length' is randomized first, and then 'payload.size()' is calculated based on the randomized 'length'
-  }
-
-  // 5. Set Membership Constraint:  Restricting values to a specific set
-  rand bit [2:0] opcode;
-  constraint valid_opcodes {
-    opcode inside {3'b001, 3'b010, 3'b100}; // 'opcode' can only be one of these three values
-  }
-
-  // 6. Unique Value Constraint (using 'unique' keyword within a constraint block)
-  rand bit [7:0] address_sequence[4]; // Array of 4 addresses
-  constraint unique_addresses {
-    unique {address_sequence}; // All elements in 'address_sequence' must be unique
-  }
-endclass
-```
-
-### Advanced Constraint Features: Fine-Tuning Randomization Behavior
-
-1.  **Soft Constraints: Overridable Constraints for Flexibility**
-
-    ```systemverilog
-    class ethernet_frame;
-      rand bit [11:0] length;
-      rand bit [7:0]  payload[];
-
-      constraint valid_length_range {
-        length inside {[64:1518]}; // Hard constraint - always enforced
-      }
-
-      constraint flexible_size_soft {
-        soft payload.size() inside {[64:256]}; // Soft constraint - can be overridden
-      }
-    endclass
-
-    module constraint_example;
-      initial begin
-        ethernet_frame frame = new();
-        frame.randomize(); // Randomizes with default constraints (including soft constraint)
-        $display("Default payload size: %0d", frame.payload.size());
-
-        frame.randomize() with { payload.size() == 1000; }; // Overrides soft constraint
-        $display("Overridden payload size: %0d", frame.payload.size());
-      end
-    endmodule
-    ```
-
-    -   **`soft` keyword**:  Soft constraints are declared using the `soft` keyword. They represent *suggestions* or *preferences* for the constraint solver, rather than strict requirements.
-    -   **Overriding Behavior**: Soft constraints can be overridden by inline constraints provided during the `randomize()` call. If an inline constraint conflicts with a soft constraint, the inline constraint takes precedence. Hard constraints (without `soft`) always take priority.
-    -   **Use Cases**: Soft constraints are useful for defining default behavior or loose guidelines for randomization, while allowing specific test cases to deviate from these defaults when needed. This provides flexibility in creating both general and specialized test scenarios.
-
-2.  **Implication Constraints: Conditional Enforcement of Constraints**
-
-    ```systemverilog
-    class ethernet_frame;
-      rand bit [11:0] length;
-      rand bit [7:0]  payload[];
-
-      constraint jumbo_frames_implication {
-        (length > 1518) -> payload.size() > 1500;
-        // IF frame length is greater than 1518 (jumbo frame), THEN payload size MUST be greater than 1500
-      }
-
-      constraint normal_frames_implication {
-        (length <= 1518) -> payload.size() <= 1500;
-         // IF frame length is NOT greater than 1518 (normal frame), THEN payload size MUST be less than or equal to 1500
-      }
-    endclass
-    ```
-
-    -   **`->` operator**: Implication constraints use the `->` operator (similar to logical implication: "if...then..."). The constraint to the right of `->` is only enforced *if* the condition to the left of `->` is true.
-    -   **Conditional Logic**: Implication constraints allow you to create conditional randomization rules, where certain constraints are active only under specific circumstances. This is powerful for modeling complex protocols or design behaviors that have different rules based on certain conditions.
-    -   **Use Cases**: Modeling protocol behavior that changes based on frame type, operating mode, or configuration settings. For example, different constraints might apply to packet length or payload format depending on the protocol version or frame type.
-
-## Randomization Control: Orchestrating the Randomization Process
-
-SystemVerilog provides specific methods and system tasks to initiate and manage the randomization process. These control mechanisms are essential for integrating randomization into your testbench and achieving the desired verification outcomes.
-
-### Core Randomization Control Methods
+### Example: Base Class `Animal` and Derived Class `Dog`
 
 ```systemverilog
-class test_generator;
-  rand ethernet_frame frame; // Declare a random ethernet_frame object
-  int seed;                // Seed for random number generator
+// Base class: Animal
+class Animal;
+  string name; // Public property: animal's name
 
-  function new(int seed_value = 12345); // Constructor with optional seed
-    frame = new();
-    seed = seed_value;
-  endfunction
+  // Method: generic animal sound
+  function virtual void speak(); // 'virtual' keyword enables polymorphism
+    $display("%0s makes a generic animal sound", name);
+  endfunction : speak
 
-  function void configure();
-    // 1. Seed Management: Setting the seed for reproducibility
-    frame.srandom(seed); // Set the seed for the object whose fields are randomized
+endclass : Animal
 
-    // 2. Randomization Invocation: Triggering randomization of the 'frame' object
-    if(!frame.randomize()) begin // Call randomize() method on the object
-      $error("Frame randomization failed!"); // Error handling if randomization fails (constraints are unsatisfiable)
-    end
-    $display("Randomized frame length: %0d, CRC Error: %0d", frame.length, frame.crc_error);
+// Derived class: Dog, inheriting from Animal
+class Dog extends Animal;
+  // Inherits 'name' property and 'speak()' method from Animal
 
-    // 3. Partial Randomization with Inline Constraints: Randomizing specific variables with temporary constraints
-    if(!frame.randomize(length) with { length > 1000; }) begin // Randomize only 'length' with inline constraint
-      $error("Partial randomization failed!");
-    end
-    $display("Partially randomized frame length ( > 1000): %0d", frame.length);
+  // Override the 'speak()' method to provide Dog-specific behavior
+  function virtual void speak(); // Override base class method; repeating 'virtual' is optional
+    super.speak();          // Optional: Call the base class's speak() method first
+    $display("%0s barks: Woof!", name); // Then add Dog-specific barking behavior
+  endfunction : speak
 
-    // 4. Randomization with specific variables and no additional constraints
-     if(!frame.randomize(crc_error)) begin // Randomize only 'crc_error' without extra constraints
-      $error("Partial randomization of crc_error failed!");
-    end
-    $display("Partially randomized crc_error: %0d", frame.crc_error);
-  endfunction
-endclass
+  function void wag_tail(); // Method specific to Dog class
+    $display("%0s is wagging its tail", name);
+  endfunction : wag_tail
 
-module testbench;
+endclass : Dog
+
+module inheritance_example_module;
   initial begin
-    test_generator gen = new(54321); // Create a test_generator object with a specific seed
-    gen.configure();              // Call the configure() function to randomize and display frames
+    Dog my_dog = new(); // Create an object of the derived class 'Dog'
+    my_dog.name = "Buddy"; // Set the 'name' property (inherited from 'Animal')
+
+    my_dog.speak();       // Call the 'speak()' method - dynamically dispatched to Dog's implementation
+    // Output will be:
+    // Buddy makes a generic animal sound
+    // Buddy barks: Woof!
+
+    my_dog.wag_tail();    // Call the Dog-specific 'wag_tail()' method
+
+    Animal my_animal;      // Declare a handle of the base class type 'Animal'
+    my_animal = my_dog;    // Assign the 'Dog' object handle to the 'Animal' handle (upcasting - always allowed)
+
+    my_animal.speak();     // Call 'speak()' method using the 'Animal' handle - still dynamically dispatched to Dog's implementation!
+    // Output will be the same as my_dog.speak():
+    // Buddy makes a generic animal sound
+    // Buddy barks: Woof!
+
+    // my_animal.wag_tail(); // Error! 'wag_tail()' is not a member of the 'Animal' class, even though 'my_animal' is pointing to a 'Dog' object.
+                               // Base class handles can only access members defined in the base class (or overridden in derived classes).
   end
-endmodule
+endmodule : inheritance_example_module
 ```
 
-**Explanation of Core Methods:**
+Key points in the inheritance example:
 
--   **`srandom(seed)`**: This method seeds the RNG associated with an object or process. Setting a specific seed makes a sequence reproducible within the same simulator and configuration; exact solver choices and sequences are not guaranteed to match across different tools or versions. If no seed is explicitly set, the starting seed may vary between simulation runs.
--   **`object.randomize()`**: This method is called on a class object that contains `rand` or `randc` variables. It triggers the constraint solver to find a valid set of random values for all `rand` variables in the object, while satisfying all defined constraints. The `randomize()` method returns 1 if randomization is successful (a valid solution is found) and 0 if it fails (constraints are unsatisfiable, no valid solution exists). It's essential to check the return value and handle potential randomization failures.
--   **`object.randomize(variable_list) with { inline_constraints }`**: This is a powerful form of partial randomization. It allows you to randomize only a *subset* of the `rand` variables within an object, and optionally apply *inline constraints* that are specific to this particular randomization call. Inline constraints are temporary and only apply to the current `randomize()` call; they do not permanently modify the class's constraints. This is useful for targeting specific scenarios or overriding default constraints for certain test cases.
+*   `class Dog extends Animal;` declares `Dog` as a derived class of `Animal`, inheriting properties and methods from `Animal`.
+*   `super.speak();` inside `Dog::speak()` calls the `speak()` method of the parent class (`Animal`). `super` is used to explicitly access parent class members.
+*   `my_animal.speak();` demonstrates polymorphism. Even though `my_animal` is an `Animal` handle, because it points to a `Dog` object and `speak()` is `virtual`, the `Dog`'s `speak()` method is executed at runtime (dynamic dispatch).
+*   `my_animal.wag_tail();` results in an error because `wag_tail()` is specific to `Dog` and not defined in the `Animal` class. Base class handles can only access members defined in the base class or overridden in derived classes.
 
-### Special Randomization Methods: Callbacks for Pre- and Post-Randomization Actions
+## Polymorphism: Dynamic Method Dispatch for Flexible Behavior
 
-SystemVerilog provides callback methods that are automatically executed *before* and *after* the `randomize()` method is called. These callbacks allow you to perform actions or modifications to the random variables or the object's state at specific points in the randomization process.
+Polymorphism, specifically through **virtual methods**, is a powerful OOP feature that allows objects of different classes to be treated through a common base class interface.  The key mechanism for polymorphism in SystemVerilog is the `virtual` keyword used in method declarations. When a method is declared `virtual` in a base class, derived classes can override it with their own implementations. When you call a virtual method through a base class handle that actually points to a derived class object, SystemVerilog dynamically determines and executes the *overridden method in the derived class*, not the base class method. This is known as **dynamic method dispatch** or runtime polymorphism.
 
-1.  **`pre_randomize()`**: This virtual function (user-defined within a class) is automatically called *immediately before* the constraint solver is invoked during a `randomize()` call.
-    -   **Purpose**:  `pre_randomize()` is typically used for:
-        -   Setting up preconditions or initial states for randomization.
-        -   Dynamically adjusting constraints based on the current test scenario or object state.
-        -   Performing any actions that need to happen *before* the random values are generated.
-
-2.  **`post_randomize()`**: This virtual function is automatically called *immediately after* the constraint solver successfully finds a solution and assigns random values to the `rand` variables.
-    -   **Purpose**: `post_randomize()` is commonly used for:
-        -   Performing post-processing or adjustments to the randomized values.
-        -   Calculating derived values or setting up dependent variables based on the randomized values.
-        -   Sampling coverage points or logging randomized values for analysis.
-        -   Performing any actions that need to happen *after* the random values have been generated and assigned.
-
-3.  **`randomize(null)`**: Passing `null` as the variable list is not a portable way to request unconstrained random values. In object randomization, use `rand_mode(0)` to disable selected random properties temporarily, or use explicit inline constraints and a separate debug configuration. `randomize(null)` has specialized variable-list semantics and should not be presented as a constraint bypass.
-  -   **Purpose**: For unconstrained debugging, disable only the intended random properties with `object.property.rand_mode(0)` or `object.rand_mode(0)`, randomize as needed, and restore the modes with `rand_mode(1)`. This should be temporary because bypassing protocol constraints can produce illegal stimulus.
-
-## Verification Integration: Building Coverage-Driven Random Testbenches
-
-Randomization is most effective when integrated into a comprehensive verification environment. A typical SystemVerilog testbench leverages randomization to generate stimulus, drive the Design Under Test (DUT), and collect coverage metrics to guide the verification process.
-
-### Typical Testbench Structure with Randomization
+### Example: Polymorphism with `Shape`, `Circle`, and `Square` Classes
 
 ```systemverilog
-module tb; // Testbench module
-  test_generator gen;       // Instance of the test generator class
-  int test_count = 1000;   // Number of random test cases to run
-  int iteration;
+// Base class: Shape
+class Shape;
+  // Virtual function: to be overridden by derived classes
+  virtual function void draw();
+    $display("Drawing an unknown shape"); // Default implementation for generic shapes
+  endfunction : draw
+endclass : Shape
 
+// Derived class: Circle, inheriting from Shape
+class Circle extends Shape;
+  // Override the 'draw()' method for circles
+  virtual function void draw(); // 'virtual' is still needed in derived class for further polymorphism
+    $display("Drawing a circle");
+  endfunction : draw
+endclass : Circle
+
+// Derived class: Square, inheriting from Shape
+class Square extends Shape;
+  // Override the 'draw()' method for squares
+  virtual function void draw();
+    $display("Drawing a square");
+  endfunction : draw
+endclass : Square
+
+module polymorphism_example_module;
   initial begin
-    gen = new();            // Create an instance of the test generator
-    gen.seed = $urandom(); // Initialize seed with a non-deterministic random value for each simulation run
-    gen.frame.srandom(gen.seed); // Apply the seed to the object whose fields are randomized
+    Shape shape_obj;       // Declare a handle of the base class 'Shape'
 
-    for (iteration = 0; iteration < test_count; iteration++) begin // Loop to run multiple random test cases
-      if (!gen.frame.randomize()) begin // Randomize a frame object using the generator
-        $fatal("Test randomization failed in iteration %0d", iteration); // Fatal error if randomization fails
-      end
+    Circle circle_obj = new(); // Create a Circle object
+    Square square_obj = new(); // Create a Square object
 
-      send_frame_to_dut(gen.frame); // Function to send the randomized frame to the DUT (implementation not shown)
-      wait_for_response();         // Function to wait for and capture response from DUT (implementation not shown)
-      check_response(gen.frame);    // Function to check the DUT's response against expected behavior based on the sent frame (implementation not shown)
-      collect_coverage(gen.frame);  // Function to sample coverage points based on the randomized frame (implementation not shown - see Coverage-Driven Example below)
+    shape_obj = circle_obj;  // Assign Circle object handle to Shape handle (upcasting)
+    shape_obj.draw();       // Call 'draw()' using Shape handle - dynamically dispatches to Circle::draw()
+    // Output: Drawing a circle
+
+    shape_obj = square_obj;  // Assign Square object handle to Shape handle (upcasting)
+    shape_obj.draw();       // Call 'draw()' using Shape handle - dynamically dispatches to Square::draw()
+    // Output: Drawing a square
+
+    Shape shape_array[2];   // Declare an array of Shape handles
+    shape_array[0] = circle_obj; // Store Circle object handle in the array
+    shape_array[1] = square_obj; // Store Square object handle in the array
+
+    foreach (shape_array[i]) begin // Iterate through the array of Shape handles
+      shape_array[i].draw();    // Call 'draw()' on each element - dynamic dispatch based on actual object type
     end
-
-    $display("Completed %0d random test cases.", test_count);
-    report_coverage();           // Function to generate and report coverage statistics (implementation not shown)
-    $finish;
+    // Output:
+    // Drawing a circle
+    // Drawing a square
   end
-endmodule
+endmodule : polymorphism_example_module
 ```
 
-**Key Elements of a Random Testbench:**
+In this polymorphism example:
 
--   **Test Generator Class (`test_generator`)**: Encapsulates the randomization logic, including the random variables (e.g., `ethernet_frame frame`), constraints, seed management, and randomization control methods (`configure()`, `pre_randomize()`, `post_randomize()`).
--   **Testbench Top Module (`tb`)**: Orchestrates the overall test flow. It instantiates the test generator, sets up the simulation environment (clock, reset, etc.), runs a loop to generate and execute multiple random test cases, interacts with the DUT (`send_to_dut`, `check_response`), collects coverage data (`collect_coverage`), and reports test results and coverage statistics.
--   **Randomization Loop (`repeat (test_count) begin ... end`)**:  Iterates a specified number of times to generate and execute multiple random test cases. Each iteration typically involves:
-    -   Randomizing a stimulus object (e.g., `gen.frame.randomize()`).
-    -   Sending the randomized stimulus to the DUT (`send_frame_to_dut()`).
-    -   Waiting for and capturing the DUT's response (`wait_for_response()`).
-    -   Checking the response for correctness (`check_response()`).
-    -   Collecting coverage information (`collect_coverage()`).
--   **Seed Management (`gen.seed = $urandom();`)**:  Using `$urandom()` to initialize the random seed ensures that each simulation run starts with a different seed, leading to different random stimulus sequences and broader coverage exploration across multiple runs. For debug or regression, fixed seeds can be used for repeatable simulations.
--   **Error Handling (`if (!gen.frame.randomize()) ...`)**:  Checking the return value of `randomize()` and handling potential randomization failures gracefully, typically by reporting an error or terminating the simulation.
+*   `virtual function void draw();` in the `Shape` class declares `draw()` as a virtual method. This makes it eligible for overriding and dynamic dispatch in derived classes. An override remains virtual even if the derived declaration omits the keyword.
+*   `Circle` and `Square` classes `extends Shape` and override the `draw()` method with their specific implementations.
+*   `Shape shape_obj;` declares a handle of the base class type `Shape`. This handle can point to objects of `Shape`, `Circle`, or `Square` types (or any other class derived from `Shape`).
+*   `shape_obj = circle_obj;` and `shape_obj = square_obj;` demonstrate **upcasting**, where handles of derived classes (`Circle`, `Square`) are assigned to a handle of the base class (`Shape`). Upcasting is always safe and allowed in OOP.
+*   `shape_obj.draw();` calls demonstrate dynamic dispatch.  The actual method that gets executed (`Circle::draw()` or `Square::draw()`) is determined at *runtime* based on the *actual object type* that `shape_obj` is currently pointing to, not just the handle type (`Shape`).
+*   The `shape_array` example further illustrates polymorphism by showing how an array of base class handles can hold objects of different derived classes, and calling a virtual method on each element will result in the correct derived class method being invoked.
 
-### Coverage-Driven Verification Example: Integrating Coverage Collection
+## Encapsulation: Data Hiding and Controlled Access
+
+Encapsulation is the principle of bundling data (properties) and methods that operate on that data within a class, and controlling access to the internal data to protect it from direct, unauthorized modification.  SystemVerilog provides access modifiers (`local` and `protected`) to implement encapsulation.
+
+*   **`local`**:  Declares a member (property or method) as *private* to the class in which it is declared. `local` members can only be accessed from within the class itself. They are not accessible from derived classes or from outside the class.
+*   **`protected`**: Declares a member as accessible within the class in which it's declared and in any classes derived from that class (subclasses). `protected` members are not accessible from outside the class hierarchy.
+*   **`public` (default)**: Members declared without an explicit access modifier are public. They are accessible from anywhere: within the class, from derived classes, and from outside the class through object handles.
+
+Encapsulation is crucial for:
+
+*   **Data Hiding**:  Preventing direct access and modification of internal data, protecting data integrity and preventing accidental corruption.
+*   **Abstraction**:  Hiding complex implementation details and exposing only a well-defined public interface to interact with objects. This simplifies the use of classes and reduces dependencies on internal implementation.
+*   **Modularity**:  Making classes more self-contained and independent, improving modularity and reusability.
+
+### Example: Encapsulation with `BankAccount` Class
 
 ```systemverilog
-class coverage_collector;
-  ethernet_frame frame; // Class property to hold the frame object for coverage sampling
+class BankAccount;
+  local int balance; // Private property: 'balance' - only accessible within BankAccount class
 
-  covergroup frame_coverage_group; // Define a covergroup for ethernet frame coverage
-    length_cp: coverpoint frame.length { // Coverpoint for frame length
-      bins small_frames  = {[64:512]};    // Coverage bins for small frame lengths
-      bins medium_frames = {[513:1024]};   // Coverage bins for medium frame lengths
-      bins large_frames  = {[1025:1518]};  // Coverage bins for large frame lengths
-    }
-    error_cp: coverpoint frame.crc_error; // Coverpoint for CRC error flag (0 and 1)
-  endgroup : frame_coverage_group
+  function new();
+    balance = 0;
+  endfunction : new
 
-  function new(ethernet_frame frame_instance); // Constructor, takes an ethernet_frame object
-    frame = frame_instance; // Store the frame instance for sampling
-    frame_coverage_group = new(); // Create an instance of the covergroup
-  endfunction
+  // Public method: to deposit money into the account
+  function void deposit(int amount);
+    if (amount > 0) begin
+      balance += amount; // Access and modify the private 'balance' property from within the class
+      $display("Deposit of $%0d successful. New balance: $%0d", amount, balance);
+    end else begin
+      $display("Invalid deposit amount. Amount must be positive.");
+    end
+  endfunction : deposit
 
-  function void sample();
-    frame_coverage_group.sample(); // Sample the covergroup - triggers coverage collection based on current frame values
-  endfunction
-endclass
+  // Public method: to withdraw money from the account
+  function bit withdraw(int amount);
+    if (amount > 0 && amount <= balance) begin
+      balance -= amount; // Access and modify 'balance'
+      $display("Withdrawal of $%0d successful. New balance: $%0d", amount, balance);
+      return 1'b1; // Indicate successful withdrawal
+    end else begin
+      $display("Withdrawal failed. Insufficient funds or invalid amount.");
+      return 1'b0; // Indicate failed withdrawal
+    end
+  endfunction : withdraw
 
-module tb_with_coverage;
-  test_generator    gen;
-  coverage_collector cov;
-  int test_count = 1000;
-  int iteration;
+  // Public method: to get the current balance (read-only access)
+  function int getBalance();
+    return balance; // Return the value of the private 'balance' property
+  endfunction : getBalance
 
+endclass : BankAccount
+
+module encapsulation_example_module;
   initial begin
-    gen = new();
-    cov = new(gen.frame); // Pass the frame object from generator to coverage collector
-    gen.seed = $urandom();
-    gen.frame.srandom(gen.seed);
+    BankAccount account = new(); // Create a BankAccount object
 
-    for (iteration = 0; iteration < test_count; iteration++) begin
-      if (!gen.frame.randomize()) begin
-        $fatal("Test randomization failed in iteration %0d", iteration);
-      end
-      send_frame_to_dut(gen.frame);
-      wait_for_response();
-      check_response(gen.frame);
-      cov.sample(); // Sample coverage after each test case
+    account.deposit(100);       // Deposit $100 using the public 'deposit()' method
+    account.deposit(50);        // Deposit another $50
+
+    $display("Current Balance: $%0d", account.getBalance()); // Get and display balance using public 'getBalance()' method
+    // Output: Current Balance: $150
+
+    if (account.withdraw(200)) begin // Attempt to withdraw $200 - should fail due to insufficient funds
+      $display("Withdrawal successful (unexpected!)"); // This line should NOT be reached
+    end else begin
+      $display("Withdrawal failed as expected."); // This line WILL be reached
     end
 
-    $display("Completed %0d random test cases with coverage collection.", test_count);
-    report_coverage();
-    $finish;
+    if (account.withdraw(75)) begin  // Attempt to withdraw $75 - should succeed
+      $display("Withdrawal of $75 successful."); // This line WILL be reached
+    end
+
+    $display("Final Balance: $%0d", account.getBalance()); // Get and display final balance
+    // Output: Final Balance: $75
+
+    // account.balance = 5000; // Error! Illegal access - 'balance' is declared 'local' (private)
+                               // Cannot directly access or modify 'local' members from outside the class.
   end
-endmodule
+endmodule : encapsulation_example_module
 ```
 
-**Coverage-Driven Verification Flow:**
+In this encapsulation example:
 
-1.  **Coverage Group Definition (`covergroup frame_coverage_group`)**:  Define covergroups and coverpoints to specify the functional coverage metrics of interest. In this example, coverpoints are defined for `frame.length` (with bins for small, medium, and large frames) and `frame.crc_error`.
-2.  **Coverage Collector Class (`coverage_collector`)**:  Create a class to manage coverage collection. It instantiates the covergroup and provides a `sample()` function to trigger coverage sampling. The constructor takes an instance of the `ethernet_frame` class, so it can access the randomized frame values for coverage sampling.
-3.  **Testbench Integration (`tb_with_coverage`)**:
-    -   Instantiate both the `test_generator` and `coverage_collector` classes.
-    -   Pass the `frame` object from the `test_generator` to the `coverage_collector` during construction, establishing the link between stimulus generation and coverage collection.
-    -   In the randomization loop, after each test case is executed (`check_response()`), call `cov.sample()` to trigger coverage sampling based on the randomized `frame` object's current values.
-4.  **Coverage Reporting (`report_coverage()`)**: After running the simulation, generate and analyze coverage reports to assess verification progress and identify coverage gaps. Coverage reports typically show the percentage of coverage achieved for each coverpoint and bin, indicating which parts of the functional space have been adequately exercised and which areas need more testing.
+*   `local int balance;` declares `balance` as a `local` property, making it private to the `BankAccount` class.  Direct access to `balance` from outside the class (e.g., `account.balance = 5000;`) is illegal and will result in a compilation error.
+*   `deposit()`, `withdraw()`, and `getBalance()` are public methods that provide *controlled access* to the `balance` property.  These methods define the *public interface* of the `BankAccount` class.
+*   `deposit()` and `withdraw()` methods encapsulate the logic for modifying the balance, including validation (e.g., positive deposit amount, sufficient funds for withdrawal). This ensures that the balance is always modified in a controlled and valid way, protecting data integrity.
+*   `getBalance()` provides read-only access to the `balance`, allowing external code to query the balance without being able to directly change it.
 
-## Best Practices for Effective SystemVerilog Randomization
+## Randomization within Classes:  Constrained Random Stimulus Generation
 
-To maximize the benefits of SystemVerilog randomization and CRV, follow these best practices in your verification methodology:
+Classes are the foundation for randomization in SystemVerilog verification.  You can declare properties within a class as `rand` or `randc` to make them randomizable.  Constraints, defined using `constraint` blocks within the class, are used to specify the rules and restrictions for the random values generated for these `rand` variables.
 
-1.  **Constraint Design Best Practices**:
+### Example: Random Packet Generation with Constraints
 
-    -   **Use Descriptive Constraint Names**: Give meaningful names to your constraints (e.g., `valid_address_range`, `packet_length_limit`, `no_back_to_back_writes`). Clear names improve code readability and make it easier to understand the purpose of each constraint.
-    -   **Avoid Circular Dependencies in Constraints**: Be careful to avoid creating circular dependencies between constraints, where constraint A depends on constraint B, and constraint B depends on constraint A (directly or indirectly). Circular dependencies can lead to constraint solving failures or unpredictable randomization behavior. Structure your constraints logically to avoid such cycles.
-    -   **Prioritize Constraints with `solve...before`**: When you have constraints that depend on each other or when you want to control the order in which variables are randomized, use the `solve...before` construct. This helps guide the constraint solver and can improve randomization efficiency and predictability in complex scenarios. For example, if packet payload size depends on packet length, `solve length before payload;` ensures that `length` is randomized first, and then `payload` size is determined based on the randomized `length`.
+```systemverilog
+class Packet;
+  rand bit [7:0] address;   // Randomizable address property
+  rand bit [7:0] data_byte; // Randomizable data byte property
+  rand bit [3:0] size;      // Randomizable size property
 
-2.  **Seed Management Best Practices**:
+  // Constraint block: 'address_range_constraint'
+  constraint address_range_constraint {
+    address inside {[8'h00 : 8'hFF]}; // 'address' must be within the range 0x00 to 0xFF (inclusive)
+  }
 
-    -   **Log Random Seeds for Reproducibility**: Always log the random seed used for each simulation run. This is crucial for debugging and regression testing. If a test case fails, you need to be able to reproduce the exact same random stimulus sequence to debug the issue effectively. Logging the seed allows you to rerun the simulation with the same seed and recreate the failing scenario.
-    -   **Use `+plusarg` for Seed Configuration**: Make your testbench configurable to accept a seed value as a command-line argument using the `+plusarg` mechanism. This allows users to easily control the random seed from the simulation command line, enabling both repeatable runs (by providing a specific seed) and varied runs (by using different seeds or a default random seed).
+  // Constraint block: 'valid_size_constraint'
+  constraint valid_size_constraint {
+    size inside {[1:8]}; // 'size' must be between 1 and 8 (inclusive)
+  }
 
-        ```systemverilog
-        module tb;
-          int seed;
-          initial begin
-            if (!$value$plusargs("SEED=%d", seed)) begin // Check for +SEED=value on command line
-              seed = 42; // Default seed if +SEED is not provided
-            end
-            srandom(seed);
-            $display("Using random seed: %0d", seed);
-            // ... rest of testbench ...
-          end
-        endmodule
-        ```
+  // Constraint block: 'even_address_constraint'
+  constraint even_address_constraint {
+    (address % 2) == 0;  // 'address' must be an even number (divisible by 2)
+  }
 
-3.  **Debugging Randomization Issues**:
+  function void display_packet();
+    $display("Randomized Packet - Address: %h, Data: %h, Size: %0d", address, data_byte, size);
+  endfunction : display_packet
 
-    -   **Use `rand_mode(0)` to Disable Random Variables**: If you encounter issues with constraint solving or unexpected randomization behavior, temporarily disable selected random properties with `object.property.rand_mode(0);` or all properties with `object.rand_mode(0);`. This does not disable constraints on variables that remain enabled, so use it only to isolate a problem and restore the modes with `rand_mode(1)` afterward.
-    -   **Use `constraint_mode()` for Constraints**: Enable or disable a named constraint with `object.constraint_name.constraint_mode(0)` or `constraint_mode(1)`. Querying the return value of `constraint_mode()` reports whether that constraint is currently enabled; it does not print solver diagnostics.
-    -   **Use Callbacks for Debug Messages**: Constraint blocks contain declarative expressions and cannot contain `$display` statements or other procedural side effects. Put diagnostics in `pre_randomize()` and `post_randomize()` callbacks, or print the values after checking that `randomize()` succeeded.
+endclass : Packet
 
-        ```systemverilog
-        class debug_class;
-          rand int value;
-          constraint debug_constraint {
-            value inside {[1:10]}; // Example constraint
-          }
+module randomization_example_module;
+  initial begin
+    Packet packet_obj = new(); // Create a Packet object
 
-          function void pre_randomize();
-            $display("Randomizing value of var...");
-          endfunction
+    repeat (10) begin // Generate and randomize 10 packets
+      if (packet_obj.randomize()) begin // Call randomize() method and check for success
+        packet_obj.display_packet(); // Display the randomized packet properties
+      end else begin
+        $display("Randomization failed for Packet object!"); // Error message if randomization fails (constraints unsatisfiable)
+      end
+    end
+  end
+endmodule : randomization_example_module
+```
 
-          function void post_randomize();
-            $display("Value after constraint: %0d", value);
-          endfunction
-        endclass
-        ```
+In this randomization example:
 
-## Exercises to Master SystemVerilog Randomization
+*   `rand bit [7:0] address;`, `rand bit [7:0] data_byte;`, and `rand bit [3:0] size;` declare these properties as `rand`, making them randomizable.
+*   `constraint address_range_constraint { ... }`, `constraint valid_size_constraint { ... }`, and `constraint even_address_constraint { ... }` define three constraint blocks that specify rules for the random values.
+    *   `address inside {[8'h00 : 8'hFF]};` is a *range constraint*, limiting `address` to be between 0x00 and 0xFF.
+    *   `size inside {[1:8]};` is another range constraint, limiting `size` to be between 1 and 8.
+    *   `(address % 2) == 0;` is a *relational constraint*, ensuring that `address` is always an even number.
+*   `if (packet_obj.randomize()) ... else ...` calls the `randomize()` method on the `packet_obj`. The `randomize()` method attempts to find random values for `address`, `data_byte`, and `size` that satisfy all the defined constraints. It returns 1 if successful and 0 if it fails (constraints are conflicting or unsatisfiable).
+*   `packet_obj.display_packet();` displays the randomized values if randomization is successful.
 
-1.  **Basic Packet Generator with Constraints**:
+## Exercises to Practice SystemVerilog Classes and OOP
 
-    -   **Objective**: Create a class `ip_packet_class` to represent IP packets with randomized and constrained fields.
-    -   **Class Properties**:
-        -   `rand bit [31:0] source_address`: Random source IP address.
-        -   `rand bit [31:0] destination_address`: Random destination IP address.
-        -   `rand bit [11:0] packet_length`: Random packet length in bytes.
-        -   `rand enum {TCP, UDP, ICMP} protocol`: Randomly selected protocol type (TCP, UDP, or ICMP).
-    -   **Constraints**:
-        -   `packet_length` should be constrained to be between 20 and 1500 bytes (inclusive).
-        -   Create a constraint to ensure that the `protocol` field is randomized to be TCP 60% of the time, UDP 30% of the time, and ICMP 10% of the time (using probability distribution).
-    -   **Task**: Write a SystemVerilog module that:
-        -   Creates an instance of `ip_packet_class`.
-        -   Randomizes the packet object.
-        -   Displays the randomized values of `source_address`, `destination_address`, `packet_length`, and `protocol`.
-        -   Repeat this process 10 times and observe the generated random packet values.
+1.  **Basic `Car` Class**:
 
-2.  **Advanced Constraints for Memory Transactions**:
+    *   Create a SystemVerilog class named `Car`.
+    *   Add the following *public* properties:
+        - `string model;` (to store the car model name)
+        - `int speed;` (to store the current speed of the car, initially 0)
+    *   Implement a *public virtual* method `function void accelerate();` that increases the `speed` property of the `Car` object by 10. Declaring it virtual enables the override and dynamic dispatch in later exercises.
+    *   In a module, instantiate a `Car` object, set its `model` property to "Sedan", call the `accelerate()` method twice, and then display the final `speed` of the car.
 
-    -   **Objective**: Implement a `memory_transaction_class` to model memory read and write transactions with advanced constraints.
-    -   **Class Properties**:
-        -   `rand bit [31:0] address`: Random memory address.
-        -   `rand enum {READ, WRITE} operation`: Randomly selected memory operation type (READ or WRITE).
-        -   `rand bit [7:0] burst_length`: Random burst length for the transaction.
-    -   **Constraints**:
-        -   `address` should be constrained to fall within one of three memory map regions:
-            -   Region 1: Address range `[0x0000_0000 : 0x0FFF_FFFF]`
-            -   Region 2: Address range `[0x4000_0000 : 0x4FFF_FFFF]`
-            -   Region 3: Address range `[0x8000_0000 : 0x8FFF_FFFF]`
-            -   Use a `dist` constraint to make Region 1 addresses more likely (e.g., Region 1: 60%, Region 2: 30%, Region 3: 10% probability).
-        -   `operation` should be biased towards READ operations (e.g., 70% READ, 30% WRITE using `dist` constraint).
-        -   `burst_length` should be constrained to be a power of 2 value between 1 and 16 (i.e., 1, 2, 4, 8, 16). Use `inside` and set membership to achieve this.
-    -   **Task**: Write a SystemVerilog module that:
-        -   Creates an instance of `memory_transaction_class`.
-        -   Randomizes the transaction object.
-        -   Displays the randomized values of `address`, `operation`, and `burst_length`.
-        -   Repeat this process 20 times and verify that the generated transactions adhere to all defined constraints.
+2.  **Object Usage and Interaction**:
 
-3.  **Error Injection with Correlated Error Types**:
+    *   Extend the `Car` class from Exercise 1.
+    *   Add a new *public* method `function void brake(int decrement);` to the `Car` class that decreases the `speed` by the amount specified by the `decrement` argument. Ensure that the speed does not become negative (clamp it at 0 if necessary).
+    *   In a module, create two `Car` objects, set their `model` names, accelerate both of them, then apply `brake()` to only one of them. Display the `model` and `speed` of both cars to demonstrate independent object behavior.
 
-    -   **Objective**: Develop an `error_generator_class` to inject different types of errors into a data stream with configurable probabilities and correlations.
-    -   **Class Properties**:
-        -   `rand bit error_enable`: Enable/disable error injection.
-        -   `rand enum {NO_ERROR, SINGLE_BIT, BURST_ERROR, CRC_ERROR} error_type`: Randomly selected error type.
-        -   `rand bit [7:0] error_position`: Random bit position for single-bit errors (within a byte).
-        -   `rand bit [3:0] burst_error_length`: Random length of a burst error (in bits).
-    -   **Constraints**:
-        -   `error_enable` should be randomized such that errors are injected with a configurable probability (e.g., parameterize the error probability and use a `dist` constraint).
-        -   If `error_type` is `SINGLE_BIT`, `error_position` should be constrained to be within the range `[0:7]`.
-        -   If `error_type` is `BURST_ERROR`, `burst_error_length` should be constrained to be between 2 and 8 bits.
-        -   Create an implication constraint such that if `error_enable` is 0 (error injection disabled), then `error_type` must be `NO_ERROR`.
-    -   **Task**: Write a SystemVerilog module that:
-        -   Creates an instance of `error_generator_class`.
-        -   Configures the error probability parameter.
-        -   Randomizes the error generator object.
-        -   Based on the randomized `error_enable` and `error_type`, simulate injecting the corresponding error into a data byte (you can simply display a message indicating the error type and parameters, actual error injection logic is not required for this exercise).
-        -   Repeat this process 30 times and observe the different types of errors being generated and their parameters.
+3.  **Inheritance: `ElectricCar` Derived Class**:
 
-4.  **Coverage Integration for USB Packet Verification**:
+    *   Create a new class `ElectricCar` that *inherits* from the `Car` class (Exercise 1).
+    *   *Override* the `accelerate()` method in the `ElectricCar` class so that it increases the `speed` by 20 instead of 10 (as in the base `Car` class). You can either implement the 20-unit behavior directly, or call `super.accelerate()` and add only 10 more units; doing both with an additional 20-unit increment would produce 30, not 20.
+    *   In a module, create objects of both `Car` and `ElectricCar` classes. Call the `accelerate()` method on both objects and display their speeds to demonstrate that the overridden method in `ElectricCar` is executed.
 
-    -   **Objective**: Create a self-checking testbench that generates random USB packets, collects functional coverage, and verifies constraint coverage.
-    -   **Reuse or Define a `usb_packet_class`**: Define a class `usb_packet_class` (or reuse an existing one) with relevant random properties for USB packets (e.g., packet type, data payload length, address, control fields, error flags). Add constraints to define valid USB packet structures and ranges for these properties.
-    -   **Create a `usb_testbench_module`**:
-        -   Instantiate a `usb_packet_class` object.
-        -   Instantiate a `coverage_collector_class` (similar to the `coverage_collector` example, but with coverpoints relevant to USB packets, e.g., packet types, payload lengths, error conditions).
-        -   In an `initial` block, run a loop to generate 1000 random USB packets:
-            -   Randomize the `usb_packet_class` object.
-            -   Call `coverage_collector.sample()` to collect coverage.
-            -   (Optionally) Simulate sending the packet to a DUT and checking the response (DUT and response checking logic are not required for this exercise, focus on randomization and coverage).
-        -   After the loop, use system tasks (e.g., `$display`, `$fwrite`) to:
-            -   Report the total number of test cases run.
-            -   Report the coverage statistics from the `coverage_collector` (coverage percentage for each coverpoint and overall coverage).
-            -   Implement a check to verify that the intended scenarios were observed at least once during the 1000 random test cases. Constraints are declarative and cannot update flags during solving; track observed values with coverpoints, counters, or post-randomization code, then check those measurements after the simulation.
-        -   Use `$finish` to end the simulation.
-    -   **Run Simulation and Analyze Coverage**: Run the simulation and analyze the generated coverage report. Verify that the coverage goals are met and that all constraints have been exercised. If coverage is not sufficient, refine the constraints, add more coverpoints, or increase the number of test cases.
+4.  **Polymorphism: Virtual `start_engine()` Method**:
 
-These exercises provide a practical introduction to using SystemVerilog randomization for verification, covering various aspects from basic random variable generation to advanced constraints, error injection, and coverage-driven verification methodologies. By completing these exercises, you will gain hands-on experience in leveraging randomization to create effective and efficient verification environments.
+    *   Add a new *virtual* method `virtual function void start_engine();` to the base `Car` class. In the base class implementation, make it display a message like `"Generic engine started"`.
+    *   *Override* the `start_engine()` method in the `ElectricCar` class to display a message like `"Electric engine started silently"`.
+    *   In a module, declare a handle of type `Car`. Create objects of both `Car` and `ElectricCar` classes. Assign the `ElectricCar` object to the `Car` handle. Call the `start_engine()` method using the `Car` handle. Demonstrate that the `ElectricCar`'s `start_engine()` method is executed (dynamic dispatch).  Also, create a `Car` object and call `start_engine()` on it directly to show that the base class method is executed in that case.
+
+5.  **Encapsulation: Private `speed` and Access Methods**:
+
+    *   Modify the `Car` class (from Exercise 1 or 3) to make the `speed` property `local` (private).
+    *   Add two *public* methods:
+        - `function int getSpeed();` that returns the current value of the `speed` property.
+        - `function void setSpeed(int new_speed);` that allows setting the `speed` property to a new value, but only if the `new_speed` is not negative (add a check to prevent negative speeds). If the `new_speed` is negative, display an error message and do not update the speed.
+    *   In a module, create a `Car` object. Try to directly access and modify the `speed` property (this should result in a compilation error, demonstrating encapsulation). Use the `setSpeed()` method to set the speed to a valid value, then use `getSpeed()` to retrieve and display the speed, demonstrating controlled access through public methods. Also, try to use `setSpeed()` to set a negative speed and observe the error message and that the speed is not updated.
+
+6.  **Randomization: `Transaction` Class with Constraints**:
+
+    *   Create a class named `Transaction`.
+    *   Add the following *random* properties (`rand` keyword):
+        - `rand bit [31:0] address;`
+        - `rand bit [7:0] data;`
+    *   Add *constraint blocks* to the `Transaction` class to define the following constraints:
+        - `address` should be within the range `[0x1000 : 0x8000]` (inclusive).
+        - `data` should be an even number and within the range `[0 : 254]` (inclusive).  You'll need two separate constraints or combine them appropriately.
+    *   In a module, create a `Transaction` object.  In a loop that iterates 10 times, call `randomize()` on the `Transaction` object.  After each successful randomization, display the randomized values of `address` and `data`.  Run the simulation and verify that all generated `address` and `data` values satisfy the defined constraints.
+
+These exercises will provide a solid foundation in SystemVerilog classes and object-oriented programming concepts, essential for building advanced verification environments. They cover class definition, object instantiation, inheritance, polymorphism, encapsulation, and randomization, all within the context of SystemVerilog for hardware verification.
 
 ##### Copyright (c) 2026 squared-studio
 

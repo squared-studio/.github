@@ -110,15 +110,7 @@
   - Practical Applications and Exercises to Master Interfaces
   - Best Practices and Common Pitfalls to Avoid
   - Conclusion
-## 14. [SystemVerilog Randomization](SystemVerilog/chapter_00014.md)
-  - Introduction
-  - Random Variable Types
-  - Constraint Specification
-  - Randomization Control
-  - Verification Integration
-  - Best Practices for Effective SystemVerilog Randomization
-  - Exercises to Master SystemVerilog Randomization
-## 15. [SystemVerilog Classes](SystemVerilog/chapter_00015.md)
+## 14. [SystemVerilog Classes](SystemVerilog/chapter_00014.md)
   - Introduction
   - Defining Classes
   - Creating Objects
@@ -127,6 +119,14 @@
   - Encapsulation
   - Randomization within Classes
   - Exercises to Practice SystemVerilog Classes and OOP
+## 15. [SystemVerilog Randomization](SystemVerilog/chapter_00015.md)
+  - Introduction
+  - Random Variable Types
+  - Constraint Specification
+  - Randomization Control
+  - Verification Integration
+  - Best Practices for Effective SystemVerilog Randomization
+  - Exercises to Master SystemVerilog Randomization
 ## 16. [SystemVerilog Packages](SystemVerilog/chapter_00016.md)
   - Introduction
   - Defining Packages
