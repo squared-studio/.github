@@ -1,502 +1,289 @@
-# SystemVerilog Modules: The Foundation of Hierarchical and Reusable Hardware Designs
+# Interprocess Communication (IPC) in SystemVerilog: Coordinating Parallel Processes
 
-## Introduction: Modules as the Building Blocks of SystemVerilog Designs
+## Introduction
 
-Modules are the cornerstone of hardware description in SystemVerilog, serving as the fundamental units of design abstraction, hierarchy, and reusability. Think of modules as the LEGO bricks of digital design – self-contained, reusable components that you can connect and combine to build complex systems.  They are the essential containers that encapsulate hardware functionality and define the boundaries of your design.
-
-**Key Aspects Encapsulated by Modules:**
-
--   **Interface**: Modules define their interaction with the external environment through well-defined input and output ports. These ports specify the signals that a module receives and drives, forming the module's communication interface.
--   **Functionality**: The core of a module lies in its internal logic, which describes the module's behavior and operations. This logic is implemented using SystemVerilog constructs such as variables, nets (wires), and concurrent processes (using `always` and `initial` blocks). The internal logic defines how the module processes inputs and generates outputs.
--   **Structure**: Modules promote hierarchical design by allowing you to instantiate other modules within them. This hierarchical composition enables you to build complex systems by assembling and connecting simpler, pre-verified modules. Module instantiation creates a design hierarchy, making it easier to manage complexity and reuse design components.
-
-**Primary Benefits of Using Modules:**
-
--   **Design Partitioning and Complexity Management**: Modules enable you to break down large, complex designs into smaller, more manageable, and logically distinct units. This divide-and-conquer approach simplifies design, implementation, and verification. By working with modules, designers can focus on specific functionalities in isolation and then integrate them to form the complete system.
--   **Design Reusability Across Projects**: Well-designed modules are highly reusable. Once a module is created and verified, it can be instantiated and reused in different parts of the same project or in entirely new projects. This reusability saves design time and effort, promotes design consistency, and leverages proven components. Module libraries and IP (Intellectual Property) cores are built upon this principle of reusability.
--   **Clear Interface Definitions for Team Collaboration**: Modules provide clear and standardized interfaces for communication between different parts of a design. The port list of a module explicitly defines its inputs and outputs, serving as a contract between the module's implementer and users. This well-defined interface facilitates team-based design, where different engineers can work on different modules concurrently, knowing how their modules will connect and interact. Clear module interfaces are essential for efficient collaboration and integration in large design teams.
-
-In essence, SystemVerilog modules are the fundamental organizational unit in hardware design, enabling a structured, hierarchical, and reusable approach to building digital systems of any complexity.
+Interprocess Communication (IPC) is a cornerstone of SystemVerilog, enabling the effective coordination and synchronization of concurrent processes. In both complex testbenches and sophisticated design models, multiple processes often operate in parallel to simulate different aspects of a system or to verify concurrent hardware operations.  To ensure correct and predictable behavior, these processes frequently need to exchange data, signal events, or manage shared resources without creating race conditions or deadlocks. SystemVerilog provides robust IPC mechanisms – **mailboxes**, **semaphores**, and **events** – each designed for specific communication and synchronization needs. Mastering these IPC tools is essential for building advanced verification environments and modeling concurrent hardware designs accurately. This guide explores the purpose, methods, and best practices for each of these IPC mechanisms, illustrating their practical application in SystemVerilog.
 
 ### Learning Goals
 
 By the end of this chapter, you should be able to:
 
-- Define a module with clear ANSI-style ports, parameters, and internal implementation items.
-- Instantiate modules using named port connections and parameter overrides.
-- Distinguish synthesizable RTL from simulation-only testbench behavior.
-- Build and verify a small hierarchy while accounting for reset polarity, clocking, and parameter validity.
+- Choose a mailbox, semaphore, or event based on whether you need data transfer, resource ownership, or synchronization.
+- Use blocking and non-blocking operations without accidentally losing messages or waiting forever.
+- Protect shared resources and release semaphore keys reliably.
+- Distinguish an event's same-time notification from persistent state that records an earlier occurrence.
 
-## Module Definition: Structuring Hardware Functionality
+## Mailboxes: Message Passing for Data Exchange
 
-Modules are defined using the `module` keyword, followed by the module name, an optional port list, and the module body enclosed within `endmodule`.
+A mailbox in SystemVerilog acts as a message queue, providing a channel for processes to exchange data. A parameterized mailbox such as `mailbox #(packet_type)` provides compile-time type checking; an unparameterized `mailbox` is a general, less type-safe mailbox. Mailboxes can be **bounded** (with a fixed capacity) or **unbounded** (dynamically sized), and they are commonly used for testbench communication rather than synthesizable RTL.
 
-### Basic Module Structure
+### Mailbox Methods: Sending and Receiving Messages
+
+SystemVerilog mailboxes offer a set of methods for sending and receiving messages, with both blocking and non-blocking options to suit different synchronization needs.
+
+| Method        | Description                                                                 | Blocking Behavior                                   | Return Value        | Example                                     |
+| ------------- | --------------------------------------------------------------------------- | --------------------------------------------------- | ------------------- | ------------------------------------------- |
+| `put(message)`   | **Blocking Send**: Sends a `message` to the mailbox.                     | **Blocks** if the mailbox is full until space is available. | `void`              | `data_mbox.put(transaction_pkt);`          |
+| `get(message)`   | **Blocking Receive**: Receives a `message` from the mailbox.                | **Blocks** if the mailbox is empty until a message arrives. | `void`              | `data_mbox.get(received_pkt);`         |
+| `try_put(message)` | **Non-blocking Send**: Attempts to send a `message`.                      | **Non-blocking**: Returns immediately.               | `1` (success) / `0` | `if (data_mbox.try_put(new_packet)) ...`  |
+| `try_get(message)` | **Non-blocking Receive**: Attempts to receive a `message`.                 | **Non-blocking**: Returns immediately.               | `1` (success) / `0` | `if (data_mbox.try_get(received_pkt)) ...` |
+| `peek(message)`  | **Non-blocking Peek**:  Retrieves the next message without removing it.  | **Non-blocking**: Returns immediately.               | `1` (success) / `0` | `if (data_mbox.peek(next_pkt)) ...`     |
+| `num()`         | **Query Message Count**: Returns the current number of messages in the mailbox. | **Non-blocking**: Returns immediately.               | `integer`           | `integer msg_count = data_mbox.num();`     |
+
+### Creating Mailbox Instances: Bounded and Unbounded
 
 ```systemverilog
-module module_name [(port_list)]; // Optional port list for interface definition
-  // Module Item Declarations:
-  //  - Port declarations (if port_list is not used in module header)
-  //  - Parameter declarations
-  //  - Variable and net declarations (internal signals and storage)
-  //  - Interface and modport declarations
-  //  - Task and function declarations
+mailbox data_mbox;                  // Unbounded mailbox (default size)
+mailbox #(packet_type) pkt_mbox;    // Unbounded mailbox for 'packet_type'
+mailbox #(integer) bounded_mbox = new(10); // Bounded mailbox for integers, capacity 10
+mailbox #(string) string_mbox = new(3);   // Bounded mailbox for strings, capacity 3
 
-  // Module Body:
-  //  - Concurrent statements (processes):
-  //    - initial blocks (commonly testbench-only; synthesis support is device/tool dependent)
-  //    - always blocks (for sequential and combinational logic, synthesizable)
-  //  - Module instantiations (hierarchical composition)
-  //  - Continuous assignments (assign statements for combinational logic)
-  //  - Assertion statements (for formal and dynamic verification)
-  //  - Generate blocks (for conditional or iterative module structure generation)
-
-endmodule // End of module definition
+initial begin
+  data_mbox = new();          // Instantiate unbounded mailbox
+  pkt_mbox  = new();          // Instantiate unbounded parameterized mailbox
+end
 ```
 
-### Example: A Minimalist Module with Internal Storage
+### Example: Producer-Consumer Model with a Bounded Mailbox
 
 ```systemverilog
-module sensor_interface_module; // Module name: 'sensor_interface_module' (using '_module' suffix for clarity)
-  // No ports - this module is self-contained and doesn't directly interact with other modules through ports
+module producer_consumer_example;
+  typedef struct packed {  // Define a packet structure
+    int data_id;
+    logic [31:0] payload;
+  } packet_type;
 
-  // Internal register declaration to store sensor data
-  logic [3:0] sensor_data_register; // 4-bit register to hold sensor readings
+  mailbox #(packet_type) packet_mailbox = new(2);  // Bounded mailbox, capacity 2
 
-  // Example: Process to simulate sensor data update (for demonstration purposes)
-  initial begin
-    sensor_data_register = 4'b0000; // Initialize sensor data at the start of simulation
-    forever begin
-      #10; // Wait for 10 time units (simulation time)
-      sensor_data_register = $random(); // Update sensor data with a random value
-    end
-  end
-
-  // Example: Display task to monitor sensor data (for demonstration purposes)
-  task display_sensor_data;
-    $display("[%0t] Sensor Data: %b", $time, sensor_data_register);
-  endtask
-
-  initial begin
-    #5; // Wait a short time before starting data display
-    forever begin
-      #20; // Display sensor data every 20 time units
-      display_sensor_data();
-    end
-  end
-
-  initial begin
-    #150; // Wait a short time before starting data display
-    $finish;
-  end
-
-endmodule // End of 'sensor_interface_module' module
-```
-
-This `sensor_interface_module` example, while minimal, demonstrates the basic structure of a SystemVerilog module. It has a name, no ports (making it self-contained), and internal logic (a register and `initial` blocks for simulation behavior). In a real design, this module might be expanded to interface with actual sensor hardware, but this simple example illustrates the fundamental module definition.
-
-## Ports and Parameters: Defining Module Interfaces and Configuration
-
-Modules communicate with their environment through ports, which are declared in the module's port list or within the module body. Parameters provide a way to configure module behavior and characteristics at instantiation time, making modules more flexible and reusable.
-
-### Interface Elements: Ports and Parameters
-
-| Element         | Purpose                                      | Syntax Example                                  |
-| --------------- | -------------------------------------------- | ----------------------------------------------- |
-| **Parameters**  | Configuration constants, customizable at instantiation | `#(parameter DATA_WIDTH=32, parameter BUFFER_DEPTH=64)` |
-| **Input Ports**   | Receive signals from external modules          | `input logic clk, input logic [7:0] command_in` |
-| **Output Ports**  | Drive signals to external modules             | `output logic data_valid, output logic [15:0] data_out` |
-| **Inout Ports**   | Bidirectional signals, for shared communication lines | `inout wire memory_data_bus`                    |
-
-### Parameterized Module Example: Configurable Smart Buffer
-
-```systemverilog
-module smart_buffer_module #( // Module name with '_module' suffix
-  parameter integer DATA_WIDTH = 64,   // Parameter for data bus width, default 64 bits
-  parameter integer BUFFER_DEPTH = 8    // Parameter for buffer depth (number of entries), default 8
-) ( // ANSI-style port list - ports declared within the module header
-  input  logic clk,             // Clock input
-  input  logic rst_n,           // Active-low reset input
-  input  logic [DATA_WIDTH-1:0] write_data_in, // Data input for writing, width parameterized
-  input  logic write_enable,      // Write enable signal
-  input logic read_enable,       // Read enable signal
-  output logic [DATA_WIDTH-1:0] read_data_out,  // Data output for reading, width parameterized
-  output logic buffer_full,        // Output flag indicating buffer full status
-  output logic buffer_empty        // Output flag indicating buffer empty status
-);
-  // Internal storage declaration: a memory array (FIFO buffer)
-  logic [DATA_WIDTH-1:0] data_buffer [0:BUFFER_DEPTH-1]; // Array to store data, depth and width parameterized
-  integer write_pointer;        // Write address pointer for the buffer
-  integer read_pointer;         // Read address pointer for the buffer
-  integer current_count;        // Counter to track the number of items in the buffer
-
-  // Functionality implementation: FIFO buffer logic (write, read, status flags)
-  logic do_write;
-  logic do_read;
-
-  always_comb begin
-    buffer_full  = (current_count == BUFFER_DEPTH);
-    buffer_empty = (current_count == 0);
-    do_write     = write_enable && !buffer_full;
-    do_read      = read_enable && !buffer_empty;
-  end
-
-  always_ff @(posedge clk or negedge rst_n) begin
-    if (!rst_n) begin
-      // Reset logic: initialize pointers, counter, and status flags
-      write_pointer <= 0;
-      read_pointer  <= 0;
-      current_count <= 0;
-      read_data_out <= '0;
-    end else begin
-      if (do_write) begin // Write operation
-        data_buffer[write_pointer] <= write_data_in; // Write data to buffer
-        write_pointer <= (write_pointer == BUFFER_DEPTH-1) ? 0 : write_pointer + 1; // Increment/wrap write pointer
+  // Producer Process
+  initial begin : producer_process
+    packet_type pkt;
+    for (int i = 0; i < 5; i++) begin
+      pkt.data_id = i;
+      pkt.payload = $random();
+      if (packet_mailbox.try_put(pkt)) begin  // Non-blocking put attempt
+        $display("[%0t] Producer: Sent packet ID %0d, Payload 0x%h", $time, pkt.data_id,
+                 pkt.payload);
+      end else begin
+        $display("[%0t] Producer: Mailbox FULL! Failed to send packet ID %0d", $time, pkt.data_id);
+        packet_mailbox.put(pkt); // Retry with a blocking put so no packet is lost
+        $display("[%0t] Producer: Sent packet ID %0d after waiting for space", $time, pkt.data_id);
       end
-
-      if (do_read) begin // Read operation
-        read_data_out <= data_buffer[read_pointer]; // Registered read data
-        read_pointer <= (read_pointer == BUFFER_DEPTH-1) ? 0 : read_pointer + 1; // Increment/wrap read pointer
-      end
-
-      case ({do_write, do_read})
-        2'b10: current_count <= current_count + 1;
-        2'b01: current_count <= current_count - 1;
-        default: current_count <= current_count;
-      endcase
+      #($urandom_range(5, 15));  // Random delay before next send
     end
+    $display("[%0t] Producer: Finished sending packets.", $time);
+
+    while (packet_mailbox.num() > 0) begin
+      #1;  // Wait for mailbox to be emptied by consumer
+    end
+
+    $finish;  // End simulation after sending all packets
   end
 
-  // Parameter validation (example - can be more comprehensive)
+  // Consumer Process
+  initial begin : consumer_process
+    packet_type received_packet;
+    #10;  // Start consumer slightly later
+    while (1) begin
+      if (packet_mailbox.try_get(received_packet)) begin  // Non-blocking get attempt
+        $display("[%0t] Consumer: Received packet ID %0d, Payload 0x%h", $time,
+                 received_packet.data_id, received_packet.payload);
+        if (received_packet.data_id == 4) break;  // Exit only after a successful receive
+      end else begin
+        $display("[%0t] Consumer: Mailbox EMPTY! Waiting for packets...", $time);
+      end
+      #($urandom_range(12, 20));  // Random delay before next receive attempt
+    end
+    $display("[%0t] Consumer: Finished receiving packets.", $time);
+  end
+endmodule
+
+```
+
+**Key Mailbox Usage Points:**
+
+-   **Bounded vs. Unbounded**:
+    -   **Bounded Mailboxes**:  Have a fixed size, useful for modeling systems with limited buffer capacity and for backpressure mechanisms. Use `try_put()` and `try_get()` to handle potential full or empty conditions gracefully without blocking indefinitely.
+    -   **Unbounded Mailboxes**: Dynamically grow as needed, suitable when the number of messages is not strictly limited or when blocking behavior is acceptable for `put()` and `get()`.
+-   **Type Parameterization**:  `mailbox #(<data_type>)` enforces type safety, ensuring only messages of the specified type can be passed, preventing type-related errors.
+-   **Blocking (`put()`, `get()`) vs. Non-blocking (`try_put()`, `try_get()`) Methods**:
+    -   **Blocking Methods**:  Guarantee message delivery and reception.  `put()` blocks the sender until space is available; `get()` blocks the receiver until a message arrives. Ideal for reliable communication where synchronization is critical.
+    -   **Non-blocking Methods**: Provide flexibility to avoid process stalls. `try_put()` and `try_get()` return immediately, indicating success or failure. Useful for scenarios where processes need to check for mailbox status without blocking, allowing for alternative actions if the mailbox is not ready.
+-   **`peek()` Method**: Allows inspection of the next message in the mailbox without removing it, useful for lookahead operations or conditional reception logic.
+-   **`num()` Method**: Provides the current message count in the mailbox, enabling processes to check mailbox occupancy and make decisions based on message queue depth.
+
+## Semaphores: Controlling Access to Shared Resources
+
+A semaphore is a synchronization primitive that controls access to shared resources by managing a pool of "keys" or permits. It acts like a gatekeeper, ensuring that only a limited number of processes can access a critical resource at any given time, preventing data corruption and race conditions. Semaphores are initialized with a count representing the number of available keys.
+
+### Semaphore Methods: Acquiring and Releasing Keys
+
+| Method        | Description                                                                | Blocking Behavior                                  | Parameters      | Example                                     |
+| ------------- | -------------------------------------------------------------------------- | -------------------------------------------------- | --------------- | ------------------------------------------- |
+| `get([count])`  | **Acquire Keys**: Attempts to acquire `count` keys (default `count` is 1). | **Blocks** if not enough keys are available until they are released. | `count` (int)   | `resource_sem.get(2);`                      |
+| `put([count])`  | **Release Keys**: Releases `count` keys back to the semaphore (default `count` is 1). | **Non-blocking**: Always returns immediately.         | `count` (int)   | `resource_sem.put(1);`                      |
+| `try_get([count])`| **Non-blocking Acquire**: Attempts to acquire `count` keys.              | **Non-blocking**: Returns immediately.              | `count` (int)   | `if (resource_sem.try_get(1)) ...`         |
+| `try_put([count])`| **Not a standard semaphore method**: Use `put([count])` to release keys. A caller that needs conditional behavior must implement its own policy. | `put()` returns immediately.              | `count` (int)   | `resource_sem.put(1);`         |
+| `num()`         | **Query Available Keys**: Returns the current number of available keys.   | **Non-blocking**: Returns immediately.              | None            | `integer keys_available = resource_sem.num();` |
+
+### Example: Protecting a Shared Resource with a Semaphore
+
+```systemverilog
+module shared_resource_protection;
+  semaphore resource_semaphore = new(1); // Binary semaphore (mutex) - 1 key available
+  integer shared_data = 0;
+
+  // Process 1: Access and modify shared data
+  initial begin : process_one
+    $display("[%0t] Process 1: Attempting to acquire semaphore...", $time);
+    resource_semaphore.get(1); // Acquire the semaphore (blocking) - exclusive access granted
+    $display("[%0t] Process 1: Semaphore acquired. Accessing shared resource...", $time);
+    shared_data++; // Access and modify shared_data - critical section
+    $display("[%0t] Process 1: Shared data incremented to %0d", $time, shared_data);
+    #20; // Simulate resource usage time
+    resource_semaphore.put(1); // Release the semaphore - allows other processes to access
+    $display("[%0t] Process 1: Semaphore released.", $time);
+  end
+
+  // Process 2: Access and modify shared data concurrently
+  initial begin : process_two
+    #10; // Start process 2 slightly later
+    $display("[%0t] Process 2: Attempting to acquire semaphore...", $time);
+    resource_semaphore.get(1); // Process 2 will block here until Process 1 releases semaphore
+    $display("[%0t] Process 2: Semaphore acquired. Accessing shared resource...", $time);
+    shared_data += 5; // Access and modify shared_data - critical section
+    $display("[%0t] Process 2: Shared data incremented to %0d", $time, shared_data);
+    #15; // Simulate resource usage time
+    resource_semaphore.put(1); // Release the semaphore
+    $display("[%0t] Process 2: Semaphore released.", $time);
+  end
+
   initial begin
-    if (BUFFER_DEPTH < 2) begin
-      $error("Error: BUFFER_DEPTH parameter must be 2 or greater for smart_buffer_module.");
-      $finish; // Terminate simulation if parameter validation fails
-    end
+    #50 $finish; // Simulation timeout
   end
-
-endmodule // End of parameterized 'smart_buffer_module'
+endmodule
 ```
 
-This `smart_buffer_module` example demonstrates:
+**Example Output (Illustrative):**
 
--   **Parameterization**: Using `parameter` keyword to define `DATA_WIDTH` and `BUFFER_DEPTH`, allowing customization of the buffer size.
--   **ANSI-style Port List**: Declaring ports directly within the module header for more compact syntax.
--   **Internal Logic**: Implementing a basic FIFO buffer functionality with write and read pointers, data storage, and status flags.
--   **Parameter Validation**: Including an `initial` block to check parameter values and issue errors if they are invalid, enhancing module robustness.
+```
+[0] Process 1: Attempting to acquire semaphore...
+[0] Process 1: Semaphore acquired. Accessing shared resource...
+[0] Process 1: Shared data incremented to 1
+[10] Process 2: Attempting to acquire semaphore...
+[20] Process 1: Semaphore released.
+[20] Process 2: Semaphore acquired. Accessing shared resource...
+[20] Process 2: Shared data incremented to 6
+[35] Process 2: Semaphore released.
+```
 
-## Module Instantiation: Creating Instances and Connecting Modules
+**Key Semaphore Usage Points:**
 
-To use a module in a design, you need to instantiate it within another module. SystemVerilog offers two primary methods for connecting ports during instantiation: positional and named connections.
+-   **Resource Protection**: Semaphores are primarily used to protect shared resources (variables, memory regions, hardware blocks) from simultaneous access by multiple processes, preventing race conditions and ensuring data integrity.
+-   **Mutual Exclusion (Mutex)**: A semaphore initialized with a count of 1 acts as a mutex (mutual exclusion lock). Only one process can acquire the key at a time, providing exclusive access to the protected resource.
+-   **Counting Semaphores**: Semaphores initialized with a count greater than 1 can control access to resources that can handle a limited number of concurrent users (e.g., a pool of buffers, a limited number of processing units).
+-   **Blocking (`get()`) vs. Non-blocking (`try_get()`) Acquisition**:
+    -   **Blocking `get()`**:  Guarantees exclusive access but can lead to process blocking if the resource is unavailable. Suitable for critical sections where exclusive access is mandatory.
+    -   **Non-blocking `try_get()`**: Allows processes to attempt to acquire the semaphore without blocking. Useful for implementing non-blocking algorithms, priority-based resource access, or deadlock avoidance strategies. Processes can check the return value of `try_get()` to determine if the acquisition was successful and take alternative actions if needed.
+-   **`put()` for Releasing Keys**: Processes **must** release the semaphore keys using `put()` after they are finished accessing the shared resource. Failing to release semaphores can lead to resource starvation and deadlocks, where processes are blocked indefinitely waiting for keys that will never be released.
+-   **`num()` for Monitoring**: The `num()` method allows processes to check the number of available keys, useful for resource monitoring and dynamic resource allocation decisions.
 
-### Module Instantiation and Port Connection Methods
+## Events: Process Synchronization without Data Transfer
 
-1.  **Positional Connection** (Less Recommended - prone to errors and harder to maintain)
+Events in SystemVerilog are lightweight synchronization objects used to signal occurrences or trigger actions between processes. Unlike mailboxes, events do not carry data; they simply act as flags to indicate that something has happened. Processes can trigger events and wait for events to be triggered, enabling synchronization of execution flow.
 
-    ```systemverilog
-    // Example: Instantiating a d_flipflop module (assumed to be defined elsewhere)
-    d_flipflop uut (clk, rst_n, data_input, data_output); // Order of ports in instantiation MUST match definition
-    // 'uut' is the instance name
-    // clk, rst_n, data_input, data_output are signals connected to the ports in the defined order
-    ```
+### Event Operations: Triggering and Waiting
 
-    **Disadvantages of Positional Connection**:
+| Operation               | Description                                                                 | Blocking Behavior                                 | Example                                    |
+| ----------------------- | --------------------------------------------------------------------------- | ------------------------------------------------- | ------------------------------------------ |
+| `-> event_name;`        | **Trigger Event**: Signals the occurrence of the event.                      | **Non-blocking**: Returns immediately.             | `-> data_available_event;`                 |
+| `@(event_name);`        | **Wait for Event**: Process suspends execution until `event_name` is triggered. | **Blocking**: Process blocks until event is triggered. | `@(data_ready_event);`                    |
+| `wait(event_name.triggered);` | **Wait for the Current-Time Trigger**: Waits until the event is triggered in the current simulation time slot, including a trigger that occurred earlier in that same slot. | **Blocking**: Process blocks if the event has not been triggered in the current time slot. | `wait(start_event.triggered);`           |
+| `event_name.triggered`  | **Query Triggered Status**: Returns true only during the simulation time slot in which the event was triggered. It is not persistent history. | **Non-blocking**: Returns immediately.             | `if (config_done_event.triggered) ...`   |
 
-    -   **Order-Dependent**: Relies on the order of ports in the module definition, which is error-prone if the definition changes or if the instantiation is done incorrectly.
-    -   **Poor Readability**: Less clear about which signal is connected to which port, especially for modules with many ports.
-    -   **Maintenance Issues**: If ports are added or reordered in the module definition, all positional instantiations need to be carefully updated.
-
-2.  **Named Connection** (Recommended - more robust, readable, and maintainable)
-
-    ```systemverilog
-    // Example: Instantiating the parameterized 'smart_buffer_module' using named connections
-    smart_buffer_module #( // Parameter value overrides (optional)
-      .DATA_WIDTH(128),    // Override DATA_WIDTH parameter to 128 bits
-      .BUFFER_DEPTH(16)    // Override BUFFER_DEPTH parameter to 16 entries
-    ) data_cache_instance ( // 'data_cache_instance' is the instance name
-      .clk(system_clock),      // Connect module port 'clk' to signal 'system_clock'
-      .rst_n(main_reset_n),    // Connect 'rst_n' port to 'main_reset_n' signal
-      .write_data_in(network_data_payload), // Connect 'write_data_in' to 'network_data_payload'
-      .read_enable(processor_read_enable), // Connect read control to the FIFO
-      .read_data_out(processor_data_input), // Connect 'read_data_out' to 'processor_data_input'
-      .write_enable(data_ready_flag),     // Connect 'write_enable' to 'data_ready_flag'
-      .buffer_full(),           // Connect 'buffer_full' port (leave unconnected - output only, if not needed)
-      .buffer_empty()            // Connect 'buffer_empty' port (leave unconnected - output only, if not needed)
-    );
-    ```
-
-    **Advantages of Named Connection**:
-
-    -   **Order-Independent**: Port connections are specified by name, not position, making instantiation order irrelevant.
-    -   **Improved Readability**: Clearly shows which signal is connected to each module port, enhancing code understanding.
-    -   **Better Maintainability**: More resilient to changes in module port order or additions. You only need to update connections for ports you are actually using.
-    -   **Parameter Overrides**: Allows you to easily override module parameters during instantiation using the `#( .PARAMETER_NAME(value) )` syntax.
-
-**Recommendation**: Always use named port connections for module instantiation in SystemVerilog. It leads to more robust, readable, and maintainable code, especially in complex designs. Positional connection should be avoided in favor of named connections except in very simple, trivial cases.
-
-### Hierarchical Design Example: Building a Sensor Subsystem
-
-**Submodule: Data Processor (for Calibration)**
+### Example: Event-Based Process Synchronization
 
 ```systemverilog
-module data_processor_module #(parameter integer PRECISION = 16) ( // Parameterized data processor
-  input  logic clk,                    // Clock input
-  input  logic reset_n,                // Reset input (active low)
-  input  logic [PRECISION-1:0] raw_sensor_input, // Raw sensor data input, width parameterized
-  output logic [PRECISION-1:0] calibrated_sensor_output // Calibrated data output, width parameterized
-);
-  // Internal logic for data calibration (example: simple scaling)
-  logic [PRECISION-1:0] internal_calibrated_data;
+module event_synchronization_example;
+  event config_ready_event; // Declare an event
+  event data_processed_event;
 
-  always_ff @(posedge clk or negedge reset_n) begin
-    if (!reset_n) begin
-      internal_calibrated_data <= '0;
-      calibrated_sensor_output <= '0;
-    end else begin
-      // Example calibration: multiply raw input by a constant (3)
-      internal_calibrated_data <= raw_sensor_input * 3;
-      calibrated_sensor_output <= internal_calibrated_data;
-    end
+  // Configuration Process
+  initial begin : config_process
+    $display("[%0t] Configuration Process: Starting...", $time);
+    #25; // Simulate configuration time
+    $display("[%0t] Configuration Process: Configuration complete. Triggering event...", $time);
+    -> config_ready_event; // Trigger the event to signal configuration completion
+    wait(data_processed_event.triggered); // Wait for data processing to complete
+    $display("[%0t] Configuration Process: Data processing acknowledged. Exiting.", $time);
   end
 
-endmodule // End of 'data_processor_module'
+  // Data Processing Process
+  initial begin : data_process
+    $display("[%0t] Data Process: Waiting for configuration...", $time);
+    @(config_ready_event); // Wait for the configuration_ready_event to be triggered
+    $display("[%0t] Data Process: Configuration ready. Starting data processing...", $time);
+    #30; // Simulate data processing time
+    $display("[%0t] Data Process: Data processing complete.", $time);
+    -> data_processed_event; // Signal data processing completion
+  end
+
+  initial begin
+    #100 $finish; // Simulation timeout
+  end
+endmodule
 ```
 
-**Top-Level Module: Sensor Subsystem (Integrating Submodules)**
+**Example Output (Illustrative):**
 
-```systemverilog
-module sensor_subsystem_module ( // Top-level module for sensor subsystem
-  input  logic core_system_clk,     // Input clock from the main system
-  input  logic system_reset_n,      // System-level reset (active low)
-  input  logic [15:0] analog_sensor_adc_data, // Input from ADC (Analog-to-Digital Converter)
-  output logic [15:0] processed_sensor_data_output // Output of processed sensor data
-);
-  // Internal clock signal (can be same as core_clk or generated internally)
-  logic processing_clock;
-
-  // Instantiate a clock divider module (assumed to be defined elsewhere)
-  clock_divider_module clock_generator_instance ( // Instance name: 'clock_generator_instance'
-    .master_clk(core_system_clk),    // Connect master clock input
-    .reset_n(system_reset_n),        // Connect reset input
-    .divided_clk(processing_clock)  // Connect divided clock output to internal 'processing_clock'
-  );
-
-  // Instantiate the data_processor_module for signal processing
-  data_processor_module #(.PRECISION(16)) data_dsp_unit ( // Instance name: 'data_dsp_unit', parameter override for PRECISION
-    .clk(processing_clock),        // Clock input connected to divided clock
-    .reset_n(system_reset_n),      // Reset input connected to system reset
-    .raw_sensor_input(analog_sensor_adc_data), // Connect raw ADC data input
-    .calibrated_sensor_output(processed_sensor_data_output) // Connect calibrated output to module output
-  );
-
-  // Additional modules for sensor subsystem can be instantiated and connected here (e.g., filtering, data formatting)
-
-endmodule // End of 'sensor_subsystem_module'
+```
+[0] Configuration Process: Starting...
+[0] Data Process: Waiting for configuration...
+[25] Configuration Process: Configuration complete. Triggering event...
+[25] Data Process: Configuration ready. Starting data processing...
+[55] Data Process: Data processing complete.
+[55] Configuration Process: Data processing acknowledged. Exiting.
 ```
 
-This hierarchical design example shows:
+**Key Event Usage Points:**
 
--   **Submodule Instantiation**: The `sensor_subsystem_module` instantiates `clock_divider_module` and `data_processor_module` as submodules.
--   **Named Connections**: Using named port connections for clarity and robustness when connecting submodules.
--   **Parameter Passing**: Overriding the `PRECISION` parameter of `data_processor_module` during instantiation to match the data width.
--   **Hierarchical Signal Connections**: Connecting signals between modules at different levels of hierarchy (e.g., `core_system_clk` to `clock_divider_module`, `processing_clock` from `clock_divider_module` to `data_processor_module`).
--   **Building a System from Components**: Demonstrating how to build a larger system (`sensor_subsystem_module`) by integrating smaller, specialized modules (`clock_divider_module`, `data_processor_module`).
+-   **Synchronization Signals**: Events are primarily used as synchronization signals between processes. They indicate that a specific condition has been met or that a certain stage of processing has been completed.
+-   **Triggering (`-> event_name`)**: The `-> event_name;` statement triggers the event, signaling to any processes waiting for this event that it has occurred. Triggering an event is non-blocking.
+-   **Waiting (`@(event_name)`)**: The `@(event_name);` statement causes the process to suspend execution and wait until the specified event is triggered.  This is a blocking wait. Once the event is triggered by another process, the waiting process resumes execution.
+-   **`wait(event_name.triggered)` for Same-Time Races**: `wait(event_name.triggered);` can avoid a race when the event was triggered earlier in the **same simulation time slot**. It does not remember a trigger from an earlier simulation time. For persistent completion status, use a separate flag, mailbox, or other state variable.
+-   **`.triggered` Property**: The `.triggered` property of an event is a non-blocking way to check whether the event was triggered in the current simulation time slot. It returns true only for that time slot, so it must not be used as a permanent completion flag.
+-   **No Data Transfer**: Events themselves do not carry data. For data exchange in conjunction with synchronization, mailboxes are the appropriate mechanism.
 
-## Testbench Integration: Verifying Module Functionality
+## Comparison: Choosing the Right IPC Mechanism
 
-Testbenches are essential for verifying the functionality of SystemVerilog modules. A testbench is also a module, typically a top-level module, that instantiates the Design Under Test (DUT) and provides stimuli and checks responses to verify its correct operation.
+| Feature             | Mailbox                                    | Semaphore                                      | Event                                          |
+| ------------------- | ------------------------------------------ | --------------------------------------------- | ---------------------------------------------- |
+| **Primary Purpose**   | **Data exchange** between processes        | **Resource access control**, mutual exclusion    | **Process synchronization**, signaling events |
+| **Data Transfer**     | **Yes**, carries messages (type-parameterized) | **No**, manages keys (permits), no data transfer | **No**, just signals occurrence of an event     |
+| **Blocking Methods**  | `put()`, `get()`                           | `get()`                                        | `@(event)`, `wait(event.triggered)`           |
+| **Non-blocking Methods**| `try_put()`, `try_get()`, `peek()`, `num()`| `try_get()`, `num()`             | `event.triggered`                             |
+| **Type Safety**       | **Yes**, parameterized for data type        | **No**, typeless, manages integer keys          | **No**, typeless, just a signal               |
+| **Synthesizable?**    | **No**, primarily for verification         | **No**, primarily for verification              | **No**, primarily for verification              |
+| **Typical Use Cases** | Producer-consumer patterns, message queues, data streaming, testbench communication | Protecting shared resources, critical sections, mutual exclusion, limiting concurrent access | Testbench phase synchronization, event-driven stimulus, signaling completion, triggering actions |
 
-### Basic Testbench Structure: Clock and Reset Generation, DUT Instantiation
+## Exercises: Practical IPC Implementation
 
-```systemverilog
-module sensor_subsystem_tb; // Testbench module for 'sensor_subsystem_module' (using '_tb' suffix)
-  timeunit 1ns;
-  timeprecision 1ps;
-  // 1. Declare testbench signals (wires or logic) to drive DUT inputs and observe outputs
-  logic tb_clk_100MHz;      // Testbench clock signal (100MHz)
-  logic tb_system_reset;     // Testbench reset signal
-  logic [15:0] tb_sensor_adc_input; // Testbench input for sensor ADC data
-  logic [15:0] tb_processed_sensor_data; // Testbench signal to observe processed data output
+1.  **String Mailbox**: Create a mailbox parameterized to carry `string` messages. Implement two processes: one process sends a series of string messages (e.g., "Hello", "World", "SystemVerilog") into the mailbox, and another process receives and displays these string messages.
+2.  **Shared Counter with Semaphore Protection**: Design a module with a shared integer counter variable. Create two concurrent processes that both increment this counter multiple times. Use a binary semaphore (mutex) to protect the counter and ensure that increments from both processes are atomic and do not lead to race conditions. Display the final counter value.
+3.  **Bounded Mailbox Overflow Handling**: Create a bounded mailbox with a small capacity (e.g., size 2) for integers. Implement a sender process that attempts to send more messages than the mailbox capacity. Use `try_put()` in the sender and demonstrate how it handles mailbox full conditions and reports failures. Implement a receiver process to consume messages.
+4.  **Semaphore for Limited Resource Access**: Simulate a system with a limited resource (e.g., 2 processing units) using a semaphore initialized with 2 keys. Create 4 concurrent processes that each need to acquire the resource (semaphore) to perform some operation. Show how only 2 processes can proceed at a time, while the others wait for a resource to become available.
+5.  **Event-Driven Testbench Phase Synchronization**: Design a testbench with two initial blocks representing different test phases (e.g., "Configuration Phase" and "Verification Phase"). Use an event (`config_phase_done`) to synchronize these phases. The "Configuration Phase" process should simulate configuration tasks and then trigger the `config_phase_done` event. The "Verification Phase" process should wait for `config_phase_done` before starting its verification activities. Display messages to indicate the start and end of each phase and the synchronization point.
+6.  **Event with `wait(event.triggered)` Robustness**: Create a scenario where an event (`early_event`) might be triggered before a process starts waiting for it. Process 1 should trigger `early_event` after a short delay. Process 2 should start at the same simulation time or in a later delta cycle and use `wait(early_event.triggered)` to demonstrate same-time race protection. Then repeat the experiment with Process 2 starting at a later simulation time and show that an event is not persistent; use a separate flag or mailbox if the notification must be remembered.
 
-  // 2. Clock Generation Block (using 'initial' and 'forever' for simulation clock)
-  initial begin : clock_generation_block
-    tb_clk_100MHz = 1'b0; // Initialize clock low
-    forever #5 tb_clk_100MHz = ~tb_clk_100MHz; // Toggle clock every 5 time units (period = 10, frequency = 100MHz if time unit is 1ns)
-  end
+## Best Practices for Effective IPC
 
-  // 3. Reset Sequence Generation Block (using 'initial' for reset stimulus)
-  initial begin : reset_sequence_block
-    tb_system_reset = 1'b1; // Assert reset initially (active high in this example)
-    #20; // Hold reset asserted for 20 time units
-    tb_system_reset = 1'b0; // De-assert reset after 20 time units (release reset)
-    #50; // Simulate some time after reset release
-    tb_sensor_adc_input = 16'h1234; // Apply some input stimulus after reset
-    #100;
-    tb_sensor_adc_input = 16'h5678; // Change input stimulus again
-    #200;
-    $finish; // End simulation after a certain time
-  end
-
-  // 4. Device Under Test (DUT) Instantiation - Instantiate the module to be tested
-  sensor_subsystem_module dut ( // Instance name 'dut' (Device Under Test)
-    .core_system_clk(tb_clk_100MHz),    // Connect DUT 'core_clk' input to testbench clock 'tb_clk_100MHz'
-    .system_reset_n(~tb_system_reset),  // Connect DUT 'system_reset_n' (active low) to negated testbench reset 'tb_system_reset' (active high)
-    .analog_sensor_adc_data(tb_sensor_adc_input), // Connect DUT 'analog_sensor_adc_data' input to testbench input 'tb_sensor_adc_input'
-    .processed_sensor_data_output(tb_processed_sensor_data) // Connect DUT 'processed_data_output' output to testbench signal 'tb_processed_sensor_data'
-  );
-
-  // 5. Verification and Checking (Assertions, Display, Scoreboarding - can be added here or in separate blocks)
-  initial begin : verification_block
-    #100; // Wait for some simulation time after reset
-    $display("[%0t] Testbench: Monitoring DUT outputs...", $time);
-    #10;
-    $display("[%0t] Testbench: Processed Data Output = %h", $time, tb_processed_sensor_data); // Example: Display DUT output
-    #100;
-    $display("[%0t] Testbench: Processed Data Output = %h", $time, tb_processed_sensor_data); // Example: Display DUT output again
-  end
-
-endmodule // End of testbench module 'sensor_subsystem_tb'
-```
-
-Key elements of this testbench example:
-
-1.  **Testbench Signals**: Declaring `logic` signals in the testbench to drive the DUT's inputs (e.g., `tb_clk_100MHz`, `tb_system_reset`, `tb_sensor_adc_input`) and to observe its outputs (e.g., `tb_processed_sensor_data`).
-2.  **Clock Generation**: Using an `initial` block with a `forever` loop to generate a periodic clock signal (`tb_clk_100MHz`). The `#5` delay creates a half-period of 5 time units, resulting in a clock period of 10 time units (100MHz if time unit is 1ns).
-3.  **Reset Sequence**: Using an `initial` block to generate a reset pulse (`tb_system_reset`). The reset is asserted high for 20 time units and then de-asserted.
-4.  **DUT Instantiation**: Instantiating the `sensor_subsystem_module` (the DUT) using named port connections, connecting the testbench signals to the DUT's ports. Note the negation `~tb_system_reset` to connect the active-high testbench reset to the active-low DUT reset input `system_reset_n`.
-5.  **Verification and Checking**: A basic `initial` block (`verification_block`) is used to monitor the DUT's output (`tb_processed_sensor_data`) and display its value at certain simulation times using `$display`. In a more comprehensive testbench, this section would include assertions, scoreboards, and more sophisticated checking mechanisms.
-6.  **Simulation Control**: `$finish` is used in the reset sequence block to end the simulation after a defined duration.
-
-This is a basic example, and real-world testbenches can be significantly more complex, involving stimulus generation, response checking, coverage analysis, and integration with verification methodologies like UVM.
-
-## Best Practices for SystemVerilog Module Design
-
-1.  **Consistent and Meaningful Naming Conventions**:
-
-    -   **Module Names**: Use `lowercase_with_underscores` for module names (e.g., `uart_transmitter_module`, `memory_controller_module`). Adding a `_module` suffix can improve clarity, especially when interfaces with similar names exist (e.g., `uart_if` and `uart_module`).
-    -   **Parameters**: Use `UPPER_SNAKE_CASE` for parameter names (e.g., `DATA_WIDTH`, `BUFFER_DEPTH`, `FIFO_SIZE`).
-    -   **Clock Signals**: Name clock signals clearly, indicating frequency if applicable (e.g., `clk_100MHz`, `system_clk`, `core_clk`). Use `clk` as a general clock signal name when frequency is not critical in the name itself.
-    -   **Reset Signals**: Name reset signals to indicate their active level (e.g., `rst_n` for active-low reset, `reset_l`, `arst_n`; `rst` or `reset_h` for active-high reset, `arst`). Be consistent in active-low vs. active-high reset naming across the project.
-    -   **Instance Names**: Use descriptive instance names that indicate the module type and its function or position in the hierarchy (e.g., `data_cache_instance`, `clock_generator_instance`, `dsp_unit`, `rx_fifo_buffer`).
-
-2.  **Port Declaration Styles - Prefer ANSI Style for Compactness**:
-
-    -   **ANSI Style (Port declaration in module header)**: Declare ports directly within the module header for a more compact and readable syntax, especially for modules with many ports. This style improves code locality and reduces verbosity.
-
-        ```systemverilog
-        module uart_tx_module ( // ANSI style port declaration
-          input  logic clk_50MHz,
-          input  logic [7:0] tx_data,
-          output logic tx_active,
-          output logic uart_tx_serial_out
-        );
-          // Module body...
-        endmodule
-        ```
-
-    -   **Non-ANSI Style (Separate port declaration)**: Declare ports inside the module body, separate from the module header. While valid, this style is often less preferred for new SystemVerilog code as it is more verbose and less compact than ANSI style.
-
-        ```systemverilog
-        module uart_tx_module_non_ansi; // Non-ANSI style - ports declared inside module
-          input  logic clk_50MHz;
-          input  logic [7:0] tx_data;
-          output logic tx_active;
-          output logic uart_tx_serial_out;
-
-          // Module body...
-        endmodule
-        ```
-
-    **Recommendation**: Adopt ANSI-style port declarations as the standard style for new SystemVerilog designs for improved code conciseness and readability.
-
-3.  **Parameter Validation and Error Handling**:
-
-    -   **Parameter Range Checks**: Include `initial` blocks to validate parameter values at the beginning of simulation. Check for out-of-range or invalid parameter settings that could lead to design errors or unexpected behavior.
-    -   **`$error` and `$fatal` System Tasks**: Use `$error` to report parameter validation failures and `$fatal` to terminate the simulation immediately when a critical parameter error is detected. This helps catch configuration errors early in the design cycle.
-    -   **Informative Error Messages**: Provide clear and informative error messages that specify the parameter name, the invalid value, and the acceptable range or conditions. This makes it easier for users to understand and correct parameter settings.
-
-    ```systemverilog
-    module parameterized_module #(parameter integer BUFFER_SIZE = 1024) (/* ports */);
-      initial begin
-        if (BUFFER_SIZE <= 0) begin
-          $error("Error: BUFFER_SIZE parameter must be a positive integer. Invalid value: %0d", BUFFER_SIZE);
-          $fatal; // Terminate simulation due to critical parameter error
-        end
-        if (BUFFER_SIZE > 4096) begin
-          $warning("Warning: BUFFER_SIZE is large (%0d), which may impact performance.", BUFFER_SIZE);
-        end
-      end
-      // ... rest of module code ...
-    endmodule
-    ```
-
-## Exercises to Practice Module Design in SystemVerilog
-
-1.  **Basic Module Creation: Serial Encoder**:
-
-    -   **Objective**: Create a `serial_encoder_module` that converts parallel byte data to a serial bit stream.
-    -   **Ports**:
-        -   `input logic clk`: Clock signal.
-        -   `input logic data_valid`: Indicates when `byte_data` is valid.
-        -   `input logic [7:0] byte_data`: Parallel byte data input.
-        -   `output logic serial_out`: Serial data output.
-    -   **Functionality**: When `data_valid` is asserted, the module should transmit the `byte_data` serially bit by bit on `serial_out` synchronized to `clk`. Define a simple serial encoding scheme (e.g., start bit, 8 data bits, stop bit – NRZ, least significant bit first).
-    -   **Implementation**: Use shift registers and control logic within an `always_ff` block to implement the serial encoding process.
-
-2.  **Parameterized Design: Configurable FIFO**:
-
-    -   **Objective**: Implement a `configurable_fifo_module` with parameterizable data width and depth.
-    -   **Parameters**:
-        -   `parameter integer DATA_WIDTH = 8`: Data width of the FIFO (default 8 bits).
-        -   `parameter integer DEPTH = 16`: Depth of the FIFO (number of entries, default 16).
-    -   **Ports**: Standard FIFO ports (at least):
-        -   `input logic clk`: Clock.
-        -   `input logic rst_n`: Reset (active low).
-        -   `input logic [DATA_WIDTH-1:0] write_data`: Data to be written into the FIFO.
-        -   `input logic write_enable`: Write enable signal.
-        -   `output logic [DATA_WIDTH-1:0] read_data`: Data read from the FIFO.
-        -   `input logic read_enable`: Read enable signal.
-        -   `output logic full`: FIFO full flag.
-        -   `output logic empty`: FIFO empty flag.
-    -   **Functionality**: Implement a synchronous FIFO buffer with the specified data width and depth using internal memory (an array of `logic` vectors). Include logic for write and read operations, full and empty flag generation, and reset.
-    -   **Parameter Validation**: Add parameter validation to ensure `DATA_WIDTH` and `DEPTH` are positive integers and `DEPTH` is at least 2 (as per best practices in the example).
-
-3.  **Hierarchical Integration: Network Interface Module**:
-
-    -   **Objective**: Create a `network_interface_module` that integrates instances of `configurable_fifo_module` and `serial_encoder_module`.
-    -   **Submodules to Instantiate**:
-        -   Two instances of `configurable_fifo_module`:
-            -   `rx_fifo`: For buffering received data (input FIFO).
-            -   `tx_fifo`: For buffering data to be transmitted (output FIFO).
-            -   Configure them with appropriate `DATA_WIDTH` and `DEPTH` parameters (e.g., `DATA_WIDTH=8`, `DEPTH=32` for both).
-        -   One instance of `serial_encoder_module`:
-            -   `serial_tx_encoder`: To serialize data from the `tx_fifo`.
-    -   **Network Interface Ports**: Define ports for the `network_interface_module` to interact with a higher-level system and a physical serial interface. Include ports for data input/output to/from the system, serial output, clock, and reset.
-    -   **Interconnection**: Connect the submodules within `network_interface_module`:
-        -   Connect the output of `tx_fifo` to the `byte_data` input of `serial_tx_encoder`.
-        -   Implement control logic to move data between the system interface and the FIFOs and to control the `serial_tx_encoder`.
-    -   **Functionality**: The `network_interface_module` should act as an interface between a system (which exchanges data in bytes) and a serial communication channel. It should buffer data for transmission and reception and handle serial encoding for transmission.
-
-4.  **Testbench Development: Self-Checking FIFO Testbench**:
-
-    -   **Objective**: Create a self-checking testbench for the `configurable_fifo_module` to verify its overflow protection and basic FIFO operations.
-    -   **Testbench Features**:
-        -   **Clock Generation**: Generate a 100MHz clock signal with a 10% duty cycle variance (simulate jitter or clock imperfections). You can achieve duty cycle variance by randomly adjusting the high and low periods of the clock within a certain percentage range in each clock cycle.
-        -   **Reset Sequence**: Implement a power-on reset sequence to initialize the FIFO and the test environment.
-        -   **Stimulus Generation**: Generate a sequence of write transactions to the FIFO, attempting to write more data than the FIFO's capacity to test overflow protection. Also, generate read transactions to verify data retrieval. Create different scenarios: write-only, read-only, interleaved write and read operations, full FIFO, empty FIFO conditions, etc.
-        -   **Response Checking**: Implement self-checking mechanisms in the testbench.
-            -   **Overflow Detection**: Verify that the `full` flag is asserted correctly when the FIFO is full and that write operations are ignored or handled gracefully in the overflow condition (no data corruption, appropriate error signaling if designed).
-            -   **Data Integrity**: For valid write and read sequences (within FIFO capacity), verify that the data read from the FIFO matches the data written in the correct order (FIFO order). Use a scoreboard or reference model in the testbench to track expected data and compare it with the data read from the FIFO.
-        -   **Assertions**: Incorporate assertion statements in the testbench to check for expected FIFO behavior and flag errors automatically during simulation. For example, assert that `full` is asserted when attempting to write to a full FIFO, or assert that data read from FIFO matches expected data.
-        -   **Test Scenarios**: Design test scenarios to cover various FIFO conditions and operations:
-            -   Write to FIFO until full, then attempt overflow.
-            -   Read from FIFO until empty.
-            -   Interleaved write and read operations.
-            -   Write and read with varying burst lengths.
-            -   Reset in different states (full, empty, partially filled).
-    -   **Self-Checking**: The testbench should automatically determine if the FIFO is working correctly and report pass/fail status at the end of the simulation without manual waveform inspection. Use `$display` statements to indicate test status (pass/fail) clearly.
-
-These exercises will provide hands-on practice in designing SystemVerilog modules, using parameters, creating hierarchical designs, and developing basic testbenches for verification. They cover essential concepts for building more complex hardware systems in SystemVerilog.
+-   **Deadlock Prevention**: Be mindful of potential deadlocks, especially when using semaphores. Ensure that processes always release semaphores after acquiring them, even in error conditions. Design your IPC logic to avoid circular dependencies in resource acquisition. Blocking mailbox operations have no universal timeout argument; use `try_get()`/`try_put()` polling or a separately designed timeout process when the protocol requires a bounded wait.
+-   **Bounded Mailboxes for Flow Control**: In systems with potential for message buildup or resource constraints, prefer bounded mailboxes over unbounded ones. Use `try_put()` and `try_get()` to implement flow control and handle mailbox full/empty conditions explicitly, preventing buffer overflows and ensuring responsiveness.
+-   **Type Parameterization for Mailboxes**: Always parameterize mailboxes with specific data types (`mailbox #(<data_type>)`) to enforce type safety and catch potential data type mismatch errors at compile time. This improves code robustness and maintainability.
+-   **Strategic Use of `wait(event.triggered)`**: Use `wait(event.triggered)` to close same-simulation-time races. Do not use it to recover a notification from an earlier simulation time; pair an event with persistent state or use a mailbox when late consumers must observe the occurrence.
+-   **Resource Management with Semaphores**: Initialize semaphores with an appropriate number of keys based on the number of concurrent accesses allowed for the shared resource. Use semaphores to protect critical sections of code that access shared variables or hardware resources. Follow a consistent pattern of `semaphore.get()` before accessing the resource and `semaphore.put()` after finishing to ensure proper mutual exclusion.
+-   **Choosing the Right IPC Mechanism**: Select the IPC mechanism that best suits the communication and synchronization needs of your processes. Use mailboxes for data exchange, semaphores for resource access control, and events for simple synchronization signaling. Avoid using a more complex mechanism than necessary for the task at hand.
+-   **Clear Naming Conventions**: Use descriptive names for mailboxes, semaphores, and events that clearly indicate their purpose and the type of data or resource they are managing. This improves code readability and understanding of the IPC mechanisms in your design or testbench.
 
 ##### Copyright (c) 2026 squared-studio
 

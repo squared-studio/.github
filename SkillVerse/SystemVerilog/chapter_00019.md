@@ -1,587 +1,445 @@
-# SystemVerilog Assertions (SVA): Formalizing and Automating Verification
+# SystemVerilog File Operations: Interacting with External Data
 
-## Introduction to Assertion-Based Verification: Specifying and Validating Design Behavior
+## Introduction: Bridging Simulation and the External World
 
-SystemVerilog Assertions (SVA) are a cornerstone of modern hardware verification, shifting the focus from traditional simulation-only testing to a more proactive and formal approach. SVAs are not just about finding bugs; they are about formally **specifying design intent** and then **automatically verifying** that the design adheres to these specifications. This methodology, known as Assertion-Based Verification (ABV), offers significant advantages:
+File operations in SystemVerilog are essential for enabling simulations to interact with the external environment. This capability is fundamental for a wide range of verification tasks, including:
 
-**Key Benefits of Assertion-Based Verification (ABV) with SystemVerilog Assertions (SVA):**
+-   **Data-Driven Verification**: Reading test vectors, stimulus data, and configuration parameters from external files to drive simulations. This allows for complex and reusable test scenarios defined outside the simulation code itself.
+-   **Simulation Result Logging and Debugging**: Recording simulation events, waveforms, coverage data, and debug messages to external files for detailed analysis and post-simulation debugging. This provides crucial insights into the simulation behavior and helps identify design issues.
+-   **Intermediate Data Handling**: Storing and retrieving intermediate data during simulation runs. This can be useful for complex verification flows where data needs to be passed between different simulation phases or tools.
+-   **Report Generation**: Creating post-simulation reports summarizing simulation results, coverage metrics, and verification status. These reports are vital for documenting verification progress and communicating results.
 
--   **Formal Specification of Design Requirements**: SVAs provide a precise and unambiguous way to document design requirements directly within the RTL code. Assertions act as executable specifications, capturing the intended behavior of the design in a formal language that both simulators and formal verification tools can understand. This self-documenting approach ensures that the verification intent is tightly coupled with the design itself.
--   **Temporal Property Checking During Simulation**: Concurrent assertions, in particular, excel at checking temporal properties – the behavior of signals and design states over time and clock cycles. They continuously monitor the design during simulation, automatically checking for violations of specified temporal relationships and sequences. This real-time checking significantly enhances the effectiveness of simulation-based verification.
--   **Coverage Metric Collection for Verification Completeness**: SVAs, through coverage properties, can be used to track the extent to which design properties and scenarios have been exercised during simulation. Assertion coverage metrics provide valuable feedback on the completeness of verification, guiding engineers to target uncovered areas and improve test stimulus. This coverage-driven approach helps ensure thorough verification.
--   **Early Error Detection and Root Cause Analysis**: Assertions are designed to detect errors as close as possible to their source, often much earlier than traditional testbench-driven error detection. When an assertion fails, it provides immediate feedback, pinpointing the exact location and time of the violation. This early detection and clear failure context dramatically reduce debug time and accelerate root cause analysis.
--   **Reusable Verification Components and Intellectual Property (IP) Verification**: Assertions, especially when parameterized and organized into packages, become reusable verification IP. These assertion libraries can be applied across different designs or reused when verifying different instances of the same IP. This promotes verification IP reuse and reduces redundant assertion development effort.
--   **Bridge to Formal Verification**: SVAs serve as a bridge between simulation and formal verification. The same assertions used in simulation can be leveraged by formal verification tools to mathematically prove (or disprove) design properties exhaustively. This integration allows for a more comprehensive verification strategy, combining the strengths of both simulation and formal methods.
+Effective file handling is paramount for creating robust, data-driven verification environments and ensuring complete simulation traceability, from input stimulus to output analysis.
 
 ### Learning Goals
 
 By the end of this chapter, you should be able to:
 
-- Distinguish immediate assertions from clocked concurrent assertions.
-- Write properties and sequences using implication, delays, repetition, and sampled-value functions.
-- Make assertions reset-aware and avoid vacuous or underconstrained checks.
-- Use assertion coverage and covergroups for complementary coverage goals.
-- Apply, debug, and review assertions while accounting for tool and language limitations.
+- Open, validate, use, and close text and binary files safely.
+- Choose between line-oriented, formatted, and byte-oriented file access.
+- Interpret the return values of the file I/O system functions correctly.
+- Produce timestamped logs and route output to both a file and the simulator console.
+- Design file-processing code with clear error handling and simulator portability in mind.
 
-## Assertion Types: Immediate vs. Concurrent - Choosing the Right Tool for the Job
+## File Handling Fundamentals
 
-SystemVerilog Assertions come in two primary flavors: **Immediate Assertions** and **Concurrent Assertions**. Understanding their differences is crucial for choosing the right type of assertion for a given verification task.
+### Opening Files: Establishing Communication Channels
 
-| Feature                     | Immediate Assertions                                  | Concurrent Assertions                                     |
-| :-------------------------- | :---------------------------------------------------- | :------------------------------------------------------ |
-| **Evaluation Trigger**      | **Procedural Execution**: Evaluated when the procedural code containing the assertion is executed (e.g., in `always` blocks, `initial` blocks, tasks, functions). | **Clock Edges or Temporal Events**: Evaluated at specific clock edges or based on temporal events defined in clocking blocks or property definitions. |
-| **Temporal Checking**       | **Immediate (Current Values)**: Check conditions based on signal values *at the moment* the assertion is executed within the procedural code. No history or temporal context. | **Multi-Cycle Behavior**: Designed for checking temporal relationships and sequences of events that unfold *over multiple clock cycles*. Can specify delays, repetitions, and sequences of signal transitions. |
-| **Typical Usage**           | **Combinational Logic Checks**:  Verifying conditions in combinational logic, checking input/output relationships, and validating data integrity within procedural code. | **Sequential Logic and Protocol Verification**: Verifying state machine behavior, protocol compliance, interface timing, data flow sequences, and complex temporal relationships in sequential circuits. |
-| **Execution Context**       | **Procedural Blocks**: Placed inside `always` blocks, `initial` blocks, tasks, and functions, executing within the procedural simulation flow. | **Module Scope or Clocking Blocks**: Typically declared at the module level or within clocking blocks, operating in parallel with the design's functional logic, triggered by clock events. |
-| **Simulation Performance Overhead** | **Low**: Minimal performance impact as they are evaluated only when procedural code is executed.                                  | **Moderate**: Can have a higher performance overhead compared to immediate assertions because they are continuously monitored at clock edges throughout the simulation. |
+The `$fopen` system function is used to open a file and obtain a **file descriptor (file handle)**, which is an integer that acts as a unique identifier for the opened file. This handle is then used in subsequent file operations (read, write, close).
 
-**Analogy:**
-
--   **Immediate Assertion**: Like a quick "snapshot" check within a piece of code. "Is `x` greater than 5 *right now* at this point in the procedure?"
--   **Concurrent Assertion**: Like a security camera continuously monitoring a sequence of events over time. "Is it *always* the case that after signal `enable` rises, signal `ack` rises within 1 to 3 clock cycles, *unless* reset is active?"
-
-## Immediate Assertions: Instantaneous Checks in Procedural Code
-
-Immediate assertions are embedded within procedural blocks (`always`, `initial`, tasks, functions) and are evaluated when the simulation execution reaches that point in the code. They are primarily used for checking conditions that are expected to be true *immediately* when the assertion statement is encountered.
-
-### Syntax and Basic Usage
+**Syntax:**
 
 ```systemverilog
-assert (expression)
-  [action_block] // Optional block executed on assertion success (not commonly used)
-else
-  [action_block]; // Optional block executed on assertion failure (most common use)
+int file_descriptor;
+file_descriptor = $fopen("<filename>", "<mode>");
 ```
 
--   **`assert (expression)`**: The core of the assertion. `expression` is a boolean expression that is evaluated.
--   **`[action_block]` (Success)**:  Optional block of statements executed if the `expression` is TRUE (assertion passes). Rarely used in practice.
--   **`else [action_block]` (Failure)**: Optional block of statements executed if the `expression` is FALSE (assertion fails). This is where you typically place error reporting actions using `$error`, `$warning`, `$fatal`, etc.
+**File Modes:** The `<mode>` argument is a string that specifies how the file should be opened. Common modes include:
 
-### Enhanced Example: Parameterized Range Checker with Immediate Assertion
+The mode strings follow the simulator's supported file-I/O conventions. Text and binary modes are often treated the same on Unix-like hosts, while binary modes can matter on systems that distinguish text and binary translation. Check the simulator documentation for any portability restrictions.
+
+| Mode | Description                                     | Behavior if File Exists | Behavior if File Doesn't Exist | Use Case                                                                 |
+| :---- | :---------------------------------------------- | :----------------------- | :----------------------------- | :----------------------------------------------------------------------- |
+| `"r"`  | **Read-only**                                  | File must exist         | Error, `$fopen` returns 0      | Reading input test vectors, configuration files.                         |
+| `"w"`  | **Write-only (truncate)**                      | **Truncates** to zero length | Creates a new file              | Creating new log files, simulation output files (overwriting existing). |
+| `"a"`  | **Append-only**                                 | Opens and positions at **end** | Creates a new file              | Adding to existing log files, accumulating simulation data.             |
+| `"r+"` | **Read and Update (existing file)**            | Opens for read/write      | Error, `$fopen` returns 0      | Modifying existing configuration files (use with caution).                |
+| `"w+"` | **Write and Update (create/truncate)**         | **Truncates** to zero length | Creates a new file              | Creating new files for read/write operations.                             |
+| `"rb"` | **Read Binary**                                | File must exist         | Error, `$fopen` returns 0      | Reading binary data files.                                              |
+| `"wb"` | **Write Binary**                               | **Truncates** to zero length | Creates a new file              | Writing binary data files.                                              |
+| `"ab"` | **Append Binary**                              | Opens and positions at **end** | Creates a new file              | Appending binary data to files.                                         |
+| `"r+b"`| **Read/Update Binary (existing file)**         | Opens for read/write      | Error, `$fopen` returns 0      | Modifying existing binary files (use with caution).                        |
+| `"w+b"`| **Write/Update Binary (create/truncate)**      | **Truncates** to zero length | Creates a new file              | Creating new binary files for read/write operations.                     |
+
+**Important Note:**  Always check the return value of `$fopen`. It returns a non-zero file descriptor on success and `0` on failure (e.g., file not found in "r" mode, permission issues).
+
+### Closing Files: Releasing System Resources
+
+It's crucial to close files using `$fclose(<file_descriptor>);` after you are finished with file operations. This releases system resources associated with the file handle and ensures data is properly written to the file (especially for buffered writes). Failing to close files can lead to resource leaks and data corruption.
+
+## Reading Data from Files
+
+SystemVerilog provides several system functions for reading data from files, each suited for different data formats and reading requirements.
+
+### Line-by-Line Reading: `$fgets`
+
+`$fgets` reads a line of text from a file, including the line terminator when one is present, and stores it in a string or packed array. It is ideal for processing text files line by line. The standard call does not take a maximum-length argument; use a suitably sized destination when a bounded packed-array read is required.
+
+**Syntax:**
 
 ```systemverilog
-module parameterized_range_checker #(
-  parameter integer MIN_VALUE = 0,      // Parameter for minimum allowed value (default 0)
-  parameter integer MAX_VALUE = 255     // Parameter for maximum allowed value (default 255)
-) (
-  input logic [7:0] data_input          // 8-bit data input port
-);
-
-  always_comb begin : data_range_assertion_block // Named 'always_comb' block for clarity
-    assert (data_input >= MIN_VALUE && data_input <= MAX_VALUE) // Check if data is within the parameterized range
-      else $error(
-             "Data Value Out of Range: Value = %0d, Allowed Range = [%0d:%0d]", // Formatted error message
-             data_input, MIN_VALUE, MAX_VALUE // Arguments for formatted message
-           );
-  end : data_range_assertion_block
-
-endmodule : parameterized_range_checker
+int result;
+string line_buffer; // String variable to store the read line
+result = $fgets(line_buffer, file_descriptor);
 ```
 
-**Best Practices for Immediate Assertions:**
+**Return Value:**
 
--   **Use in `always_comb` Blocks for Combinational Checks**: For verifying combinational logic relationships, place immediate assertions inside `always_comb` blocks to ensure they are re-evaluated whenever inputs change.
--   **Avoid Side Effects in Assertion Expressions**: Assertion expressions should ideally be pure boolean conditions without side effects (e.g., assignments, incrementing variables). Side effects can make assertions harder to understand and debug.
--   **Parameterize for Reusability**: Use parameters to make immediate assertions reusable across different modules or instances with varying constraints. This enhances assertion IP reuse.
--   **Provide Specific and Formatted Error Messages**:  Use the `else $error(...)` action block with informative, formatted error messages using `$error`, `$warning`, or `$fatal`. Include relevant signal values and parameter values in the error message to aid in debugging.  Use format specifiers (`%0d`, `%0h`, `%s`) for clear output.
+-   Returns the number of characters read when at least one character is read.
+-   Returns `0` at EOF when no characters are read, or when an error prevents any characters from being read. A final line does not need to end with a newline to be read successfully.
 
-## Concurrent Assertions: Temporal Verification for Sequential Behavior
-
-Concurrent assertions are the workhorses of temporal verification in SystemVerilog. They are designed to monitor signal behavior over time, triggered by clock edges or other temporal events. They are essential for verifying sequential logic, protocols, and interfaces.
-
-### Concurrent Assertion Architecture: Properties, Sequences, and Clocking
-
-Concurrent assertions are built upon three core concepts:
-
-1.  **Sequences**: Define temporal sequences of events or conditions. Sequences are the building blocks of properties, specifying the patterns of signal behavior to be checked.
-2.  **Properties**:  Describe temporal relationships between sequences or signals. Properties use sequences and temporal operators to express complex temporal requirements (e.g., "if `request` occurs, then `grant` must occur within 3 clock cycles").
-3.  **Clocking**: Concurrent assertions are inherently clock-domain aware. They are typically evaluated at specific clock edges, defined either explicitly within the property or using default clocking blocks. Clocking synchronizes assertion evaluation with the design's clocking scheme.
-
-### Clock Declaration Styles for Concurrent Assertions
-
-Concurrent assertions that use clock-cycle delays or sampled-value functions need a clocking event to define their time base. A property may also be written with an event expression for an unclocked or event-based check. SystemVerilog provides two common ways to specify clocking for clocked concurrent assertions:
-
-1.  **Explicit Clock in Property Definition**:  Specify the clock edge directly within each `property` definition using the `@(posedge clk)` or `@(negedge clk)` construct. This is useful when you have different clock domains or want to associate specific assertions with particular clocks.
-
-    ```systemverilog
-    property request_grant_sequence_explicit_clock;
-      @(posedge clk_a)  // Explicit clock 'clk_a' for this property
-      request_a |-> ##[1:5] grant_a; // Sequence: request_a followed by grant_a within 1-5 cycles of clk_a
-    endproperty : request_grant_sequence_explicit_clock
-    ```
-
-2.  **Default Clocking Block**: Define a `default clocking` block to specify a default clock and input/output sampling behavior for all concurrent assertions within a scope (e.g., module, interface). This simplifies assertion syntax when most assertions use the same clock.
-
-    ```systemverilog
-    default clocking main_clocking_block @(posedge clk_main); // Default clocking block named 'main_clocking_block' for posedge 'clk_main'
-      default input  #1step; // Default input sampling: 1-step delay from clock edge
-      default output #0;     // Default output skew: 0 delay from clock edge
-    endclocking : main_clocking_block
-
-    property data_valid_after_address_default_clock;
-      address ##1 valid_data; // Property using default clock 'clk_main' from 'main_clocking_block'
-    endproperty : data_valid_after_address_default_clock
-    ```
-
-    -   `default input #1step;` and `default output #0;` within the `clocking` block define default input sampling and output skew. These are timing parameters that control when clocking-block signals are sampled or driven relative to the clock edge. They do not by themselves change the sampling semantics of a property that directly references ordinary module signals.
-
-### Reset-Aware Assertions: Handling Asynchronous Reset
-
-In real-world designs, assertions often need to be disabled or qualified during reset conditions. SystemVerilog provides the `disable iff (reset_condition)` clause within properties to make assertions reset-aware.
+**Example: Reading and Displaying Lines from a Text File**
 
 ```systemverilog
-property data_transfer_valid_reset_aware;
-  @(posedge clk)  // Clocked property
-  disable iff (reset_n == 1'b0) // Assertion disabled when reset_n is low (active low reset)
-  valid_request |-> ##1 data_ready; // Property: valid_request followed by data_ready in the next cycle (if not reset)
-endproperty : data_transfer_valid_reset_aware
-```
+module file_line_reader;
+  int file_descriptor;
+  string line_of_text;
 
--   `disable iff (reset_n == 1'b0)`: This clause aborts active attempts and prevents new attempts while the condition is true. With a 4-state reset signal, an unknown reset value should be handled deliberately rather than assumed to mean inactive.
--   The assertion is active when `reset_n` is high (reset is inactive), subject to the sampled values and any attempts already in progress.
-
-## Temporal Operators: Building Blocks for Sequence and Property Definitions
-
-SystemVerilog provides a rich set of temporal operators that allow you to express complex temporal relationships and sequences in concurrent assertions. These operators are used within sequences and properties to define the temporal behavior you want to verify.
-
-| Operator              | Description                                                                 | Example                                       | Explanation                                                                                                                                                                                                                                                            |
-| :-------------------- | :-------------------------------------------------------------------------- | :-------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **`##n`**             | **Delay**: Delays the sequence by exactly `n` clock cycles.                  | `req ##2 gnt`                                 | `gnt` must be true exactly 2 clock cycles after `req` becomes true.                                                                                                                                                                                                 |
-| **`##[m:n]`**         | **Range Delay**: Delays the sequence by between `m` and `n` clock cycles (inclusive). | `req ##[1:4] gnt`                             | `gnt` must be true between 1 to 4 clock cycles after `req` becomes true.                                                                                                                                                                                          |
-| **`[*n]`**             | **Consecutive Repetition**:  The preceding expression must be true for exactly `n` consecutive clock cycles. | `valid [*3]`                                  | `valid` must be true for exactly 3 consecutive clock cycles.                                                                                                                                                                                   |
-| **`[*m:n]`**         | **Consecutive Repetition Range**: The preceding expression must be true for between `m` and `n` consecutive clock cycles. | `valid [*1:inf]`                             | `valid` must be true for at least 1 consecutive clock cycle, with no finite upper bound. `inf` represents infinity.                                                                                   |
-| **`[->n]`**            | **Non-Consecutive Goto Repetition**: The preceding expression must be true `n` times, not necessarily consecutively, and the sequence ends on the `n`th match. | `req [->3] ##1 gnt`                               | `req` must be true 3 times, possibly with gaps, before the following sequence element is matched.                                                                                                                                                              |
-| **`[=n]`**             | **Non-Consecutive Repetition**: The preceding expression must occur `n` times, not necessarily consecutively; the sequence may remain open for trailing cycles. | `req [=2] ##1 gnt`                               | `req` must be true 2 times, possibly with gaps, before the following sequence element is matched.                                                                                                                                                               |
-| **`throughout`**      | **Condition Maintained Throughout Sequence**:  Ensures a condition is true throughout the duration of a sequence. | `valid_data throughout data_sequence ##1 ack` | `valid_data` must be true for the entire duration of `data_sequence`, and then `ack` must be true 1 cycle after `data_sequence` completes.                                                                                                     |
-| **`within`**          | **Sequence Containment**: Checks if one sequence occurs *within* another sequence. | `sequence s1; ... endsequence <br> sequence s2; s1 within s2; endsequence` | Sequence `s1` must complete entirely within the duration of sequence `s2`.                                                                                                                                                                             |
-| **`and`**             | **Sequence Conjunction**: Both sequences must match and complete at the same time. | `sequence s_combined; s1 and s2; endsequence` | Both sequence `s1` and sequence `s2` must start at the same time and complete successfully at the same time for `s_combined` to succeed.                                                                                                                            |
-| **`or`**              | **Sequence Disjunction**: Either sequence can match.                               | `property p_either_seq; s1 or s2; endproperty` | Property `p_either_seq` passes if either sequence `s1` *or* sequence `s2` matches.                                                                                                                                                                                  |
-| **`intersect`**       | **Sequence Intersection**: Both sequences must match over the same start time and end time. | `sequence s_intersect; s1 intersect s2; endsequence` | Sequence `s_intersect` matches only when both `s1` and `s2` match and complete on the same cycle. |
-| **Implication `\|->` (Overlapping)** | **Implication (Overlapping)**: If the antecedent sequence (left side) matches, then the consequent property (right side) must also hold, starting in the *same* clock cycle. | `req \|-> gnt`                                 | If `req` becomes true, then `gnt` must also become true in the *same* clock cycle or in subsequent cycles as defined by the property following the implication. Overlapping means the consequent check starts in the *same* cycle as the antecedent. |
-| **Implication `\|=>` (Non-Overlapping)**| **Implication (Non-Overlapping)**: If the antecedent sequence (left side) matches, then the consequent property (right side) must hold, starting in the *next* clock cycle. | `req \|=> gnt`                                 | If `req` becomes true, then `gnt` must become true in the clock cycle *immediately following* the cycle in which `req` became true, or in subsequent cycles as defined by the property following the implication. Non-overlapping means the consequent check starts in the *cycle after* the antecedent. |
-
-## Assertion Severity Levels: Controlling Simulation Response to Assertion Failures
-
-SystemVerilog provides a hierarchy of severity levels for assertion failure messages, allowing you to control the simulation's response based on the criticality of the assertion violation.
-
-| Severity Level   | Typical Usage Scenario                                     | Simulation Impact                               | Description                                                                                                                                                                                                                                                            |
-| :----------------- | :------------------------------------------------------- | :------------------------------------------------ | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **`$fatal`**       | **Critical, Unrecoverable Errors**: Safety violations, catastrophic design flaws that make further simulation meaningless. | **Terminates Simulation Immediately**: Stops the simulation run immediately upon assertion failure.                                                                                                                                                             |
-| **`$error`**       | **Design Requirement Violations**: Functional errors, protocol violations, incorrect behavior that violates specified design functionality. | **Increments Error Count, Continues Simulation**:  Reports an error message, increments the simulation error count, but allows the simulation to continue running. This is the most common severity level for functional assertions. |
-| **`$warning`**     | **Potential Issues Requiring Review**:  Unexpected or suspicious behavior that might indicate a problem, but not necessarily a functional error.  | **Logs Warning Message, Continues Simulation**: Reports a warning message, but the simulation continues without incrementing the error count. Useful for flagging potential issues that need investigation but are not critical failures. |
-| **`$info`**        | **Diagnostic Information, Status Messages**:  Reporting progress, milestones, or specific design states reached during simulation. | **Logs Informational Message, Continues Simulation**: Reports an informational message. Used for providing feedback on simulation progress or for debugging purposes.                                                                                    |
-| **`$system`**      | **Not an Assertion Severity**: `$system` invokes a host operating-system command; it is not a standard assertion action severity. | **Tool/Host Dependent**: Avoid using it as a portable assertion response. Use `$fatal`, `$error`, `$warning`, or `$info` for assertion action blocks.                                             |
-
-### Severity Level Usage Example: Traffic Light Controller Verification
-
-```systemverilog
-module traffic_light_controller_checker(
-  input logic clk,
-  input logic rst,
-  input logic [1:0] light_state // 2-bit signal representing traffic light state
-);
-
-  // Property: No Dual Red - Ensure that both directions are never red simultaneously (safety property)
-  property no_concurrent_red_lights;
-    @(posedge clk)
-    disable iff (rst) // Reset disable clause
-    ! (light_state == 2'b11); // '11' might represent both directions being red
-  endproperty : no_concurrent_red_lights
-
-  // Assertion: Check the 'no_concurrent_red_lights' property. If violated, it's a fatal safety error.
-  assert property (no_concurrent_red_lights)
-    else $fatal(1, "!!! SAFETY VIOLATION !!!: Both traffic directions are RED simultaneously! State = %b Time = %0t", light_state, $time);
-
-  // Coverage Property: Track when the "all lights off" state (state '00') is observed (coverage metric)
-  cover property (@(posedge clk) light_state == 2'b00)
-    $info("INFO: Traffic light 'All Lights Off' state observed at Time = %0t", $time); // Informational message when "all off" state is reached
-
-endmodule : traffic_light_controller_checker
-```
-
-## Coverage-Driven Verification with Assertions: Measuring Verification Progress
-
-SystemVerilog assertions are not just for error detection; they are also powerful tools for **coverage-driven verification**. Coverage properties allow you to track whether specific design behaviors or scenarios, as defined by assertions, have been exercised during simulation. This helps measure verification completeness and identify areas that need more testing.
-
-### Coverage Property Types: Event, Sequence, and Property Coverage
-
-SystemVerilog provides assertion coverage through `cover property`; covergroups provide a separate functional-coverage mechanism. The following patterns show common ways to cover events, sequences, and properties:
-
-1.  **Event Coverage**: Use a covergroup coverpoint or a procedural event counter to track a simple boolean event or condition. `cover (event_expression)` is not the portable concurrent-assertion syntax for this purpose.
-
-    ```systemverilog
-    cover property (@(posedge clk) enable_signal); // Track an occurrence of 'enable_signal'
-    ```
-
-2.  **Sequence Coverage**: Use `cover property (sequence_expression)` to track the occurrence of a defined temporal sequence. Useful for verifying that specific sequences of events in a protocol or state machine are exercised.
-
-    ```systemverilog
-    sequence req_ack_seq;
-      request ##[1:3] acknowledge; // Sequence: request followed by acknowledge within 1-3 cycles
-    endsequence : req_ack_seq
-
-    cover property (@(posedge clk) req_ack_seq); // Track coverage of the 'req_ack_seq' sequence
-    ```
-
-3.  **Property Coverage**: `cover property (property_expression)` - Tracks whether a defined property (which can be complex temporal property) holds true during simulation. Useful for measuring the coverage of design properties and ensuring that assertions are actually being triggered and tested.
-
-    ```systemverilog
-    property valid_address_range;
-      address >= MIN_ADDR && address <= MAX_ADDR; // Property: address within valid range
-    endproperty : valid_address_range
-
-    cover property (@(posedge clk) valid_address_range); // Track coverage of the 'valid_address_range' property
-    ```
-
-### Cross-Coverage with Covergroups: Analyzing Combined Coverage
-
-SystemVerilog covergroups can be used in conjunction with assertion coverage to perform **cross-coverage analysis**. This allows you to analyze the coverage of combinations of different assertion coverage points, providing a more comprehensive view of verification coverage.
-
-**Example: Cross-Coverage of Protocol State Transitions and Completion Status**
-
-```systemverilog
-module protocol_coverage_example;
-  logic clk;
-  logic start_transaction;
-  logic transaction_done;
-  enum logic [1:0] { IDLE, PROCESSING, COMPLETE } protocol_state;
-
-  covergroup protocol_coverage_group @(posedge clk); // Covergroup sampled at posedge clk
-    start_state_coverage: coverpoint protocol_state { // Coverpoint for 'protocol_state'
-      bins idle_to_busy = (IDLE => PROCESSING); // Bin for IDLE to BUSY state transition
-      bins busy_to_complete = (PROCESSING => COMPLETE); // Bin for PROCESSING to COMPLETE transition
-    }
-
-    completion_status_coverage: coverpoint transaction_done { // Coverpoint for 'transaction_done' signal
-      bins normal_completion = (1'b1); // Bin for 'transaction_done' being 1 (normal completion)
-      bins timeout_completion = (1'b0); // Bin for 'transaction_done' being 0 (timeout or incomplete)
-    }
-
-    // Cross-coverage: Analyze combinations of 'start_state_coverage' and 'completion_status_coverage'
-    state_completion_cross_coverage: cross start_state_coverage, completion_status_coverage;
-  endgroup : protocol_coverage_group
-
-  protocol_coverage_group protocol_coverage_instance = new(); // Instantiate the covergroup
-
-  always @(posedge clk) begin
-    if (start_transaction) begin
-      protocol_state <= PROCESSING;
-    end else if (transaction_done) begin
-      protocol_state <= COMPLETE;
-    end else begin
-      protocol_state <= IDLE;
+  initial begin
+    file_descriptor = $fopen("input_data.txt", "r"); // Open "input_data.txt" in read mode
+    if (file_descriptor == 0) begin
+      $error("Error: Could not open file 'input_data.txt' for reading.");
+      $finish; // Terminate simulation if file opening fails
     end
+
+    $display("--- Reading lines from file 'input_data.txt' ---");
+    while ($fgets(line_of_text, file_descriptor)) begin // Read line by line
+      $display("[Line Read] %s", line_of_text); // Display each line read
+    end
+
+    $display("--- End of file reached ---");
+    $fclose(file_descriptor); // Close the file
+  end
+endmodule
+```
+
+### Formatted Reading: `$fscanf`
+
+`$fscanf` reads formatted data from a file, similar to the `fscanf` function in C. It uses format specifiers (like `%d`, `%h`, `%s`, `%b`, `%f`) to parse data according to a specified format string. This is useful for reading structured data files.
+
+**Syntax:**
+
+```systemverilog
+int items_read;
+<variable_declarations>; // Variables to store read values
+items_read = $fscanf(file_descriptor, "<format_string>", <variable1>, <variable2>, ...);
+```
+
+**Return Value:**
+
+-   Returns the **number of input items successfully matched and assigned** to the provided variables.
+-   Returns a value less than the number of variables if there is a format mismatch or EOF is reached before all expected items are read.
+-   Returns `0` when input is present but no conversion matches. Returns `-1` when EOF is encountered before any item is matched.
+
+**Example: Reading Formatted Integer Values from a File**
+
+```systemverilog
+module formatted_data_reader;
+  int file_descriptor;
+  integer read_value; // Variable to store the integer value read
+
+  initial begin
+    file_descriptor = $fopen("integer_values.txt", "r"); // Open "integer_values.txt" in read mode
+    if (file_descriptor == 0) $fatal(1, "Fatal Error: File 'integer_values.txt' could not be opened.");
+
+    $display("--- Reading integer values from file 'integer_values.txt' ---");
+    while ($fscanf(file_descriptor, "%d", read_value) == 1) begin // Read integers, one at a time
+      $display("Value Read: %0d", read_value); // Display each integer value read
+    end
+
+    $display("--- Finished reading integer values ---");
+    $fclose(file_descriptor); // Close the file
+  end
+endmodule
+```
+
+**Best Practices for File Reading:**
+
+-   **Always Check `$fopen` Return Value**: Ensure the file is opened successfully before proceeding with read operations. A return value of `0` indicates failure.
+-   **Use `$fgets` Return Value for Loop Control**:  The return value of `$fgets` is the most reliable way to control loops when reading line by line. Avoid using `$feof` in loops controlled by `$fgets` as it can lead to reading an extra empty line after EOF.
+-   **Validate `$fscanf` Return Value**: Check the return value of `$fscanf` to verify that the expected number of items were successfully parsed and read according to the format string. This is crucial for error detection and data integrity.
+
+## Writing Data to Files
+
+SystemVerilog offers several system functions for writing data to files, providing flexibility in formatting and output control.
+
+### Basic Writing Functions: `$fwrite`, `$fdisplay`, and `$fstrobe`
+
+These functions are used to write data to files pointed to by a file descriptor. They are similar to `$fwrite`, `$display`, and `$strobe` system tasks, but direct their output to a file instead of the standard output.
+
+**Syntax:**
+
+```systemverilog
+$fwrite(file_descriptor, "<format_string>", <arguments>); // No automatic newline
+$fdisplay(file_descriptor, "<format_string>", <arguments>); // Automatic newline after each call
+$fstrobe(file_descriptor, "<format_string>", <arguments>); // Automatic newline, postponed execution
+```
+
+**Key Differences and Use Cases:**
+
+| Function    | Newline Character | Formatting Support | Execution Timing          | Typical Use Case                                     |
+| :---------- | :---------------- | :----------------- | :------------------------ | :--------------------------------------------------- |
+| `$fwrite`   | **No**            | Yes (format specifiers) | Immediate execution       | Writing structured data, binary data, partial lines. |
+| `$fdisplay`  | **Yes**           | Yes (full formatting) | Immediate execution       | Human-readable logging, general output.              |
+| `$fstrobe`  | **Yes**           | Yes (full formatting) | **Postponed** in the postponed region | Recording final values at the end of a time step.     |
+
+**Example: Writing Simulation Information to a Log File**
+
+```systemverilog
+module file_writer;
+  int log_file_descriptor;
+  timeunit 1ns;
+  timeprecision 1ps;
+
+  initial begin
+    log_file_descriptor = $fopen("simulation_log.txt", "w"); // Open "simulation_log.txt" in write mode
+    if (log_file_descriptor == 0) begin
+      $error("Error: Could not create log file 'simulation_log.txt'.");
+      return; // Exit initial block if file creation fails
+    end
+
+    // Using $fwrite (no newline - for writing parts of a line or structured data)
+    $fwrite(log_file_descriptor, "--- Simulation Start --- Time: %0t", $time); // No newline here
+
+    // Using $fdisplay (automatic newline - for general logging messages)
+    $fdisplay(log_file_descriptor, "Configuration: Mode = %s, Speed = %0d", "Fast", 100); // Newline added
+
+    // Using $fstrobe (postponed newline - for recording values at the end of time step)
+    #10ns; // Advance simulation time
+    $fstrobe(log_file_descriptor, "[%0t] Signal value at end of time step: %b", $time, 1'b1); // Newline, value at end of timestep
+
+    $fclose(log_file_descriptor); // Close the log file
+  end
+endmodule
+```
+
+### Writing Binary Data
+
+To write binary data to a file, you should open the file in a binary write mode (e.g., `"wb"`, `"w+b"`, `"ab"`).  You can then use `$fwrite` with the `%c` format specifier to write byte-by-byte binary data.
+
+**Example: Writing and Reading Binary Data**
+
+```systemverilog
+module binary_file_operations;
+  int binary_file_descriptor;
+  int bytes_read;
+  byte binary_data[]; // Dynamic array of bytes
+
+  initial begin
+    // 1. Write Binary Data to File
+    binary_file_descriptor = $fopen("binary_data.bin", "wb"); // Open "binary_data.bin" in binary write mode
+    if (binary_file_descriptor == 0) $fatal(1, "Binary file open error for writing.");
+
+    binary_data = '{8'hDE, 8'hAD, 8'hBE, 8'hEF}; // Initialize byte array with binary values
+    $display("--- Writing Binary Data to 'binary_data.bin' ---");
+    foreach (binary_data[i]) $fwrite(binary_file_descriptor, "%c", binary_data[i]); // Write each byte in binary format
+    $fclose(binary_file_descriptor); // Close the binary write file
+
+    // 2. Read Binary Data from File
+    binary_file_descriptor = $fopen("binary_data.bin", "rb"); // Open "binary_data.bin" in binary read mode
+    if (binary_file_descriptor == 0) $fatal(1, "Binary file open error for reading.");
+
+    $display("--- Reading Binary Data from 'binary_data.bin' ---");
+    binary_data = new[4]; // Allocate memory for reading 4 bytes
+    bytes_read = $fread(binary_data, binary_file_descriptor); // Read raw bytes into the array
+    if (bytes_read != binary_data.size())
+      $error("Expected %0d bytes but read %0d.", binary_data.size(), bytes_read);
+    $fclose(binary_file_descriptor); // Close the binary read file
+
+    // 3. Display Read Binary Data (as hex)
+    $display("--- Displaying Read Binary Data (Hexadecimal) ---");
+    foreach (binary_data[i]) $display("Byte[%0d]: %h", i, binary_data[i]); // Display each byte in hex format
+  end
+endmodule
+```
+
+## Advanced File Output: Multi-Channel Output
+
+SystemVerilog allows writing to multiple output channels simultaneously using a bitwise OR combination of file descriptors. In the standard file-I/O convention, the descriptor `32'h8000_0000` (often written `1 << 31`) represents standard output (the console). Treat this value as a simulator-defined convention and verify it in the simulator documentation.
+
+**Example: Writing to Both Log File and Console**
+
+```systemverilog
+module multi_channel_logger;
+  int log_file_descriptor, console_output_channel;
+  int multi_channel_descriptor;
+
+  initial begin
+    log_file_descriptor = $fopen("simulation_activity.log", "w"); // Open log file for writing
+    console_output_channel = 1 << 31; // File descriptor for standard output (console)
+
+    if (log_file_descriptor == 0) $fatal(1, "Log file creation error.");
+
+    // Create a multi-channel file descriptor by bitwise ORing log file and console descriptors
+    multi_channel_descriptor = log_file_descriptor | console_output_channel;
+
+    // Write to both the log file AND the console simultaneously
+    $fwrite(multi_channel_descriptor, "--- System Initialization Message ---\n");
+    $fdisplay(multi_channel_descriptor, "Timestamp: %0t, System State: Initialized", $time);
+
+    $fclose(log_file_descriptor); // Close the log file (console descriptor doesn't need closing)
+  end
+endmodule
+```
+
+## Comprehensive Function Reference Table
+
+| Function        | Description                                                                 | Return Value                  | Notes                                                                 |
+| :-------------- | :-------------------------------------------------------------------------- | :---------------------------- | :-------------------------------------------------------------------- |
+| `$fopen("<filename>", "<mode>")` | Opens a file with specified mode, returns file descriptor or 0 on error | File descriptor (int) or 0    | Modes: "r", "w", "a", "r+", "w+", "rb", "wb", "ab", "r+b", "w+b"     |
+| `$fclose(file_descriptor)`     | Closes an opened file, releasing resources                        | None                          | Always close files after use.                                         |
+| `$fgets(string_var, file_descriptor)`     | Reads a line of text into `string_var` until newline or EOF     | Number of characters read, or 0 if none    | Use return value for loop control.                                  |
+| `$fscanf(file_descriptor, "<format>", <vars>)`    | Reads formatted input from file according to `<format>` string     | Number of items matched (int) | Check return value for parsing errors.                               |
+| `$fread(memory_array, file_descriptor)`     | Reads binary data from file into `memory_array`                         | Number of bytes read (int)    | Reads until array is full or EOF.                                    |
+| `$fwrite(file_descriptor, "<format>", <args>)`    | Writes formatted data to file without automatic newline              | No portable status return    | Use for structured output, binary data.                               |
+| `$fdisplay(file_descriptor, "<format>", <args>)`   | Writes formatted data to file with automatic newline                 | No portable status return    | Use for human-readable logs, general output.                        |
+| `$fstrobe(file_descriptor, "<format>", <args>)`    | Writes formatted data with newline in the postponed region              | No portable status return    | Use for recording final values at time step end.                     |
+| `$feof(file_descriptor)`       | Checks for end-of-file condition on a file                          | 1 (EOF), 0 (not EOF)          | Less reliable for loop control with `$fgets`.                         |
+| `$ferror(file_descriptor, error_string)`     | Retrieves file error status and a diagnostic message                     | Error code (int)              | Useful for detailed error diagnostics after file operations.        |
+
+## Robust Error Handling Techniques
+
+Error handling is crucial for reliable file operations. Always check for potential errors and implement appropriate error handling mechanisms.
+
+### Comprehensive File Operation Error Checking
+
+```systemverilog
+module safe_file_writer;
+  int file_descriptor;
+  int error_code;
+  string error_message;
+
+  initial begin
+    file_descriptor = $fopen("important_data.dat", "a"); // Open in append mode
+    if (file_descriptor === 0) begin // Check for file open failure (using === for 4-state comparison)
+      $error("Fatal File Open Error: Could not open 'important_data.dat' for appending.");
+      $fatal(1, "Simulation terminated due to file error."); // Terminate simulation as critical file operation failed
+    end else begin
+      $display("Successfully opened 'important_data.dat' for appending.");
+    end
+
+    // Attempt a file write operation. Output tasks have no portable status return.
+    $fdisplay(file_descriptor, "Critical data entry at time %0t", $time);
+    error_code = $ferror(file_descriptor, error_message);
+    if (error_code != 0) begin
+      $error("File Write Error: Problem writing to 'important_data.dat'.");
+      $error("Error Code: %0d, Message: %s", error_code, error_message);
+    end else begin
+      $display("Successfully wrote data to 'important_data.dat'.");
+    end
+
+    $fclose(file_descriptor); // Close the file
+    $display("File 'important_data.dat' closed.");
+  end
+endmodule
+```
+
+**Key Error Handling Practices:**
+
+-   **Explicitly Verify `$fopen`**:  Always check if `$fopen` returns a non-zero file descriptor. Use `=== 0` for 4-state comparison to reliably detect failure.
+-   **Check Return Values of File Functions**:  For functions like `$fgets` and `$fscanf`, check their return values to ensure successful read operations and data parsing.
+-   **Utilize `$ferror` for Diagnostics**: When an error is detected, use `$ferror(file_descriptor, error_string)` to get an implementation-defined error code and diagnostic message. This can help diagnose the cause of the file operation failure.
+-   **Implement Appropriate Error Responses**:  Decide how to handle file operation errors based on the criticality of the operation. For critical operations (like opening essential configuration files or log files), use `$fatal` to terminate the simulation if errors occur. For less critical operations, use `$error` or `$warning` to report the issue and potentially implement error recovery or alternative actions.
+-   **Close Open Files in Error Scenarios**: If a file was opened successfully and a later operation fails, close it using `$fclose(file_descriptor)` to release resources. Do not treat descriptor `0` from a failed `$fopen` as an open file.
+
+## Best Practices Checklist for SystemVerilog File Operations
+
+☐ **Always Verify `$fopen` Return Values**:  Immediately after opening a file, check if the file descriptor is non-zero to confirm successful file opening.
+
+☐ **Use Appropriate File Modes**: Select the correct file mode (`"r"`, `"w"`, `"a"`, `"rb"`, `"wb"`, etc.) based on your intended file operations (read, write, append, binary, text) and the desired behavior if the file exists or not.
+
+☐ **Close Files Explicitly with `$fclose`**:  Make sure to close every file you open using `$fclose` when you are finished with file operations to release system resources and ensure data integrity.
+
+☐ **Prefer `$fdisplay` for Human-Readable Logs**: Use `$fdisplay` for writing general logging messages, simulation status updates, and human-readable output to log files due to its automatic newline feature and full formatting capabilities.
+
+☐ **Use `$fwrite` for Precise Format Control**:  Utilize `$fwrite` when you need precise control over the output format, when writing structured data without automatic newlines (e.g., CSV, data tables), or when writing binary data.
+
+☐ **Check `$fscanf` Return Values for Parsing Validation**:  Always validate the return value of `$fscanf` to ensure that the expected number of data items were successfully parsed from the file according to the format string.
+
+☐ **Utilize `$ferror` for Diagnostic Information**:  Incorporate `$ferror` to retrieve specific error codes when file operations fail. This provides valuable information for debugging and troubleshooting file-related issues.
+
+☐ **Consider File Buffering for Large Datasets**:  For very large files or performance-critical simulations, investigate file buffering techniques (if supported by your simulator) to optimize file I/O operations. However, for most verification tasks, standard file operations are sufficient.
+
+## Practical Exercises to Solidify File Operation Skills
+
+1.  **File Content Analyzer**:
+
+    -   Create a SystemVerilog module that takes a filename as a parameter.
+    -   Open the specified file in read mode (`"r"`).
+    -   Read the file line by line using `$fgets`.
+    -   For each line, count the number of characters (excluding the newline character) and the number of words (you can assume words are separated by spaces).
+    -   After reading the entire file, display the total number of lines, total characters, and total words in the file.
+    -   Implement robust error handling to handle cases where the file cannot be opened.
+
+2.  **Timestamped Simulation Activity Logger**:
+
+    -   Develop a SystemVerilog module that creates a log file named "simulation\_activity.log" in write mode (`"w"`).
+    -   Use `$fdisplay` to record timestamped events in the log file.
+    -   Implement at least three different simulation events (e.g., "Phase 1 Started", "Data Transaction Initiated", "Error Condition Detected").
+    -   For each event, use `$time` to get the current simulation time and include it in the log message in a human-readable format (e.g., `"[<time>] Event Description"`).
+    -   Demonstrate the logger by triggering these events at different simulation times using delays (`#delay`).
+
+3.  **Configuration Parameter Parser**:
+
+    -   Create a text file named "config.txt" with key-value pairs, where each line has the format: `parameter_name=value` (e.g., `CLOCK_PERIOD=10`, `DATA_WIDTH=32`, `SIMULATION_MODE=FAST`).
+    -   Develop a SystemVerilog module that reads "config.txt".
+    -   Use `$fgets` to read each line.
+    -   Parse each line to extract the `parameter_name` and `value`. You can use string manipulation functions (e.g., `$sscanf`, `$substr`, and `len()`) to split the line at the `=` character.
+    -   Store the parsed parameters in variables or parameters within your module.
+    -   Display the parsed configuration parameters and their values.
+    -   Add error handling for cases like invalid file format or file open errors.
+
+4.  **ASCII Hex to Binary File Converter**:
+
+    -   Create a text file named "hex\_data.txt" containing ASCII hexadecimal values, one value per line (e.g., `"DE"`, `"AD"`, `"BE"`, `"EF"`).
+    -   Write a SystemVerilog module that reads "hex\_data.txt".
+    -   For each line, read the ASCII hex value using `$fscanf` with the `%h` format specifier and store it as a byte.
+    -   Open a binary file named "output.bin" in binary write mode (`"wb"`).
+    -   Write the converted byte values to "output.bin" using `$fwrite` with the `%c` format specifier.
+    -   Close both files.
+    -   Optionally, add code to read back "output.bin" in binary read mode (`"rb"`) and display the read byte values to verify the conversion.
+
+5.  **Robust File Wrapper Module with Error Recovery (Conceptual)**:
+
+    -   *(Conceptual Exercise - Design Outline)* Design a SystemVerilog module that acts as a wrapper for file operations.
+    -   This module should encapsulate file opening, reading, writing, and closing operations.
+    -   Implement error handling within the wrapper module for all file operations (check `$fopen`, `$fgets`, `$fscanf`, `$fwrite` return values, use `$ferror`).
+    -   For file open errors, implement a simple error recovery mechanism, such as attempting to open the file again with a different mode or reporting a default value if a configuration file is missing but not critical.
+    -   The wrapper module should provide tasks or functions that higher-level modules can call to perform file operations without needing to directly handle low-level file operations and error checking.
+    -   *(Note: Full implementation of error recovery might be simulator-dependent and could involve more advanced techniques beyond basic SystemVerilog file I/O.)*
+
+```systemverilog
+// Sample Solution for Exercise 2: Timestamped Data Logger (Improved)
+module timestamp_data_logger;
+  int log_file_descriptor;
+  timeunit 1ns / 1ps; // Define time unit and precision for $time
+
+  initial begin
+    log_file_descriptor = $fopen("data_log_times.log", "w"); // Open log file in write mode
+    if (log_file_descriptor == 0) $fatal(1, "Fatal Error: Log file 'data_log_times.log' creation failed.");
+
+    $display("--- Simulation Timestamped Logger Started ---");
+
+    fork // Use fork-join to simulate concurrent events
+      begin
+        #10ns; // Wait for 10ns
+        log_activity_event("Phase 1 Completed"); // Log "Phase 1 Completed" event
+      end
+      begin
+        #25ns; // Wait for 25ns
+        log_activity_event("Phase 2 Started");   // Log "Phase 2 Started" event
+      end
+      begin
+        #35ns;
+        log_error_event("Data integrity check failed!"); // Log an error event
+      end
+    join
+
+    $display("--- Simulation Logger Finished - Check 'data_log_times.log' ---");
+    $fclose(log_file_descriptor); // Close the log file
   end
 
-  // ... (Stimulus and other design logic) ...
-
-endmodule : protocol_coverage_example
-```
-
-In this cross-coverage example:
-
--   `protocol_coverage_group` is a covergroup sampled at `posedge clk`.
--   `start_state_coverage` coverpoint tracks state transitions in `protocol_state`.
--   `completion_status_coverage` coverpoint tracks the values of `transaction_done`.
--   `state_completion_cross_coverage` is a `cross` coverpoint that analyzes the combinations of bins from `start_state_coverage` and `completion_status_coverage`. This allows you to see, for example, how often the "IDLE to BUSY" transition occurs in combination with "normal completion" vs. "timeout completion," providing insights into different protocol scenarios exercised.
-
-## Advanced Assertion Techniques: Recursion and Binding
-
-### Parameterized Properties: Defining Checks Based on Previous Occurrences
-
-SystemVerilog properties can be parameterized and can use sampled-value functions such as `$past` to refer to previous clock cycles. A property that refers to itself recursively is a more specialized construct; the example below uses a repetition operator instead because it expresses the requirement directly and is supported by more tools.
-
-**Example: Checking for a Maximum Number of Consecutive '1's in a Data Stream**
-
-```systemverilog
-module recursive_assertion_example (input logic clk, input logic data_input);
-  property consecutive_ones_limit(int max_ones);
-    @(posedge clk)
-    not (data_input[* (max_ones + 1)]); // No run may contain more than max_ones consecutive ones
-  endproperty : consecutive_ones_limit
-
-  assert property (consecutive_ones_limit(7)); // Assert that there are never more than 7 consecutive '1's
-endmodule : recursive_assertion_example
-```
-
--   `property consecutive_ones_limit(int max_ones)`: Defines a parameterized property that accepts the maximum permitted run length.
--   `data_input[* (max_ones + 1)]`: Describes a run of one-valued samples that would violate the limit; `not` rejects such a run.
--   The repetition form avoids maintaining a mutable local counter. A counter-based or genuinely recursive formulation can be useful for more complex patterns, but it should be introduced only when the requirement cannot be expressed directly with SVA operators.
-
-### Assertion Bindings: Applying Assertions Externally
-
-SystemVerilog's `bind` construct allows you to **externally bind** assertions to modules or instances *without modifying the original RTL code*. This is extremely useful for:
-
--   **Adding assertions to third-party IP or legacy code** where you cannot or do not want to modify the source.
--   **Creating separate verification modules** that contain assertions for a specific module, keeping assertions organized and modular.
--   **Applying different sets of assertions** to the same design for different verification scenarios.
-
-**Example: Binding Assertions to a FIFO Module Externally**
-
-```systemverilog
-// 1. FIFO Module (Assume this is pre-existing IP you cannot modify)
-module fifo #(parameter DEPTH = 8) (
-  input logic clk, rst_n, wr_en, rd_en,
-  input logic [7:0] data_in,
-  output logic [7:0] data_out,
-  output logic full, empty
-  // ... (FIFO implementation - not shown for brevity) ...
-);
-endmodule : fifo
-
-// 2. Separate Assertion Module for FIFO
-module fifo_assertions #(parameter DEPTH_ASSERT = 8) (
-  input logic clk,
-  input logic rst_n,
-  input logic wr_en,
-  input logic full
-); // Signals sampled by the assertion checker
-
-  property fifo_overflow_check; // Property to check for FIFO overflow
-    @(posedge clk)
-    disable iff (!rst_n)
-    !(wr_en && full); // Condition: a write must not be accepted while FIFO is full
-  endproperty : fifo_overflow_check
-
-  assert property (fifo_overflow_check) // Assertion for overflow check
-    else $error("FIFO Overflow detected! Write when FIFO is full at Time = %0t", $time);
-
-  // ... (More FIFO assertions can be added here) ...
-
-endmodule : fifo_assertions
-
-// 3. Interface to connect assertions to FIFO signals
-interface fifo_if (
-  input logic clk, rst_n, wr_en, rd_en, full, empty,
-  input logic [7:0] data_in, data_out
-);
-  modport tb (input clk, rst_n, wr_en, rd_en, full, empty, data_in, data_out);
-  modport dut (input clk, rst_n, wr_en, rd_en, full, empty, data_in, data_out);
-endinterface : fifo_if
-
-// 4. Top-Level Module Instantiating FIFO and Binding Assertions
-module top_module;
-  logic clk_top, rst_n_top, wr_en_top, rd_en_top, full_top, empty_top;
-  logic [7:0] data_in_top, data_out_top;
-
-  fifo_if fifo_interface (clk_top, rst_n_top, wr_en_top, rd_en_top, full_top, empty_top, data_in_top, data_out_top);
-
-  fifo #(.DEPTH(16)) fifo_instance ( // Instantiate FIFO
-    .clk(clk_top), .rst_n(rst_n_top), .wr_en(wr_en_top), .rd_en(rd_en_top),
-    .data_in(data_in_top), .data_out(data_out_top), .full(full_top), .empty(empty_top)
-  );
-
-  bind fifo fifo_instance fifo_assertions #(.DEPTH_ASSERT(16)) fifo_checks ( // **BIND ASSERTIONS TO FIFO INSTANCE**
-    .clk(clk), .rst_n(rst_n), .wr_en(wr_en), .full(full)
-  );
-
-  // ... (Testbench stimulus and clock generation) ...
-
-endmodule : top_module
-```
-
--   `bind fifo fifo_instance fifo_assertions #(.DEPTH_ASSERT(16)) fifo_checks (fifo_interface.dut);`: This `bind` statement does the following:
-    -   `bind fifo fifo_instance`: Targets the instance named `fifo_instance` of module type `fifo` in the `top_module`.
-    -   `fifo_assertions #(.DEPTH_ASSERT(16))`: Instantiates the `fifo_assertions` module, parameterizing it with `DEPTH_ASSERT = 16`.
-    -   `fifo_checks (...)`: Instantiates the checker as `fifo_checks` and connects signals in the targeted FIFO scope to its checker ports. An interface such as `fifo_if` can also be used when the checker is designed with an interface port, but the direct signal connections shown here make the binding scope explicit.
-
-## Debugging Methodologies for SystemVerilog Assertions
-
-When assertions fail, effective debugging is crucial. SystemVerilog provides several features to aid in assertion debugging:
-
-### Assertion Control System Tasks: `$asserton`, `$assertoff`, `$assertkill`, `$assertvacuouson`, and `$assertvacuousoff`
-
-These system tasks provide runtime control over assertion behavior, useful for debugging and focused verification:
-
--   **`$assertoff(levels, [hierarchy_name])`**: Disables assertions. `levels` selects assertion-control levels defined by the language or simulator; it is not a severity selector. `hierarchy_name` optionally specifies a hierarchical scope to disable assertions within.
--   **`$asserton(levels, [hierarchy_name])`**: Enables assertions that were previously disabled.
--   **`$assertkill(levels, [hierarchy_name])`**: Terminates currently active assertion attempts in the selected scope. It does not permanently disable future attempts.
--   **`$assertvacuouson(levels, [hierarchy_name])`** and **`$assertvacuousoff(levels, [hierarchy_name])`**: Enable or disable reporting of vacuous successes, where supported by the simulator. Vacuity occurs when an implication's antecedent never becomes true, making the property pass without checking its consequent. Verify exact argument support in the simulator documentation.
-
-**Example: Disabling and Enabling Assertions During Simulation**
-
-```systemverilog
-initial begin
-  // Initially disable all assertions within the 'top.dut.arbiter' hierarchy
-  $assertoff(0, "top.dut.arbiter");
-
-  // ... (Simulation initialization and reset sequence) ...
-
-  // Enable assertions within 'top.dut.arbiter' after reset is de-asserted
-  wait (reset_signal == 1'b0); // Wait for reset to become inactive
-  $asserton(0, "top.dut.arbiter");
-
-  // ... (Continue simulation with assertions enabled) ...
-end
-```
-
-### Waveform Markers and `$info` for Debugging Context
-
--   **`$info` in Assertion Action Blocks**: Use `$info` severity within assertion action blocks (both success and failure blocks) to print messages, display signal values, and provide context when an assertion is evaluated or triggers. This helps trace assertion execution and understand the design state around assertion events.
--   **Waveform Markers**: Many simulators allow you to configure assertions to generate waveform markers or annotations when they are evaluated or when they fail. These markers visually highlight assertion activity in waveform viewers, making it easier to correlate assertion behavior with signal waveforms and debug temporal issues.
-
-**Example: Using `$info` to Add Debugging Context to Assertions**
-
-```systemverilog
-property memory_write_acknowledgement_check;
-  @(posedge clk)
-  write_enable |-> ##[1:2] ( // Write enable followed by acknowledgement within 1-2 cycles
-    acknowledge_signal,
-    $info("INFO: Write operation acknowledged at Time = %0t, Address = %h", $time, current_address) // $info on success
-  );
-endproperty : memory_write_acknowledgement_check
-
-assert property (memory_write_acknowledgement_check)
-  else $error("ERROR: Memory write acknowledgement timeout! Write request at Time = %0t, Address = %h", $time, current_address); // $error on failure
-```
-
-## Best Practices Checklist for Effective SystemVerilog Assertion Usage
-
-☐ **Use Named Properties and Sequences for Complex Assertions**: For any assertion more complex than a simple immediate check, define named `property` and `sequence` blocks. This improves readability, reusability, and maintainability of assertions.
-
-☐ **Synchronize Assertions with Design Clock Domains**: Ensure that concurrent assertions are properly clocked and synchronized with the relevant clock domains in your design using `@(posedge clk)` or `default clocking` blocks. Incorrect clocking is a common source of assertion errors.
-
-☐ **Include `disable iff (reset_condition)` for Reset Awareness**: Make assertions reset-aware by using the `disable iff (reset_condition)` clause, especially for sequential assertions. This prevents assertions from firing spuriously during reset and makes them more relevant to functional verification.
-
-☐ **Avoid Combinatorial Loops in Assertion Expressions**: Be careful to avoid creating combinatorial loops when writing assertion expressions, especially immediate assertions in `always_comb` blocks. Ensure that assertion expressions are sensitive to inputs and do not create unintended feedback paths.
-
-☐ **Use Coverage Properties to Track Scenario Execution**: Actively use `cover property` for temporal scenarios and covergroups for event/value coverage. Regularly analyze coverage reports to guide testbench development and improve verification completeness.
-
-☐ **Parameterize Assertions for Reuse and Configurability**:  Parameterize assertions (both immediate and concurrent) to make them reusable across different modules, instances, or configurations. This promotes assertion IP reuse and reduces redundancy.
-
-☐ **Combine Assertions with Functional Coverage Points**: Integrate assertion coverage with traditional functional coverage. Use assertions to verify specific functional properties and use functional coverage to measure the overall coverage of design features and functionalities.
-
-☐ **Document Assertion Purpose Clearly Using Comments**:  Document each assertion with clear and concise comments explaining the design property being checked, the intended behavior, and any relevant context. Good documentation is essential for assertion maintainability and understanding.
-
-☐ **Use Severity Levels Appropriately to Control Simulation Response**:  Choose appropriate severity levels (`$fatal`, `$error`, `$warning`, `$info`) based on the criticality of the property being asserted. Use `$fatal` for safety-critical violations, `$error` for functional errors, and `$warning` for potential issues requiring review.
-
-☐ **Verify Assertion Activation and Coverage in Simulation Reports**: Regularly review simulation reports and assertion coverage reports to ensure that assertions are being activated, triggered, and contributing to coverage metrics. Inactive or trivially passing assertions provide no verification value.
-
-## Practical Exercises to Master SystemVerilog Assertions
-
-### 1. Packet Protocol Assertion Suite
-
-Create a SystemVerilog module `packet_protocol_checker` with concurrent assertions to verify a simple packet protocol. Assume the protocol has the following signals:
-
--   `clk`: Clock signal
--   `rst_n`: Active-low reset
--   `start_bit`: Indicates the start of a packet (1 clock cycle pulse)
--   `data [7:0]`: 8-bit data payload
--   `parity_bit`: Even parity bit for the data
--   `stop_bit`: Indicates the end of a packet (1 clock cycle pulse)
-
-Implement concurrent assertions to check the following:
-
--   **Start Bit Detection**:  Assert that whenever `start_bit` is asserted, it is asserted for exactly one clock cycle.
--   **8-bit Data Transfer**: After the `start_bit`, assert that 8 clock cycles of data transfer follow immediately.
--   **Even Parity Check**:  Assert that the `parity_bit` is correct for the 8-bit `data` (even parity).
--   **Stop Bit Verification**: After the 8 data bits and parity bit, assert that the `stop_bit` is asserted for exactly one clock cycle.
--   **No Overlap**: Assert that `start_bit`, `data`, `parity_bit`, and `stop_bit` are not asserted simultaneously (mutually exclusive in time, except for the intended sequence).
-
-```systemverilog
-module packet_protocol_checker(
-  input logic clk,
-  input logic rst_n,
-  input logic start_bit,
-  input logic [7:0] data,
-  input logic parity_bit,
-  input logic stop_bit
-);
-  default clocking packet_clk_block @(posedge clk);
-  endclocking
-
-  // Assertions for Packet Protocol Verification (Implement here)
-
-endmodule : packet_protocol_checker
-```
-
-### 2. UART Controller State Machine Coverage
-
-Define coverage points for a simplified UART (Universal Asynchronous Receiver/Transmitter) controller state machine. Assume the UART has the following states (represented by an `enum`): `IDLE`, `START_BIT_DETECT`, `DATA_RECEIVE`, `PARITY_CHECK`, `STOP_BIT_DETECT`, `ERROR_STATE`.
-
-Define a covergroup with coverpoints to track:
-
--   **Idle to Start State Transition**: Cover the transition from `IDLE` state to `START_BIT_DETECT` state.
--   **Data Bits Reception Coverage**: Cover the reception of all 8 data bits in the `DATA_RECEIVE` state. You can create bins for each bit position (bit 0 received, bit 1 received, ..., bit 7 received) or group them.
--   **Stop Bit Detection**: Cover the successful detection of the `STOP_BIT_DETECT` state.
--   **Error State Coverage**: Cover reaching the `ERROR_STATE` (you'll need to define conditions that lead to the `ERROR_STATE` in your UART design, e.g., parity error, framing error).
--   **Cross-Coverage**: Create cross-coverage between state transitions and error/success outcomes (e.g., cross between state transitions and whether an error occurred during data reception).
-
-### 3. Memory Access Assertion Suite
-
-Develop concurrent assertions for a simple memory controller interface. Assume the memory controller has the following signals:
-
--   `clk`: Clock
--   `rst_n`: Reset
--   `address [31:0]`: Memory address bus
--   `data_in [31:0]`: Data input bus (for writes)
--   `data_out [31:0]`: Data output bus (for reads)
--   `write_enable`: Write enable signal
--   `read_enable`: Read enable signal
--   `acknowledge`: Acknowledge signal (indicates memory operation completion)
-
-Implement concurrent assertions to check:
-
--   **Address Stability During Write/Read**: Assert that the `address` signal remains stable throughout a write or read transaction (from `write_enable`/`read_enable` assertion to `acknowledge` assertion).
--   **Data Bus Contention Check**: Assert that `data_in` and `data_out` are not driven simultaneously.
--   **Write Enable Pulse Width**: Assert that the `write_enable` pulse is asserted for at least one clock cycle.
--   **Read-After-Write Hazard Detection (Optional - Advanced)**: If applicable to your memory controller design, try to assert that a read operation to the same address immediately after a write operation returns the written data (or flags a hazard if not supported).
-
-### 4. AMBA AHB Bus Protocol Assertions (Simplified)
-
-Implement simplified concurrent assertions for key aspects of the AMBA AHB (Advanced High-Performance Bus) protocol. Focus on:
-
--   **Address Phase Validity**: Assert that during the address phase of a transfer (HSEL is asserted), signals like HADDR, HWRITE, HSIZE, HBURST, HPROT are stable and valid.
--   **Data Phase Sequencing**: Assert that after the address phase, the data phase follows, and data transfer occurs according to HWRITE (read or write) and HBURST type.
--   **Burst Mode Transitions (Simplified)**: For incrementing bursts (HBURST = INCR, INCR4, INCR8, INCR16), assert that the address (HADDR) increments correctly in each data phase of the burst.
--   **Error Response Handling**: If your AHB model includes error responses (e.g., using HRESP signal), assert that error responses are generated under specific error conditions (you'll need to define what constitutes an error condition in your simplified AHB model).
-
-These exercises provide a progressive path to learning and applying SystemVerilog Assertions, starting from basic protocol checks to more complex state machine coverage and bus protocol verification. Remember to utilize the best practices and debugging techniques discussed to create effective and robust assertion suites for your verification projects.
-
-## Comprehensive Function Reference Table for SystemVerilog Assertions
-
-| Construct                    | Description                                                                   | Example                                                                   | Notes                                                                                                                                                                                                                                                           |
-| :--------------------------- | :---------------------------------------------------------------------------- | :------------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **`sequence sequence_name; ... endsequence`** | Defines a named temporal sequence, which can be reused in properties.           | `sequence req_ack_seq; req ##1 ack; endsequence`                        | Sequences are building blocks for properties, defining temporal patterns.                                                                                                                                                                                 |
-| **`property property_name; ... endproperty`** | Defines a named assertion property, encapsulating a temporal assertion rule.    | `property req_ack_prop; @(posedge clk) req \|-> ack; endproperty`        | Properties are the core of concurrent assertions, specifying temporal relationships to be checked.                                                                                                                                                              |
-| **`assert property (property_name) [action_block] else [action_block]`** | Checks if a named property holds true during simulation.                               | `assert property (req_ack_prop) else $error("Req-Ack protocol violation!");` | The `assert` statement triggers the property check during simulation. The `else` block is executed on failure.                                                                                                                                    |
-| **`cover property (property_name) [action_block]`** | Tracks coverage of a named property. Measures how often the property holds true.       | `cover property (req_ack_prop) $info("Req-Ack sequence covered!");`       | `cover` properties are used for coverage-driven verification, measuring the extent to which design properties are exercised.                                                                                                                                 |
-| **`assume property (property_name)`** | Specifies assumptions for formal verification tools. Constraints the environment for formal proofs. | `assume property (valid_input_data);`                                    | `assume` properties are primarily used in formal verification to define constraints on inputs or environment behavior that the formal tool can use to simplify proofs.                                                                                |
-| **`$past(signal, n)`**         | Accesses the value of `signal` from `n` clock cycles ago.                     | `$past(data_bus, 2)`                                                       | Used in concurrent assertions to refer to signal values from previous clock cycles, enabling history-based checks.                                                                                                                                             |
-| **`$rose(signal)`**          | Detects a rising edge (0 to 1 transition) of `signal`.                       | `$rose(enable_signal)`                                                     | Temporal operator to detect rising edges.                                                                                                                                                                                                            |
-| **`$fell(signal)`**          | Detects a falling edge (1 to 0 transition) of `signal`.                       | `$fell(reset_n)`                                                         | Temporal operator to detect falling edges.                                                                                                                                                                                                           |
-| **`$stable(signal)`**        | Checks if `signal` remains stable (does not change value) in the current cycle. | `$stable(address_bus)`                                                    | Temporal operator to check for signal stability.                                                                                                                                                                                                      |
-| **`$countones(expression)`**   | Counts the number of '1' bits in `expression`.                                | `$countones(control_vector)`                                               | System function usable in assertion expressions to count set bits.                                                                                                                                                                                    |
-| **`$onehot(expression)`**     | Checks if exactly one bit in `expression` is '1' (one-hot encoding).           | `$onehot(state_encoding)`                                                  | System function to verify one-hot encoding.                                                                                                                                                                                                         |
-| **`$isunknown(expression)`**   | Checks if `expression` contains any X or Z (unknown or high-impedance) bits. | `$isunknown(data_bus)`                                                     | System function to detect X or Z values, often used for error or undefined state detection.                                                                                                                                                            |
-| **`disable iff (condition)`** | Conditional disable clause for properties. Active attempts are aborted and new attempts are prevented while `condition` is true. | `property p_reset_aware; @(posedge clk) disable iff (rst) ... endproperty`    | Used to make assertions reset-aware or conditionally disable them based on any boolean condition. Essential for handling reset and other exceptional conditions.                                                                                              |
-
-```systemverilog
-// Sample Solution for Exercise 1: Packet Protocol Assertions (Example - Start Bit Detection)
-module packet_protocol_checker(
-  input logic clk,
-  input logic rst_n,
-  input logic start_bit,
-  input logic [7:0] data,
-  input logic parity_bit,
-  input logic stop_bit
-);
-  default clocking packet_clk_block @(posedge clk);
-  endclocking
-
-  // Assertion 1: A sampled start bit must be low on the next clock cycle
-  property start_bit_duration_check;
-    @(posedge clk)
-    disable iff (!rst_n)
-    start_bit |=> !start_bit; // A start-bit pulse lasts for one sampled cycle
-  endproperty : start_bit_duration_check
-
-  assert property (start_bit_duration_check)
-    else $error("Start bit duration violation: Start bit asserted for more than one clock cycle!");
-
-  // ... (Implement other assertions for data transfer, parity, stop bit, no overlap) ...
-
-endmodule : packet_protocol_checker
+  // Task to log a general activity event with timestamp
+  task log_activity_event(string event_description);
+    $fdisplay(log_file_descriptor, "[%0t] ACTIVITY: %s", $time, event_description); // Log with timestamp and "ACTIVITY" prefix
+  endtask : log_activity_event
+
+  // Task to log an error event with timestamp
+  task log_error_event(string error_message);
+    $fdisplay(log_file_descriptor, "[%0t] ERROR: %s", $time, error_message); // Log with timestamp and "ERROR" prefix
+  endtask : log_error_event
+
+endmodule
 ```
 
 ##### Copyright (c) 2026 squared-studio
