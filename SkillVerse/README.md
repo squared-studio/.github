@@ -4,6 +4,8 @@
   - ### [AXI Protocol](AXI_Protocol.md)
   - ### [bash](bash.md)
   - ### [CHI Protocol](CHI_Protocol.md)
+  - ### [Electronics](Electronics.md)
+  - ### [Formal Verification](Formal_Verification.md)
   - ### [git](git.md)
   - ### [Makefile](Makefile.md)
   - ### [OBI](OBI.md)
