@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 750 240" width="750" height="240" style="background-color: #ffffff; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+  <defs>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="1" dy="2" stdDeviation="2" flood-color="#0f172a" flood-opacity="0.08" />
+    </filter>
+    <marker id="arr-blue" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#2563eb" />
+    </marker>
+    <marker id="arr-slate" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#64748b" />
+    </marker>
+    <marker id="arr-green" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#10b981" />
+    </marker>
+    <marker id="arr-red" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#ef4444" />
+    </marker>
+    <marker id="arr-purple" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#8b5cf6" />
+    </marker>
+    <marker id="arr-amber" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#f59e0b" />
+    </marker>
+  </defs>
+
+  <rect x="15" y="15" width="720" height="210" rx="12" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2"/>
+  <text x="35" y="42" font-size="14" font-weight="700" fill="#0f172a">Register-to-Register Timing Path</text>
+
+  <!-- Launch Flip-Flop -->
+  <rect x="50" y="65" width="130" height="105" rx="6" fill="#eff6ff" stroke="#3b82f6" stroke-width="2" filter="url(#shadow)"/>
+  <text x="115" y="95" font-size="12" font-weight="700" fill="#1e3a8a" text-anchor="middle">Launch FF (FF1)</text>
+  <text x="65" y="120" font-size="10" fill="#64748b">D1</text>
+  <text x="165" y="120" font-size="10" fill="#64748b">Q1</text>
+  <path d="M 50 145 L 62 153 L 50 161 Z" fill="none" stroke="#3b82f6" stroke-width="1.5"/>
+
+  <!-- Combinational Logic -->
+  <rect x="270" y="60" width="180" height="115" rx="16" fill="#f0fdf4" stroke="#10b981" stroke-width="2" filter="url(#shadow)"/>
+  <text x="360" y="100" font-size="13" font-weight="700" fill="#065f46" text-anchor="middle">Combinational Logic</text>
+  <text x="360" y="120" font-size="11" font-weight="700" fill="#047857" text-anchor="middle">Delay: t_comb</text>
+
+  <!-- Capture Flip-Flop -->
+  <rect x="540" y="65" width="130" height="105" rx="6" fill="#eff6ff" stroke="#3b82f6" stroke-width="2" filter="url(#shadow)"/>
+  <text x="605" y="95" font-size="12" font-weight="700" fill="#1e3a8a" text-anchor="middle">Capture FF (FF2)</text>
+  <text x="555" y="120" font-size="10" fill="#64748b">D2</text>
+  <text x="655" y="120" font-size="10" fill="#64748b">Q2</text>
+  <path d="M 540 145 L 552 153 L 540 161 Z" fill="none" stroke="#3b82f6" stroke-width="1.5"/>
+
+  <line x1="180" y1="118" x2="266" y2="118" stroke="#2563eb" stroke-width="2" marker-end="url(#arr-blue)"/>
+  <text x="223" y="110" font-size="10" font-weight="600" fill="#2563eb" text-anchor="middle">t_cq</text>
+
+  <line x1="450" y1="118" x2="536" y2="118" stroke="#10b981" stroke-width="2" marker-end="url(#arr-green)"/>
+  <text x="495" y="110" font-size="10" font-weight="600" fill="#059669" text-anchor="middle">t_setup / t_hold</text>
+
+  <!-- Clock tree with skew -->
+  <polyline points="115,200 115,153 50,153" fill="none" stroke="#8b5cf6" stroke-width="2" marker-end="url(#arr-purple)"/>
+  <polyline points="605,200 605,153 540,153" fill="none" stroke="#8b5cf6" stroke-width="2" marker-end="url(#arr-purple)"/>
+  <line x1="30" y1="200" x2="680" y2="200" stroke="#8b5cf6" stroke-width="2"/>
+  <text x="360" y="218" font-size="11" font-weight="700" fill="#6d28d9" text-anchor="middle">Clock Network (Period T_clk | Skew t_skew = t_clk2 - t_clk1)</text>
+
+</svg>

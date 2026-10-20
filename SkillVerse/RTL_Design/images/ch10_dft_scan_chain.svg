@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 200" width="720" height="200" style="background-color: #ffffff; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+  <defs>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="1" dy="2" stdDeviation="2" flood-color="#0f172a" flood-opacity="0.08" />
+    </filter>
+    <marker id="arr-blue" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#2563eb" />
+    </marker>
+    <marker id="arr-green" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#10b981" />
+    </marker>
+    <marker id="arr-red" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#ef4444" />
+    </marker>
+    <marker id="arr-purple" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#8b5cf6" />
+    </marker>
+    <marker id="arr-amber" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#f59e0b" />
+    </marker>
+  </defs>
+
+  <rect x="15" y="15" width="690" height="170" rx="12" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2"/>
+  <text x="35" y="40" font-size="14" font-weight="700" fill="#0f172a">Design for Testability (DFT): Scan Chain Architecture</text>
+
+  <text x="35" y="95" font-size="11" font-weight="700" fill="#2563eb">Scan In (SI)</text>
+  <line x1="105" y1="90" x2="144" y2="90" stroke="#2563eb" stroke-width="2" marker-end="url(#arr-blue)"/>
+
+  <rect x="150" y="60" width="115" height="75" rx="6" fill="#eff6ff" stroke="#3b82f6" stroke-width="2" filter="url(#shadow)"/>
+  <text x="207" y="88" font-size="11" font-weight="700" fill="#1e3a8a" text-anchor="middle">Scan DFF 1</text>
+  <text x="207" y="108" font-size="9" fill="#2563eb" text-anchor="middle">Muxed D-input</text>
+
+  <line x1="265" y1="90" x2="314" y2="90" stroke="#2563eb" stroke-width="2" marker-end="url(#arr-blue)"/>
+
+  <rect x="320" y="60" width="115" height="75" rx="6" fill="#eff6ff" stroke="#3b82f6" stroke-width="2" filter="url(#shadow)"/>
+  <text x="377" y="88" font-size="11" font-weight="700" fill="#1e3a8a" text-anchor="middle">Scan DFF 2</text>
+  <text x="377" y="108" font-size="9" fill="#2563eb" text-anchor="middle">Muxed D-input</text>
+
+  <line x1="435" y1="90" x2="484" y2="90" stroke="#2563eb" stroke-width="2" marker-end="url(#arr-blue)"/>
+
+  <rect x="490" y="60" width="115" height="75" rx="6" fill="#eff6ff" stroke="#3b82f6" stroke-width="2" filter="url(#shadow)"/>
+  <text x="547" y="88" font-size="11" font-weight="700" fill="#1e3a8a" text-anchor="middle">Scan DFF 3</text>
+  <text x="547" y="108" font-size="9" fill="#2563eb" text-anchor="middle">Muxed D-input</text>
+
+  <line x1="605" y1="90" x2="644" y2="90" stroke="#2563eb" stroke-width="2" marker-end="url(#arr-blue)"/>
+  <text x="650" y="95" font-size="11" font-weight="700" fill="#2563eb">Scan Out</text>
+
+  <!-- Scan Enable -->
+  <line x1="40" y1="160" x2="550" y2="160" stroke="#f59e0b" stroke-width="2"/>
+  <polyline points="207,160 207,135" fill="none" stroke="#f59e0b" stroke-width="1.5" marker-end="url(#arr-amber)"/>
+  <polyline points="377,160 377,135" fill="none" stroke="#f59e0b" stroke-width="1.5" marker-end="url(#arr-amber)"/>
+  <polyline points="547,160 547,135" fill="none" stroke="#f59e0b" stroke-width="1.5" marker-end="url(#arr-amber)"/>
+  <text x="560" y="164" font-size="11" font-weight="700" fill="#b45309">Scan Enable (SE: 1=Shift, 0=Capture)</text>
+
+</svg>

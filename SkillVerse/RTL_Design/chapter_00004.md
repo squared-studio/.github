@@ -1,150 +1,190 @@
 # Clocking and Reset
 
-This chapter delves into the critical aspects of clocking and reset in synchronous digital designs. Proper clock and reset design are fundamental to ensuring the correct and reliable operation of digital hardware. This chapter covers clock domains, synchronization, reset strategies, and best practices for robust clock and reset implementation.
+Proper clock and reset design is the bedrock of stable, reliable digital hardware. Errors in clock distribution, clock domain crossings (CDC), or reset assertion/de-assertion cause unpredictable silicon bugs, intermittent field failures, and metastability that simulation often misses.
 
-*   **Clock Domains and Clock Domain Crossing (CDC) Issues:**
-    *   **Clock Domain Definition:**
-        - A clock domain is a region of a digital circuit where all sequential logic elements (flip-flops, registers) are clocked by the same clock signal.
-        - Signals within a clock domain are considered synchronous to that clock.
-    *   **Multiple Clock Domains:**
-        - Modern SoCs and FPGAs often contain multiple clock domains operating at different frequencies or with different clock sources. This is done for power optimization, performance requirements, and integration of different functional blocks.
-    *   **Clock Domain Crossing (CDC):**
-        - Definition: When a signal originates in one clock domain and is used in another clock domain, it is called a clock domain crossing (CDC).
-        - Asynchronous Signal Transfer: Signals crossing clock domains are asynchronous with respect to the destination clock domain.
-        - Metastability Problem: Direct transfer of asynchronous signals between clock domains can lead to metastability in flip-flops in the destination domain.
-        - Reliability Issues: Metastability can cause unpredictable behavior, data corruption, and system failures.
-    *   **CDC Issues and Challenges:**
-        - **Metastability:** Flip-flops can enter a metastable state when setup or hold time violations occur due to asynchronous inputs.
-        - **Data Corruption:**  Incorrect data sampling in the destination clock domain due to metastability or timing skew.
-        - **Synchronization Failure:**  Loss of data integrity when transferring multi-bit signals across clock domains if not synchronized properly.
-        - **Verification Complexity:** CDC paths require careful analysis and verification to ensure reliable operation.
+## Learning Goals
 
-*   **Synchronous Design Principles:**
-    *   **Clocked Sequential Logic:**  Synchronous design relies on clock signals to control the operation of sequential logic. All registers and flip-flops are clocked by a common clock or clocks derived from a common source within a clock domain.
-    *   **Clock Edges as Synchronization Points:** Data transfers and state updates occur at specific clock edges (e.g., rising edge).
-    *   **Predictable Timing:** Synchronous designs are easier to analyze for timing because signal transitions are synchronized to the clock.
-    *   **Timing Constraints:**  Synchronous design relies on meeting setup and hold time constraints for flip-flops to ensure reliable data capture.
-    *   **Advantages of Synchronous Design:**
-        - Simpler design and verification compared to asynchronous designs.
-        - Easier timing analysis and closure.
-        - Widely supported by EDA tools and FPGA/ASIC technologies.
-    *   **Limitations:**
-        - Clock distribution complexity in large designs.
-        - Power consumption due to clock network switching.
-        - Performance limitations due to clock skew and jitter.
+After completing this chapter, you should be able to:
+- Define clock domains and explain why asynchronous signal transfers cause metastability.
+- Calculate and understand Mean Time Between Failures (MTBF) and how 2-Flip-Flop synchronizers mitigate metastability for single-bit control signals.
+- Explain why multi-bit buses cannot be synchronized using independent flip-flop synchronizers and identify safe alternatives (handshakes, FIFOs).
+- Compare synchronous and asynchronous resets, analyzing their impact on timing closure, glitch susceptibility, and silicon area.
+- Implement an **Asynchronous Assert, Synchronous De-assert Reset Synchronizer** (Reset Bridge) in synthesizable SystemVerilog.
 
-*   **Clock Generation and Distribution:**
-    *   **Clock Sources:**
-        - Crystal Oscillators:  Precise and stable frequency sources.
-        - PLLs (Phase-Locked Loops):  Used to generate multiple clock frequencies from a reference clock, and for clock jitter reduction.
-        - Clock Dividers/Multipliers:  Logic circuits to derive different clock frequencies.
-    *   **Clock Distribution Network:**
-        - Clock Tree:  A network of buffers and wires designed to distribute the clock signal to all sequential elements with minimal skew and delay.
-        - Clock Buffering:  Using buffers to drive the clock signal and maintain signal integrity across the distribution network.
-        - Clock Skew:  The difference in arrival times of the clock signal at different flip-flops. Minimizing clock skew is crucial for high-speed synchronous designs.
-        - Clock Jitter:  Short-term variations in the clock period, which can impact timing margins.
-    *   **Clock Domain Definition in RTL:**
-        - Typically, clock domains are implicitly defined by the clock signal used to clock `always_ff` blocks in different parts of the design.
-        - For CDC analysis, it's important to identify and document the clock domains and signals crossing between them.
+---
 
-*   **Reset Types: Synchronous vs. Asynchronous Reset:**
-    *   **Asynchronous Reset:**
-        - Reset Signal Behavior:  Reset signal directly affects the flip-flop's output regardless of the clock.
-        - Flip-flop with Asynchronous Reset: Most flip-flops in FPGAs/ASICs have asynchronous reset inputs.
-        - Advantages:
-            - Guaranteed reset: Reset is effective even if the clock is not running or is unstable.
-            - Faster reset assertion and release.
-        - Disadvantages:
-            - Potential for reset glitches if reset is de-asserted asynchronously to the clock.
-            - More complex timing analysis due to asynchronous paths.
-            - Can contribute to metastability issues if reset is released close to the clock edge.
-    *   **Synchronous Reset:**
-        - Reset Signal Behavior: Reset is sampled and acted upon only at the active clock edge.
-        - Reset Logic in `always_ff` Block: Reset condition is checked within the clocked `always_ff` block.
-        - Advantages:
-            - Clean reset behavior: Reset assertion and release are synchronized to the clock, avoiding glitches.
-            - Simpler timing analysis: All paths are synchronous, simplifying timing closure.
-            - Generally preferred for most designs due to timing predictability.
-        - Disadvantages:
-            - Reset is effective only when the clock is running.
-            - Reset release latency of one clock cycle.
-    *   **Choosing Reset Type:**
-        - Synchronous reset is generally recommended for most applications due to its timing advantages and predictability.
-        - Asynchronous reset might be necessary in specific cases, such as system-level reset, power-on reset, or when guaranteed reset functionality is required regardless of clock status. If asynchronous reset is used, careful synchronization of reset release is essential.
+## Clock Domains and Clock Domain Crossing (CDC)
 
-*   **Reset Strategies and Best Practices:**
-    *   **Active High vs. Active Low Reset:** Choose a consistent reset polarity (active high or active low) throughout the design. Active low reset is common in many systems.
-    *   **Reset Assertion and De-assertion:**
-        - Reset Assertion:  Reset signal should be asserted long enough to reliably reset all sequential elements.
-        - Reset De-assertion:  For asynchronous reset, ensure proper synchronization of reset release to avoid metastability. For synchronous reset, reset release is naturally synchronous to the clock.
-    *   **Power-On Reset (POR):**  Mechanism to ensure the system starts in a known state when power is applied. Often implemented using asynchronous reset.
-    *   **Global Reset Signal:**  A single, top-level reset signal that resets the entire design.
-    *   **Local Resets (Careful Use):**  Local resets within modules can be used in specific cases, but overuse can complicate reset distribution and verification.
-    *   **Reset Domain Crossing (RDC) (Less Common, but relevant in complex systems):** If reset signals cross clock domains, they also need synchronization, similar to data CDC.
+A **clock domain** is an area of a digital circuit where all sequential elements are driven by the same clock source (or clocks with a fixed, known phase relationship).
 
-*   **Metastability and Synchronization:**
-    *   **Metastability Phenomenon:**
-        - When a flip-flop's setup or hold time is violated, it can enter a metastable state, where its output is neither a clear '0' nor '1', and it may remain in this state for an unpredictable time.
-        - Probability of Metastability:  Metastability is probabilistic. The probability of metastability decreases exponentially with time.
-    *   **Synchronization for CDC:**
-        - Purpose: To reduce the probability of metastability to an acceptable level when transferring asynchronous signals between clock domains.
-        - Two-Stage Synchronizer (Common Technique):
-            - Consists of two flip-flops in series in the destination clock domain.
-            - The first flip-flop synchronizes the asynchronous input, and the second flip-flop further reduces the probability of metastability.
-            - Probability of failure is reduced to a very low level after two stages for typical clock frequencies.
-        - Synchronization Latency: Introduces a latency of at least two clock cycles in the destination domain.
-        - Handshake Protocols (for more complex data transfer): For multi-bit data or control signals, handshake protocols (e.g., request/acknowledge) are often used in conjunction with synchronizers to ensure reliable data transfer and ordering across clock domains.
-    *   **Analyzing CDC Paths:**
-        - Static CDC analysis tools are used to identify clock domain crossings in the design and verify synchronization schemes.
-        - Simulation and formal verification techniques are also used to validate CDC paths.
+In modern SoCs and FPGAs, a single chip contains dozens of clock domains running at different frequencies (e.g., PCIe at 250 MHz, DDR controller at 800 MHz, CPU at 1.5 GHz, UART at 1.8432 MHz).
+
+![Clock Domain Crossing (CDC) Metastability Hazard](images/ch4_cdc_hazard.svg)
+
+### The Metastability Phenomenon
+When an input signal changes within the narrow setup-and-hold aperture ($t_{setup} + t_{hold}$) of a flip-flop, the internal master latch can become balanced between logic `0` and logic `1`. The output voltage hovers at an indeterminate intermediate voltage for an unpredictable duration before settling randomly to `0` or `1`.
+
+If the metastable signal propagates to downstream combinational logic before settling, different receiving gates may interpret it differently (one gate sees `1`, another sees `0`), leading to catastrophic state corruption.
+
+### MTBF (Mean Time Between Failures)
+The reliability of a synchronizer is quantified by Mean Time Between Failures:
+
+$$\text{MTBF} = \frac{e^{t_r / \tau}}{T_0 \cdot f_{clk} \cdot f_{data}}$$
+
+Where:
+- $f_{clk}$ is the destination clock frequency.
+- $f_{data}$ is the toggle rate of the crossing asynchronous signal.
+- $t_r$ is the available resolving time (slack between clock edge and setup time of next stage).
+- $\tau$ and $T_0$ are physical parameters of the flip-flop silicon process.
+
+Adding a second flip-flop dramatically increases $t_r$, typically increasing MTBF from fractions of a second to **thousands of years**!
+
+---
+
+## Single-Bit Synchronization: The 2-FF Synchronizer
+
+For a single-bit, slowly changing control signal crossing between unrelated clock domains, the standard industry solution is a **Two-Flip-Flop (2-FF) Synchronizer**:
+
+![Two-Flip-Flop (2-FF) Synchronizer](images/ch4_2ff_synchronizer.svg)
+
+### Synthesizable SystemVerilog 2-FF Synchronizer
+```systemverilog
+// cdc_2ff_sync.sv - Industry-standard 2-FF Synchronizer
+(* dont_touch = "true" *) // Prevents synthesis optimization from removing FFs
+module cdc_2ff_sync #(
+    parameter bit RESET_VAL = 1'b0
+) (
+    input  logic clk_b,
+    input  logic rst_n_b,
+    input  logic async_din,
+    output logic sync_dout
+);
+    // Apply synthesis attributes to prevent merging/register retiming
+    // and place registers physically close in FPGA/ASIC layout
+    (* async_reg = "true" *) logic sync_stage1;
+    (* async_reg = "true" *) logic sync_stage2;
+
+    always_ff @(posedge clk_b or negedge rst_n_b) begin
+        if (!rst_n_b) begin
+            sync_stage1 <= RESET_VAL;
+            sync_stage2 <= RESET_VAL;
+        end else begin
+            sync_stage1 <= async_din;
+            sync_stage2 <= sync_stage1;
+        end
+    end
+
+    assign sync_dout = sync_stage2;
+
+endmodule
+```
+
+> [!CAUTION]
+> **The 2-FF synchronizer works ONLY for single-bit signals!**
+> Never use separate 2-FF synchronizers for multi-bit data buses (e.g., an 8-bit counter). Because wire delays and flip-flop sampling points vary slightly, stage 1 flip-flops will resolve intermediate skewed values (e.g., transitioning from `0111` to `1000` could be sampled as `0000`, `1111`, etc.), causing severe data corruption.
+>
+> **Multi-bit solutions:** Use Gray-code pointers (where only 1 bit changes at a time, common in Asynchronous FIFOs) or a 4-phase/2-phase Request-Acknowledge Handshake.
+
+---
+
+## Reset Strategies: Synchronous vs. Asynchronous
+
+Reset logic brings all sequential state elements to a known starting state upon power-up or system initialization.
+
+![Reset Architecture: Synchronous vs Asynchronous](images/ch4_reset_types.svg)
+
+### Detailed Comparison
+
+| Feature | Synchronous Reset | Asynchronous Reset |
+| :--- | :--- | :--- |
+| **Response Time** | Delayed until next rising clock edge | Immediate (combinational path to clear pin) |
+| **Clock Dependency** | **Requires clock to be running** | Operates even if clock is dead or unstable |
+| **Noise & Glitches** | Highly robust; glitches between edges ignored | Highly sensitive; noise glitch resets the chip |
+| **Timing Analysis** | Standard register-to-register setup/hold check | Requires **Recovery and Removal** timing checks |
+| **Silicon Area** | May require extra multiplexer logic before D-input | Dedicated asynchronous clear pin on standard cell |
+
+### Recovery and Removal Time
+Asynchronous resets have a hidden timing catch: **Reset De-assertion (Release)**!
+- **Recovery Time ($t_{rec}$):** The minimum time the reset signal must be de-asserted **before** the active clock edge.
+- **Removal Time ($t_{rem}$):** The minimum time the reset signal must remain asserted **after** the active clock edge before being released.
+
+If an asynchronous reset is de-asserted right on a clock edge, some flip-flops will come out of reset in cycle $N$ while others stay in reset until cycle $N+1$, destroying FSM synchronization!
+
+---
+
+## The Industry Standard: Asynchronous Assert, Synchronous De-assert (Reset Bridge)
+
+To achieve the best of both worlds—guaranteeing immediate reset even if clocks are stopped, while ensuring deterministic, glitch-free, synchronized reset de-assertion—industry designs use a **Reset Synchronizer**:
+
+![Reset Synchronizer Bridge](images/ch4_reset_synchronizer.svg)
+
+### How it Works:
+1. **Assertion:** When `async_rst_n_in` goes low, it immediately asserts the asynchronous reset pins of both flip-flops. `sync_rst_n_out` goes to `0` instantly, without waiting for the clock.
+2. **De-assertion:** When `async_rst_n_in` returns to `1`, the flip-flops shift `1'b1` through the chain, releasing the reset synchronously aligned to the target clock rising edge!
+
+### Synthesizable SystemVerilog Reset Synchronizer
+```systemverilog
+// rst_sync.sv - Industry Standard Reset Synchronizer
+module rst_sync (
+    input  logic clk,
+    input  logic async_rst_n_i, // Raw asynchronous reset input
+    output logic sync_rst_n_o   // Synchronized reset output for local domain
+);
+    (* async_reg = "true" *) logic rst_stage1;
+    (* async_reg = "true" *) logic rst_stage2;
+
+    always_ff @(posedge clk or negedge async_rst_n_i) begin
+        if (!async_rst_n_i) begin
+            rst_stage1 <= 1'b0; // Assert immediately on async reset
+            rst_stage2 <= 1'b0;
+        end else begin
+            rst_stage1 <= 1'b1; // Shift in 1 synchronously after reset release
+            rst_stage2 <= rst_stage1;
+        end
+    end
+
+    assign sync_rst_n_o = rst_stage2;
+
+endmodule
+```
+
+---
+
+## Clock Distribution Networks & Clock Skew
+
+In high-speed designs, distributing a clock across millions of flip-flops requires a balanced **Clock Tree (CTS)** composed of matched inverter/buffer trees (H-tree or mesh):
+
+- **Clock Skew ($t_{skew}$):** The spatial difference in arrival times of a clock edge at two different registers.
+- **Positive Skew:** Clock arrives at the capture register later than the launch register. (Helps setup time, hurts hold time).
+- **Negative Skew:** Clock arrives at the capture register earlier than the launch register. (Hurts setup time, helps hold time).
+- **Clock Jitter:** Temporal fluctuation in clock period caused by power supply noise, thermal noise, and PLL phase noise.
+
+---
 
 ## Learning Resources
 
-*   **Articles and tutorials on clocking and reset in digital design:**
-    *   **Search Query Suggestion:** Use search terms like "clocking strategies digital design," "reset design techniques," "synchronous reset vs asynchronous reset," "clock domain crossing tutorial," "metastability in digital circuits."
-    *   **Focus on Fundamentals:** Look for resources that explain the basic concepts of clocking and reset, the differences between synchronous and asynchronous reset, and the metastability problem.
+### Industry Papers & Standards
+- **"Clock Domain Crossing (CDC) Design & Verification Techniques Using SystemVerilog"** by Clifford E. Cummings (SNUG) — Essential reading for every hardware engineer.
+- **"Asynchronous & Synchronous Reset Design Techniques - Part Deux"** by Clifford E. Cummings and Don Mills.
+- **AMD Xilinx UG903:** Vivado Design Suite User Guide: Using Constraints (CDC & Timing Exceptions).
 
-*   **Application notes and white papers from FPGA vendors (Xilinx, Intel) on clocking and reset:**
-    *   **Search Query Suggestion:** Search for "Xilinx clocking guide," "Xilinx reset guidelines," "Intel FPGA clocking," "Intel FPGA reset best practices," "Xilinx CDC design," "Intel CDC guidelines."
-    *   **Vendor-Specific Recommendations:** FPGA vendors provide detailed application notes and white papers that describe recommended clocking and reset architectures, best practices for their devices, and guidelines for handling clock domain crossing. These are very valuable for practical FPGA design.
-
-*   **IEEE papers or online resources on clock domain crossing:**
-    *   **Search Query Suggestion:** Search for "clock domain crossing CDC," "CDC synchronization techniques," "metastability mitigation CDC," "formal CDC verification," "advanced CDC methods."
-    *   **Explore Advanced Techniques:** IEEE papers and more in-depth online resources delve into the complexities of CDC, advanced synchronization methods (beyond two-stage synchronizers), and formal verification approaches for CDC paths. These are useful for understanding more complex CDC scenarios and cutting-edge techniques.
+---
 
 ## Exercises
 
-*   **Design a simple module with synchronous and asynchronous reset options:**
-    *   **Module Functionality:** Choose a simple sequential module, like a counter or a shift register.
-    *   **Parameter for Reset Type:** Add a parameter to the module (e.g., `parameter RESET_TYPE = "SYNC";`) to select between synchronous and asynchronous reset.
-    *   **Conditional Reset Logic:** Use `generate` statements or `if-else` within the `always_ff` block to implement the reset logic based on the `RESET_TYPE` parameter.
-    *   **Synchronous Reset Implementation:**  Reset condition is checked within the `@(posedge clk)` `always_ff` block, and reset is effective only at the clock edge.
-    *   **Asynchronous Reset Implementation:**  Use the asynchronous reset capability of flip-flops (e.g., `always_ff @(posedge clk or posedge arst)` or `always_ff @(posedge clk or negedge arst)`).
-    *   **Testbench:** Write a testbench to verify both synchronous and asynchronous reset functionalities by changing the `RESET_TYPE` parameter.
+### Exercise 4.1: Single-Bit vs. Multi-Bit CDC Hazard
+1. Explain why sampling a 4-bit binary counter transitioning from `4'b0011` (3) to `4'b0100` (4) through 4 separate 2-FF synchronizers can result in any value from 0 to 7.
+2. What is the Gray-code representation of 3 and 4?
+3. Explain why Gray coding prevents this multi-bit sampling error.
 
-*   **Implement a basic clock domain crossing circuit (e.g., a two-stage synchronizer):**
-    *   **Two-Stage Synchronizer Module:** Create a SystemVerilog module that implements a two-stage synchronizer.
-    *   **Input and Output Ports:**  Input port for the asynchronous signal (in source clock domain), output port for the synchronized signal (in destination clock domain), and clock input for the destination clock domain.
-    *   **Implementation:** Instantiate two D flip-flops in series, clocked by the destination clock. Connect the asynchronous input to the D input of the first flip-flop, and the output of the first flip-flop to the D input of the second flip-flop. The output of the second flip-flop is the synchronized output.
-    *   **Testbench:**
-        - Create two clock signals with different frequencies (source clock and destination clock).
-        - Generate an asynchronous pulse in the source clock domain.
-        - Instantiate the synchronizer module and apply the asynchronous pulse as input.
-        - Observe the synchronized output in the destination clock domain in simulation waveforms. Verify that the pulse is reliably transferred to the destination domain, although with a latency of two destination clock cycles.
+### Exercise 4.2: Reset Synchronizer Integration
+Design a top-level module `chip_core` that accepts a global active-low push-button reset `btn_rst_n` and a 100 MHz clock `clk_100m`:
+1. Instantiate the `rst_sync` module to generate a local clean `rst_n`.
+2. Connect `rst_n` to a 16-bit up-counter.
+3. Simulate what happens when `btn_rst_n` is pulsed low asynchronously for 5 ns, and observe how `rst_n` de-asserts synchronously on the clock edge.
 
-*   **Analyze timing diagrams for different clock and reset scenarios:**
-    *   **Scenario 1: Synchronous Reset:**
-        - Sketch a timing diagram showing clock, synchronous reset signal, data input, and flip-flop output.
-        - Illustrate setup and hold time windows around the clock edge for data and reset signals.
-        - Show how the output changes synchronously with the clock edge when reset is asserted and de-asserted.
-    *   **Scenario 2: Asynchronous Reset:**
-        - Sketch a timing diagram showing clock, asynchronous reset signal, data input, and flip-flop output.
-        - Illustrate how asynchronous reset immediately forces the output to its reset value, regardless of the clock.
-        - Show the reset release timing and potential for metastability if reset release is close to the clock edge.
-    *   **Scenario 3: Clock Domain Crossing (Synchronizer):**
-        - Sketch timing diagrams for source clock, destination clock, asynchronous input signal, and the output of each stage of a two-stage synchronizer.
-        - Visualize the latency introduced by the synchronizer and how it reduces the probability of metastability.
-    *   **Analysis:** Analyze the timing diagrams to understand the behavior of synchronous and asynchronous resets, and the operation of a basic CDC synchronizer. Identify potential timing issues and how they are addressed by synchronous design principles and synchronization techniques.
+### Exercise 4.3: Pulse Synchronizer Design
+Design a **Pulse Synchronizer** circuit that takes a single-cycle pulse from a 100 MHz clock domain and reliably generates a single-cycle pulse in a slower 25 MHz clock domain:
+- Hint: Toggle a flip-flop in the source domain on every incoming pulse, pass the toggle signal through a 2-FF synchronizer into the destination domain, and use an edge detector (XOR with delayed version) in the destination domain.
 
 ##### Copyright (c) 2026 squared-studio
-

@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 200" width="700" height="200" style="background-color: #ffffff; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+  <defs>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="1" dy="2" stdDeviation="2" flood-color="#0f172a" flood-opacity="0.08" />
+    </filter>
+    <marker id="arr-blue" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#2563eb" />
+    </marker>
+    <marker id="arr-green" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#10b981" />
+    </marker>
+    <marker id="arr-red" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#ef4444" />
+    </marker>
+    <marker id="arr-purple" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#8b5cf6" />
+    </marker>
+    <marker id="arr-amber" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#f59e0b" />
+    </marker>
+  </defs>
+
+  <rect x="15" y="15" width="670" height="170" rx="12" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2"/>
+  <text x="35" y="40" font-size="14" font-weight="700" fill="#0f172a">Integrated Clock-Gating (ICG) Cell Schematic</text>
+
+  <!-- Latch -->
+  <rect x="180" y="60" width="140" height="85" rx="6" fill="#eff6ff" stroke="#3b82f6" stroke-width="2" filter="url(#shadow)"/>
+  <text x="250" y="90" font-size="12" font-weight="700" fill="#1e3a8a" text-anchor="middle">Level Latch</text>
+  <text x="250" y="110" font-size="10" fill="#2563eb" text-anchor="middle">Transparent Low (clk=0)</text>
+
+  <!-- Inputs to Latch -->
+  <text x="40" y="85" font-size="11" font-weight="600" fill="#1e293b">enable_i</text>
+  <line x1="90" y1="80" x2="174" y2="80" stroke="#2563eb" stroke-width="2" marker-end="url(#arr-blue)"/>
+
+  <!-- Clock to Latch and AND gate -->
+  <line x1="40" y1="125" x2="430" y2="125" stroke="#8b5cf6" stroke-width="2"/>
+  <circle cx="150" cy="125" r="3" fill="#8b5cf6"/>
+  <polyline points="150,125 150,105 174,105" fill="none" stroke="#8b5cf6" stroke-width="2" marker-end="url(#arr-purple)"/>
+  <circle cx="178" cy="105" r="2.5" fill="none" stroke="#8b5cf6" stroke-width="1.5"/>
+  <text x="40" y="145" font-size="11" font-weight="700" fill="#6d28d9">clk_i (Input Clock)</text>
+
+  <!-- AND Gate -->
+  <path d="M 440 70 L 470 70 A 35 35 0 0 1 470 140 L 440 140 Z" fill="#f0fdf4" stroke="#10b981" stroke-width="2" filter="url(#shadow)"/>
+  <text x="465" y="110" font-size="12" font-weight="700" fill="#065f46" text-anchor="middle">AND</text>
+
+  <!-- Latch to AND -->
+  <line x1="320" y1="90" x2="434" y2="90" stroke="#2563eb" stroke-width="2" marker-end="url(#arr-blue)"/>
+  <text x="375" y="82" font-size="9" fill="#2563eb" text-anchor="middle">Stable when clk=1</text>
+
+  <!-- Clock input to AND -->
+  <polyline points="380,125 380,120 434,120" fill="none" stroke="#8b5cf6" stroke-width="2" marker-end="url(#arr-purple)"/>
+
+  <!-- Gated output -->
+  <line x1="505" y1="105" x2="574" y2="105" stroke="#10b981" stroke-width="2.5" marker-end="url(#arr-green)"/>
+  <text x="585" y="110" font-size="12" font-weight="800" fill="#065f46">clk_gated_o (Glitch-Free!)</text>
+
+</svg>
