@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 740 260" width="740" height="260" style="background-color: #ffffff; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+  <defs>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="1" dy="2" stdDeviation="2" flood-color="#0f172a" flood-opacity="0.08" />
+    </filter>
+    <marker id="arr-blue" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#2563eb" />
+    </marker>
+    <marker id="arr-green" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#10b981" />
+    </marker>
+    <marker id="arr-red" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#ef4444" />
+    </marker>
+    <marker id="arr-purple" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#8b5cf6" />
+    </marker>
+    <marker id="arr-amber" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#f59e0b" />
+    </marker>
+    <marker id="arr-slate" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#64748b" />
+    </marker>
+  </defs>
+
+  <rect x="15" y="15" width="710" height="230" rx="12" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2"/>
+  <text x="35" y="40" font-size="14" font-weight="700" fill="#0f172a">APB Peripheral Slave Internal Architecture</text>
+
+  <!-- Inputs from Bus -->
+  <text x="40" y="85" font-size="10.5" font-weight="700" fill="#1e293b">PADDR[7:0]</text>
+  <text x="40" y="115" font-size="10.5" font-weight="700" fill="#1e293b">PSEL &amp; PENABLE</text>
+  <text x="40" y="145" font-size="10.5" font-weight="700" fill="#1e293b">PWRITE &amp; PSTRB</text>
+  <text x="40" y="175" font-size="10.5" font-weight="700" fill="#1e293b">PWDATA[31:0]</text>
+
+  <!-- Write / Control Logic -->
+  <rect x="160" y="65" width="150" height="150" rx="8" fill="#eff6ff" stroke="#3b82f6" stroke-width="2" filter="url(#shadow)"/>
+  <text x="235" y="95" font-size="11.5" font-weight="700" fill="#1e3a8a" text-anchor="middle">Register Decode &amp;</text>
+  <text x="235" y="115" font-size="11.5" font-weight="700" fill="#1e3a8a" text-anchor="middle">Write Control</text>
+  <text x="235" y="145" font-size="9.5" fill="#2563eb" text-anchor="middle">wr_en = PSEL &amp; PENABLE</text>
+  <text x="235" y="165" font-size="9.5" fill="#2563eb" text-anchor="middle">&amp; PWRITE &amp; PREADY</text>
+
+  <line x1="125" y1="110" x2="154" y2="110" stroke="#2563eb" stroke-width="2" marker-end="url(#arr-blue)"/>
+  <line x1="125" y1="140" x2="154" y2="140" stroke="#2563eb" stroke-width="2" marker-end="url(#arr-blue)"/>
+
+  <!-- Internal Registers -->
+  <rect x="360" y="65" width="160" height="150" rx="8" fill="#f0fdf4" stroke="#10b981" stroke-width="2" filter="url(#shadow)"/>
+  <text x="440" y="90" font-size="12" font-weight="700" fill="#065f46" text-anchor="middle">Register Bank</text>
+  <rect x="375" y="105" width="130" height="22" rx="3" fill="#ffffff" stroke="#86efac"/>
+  <text x="440" y="120" font-size="9.5" font-weight="600" fill="#047857" text-anchor="middle">Control Reg (0x00)</text>
+  <rect x="375" y="132" width="130" height="22" rx="3" fill="#ffffff" stroke="#86efac"/>
+  <text x="440" y="147" font-size="9.5" font-weight="600" fill="#047857" text-anchor="middle">Status Reg (0x04)</text>
+  <rect x="375" y="159" width="130" height="22" rx="3" fill="#ffffff" stroke="#86efac"/>
+  <text x="440" y="174" font-size="9.5" font-weight="600" fill="#047857" text-anchor="middle">Data / FIFO (0x08)</text>
+
+  <line x1="310" y1="120" x2="354" y2="120" stroke="#3b82f6" stroke-width="2" marker-end="url(#arr-blue)"/>
+
+  <!-- Read Mux -->
+  <rect x="560" y="65" width="140" height="150" rx="8" fill="#fef3c7" stroke="#f59e0b" stroke-width="2" filter="url(#shadow)"/>
+  <text x="630" y="95" font-size="12" font-weight="700" fill="#92400e" text-anchor="middle">Read Data Mux</text>
+  <text x="630" y="120" font-size="9.5" fill="#78350f" text-anchor="middle">Selects register</text>
+  <text x="630" y="135" font-size="9.5" fill="#78350f" text-anchor="middle">based on PADDR</text>
+  <text x="630" y="165" font-size="11" font-weight="700" fill="#b45309" text-anchor="middle">Drives PRDATA</text>
+
+  <line x1="520" y1="140" x2="554" y2="140" stroke="#10b981" stroke-width="2" marker-end="url(#arr-green)"/>
+
+</svg>

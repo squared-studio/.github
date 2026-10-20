@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 750 190" width="750" height="190" style="background-color: #ffffff; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+  <defs>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="1" dy="2" stdDeviation="2" flood-color="#0f172a" flood-opacity="0.08" />
+    </filter>
+    <marker id="arr-blue" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#2563eb" />
+    </marker>
+    <marker id="arr-green" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#10b981" />
+    </marker>
+    <marker id="arr-red" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#ef4444" />
+    </marker>
+    <marker id="arr-purple" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#8b5cf6" />
+    </marker>
+    <marker id="arr-amber" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#f59e0b" />
+    </marker>
+    <marker id="arr-slate" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#64748b" />
+    </marker>
+  </defs>
+
+  <rect x="15" y="15" width="720" height="160" rx="12" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2"/>
+  <text x="35" y="40" font-size="14" font-weight="700" fill="#0f172a">Evolution of the ARM AMBA APB Protocol</text>
+
+  <!-- APB2 -->
+  <rect x="35" y="65" width="155" height="95" rx="8" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="112" y="90" font-size="12" font-weight="700" fill="#0f172a" text-anchor="middle">AMBA 2 APB (APB2)</text>
+  <text x="112" y="110" font-size="9.5" fill="#475569" text-anchor="middle">- Fixed 2-cycle transfers</text>
+  <text x="112" y="127" font-size="9.5" fill="#475569" text-anchor="middle">- PSEL, PENABLE, PWRITE</text>
+  <text x="112" y="144" font-size="9.5" fill="#dc2626" text-anchor="middle">No wait states / No errors</text>
+
+  <line x1="190" y1="112" x2="214" y2="112" stroke="#64748b" stroke-width="2" marker-end="url(#arr-slate)"/>
+
+  <!-- APB3 -->
+  <rect x="220" y="65" width="160" height="95" rx="8" fill="#eff6ff" stroke="#3b82f6" stroke-width="2" filter="url(#shadow)"/>
+  <text x="300" y="90" font-size="12" font-weight="700" fill="#1e3a8a" text-anchor="middle">AMBA 3 APB (APB3)</text>
+  <text x="300" y="110" font-size="9.5" font-weight="700" fill="#2563eb" text-anchor="middle">+ PREADY (Wait states)</text>
+  <text x="300" y="127" font-size="9.5" font-weight="700" fill="#2563eb" text-anchor="middle">+ PSLVERR (Error signaling)</text>
+  <text x="300" y="144" font-size="9.5" fill="#1e40af" text-anchor="middle">Supports slow peripherals</text>
+
+  <line x1="380" y1="112" x2="404" y2="112" stroke="#3b82f6" stroke-width="2" marker-end="url(#arr-blue)"/>
+
+  <!-- APB4 -->
+  <rect x="410" y="65" width="160" height="95" rx="8" fill="#f0fdf4" stroke="#10b981" stroke-width="2" filter="url(#shadow)"/>
+  <text x="490" y="90" font-size="12" font-weight="700" fill="#065f46" text-anchor="middle">AMBA 4 APB (APB4)</text>
+  <text x="490" y="110" font-size="9.5" font-weight="700" fill="#059669" text-anchor="middle">+ PPROT (Protection/Security)</text>
+  <text x="490" y="127" font-size="9.5" font-weight="700" fill="#059669" text-anchor="middle">+ PSTRB (Byte write strobes)</text>
+  <text x="490" y="144" font-size="9.5" fill="#047857" text-anchor="middle">ARM TrustZone integration</text>
+
+  <line x1="570" y1="112" x2="594" y2="112" stroke="#10b981" stroke-width="2" marker-end="url(#arr-green)"/>
+
+  <!-- APB5 -->
+  <rect x="600" y="65" width="120" height="95" rx="8" fill="#faf5ff" stroke="#8b5cf6" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="660" y="90" font-size="12" font-weight="700" fill="#5b21b6" text-anchor="middle">AMBA 5 APB</text>
+  <text x="660" y="110" font-size="9" fill="#7c3aed" text-anchor="middle">+ PWAKEUP power</text>
+  <text x="660" y="127" font-size="9" fill="#7c3aed" text-anchor="middle">+ Parity check</text>
+  <text x="660" y="144" font-size="9" fill="#7c3aed" text-anchor="middle">+ User signals</text>
+
+</svg>

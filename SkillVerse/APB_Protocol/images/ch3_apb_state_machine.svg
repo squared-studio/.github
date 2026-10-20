@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 260" width="720" height="260" style="background-color: #ffffff; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+  <defs>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="1" dy="2" stdDeviation="2" flood-color="#0f172a" flood-opacity="0.08" />
+    </filter>
+    <marker id="arr-blue" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#2563eb" />
+    </marker>
+    <marker id="arr-green" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#10b981" />
+    </marker>
+    <marker id="arr-red" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#ef4444" />
+    </marker>
+    <marker id="arr-purple" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#8b5cf6" />
+    </marker>
+    <marker id="arr-amber" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#f59e0b" />
+    </marker>
+    <marker id="arr-slate" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#64748b" />
+    </marker>
+  </defs>
+
+  <rect x="15" y="15" width="690" height="230" rx="12" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2"/>
+  <text x="35" y="42" font-size="14" font-weight="700" fill="#0f172a">APB Operational State Machine</text>
+
+  <!-- IDLE State -->
+  <circle cx="120" cy="130" r="50" fill="#eff6ff" stroke="#3b82f6" stroke-width="2.5" filter="url(#shadow)"/>
+  <text x="120" y="125" font-size="13" font-weight="800" fill="#1e3a8a" text-anchor="middle">IDLE</text>
+  <text x="120" y="145" font-size="9.5" fill="#2563eb" text-anchor="middle">PSEL = 0</text>
+  <text x="120" y="158" font-size="9.5" fill="#2563eb" text-anchor="middle">PENABLE = 0</text>
+
+  <!-- SETUP State -->
+  <circle cx="360" cy="130" r="50" fill="#fef3c7" stroke="#f59e0b" stroke-width="2.5" filter="url(#shadow)"/>
+  <text x="360" y="125" font-size="13" font-weight="800" fill="#92400e" text-anchor="middle">SETUP</text>
+  <text x="360" y="145" font-size="9.5" fill="#b45309" text-anchor="middle">PSEL = 1</text>
+  <text x="360" y="158" font-size="9.5" fill="#b45309" text-anchor="middle">PENABLE = 0</text>
+
+  <!-- ACCESS State -->
+  <circle cx="600" cy="130" r="50" fill="#f0fdf4" stroke="#10b981" stroke-width="2.5" filter="url(#shadow)"/>
+  <text x="600" y="125" font-size="13" font-weight="800" fill="#065f46" text-anchor="middle">ACCESS</text>
+  <text x="600" y="145" font-size="9.5" fill="#047857" text-anchor="middle">PSEL = 1</text>
+  <text x="600" y="158" font-size="9.5" fill="#047857" text-anchor="middle">PENABLE = 1</text>
+
+  <!-- IDLE to SETUP -->
+  <line x1="170" y1="130" x2="304" y2="130" stroke="#3b82f6" stroke-width="2" marker-end="url(#arr-blue)"/>
+  <text x="237" y="120" font-size="9.5" font-weight="700" fill="#1d4ed8" text-anchor="middle">Transfer Required</text>
+
+  <!-- SETUP to ACCESS -->
+  <line x1="410" y1="130" x2="544" y2="130" stroke="#f59e0b" stroke-width="2" marker-end="url(#arr-amber)"/>
+  <text x="477" y="120" font-size="9.5" font-weight="700" fill="#b45309" text-anchor="middle">Next Clock Edge</text>
+
+  <!-- ACCESS wait self-loop -->
+  <path d="M 625 85 A 25 25 0 1 1 645 110" fill="none" stroke="#ef4444" stroke-width="2" marker-end="url(#arr-red)"/>
+  <text x="670" y="80" font-size="9.5" font-weight="700" fill="#dc2626">PREADY == 0 (Wait)</text>
+
+  <!-- ACCESS to IDLE -->
+  <path d="M 600 180 Q 360 250 120 180" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#arr-green)"/>
+  <text x="360" y="228" font-size="10" font-weight="700" fill="#059669" text-anchor="middle">PREADY == 1 &amp;&amp; No new transfer</text>
+
+  <!-- ACCESS to SETUP (Back to back) -->
+  <path d="M 570 95 Q 480 50 395 95" fill="none" stroke="#8b5cf6" stroke-width="2" stroke-dasharray="4,3" marker-end="url(#arr-purple)"/>
+  <text x="480" y="58" font-size="9.5" font-weight="700" fill="#6d28d9" text-anchor="middle">PREADY == 1 &amp;&amp; Next Transfer</text>
+
+</svg>
