@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 850 420" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bg6" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f172a"/>
+      <stop offset="100%" stop-color="#1e293b"/>
+    </linearGradient>
+    <marker id="seqArr" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8"/>
+    </marker>
+    <marker id="datArr" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#34d399"/>
+    </marker>
+  </defs>
+  <rect width="100%" height="100%" fill="url(#bg6)"/>
+  <text x="425" y="32" fill="#f8fafc" font-size="20" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">CHI ReadShared Transaction Flow (via Home Node)</text>
+
+  <!-- Lifelines -->
+  <g transform="translate(100, 60)">
+    <rect x="0" y="0" width="120" height="40" rx="6" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+    <text x="60" y="25" fill="#38bdf8" font-size="13" font-weight="bold" text-anchor="middle">RN-F 0 (Req)</text>
+    <line x1="60" y1="40" x2="60" y2="340" stroke="#475569" stroke-width="2" stroke-dasharray="4,4"/>
+  </g>
+
+  <g transform="translate(365, 60)">
+    <rect x="0" y="0" width="120" height="40" rx="6" fill="#1e293b" stroke="#818cf8" stroke-width="2"/>
+    <text x="60" y="25" fill="#818cf8" font-size="13" font-weight="bold" text-anchor="middle">HN-F (Home)</text>
+    <line x1="60" y1="40" x2="60" y2="340" stroke="#475569" stroke-width="2" stroke-dasharray="4,4"/>
+  </g>
+
+  <g transform="translate(630, 60)">
+    <rect x="0" y="0" width="120" height="40" rx="6" fill="#1e293b" stroke="#fbbf24" stroke-width="2"/>
+    <text x="60" y="25" fill="#fbbf24" font-size="13" font-weight="bold" text-anchor="middle">RN-F 1 (Peer)</text>
+    <line x1="60" y1="40" x2="60" y2="340" stroke="#475569" stroke-width="2" stroke-dasharray="4,4"/>
+  </g>
+
+  <!-- Flow 1: REQ ReadShared -->
+  <path d="M 160 130 L 425 130" stroke="#38bdf8" stroke-width="2" marker-end="url(#seqArr)"/>
+  <text x="292" y="122" fill="#38bdf8" font-size="11" text-anchor="middle" font-family="system-ui, sans-serif">1. REQ (ReadShared, TxnID=0x1)</text>
+
+  <!-- Flow 2: SNP SnpShared -->
+  <path d="M 425 170 L 690 170" stroke="#f59e0b" stroke-width="2" marker-end="url(#seqArr)"/>
+  <text x="557" y="162" fill="#f59e0b" font-size="11" text-anchor="middle" font-family="system-ui, sans-serif">2. SNP (SnpShared)</text>
+
+  <!-- Flow 3: SnpRespData -->
+  <path d="M 690 215 L 425 215" stroke="#34d399" stroke-width="2" marker-end="url(#datArr)"/>
+  <text x="557" y="207" fill="#34d399" font-size="11" text-anchor="middle" font-family="system-ui, sans-serif">3. DAT (SnpRespData, Dirty passed)</text>
+
+  <!-- Flow 4: CompData to RN-F 0 -->
+  <path d="M 425 260 L 160 260" stroke="#34d399" stroke-width="2" marker-end="url(#datArr)"/>
+  <text x="292" y="252" fill="#34d399" font-size="11" text-anchor="middle" font-family="system-ui, sans-serif">4. DAT (CompData_I_PD, Line Data)</text>
+
+  <!-- Flow 5: CompAck -->
+  <path d="M 160 305 L 425 305" stroke="#38bdf8" stroke-width="2" marker-end="url(#seqArr)"/>
+  <text x="292" y="297" fill="#38bdf8" font-size="11" text-anchor="middle" font-family="system-ui, sans-serif">5. RSP (CompAck)</text>
+</svg>

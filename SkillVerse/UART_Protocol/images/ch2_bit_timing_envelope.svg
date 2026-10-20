@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 260" width="100%" height="100%">
+  <rect width="840" height="260" fill="#0f172a" rx="10"/>
+  <text x="420" y="35" fill="#f8fafc" font-size="17" font-weight="bold" text-anchor="middle" font-family="sans-serif">Bit Timing Envelope &amp; Sampling Margins</text>
+  
+  <!-- Waveform of a single bit -->
+  <line x1="60" y1="180" x2="160" y2="180" stroke="#64748b" stroke-width="2"/>
+  <line x1="160" y1="180" x2="200" y2="90" stroke="#38bdf8" stroke-width="3"/>
+  <line x1="200" y1="90" x2="600" y2="90" stroke="#38bdf8" stroke-width="3"/>
+  <line x1="600" y1="90" x2="640" y2="180" stroke="#38bdf8" stroke-width="3"/>
+  <line x1="640" y1="180" x2="740" y2="180" stroke="#64748b" stroke-width="2"/>
+
+  <!-- Jitter / Transition regions -->
+  <rect x="150" y="70" width="60" height="130" fill="#f87171" fill-opacity="0.15" stroke="#f87171" stroke-dasharray="2"/>
+  <text x="180" y="60" fill="#f87171" font-size="11" text-anchor="middle" font-family="sans-serif">Rise Slew / Jitter</text>
+
+  <rect x="590" y="70" width="60" height="130" fill="#f87171" fill-opacity="0.15" stroke="#f87171" stroke-dasharray="2"/>
+  <text x="620" y="60" fill="#f87171" font-size="11" text-anchor="middle" font-family="sans-serif">Fall Slew / Jitter</text>
+
+  <!-- Stable Region & Center Sample -->
+  <rect x="220" y="70" width="360" height="130" fill="#4ade80" fill-opacity="0.1" stroke="#4ade80" stroke-dasharray="3"/>
+  <text x="400" y="80" fill="#4ade80" font-size="12" font-weight="bold" text-anchor="middle" font-family="sans-serif">Stable Eye Opening (Noise Margin)</text>
+
+  <!-- Center Sample Marker -->
+  <line x1="400" y1="70" x2="400" y2="210" stroke="#facc15" stroke-width="3"/>
+  <circle cx="400" cy="90" r="5" fill="#facc15"/>
+  <text x="400" y="235" fill="#facc15" font-size="13" font-weight="bold" text-anchor="middle" font-family="sans-serif">Optimal Sampling Point (50% Center)</text>
+</svg>

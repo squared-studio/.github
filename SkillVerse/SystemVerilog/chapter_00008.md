@@ -51,7 +51,7 @@ In a four-state expression, an `X` or `Z` condition is not the same as a known `
 
 `case` statements select one branch by comparing an expression with a list of items. The first matching item executes, so item order matters whenever patterns overlap. The three common forms differ mainly in how they treat `X`, `Z`, and `?` values.
 
-### 1. `case`: Exact Value Matching
+### `case`: Exact Value Matching
 
 -   **Four-state matching**: A plain `case` compares all bits, including `X` and `Z`. For example, `4'b10x1` matches `4'b10x1`, but does not match `4'b1011`.
 -   **Use for known encodings**: This is the usual choice for an opcode, state, or enum whose value must be known exactly.
@@ -76,7 +76,7 @@ endmodule
 
 If `opcode` contains `2'b0x`, none of the three known patterns matches, so the `default` branch is selected. That behavior is often useful because an unknown control value does not silently select a real operation.
 
-### 2. `casez`: Wildcards for `Z` and `?`
+### `casez`: Wildcards for `Z` and `?`
 
 -   **Pattern matching**: In a case item, `?` means “this bit can be either `0` or `1`.” `casez` also treats `Z` as a wildcard in the expression and in case items.
 -   **Unknown `X` is different**: `casez` does not treat `X` as a wildcard. An `X` in a significant position prevents a match against either `0` or `1`, which helps expose unknown control signals.
@@ -112,7 +112,7 @@ The difference between an intentional wildcard and an unknown signal is importan
 
 The last row is an exact `X` match, not a wildcard match. It only matches another `X` in that same bit position.
 
-### 3. `casex`: Wildcards for `X`, `Z`, and `?`
+### `casex`: Wildcards for `X`, `Z`, and `?`
 
 -   **Aggressive matching**: `casex` treats `X`, `Z`, and `?` as wildcards in both the expression and the case items. A wildcard is not a statement that the signal is valid; it simply removes that bit from the comparison.
 -   **Why this is risky**: An uninitialized, disconnected, or not-yet-driven signal can match a valid pattern. Simulation may therefore report a valid operation even though the hardware input is unknown.
@@ -176,7 +176,7 @@ These keywords document intent and enable simulation warnings; they do not chang
 
 Loop constructs in SystemVerilog enable you to execute code blocks repeatedly, automating repetitive tasks in testbenches and, under certain constraints, in RTL designs.
 
-### 1. `repeat` Loop: Fixed Iteration Count
+### `repeat` Loop: Fixed Iteration Count
 
 -   **Predefined Iterations**: The `repeat` loop executes a block of code a fixed number of times. Its count expression is evaluated when the loop starts, so the count can come from a runtime variable; it does not have to be a compile-time constant.
 
@@ -194,7 +194,7 @@ module repeat_example;
 endmodule
 ```
 
-### 2. `while` Loop: Condition-Based Iteration
+### `while` Loop: Condition-Based Iteration
 
 -   **Condition-Controlled Execution**: The `while` loop continues to execute its code block as long as a specified condition remains true.
 
@@ -214,7 +214,7 @@ module while_example;
 endmodule
 ```
 
-### 3. `for` Loop: Compact Iteration with Initialization, Condition, Increment
+### `for` Loop: Compact Iteration with Initialization, Condition, Increment
 
 -   **Combined Loop Control**: The `for` loop provides a concise syntax for loop control, combining initialization, a loop condition, and an increment/decrement step in a single statement.
 
@@ -232,7 +232,7 @@ module for_example;
 endmodule
 ```
 
-### 4. `foreach` Loop: Array Element Iteration
+### `foreach` Loop: Array Element Iteration
 
 -   **Simplified Array Traversal**: The `foreach` loop is specifically designed to iterate over the elements of an array, simplifying array processing.
 
@@ -252,7 +252,7 @@ module foreach_example;
 endmodule
 ```
 
-### 5. `forever` Loop: Continuous Execution (Testbenches)
+### `forever` Loop: Continuous Execution (Testbenches)
 
 -   **Infinite Loop**: The `forever` loop executes its code block indefinitely, creating an infinite loop.  It is primarily used in testbenches to generate continuous stimuli or to model systems that run continuously.
 -   **Timing Control and Exit Mechanisms**:  **Crucially, always include a timing control (`#delay`) or a loop exit mechanism (like `disable`) within a `forever` loop to prevent simulation from hanging indefinitely.**

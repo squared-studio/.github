@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 360" width="100%" height="100%">
+  <rect width="900" height="360" fill="#0f172a" rx="10"/>
+  <text x="450" y="35" fill="#f8fafc" font-size="18" font-weight="bold" text-anchor="middle" font-family="sans-serif">Standard 16550 UART Register Memory Map (DLAB Switching)</text>
+
+  <!-- Table Header -->
+  <rect x="50" y="65" width="800" height="35" fill="#1e293b" stroke="#38bdf8" rx="4"/>
+  <text x="90" y="88" fill="#38bdf8" font-size="12" font-weight="bold" text-anchor="middle" font-family="sans-serif">Offset</text>
+  <text x="170" y="88" fill="#38bdf8" font-size="12" font-weight="bold" text-anchor="middle" font-family="sans-serif">DLAB</text>
+  <text x="240" y="88" fill="#38bdf8" font-size="12" font-weight="bold" text-anchor="middle" font-family="sans-serif">R/W</text>
+  <text x="350" y="88" fill="#38bdf8" font-size="12" font-weight="bold" text-anchor="middle" font-family="sans-serif">Register Name</text>
+  <text x="630" y="88" fill="#38bdf8" font-size="12" font-weight="bold" text-anchor="middle" font-family="sans-serif">Function / Architectural Description</text>
+
+  <!-- Row 1: RBR / THR -->
+  <rect x="50" y="105" width="800" height="30" fill="#0f172a" stroke="#334155"/>
+  <text x="90" y="125" fill="#cbd5e1" font-size="11" text-anchor="middle" font-family="sans-serif">0x00</text>
+  <text x="170" y="125" fill="#4ade80" font-size="11" text-anchor="middle" font-family="sans-serif">0</text>
+  <text x="240" y="125" fill="#cbd5e1" font-size="11" text-anchor="middle" font-family="sans-serif">R / W</text>
+  <text x="350" y="125" fill="#f8fafc" font-size="11" font-weight="bold" text-anchor="middle" font-family="sans-serif">RBR / THR</text>
+  <text x="630" y="125" fill="#cbd5e1" font-size="10" text-anchor="middle" font-family="sans-serif">Receiver Buffer (Read) / Transmitter Holding (Write)</text>
+
+  <!-- Row 2: DLL -->
+  <rect x="50" y="140" width="800" height="30" fill="#1e293b" stroke="#334155"/>
+  <text x="90" y="160" fill="#cbd5e1" font-size="11" text-anchor="middle" font-family="sans-serif">0x00</text>
+  <text x="170" y="160" fill="#f87171" font-size="11" font-weight="bold" text-anchor="middle" font-family="sans-serif">1</text>
+  <text x="240" y="160" fill="#cbd5e1" font-size="11" text-anchor="middle" font-family="sans-serif">R/W</text>
+  <text x="350" y="160" fill="#facc15" font-size="11" font-weight="bold" text-anchor="middle" font-family="sans-serif">DLL</text>
+  <text x="630" y="160" fill="#cbd5e1" font-size="10" text-anchor="middle" font-family="sans-serif">Divisor Latch LSB (Baud rate lower 8 bits)</text>
+
+  <!-- Row 3: IER / DLM -->
+  <rect x="50" y="175" width="800" height="30" fill="#0f172a" stroke="#334155"/>
+  <text x="90" y="195" fill="#cbd5e1" font-size="11" text-anchor="middle" font-family="sans-serif">0x01</text>
+  <text x="170" y="195" fill="#4ade80" font-size="11" text-anchor="middle" font-family="sans-serif">0 / 1</text>
+  <text x="240" y="195" fill="#cbd5e1" font-size="11" text-anchor="middle" font-family="sans-serif">R/W</text>
+  <text x="350" y="195" fill="#f8fafc" font-size="11" font-weight="bold" text-anchor="middle" font-family="sans-serif">IER / DLM</text>
+  <text x="630" y="195" fill="#cbd5e1" font-size="10" text-anchor="middle" font-family="sans-serif">Interrupt Enable (DLAB=0) / Divisor Latch MSB (DLAB=1)</text>
+
+  <!-- Row 4: IIR / FCR -->
+  <rect x="50" y="210" width="800" height="30" fill="#1e293b" stroke="#334155"/>
+  <text x="90" y="230" fill="#cbd5e1" font-size="11" text-anchor="middle" font-family="sans-serif">0x02</text>
+  <text x="170" y="230" fill="#cbd5e1" font-size="11" text-anchor="middle" font-family="sans-serif">X</text>
+  <text x="240" y="230" fill="#cbd5e1" font-size="11" text-anchor="middle" font-family="sans-serif">R / W</text>
+  <text x="350" y="230" fill="#f8fafc" font-size="11" font-weight="bold" text-anchor="middle" font-family="sans-serif">IIR / FCR</text>
+  <text x="630" y="230" fill="#cbd5e1" font-size="10" text-anchor="middle" font-family="sans-serif">Interrupt Identification (Read) / FIFO Control Register (Write)</text>
+
+  <!-- Row 5: LCR -->
+  <rect x="50" y="245" width="800" height="30" fill="#0f172a" stroke="#334155"/>
+  <text x="90" y="265" fill="#cbd5e1" font-size="11" text-anchor="middle" font-family="sans-serif">0x03</text>
+  <text x="170" y="265" fill="#cbd5e1" font-size="11" text-anchor="middle" font-family="sans-serif">X</text>
+  <text x="240" y="265" fill="#cbd5e1" font-size="11" text-anchor="middle" font-family="sans-serif">R/W</text>
+  <text x="350" y="265" fill="#c084fc" font-size="11" font-weight="bold" text-anchor="middle" font-family="sans-serif">LCR</text>
+  <text x="630" y="265" fill="#c084fc" font-size="10" text-anchor="middle" font-family="sans-serif">Line Control Register: Word Length, Parity, Stop Bits, DLAB bit (Bit 7)</text>
+
+  <!-- Row 6: LSR -->
+  <rect x="50" y="280" width="800" height="30" fill="#1e293b" stroke="#334155"/>
+  <text x="90" y="300" fill="#cbd5e1" font-size="11" text-anchor="middle" font-family="sans-serif">0x05</text>
+  <text x="170" y="300" fill="#cbd5e1" font-size="11" text-anchor="middle" font-family="sans-serif">X</text>
+  <text x="240" y="300" fill="#cbd5e1" font-size="11" text-anchor="middle" font-family="sans-serif">R</text>
+  <text x="350" y="300" fill="#f87171" font-size="11" font-weight="bold" text-anchor="middle" font-family="sans-serif">LSR</text>
+  <text x="630" y="300" fill="#f87171" font-size="10" text-anchor="middle" font-family="sans-serif">Line Status: DR (Data Ready), OE (Overrun), PE (Parity), FE (Framing), THRE, TEMT</text>
+
+  <!-- Row 7: MCR / MSR -->
+  <rect x="50" y="315" width="800" height="30" fill="#0f172a" stroke="#334155"/>
+  <text x="90" y="335" fill="#cbd5e1" font-size="11" text-anchor="middle" font-family="sans-serif">0x04/06</text>
+  <text x="170" y="335" fill="#cbd5e1" font-size="11" text-anchor="middle" font-family="sans-serif">X</text>
+  <text x="240" y="335" fill="#cbd5e1" font-size="11" text-anchor="middle" font-family="sans-serif">R/W</text>
+  <text x="350" y="335" fill="#cbd5e1" font-size="11" font-weight="bold" text-anchor="middle" font-family="sans-serif">MCR / MSR</text>
+  <text x="630" y="335" fill="#cbd5e1" font-size="10" text-anchor="middle" font-family="sans-serif">Modem Control (RTS/DTR drive) / Modem Status (CTS/DSR/RI/DCD inputs)</text>
+</svg>

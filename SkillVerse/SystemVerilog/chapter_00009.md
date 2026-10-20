@@ -105,7 +105,7 @@ endmodule
 
 `always` blocks are the workhorses of SystemVerilog behavioral modeling, especially for RTL design. They describe blocks of code that execute **repeatedly** in response to events or conditions defined by their sensitivity lists or timing controls.
 
-### 1. General `always` Block: Continuous Processes (Testbench Clock Generation)
+### General `always` Block: Continuous Processes (Testbench Clock Generation)
 
 -   **Continuous, Unconditional Execution**: A general `always` block, when combined with timing control statements (like `#delay`), creates a continuously running process.
 -   **Primary Testbench Use**:  In RTL design, general `always` blocks without sensitivity lists are **rarely synthesizable**. They are primarily used in testbenches for tasks like clock generation and background processes.
@@ -124,7 +124,7 @@ module clock_generator (
 endmodule
 ```
 
-### 2. `always_comb` Block: Combinational Logic Inference
+### `always_comb` Block: Combinational Logic Inference
 
 -   **Combinational Logic Description**: `always_comb` blocks are specifically designed to model combinational logic. They infer combinational circuits based on the code within the block.
 -   **Automatic Sensitivity List**:  The key feature of `always_comb` is its **automatic sensitivity list**. The simulator automatically infers all input signals that the output depends on. Whenever any of these input signals change value, the `always_comb` block is re-evaluated, ensuring the output is always up-to-date with the inputs.
@@ -143,7 +143,7 @@ module combinational_adder(
 endmodule
 ```
 
-### 3. `always_ff` Block: Sequential Logic (Flip-Flop) Inference
+### `always_ff` Block: Sequential Logic (Flip-Flop) Inference
 
 -   **Sequential Logic Modeling**: `always_ff` blocks are specifically for modeling sequential logic elements, primarily flip-flops and registers.
 -   **Explicit Event Control Required**:  `always_ff` requires an event control, typically a clock edge such as `posedge clk`, plus asynchronous control edges such as `negedge rst_n` when the design has an asynchronous reset. Data inputs are not placed in the event control because a flip-flop samples them at the clock event. The exact restrictions are enforced by the simulator and lint tools.
@@ -166,7 +166,7 @@ module d_flip_flop(
 endmodule
 ```
 
-### 4. `always_latch` Block: Latch Inference (Use with Caution)
+### `always_latch` Block: Latch Inference (Use with Caution)
 
 -   **Latch Modeling**: `always_latch` blocks are intended to model latches. Latches are level-sensitive memory elements, unlike flip-flops which are edge-triggered.
 -   **Conditional Assignments for Latch Behavior**: Latches are typically inferred when a signal is assigned a value conditionally within an `always_latch` block, and there is no `else` clause or default assignment to cover all conditions. `always_latch` communicates that this storage is intentional and lets tools check the construct; it does not remove the latch.

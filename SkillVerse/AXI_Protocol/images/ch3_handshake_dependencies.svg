@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 360" width="100%" height="100%">
+  <rect width="100%" height="100%" fill="#0f172a"/>
+  <defs>
+    <marker id="dpG" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 8 5 L 0 9 z" fill="#34d399"/>
+    </marker>
+    <marker id="dpR" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 8 5 L 0 9 z" fill="#ef4444"/>
+    </marker>
+  </defs>
+
+  <text x="420" y="32" fill="#f8fafc" font-size="18" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">AXI Handshake Dependency Rules: Preventing Deadlock</text>
+  <text x="420" y="52" fill="#94a3b8" font-size="12" text-anchor="middle" font-family="system-ui, sans-serif">The Golden Rule: VALID must NEVER depend on READY; READY may depend on VALID</text>
+
+  <!-- Left: Permitted Dependencies -->
+  <g transform="translate(60, 80)">
+    <rect width="330" height="245" rx="8" fill="#1e293b" stroke="#34d399" stroke-width="2"/>
+    <rect width="330" height="35" rx="8" fill="#059669"/>
+    <text x="165" y="22" fill="#ffffff" font-size="13" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">LEGAL Handshake Relationships</text>
+
+    <!-- Node VALID -->
+    <rect x="30" y="60" width="110" height="40" rx="6" fill="#0284c7"/>
+    <text x="85" y="85" fill="#ffffff" font-size="12" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">VALID (M)</text>
+
+    <!-- Node READY -->
+    <rect x="190" y="60" width="110" height="40" rx="6" fill="#047857"/>
+    <text x="245" y="85" fill="#ffffff" font-size="12" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">READY (S)</text>
+
+    <line x1="140" y1="80" x2="180" y2="80" stroke="#34d399" stroke-width="2.5" marker-end="url(#dpG)"/>
+    <text x="160" y="70" fill="#34d399" font-size="9" text-anchor="middle" font-family="system-ui, sans-serif">Legal</text>
+
+    <text x="20" y="130" fill="#a7f3d0" font-size="11" font-family="system-ui, sans-serif">&bull; READY can wait for VALID to go HIGH</text>
+    <text x="20" y="150" fill="#a7f3d0" font-size="11" font-family="system-ui, sans-serif">&bull; Master can assert VALID autonomously</text>
+    <text x="20" y="170" fill="#a7f3d0" font-size="11" font-family="system-ui, sans-serif">&bull; BVALID can wait for WLAST &amp; WVALID</text>
+    <text x="20" y="190" fill="#a7f3d0" font-size="11" font-family="system-ui, sans-serif">&bull; RVALID can wait for ARVALID &amp; ARREADY</text>
+    <text x="20" y="220" fill="#34d399" font-size="10" font-weight="bold" font-family="system-ui, sans-serif">&check; Guarantees deadlock-free bus progression</text>
+  </g>
+
+  <!-- Right: Forbidden Dependencies -->
+  <g transform="translate(450, 80)">
+    <rect width="330" height="245" rx="8" fill="#1e293b" stroke="#ef4444" stroke-width="2"/>
+    <rect width="330" height="35" rx="8" fill="#dc2626"/>
+    <text x="165" y="22" fill="#ffffff" font-size="13" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">FORBIDDEN Deadlock Trap</text>
+
+    <!-- Node READY -->
+    <rect x="30" y="60" width="110" height="40" rx="6" fill="#047857"/>
+    <text x="85" y="85" fill="#ffffff" font-size="12" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">READY (S)</text>
+
+    <!-- Node VALID -->
+    <rect x="190" y="60" width="110" height="40" rx="6" fill="#0284c7"/>
+    <text x="245" y="85" fill="#ffffff" font-size="12" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">VALID (M)</text>
+
+    <line x1="140" y1="80" x2="180" y2="80" stroke="#ef4444" stroke-width="2.5" marker-end="url(#dpR)"/>
+    <text x="160" y="70" fill="#ef4444" font-size="9" text-anchor="middle" font-family="system-ui, sans-serif">ILLEGAL</text>
+
+    <text x="20" y="130" fill="#fca5a5" font-size="11" font-family="system-ui, sans-serif">&bull; VALID MUST NOT wait for READY!</text>
+    <text x="20" y="150" fill="#fca5a5" font-size="11" font-family="system-ui, sans-serif">&bull; If Master waits for READY to assert VALID,</text>
+    <text x="20" y="170" fill="#fca5a5" font-size="11" font-family="system-ui, sans-serif">  and Slave waits for VALID to assert READY:</text>
+    <rect x="20" y="195" width="290" height="35" rx="4" fill="#450a0a"/>
+    <text x="165" y="217" fill="#f87171" font-size="11" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">&cross; FATAL DEADLOCK: Bus freezes forever!</text>
+  </g>
+</svg>

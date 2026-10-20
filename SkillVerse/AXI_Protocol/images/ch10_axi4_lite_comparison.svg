@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 350" width="100%" height="100%">
+  <rect width="100%" height="100%" fill="#0f172a"/>
+  <text x="420" y="32" fill="#f8fafc" font-size="18" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">Full AXI4 vs. AXI4-Lite Protocol Comparison</text>
+  <text x="420" y="52" fill="#94a3b8" font-size="12" text-anchor="middle" font-family="system-ui, sans-serif">Trade-off between maximum throughput and minimal silicon area</text>
+
+  <!-- Left: Full AXI4 -->
+  <g transform="translate(60, 80)">
+    <rect width="330" height="240" rx="8" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+    <rect width="330" height="35" rx="8" fill="#0284c7"/>
+    <text x="165" y="22" fill="#ffffff" font-size="13" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">Full AXI4 (High Throughput)</text>
+    
+    <text x="15" y="60" fill="#38bdf8" font-size="11" font-weight="bold" font-family="system-ui, sans-serif">Features:</text>
+    <text x="15" y="80" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">&bull; Multi-beat bursts up to 256 beats</text>
+    <text x="15" y="100" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">&bull; Out-of-order execution with Transaction IDs</text>
+    <text x="15" y="120" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">&bull; Bus widths: 32, 64, 128, 256, 512, 1024 bits</text>
+    <text x="15" y="140" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">&bull; Supports WRAP cache fills &amp; Exclusive locks</text>
+    <text x="15" y="160" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">&bull; AxCACHE, AxQOS, AxREGION sidebands</text>
+    
+    <text x="15" y="195" fill="#38bdf8" font-size="10" font-weight="bold" font-family="system-ui, sans-serif">Target:</text>
+    <text x="15" y="210" fill="#94a3b8" font-size="10" font-family="system-ui, sans-serif">CPUs, DDR controllers, GPUs, high-speed DMA</text>
+  </g>
+
+  <!-- Right: AXI4-Lite -->
+  <g transform="translate(450, 80)">
+    <rect width="330" height="240" rx="8" fill="#1e293b" stroke="#fbbf24" stroke-width="2"/>
+    <rect width="330" height="35" rx="8" fill="#d97706"/>
+    <text x="165" y="22" fill="#ffffff" font-size="13" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">AXI4-Lite (Lightweight Register Access)</text>
+    
+    <text x="15" y="60" fill="#fbbf24" font-size="11" font-weight="bold" font-family="system-ui, sans-serif">Restrictions:</text>
+    <text x="15" y="80" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">&bull; Burst length strictly 1 (No bursts!)</text>
+    <text x="15" y="100" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">&bull; No IDs: Strictly IN-ORDER transactions</text>
+    <text x="15" y="120" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">&bull; Bus width fixed to 32 or 64 bits only</text>
+    <text x="15" y="140" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">&bull; No cache, no lock, no QoS, no region</text>
+    <text x="15" y="160" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">&bull; Requires only ~20% of full AXI4 gate count</text>
+    
+    <text x="15" y="195" fill="#fbbf24" font-size="10" font-weight="bold" font-family="system-ui, sans-serif">Target:</text>
+    <text x="15" y="210" fill="#94a3b8" font-size="10" font-family="system-ui, sans-serif">Control/Status Registers (CSRs), simple IPs</text>
+  </g>
+</svg>

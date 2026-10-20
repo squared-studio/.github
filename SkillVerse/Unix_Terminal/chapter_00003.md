@@ -1,4 +1,4 @@
-# Chapter 3: File Management and Permissions
+# File Management and Permissions
 
 ## What You Will Learn
 - Create, copy, move, and delete files/directories safely.

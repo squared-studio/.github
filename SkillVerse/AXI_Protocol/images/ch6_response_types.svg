@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 360" width="100%" height="100%">
+  <rect width="100%" height="100%" fill="#0f172a"/>
+  <text x="430" y="32" fill="#f8fafc" font-size="18" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">AXI Response Status Encodings (BRESP and RRESP)</text>
+  <text x="430" y="52" fill="#94a3b8" font-size="12" text-anchor="middle" font-family="system-ui, sans-serif">2-Bit status vector signaling transaction completion state</text>
+
+  <!-- 4 Cards -->
+  <!-- 1. OKAY -->
+  <g transform="translate(40, 80)">
+    <rect width="175" height="240" rx="8" fill="#1e293b" stroke="#34d399" stroke-width="2"/>
+    <rect width="175" height="40" rx="8" fill="#059669"/>
+    <text x="87" y="25" fill="#ffffff" font-size="13" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">OKAY (2'b00)</text>
+    <text x="15" y="65" fill="#34d399" font-size="11" font-weight="bold" font-family="system-ui, sans-serif">Normal Success:</text>
+    <text x="15" y="85" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">&bull; Normal access</text>
+    <text x="18" y="100" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">success</text>
+    <text x="15" y="120" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">&bull; Also returned when</text>
+    <text x="18" y="135" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">an Exclusive access</text>
+    <text x="18" y="150" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">fails (exclusive fail)</text>
+    <text x="15" y="180" fill="#a7f3d0" font-size="10" font-family="system-ui, sans-serif">Most common</text>
+    <text x="15" y="195" fill="#a7f3d0" font-size="10" font-family="system-ui, sans-serif">response on the bus</text>
+  </g>
+
+  <!-- 2. EXOKAY -->
+  <g transform="translate(240, 80)">
+    <rect width="175" height="240" rx="8" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+    <rect width="175" height="40" rx="8" fill="#0284c7"/>
+    <text x="87" y="25" fill="#ffffff" font-size="13" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">EXOKAY (2'b01)</text>
+    <text x="15" y="65" fill="#38bdf8" font-size="11" font-weight="bold" font-family="system-ui, sans-serif">Exclusive Success:</text>
+    <text x="15" y="85" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">&bull; Atomic semaphore</text>
+    <text x="18" y="100" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">success</text>
+    <text x="15" y="120" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">&bull; Confirms no other</text>
+    <text x="18" y="135" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">master updated</text>
+    <text x="18" y="150" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">the target address</text>
+    <text x="15" y="180" fill="#bae6fd" font-size="10" font-family="system-ui, sans-serif">Used for spinlocks &amp;</text>
+    <text x="15" y="195" fill="#bae6fd" font-size="10" font-family="system-ui, sans-serif">mutex primitives</text>
+  </g>
+
+  <!-- 3. SLVERR -->
+  <g transform="translate(440, 80)">
+    <rect width="175" height="240" rx="8" fill="#1e293b" stroke="#f87171" stroke-width="2"/>
+    <rect width="175" height="40" rx="8" fill="#b91c1c"/>
+    <text x="87" y="25" fill="#ffffff" font-size="13" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">SLVERR (2'b10)</text>
+    <text x="15" y="65" fill="#f87171" font-size="11" font-weight="bold" font-family="system-ui, sans-serif">Slave Error:</text>
+    <text x="15" y="85" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">&bull; Peripheral error</text>
+    <text x="15" y="105" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">&bull; Unaligned access</text>
+    <text x="15" y="125" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">&bull; Write to read-only</text>
+    <text x="15" y="145" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">&bull; Parity/ECC failure</text>
+    <text x="15" y="165" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">&bull; Permission fault</text>
+    <text x="15" y="195" fill="#fca5a5" font-size="10" font-family="system-ui, sans-serif">Slave reached, but</text>
+    <text x="15" y="210" fill="#fca5a5" font-size="10" font-family="system-ui, sans-serif">transaction rejected</text>
+  </g>
+
+  <!-- 4. DECERR -->
+  <g transform="translate(640, 80)">
+    <rect width="175" height="240" rx="8" fill="#1e293b" stroke="#f472b6" stroke-width="2"/>
+    <rect width="175" height="40" rx="8" fill="#db2777"/>
+    <text x="87" y="25" fill="#f8fafc" font-size="13" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">DECERR (2'b11)</text>
+    <text x="15" y="65" fill="#f472b6" font-size="11" font-weight="bold" font-family="system-ui, sans-serif">Decode Error:</text>
+    <text x="15" y="85" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">&bull; Generated by</text>
+    <text x="18" y="100" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">interconnect crossbar</text>
+    <text x="15" y="120" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">&bull; Target address does</text>
+    <text x="18" y="135" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">not map to ANY slave</text>
+    <text x="15" y="155" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">&bull; Interconnect default</text>
+    <text x="18" y="170" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">slave responds</text>
+    <text x="15" y="195" fill="#fbcfe8" font-size="10" font-family="system-ui, sans-serif">Traps software stray</text>
+    <text x="15" y="210" fill="#fbcfe8" font-size="10" font-family="system-ui, sans-serif">pointer bugs</text>
+  </g>
+</svg>

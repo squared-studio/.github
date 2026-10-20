@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 850 420" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bg3" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f172a"/>
+      <stop offset="100%" stop-color="#1e1e2e"/>
+    </linearGradient>
+  </defs>
+  <rect width="100%" height="100%" fill="url(#bg3)"/>
+  <text x="425" y="35" fill="#f8fafc" font-size="20" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">AMBA 5 CHI Protocol Layering & Flit Encapsulation</text>
+
+  <!-- 3 Layers Stack -->
+  <g transform="translate(100, 70)">
+    <!-- Protocol Layer -->
+    <rect width="650" height="75" rx="8" fill="#1e3a8a" stroke="#3b82f6" stroke-width="2"/>
+    <text x="325" y="28" fill="#ffffff" font-size="16" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">Protocol Layer (Packet Construction)</text>
+    <text x="325" y="52" fill="#bfdbfe" font-size="12" text-anchor="middle" font-family="system-ui, sans-serif">Defines Opcode, Address, TxnID, Return TxnID, Coherency Attributes, MOESI States</text>
+
+    <!-- Network Layer -->
+    <rect y="95" width="650" height="75" rx="8" fill="#1d4ed8" stroke="#60a5fa" stroke-width="2"/>
+    <text x="325" y="123" fill="#ffffff" font-size="16" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">Network Layer (Routing & Flit Segmentation)</text>
+    <text x="325" y="147" fill="#dbeafe" font-size="12" text-anchor="middle" font-family="system-ui, sans-serif">Adds Source NodeID (SrcID), Target NodeID (TgtID), Virtual Network ID (QoS/VNET)</text>
+
+    <!-- Link Layer -->
+    <rect y="190" width="650" height="75" rx="8" fill="#2563eb" stroke="#93c5fd" stroke-width="2"/>
+    <text x="325" y="218" fill="#ffffff" font-size="16" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">Link Layer (Credit Flow Control & Physical Framing)</text>
+    <text x="325" y="242" fill="#eff6ff" font-size="12" text-anchor="middle" font-family="system-ui, sans-serif">TXFLITV, TXFLITPEND, TXFLIT[N-1:0], Link Credits (LCRDV), Channel Arbitration</text>
+  </g>
+
+  <!-- Physical Link Representation -->
+  <g transform="translate(100, 360)">
+    <rect width="650" height="35" rx="6" fill="#334155" stroke="#cbd5e1" stroke-width="1.5"/>
+    <text x="325" y="22" fill="#f8fafc" font-size="13" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">Physical Wires (Bidirectional Point-to-Point Link)</text>
+  </g>
+</svg>

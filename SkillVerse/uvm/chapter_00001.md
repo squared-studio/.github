@@ -1,4 +1,4 @@
-# Chapter 1: Understanding the Problem and the Language
+# Understanding the Problem and the Language
 
 ![Top-Level APB-UART View](top-level-black-box.png)
 
@@ -12,7 +12,7 @@ By the end of this chapter, you should be comfortable with three things:
 
 If you are completely new to UVM, start here and do not rush. A lot of confusion later comes from not having a clear picture of the DUT and the vocabulary first.
 
-## 1.1 Why This Example Is Good for a Trainee Engineer
+## Why This Example Is Good for a Trainee Engineer
 
 UVM is easier to learn when the design under test is small enough that you can follow one transaction all the way through the verification flow.
 
@@ -28,7 +28,7 @@ That means you can ask very practical verification questions:
 
 These are strong beginner questions because they are both realistic and easy to visualize.
 
-## 1.2 What APB Means in This Tutorial
+## What APB Means in This Tutorial
 
 APB, or Advanced Peripheral Bus, is a simple on-chip bus protocol commonly used for peripheral control registers.
 
@@ -42,7 +42,7 @@ In this tutorial, you can think of APB as the path used by software to:
 
 So when you see APB traffic in this environment, think, "software is controlling the block through registers."
 
-## 1.3 What UART Means in This Tutorial
+## What UART Means in This Tutorial
 
 UART, or Universal Asynchronous Receiver/Transmitter, is a serial communication interface.
 
@@ -57,7 +57,7 @@ In this tutorial, you can think of the UART side as the physical communication b
 
 So when you see UART monitor traffic, think, "this is what actually happened on the serial line."
 
-## 1.4 The Main Registers You Need to Care About
+## The Main Registers You Need to Care About
 
 You do not need the full register map memorized to understand the training flow. A few addresses are enough.
 
@@ -76,7 +76,7 @@ If you remember only two addresses, remember these:
 
 These two registers are the center of the scoreboard's end-to-end data checks.
 
-## 1.5 The Core Verification Question
+## The Core Verification Question
 
 A beginner sometimes thinks verification means, "send some stimulus and hope nothing crashes."
 
@@ -96,7 +96,7 @@ For this APB-UART example, the core verification questions are:
 
 Those two questions are simple, strong, and easy to measure.
 
-## 1.6 UVM Vocabulary in Plain Language
+## UVM Vocabulary in Plain Language
 
 Before moving further, it helps to translate the main UVM terms into simple engineering language.
 
@@ -121,7 +121,7 @@ A simple trainee-friendly memory trick is:
 - monitors tell us what actually happened,
 - scoreboards decide whether it was correct.
 
-## 1.7 Why Transactions Are Better Than Raw Signal Thinking
+## Why Transactions Are Better Than Raw Signal Thinking
 
 When beginners first see UVM, they often wonder why everything is wrapped in classes and objects instead of just working with pins directly.
 
@@ -149,7 +149,7 @@ UVM lets the test describe intent at the transaction level while the driver hand
 
 That is one of the biggest reasons UVM scales better than handwritten, signal-level procedural benches.
 
-## 1.8 The Main Learning Goal Before Chapter 2
+## The Main Learning Goal Before Chapter 2
 
 If you leave this chapter with a clear answer to the question below, you are ready for the next chapter:
 

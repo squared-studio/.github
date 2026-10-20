@@ -1,4 +1,4 @@
-# Chapter 6: Extending the Environment as a New Verification Engineer
+# Extending the Environment as a New Verification Engineer
 
 ## What You Should Learn in This Chapter
 
@@ -11,7 +11,7 @@ By the end, you should understand:
 - when the scoreboard must change,
 - and what beginner mistakes to avoid.
 
-## 6.1 A Safe Way to Think About Extensions
+## A Safe Way to Think About Extensions
 
 When a trainee engineer first adds a new test, the most common mistake is to change too many parts of the environment at once.
 
@@ -25,7 +25,7 @@ A safer approach is:
 
 This keeps the environment stable while you learn.
 
-## 6.2 Reuse Before You Create
+## Reuse Before You Create
 
 Before writing a new sequence or a new checker, ask two simple questions.
 
@@ -50,7 +50,7 @@ then the current scoreboard may already be sufficient.
 
 That is the first thing to check before adding more infrastructure.
 
-## 6.3 A Minimal Derived Test Template
+## A Minimal Derived Test Template
 
 A good beginner template for a new test looks like this:
 
@@ -82,7 +82,7 @@ The key lesson here is what is not present:
 
 That setup already belongs to `base_test`.
 
-## 6.4 When the Scoreboard Needs to Grow
+## When the Scoreboard Needs to Grow
 
 A trainee engineer should be careful not to assume the scoreboard magically understands every new feature.
 
@@ -100,7 +100,7 @@ A practical rule is this:
 
 If the test is checking something the scoreboard never observes or compares today, the scoreboard probably needs an update.
 
-## 6.5 When Coverage Needs to Grow
+## When Coverage Needs to Grow
 
 The same idea applies to coverage.
 
@@ -113,7 +113,7 @@ For example, if you add parity-enabled testing, you may also want coverage point
 
 Coverage is how you make sure the new feature is not only supported in code, but also intentionally explored by tests.
 
-## 6.6 Common Beginner Mistakes
+## Common Beginner Mistakes
 
 This section is especially useful for trainees because these mistakes are very common.
 
@@ -143,7 +143,7 @@ A test can pass while still covering only a small part of the intended behavior 
 
 That is why coverage matters.
 
-## 6.7 A Practical Checklist for Writing a New Test
+## A Practical Checklist for Writing a New Test
 
 When you add a test, use this checklist.
 
@@ -157,7 +157,7 @@ When you add a test, use this checklist.
 
 If you can answer these questions clearly, your test will usually be much easier to debug.
 
-## 6.8 Final Takeaway for a New Verification Engineer
+## Final Takeaway for a New Verification Engineer
 
 At first, UVM can feel like a large framework with many moving parts. But this APB-UART environment shows that the core idea is actually straightforward.
 

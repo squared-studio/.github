@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 380" width="100%" height="100%">
+  <rect width="920" height="380" fill="#0f172a" rx="10"/>
+  <text x="460" y="35" fill="#f8fafc" font-size="18" font-weight="bold" text-anchor="middle" font-family="sans-serif">The Eight ACE Channels: 5 Standard AXI4 + 3 Snoop Channels</text>
+
+  <!-- Master Node -->
+  <rect x="40" y="70" width="180" height="280" fill="#1e293b" stroke="#38bdf8" stroke-width="2" rx="8"/>
+  <text x="130" y="105" fill="#38bdf8" font-size="16" font-weight="bold" text-anchor="middle" font-family="sans-serif">ACE Master</text>
+  <text x="130" y="125" fill="#94a3b8" font-size="11" text-anchor="middle" font-family="sans-serif">(CPU Cluster L2)</text>
+
+  <!-- Interconnect Node -->
+  <rect x="700" y="70" width="180" height="280" fill="#1e293b" stroke="#c084fc" stroke-width="2" rx="8"/>
+  <text x="790" y="105" fill="#c084fc" font-size="16" font-weight="bold" text-anchor="middle" font-family="sans-serif">Coherent Fabric</text>
+  <text x="790" y="125" fill="#94a3b8" font-size="11" text-anchor="middle" font-family="sans-serif">(CCI-500 / CCN)</text>
+
+  <!-- Standard AXI4 5 Channels (Master to Slave) -->
+  <rect x="250" y="65" width="420" height="150" fill="#0f172a" stroke="#38bdf8" stroke-width="1.5" rx="6"/>
+  <text x="460" y="85" fill="#38bdf8" font-size="11" font-weight="bold" text-anchor="middle" font-family="sans-serif">Standard AXI4 Channels (Extended with ARSNOOP, AWSNOOP, AxDOMAIN)</text>
+  
+  <line x1="220" y1="105" x2="700" y2="105" stroke="#38bdf8" stroke-width="2"/>
+  <text x="460" y="100" fill="#cbd5e1" font-size="9" text-anchor="middle" font-family="sans-serif">AW Channel (AWADDR, AWSNOOP, AWDOMAIN, AWBAR)</text>
+
+  <line x1="220" y1="125" x2="700" y2="125" stroke="#38bdf8" stroke-width="2"/>
+  <text x="460" y="120" fill="#cbd5e1" font-size="9" text-anchor="middle" font-family="sans-serif">W Channel (WDATA, WSTRB, WLAST)</text>
+
+  <line x1="700" y1="145" x2="220" y2="145" stroke="#4ade80" stroke-width="2"/>
+  <text x="460" y="140" fill="#cbd5e1" font-size="9" text-anchor="middle" font-family="sans-serif">B Channel (BRESP, BVALID, BREADY)</text>
+
+  <line x1="220" y1="170" x2="700" y2="170" stroke="#38bdf8" stroke-width="2"/>
+  <text x="460" y="165" fill="#cbd5e1" font-size="9" text-anchor="middle" font-family="sans-serif">AR Channel (ARADDR, ARSNOOP, ARDOMAIN, ARBAR)</text>
+
+  <line x1="700" y1="195" x2="220" y2="195" stroke="#4ade80" stroke-width="2"/>
+  <text x="460" y="190" fill="#cbd5e1" font-size="9" text-anchor="middle" font-family="sans-serif">R Channel (RDATA, RRESP[3:2] = PassDirty, IsShared)</text>
+
+  <!-- ACE Snooping 3 Channels (Interconnect to Master!) -->
+  <rect x="250" y="230" width="420" height="120" fill="#0f172a" stroke="#facc15" stroke-width="2" rx="6"/>
+  <text x="460" y="250" fill="#facc15" font-size="12" font-weight="bold" text-anchor="middle" font-family="sans-serif">Three Snoop Channels (Interconnect SNOOPS Master!)</text>
+
+  <line x1="700" y1="270" x2="220" y2="270" stroke="#facc15" stroke-width="2.5"/>
+  <polygon points="225,265 215,270 225,275" fill="#facc15"/>
+  <text x="460" y="265" fill="#facc15" font-size="10" font-weight="bold" text-anchor="middle" font-family="sans-serif">AC Channel: Snoop Address (ACADDR, ACSNOOP, ACPROT)</text>
+
+  <line x1="220" y1="300" x2="700" y2="300" stroke="#4ade80" stroke-width="2.5"/>
+  <polygon points="695,295 705,300 695,305" fill="#4ade80"/>
+  <text x="460" y="295" fill="#4ade80" font-size="10" font-weight="bold" text-anchor="middle" font-family="sans-serif">CR Channel: Snoop Response (CRRESP[4:0], CRVALID, CRREADY)</text>
+
+  <line x1="220" y1="330" x2="700" y2="330" stroke="#c084fc" stroke-width="2.5"/>
+  <polygon points="695,325 705,330 695,335" fill="#c084fc"/>
+  <text x="460" y="325" fill="#c084fc" font-size="10" font-weight="bold" text-anchor="middle" font-family="sans-serif">CD Channel: Snoop Data Forwarding (CDDATA, CDLAST)</text>
+</svg>

@@ -41,7 +41,7 @@ Modern SystemVerilog introduced dedicated procedural blocks to replace the ambig
 
 ![Procedural Blocks: Combinational vs Sequential](images/ch3_procedural_blocks.svg)
 
-### 1. Combinational Logic: `always_comb` and `assign`
+### Combinational Logic: `always_comb` and `assign`
 - **`always_comb`:**
   - Evaluates once at simulation time zero, guaranteeing correct initialization.
   - Automatically infers the sensitivity list from all signals read inside the block.
@@ -64,7 +64,7 @@ always_comb begin                   // Procedural combinational block
 end
 ```
 
-### 2. Sequential Logic: `always_ff`
+### Sequential Logic: `always_ff`
 - Enforces that physical hardware registers (flip-flops) are inferred.
 - Explicit clock edge (`posedge clk` or `negedge clk`).
 - Always use **non-blocking assignments (`<=`)**.

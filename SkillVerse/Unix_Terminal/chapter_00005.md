@@ -1,4 +1,4 @@
-# Chapter 5: Processes and Job Control
+# Processes and Job Control
 
 ## What You Will Learn
 - Inspect running processes and system load.

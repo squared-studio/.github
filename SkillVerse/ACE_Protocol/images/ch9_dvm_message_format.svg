@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 300" width="100%" height="100%">
+  <rect width="880" height="300" fill="#0f172a" rx="10"/>
+  <text x="440" y="35" fill="#f8fafc" font-size="18" font-weight="bold" text-anchor="middle" font-family="sans-serif">DVM Message Packet Encoding on ARADDR Payload</text>
+
+  <rect x="50" y="70" width="780" height="60" fill="#1e293b" stroke="#38bdf8" rx="6"/>
+  <!-- Field 1: Virtual Address -->
+  <rect x="70" y="85" width="260" height="35" fill="#0f172a" stroke="#38bdf8" rx="4"/>
+  <text x="200" y="107" fill="#38bdf8" font-size="11" font-weight="bold" text-anchor="middle" font-family="sans-serif">VA[31:12] (Target Page)</text>
+
+  <!-- Field 2: ASID -->
+  <rect x="340" y="85" width="160" height="35" fill="#0f172a" stroke="#facc15" rx="4"/>
+  <text x="420" y="107" fill="#facc15" font-size="11" font-weight="bold" text-anchor="middle" font-family="sans-serif">ASID[15:0] (Process ID)</text>
+
+  <!-- Field 3: VMID -->
+  <rect x="510" y="85" width="140" height="35" fill="#0f172a" stroke="#c084fc" rx="4"/>
+  <text x="580" y="107" fill="#c084fc" font-size="11" font-weight="bold" text-anchor="middle" font-family="sans-serif">VMID (Hypervisor)</text>
+
+  <!-- Field 4: DVM Command -->
+  <rect x="660" y="85" width="150" height="35" fill="#0f172a" stroke="#4ade80" rx="4"/>
+  <text x="735" y="107" fill="#4ade80" font-size="11" font-weight="bold" text-anchor="middle" font-family="sans-serif">CMD (TLBI / BPI / ICI)</text>
+
+  <!-- DVM Operation Descriptions -->
+  <rect x="50" y="150" width="780" height="120" fill="#0f172a" stroke="#64748b" rx="6"/>
+  <text x="70" y="180" fill="#cbd5e1" font-size="11" font-family="sans-serif">&#8226; <tspan fill="#38bdf8" font-weight="bold">TLBI (TLB Invalidate):</tspan> Flushes cached virtual address page translations across peer core MMUs.</text>
+  <text x="70" y="210" fill="#cbd5e1" font-size="11" font-family="sans-serif">&#8226; <tspan fill="#facc15" font-weight="bold">BPI (Branch Predictor Invalidate):</tspan> Clears branch history tables across peer execution units.</text>
+  <text x="70" y="240" fill="#cbd5e1" font-size="11" font-family="sans-serif">&#8226; <tspan fill="#4ade80" font-weight="bold">ICI (Instruction Cache Invalidate):</tspan> Forces peer cores to discard self-modifying code lines.</text>
+</svg>

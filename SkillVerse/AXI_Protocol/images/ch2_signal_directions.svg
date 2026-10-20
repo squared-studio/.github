@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 380" width="100%" height="100%">
+  <rect width="100%" height="100%" fill="#0f172a"/>
+  <text x="430" y="32" fill="#f8fafc" font-size="18" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">AXI Signal Dictionary &amp; Directionality Overview</text>
+  <text x="430" y="52" fill="#94a3b8" font-size="12" text-anchor="middle" font-family="system-ui, sans-serif">Unidirectional point-to-point buses grouped by operational channel</text>
+
+  <!-- 3 Big Sections -->
+  <!-- Left: Common & Write Channels -->
+  <g transform="translate(40, 75)">
+    <rect width="250" height="280" rx="8" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+    <rect width="250" height="32" rx="8" fill="#0284c7"/>
+    <text x="125" y="21" fill="#ffffff" font-size="12" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">Global &amp; Write Address (AW)</text>
+    
+    <text x="15" y="55" fill="#38bdf8" font-size="11" font-weight="bold" font-family="system-ui, sans-serif">Global Clock &amp; Reset:</text>
+    <text x="15" y="75" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">&bull; ACLK, ARESETn (Active-LOW)</text>
+
+    <text x="15" y="105" fill="#38bdf8" font-size="11" font-weight="bold" font-family="system-ui, sans-serif">AW Channel (Master &rarr; Slave):</text>
+    <text x="15" y="125" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">&bull; AWID [m-1:0] (Transaction ID)</text>
+    <text x="15" y="145" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">&bull; AWADDR [31:0 / 63:0]</text>
+    <text x="15" y="165" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">&bull; AWLEN [7:0] (Burst length - 1)</text>
+    <text x="15" y="185" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">&bull; AWSIZE [2:0] (Bytes in beat)</text>
+    <text x="15" y="205" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">&bull; AWBURST [1:0] (FIXED/INCR/WRAP)</text>
+    <text x="15" y="225" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">&bull; AWLOCK, AWCACHE, AWPROT</text>
+    <text x="15" y="245" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">&bull; AWQOS, AWREGION, AWUSER</text>
+    <text x="15" y="270" fill="#34d399" font-size="10" font-weight="bold" font-family="system-ui, sans-serif">&bull; AWVALID (M&rarr;S), AWREADY (S&rarr;M)</text>
+  </g>
+
+  <!-- Middle: Write Data (W) & Write Response (B) -->
+  <g transform="translate(305, 75)">
+    <rect width="250" height="280" rx="8" fill="#1e293b" stroke="#818cf8" stroke-width="2"/>
+    <rect width="250" height="32" rx="8" fill="#4f46e5"/>
+    <text x="125" y="21" fill="#ffffff" font-size="12" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">Write Data (W) &amp; Response (B)</text>
+    
+    <text x="15" y="55" fill="#818cf8" font-size="11" font-weight="bold" font-family="system-ui, sans-serif">W Channel (Master &rarr; Slave):</text>
+    <text x="15" y="75" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">&bull; WDATA [31:0 .. 1024:0]</text>
+    <text x="15" y="95" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">&bull; WSTRB [w/8 - 1:0] (Byte enable)</text>
+    <text x="15" y="115" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">&bull; WLAST (Strobe on last beat)</text>
+    <text x="15" y="135" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">&bull; WUSER [u-1:0] (Sideband)</text>
+    <text x="15" y="155" fill="#34d399" font-size="10" font-weight="bold" font-family="system-ui, sans-serif">&bull; WVALID (M&rarr;S), WREADY (S&rarr;M)</text>
+
+    <line x1="15" y1="175" x2="235" y2="175" stroke="#334155"/>
+
+    <text x="15" y="195" fill="#fbbf24" font-size="11" font-weight="bold" font-family="system-ui, sans-serif">B Channel (Slave &rarr; Master):</text>
+    <text x="15" y="215" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">&bull; BID [m-1:0] (Matches AWID)</text>
+    <text x="15" y="235" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">&bull; BRESP [1:0] (OK/EXOK/SLVERR/DEC)</text>
+    <text x="15" y="255" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">&bull; BUSER [u-1:0]</text>
+    <text x="15" y="275" fill="#34d399" font-size="10" font-weight="bold" font-family="system-ui, sans-serif">&bull; BVALID (S&rarr;M), BREADY (M&rarr;S)</text>
+  </g>
+
+  <!-- Right: Read Channels (AR and R) -->
+  <g transform="translate(570, 75)">
+    <rect width="250" height="280" rx="8" fill="#1e293b" stroke="#34d399" stroke-width="2"/>
+    <rect width="250" height="32" rx="8" fill="#059669"/>
+    <text x="125" y="21" fill="#ffffff" font-size="12" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">Read Address (AR) &amp; Data (R)</text>
+    
+    <text x="15" y="55" fill="#fbbf24" font-size="11" font-weight="bold" font-family="system-ui, sans-serif">AR Channel (Master &rarr; Slave):</text>
+    <text x="15" y="75" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">&bull; ARID, ARADDR, ARLEN</text>
+    <text x="15" y="95" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">&bull; ARSIZE, ARBURST, ARLOCK</text>
+    <text x="15" y="115" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">&bull; ARCACHE, ARPROT, ARQOS</text>
+    <text x="15" y="135" fill="#34d399" font-size="10" font-weight="bold" font-family="system-ui, sans-serif">&bull; ARVALID (M&rarr;S), ARREADY (S&rarr;M)</text>
+
+    <line x1="15" y1="155" x2="235" y2="155" stroke="#334155"/>
+
+    <text x="15" y="175" fill="#f472b6" font-size="11" font-weight="bold" font-family="system-ui, sans-serif">R Channel (Slave &rarr; Master):</text>
+    <text x="15" y="195" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">&bull; RID [m-1:0] (Matches ARID)</text>
+    <text x="15" y="215" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">&bull; RDATA [data bus width]</text>
+    <text x="15" y="235" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">&bull; RRESP [1:0] (Per beat!)</text>
+    <text x="15" y="255" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">&bull; RLAST (Flag on final beat)</text>
+    <text x="15" y="275" fill="#34d399" font-size="10" font-weight="bold" font-family="system-ui, sans-serif">&bull; RVALID (S&rarr;M), RREADY (M&rarr;S)</text>
+  </g>
+</svg>

@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 850 420" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bg9" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f172a"/>
+      <stop offset="100%" stop-color="#1e1e2e"/>
+    </linearGradient>
+    <marker id="dwtArr" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#ec4899"/>
+    </marker>
+    <marker id="genArr" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8"/>
+    </marker>
+  </defs>
+  <rect width="100%" height="100%" fill="url(#bg9)"/>
+  <text x="425" y="32" fill="#f8fafc" font-size="20" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">Direct Write-data Transfer (DWT) Directly to Memory (SN-F)</text>
+
+  <!-- 3 Nodes -->
+  <g transform="translate(100, 70)">
+    <rect width="130" height="40" rx="6" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+    <text x="65" y="25" fill="#38bdf8" font-size="13" font-weight="bold" text-anchor="middle">RN-F (Requestor)</text>
+    <line x1="65" y1="40" x2="65" y2="330" stroke="#475569" stroke-width="2" stroke-dasharray="4,4"/>
+  </g>
+  <g transform="translate(360, 70)">
+    <rect width="130" height="40" rx="6" fill="#1e293b" stroke="#818cf8" stroke-width="2"/>
+    <text x="65" y="25" fill="#818cf8" font-size="13" font-weight="bold" text-anchor="middle">HN-F (Home Node)</text>
+    <line x1="65" y1="40" x2="65" y2="330" stroke="#475569" stroke-width="2" stroke-dasharray="4,4"/>
+  </g>
+  <g transform="translate(620, 70)">
+    <rect width="130" height="40" rx="6" fill="#1e293b" stroke="#fbbf24" stroke-width="2"/>
+    <text x="65" y="25" fill="#fbbf24" font-size="13" font-weight="bold" text-anchor="middle">SN-F (Memory Ctrl)</text>
+    <line x1="65" y1="40" x2="65" y2="330" stroke="#475569" stroke-width="2" stroke-dasharray="4,4"/>
+  </g>
+
+  <!-- Flow 1: REQ WriteNoSnoop -->
+  <path d="M 165 130 L 425 130" stroke="#38bdf8" stroke-width="2" marker-end="url(#genArr)"/>
+  <text x="295" y="122" fill="#38bdf8" font-size="11" text-anchor="middle">1. REQ (WriteNoSnoop)</text>
+
+  <!-- Flow 2: HN-F asks SN-F for Write Buffer -->
+  <path d="M 425 170 L 685 170" stroke="#818cf8" stroke-width="2" marker-end="url(#genArr)"/>
+  <text x="555" y="162" fill="#a5b4fc" font-size="11" text-anchor="middle">2. REQ to SN-F</text>
+
+  <!-- Flow 3: SN-F sends DBID to HN-F -->
+  <path d="M 685 210 L 425 210" stroke="#fbbf24" stroke-width="2" marker-end="url(#genArr)"/>
+  <text x="555" y="202" fill="#fde68a" font-size="11" text-anchor="middle">3. RSP (DBIDResp from SN-F)</text>
+
+  <!-- Flow 4: HN-F sends CompDBID to RN-F pointing to SN-F -->
+  <path d="M 425 250 L 165 250" stroke="#818cf8" stroke-width="2" marker-end="url(#genArr)"/>
+  <text x="295" y="242" fill="#a5b4fc" font-size="11" text-anchor="middle">4. RSP (CompDBIDResp, Target=SN-F)</text>
+
+  <!-- Flow 5: DIRECT WRITE DATA (RN-F directly to SN-F, bypassing HN-F!) -->
+  <path d="M 165 295 L 685 295" stroke="#ec4899" stroke-width="3" marker-end="url(#dwtArr)"/>
+  <text x="425" y="287" fill="#f472b6" font-size="12" font-weight="bold" text-anchor="middle">5. DIRECT WRITE TRANSFER (DAT: NCBWrData directly to SN-F!)</text>
+</svg>

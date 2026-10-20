@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 380" width="100%" height="100%">
+  <rect width="100%" height="100%" fill="#0f172a"/>
+  <defs>
+    <marker id="chR" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 8 5 L 0 9 z" fill="#38bdf8"/>
+    </marker>
+    <marker id="chL" viewBox="0 0 10 10" refX="2" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 8 1 L 0 5 L 8 9 z" fill="#34d399"/>
+    </marker>
+  </defs>
+
+  <text x="430" y="32" fill="#f8fafc" font-size="18" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">The Five Independent AXI Channels</text>
+  <text x="430" y="52" fill="#94a3b8" font-size="12" text-anchor="middle" font-family="system-ui, sans-serif">Unidirectional decoupled channels enabling simultaneous full-duplex transactions</text>
+
+  <!-- Master Box -->
+  <g transform="translate(60, 80)">
+    <rect width="160" height="270" rx="10" fill="#1e3a8a" stroke="#60a5fa" stroke-width="2.5"/>
+    <text x="80" y="40" fill="#ffffff" font-size="16" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">AXI MASTER</text>
+    <text x="80" y="65" fill="#93c5fd" font-size="11" text-anchor="middle" font-family="system-ui, sans-serif">(Requester)</text>
+  </g>
+
+  <!-- Slave Box -->
+  <g transform="translate(640, 80)">
+    <rect width="160" height="270" rx="10" fill="#065f46" stroke="#34d399" stroke-width="2.5"/>
+    <text x="80" y="40" fill="#ffffff" font-size="16" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">AXI SLAVE</text>
+    <text x="80" y="65" fill="#a7f3d0" font-size="11" text-anchor="middle" font-family="system-ui, sans-serif">(Completer)</text>
+  </g>
+
+  <!-- Channel 1: Write Address Channel (AW) -->
+  <g transform="translate(240, 90)">
+    <rect width="380" height="40" rx="6" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+    <text x="190" y="24" fill="#38bdf8" font-size="12" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">Write Address Channel (AW) &rarr;</text>
+  </g>
+  <line x1="220" y1="110" x2="635" y2="110" stroke="#38bdf8" stroke-width="2" marker-end="url(#chR)"/>
+
+  <!-- Channel 2: Write Data Channel (W) -->
+  <g transform="translate(240, 145)">
+    <rect width="380" height="40" rx="6" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+    <text x="190" y="24" fill="#38bdf8" font-size="12" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">Write Data Channel (W) &rarr;</text>
+  </g>
+  <line x1="220" y1="165" x2="635" y2="165" stroke="#38bdf8" stroke-width="2" marker-end="url(#chR)"/>
+
+  <!-- Channel 3: Write Response Channel (B) -->
+  <g transform="translate(240, 200)">
+    <rect width="380" height="40" rx="6" fill="#1e293b" stroke="#34d399" stroke-width="2"/>
+    <text x="190" y="24" fill="#34d399" font-size="12" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">&larr; Write Response Channel (B)</text>
+  </g>
+  <line x1="225" y1="220" x2="640" y2="220" stroke="#34d399" stroke-width="2" marker-start="url(#chL)"/>
+
+  <!-- Channel 4: Read Address Channel (AR) -->
+  <g transform="translate(240, 255)">
+    <rect width="380" height="40" rx="6" fill="#1e293b" stroke="#fbbf24" stroke-width="2"/>
+    <text x="190" y="24" fill="#fbbf24" font-size="12" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">Read Address Channel (AR) &rarr;</text>
+  </g>
+  <line x1="220" y1="275" x2="635" y2="275" stroke="#fbbf24" stroke-width="2" marker-end="url(#chR)"/>
+
+  <!-- Channel 5: Read Data Channel (R) -->
+  <g transform="translate(240, 310)">
+    <rect width="380" height="40" rx="6" fill="#1e293b" stroke="#f472b6" stroke-width="2"/>
+    <text x="190" y="24" fill="#f472b6" font-size="12" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">&larr; Read Data Channel (R) [Includes Response]</text>
+  </g>
+  <line x1="225" y1="330" x2="640" y2="330" stroke="#f472b6" stroke-width="2" marker-start="url(#chL)"/>
+</svg>

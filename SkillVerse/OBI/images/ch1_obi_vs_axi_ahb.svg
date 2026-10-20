@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 340" width="100%" height="100%">
+  <rect width="900" height="340" fill="#0f172a" rx="10"/>
+  <text x="450" y="35" fill="#f8fafc" font-size="18" font-weight="bold" text-anchor="middle" font-family="sans-serif">Protocol Architecture Comparison: OBI vs. AHB5 vs. AXI4-Lite</text>
+
+  <!-- Table Header -->
+  <rect x="40" y="60" width="820" height="35" fill="#1e293b" stroke="#38bdf8" rx="4"/>
+  <text x="130" y="83" fill="#38bdf8" font-size="12" font-weight="bold" text-anchor="middle" font-family="sans-serif">Feature</text>
+  <text x="320" y="83" fill="#4ade80" font-size="12" font-weight="bold" text-anchor="middle" font-family="sans-serif">Open Bus Interface (OBI)</text>
+  <text x="540" y="83" fill="#facc15" font-size="12" font-weight="bold" text-anchor="middle" font-family="sans-serif">AMBA AHB5 / AHB-Lite</text>
+  <text x="750" y="83" fill="#c084fc" font-size="12" font-weight="bold" text-anchor="middle" font-family="sans-serif">AMBA AXI4-Lite</text>
+
+  <!-- Row 1: Handshake Style -->
+  <rect x="40" y="100" width="820" height="35" fill="#0f172a" stroke="#334155"/>
+  <text x="130" y="123" fill="#cbd5e1" font-size="11" font-weight="bold" text-anchor="middle" font-family="sans-serif">Handshake Style</text>
+  <text x="320" y="123" fill="#4ade80" font-size="11" text-anchor="middle" font-family="sans-serif">Split req/gnt &amp; rvalid/rready</text>
+  <text x="540" y="123" fill="#cbd5e1" font-size="11" text-anchor="middle" font-family="sans-serif">Pipelined address/data (HREADY)</text>
+  <text x="750" y="123" fill="#cbd5e1" font-size="11" text-anchor="middle" font-family="sans-serif">5 Decoupled Channels (Valid/Ready)</text>
+
+  <!-- Row 2: Outstanding Requests -->
+  <rect x="40" y="140" width="820" height="35" fill="#1e293b" stroke="#334155"/>
+  <text x="130" y="163" fill="#cbd5e1" font-size="11" font-weight="bold" text-anchor="middle" font-family="sans-serif">Outstanding Requests</text>
+  <text x="320" y="163" fill="#4ade80" font-size="11" text-anchor="middle" font-family="sans-serif">Multiple (Pipelined with MOT)</text>
+  <text x="540" y="163" fill="#cbd5e1" font-size="11" text-anchor="middle" font-family="sans-serif">Strictly 1 in address, 1 in data</text>
+  <text x="750" y="163" fill="#cbd5e1" font-size="11" text-anchor="middle" font-family="sans-serif">Single or Multiple (Implementation)</text>
+
+  <!-- Row 3: Read/Write Split -->
+  <rect x="40" y="180" width="820" height="35" fill="#0f172a" stroke="#334155"/>
+  <text x="130" y="203" fill="#cbd5e1" font-size="11" font-weight="bold" text-anchor="middle" font-family="sans-serif">Read / Write Channels</text>
+  <text x="320" y="203" fill="#4ade80" font-size="11" text-anchor="middle" font-family="sans-serif">Unified Request Channel (we bit)</text>
+  <text x="540" y="203" fill="#cbd5e1" font-size="11" text-anchor="middle" font-family="sans-serif">Unified Address (HWRITE bit)</text>
+  <text x="750" y="203" fill="#cbd5e1" font-size="11" text-anchor="middle" font-family="sans-serif">Separate AW, W, B vs AR, R</text>
+
+  <!-- Row 4: Gate Count Complexity -->
+  <rect x="40" y="220" width="820" height="35" fill="#1e293b" stroke="#334155"/>
+  <text x="130" y="243" fill="#cbd5e1" font-size="11" font-weight="bold" text-anchor="middle" font-family="sans-serif">Hardware Gate Overhead</text>
+  <text x="320" y="243" fill="#4ade80" font-size="11" font-weight="bold" text-anchor="middle" font-family="sans-serif">Minimal (ideal for RISC-V cores)</text>
+  <text x="540" y="243" fill="#cbd5e1" font-size="11" text-anchor="middle" font-family="sans-serif">Moderate (strict single-cycle timing)</text>
+  <text x="750" y="243" fill="#cbd5e1" font-size="11" text-anchor="middle" font-family="sans-serif">Higher (5 handshake pairs)</text>
+
+  <!-- Row 5: Open Standard -->
+  <rect x="40" y="260" width="820" height="35" fill="#0f172a" stroke="#334155"/>
+  <text x="130" y="283" fill="#cbd5e1" font-size="11" font-weight="bold" text-anchor="middle" font-family="sans-serif">Open Governance</text>
+  <text x="320" y="283" fill="#4ade80" font-size="11" font-weight="bold" text-anchor="middle" font-family="sans-serif">OpenHW Group (Free &amp; Open)</text>
+  <text x="540" y="283" fill="#cbd5e1" font-size="11" text-anchor="middle" font-family="sans-serif">Arm Proprietary Standard</text>
+  <text x="750" y="283" fill="#cbd5e1" font-size="11" text-anchor="middle" font-family="sans-serif">Arm Proprietary Standard</text>
+</svg>

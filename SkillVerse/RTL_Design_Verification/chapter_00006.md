@@ -1,4 +1,4 @@
-# Chapter 6: Assertion-Based Verification (ABV) with SystemVerilog Assertions (SVA)
+# Assertion-Based Verification (ABV) with SystemVerilog Assertions (SVA)
 
 Traditional simulation checking relies on scoreboards and monitors that compare DUT outputs long after an internal fault occurs. If an arithmetic overflow or state machine glitch corrupts an internal pipeline stage at Cycle 100, the error might not propagate to an external output pin until Cycle 150. By then, determining which internal gate malfunctioned requires tracing through thousands of waveform signals.
 
@@ -20,7 +20,7 @@ After completing this chapter, you should be able to:
 
 ---
 
-## 1. Immediate vs. Concurrent Assertions
+## Immediate vs. Concurrent Assertions
 
 SystemVerilog provides two fundamentally distinct categories of assertions to balance procedural programming with temporal hardware property checking.
 
@@ -38,19 +38,19 @@ SystemVerilog provides two fundamentally distinct categories of assertions to ba
 
 ---
 
-## 2. SystemVerilog Assertions (SVA) Temporal Syntax
+## SystemVerilog Assertions (SVA) Temporal Syntax
 
 Concurrent assertions are built hierarchically:
 $$\text{Boolean Expressions} \longrightarrow \text{Sequences} \longrightarrow \text{Properties} \longrightarrow \text{Directives}$$
 
-### 1. Delay Operators (`##`)
+### Delay Operators (`##`)
 - **Fixed Delay (`##n`):** The subsequent condition must hold exactly $n$ clocks later.
   `req ##2 gnt` (If `req` is true at $T$, `gnt` must be true at $T+2$).
 - **Range Delay (`##[min:max]`):** The condition must match at least once between `min` and `max` clock cycles.
   `req ##[1:4] ack` (`ack` must arrive between 1 and 4 cycles after `req`).
 - **Unbounded Delay (`##[1:$]`):** The event must eventually happen at some point in the future.
 
-### 2. Repetition Operators
+### Repetition Operators
 - **Consecutive Repetition (`expr [*n]`):** Expression must hold continuously for $n$ consecutive clocks.
   `frame_valid [*4]` (Valid must stay asserted for exactly 4 consecutive cycles).
 - **Goto Repetition (`expr [->n]`):** Expression must match $n$ times non-consecutively, and the sequence ends on the exact cycle of the $n$-th match.
@@ -66,7 +66,7 @@ endsequence
 
 ---
 
-## 3. Implication Operators: Overlapping (`|->`) vs. Non-Overlapping (`|=>`)
+## Implication Operators: Overlapping (`|->`) vs. Non-Overlapping (`|=>`)
 
 Properties use implication operators to establish cause-and-effect relationships:
 $$\text{Antecedent (Trigger)} \implies \text{Consequent (Requirement)}$$
@@ -95,7 +95,7 @@ assert property (p_axi_wdata_stable) else
 
 ---
 
-## 4. Built-In SVA System Functions
+## Built-In SVA System Functions
 
 SVA provides specialized system functions to inspect past cycles, detect signal transitions, and check bus encoding:
 
@@ -121,7 +121,7 @@ assert property (p_arbiter_onehot) else
 
 ---
 
-## 5. Non-Intrusive Assertion Integration: The `bind` Construct
+## Non-Intrusive Assertion Integration: The `bind` Construct
 
 Embedding assertions directly into synthesizable RTL can clutter clean production code or violate intellectual property rules when using third-party encrypted cores.
 
@@ -160,7 +160,7 @@ bind sync_fifo fifo_sva_bind #(.DEPTH(DEPTH)) u_fifo_assert (
 
 ---
 
-## 6. The ABV Verification Workflow: Dual-Engine Verification
+## The ABV Verification Workflow: Dual-Engine Verification
 
 A major advantage of SVA is that the exact same properties serve two distinct verification engines without modification: **Dynamic Simulation** and **Formal Property Verification (FPV)**.
 
@@ -178,7 +178,7 @@ A major advantage of SVA is that the exact same properties serve two distinct ve
 
 ---
 
-## 7. Learning Resources
+## Learning Resources
 
 - **Books:**
   - *SystemVerilog Assertions Handbook* by Ben Cohen, Srinivasan Venkataramanan, and Ajeetha Kumari.
@@ -188,7 +188,7 @@ A major advantage of SVA is that the exact same properties serve two distinct ve
 
 ---
 
-## 8. Review Exercises
+## Review Exercises
 
 1. Explain the difference between `req |-> ##2 gnt` and `req |=> ##1 gnt`. In which cycle relative to `req` is `gnt` evaluated in each case?
 2. Write a concurrent SVA property that verifies an active-LOW asynchronous reset: whenever `rst_n` falls LOW, the `state` register must equal `IDLE` on the following rising edge of `clk`.

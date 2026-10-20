@@ -219,13 +219,13 @@ endmodule
 
 Assertions express designer intent directly in the source code or verification bind files.
 
-### 1. Immediate Assertions
+### Immediate Assertions
 Executed like procedural statements inside `always` blocks or tasks:
 ```systemverilog
 assert (divisor != 0) else $error("Division by zero error!");
 ```
 
-### 2. Concurrent Assertions
+### Concurrent Assertions
 Sample values across clock edges over multiple cycles:
 - **Overlapping Implication (`|->`):** If condition antecedent matches on current edge, consequent must hold on the **same clock edge**.
 - **Non-Overlapping Implication (`|=>`):** If condition antecedent matches on current edge, consequent must hold on the **next clock edge** (equivalent to `|-> ##1`).

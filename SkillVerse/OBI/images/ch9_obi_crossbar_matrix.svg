@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 380" width="100%" height="100%">
+  <rect width="900" height="380" fill="#0f172a" rx="10"/>
+  <text x="450" y="35" fill="#f8fafc" font-size="18" font-weight="bold" text-anchor="middle" font-family="sans-serif">OBI N-to-M Non-Blocking Crossbar Interconnect</text>
+
+  <!-- Master Ports -->
+  <rect x="40" y="90" width="150" height="70" fill="#1e293b" stroke="#38bdf8" rx="6"/>
+  <text x="115" y="125" fill="#38bdf8" font-size="13" font-weight="bold" text-anchor="middle" font-family="sans-serif">Master 0 (CPU I)</text>
+
+  <rect x="40" y="180" width="150" height="70" fill="#1e293b" stroke="#38bdf8" rx="6"/>
+  <text x="115" y="215" fill="#38bdf8" font-size="13" font-weight="bold" text-anchor="middle" font-family="sans-serif">Master 1 (CPU D)</text>
+
+  <rect x="40" y="270" width="150" height="70" fill="#1e293b" stroke="#38bdf8" rx="6"/>
+  <text x="115" y="305" fill="#38bdf8" font-size="13" font-weight="bold" text-anchor="middle" font-family="sans-serif">Master 2 (DMA)</text>
+
+  <!-- Crossbar Routing Core -->
+  <rect x="260" y="75" width="380" height="280" fill="#1e293b" stroke="#c084fc" stroke-width="2" rx="8"/>
+  <text x="450" y="105" fill="#c084fc" font-size="15" font-weight="bold" text-anchor="middle" font-family="sans-serif">Full Crossbar Switching Fabric</text>
+
+  <rect x="290" y="130" width="320" height="45" fill="#0f172a" stroke="#64748b" rx="4"/>
+  <text x="450" y="157" fill="#cbd5e1" font-size="11" text-anchor="middle" font-family="sans-serif">Address Decoders (Target Slave Selection)</text>
+
+  <rect x="290" y="190" width="320" height="45" fill="#0f172a" stroke="#64748b" rx="4"/>
+  <text x="450" y="217" fill="#cbd5e1" font-size="11" text-anchor="middle" font-family="sans-serif">Multi-Port Grant Arbiters (Round-Robin)</text>
+
+  <rect x="290" y="250" width="320" height="45" fill="#0f172a" stroke="#64748b" rx="4"/>
+  <text x="450" y="277" fill="#cbd5e1" font-size="11" text-anchor="middle" font-family="sans-serif">Response Demultiplexers (In-Flight Table)</text>
+
+  <text x="450" y="335" fill="#4ade80" font-size="11" font-weight="bold" text-anchor="middle" font-family="sans-serif">Non-blocking: Uncontested routes execute in parallel</text>
+
+  <!-- Slave Ports -->
+  <rect x="710" y="90" width="150" height="70" fill="#1e293b" stroke="#4ade80" rx="6"/>
+  <text x="785" y="125" fill="#4ade80" font-size="13" font-weight="bold" text-anchor="middle" font-family="sans-serif">Slave 0 (SRAM 0)</text>
+
+  <rect x="710" y="180" width="150" height="70" fill="#1e293b" stroke="#4ade80" rx="6"/>
+  <text x="785" y="215" fill="#4ade80" font-size="13" font-weight="bold" text-anchor="middle" font-family="sans-serif">Slave 1 (SRAM 1)</text>
+
+  <rect x="710" y="270" width="150" height="70" fill="#1e293b" stroke="#4ade80" rx="6"/>
+  <text x="785" y="305" fill="#4ade80" font-size="13" font-weight="bold" text-anchor="middle" font-family="sans-serif">Slave 2 (Bridge)</text>
+
+  <!-- Interconnect arrows -->
+  <line x1="190" y1="125" x2="260" y2="125" stroke="#38bdf8" stroke-width="2"/>
+  <line x1="190" y1="215" x2="260" y2="215" stroke="#38bdf8" stroke-width="2"/>
+  <line x1="190" y1="305" x2="260" y2="305" stroke="#38bdf8" stroke-width="2"/>
+
+  <line x1="640" y1="125" x2="710" y2="125" stroke="#4ade80" stroke-width="2"/>
+  <line x1="640" y1="215" x2="710" y2="215" stroke="#4ade80" stroke-width="2"/>
+  <line x1="640" y1="305" x2="710" y2="305" stroke="#4ade80" stroke-width="2"/>
+</svg>

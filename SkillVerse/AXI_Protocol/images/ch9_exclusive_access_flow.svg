@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 370" width="100%" height="100%">
+  <rect width="100%" height="100%" fill="#0f172a"/>
+  <defs>
+    <marker id="exArr" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 8 5 L 0 9 z" fill="#38bdf8"/>
+    </marker>
+  </defs>
+
+  <text x="420" y="32" fill="#f8fafc" font-size="18" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">AXI Exclusive Access (Load-Linked / Store-Conditional) Protocol Flow</text>
+  <text x="420" y="52" fill="#94a3b8" font-size="12" text-anchor="middle" font-family="system-ui, sans-serif">Atomic multi-core semaphore update without locking the entire bus</text>
+
+  <!-- 4 Step Boxes -->
+  <!-- Step 1: Exclusive Read -->
+  <g transform="translate(60, 85)">
+    <rect width="165" height="180" rx="8" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+    <rect width="165" height="32" rx="8" fill="#0284c7"/>
+    <text x="82" y="21" fill="#ffffff" font-size="11" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">1. Exclusive Read</text>
+    <text x="12" y="55" fill="#38bdf8" font-size="10" font-weight="bold" font-family="monospace">ARLOCK = 0b01</text>
+    <text x="12" y="75" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">&bull; Master reads semaphore</text>
+    <text x="12" y="95" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">&bull; Slave Exclusive Monitor</text>
+    <text x="16" y="110" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">records {ARID, Addr}</text>
+    <text x="12" y="135" fill="#34d399" font-size="10" font-weight="bold" font-family="monospace">RRESP = EXOKAY</text>
+    <text x="12" y="160" fill="#a7f3d0" font-size="9" text-anchor="middle" font-family="system-ui, sans-serif">Monitor tag is active</text>
+  </g>
+
+  <!-- Step 2: Internal Compute -->
+  <g transform="translate(255, 85)">
+    <rect width="150" height="180" rx="8" fill="#1e293b" stroke="#818cf8" stroke-width="2"/>
+    <rect width="150" height="32" rx="8" fill="#4f46e5"/>
+    <text x="75" y="21" fill="#ffffff" font-size="11" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">2. Compute in CPU</text>
+    <text x="12" y="60" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">&bull; Master checks lock</text>
+    <text x="12" y="80" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">&bull; Computes new value</text>
+    <text x="12" y="100" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">&bull; Bus is 100% FREE for</text>
+    <text x="16" y="115" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">other masters!</text>
+    <text x="75" y="155" fill="#818cf8" font-size="10" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">(No bus lock!)</text>
+  </g>
+
+  <!-- Step 3: Exclusive Write -->
+  <g transform="translate(435, 85)">
+    <rect width="165" height="180" rx="8" fill="#1e293b" stroke="#fbbf24" stroke-width="2"/>
+    <rect width="165" height="32" rx="8" fill="#d97706"/>
+    <text x="82" y="21" fill="#ffffff" font-size="11" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">3. Exclusive Write</text>
+    <text x="12" y="55" fill="#fbbf24" font-size="10" font-weight="bold" font-family="monospace">AWLOCK = 0b01</text>
+    <text x="12" y="75" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">&bull; Master writes back</text>
+    <text x="12" y="95" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">&bull; Monitor checks: did</text>
+    <text x="16" y="110" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">another master write</text>
+    <text x="16" y="125" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">this address?</text>
+  </g>
+
+  <!-- Step 4: Outcome Verdict -->
+  <g transform="translate(630, 85)">
+    <rect width="160" height="180" rx="8" fill="#1e293b" stroke="#34d399" stroke-width="2"/>
+    <rect width="160" height="32" rx="8" fill="#059669"/>
+    <text x="80" y="21" fill="#ffffff" font-size="11" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">4. Verdict</text>
+    <rect x="10" y="45" width="140" height="40" rx="4" fill="#047857"/>
+    <text x="80" y="65" fill="#ffffff" font-size="10" font-weight="bold" text-anchor="middle" font-family="monospace">EXOKAY (Success!)</text>
+    <text x="80" y="78" fill="#a7f3d0" font-size="8" text-anchor="middle" font-family="system-ui, sans-serif">Data written to RAM</text>
+
+    <rect x="10" y="95" width="140" height="40" rx="4" fill="#7f1d1d"/>
+    <text x="80" y="115" fill="#ffffff" font-size="10" font-weight="bold" text-anchor="middle" font-family="monospace">OKAY (Failed!)</text>
+    <text x="80" y="128" fill="#fca5a5" font-size="8" text-anchor="middle" font-family="system-ui, sans-serif">Data dropped! Retry.</text>
+
+    <text x="80" y="160" fill="#94a3b8" font-size="9" text-anchor="middle" font-family="system-ui, sans-serif">Zero silent race bugs</text>
+  </g>
+
+  <!-- Arrows -->
+  <line x1="225" y1="175" x2="250" y2="175" stroke="#38bdf8" stroke-width="2" marker-end="url(#exArr)"/>
+  <line x1="405" y1="175" x2="430" y2="175" stroke="#38bdf8" stroke-width="2" marker-end="url(#exArr)"/>
+  <line x1="600" y1="175" x2="625" y2="175" stroke="#38bdf8" stroke-width="2" marker-end="url(#exArr)"/>
+
+  <text x="420" y="300" fill="#64748b" font-size="11" text-anchor="middle" font-family="system-ui, sans-serif">If another master wrote to the monitored address between Step 1 and Step 3, the write fails safely (OKAY response)</text>
+</svg>

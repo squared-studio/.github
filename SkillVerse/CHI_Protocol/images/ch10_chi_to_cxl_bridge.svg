@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 850 420" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bg17" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f172a"/>
+      <stop offset="100%" stop-color="#1e1e2e"/>
+    </linearGradient>
+    <marker id="bridgeArr" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8"/>
+    </marker>
+  </defs>
+  <rect width="100%" height="100%" fill="url(#bg17)"/>
+  <text x="425" y="32" fill="#f8fafc" font-size="20" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">Bridging On-Chip AMBA CHI to Off-Chip CXL (Compute Express Link)</text>
+
+  <!-- Left: On-Chip SoC Domain -->
+  <g transform="translate(40, 70)">
+    <rect width="320" height="300" rx="10" fill="#18182b" stroke="#38bdf8" stroke-width="2"/>
+    <text x="160" y="28" fill="#38bdf8" font-size="14" font-weight="bold" text-anchor="middle">On-Chip Domain (Die A)</text>
+    
+    <rect x="25" y="50" width="270" height="60" rx="6" fill="#1e293b" stroke="#64748b"/>
+    <text x="160" y="75" fill="#f8fafc" font-size="12" font-weight="bold" text-anchor="middle">Multi-Core CPU Cluster</text>
+    <text x="160" y="95" fill="#94a3b8" font-size="10" text-anchor="middle">RN-F Nodes (L1/L2 Caches)</text>
+
+    <rect x="25" y="130" width="270" height="60" rx="6" fill="#1e293b" stroke="#818cf8"/>
+    <text x="160" y="155" fill="#c7d2fe" font-size="12" font-weight="bold" text-anchor="middle">2D Mesh NoC (CMN-700)</text>
+    <text x="160" y="175" fill="#a5b4fc" font-size="10" text-anchor="middle">HN-F Home Nodes &amp; SLC</text>
+
+    <rect x="25" y="210" width="270" height="60" rx="6" fill="#0369a1" stroke="#38bdf8"/>
+    <text x="160" y="235" fill="#ffffff" font-size="12" font-weight="bold" text-anchor="middle">CHI-to-CXL Protocol Bridge</text>
+    <text x="160" y="255" fill="#bae6fd" font-size="10" text-anchor="middle">Translates CHI Flits to CXL Flits</text>
+  </g>
+
+  <!-- Middle: Physical PCIe Gen5/Gen6 PHY -->
+  <g transform="translate(380, 160)">
+    <rect width="90" height="120" rx="8" fill="#1e293b" stroke="#f59e0b" stroke-width="2"/>
+    <text x="45" y="30" fill="#fbbf24" font-size="11" font-weight="bold" text-anchor="middle">PCIe / CXL</text>
+    <text x="45" y="50" fill="#fbbf24" font-size="11" font-weight="bold" text-anchor="middle">PHY Layer</text>
+    <text x="45" y="80" fill="#fde68a" font-size="9" text-anchor="middle">32 / 64 GT/s</text>
+    <text x="45" y="100" fill="#fde68a" font-size="9" text-anchor="middle">SerDes</text>
+  </g>
+
+  <!-- Right: Off-Chip Disaggregated Accelerator / CXL Memory -->
+  <g transform="translate(490, 70)">
+    <rect width="320" height="300" rx="10" fill="#18182b" stroke="#ec4899" stroke-width="2"/>
+    <text x="160" y="28" fill="#ec4899" font-size="14" font-weight="bold" text-anchor="middle">Off-Chip Device (CXL.cache / CXL.mem)</text>
+    
+    <rect x="25" y="50" width="270" height="60" rx="6" fill="#1e293b" stroke="#64748b"/>
+    <text x="160" y="75" fill="#f8fafc" font-size="12" font-weight="bold" text-anchor="middle">CXL Device Controller</text>
+    <text x="160" y="95" fill="#94a3b8" font-size="10" text-anchor="middle">Type 2 Accelerator / Type 3 Memory</text>
+
+    <rect x="25" y="130" width="270" height="60" rx="6" fill="#1e293b" stroke="#f472b6"/>
+    <text x="160" y="155" fill="#fce7f3" font-size="12" font-weight="bold" text-anchor="middle">Hardware Coherency Engine</text>
+    <text x="160" y="175" fill="#fbcfe8" font-size="10" text-anchor="middle">Peer-to-Peer Cache Sharing</text>
+
+    <rect x="25" y="210" width="270" height="60" rx="6" fill="#9d174d" stroke="#ec4899"/>
+    <text x="160" y="235" fill="#ffffff" font-size="12" font-weight="bold" text-anchor="middle">Disaggregated DDR5 / HBM</text>
+    <text x="160" y="255" fill="#fce7f3" font-size="10" text-anchor="middle">Pooled Memory Expansion</text>
+  </g>
+
+  <!-- Connection Arrows -->
+  <line x1="310" y1="220" x2="380" y2="220" stroke="#38bdf8" stroke-width="2.5" marker-end="url(#bridgeArr)"/>
+  <line x1="470" y1="220" x2="490" y2="220" stroke="#ec4899" stroke-width="2.5" marker-end="url(#bridgeArr)"/>
+</svg>

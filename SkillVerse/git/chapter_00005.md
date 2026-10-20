@@ -72,7 +72,7 @@ Your task is to manually edit the content between these markers to resolve the c
 
 When you encounter a merge conflict, follow these steps to resolve it effectively:
 
-### 1. Decide: Abort or Resolve?
+### Decide: Abort or Resolve?
 
 When a merge conflict arises, your immediate choice is whether to stop the merge and go back, or to proceed with resolving the conflict.
 
@@ -90,7 +90,7 @@ git status # Lists files with merge conflicts
 
 - **`git status`**: After a failed merge due to conflicts, `git status` will list all the files that are in a conflicted state under the section "Unmerged paths". This helps you pinpoint exactly which files require your attention to resolve the conflicts.
 
-### 2. Manually Resolve Conflicts in Your Code Editor
+### Manually Resolve Conflicts in Your Code Editor
 
 The core of resolving merge conflicts lies in manually editing the conflicted files. You'll need to open each file marked as conflicted and decide how to integrate the changes.
 
@@ -126,7 +126,7 @@ The core of resolving merge conflicts lies in manually editing the conflicted fi
     - Rewriting the entire section to integrate the intended functionality from both changesets.
     - Crucially, **delete the conflict markers** (`<<<<<<< HEAD`, `=======`, `>>>>>>> feature/new-api`) themselves after you've resolved the conflict and have the code in the desired state.
 
-### 3. Finalizing the Merge: Declare Peace!
+### Finalizing the Merge: Declare Peace!
 
 Once you have manually resolved all conflicts in all conflicted files:
 

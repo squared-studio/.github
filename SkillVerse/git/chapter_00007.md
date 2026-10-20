@@ -6,7 +6,7 @@ Git is the engine of teamwork in coding. When you wield it well, projects stay o
 
 Think of commit messages as your project's diary. They're for your future self, your teammates, and anyone exploring your codebase. Make them count!
 
-### 1. Start with a Verb in the Imperative Mood
+### Start with a Verb in the Imperative Mood
 
 Use action verbs to kick off your subject line. It's clear, concise, and a Git standard.
 
@@ -18,7 +18,7 @@ improve: Loading performance
 
 - **Why?** It's a universal convention that makes commit logs consistent and focused on actions. Think of each commit as a command to the codebase.
 
-### 2. Be Brief, Then Expand (If Needed)
+### Be Brief, Then Expand (If Needed)
 
 Aim for a subject line of 50 characters or less—like a tweet for your code change. Need more room? Use the body to elaborate.
 
@@ -30,7 +30,7 @@ This commit introduces fuzzy search and auto-complete suggestions to significant
 
 - **Think Headline vs. Article:** The subject is your headline—catchy and to the point. The body is the article—details and context.
 
-### 3. Explain _Why_ You Changed It, Not Just _What_
+### Explain _Why_ You Changed It, Not Just _What_
 
 Code changes are obvious in the commit itself. Your message should explain the _reasoning_ behind them.
 
@@ -43,7 +43,7 @@ Code changes are obvious in the commit itself. Your message should explain the _
 
 Branches are your secret weapon for organized work and a stable `main` branch.
 
-### 1. Feature Branches: Your Coding Sandboxes
+### Feature Branches: Your Coding Sandboxes
 
 For every new feature or fix, create a branch.
 
@@ -53,7 +53,7 @@ git checkout -b feature/payment-integration
 
 - **Keep `main` Pristine:** Feature branches isolate your work, keeping the `main` branch clean and deployable. Focus your development efforts without disrupting the core codebase.\*
 
-### 2. Keep Branches Short and Sweet
+### Keep Branches Short and Sweet
 
 Treat branches like fresh produce—merge them before they go stale!
 
@@ -62,7 +62,7 @@ Treat branches like fresh produce—merge them before they go stale!
 
 - **Merge Often, Conflict Less:** Regularly merging back reduces the headache of complex merge conflicts and makes integration smoother.\*
 
-### 3. Name Branches So They Tell a Story
+### Name Branches So They Tell a Story
 
 Branch names should be instantly understandable.
 
@@ -78,7 +78,7 @@ hotfix/urgent-security-vulnerability
 
 Frequent syncing is like checking your mirrors while driving—essential to avoid collisions.
 
-### 1. Pull Early, Pull Often: Your Daily Git Vitamin
+### Pull Early, Pull Often: Your Daily Git Vitamin
 
 Regularly grab and integrate changes from the remote repository.
 
@@ -88,7 +88,7 @@ git pull origin main
 
 - **Stay in Sync, Avoid Surprises:** Pulling frequently minimizes nasty merge conflicts and ensures you're always building on the latest team progress.\*
 
-### 2. Rebase for a Clean, Linear History
+### Rebase for a Clean, Linear History
 
 Use rebasing to keep your project history streamlined and easy to follow.
 
@@ -118,14 +118,14 @@ Rebase: (Rewrites history for a linear, cleaner look)
 
 Code reviews are your safety net—catching bugs and boosting code quality before they reach production.
 
-### 1. Embrace Pull Requests: More Than Just Merging
+### Embrace Pull Requests: More Than Just Merging
 
 Use PRs as hubs for discussion and improvement, not just gateways to merge.
 
 - **Discuss Alternatives:** "Has anyone considered using the new API for this?"
 - **Suggest Enhancements:** "What if we added error handling for these edge cases?"
 
-### 2. Give Feedback That Builds Up, Not Tears Down
+### Give Feedback That Builds Up, Not Tears Down
 
 Focus on constructive, growth-oriented feedback.
 
@@ -138,7 +138,7 @@ Focus on constructive, growth-oriented feedback.
 
 A clean repository is a happy repository—easier to navigate, maintain, and contribute to.
 
-### 1. Prune Old Branches: Keep It Fresh
+### Prune Old Branches: Keep It Fresh
 
 Once a branch is merged, say goodbye!
 
@@ -149,7 +149,7 @@ git push origin --delete feature/legacy-feature # Delete remote branch
 
 - **Declutter and Simplify:** Deleting merged branches reduces visual noise and keeps everyone focused on active development.\*
 
-### 2. `.gitignore`: Your Repo's Bouncer
+### `.gitignore`: Your Repo's Bouncer
 
 Prevent unnecessary files from sneaking into version control.
 
@@ -164,7 +164,7 @@ temp/
 
 - **Keep It Lean and Secure:** `.gitignore` keeps your repository lightweight, focused on source code, and prevents sensitive files from being accidentally committed.\*
 
-### 3. Commit Little and Often: Baby Steps to Success
+### Commit Little and Often: Baby Steps to Success
 
 Make frequent, focused commits with clear purposes.
 

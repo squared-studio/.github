@@ -1,4 +1,4 @@
-# Chapter 5: UVM Testbench Components and Advanced Features
+# UVM Testbench Components and Advanced Features
 
 Building on the architectural foundations of UVM, production verification environments require advanced mechanisms to manage complex, multi-interface System-on-Chips (SoCs). Verifying modern processors and accelerators demands sophisticated stimulus coordination, memory-mapped register modeling, dynamic component polymorphism, and standardized cross-component communication.
 
@@ -18,7 +18,7 @@ After completing this chapter, you should be able to:
 
 ---
 
-## 1. UVM Sequences and the Sequence-Driver Handshake
+## UVM Sequences and the Sequence-Driver Handshake
 
 In UVM, stimulus generation is strictly decoupled from pin-level driving. A `uvm_sequence` executes algorithmic transaction generation in software, communicating with a `uvm_driver` through a synchronized, two-way handshake.
 
@@ -67,7 +67,7 @@ Notice that `req.randomize()` is called **between `start_item()` and `finish_ite
 
 ---
 
-## 2. Virtual Sequences: Orchestrating Multi-Agent Scenarios
+## Virtual Sequences: Orchestrating Multi-Agent Scenarios
 
 At the subsystem and SoC level, a testbench contains multiple independent interface agents (e.g., PCIe Ingress Agent, Ethernet Rx Agent, DDR Controller Agent, and Interrupt Monitor). Coordinating concurrent transactions across these agents cannot be accomplished with a single agent sequence.
 
@@ -114,7 +114,7 @@ endclass
 
 ---
 
-## 3. The UVM Register Abstraction Layer (RAL)
+## The UVM Register Abstraction Layer (RAL)
 
 Virtually every modern digital IP contains dozens or hundreds of memory-mapped Control and Status Registers (CSRs). Verifying registers manually by tracking absolute addresses in hexadecimal is error-prone.
 
@@ -154,7 +154,7 @@ endtask
 
 ---
 
-## 4. TLM Analysis Ports and Non-Blocking Broadcasts
+## TLM Analysis Ports and Non-Blocking Broadcasts
 
 While drivers and sequencers use point-to-point, blocking TLM ports to transfer transactions, monitors require a **one-to-many broadcast mechanism** to send observed transactions to scoreboards, functional coverage collectors, and protocol loggers simultaneously without backpressure.
 
@@ -200,7 +200,7 @@ endclass
 
 ---
 
-## 5. The UVM Factory Mechanism: Dynamic Overrides
+## The UVM Factory Mechanism: Dynamic Overrides
 
 The **UVM Factory** is an implementation of the classic Software Design Pattern that enables dynamically substituting one class with another derived class **without altering existing code or module instantiations**.
 
@@ -237,7 +237,7 @@ endclass
 
 ---
 
-## 6. UVM Messaging and Reporting Infrastructure
+## UVM Messaging and Reporting Infrastructure
 
 UVM provides a centralized, severity-classified reporting mechanism through four standard macros:
 
@@ -264,7 +264,7 @@ Simulation verbosity can be adjusted from the command line without recompilation
 
 ---
 
-## 7. The UVM Objection Mechanism and Drain Time
+## The UVM Objection Mechanism and Drain Time
 
 The UVM `run_phase` is governed by the **Objection Mechanism**. The simulator stays in `run_phase` as long as at least one component holds an active objection.
 
@@ -291,7 +291,7 @@ Setting a **Drain Time** (`set_drain_time()`) ensures that the `run_phase` linge
 
 ---
 
-## 8. Learning Resources
+## Learning Resources
 
 - **Books:**
   - *UVM Primer* by Ray Salemi (Chapters 14-22: Sequences, Factory, and Objections).
@@ -302,7 +302,7 @@ Setting a **Drain Time** (`set_drain_time()`) ensures that the `run_phase` linge
 
 ---
 
-## 9. Review Exercises
+## Review Exercises
 
 1. Why must transaction randomization occur inside the `start_item()` / `finish_item()` block rather than prior to calling `start_item()`?
 2. What is the fundamental difference between an instance override and a type override in the UVM factory? Give a practical verification use case for each.

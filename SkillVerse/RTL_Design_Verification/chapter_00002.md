@@ -1,4 +1,4 @@
-# Chapter 2: SystemVerilog for Verification - Testbench Fundamentals
+# SystemVerilog for Verification - Testbench Fundamentals
 
 SystemVerilog is uniquely distinguished as both a synthesizable Hardware Description Language (HDL) and a powerful, object-oriented **Hardware Verification Language (HVL)**. Standardized under IEEE 1800, its verification features were engineered specifically to overcome the limitations of classic Verilog-1995/2001 testbenches.
 
@@ -17,7 +17,7 @@ After completing this chapter, you should be able to:
 
 ---
 
-## 1. SystemVerilog as a Verification Language: Core Constructs
+## SystemVerilog as a Verification Language: Core Constructs
 
 ### Classes, Objects, and Object-Oriented Programming (OOP)
 In classic Verilog, testbenches relied on static `module` blocks and global variables. SystemVerilog introduces dynamic OOP classes:
@@ -70,7 +70,7 @@ import bus_pkg::*;
 
 ---
 
-## 2. Eliminating Race Conditions: Simulation Event Regions
+## Eliminating Race Conditions: Simulation Event Regions
 
 One of the most persistent bugs in legacy Verilog testbenches is the **simulation race condition**, where a testbench samples an output on the same delta cycle that the design register updates, yielding non-deterministic values depending on simulator engine ordering.
 
@@ -90,7 +90,7 @@ SystemVerilog eliminates race conditions through **Stratified Event Scheduling R
 
 ---
 
-## 3. Clocking Blocks: Deterministic Synchronous Interfacing
+## Clocking Blocks: Deterministic Synchronous Interfacing
 
 A **Clocking Block** synchronizes testbench drives and samples to specific clock edges, completely abstracting setup and hold timings.
 
@@ -129,7 +129,7 @@ endinterface : bus_if
 
 ---
 
-## 4. Virtual Interfaces: Bridging Dynamic Classes to Static RTL
+## Virtual Interfaces: Bridging Dynamic Classes to Static RTL
 
 In SystemVerilog, synthesizable RTL modules are **static structures** created at elaboration and compiled into fixed memory locations. In contrast, testbench components (drivers, monitors, scoreboards) are **dynamic OOP classes** instantiated at runtime on the heap.
 
@@ -180,7 +180,7 @@ endclass
 
 ---
 
-## 5. Layered Testbench Architecture
+## Layered Testbench Architecture
 
 Monolithic testbenches where test logic, protocol formatting, and pin wiggling are intermingled become unmaintainable as designs scale. Production verification environments utilize a **Layered Testbench Architecture**.
 
@@ -203,7 +203,7 @@ Monolithic testbenches where test logic, protocol formatting, and pin wiggling a
 
 ---
 
-## 6. Building a Self-Checking Testbench with a Queue-Based Scoreboard
+## Building a Self-Checking Testbench with a Queue-Based Scoreboard
 
 Below is a complete, working example illustrating a layered, self-checking SystemVerilog testbench for a synchronous processing pipeline using virtual interfaces, transactors, and a queue-based scoreboard.
 
@@ -271,7 +271,7 @@ endclass
 
 ---
 
-## 7. Learning Resources
+## Learning Resources
 
 - **Books:**
   - *SystemVerilog for Verification: A Guide to Learning the Testbench Language Features* by Chris Spear & Greg Tumbush (Chapters 3-5: OOP, Interfaces, Clocking Blocks).
@@ -281,7 +281,7 @@ endclass
 
 ---
 
-## 8. Review Exercises
+## Review Exercises
 
 1. Explain the difference between an interface instance and a virtual interface handle in SystemVerilog. Why can a class not contain an interface instance directly?
 2. What happens if a testbench samples an asynchronous output from a DUT inside the Active region versus inside the Preponed region via a clocking block with `#1step` skew?

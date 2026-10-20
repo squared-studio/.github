@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 850 420" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bg7" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f172a"/>
+      <stop offset="100%" stop-color="#1e1e2e"/>
+    </linearGradient>
+    <marker id="dctArr" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#ec4899"/>
+    </marker>
+    <marker id="normArr" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8"/>
+    </marker>
+  </defs>
+  <rect width="100%" height="100%" fill="url(#bg7)"/>
+  <text x="425" y="32" fill="#f8fafc" font-size="20" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">Direct Cache Transfer (DCT / Forwarding Snoop)</text>
+
+  <!-- 3 Nodes -->
+  <g transform="translate(100, 70)">
+    <rect width="130" height="45" rx="6" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+    <text x="65" y="28" fill="#38bdf8" font-size="13" font-weight="bold" text-anchor="middle">RN-F 0 (Requestor)</text>
+    <line x1="65" y1="45" x2="65" y2="330" stroke="#475569" stroke-width="2" stroke-dasharray="4,4"/>
+  </g>
+  <g transform="translate(360, 70)">
+    <rect width="130" height="45" rx="6" fill="#1e293b" stroke="#818cf8" stroke-width="2"/>
+    <text x="65" y="28" fill="#818cf8" font-size="13" font-weight="bold" text-anchor="middle">HN-F (Home)</text>
+    <line x1="65" y1="45" x2="65" y2="330" stroke="#475569" stroke-width="2" stroke-dasharray="4,4"/>
+  </g>
+  <g transform="translate(620, 70)">
+    <rect width="130" height="45" rx="6" fill="#1e293b" stroke="#f59e0b" stroke-width="2"/>
+    <text x="65" y="28" fill="#f59e0b" font-size="13" font-weight="bold" text-anchor="middle">RN-F 1 (Forwarder)</text>
+    <line x1="65" y1="45" x2="65" y2="330" stroke="#475569" stroke-width="2" stroke-dasharray="4,4"/>
+  </g>
+
+  <!-- Step 1: REQ ReadShared -->
+  <path d="M 165 140 L 425 140" stroke="#38bdf8" stroke-width="2" marker-end="url(#normArr)"/>
+  <text x="295" y="132" fill="#38bdf8" font-size="11" text-anchor="middle">1. REQ (ReadShared)</text>
+
+  <!-- Step 2: SnpSharedFwd (Tells RN-F 1 to send directly to RN-F 0) -->
+  <path d="M 425 180 L 685 180" stroke="#f59e0b" stroke-width="2" marker-end="url(#normArr)"/>
+  <text x="555" y="172" fill="#f59e0b" font-size="11" text-anchor="middle">2. SNP (SnpSharedFwd, FwdNID = RN-F 0)</text>
+
+  <!-- Step 3: DIRECT DATA TRANSFER (RN-F 1 directly to RN-F 0) -->
+  <path d="M 685 230 L 165 230" stroke="#ec4899" stroke-width="3" marker-end="url(#dctArr)"/>
+  <text x="425" y="222" fill="#f472b6" font-size="12" font-weight="bold" text-anchor="middle">3. DIRECT CACHE TRANSFER (DAT: CompData directly to RN-F 0!)</text>
+
+  <!-- Step 4: SnpRespFwd to HN-F -->
+  <path d="M 685 275 L 425 275" stroke="#f59e0b" stroke-width="2" marker-end="url(#normArr)"/>
+  <text x="555" y="267" fill="#f59e0b" font-size="11" text-anchor="middle">4. RSP (SnpRespFwd to Home)</text>
+
+  <!-- Step 5: CompAck from RN-F 0 to HN-F -->
+  <path d="M 165 315 L 425 315" stroke="#38bdf8" stroke-width="2" marker-end="url(#normArr)"/>
+  <text x="295" y="307" fill="#38bdf8" font-size="11" text-anchor="middle">5. RSP (CompAck to Home)</text>
+</svg>

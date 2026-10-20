@@ -1,4 +1,4 @@
-# Chapter 4: Introduction to Universal Verification Methodology (UVM)
+# Introduction to Universal Verification Methodology (UVM)
 
 The **Universal Verification Methodology (UVM)**, standardized under IEEE 1800.2, represents the pinnacle of verification methodology convergence. Prior to UVM, the semiconductor industry suffered from fragmented, proprietary frameworks (Synopsys VMM, Mentor AVM/OVM, Cadence eRM/URM), making Verification IP (VIP) sharing and engineer mobility exceedingly costly.
 
@@ -18,7 +18,7 @@ After completing this chapter, you should be able to:
 
 ---
 
-## 1. Motivation for UVM: Industry Standardization and Reuse
+## Motivation for UVM: Industry Standardization and Reuse
 
 Before UVM, verification teams built ad-hoc testbenches or vendor-locked frameworks. This led to:
 - **Zero Interoperability:** A PCIe verification IP developed for Mentor tools could not be integrated into a Cadence or Synopsys testbench without extensive rewriting.
@@ -32,7 +32,7 @@ UVM solved these challenges through Accellera and IEEE standardization:
 
 ---
 
-## 2. The UVM Class Library Architecture
+## The UVM Class Library Architecture
 
 Every class in UVM ultimately inherits from the root abstract class `uvm_void`. The library bifurcates into two fundamental branches:
 
@@ -65,7 +65,7 @@ Every class in UVM ultimately inherits from the root abstract class `uvm_void`. 
 
 ---
 
-## 3. The Standard UVM Testbench Hierarchy
+## The Standard UVM Testbench Hierarchy
 
 A production UVM verification environment is structured as a hierarchical tree of modular components.
 
@@ -83,7 +83,7 @@ A production UVM verification environment is structured as a hierarchical tree o
 
 ---
 
-## 4. Active vs. Passive UVM Agents
+## Active vs. Passive UVM Agents
 
 The `uvm_agent` is the core building block of modular verification IP. It can be dynamically configured as **Active** or **Passive**.
 
@@ -133,7 +133,7 @@ endclass
 
 ---
 
-## 5. UVM Phasing Architecture
+## UVM Phasing Architecture
 
 To ensure predictable initialization, execution, and cleanup, UVM executes a strict sequence of standardized **Phases**.
 
@@ -157,7 +157,7 @@ To ensure predictable initialization, execution, and cleanup, UVM executes a str
 
 ---
 
-## 6. The UVM Configuration Database (`uvm_config_db`)
+## The UVM Configuration Database (`uvm_config_db`)
 
 The `uvm_config_db` is a type-safe, string-indexed hierarchical database used to configure testbench components without hardcoding variables or passing values through multiple constructor layers.
 
@@ -204,7 +204,7 @@ endclass
 
 ---
 
-## 7. Complete End-to-End Basic UVM Testbench
+## Complete End-to-End Basic UVM Testbench
 
 Below is an architectural template demonstrating how a complete, compiling UVM testbench connects together from top module to UVM test.
 
@@ -292,7 +292,7 @@ endmodule
 
 ---
 
-## 8. Learning Resources
+## Learning Resources
 
 - **Official Standards & User Guides:**
   - Accellera Systems Initiative: *UVM 1.2 User's Guide* and *UVM 1.2 Class Reference*.
@@ -303,7 +303,7 @@ endmodule
 
 ---
 
-## 9. Review Exercises
+## Review Exercises
 
 1. Why are `build_phase` methods executed in a top-down order, whereas `connect_phase` methods are executed in a bottom-up order?
 2. In an SoC containing an integrated SPI controller and an on-chip CPU, how would you configure the UVM SPI Agent when testing the SPI block stand-alone versus testing the entire SoC?

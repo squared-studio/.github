@@ -1,161 +1,149 @@
-# Open Bus Interface (OBI)
+# Introduction to Open Bus Interface (OBI) and OpenHW Ecosystem
 
-## Description
+### Learning Objectives
+- Understand the historical origin and evolution of the **Open Bus Interface (OBI)** from the PULP platform (RI5CY) to the official **OpenHW Group** standard.
+- Analyze the role of OBI in modern open-source RISC-V processor cores, including **CV32E40P**, **CV32E40X**, **CV32E40S**, and **CVA6**.
+- Compare and contrast OBI with industry-standard on-chip protocols: **AMBA AXI4-Lite**, **AMBA AHB-Lite / AHB5**, and **TileLink-UL**.
+- Master the fundamental architectural philosophy of OBI: decoupled split request/response phases, latency insensitivity, and minimal silicon area footprint.
+- Examine the dual-bus system topology of RISC-V processors: the **Instruction OBI (I-OBI)** and **Data OBI (D-OBI)** interfaces.
 
-The Open Bus Interface (OBI) is a lightweight bus protocol used to connect masters and slaves in embedded and SoC designs. It is designed to be easy to implement in RTL while still supporting practical features such as reads, writes, wait states, and byte enables.
+---
 
-At its core, OBI separates a transaction into two parts:
+## The Genesis of the Open Bus Interface (OBI)
 
-1. **Request acceptance** using `req` and `gnt`
-2. **Transaction completion** using `rvalid` and, for reads, `rdata`
+In the open-source silicon and RISC-V revolution, processor cores require high-performance, royalty-free, standardized on-chip bus interfaces. Historically, open-source cores faced an architectural dilemma:
 
-That split makes OBI simple to reason about:
+1. **AMBA Protocols (Arm):** While protocols like AHB and AXI are ubiquitous in commercial silicon, their specifications and IP wrappers are encumbered by proprietary ecosystem standards and legacy complexities that add unnecessary gate overhead to lightweight 32-bit embedded microcontroller cores.
+2. **Proprietary Core Buses:** Early RISC-V research implementations utilized ad-hoc, core-specific internal interfaces. For example, the **PULP (Parallel Ultra-Low-Power) Platform** developed by ETH Zürich and the University of Bologna introduced an internal low-latency bus interface for the **RI5CY** (later renamed CV32E40P) processor core.
+3. **The Need for Standardization:** As the **OpenHW Group** formed to drive industrial-grade, verified open-source RISC-V cores into commercial automotive and industrial silicon, this interface was formally extracted, standardized, and codified as the **Open Bus Interface (OBI)** specification.
 
-- the master asks for a transfer,
-- the slave accepts it when ready,
-- the slave later returns the completion.
+Today, OBI is the premier open-source on-chip interconnect standard for high-efficiency embedded RISC-V computing.
 
-This chapter focuses on the common minimal OBI-style interface shown in the waveform below.
+---
 
-### Why OBI is useful
+## OBI in the CORE-V Processor Ecosystem
 
-- **Simple handshake:** easy to implement and verify
-- **Low overhead:** good fit for small and medium interconnects
-- **Configurable widths:** address and data widths are implementation-defined
-- **Byte enables:** supports partial-word writes
-- **Latency tolerant:** the slave can delay either acceptance or completion
+The OpenHW Group's **CORE-V** family of open-source RISC-V cores relies on OBI as its primary system interface:
 
-## Protocol Overview
+![OBI System Topology](images/ch1_obi_system_topology.svg)
 
-An OBI transfer is considered **accepted** in the cycle where both `req` and `gnt` are high.
+### Dual-Bus Core Architecture:
+A modern 32-bit or 64-bit RISC-V processor core integrates two physically separate OBI master interfaces:
+1. **Instruction OBI (I-OBI):** Dedicated exclusively to the Instruction Fetch Unit (IFU). It operates in read-only mode (`we` is permanently tied to `0`), streaming instructions from on-chip SRAM or instruction cache with minimal latency.
+2. **Data OBI (D-OBI):** Dedicated to the Load/Store Unit (LSU). It handles both read (load) and write (store) transactions, supporting partial-word byte enables (`be`) and atomic memory operations (`atop`).
 
-- `req` is driven by the master
-- `gnt` is driven by the slave
-- `rvalid` indicates that the slave is returning the response
-- `rdata` is meaningful only for read responses
+Because I-OBI and D-OBI operate as independent bus masters, the processor can execute a 32-bit data memory store while simultaneously fetching the next instruction from code memory, achieving full **Harvard Architecture** concurrency.
 
-In this simplified interface, the protocol is typically used with **one outstanding transaction at a time**. That means the master waits for `rvalid` before starting the next transfer.
+---
 
-## Signals
+## Architectural Comparison: OBI vs. AHB vs. AXI4-Lite vs. TileLink
 
-### Clock and Reset
+To understand why OBI was chosen for modern RISC-V cores, consider how it compares to alternative on-chip buses:
 
-- **`clk`**: system clock; interface signals are sampled on the rising edge
-- **`arst_n`**: asynchronous active-low reset
+![OBI vs AHB vs AXI](images/ch1_obi_vs_axi_ahb.svg)
 
-### Request Channel (Master to Slave)
+| Feature | Open Bus Interface (OBI) | AMBA AHB5 / AHB-Lite | AMBA AXI4-Lite | TileLink-UL (Uncached) |
+|---|---|---|---|---|
+| **Governance** | **OpenHW Group (Open Source)** | Arm Proprietary | Arm Proprietary | SiFive / RISC-V International |
+| **Channel Structure** | **2 Decoupled Channels** (Request &amp; Response) | Single Pipelined Bus (Address then Data) | **5 Independent Channels** (AW, W, B, AR, R) | 2 Channels (A Channel &amp; D Channel) |
+| **Handshake Mechanics** | Request: `req`/`gnt`<br>Response: `rvalid` | Pipelined single handshake (`HREADY`) | Two-way valid/ready on all 5 channels | Ready/Valid on both channels |
+| **Read / Write Channel** | **Unified Request Channel** (`we` bit) | Unified Address Bus (`HWRITE`) | **Split Channels** (AW/W vs AR/R) | Unified Request (`a_opcode`) |
+| **Pipelining / MOT** | **Yes** (Multiple Outstanding Transactions) | Strictly 1 in address, 1 in data phase | Implementation-defined | **Yes** (Multiple outstanding requests) |
+| **Hardware Complexity** | **Ultra-Low** (~1,500 gates/switch) | Moderate (~3,000 gates) | Higher (~6,000+ gates) | Low-to-Moderate |
+| **Critical Timing Path** | Decoupled; register slices insertable | Tight: `HREADY` feeds across masters/slaves | Decoupled; skid buffers insertable | Decoupled |
 
-- **`req`**: request valid from the master
-- **`addr`**: transfer address
-- **`we`**: write enable; `1` for write, `0` for read
-- **`wdata`**: write data; valid for write transactions
-- **`be`**: byte enable mask for partial writes
+### The "Sweet Spot" of OBI:
+- Compared to **AHB-Lite**, OBI eliminates the rigid requirement that a slave must accept data exactly one cycle after the address phase, removing tight combinatorial feedback paths and allowing arbitrary multi-cycle memory latencies.
+- Compared to **AXI4-Lite**, OBI collapses five separate channels down into **two intuitive channels** (Request and Response), reducing interconnect wire counts and routing congestion by over $40\%$ while retaining high pipelined throughput.
 
-### Response / Handshake Channel (Slave to Master)
+---
 
-- **`gnt`**: grant; indicates the slave accepts the request in this cycle
-- **`rvalid`**: response valid; indicates the transaction has completed
-- **`rdata`**: read data; valid only when `rvalid = 1` for a read response
+## Fundamental Architectural Principles of OBI
 
-## Transfer Rules
+Four foundational architectural tenets define OBI:
 
-The following rules are the most important ones to remember:
+### The Request-Response Phase Decoupling
+An OBI transaction is cleanly split into two asynchronous, decoupled phases:
+1. **The Request Phase:** The master presents the address, control attributes, and write data (if a write). The slave signals acceptance via the grant wire (`gnt`).
+2. **The Response Phase:** At a later clock cycle, the slave signals completion via `rvalid` and returns read data (`rdata`) or error status (`err`).
 
-1. The master asserts `req` when it has a valid request.
-2. While waiting for `gnt`, the master must keep request signals stable.
-3. A request is accepted only in a cycle where `req && gnt` is true.
-4. The response may come later, indicated by `rvalid`.
-5. For writes, `rvalid` is a completion acknowledgement; `rdata` is ignored.
-6. For reads, the master samples `rdata` when `rvalid` is asserted.
+Because the response phase is completely decoupled from request acceptance, memory controllers with variable access latencies (such as DRAM, flash memory, or multi-bank SRAM) can accept requests immediately into FIFOs without stalling the master's pipeline.
 
-## Waveform
+### Symmetrical Read and Write Phase Mechanics
+In OBI, **write transactions follow the exact same phase structure as read transactions**:
+- In a read, `rvalid` indicates that valid data is present on `rdata`.
+- In a write, `rvalid` serves as an explicit **completion acknowledgment**, indicating that the write has been safely committed to the destination memory or peripheral register.
 
-![Waveform](waveform.svg)
+### Pipelining and Multiple Outstanding Transactions (MOT)
+Unlike simple buses that force the master to wait for `rvalid` before issuing the next request, OBI natively supports **Multiple Outstanding Transactions**. A master can issue consecutive requests across cycles 1, 2, and 3; the slave accepts them with `gnt`, and subsequently streams responses back across cycles 4, 5, and 6, achieving **100% bus utilization**.
 
-### How to read the waveform
+### Implementation Modularity
+The OBI specification defines a minimal mandatory baseline (`req`, `gnt`, `addr`, `we`, `be`, `wdata`, `rvalid`, `rdata`) while offering standardized optional extensions:
+- **`atop[5:0]`** for hardware Atomic Memory Operations (RISC-V 'A' extension),
+- **`prot[2:0]`** for Privilege and TrustZone-style hardware security firewalls,
+- **`dbg`** for non-intrusive on-chip hardware debug module access,
+- **`mid` / `rid`** for out-of-order multi-master interconnect routing.
 
-- The master raises `req` together with address and control information.
-- If the slave is not ready, `gnt` stays low and the request must remain unchanged.
-- When `gnt` goes high, the request is accepted on that rising edge.
-- Some cycles later, the slave asserts `rvalid` to finish the transfer.
-- If the transfer was a read, `rdata` is valid in the `rvalid` cycle.
+---
 
-## Operations
+## Protocol Efficiency and Theoretical Bandwidth
 
-### Reset
+The peak theoretical bandwidth of an OBI bus interface is determined by the system clock frequency and data bus width.
 
-When `arst_n` is low, the interface returns to its idle state.
+### Maximum Bandwidth Formula
+$$BW_{peak} = f_{CLK} \times W_{bytes} = f_{CLK} \times \frac{\text{Data Width in Bits}}{8}$$
 
-**Master side:**
+### Example: High-Performance CV32E40P RISC-V SoC
+Consider an embedded SoC operating at $f_{CLK} = 250\text{ MHz}$ with a standard 32-bit OBI bus:
+- Data Width = 32 bits = 4 bytes per transfer.
+- Peak Bandwidth:
+  $$BW_{peak} = 250 \times 10^6 \times 4 = 1.0\times 10^9\text{ Bytes/sec} = \mathbf{1.0\text{ GB/s}}$$
 
-- `req = 0`
-- `addr`, `we`, `wdata`, and `be` are don't-care unless the design specifies otherwise
+Because OBI supports back-to-back pipelined requests with zero turnaround overhead, an on-chip SRAM block can sustain one 32-bit transfer **on every single clock cycle**, reaching 100% bus efficiency ($\eta = 100\%$).
 
-**Slave side:**
+---
 
-- `gnt = 0`
-- `rvalid = 0`
-- `rdata` is don't-care unless the design specifies otherwise
+## Chapter Summary
 
-After reset is released, transfers can begin on a subsequent rising edge of `clk`.
+- **OBI (Open Bus Interface)** is the official, open-source on-chip bus standard managed by the **OpenHW Group**.
+- OBI originated from the PULP platform's **RI5CY** core bus and is now standard across the **CORE-V** family (CV32E40P, CV32E40X, CVA6).
+- A CORE-V processor typically exposes two OBI interfaces: **I-OBI** for instruction fetch and **D-OBI** for data load/stores.
+- OBI provides a 2-channel decoupled architecture (**Request Phase** and **Response Phase**), avoiding the combinatorial timing pitfalls of AHB and the silicon area overhead of AXI.
+- Write operations return an explicit `rvalid` completion acknowledgment just like reads.
+- Pipelined requests and Multiple Outstanding Transactions enable 100% theoretical bus utilization over pipelined on-chip memories.
 
-### Read Operation
+---
 
-For a read transfer, the master:
+## Review Questions
 
-1. Drives the target address on `addr`
-2. Sets `we = 0`
-3. Asserts `req = 1`
-4. Keeps the request stable until the slave asserts `gnt`
+### Question 1
+Why does a CORE-V RISC-V processor core expose two separate OBI interfaces (I-OBI and D-OBI) rather than multiplexing both onto a single shared bus?
+<details>
+<summary><b>View Answer</b></summary>
+Exposing separate I-OBI and D-OBI interfaces implements a Harvard Architecture at the core boundary. If instruction fetches and data load/stores shared a single bus, memory accesses would compete for bus cycles, forcing the instruction fetch unit to stall every time a load or store instruction executed (structural hazard). Separate buses allow simultaneous instruction prefetching and data memory access without bus contention.
+</details>
 
-**Acceptance phase:**
+### Question 2
+What is the primary architectural difference between OBI's write completion mechanism and AHB's write completion mechanism?
+<details>
+<summary><b>View Answer</b></summary>
+In AHB, a write transfer is considered completed when the slave asserts `HREADY = 1` during the data phase immediately following the address phase. The master cannot separate address and data phases by multiple cycles. In OBI, write transactions are decoupled: the write data is delivered during the request phase (`req` & `gnt`), and the slave returns an explicit `rvalid = 1` response completion acknowledgment at an arbitrary later cycle. This allows write buffers and interconnects to absorb writes without holding the master's address pipeline.
+</details>
 
-- The slave may immediately assert `gnt`, or it may insert wait states.
-- The read request is accepted on the cycle where `req && gnt` is true.
+### Question 3
+An OBI master issues a read request at Cycle 1. The slave asserts `gnt` in Cycle 1, but does not assert `rvalid` until Cycle 4. Did the master need to hold `req = 1` during Cycles 2 and 3?
+<details>
+<summary><b>View Answer</b></summary>
+No. In OBI, once a request has been granted (`req = 1` and `gnt = 1` in Cycle 1), the request phase is complete. The master may deassert `req` in Cycle 2 (or issue a brand-new pipelined request). The master does not need to maintain `req = 1` while waiting for `rvalid`.
+</details>
 
-**Completion phase:**
+### Question 4
+Why is OBI considered significantly less complex to route in silicon than AMBA AXI4-Lite?
+<details>
+<summary><b>View Answer</b></summary>
+AXI4-Lite requires five completely separate physical channels (AW, W, B, AR, R), each possessing its own independent `VALID` and `READY` flow control handshake lines and routing multiplexers. OBI collapses these into just two channels: a unified Request Channel (handling both reads and writes via a `we` select line) and a unified Response Channel. This reduces wire counts, multiplexer area, and routing congestion by over 40%.
+</details>
 
-- At a later cycle, the slave asserts `rvalid = 1`.
-- In that same cycle, `rdata` contains valid read data.
-- The master samples `rdata` on the rising edge when `rvalid = 1`.
-
-### Write Operation
-
-For a write transfer, the master:
-
-1. Drives the target address on `addr`
-2. Sets `we = 1`
-3. Drives write data on `wdata`
-4. Drives the byte mask on `be`
-5. Asserts `req = 1`
-6. Keeps all request signals stable until `gnt`
-
-**Acceptance phase:**
-
-- The write is accepted when `req && gnt` is true.
-- At that point, the slave has accepted the address, control, and write data.
-
-**Completion phase:**
-
-- The slave later asserts `rvalid = 1` to indicate completion.
-- During a write response, `rdata` is not used and should be ignored.
-
-## Byte Enable Examples
-
-For a 32-bit data bus, `be` is typically 4 bits wide:
-
-- `4'b1111` writes all 4 bytes
-- `4'b0001` writes only byte 0
-- `4'b0011` writes the lower halfword
-- `4'b1100` writes the upper halfword
-
-## Practical Notes
-
-- OBI allows the request and response phases to be separated by any number of cycles.
-- A slave can throttle requests by keeping `gnt` low.
-- A slave can add response latency by delaying `rvalid`.
-- In this simplified usage model, responses return in order because only one request is outstanding.
-
-If you remember only one rule, remember this: **keep the request stable until grant, then wait for `rvalid` to know the transfer is finished.**
+---
 
 ##### Copyright (c) 2026 squared-studio

@@ -1,4 +1,4 @@
-# Chapter 8: Verification Project and Advanced Verification Topics
+# Verification Project and Advanced Verification Topics
 
 This capstone chapter synthesizes the verification methodologies, languages, and frameworks mastered across this course. We present a blueprint for executing a production-grade **End-to-End Verification Project** on a complex digital subsystem (such as a RISC-V core pipeline, multi-channel memory controller, or AMBA bus bridge).
 
@@ -18,7 +18,7 @@ After completing this chapter, you should be able to:
 
 ---
 
-## 1. End-to-End Verification Project Roadmap
+## End-to-End Verification Project Roadmap
 
 Executing a complex verification project requires disciplined milestone gating to ensure verification closure aligns with physical design tape-out schedules.
 
@@ -66,7 +66,7 @@ Executing a complex verification project requires disciplined milestone gating t
 
 ---
 
-## 2. Recommended Capstone Verification Projects
+## Recommended Capstone Verification Projects
 
 Students and engineers can select from three representative industry-standard project targets:
 
@@ -96,13 +96,13 @@ Students and engineers can select from three representative industry-standard pr
 
 ---
 
-## 3. Advanced Verification Frontiers
+## Advanced Verification Frontiers
 
 As semiconductor designs scale toward billion-transistor chiplets and multi-die 2.5D/3D architectures, traditional software simulation alone becomes inadequate.
 
 ![Advanced Verification Technologies Landscape](images/ch8_advanced_verification_landscape.svg)
 
-### 1. Hardware Emulation and In-Circuit Prototyping
+### Hardware Emulation and In-Circuit Prototyping
 Software simulators execute at roughly 10 Hz to 1,000 Hz, requiring weeks to simulate a few seconds of real-time hardware operation.
 - **Hardware Emulators (e.g., Cadence Palladium, Synopsys ZeBu, Siemens Veloce):** Map synthesizable RTL onto custom processor arrays or massive FPGA matrices, operating at **1 MHz to 20 MHz** (a $10,000\times$ to $100,000\times$ speedup).
 - **Capabilities:**
@@ -110,13 +110,13 @@ Software simulators execute at roughly 10 Hz to 1,000 Hz, requiring weeks to sim
   - Execute real device drivers, firmware stacks, and realistic network/video workloads.
   - In-Circuit Emulation (ICE): Connect physical cable interfaces (PCIe, USB, Ethernet) directly to virtual hardware.
 
-### 2. Deep Formal Verification and Equivalence Checking
+### Deep Formal Verification and Equivalence Checking
 Formal verification utilizes mathematical solvers to prove properties across infinite time horizons:
 - **Formal Property Verification (FPV):** Proves complex arbiter fairness, cache coherency protocols, and deadlock freedom without requiring test stimuli.
 - **Automated Formal Apps:** Push-button tools for checking bus connectivity, CSR register access policies, and X-propagation without writing manual properties.
 - **Equivalence Checking (Logic Equivalence):** Mathematically verifies that a post-synthesis gate-level netlist or physical layout perfectly matches the golden RTL description.
 
-### 3. Low-Power Verification (UPF / IEEE 1801)
+### Low-Power Verification (UPF / IEEE 1801)
 Modern mobile and IoT processors dynamically power down idle blocks:
 - **Unified Power Format (UPF):** A standardized declarative language describing power intent: power domains, isolation cells, retention registers, and level shifters.
 - **Verification Focus:**
@@ -124,27 +124,27 @@ Modern mobile and IoT processors dynamically power down idle blocks:
   - Validating state retention registers capture values before power-gating and restore them properly on wakeup.
   - Trapping sneak-path leakage currents through un-level-shifted voltage domain boundaries.
 
-### 4. Hardware Security Verification
+### Hardware Security Verification
 With rising threats of physical tampering and microarchitectural exploits (Spectre, Meltdown):
 - **Privilege Separation:** Verifying that unprivileged user transactions (`PPROT[0]=0`) cannot access supervisor crypto key stores.
 - **Side-Channel Analysis:** Ensuring cryptographic hardware (AES, RSA, ECC) does not leak secret keys through data-dependent power dissipation or execution timing jitter.
 - **Hardware Trojan Detection:** Employing formal reachability analysis to detect malicious trigger circuits hidden in third-party IP cores.
 
-### 5. Portable Test and Stimulus Standard (PSS 2.0)
+### Portable Test and Stimulus Standard (PSS 2.0)
 Accellera developed the **Portable Stimulus Standard (PSS)** to address verification fragmentation across platforms:
 - **The Portability Problem:** Tests written in UVM cannot be reused on hardware emulators, FPGA prototypes, or post-silicon validation boards.
 - **The PSS Solution:** Defines verification intent as an abstract behavioral graph. A PSS tool compiles this single graph into:
   - SystemVerilog/UVM sequences for software simulation.
   - C/C++ embedded firmware routines for emulation and silicon validation.
 
-### 6. AI and Machine Learning in Verification
+### AI and Machine Learning in Verification
 Artificial Intelligence is transforming verification productivity:
 - **Coverage Closure Acceleration:** Reinforcement learning agents observe unhit functional coverage bins and dynamically tune UVM constraint weights to hit boundary states $5\times$ to $10\times$ faster than pseudo-random guessing.
 - **Automated Bug Triage:** Natural Language Processing (NLP) and clustering algorithms parse thousands of regression log files, automatically grouping identical root causes and routing bug tickets to the responsible RTL designers.
 
 ---
 
-## 4. Final Project Sign-Off Checklist
+## Final Project Sign-Off Checklist
 
 Before submitting a verification project for final sign-off, verify every requirement on the production tape-out checklist:
 
@@ -178,7 +178,7 @@ Before submitting a verification project for final sign-off, verify every requir
 
 ---
 
-## 5. Learning Resources
+## Learning Resources
 
 - **Academic Journals & Conferences:**
   - IEEE Transactions on Computer-Aided Design of Integrated Circuits and Systems (TCAD).
@@ -190,7 +190,7 @@ Before submitting a verification project for final sign-off, verify every requir
 
 ---
 
-## 6. Review Exercises
+## Review Exercises
 
 1. Explain the primary trade-off between software simulation and hardware emulation. Why is emulation mandatory for verifying full-chip smartphone SoCs before tape-out?
 2. What is the role of an isolation cell in a low-power digital design, and what failure occurs if isolation is not properly asserted before a power domain is shut off?

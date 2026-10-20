@@ -135,7 +135,7 @@ You can use `trap ""` to ignore a signal. For example, `trap "" INT` will make t
 
 Debugging Bash scripts is essential for identifying and resolving errors. Bash provides several built-in features and common techniques to aid in the debugging process.
 
-### 1. Using the `set` Command for Debugging Options
+### Using the `set` Command for Debugging Options
 
 The `set` command is versatile and can enable various debugging options that control Bash's behavior during script execution.
 
@@ -243,7 +243,7 @@ The `set` command is versatile and can enable various debugging options that con
 
 You can combine multiple `set` options for more comprehensive debugging. For example, `set -x -e` will enable both execution tracing and exit-on-error.
 
-### 2. Using `trap DEBUG` for Line-by-Line Inspection
+### Using `trap DEBUG` for Line-by-Line Inspection
 
 As demonstrated earlier, `trap DEBUG` is a powerful debugging tool. It allows you to execute a command **before every command** in your script. This can be used to:
 
@@ -276,7 +276,7 @@ Line 7: ls -l /tmp
 ... (output of ls -l /tmp) ...
 ```
 
-### 3. Simple `echo` Statements for Debugging
+### Simple `echo` Statements for Debugging
 
 Sometimes, the simplest debugging technique is the most effective. Inserting `echo` statements at strategic points in your script to print variable values, messages, or track program flow can be very helpful.
 
@@ -299,7 +299,7 @@ fi
 
 The `echo "Debugging: ..."` lines are added to print messages that help you understand the script's state and logic during execution. Once you've debugged, you can easily remove or comment out these `echo` statements.
 
-### 4. Using a Bash Debugger (e.g., `bashdb`, `shdb`)
+### Using a Bash Debugger (e.g., `bashdb`, `shdb`)
 
 For more complex scripts, dedicated debuggers like `bashdb` (for Bash) or `shdb` (for Bourne shell compatible scripts) provide advanced debugging features similar to debuggers in other programming languages. These debuggers allow you to:
 

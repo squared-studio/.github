@@ -1,4 +1,4 @@
-# Chapter 1: Introduction to Verification and Verification Planning
+# Introduction to Verification and Verification Planning
 
 Hardware verification is the systematic process of demonstrating that a digital design fulfills its specified requirements across all operational scenarios. In contemporary semiconductor engineering, verification routinely accounts for **60% to 70% of the entire design cycle time, compute resources, and engineering headcount**.
 
@@ -18,7 +18,7 @@ After completing this chapter, you should be able to:
 
 ---
 
-## 1. Why Verification is Critical
+## Why Verification is Critical
 
 ### The Exponential Complexity of Modern SoCs
 Modern System-on-Chip (SoC) architectures integrate billions of transistors, dozens of heterogeneous CPU/GPU/NPU cores, multi-level coherent cache hierarchies, high-speed SerDes interfaces (PCIe Gen 5/6, DDR5/LPDDR5, Ethernet), and complex security subsystems. 
@@ -56,7 +56,7 @@ A robust verification program is engineered around six fundamental goals:
 
 ---
 
-## 2. Verification Methodologies
+## Verification Methodologies
 
 No single verification technology can address every facet of modern digital hardware. Verification teams deploy a balanced suite of complementary methodologies.
 
@@ -73,7 +73,7 @@ No single verification technology can address every facet of modern digital hard
 
 ---
 
-## 3. The Closed-Loop Verification Flow
+## The Closed-Loop Verification Flow
 
 Hardware verification is not a linear, one-pass effort; it is an iterative, coverage-driven feedback loop.
 
@@ -110,7 +110,7 @@ Hardware verification is not a linear, one-pass effort; it is an iterative, cove
 
 ---
 
-## 4. Verification Metrics: Measuring Completeness
+## Verification Metrics: Measuring Completeness
 
 How does an engineering team know when verification is complete? Verification relies on objective, quantifiable metrics.
 
@@ -137,7 +137,7 @@ Functional coverage is a user-defined metric that answers the question: *Did we 
 
 ---
 
-## 5. Verification Planning and Sign-Off Strategy
+## Verification Planning and Sign-Off Strategy
 
 The **Verification Plan (vPlan)** is the central contract governing the verification project. It converts an ambiguous architectural document into concrete, verifiable test requirements.
 
@@ -155,7 +155,7 @@ The **Verification Plan (vPlan)** is the central contract governing the verifica
 
 ---
 
-## 6. Testbench Architecture Overview
+## Testbench Architecture Overview
 
 A verification testbench is a software harness wrapping the hardware design to stimulate inputs and validate outputs.
 
@@ -172,7 +172,7 @@ A verification testbench is a software harness wrapping the hardware design to s
 
 ---
 
-## 7. Learning Resources
+## Learning Resources
 
 - **Books:**
   - *Writing Testbenches using SystemVerilog* by Janick Bergeron (Springer).
@@ -183,7 +183,7 @@ A verification testbench is a software harness wrapping the hardware design to s
 
 ---
 
-## 8. Review Exercises
+## Review Exercises
 
 1. Calculate the financial and schedule consequences if a hardware division bug escapes verification into 500,000 deployed automotive microcontrollers versus finding it during RTL simulation.
 2. Why is 100% statement (line) coverage insufficient to prove that an RTL module meets its functional specification? Give a concrete example.

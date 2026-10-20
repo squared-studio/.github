@@ -1,4 +1,4 @@
-# Chapter 3: UVM Phases, Objections, and the Base Test
+# UVM Phases, Objections, and the Base Test
 
 ![UART Register Interface](uart-register-interface.png)
 
@@ -12,7 +12,7 @@ By the end, you should understand:
 - why the base test is so important,
 - and what objections mean in practice.
 
-## 3.1 Why Phases Exist at All
+## Why Phases Exist at All
 
 A beginner often sees UVM phases as an arbitrary list of method names. That makes them hard to remember.
 
@@ -31,7 +31,7 @@ Instead of doing everything in one place, UVM encourages an ordered flow:
 
 That is much easier to maintain than an unstructured procedural test.
 
-## 3.2 The Most Important Phases in This Example
+## The Most Important Phases in This Example
 
 This example uses a subset of the full UVM phase system, and that is a good thing for training.
 
@@ -95,7 +95,7 @@ Typical actions here include:
 - reporting coverage information,
 - reporting pass or fail status.
 
-## 3.3 Why the Base Test Is So Important
+## Why the Base Test Is So Important
 
 The base test is one of the most important ideas in a reusable UVM environment.
 
@@ -125,7 +125,7 @@ In this APB-UART example, the base test is responsible for:
 
 That means derived tests can focus on the scenario they are trying to prove.
 
-## 3.4 A Close Look at the Configuration Phase
+## A Close Look at the Configuration Phase
 
 The configuration phase is especially useful for training because it shows how setup is performed in a deliberate, readable way.
 
@@ -185,7 +185,7 @@ This programs the DUT through the same APB path a real system would use.
 
 That tells UVM the configuration work for this phase is finished.
 
-## 3.5 What an Objection Really Means
+## What an Objection Really Means
 
 Objections confuse many beginners because the name sounds more abstract than the actual idea.
 
@@ -211,7 +211,7 @@ Because without objections, a phase could end too early:
 
 That would make the testbench fragile and misleading.
 
-## 3.6 Why Derived Tests Should Stay Small
+## Why Derived Tests Should Stay Small
 
 A trainee engineer sometimes feels that a test is not "real" unless it contains a lot of code. In good UVM, smaller tests are often better.
 
@@ -225,7 +225,7 @@ Everything that is common should remain in the base test.
 
 That is not just a style preference. It keeps the environment consistent and easier to debug.
 
-## 3.7 The Role of Reset in Verification Quality
+## The Role of Reset in Verification Quality
 
 Reset is more than a ritual. It is one of the most important parts of making a test reproducible.
 
@@ -237,7 +237,7 @@ A clean reset sequence ensures:
 
 One of the fastest ways to create hard-to-debug failures is to start stimulus before reset and configuration are complete.
 
-## 3.8 The Main Lesson of This Chapter
+## The Main Lesson of This Chapter
 
 If you leave this chapter understanding the sentence below, you are ready to move on:
 

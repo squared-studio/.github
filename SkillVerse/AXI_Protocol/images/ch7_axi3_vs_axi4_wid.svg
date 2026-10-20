@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 330" width="100%" height="100%">
+  <rect width="100%" height="100%" fill="#0f172a"/>
+  <text x="420" y="32" fill="#f8fafc" font-size="18" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">AXI3 vs. AXI4: Write Interleaving and the Removal of WID</text>
+  <text x="420" y="52" fill="#94a3b8" font-size="12" text-anchor="middle" font-family="system-ui, sans-serif">Architectural simplification eliminating huge slave reassembly buffer overhead</text>
+
+  <!-- Left: AXI3 -->
+  <g transform="translate(60, 85)">
+    <rect width="330" height="210" rx="8" fill="#1e293b" stroke="#f59e0b" stroke-width="2"/>
+    <rect width="330" height="35" rx="8" fill="#d97706"/>
+    <text x="165" y="22" fill="#ffffff" font-size="13" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">AXI3 (Supported WID Interleaving)</text>
+    
+    <text x="15" y="60" fill="#fde68a" font-size="11" font-weight="bold" font-family="system-ui, sans-serif">Write Data could interleave:</text>
+    <text x="15" y="80" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">&bull; WDATA beats carried dedicated `WID`</text>
+    <text x="15" y="100" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">&bull; Write beats for Trans A and Trans B</text>
+    <text x="18" y="115" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">could interleave on the same W bus</text>
+    <text x="15" y="145" fill="#ef4444" font-size="10" font-family="system-ui, sans-serif">&cross; Serious Problem: Slaves required massive</text>
+    <text x="18" y="160" fill="#ef4444" font-size="10" font-family="system-ui, sans-serif">internal reassembly SRAM buffers!</text>
+    <text x="15" y="185" fill="#94a3b8" font-size="10" font-family="system-ui, sans-serif">Rarely used by masters; wasted silicon area.</text>
+  </g>
+
+  <!-- Right: AXI4 -->
+  <g transform="translate(450, 85)">
+    <rect width="330" height="210" rx="8" fill="#1e293b" stroke="#34d399" stroke-width="2"/>
+    <rect width="330" height="35" rx="8" fill="#059669"/>
+    <text x="165" y="22" fill="#ffffff" font-size="13" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">AXI4 (WID Removed!)</text>
+    
+    <text x="15" y="60" fill="#a7f3d0" font-size="11" font-weight="bold" font-family="system-ui, sans-serif">Strict Write Order Rule:</text>
+    <text x="15" y="80" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">&bull; WID signal completely removed from spec</text>
+    <text x="15" y="100" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">&bull; Write data MUST be sent in the exact</text>
+    <text x="18" y="115" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">order of issued AWADDR transactions</text>
+    <text x="15" y="145" fill="#34d399" font-size="10" font-weight="bold" font-family="system-ui, sans-serif">&check; Massive Silicon Savings:</text>
+    <text x="18" y="160" fill="#a7f3d0" font-size="10" font-family="system-ui, sans-serif">Slaves stream write data directly into memory</text>
+    <text x="18" y="175" fill="#a7f3d0" font-size="10" font-family="system-ui, sans-serif">without multi-thread reassembly FIFOs</text>
+  </g>
+</svg>

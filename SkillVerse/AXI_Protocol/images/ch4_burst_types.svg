@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 360" width="100%" height="100%">
+  <rect width="100%" height="100%" fill="#0f172a"/>
+  <text x="430" y="32" fill="#f8fafc" font-size="18" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">AXI Burst Types: FIXED, INCR, and WRAP</text>
+  <text x="430" y="52" fill="#94a3b8" font-size="12" text-anchor="middle" font-family="system-ui, sans-serif">AxBURST encoding and address progression across successive beats</text>
+
+  <!-- Type 1: FIXED -->
+  <g transform="translate(40, 80)">
+    <rect width="250" height="245" rx="8" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+    <rect width="250" height="35" rx="8" fill="#0284c7"/>
+    <text x="125" y="22" fill="#ffffff" font-size="13" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">FIXED (2'b00)</text>
+
+    <text x="15" y="60" fill="#38bdf8" font-size="11" font-weight="bold" font-family="system-ui, sans-serif">Address is Static:</text>
+    <rect x="15" y="75" width="220" height="75" rx="4" fill="#0f172a"/>
+    <text x="25" y="95" fill="#cbd5e1" font-size="11" font-family="monospace">Beat 0: 0x1000</text>
+    <text x="25" y="115" fill="#cbd5e1" font-size="11" font-family="monospace">Beat 1: 0x1000</text>
+    <text x="25" y="135" fill="#cbd5e1" font-size="11" font-family="monospace">Beat 2: 0x1000</text>
+
+    <text x="15" y="175" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">&bull; Target: Peripheral FIFOs</text>
+    <text x="15" y="195" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">&bull; Repeatedly reads/writes</text>
+    <text x="15" y="210" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">  the same register address</text>
+    <text x="15" y="235" fill="#38bdf8" font-size="10" font-family="system-ui, sans-serif">Max Length: 16 beats</text>
+  </g>
+
+  <!-- Type 2: INCR -->
+  <g transform="translate(305, 80)">
+    <rect width="250" height="245" rx="8" fill="#1e293b" stroke="#34d399" stroke-width="2"/>
+    <rect width="250" height="35" rx="8" fill="#059669"/>
+    <text x="125" y="22" fill="#ffffff" font-size="13" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">INCR (2'b01) - Linear</text>
+
+    <text x="15" y="60" fill="#34d399" font-size="11" font-weight="bold" font-family="system-ui, sans-serif">Sequential Increment:</text>
+    <rect x="15" y="75" width="220" height="75" rx="4" fill="#0f172a"/>
+    <text x="25" y="95" fill="#cbd5e1" font-size="11" font-family="monospace">Beat 0: 0x1000 (+4)</text>
+    <text x="25" y="115" fill="#cbd5e1" font-size="11" font-family="monospace">Beat 1: 0x1004 (+4)</text>
+    <text x="25" y="135" fill="#cbd5e1" font-size="11" font-family="monospace">Beat 2: 0x1008 (+4)</text>
+
+    <text x="15" y="175" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">&bull; Target: Memory Refills, DMA</text>
+    <text x="15" y="195" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">&bull; Address = Prev + Beat Size</text>
+    <text x="15" y="215" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">&bull; Cannot cross 4KB boundary</text>
+    <text x="15" y="235" fill="#34d399" font-size="10" font-family="system-ui, sans-serif">Max Length: 256 beats (AXI4)</text>
+  </g>
+
+  <!-- Type 3: WRAP -->
+  <g transform="translate(570, 80)">
+    <rect width="250" height="245" rx="8" fill="#1e293b" stroke="#fbbf24" stroke-width="2"/>
+    <rect width="250" height="35" rx="8" fill="#d97706"/>
+    <text x="125" y="22" fill="#ffffff" font-size="13" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">WRAP (2'b10) - Cache Fill</text>
+
+    <text x="15" y="60" fill="#fbbf24" font-size="11" font-weight="bold" font-family="system-ui, sans-serif">Wraps at Boundary:</text>
+    <rect x="15" y="75" width="220" height="75" rx="4" fill="#0f172a"/>
+    <text x="25" y="95" fill="#cbd5e1" font-size="11" font-family="monospace">Beat 0: 0x1008 (Start)</text>
+    <text x="25" y="115" fill="#cbd5e1" font-size="11" font-family="monospace">Beat 1: 0x100C</text>
+    <text x="25" y="135" fill="#f59e0b" font-size="11" font-family="monospace">Beat 2: 0x1000 (WRAP!)</text>
+
+    <text x="15" y="175" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">&bull; Target: Critical-Word-First</text>
+    <text x="15" y="195" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">  Processor Cache Line Refill</text>
+    <text x="15" y="215" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">&bull; Length must be 2, 4, 8, or 16</text>
+    <text x="15" y="235" fill="#fbbf24" font-size="10" font-family="system-ui, sans-serif">Aligned address boundary</text>
+  </g>
+</svg>

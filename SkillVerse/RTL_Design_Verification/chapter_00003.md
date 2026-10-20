@@ -1,4 +1,4 @@
-# Chapter 3: Constrained-Random Verification
+# Constrained-Random Verification
 
 As digital designs surpass millions of equivalent gates, hand-crafted directed tests become inadequate for exploring the combinatorial state space. A directed test exercises only the exact sequence envisioned by the testbench author, systematically missing obscure corner cases and cross-domain race conditions.
 
@@ -17,7 +17,7 @@ After completing this chapter, you should be able to:
 
 ---
 
-## 1. Directed Testing vs. Constrained-Random Verification
+## Directed Testing vs. Constrained-Random Verification
 
 In a **Directed Testing** environment, the verification engineer manually specifies every signal sequence, address offset, and payload value.
 
@@ -36,7 +36,7 @@ Constrained-Random Verification automates stimulus generation by defining **vali
 
 ---
 
-## 2. SystemVerilog Randomization: `rand`, `randc`, and Constraints
+## SystemVerilog Randomization: `rand`, `randc`, and Constraints
 
 ### Random Variables: `rand` vs. `randc`
 - **`rand` (Uniform Random):** The variable is assigned a pseudo-random value within its valid range on each call to `randomize()`. Successive calls may return identical values (standard uniform distribution).
@@ -123,7 +123,7 @@ endclass
 
 ---
 
-## 3. Advanced Constraint Techniques
+## Advanced Constraint Techniques
 
 ### Implication (`->`) and `if-else` Constraints
 Conditional constraints restrict variable values only when a specific condition evaluates to true:
@@ -205,7 +205,7 @@ Constraints and variables can be selectively enabled or disabled at runtime:
 
 ---
 
-## 4. Coverage-Driven Verification (CDV)
+## Coverage-Driven Verification (CDV)
 
 How do we prevent random testing from aimlessly thrashing in areas that have already been verified? We close the loop using **Coverage-Driven Verification**.
 
@@ -220,7 +220,7 @@ How do we prevent random testing from aimlessly thrashing in areas that have alr
 
 ---
 
-## 5. Functional Coverage Modeling: Covergroups, Coverpoints, and Bins
+## Functional Coverage Modeling: Covergroups, Coverpoints, and Bins
 
 Functional coverage measures design intent and verification completeness directly in SystemVerilog.
 
@@ -284,7 +284,7 @@ endgroup : packet_cg
 
 ---
 
-## 6. Coverage Closure Strategy: Eliminating Coverage Holes
+## Coverage Closure Strategy: Eliminating Coverage Holes
 
 Achieving the final 5% to 10% of coverage closure is typically the most challenging phase of a project:
 1. **Analyze Unhit Bins:** Determine why a bin was missed. Is it an unreachable state, a missing stimulus sequence, or an overly restrictive constraint?
@@ -295,7 +295,7 @@ Achieving the final 5% to 10% of coverage closure is typically the most challeng
 
 ---
 
-## 7. Learning Resources
+## Learning Resources
 
 - **Books:**
   - *SystemVerilog for Verification* by Chris Spear & Greg Tumbush (Chapters 6 & 9: Randomization and Functional Coverage).
@@ -305,7 +305,7 @@ Achieving the final 5% to 10% of coverage closure is typically the most challeng
 
 ---
 
-## 8. Review Exercises
+## Review Exercises
 
 1. Explain the operational difference between `rand` and `randc`. What occurs when a `randc` variable exhausts all permutations?
 2. Write a SystemVerilog constraint block for an image frame generator where `width` and `height` are between 128 and 1920, `total_pixels == width * height <= 1048576`, and `width` must be divisible by 16.

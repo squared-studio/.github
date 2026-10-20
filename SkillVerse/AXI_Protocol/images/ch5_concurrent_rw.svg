@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 330" width="100%" height="100%">
+  <rect width="100%" height="100%" fill="#0f172a"/>
+  <text x="420" y="32" fill="#f8fafc" font-size="18" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">Full-Duplex Concurrent Read &amp; Write Operation</text>
+  <text x="420" y="52" fill="#94a3b8" font-size="12" text-anchor="middle" font-family="system-ui, sans-serif">Independent channels allow reading from Slave B while simultaneously writing to Slave A</text>
+
+  <!-- Left: Master -->
+  <g transform="translate(60, 95)">
+    <rect width="160" height="180" rx="8" fill="#1e3a8a" stroke="#60a5fa" stroke-width="2"/>
+    <text x="80" y="35" fill="#ffffff" font-size="14" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">CPU Core Master</text>
+    <text x="80" y="60" fill="#93c5fd" font-size="10" text-anchor="middle" font-family="system-ui, sans-serif">Issuing Read &amp; Write</text>
+    <rect x="15" y="80" width="130" height="35" rx="4" fill="#0284c7"/>
+    <text x="80" y="102" fill="#ffffff" font-size="10" text-anchor="middle" font-family="system-ui, sans-serif">Write Port (AW/W)</text>
+    <rect x="15" y="125" width="130" height="35" rx="4" fill="#d97706"/>
+    <text x="80" y="147" fill="#ffffff" font-size="10" text-anchor="middle" font-family="system-ui, sans-serif">Read Port (AR/R)</text>
+  </g>
+
+  <!-- Middle Flows -->
+  <!-- Write Flow -->
+  <g transform="translate(260, 100)">
+    <rect width="320" height="60" rx="6" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+    <text x="160" y="26" fill="#38bdf8" font-size="12" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">Write Stream &rarr; Target: DDR5</text>
+    <text x="160" y="46" fill="#cbd5e1" font-size="10" text-anchor="middle" font-family="system-ui, sans-serif">AWADDR + WDATA streaming at 64 GB/s</text>
+  </g>
+
+  <!-- Read Flow -->
+  <g transform="translate(260, 190)">
+    <rect width="320" height="60" rx="6" fill="#1e293b" stroke="#fbbf24" stroke-width="2"/>
+    <text x="160" y="26" fill="#fbbf24" font-size="12" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">&larr; Read Stream &larr; Source: On-Chip SRAM</text>
+    <text x="160" y="46" fill="#cbd5e1" font-size="10" text-anchor="middle" font-family="system-ui, sans-serif">RDATA returning in parallel at 32 GB/s</text>
+  </g>
+
+  <!-- Right: Slaves -->
+  <g transform="translate(620, 95)">
+    <rect width="160" height="75" rx="6" fill="#065f46" stroke="#34d399" stroke-width="2"/>
+    <text x="80" y="32" fill="#ffffff" font-size="12" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">DDR5 Controller</text>
+    <text x="80" y="52" fill="#a7f3d0" font-size="10" text-anchor="middle" font-family="system-ui, sans-serif">Receiving Write Data</text>
+  </g>
+
+  <g transform="translate(620, 185)">
+    <rect width="160" height="75" rx="6" fill="#065f46" stroke="#34d399" stroke-width="2"/>
+    <text x="80" y="32" fill="#ffffff" font-size="12" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">SRAM Controller</text>
+    <text x="80" y="52" fill="#a7f3d0" font-size="10" text-anchor="middle" font-family="system-ui, sans-serif">Returning Read Data</text>
+  </g>
+
+  <text x="420" y="295" fill="#34d399" font-size="11" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">&check; Total System Bandwidth = Read Bandwidth + Write Bandwidth</text>
+</svg>

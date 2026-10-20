@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 340" width="100%" height="100%">
+  <rect width="900" height="340" fill="#0f172a" rx="10"/>
+  <text x="450" y="35" fill="#f8fafc" font-size="18" font-weight="bold" text-anchor="middle" font-family="sans-serif">OBI Pipelined Streaming: Multiple Outstanding Transactions (MOT)</text>
+
+  <!-- Pipelined Requests -->
+  <text x="50" y="80" fill="#38bdf8" font-size="12" font-weight="bold" font-family="sans-serif">Request Phase (req &amp; gnt)</text>
+  <rect x="180" y="65" width="100" height="35" fill="#1e293b" stroke="#38bdf8" rx="4"/>
+  <text x="230" y="88" fill="#38bdf8" font-size="11" text-anchor="middle" font-family="sans-serif">Req A</text>
+
+  <rect x="290" y="65" width="100" height="35" fill="#1e293b" stroke="#38bdf8" rx="4"/>
+  <text x="340" y="88" fill="#38bdf8" font-size="11" text-anchor="middle" font-family="sans-serif">Req B</text>
+
+  <rect x="400" y="65" width="100" height="35" fill="#1e293b" stroke="#38bdf8" rx="4"/>
+  <text x="450" y="88" fill="#38bdf8" font-size="11" text-anchor="middle" font-family="sans-serif">Req C</text>
+
+  <rect x="510" y="65" width="100" height="35" fill="#1e293b" stroke="#38bdf8" rx="4"/>
+  <text x="560" y="88" fill="#38bdf8" font-size="11" text-anchor="middle" font-family="sans-serif">Req D</text>
+
+  <!-- In-flight tracker bar -->
+  <rect x="180" y="125" width="600" height="30" fill="#0f172a" stroke="#64748b" rx="4"/>
+  <text x="450" y="145" fill="#facc15" font-size="11" text-anchor="middle" font-family="sans-serif">In-Flight Queue: Outstanding Count = 4 (Maximum Bus Utilization)</text>
+
+  <!-- Pipelined Responses -->
+  <text x="50" y="205" fill="#c084fc" font-size="12" font-weight="bold" font-family="sans-serif">Response Phase (rvalid)</text>
+  <rect x="360" y="190" width="100" height="35" fill="#1e293b" stroke="#c084fc" rx="4"/>
+  <text x="410" y="213" fill="#c084fc" font-size="11" text-anchor="middle" font-family="sans-serif">Resp A</text>
+
+  <rect x="470" y="190" width="100" height="35" fill="#1e293b" stroke="#c084fc" rx="4"/>
+  <text x="520" y="213" fill="#c084fc" font-size="11" text-anchor="middle" font-family="sans-serif">Resp B</text>
+
+  <rect x="580" y="190" width="100" height="35" fill="#1e293b" stroke="#c084fc" rx="4"/>
+  <text x="630" y="213" fill="#c084fc" font-size="11" text-anchor="middle" font-family="sans-serif">Resp C</text>
+
+  <rect x="690" y="190" width="100" height="35" fill="#1e293b" stroke="#c084fc" rx="4"/>
+  <text x="740" y="213" fill="#c084fc" font-size="11" text-anchor="middle" font-family="sans-serif">Resp D</text>
+
+  <text x="450" y="285" fill="#4ade80" font-size="12" font-weight="bold" text-anchor="middle" font-family="sans-serif">Continuous single-cycle data returns completely hide memory latency!</text>
+</svg>

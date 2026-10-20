@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 850 420" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bg10" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f172a"/>
+      <stop offset="100%" stop-color="#1e293b"/>
+    </linearGradient>
+  </defs>
+  <rect width="100%" height="100%" fill="url(#bg10)"/>
+  <text x="425" y="32" fill="#f8fafc" font-size="20" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">CHI Snoop Request vs. Response Resolution Matrix</text>
+
+  <g transform="translate(50, 60)">
+    <!-- Header -->
+    <rect width="750" height="40" rx="6" fill="#1e3a8a"/>
+    <text x="120" y="25" fill="#ffffff" font-size="12" font-weight="bold" text-anchor="middle">Inbound Snoop Type</text>
+    <text x="320" y="25" fill="#ffffff" font-size="12" font-weight="bold" text-anchor="middle">Initial Cache State</text>
+    <text x="500" y="25" fill="#ffffff" font-size="12" font-weight="bold" text-anchor="middle">Snoop Response Flit</text>
+    <text x="670" y="25" fill="#ffffff" font-size="12" font-weight="bold" text-anchor="middle">Final State</text>
+
+    <!-- Row 1 -->
+    <g transform="translate(0, 48)">
+      <rect width="750" height="45" fill="#1e293b" stroke="#334155"/>
+      <text x="120" y="27" fill="#38bdf8" font-size="11" font-weight="bold" text-anchor="middle">SnpShared</text>
+      <text x="320" y="27" fill="#f87171" font-size="11" text-anchor="middle">Modified (Dirty Unique)</text>
+      <text x="500" y="27" fill="#34d399" font-size="11" text-anchor="middle">SnpRespData (Pass Dirty)</text>
+      <text x="670" y="27" fill="#fbbf24" font-size="11" text-anchor="middle">Shared (or Owned)</text>
+    </g>
+
+    <!-- Row 2 -->
+    <g transform="translate(0, 100)">
+      <rect width="750" height="45" fill="#1e293b" stroke="#334155"/>
+      <text x="120" y="27" fill="#38bdf8" font-size="11" font-weight="bold" text-anchor="middle">SnpShared</text>
+      <text x="320" y="27" fill="#60a5fa" font-size="11" text-anchor="middle">Clean Exclusive (E)</text>
+      <text x="500" y="27" fill="#34d399" font-size="11" text-anchor="middle">SnpRespData / SnpResp</text>
+      <text x="670" y="27" fill="#93c5fd" font-size="11" text-anchor="middle">Shared Clean (S)</text>
+    </g>
+
+    <!-- Row 3 -->
+    <g transform="translate(0, 152)">
+      <rect width="750" height="45" fill="#1e293b" stroke="#334155"/>
+      <text x="120" y="27" fill="#f59e0b" font-size="11" font-weight="bold" text-anchor="middle">SnpUnique</text>
+      <text x="320" y="27" fill="#f87171" font-size="11" text-anchor="middle">Modified (Dirty Unique)</text>
+      <text x="500" y="27" fill="#ec4899" font-size="11" text-anchor="middle">SnpRespData (Data returned)</text>
+      <text x="670" y="27" fill="#ef4444" font-size="11" text-anchor="middle">Invalid (I)</text>
+    </g>
+
+    <!-- Row 4 -->
+    <g transform="translate(0, 204)">
+      <rect width="750" height="45" fill="#1e293b" stroke="#334155"/>
+      <text x="120" y="27" fill="#f59e0b" font-size="11" font-weight="bold" text-anchor="middle">SnpUnique</text>
+      <text x="320" y="27" fill="#93c5fd" font-size="11" text-anchor="middle">Shared Clean (S)</text>
+      <text x="500" y="27" fill="#94a3b8" font-size="11" text-anchor="middle">SnpResp_I (No data)</text>
+      <text x="670" y="27" fill="#ef4444" font-size="11" text-anchor="middle">Invalid (I)</text>
+    </g>
+
+    <!-- Row 5 -->
+    <g transform="translate(0, 256)">
+      <rect width="750" height="45" fill="#1e293b" stroke="#334155"/>
+      <text x="120" y="27" fill="#a855f7" font-size="11" font-weight="bold" text-anchor="middle">SnpCleanInvalid</text>
+      <text x="320" y="27" fill="#f87171" font-size="11" text-anchor="middle">Modified / Owned</text>
+      <text x="500" y="27" fill="#ec4899" font-size="11" text-anchor="middle">SnpRespData (Flush to Home)</text>
+      <text x="670" y="27" fill="#ef4444" font-size="11" text-anchor="middle">Invalid (I)</text>
+    </g>
+  </g>
+</svg>

@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 850 420" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bg13" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f172a"/>
+      <stop offset="100%" stop-color="#1e1e2e"/>
+    </linearGradient>
+  </defs>
+  <rect width="100%" height="100%" fill="url(#bg13)"/>
+  <text x="425" y="32" fill="#f8fafc" font-size="20" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">Virtual Networks (VNETs) &amp; Protocol Deadlock Prevention</text>
+
+  <!-- Four Virtual Networks -->
+  <g transform="translate(60, 70)">
+    <!-- REQ VNET -->
+    <rect width="730" height="60" rx="8" fill="#0369a1" stroke="#38bdf8" stroke-width="1.5"/>
+    <text x="30" y="35" fill="#ffffff" font-size="14" font-weight="bold">REQ VNET (Request)</text>
+    <text x="250" y="35" fill="#e0f2fe" font-size="11">Carries all initial requests (ReadShared, ReadUnique, WriteUnique, DVM)</text>
+    <text x="680" y="35" fill="#bae6fd" font-size="12" font-weight="bold">Priority 0</text>
+  </g>
+
+  <g transform="translate(60, 145)">
+    <!-- SNP VNET -->
+    <rect width="730" height="60" rx="8" fill="#b45309" stroke="#fbbf24" stroke-width="1.5"/>
+    <text x="30" y="35" fill="#ffffff" font-size="14" font-weight="bold">SNP VNET (Snoop)</text>
+    <text x="250" y="35" fill="#fef3c7" font-size="11">Carries home-to-peer snoops (SnpShared, SnpUnique, SnpCleanInvalid)</text>
+    <text x="680" y="35" fill="#fde68a" font-size="12" font-weight="bold">Priority 1</text>
+  </g>
+
+  <g transform="translate(60, 220)">
+    <!-- DAT VNET -->
+    <rect width="730" height="60" rx="8" fill="#be185d" stroke="#f472b6" stroke-width="1.5"/>
+    <text x="30" y="35" fill="#ffffff" font-size="14" font-weight="bold">DAT VNET (Data)</text>
+    <text x="250" y="35" fill="#fce7f3" font-size="11">Carries read data, write data, snoop data (CompData, NCBWrData, SnpRespData)</text>
+    <text x="680" y="35" fill="#fbcfe8" font-size="12" font-weight="bold">Priority 2</text>
+  </g>
+
+  <g transform="translate(60, 295)">
+    <!-- RSP VNET -->
+    <rect width="730" height="60" rx="8" fill="#047857" stroke="#34d399" stroke-width="1.5"/>
+    <text x="30" y="35" fill="#ffffff" font-size="14" font-weight="bold">RSP VNET (Response)</text>
+    <text x="250" y="35" fill="#d1fae5" font-size="11">Carries completions &amp; credits (Comp, CompAck, DBIDResp, RetryAck)</text>
+    <text x="680" y="35" fill="#a7f3d0" font-size="12" font-weight="bold">Priority 3</text>
+  </g>
+
+  <rect x="60" y="370" width="730" height="35" rx="6" fill="#1e1e38" stroke="#818cf8"/>
+  <text x="425" y="392" fill="#c7d2fe" font-size="11" font-weight="bold" text-anchor="middle">Rule: Higher priority VNET buffers can never depend on lower priority VNET forward progress</text>
+</svg>

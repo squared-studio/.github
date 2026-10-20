@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 340" width="100%" height="100%">
+  <rect width="900" height="340" fill="#0f172a" rx="10"/>
+  <text x="450" y="35" fill="#f8fafc" font-size="18" font-weight="bold" text-anchor="middle" font-family="sans-serif">OBI Write Transaction with Byte Enables (be)</text>
+
+  <g font-family="monospace" font-size="12">
+    <!-- Cycles -->
+    <text x="50" y="80" fill="#64748b">Cycle :</text>
+    <text x="170" y="80" fill="#94a3b8">C1</text>
+    <text x="310" y="80" fill="#94a3b8">C2 (Grant)</text>
+    <text x="450" y="80" fill="#94a3b8">C3 (Wait)</text>
+    <text x="590" y="80" fill="#94a3b8">C4 (Done)</text>
+
+    <!-- req -->
+    <text x="50" y="125" fill="#38bdf8">req   :</text>
+    <path d="M 140 135 L 210 135 L 210 115 L 350 115 L 350 135 L 770 135" fill="none" stroke="#38bdf8" stroke-width="2.5"/>
+
+    <!-- gnt -->
+    <text x="50" y="160" fill="#4ade80">gnt   :</text>
+    <path d="M 140 170 L 210 170 L 210 150 L 350 150 L 350 170 L 770 170" fill="none" stroke="#4ade80" stroke-width="2.5"/>
+
+    <!-- we -->
+    <text x="50" y="195" fill="#cbd5e1">we    :</text>
+    <path d="M 140 205 L 210 205 L 210 185 L 350 185 L 350 205 L 770 205" fill="none" stroke="#cbd5e1" stroke-width="2"/>
+    <text x="280" y="195" fill="#facc15" text-anchor="middle">1 (Write)</text>
+
+    <!-- addr / wdata / be -->
+    <text x="50" y="235" fill="#facc15">addr  :</text>
+    <rect x="210" y="220" width="140" height="20" fill="#334155" rx="3"/>
+    <text x="280" y="235" fill="#f8fafc" text-anchor="middle">0x2004</text>
+
+    <text x="50" y="265" fill="#facc15">wdata :</text>
+    <rect x="210" y="250" width="140" height="20" fill="#334155" rx="3"/>
+    <text x="280" y="265" fill="#f8fafc" text-anchor="middle">0xDEAD_BEEF</text>
+
+    <text x="50" y="295" fill="#facc15">be    :</text>
+    <rect x="210" y="280" width="140" height="20" fill="#334155" rx="3"/>
+    <text x="280" y="295" fill="#4ade80" text-anchor="middle">4'b0011 (Low Half)</text>
+
+    <!-- rvalid -->
+    <text x="50" y="325" fill="#c084fc">rvalid:</text>
+    <path d="M 140 335 L 490 335 L 490 315 L 630 315 L 630 335 L 770 335" fill="none" stroke="#c084fc" stroke-width="2.5"/>
+  </g>
+
+  <rect x="650" y="305" width="200" height="30" fill="#1e293b" stroke="#c084fc" rx="4"/>
+  <text x="750" y="325" fill="#c084fc" font-size="11" text-anchor="middle" font-family="sans-serif">Write Ack (rdata ignored)</text>
+</svg>

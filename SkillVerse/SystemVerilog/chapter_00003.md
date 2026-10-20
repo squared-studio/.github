@@ -18,7 +18,7 @@ System tasks are simulator services, so their exact formatting, command-line beh
 
 Display tasks are your primary means of communication with the simulator. They allow you to print messages and inspect variable values during simulation, making debugging a more transparent process.
 
-### 1. **`$display`**: Immediate Output to Console
+### **`$display`**: Immediate Output to Console
 
 `$display` acts like a print statement, instantly outputting formatted text to your simulation console the moment it's executed. It's perfect for logging events, checking values at specific points in time, and providing immediate feedback during simulation.
 
@@ -41,7 +41,7 @@ endmodule
 ```
 **Explanation**: This example demonstrates `$display` printing the simulation time (`%0t`), a decimal value (`%0d`), and its binary (`%b`) and hexadecimal (`%h`) representations, all in a single line for clear, informative output. The literal `ns` in the format string is only a label; use the module's declared time unit and a consistent `%t` format policy when reporting time.
 
-### 2. **`$monitor`**:  Real-time Variable Tracking
+### **`$monitor`**:  Real-time Variable Tracking
 
 `$monitor` is like setting up a watch on variables. Once activated, it continuously observes the variables you specify and automatically prints an update to the console **every time any of those variables change** value.
 
@@ -72,7 +72,7 @@ Time=10 ns: a=5, b=10
 ```
 **Explanation**:  `$monitor` automatically prints whenever `a` or `b` changes. Notice the initial output at time 0 shows 'x' because the registers are initially in an unknown state. After `$monitoroff`, changes to `a` no longer produce output.
 
-### 3. **`$strobe`**:  Stable Value Sampling
+### **`$strobe`**:  Stable Value Sampling
 
 `$strobe` is similar to `$display` but with a crucial timing difference. It prints values in the simulator's postponed region, after updates scheduled earlier in the current time slot, including nonblocking assignments, have been processed. It does not mean that every possible future delta cycle or later timed event has completed.
 
@@ -104,7 +104,7 @@ endmodule
 
 Wavedump tasks are essential for generating **Value Change Dump (VCD)** files. These files record signal changes over time, which can then be visualized using waveform viewers. Waveform analysis is a cornerstone of digital verification, allowing you to graphically examine signal interactions and pinpoint timing-related issues.
 
-### 1. **`$dumpfile`**: Naming Your Waveform File
+### **`$dumpfile`**: Naming Your Waveform File
 
 `$dumpfile` simply specifies the filename for the VCD file that will be generated during simulation. This task should be called **before** `$dumpvars`.
 
@@ -119,7 +119,7 @@ endmodule
 ```
 **Explanation**: This code will create a file named `signals.vcd` in the directory where you run your simulation. This file will store the waveform data.
 
-### 2. **`$dumpvars`**: Selecting Signals for Waveform Recording
+### **`$dumpvars`**: Selecting Signals for Waveform Recording
 
 `$dumpvars` is the task that controls **which signals and variables are recorded** in the VCD file. You can selectively dump specific signals or entire modules.
 
@@ -150,7 +150,7 @@ endmodule
 
 SystemVerilog provides functions to access the current simulation time in different formats and precisions.
 
-### 1. **`$time`**: High-Precision 64-bit Time
+### **`$time`**: High-Precision 64-bit Time
 
 `$time` returns the current simulation time as an integer time value, commonly represented with 64-bit precision. Its value is quantized to the active `timeprecision` and scaled according to the current scope's time unit. It is generally preferred over `$stime` when an integer time value is sufficient.
 
@@ -165,7 +165,7 @@ endmodule
 ```
 **Explanation**: Even though we used a fractional delay `#7.5ns`, `$time` returns an integer value after the delay has been rounded or quantized according to the active time precision. It should not be described universally as truncating to `7`. The time unit and precision come from `timeunit`/`timeprecision` declarations or legacy `` `timescale`` settings, and `%t` formatting is simulator- and configuration-dependent.
 
-### 2. **`$stime`**:  32-bit Time (Potentially Limited Range)
+### **`$stime`**:  32-bit Time (Potentially Limited Range)
 
 `$stime` returns the current simulation time as a **32-bit integer**.  While it can be quicker in some simulators, it has a **limited range**. For very long simulations, `$stime` can wrap around or truncate, leading to incorrect time values. **It is generally recommended to use `$time` for most applications to avoid potential issues with range limitations.**
 
@@ -180,7 +180,7 @@ endmodule
 ```
 **Caution**: Be mindful of the simulation duration when using `$stime`, especially for lengthy simulations where the 32-bit range might be exceeded.
 
-### 3. **`$realtime`**: Real Number Time for Fractional Steps
+### **`$realtime`**: Real Number Time for Fractional Steps
 
 `$realtime` returns the current simulation time as a **real number (floating-point)**. This is useful when your simulation involves **fractional time steps**, allowing you to display a fractional value after the simulator has quantized the delay to its active time precision.
 
@@ -199,7 +199,7 @@ endmodule
 
 Simulation control tasks allow you to manage the execution of your simulation, providing commands to stop, pause, or terminate the process.
 
-### 1. **`$finish`**:  Ending the Simulation Gracefully
+### **`$finish`**:  Ending the Simulation Gracefully
 
 `$finish` is used to **terminate the current simulation run**. It signals that the simulation has reached a natural conclusion or an error condition that warrants stopping. The simulator application or command-line process may remain available for another run.
 
@@ -214,7 +214,7 @@ endmodule
 ```
 **Explanation**: When `$finish` is executed, the current simulation stops, and any code after `$finish` in the same or subsequent blocks will not execute. Use a reporting or exit-status convention agreed by the regression flow when the reason is a test failure.
 
-### 2. **`$stop`**:  Pausing for Inspection
+### **`$stop`**:  Pausing for Inspection
 
 `$stop` **pauses the simulation** at the point where it's encountered. The simulator remains active but is halted, allowing you to:
 
@@ -232,7 +232,7 @@ endmodule
 ```
 **Explanation**: The simulation will pause at time 20ns. The message "Simulation Resumed." will only be displayed if you manually instruct the simulator to continue (e.g., using a 'run -continue' command in ModelSim or a similar command in your simulator).
 
-### 3. **`$exit`**: Program-Block Exit (Tool and Context Dependent)
+### **`$exit`**: Program-Block Exit (Tool and Context Dependent)
 
 `$exit` is associated with exiting a SystemVerilog `program` block and is not a portable replacement for `$finish` that immediately terminates every simulator process. Support and behavior can vary by simulator and by the context in which it is called. A module-based testbench should normally use `$finish` for normal termination and should consult its simulator documentation before using `$exit`.
 

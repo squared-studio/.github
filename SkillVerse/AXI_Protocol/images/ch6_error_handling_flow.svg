@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 340" width="100%" height="100%">
+  <rect width="100%" height="100%" fill="#0f172a"/>
+  <text x="420" y="32" fill="#f8fafc" font-size="18" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">AXI Error Handling &amp; CPU Trap Propagation</text>
+  <text x="420" y="52" fill="#94a3b8" font-size="12" text-anchor="middle" font-family="system-ui, sans-serif">Translating bus SLVERR and DECERR responses into hardware exceptions</text>
+
+  <!-- Step 1: Slave Error Source -->
+  <g transform="translate(60, 95)">
+    <rect width="200" height="100" rx="8" fill="#1e293b" stroke="#f87171" stroke-width="2"/>
+    <text x="100" y="28" fill="#f87171" font-size="12" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">Fault Event in Slave</text>
+    <text x="15" y="52" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">&bull; Parity/ECC uncorrectable</text>
+    <text x="15" y="70" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">&bull; Security firewall violation</text>
+    <text x="15" y="88" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">&bull; Unaligned register write</text>
+  </g>
+
+  <!-- Step 2: Bus Channel Response -->
+  <g transform="translate(320, 95)">
+    <rect width="200" height="100" rx="8" fill="#1e293b" stroke="#fbbf24" stroke-width="2"/>
+    <text x="100" y="28" fill="#fbbf24" font-size="12" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">In-Band Response</text>
+    <text x="15" y="55" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">&bull; Write: BRESP = SLVERR</text>
+    <text x="15" y="75" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">&bull; Read: RRESP = SLVERR</text>
+    <text x="15" y="92" fill="#fde68a" font-size="9" text-anchor="middle" font-family="system-ui, sans-serif">(Returned with BVALID/RVALID)</text>
+  </g>
+
+  <!-- Step 3: CPU Core Action -->
+  <g transform="translate(580, 95)">
+    <rect width="200" height="100" rx="8" fill="#831843" stroke="#f472b6" stroke-width="2"/>
+    <text x="100" y="28" fill="#ffffff" font-size="12" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">CPU Core Exception</text>
+    <text x="15" y="52" fill="#fbcfe8" font-size="10" font-family="system-ui, sans-serif">&bull; ARM: Data Abort / BusFault</text>
+    <text x="15" y="70" fill="#fbcfe8" font-size="10" font-family="system-ui, sans-serif">&bull; RISC-V: Load/Store Fault</text>
+    <text x="15" y="88" fill="#fbcfe8" font-size="10" font-family="system-ui, sans-serif">&bull; OS kernel panics / kills task</text>
+  </g>
+
+  <!-- Arrows -->
+  <line x1="260" y1="145" x2="315" y2="145" stroke="#f87171" stroke-width="2"/>
+  <line x1="520" y1="145" x2="575" y2="145" stroke="#fbbf24" stroke-width="2"/>
+
+  <text x="420" y="250" fill="#94a3b8" font-size="11" text-anchor="middle" font-family="system-ui, sans-serif">Critical Rule: An error response does NOT cancel or truncate the remaining beats of a burst!</text>
+  <text x="420" y="270" fill="#94a3b8" font-size="11" text-anchor="middle" font-family="system-ui, sans-serif">The master and slave must complete all remaining beats through RLAST or WLAST.</text>
+</svg>

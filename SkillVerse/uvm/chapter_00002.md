@@ -1,4 +1,4 @@
-# Chapter 2: Testbench Architecture and Top-Level Flow
+# Testbench Architecture and Top-Level Flow
 
 ![APB-UART Architecture](apb-uart-architecture.png)
 
@@ -13,7 +13,7 @@ By the end, you should understand:
 - what the top-level module is responsible for,
 - and why virtual interfaces are necessary.
 
-## 2.1 The Big Picture of the Environment
+## The Big Picture of the Environment
 
 The example environment is intentionally small. That is a strength, not a limitation.
 
@@ -82,7 +82,7 @@ Read that diagram slowly.
 
 That is the heart of the UVM model.
 
-## 2.2 Why the Loopback Setup Is So Helpful
+## Why the Loopback Setup Is So Helpful
 
 A beginner-friendly feature of this APB-UART environment is the loopback-style connection between the UART pins.
 
@@ -120,7 +120,7 @@ That gives us clean end-to-end stories:
 
 For a trainee engineer, this removes a lot of distraction.
 
-## 2.3 What the Top-Level Module Should Do
+## What the Top-Level Module Should Do
 
 A common beginner mistake is to put too much verification logic in the top-level module. In UVM, the top-level module should stay thin.
 
@@ -167,7 +167,7 @@ The module does not manually hand values to every class instance. Instead, it pu
 
 The top-level module bootstraps the UVM class world. It should not become a second procedural testbench that competes with the class hierarchy.
 
-## 2.4 What Is a Virtual Interface?
+## What Is a Virtual Interface?
 
 This is one of the most common beginner questions.
 
@@ -183,7 +183,7 @@ The flow is:
 
 Without a virtual interface, a driver would not have a clean way to access APB or UART signals and tasks.
 
-## 2.5 Why `uvm_config_db` Exists
+## Why `uvm_config_db` Exists
 
 At first glance, `uvm_config_db` can look like unnecessary complexity. But it solves a real organizational problem.
 
@@ -205,7 +205,7 @@ A trainee engineer does not need to master every detail of it immediately. At th
 - components retrieve things,
 - and this allows the class world to stay flexible.
 
-## 2.6 What the Environment Owns
+## What the Environment Owns
 
 The environment is the top-level UVM class container for the main verification blocks.
 
@@ -240,7 +240,7 @@ This is a good beginner example because it shows what an environment should do:
 
 The environment is the structure. The tests provide the behavior.
 
-## 2.7 What the Architecture Diagram Is Telling You
+## What the Architecture Diagram Is Telling You
 
 Do not treat the architecture figure as decoration. It gives you a visual map of the DUT's major blocks and data flow.
 
@@ -253,7 +253,7 @@ When you see a diagram like this in a verification tutorial, use it to ask:
 
 That habit will make both design debugging and verification planning easier later in your career.
 
-## 2.8 The Main Lesson of This Chapter
+## The Main Lesson of This Chapter
 
 If you leave this chapter understanding the following sentence, you are on track:
 

@@ -116,7 +116,7 @@ The `with` expression is evaluated for each element. Use an explicit iterator na
 
 ## Illustrative Examples with Expected Outputs
 
-### 1. Filtering with `find()` for Temperature Data
+### Filtering with `find()` for Temperature Data
 
 ```systemverilog
 int temperatures[] = '{-5, 12, 23, -3, 42, 18};
@@ -125,7 +125,7 @@ $display("Temperatures below freezing: %p", below_freezing);
 // Output: Temperatures below freezing: '{-5, -3}
 ```
 
-### 2. Sorting Strings by Length using `sort()` with `with` Clause
+### Sorting Strings by Length using `sort()` with `with` Clause
 
 ```systemverilog
 string names[] = '{"Alice", "Bob", "Charlie"};
@@ -134,7 +134,7 @@ $display("Sorted by length: %p", names);
 // Output: Sorted by length: '{"Bob", "Alice", "Charlie"}
 ```
 
-### 3. Bitwise AND Reduction on a Packed Array of Masks
+### Bitwise AND Reduction on a Packed Array of Masks
 
 ```systemverilog
 bit [3:0] masks[] = '{4'b1010, 4'b1100, 4'b1111};
@@ -143,7 +143,7 @@ $display("Combined AND mask: %b", combined_mask);
 // Output: Combined AND mask: 1000 (1010 & 1100 & 1111 = 1000)
 ```
 
-### 4. Finding Unique Indices with `unique_index()`
+### Finding Unique Indices with `unique_index()`
 
 ```systemverilog
 int data_stream[] = '{5, 2, 5, 7, 2, 9};
@@ -152,7 +152,7 @@ $display("Indices of first unique values: %p", unique_indices);
 // Output: Indices of first unique values: '{0, 1, 3, 5} (indices of 5, 2, 7, 9)
 ```
 
-### 5. Method Chaining for Concise Operations
+### Method Chaining for Concise Operations
 
 ```systemverilog
 int sample_values[] = '{8, 3, 5, 8, 2, 5};

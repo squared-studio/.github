@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 850 420" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f172a"/>
+      <stop offset="100%" stop-color="#1e293b"/>
+    </linearGradient>
+    <marker id="arr" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8"/>
+    </marker>
+  </defs>
+  <rect width="100%" height="100%" fill="url(#bg)"/>
+  <text x="425" y="32" fill="#f8fafc" font-size="20" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">AMBA 5 CHI Node Taxonomy & System Topology</text>
+
+  <!-- Central Interconnect Mesh/Ring -->
+  <rect x="220" y="80" width="410" height="260" rx="16" fill="#1e1e38" stroke="#6366f1" stroke-width="2.5" stroke-dasharray="6,4"/>
+  <text x="425" y="110" fill="#a5b4fc" font-size="15" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">Coherent Network-on-Chip (NoC Interconnect)</text>
+
+  <!-- HN-F Node -->
+  <g transform="translate(350, 140)">
+    <rect width="150" height="85" rx="8" fill="#4338ca" stroke="#818cf8" stroke-width="2"/>
+    <text x="75" y="28" fill="#ffffff" font-size="14" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">HN-F</text>
+    <text x="75" y="48" fill="#e0e7ff" font-size="10" text-anchor="middle" font-family="system-ui, sans-serif">Fully Coherent Home Node</text>
+    <text x="75" y="65" fill="#c7d2fe" font-size="9" text-anchor="middle" font-family="system-ui, sans-serif">System Cache + Directory</text>
+  </g>
+
+  <!-- HN-I Node -->
+  <g transform="translate(350, 245)">
+    <rect width="150" height="65" rx="8" fill="#312e81" stroke="#6366f1" stroke-width="1.5"/>
+    <text x="75" y="26" fill="#ffffff" font-size="13" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">HN-I</text>
+    <text x="75" y="46" fill="#c7d2fe" font-size="10" text-anchor="middle" font-family="system-ui, sans-serif">Non-coherent Home Node (I/O)</text>
+  </g>
+
+  <!-- Left: RN-F Nodes (CPU Clusters) -->
+  <g transform="translate(40, 90)">
+    <rect width="140" height="85" rx="8" fill="#047857" stroke="#34d399" stroke-width="2"/>
+    <text x="70" y="28" fill="#ffffff" font-size="14" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">RN-F 0</text>
+    <text x="70" y="48" fill="#d1fae5" font-size="10" text-anchor="middle" font-family="system-ui, sans-serif">Fully Coherent Core</text>
+    <text x="70" y="65" fill="#a7f3d0" font-size="9" text-anchor="middle" font-family="system-ui, sans-serif">L1/L2 Caches (Snooped)</text>
+  </g>
+
+  <g transform="translate(40, 240)">
+    <rect width="140" height="85" rx="8" fill="#047857" stroke="#34d399" stroke-width="2"/>
+    <text x="70" y="28" fill="#ffffff" font-size="14" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">RN-F 1</text>
+    <text x="70" y="48" fill="#d1fae5" font-size="10" text-anchor="middle" font-family="system-ui, sans-serif">Fully Coherent Core</text>
+    <text x="70" y="65" fill="#a7f3d0" font-size="9" text-anchor="middle" font-family="system-ui, sans-serif">L1/L2 Caches (Snooped)</text>
+  </g>
+
+  <!-- Top: RN-I Node (GPU / PCIe) -->
+  <g transform="translate(355, 370)">
+    <rect width="140" height="40" rx="6" fill="#065f46" stroke="#10b981" stroke-width="1.5"/>
+    <text x="70" y="24" fill="#ecfdf5" font-size="12" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">RN-I (DMA / GPU)</text>
+  </g>
+
+  <!-- Right: SN-F and SN-I Nodes -->
+  <g transform="translate(670, 120)">
+    <rect width="140" height="85" rx="8" fill="#b45309" stroke="#fbbf24" stroke-width="2"/>
+    <text x="70" y="28" fill="#ffffff" font-size="14" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">SN-F</text>
+    <text x="70" y="48" fill="#fef3c7" font-size="10" text-anchor="middle" font-family="system-ui, sans-serif">Coherent Subordinate</text>
+    <text x="70" y="65" fill="#fde68a" font-size="9" text-anchor="middle" font-family="system-ui, sans-serif">DDR5 / HBM Memory Ctrl</text>
+  </g>
+
+  <g transform="translate(670, 240)">
+    <rect width="140" height="85" rx="8" fill="#92400e" stroke="#f59e0b" stroke-width="1.5"/>
+    <text x="70" y="28" fill="#ffffff" font-size="14" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">SN-I</text>
+    <text x="70" y="48" fill="#fef3c7" font-size="10" text-anchor="middle" font-family="system-ui, sans-serif">Non-coherent Subordinate</text>
+    <text x="70" y="65" fill="#fde68a" font-size="9" text-anchor="middle" font-family="system-ui, sans-serif">Boot ROM / Peripherals</text>
+  </g>
+
+  <!-- Arrows -->
+  <path d="M 180 132 L 220 132" stroke="#38bdf8" stroke-width="2" marker-end="url(#arr)"/>
+  <path d="M 180 282 L 220 282" stroke="#38bdf8" stroke-width="2" marker-end="url(#arr)"/>
+  <path d="M 630 162 L 670 162" stroke="#38bdf8" stroke-width="2" marker-end="url(#arr)"/>
+  <path d="M 630 282 L 670 282" stroke="#38bdf8" stroke-width="2" marker-end="url(#arr)"/>
+  <path d="M 425 370 L 425 340" stroke="#38bdf8" stroke-width="2" marker-end="url(#arr)"/>
+</svg>

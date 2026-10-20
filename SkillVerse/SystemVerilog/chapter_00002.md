@@ -49,7 +49,7 @@ The example has one top-level module and one `initial` process. The process prin
 
 Prior to delving into the testbench structure, it is imperative to comprehend certain fundamental elements of the SystemVerilog language itself.
 
-### 1. SystemVerilog File Naming
+### SystemVerilog File Naming
 
 SystemVerilog code is stored in plain text files. The conventional file extensions are:
 * **.sv**: The recommended extension for SystemVerilog files.
@@ -57,7 +57,7 @@ SystemVerilog code is stored in plain text files. The conventional file extensio
 
 Upon developing your testbench code, it is typically saved as `testbench.sv` or, for legacy Verilog-oriented flows, `testbench.v`. These files are then provided to the simulator for compilation and execution. The extension often selects the language mode, but build scripts can override that behavior, so confirm the simulator's compile options.
 
-### 2. The Semicolon (`;`): Statement Terminator
+### The Semicolon (`;`): Statement Terminator
 
 In SystemVerilog, the **semicolon (`;`)** functions as a statement terminator. It signals to the compiler that a complete instruction has been provided.
 
@@ -73,7 +73,7 @@ $display("Message");    // System task invocation terminates with a semicolon.
 ```
 Omission of a semicolon is a common error for new users, which will result in a syntax error during compilation. Blocks of statements, such as those delimited by **`begin`** and **`end`**, do not require a semicolon after the **`end`** keyword. A semicolon may be required after the complete construct that contains the block, but `end else;` is not valid SystemVerilog syntax. A conditional block is written, for example, as `if (ready) begin ... end else begin ... end`.
 
-### 3. Comments: Documenting Code
+### Comments: Documenting Code
 
 Comments are textual annotations within the code that are disregarded by the SystemVerilog compiler and simulator. Their primary purpose is to enhance code readability and provide explanations for human comprehension.
 
@@ -95,14 +95,14 @@ Comments are textual annotations within the code that are disregarded by the Sys
     ```
     Effective utilization of comments is a professional practice that significantly improves code comprehension and maintainability.
 
-### 4. Case Sensitivity
+### Case Sensitivity
 
 SystemVerilog is a **case-sensitive** language. This implies that uppercase and lowercase letters are interpreted as distinct characters.
 
 * **Impact**: `myVariable` is differentiated from `myvariable` or `MyVariable`. Keywords such as **`module`**, **`initial`**, **`begin`**, and **`end`** must be written in lowercase precisely as defined.
 * **Best Practice**: Consistent capitalization for module names, signal names, and other identifiers is crucial to prevent errors and enhance code readability.
 
-### 5. Whitespace and Indentation
+### Whitespace and Indentation
 
 Whitespace (spaces, tabs, newlines) and indentation (the leading empty space on a line) are generally ignored by the SystemVerilog compiler. However, their importance for human readability and code clarity is paramount.
 
@@ -187,7 +187,7 @@ Multiple `initial` blocks start concurrently. This is useful for independent act
 
 **System tasks** are predefined simulator services, conventionally prefixed with a dollar sign (`$`). They facilitate essential functionality for interacting with and controlling the simulation environment. Users are not required to define these tasks; they are ready for direct use. SystemVerilog also has **system functions**, which return a value and can be used in expressions. `$display` and `$finish` are tasks because they perform actions rather than return a value.
 
-### 1. `$display`: Simulation Output Task
+### `$display`: Simulation Output Task
 
 **`$display`** is a **system task** employed to output information to the simulation console (the text-based interface where your simulator operates).
 
@@ -213,7 +213,7 @@ end
 
 The format specifiers `%0d` and `%0h` request compact decimal and hexadecimal output. More display and formatting tasks are covered in the next chapter.
 
-### 2. `$finish`: Simulation Termination Task
+### `$finish`: Simulation Termination Task
 
 **`$finish`** is a critical **system task** employed for controlling the simulation flow.
 

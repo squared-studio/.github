@@ -1,4 +1,4 @@
-# Chapter 7: Debugging and Coverage Analysis in Verification
+# Debugging and Coverage Analysis in Verification
 
 Writing testbenches and generating stimulus is only half the verification challenge. The remaining effort is consumed by two critical engineering disciplines:
 1. **Failure Triage & Debugging:** Rapidly isolating the root cause of simulation failures to determine whether the bug lives in the synthesizable RTL, the verification testbench, or the specification itself.
@@ -20,7 +20,7 @@ After completing this chapter, you should be able to:
 
 ---
 
-## 1. Simulation Debugging Methodology and Failure Triage
+## Simulation Debugging Methodology and Failure Triage
 
 When a nightly regression of 10,000 tests reports 45 failures, debugging them randomly is inefficient. Engineers apply a systematic **Failure Triage Funnel**.
 
@@ -43,31 +43,31 @@ When a nightly regression of 10,000 tests reports 45 failures, debugging them ra
 
 ---
 
-## 2. Debugging SystemVerilog and UVM Testbenches
+## Debugging SystemVerilog and UVM Testbenches
 
 Because UVM is a complex, dynamic object-oriented framework, testbench bugs often manifest as silent hangs or confusing runtime null pointer exceptions.
 
 ### Common UVM Pitfalls and Diagnostics
 
-#### 1. The Hanging `run_phase` (Un-dropped Objection)
+#### The Hanging `run_phase` (Un-dropped Objection)
 - **Symptom:** The simulation runs until reaching the global timeout limit (`+UVM_TIMEOUT=10ms`) with zero progress.
 - **Root Cause:** A component raised an objection (`phase.raise_objection()`) but failed to drop it due to an unhandled exception or an infinite loop in a sequence.
 - **Diagnostic Tool:** Enable UVM objection tracing from the command line:
   `+UVM_OBJECTION_TRACE`
   The simulator logs every objection raise, drop, and current count, instantly revealing which component failed to drop its objection.
 
-#### 2. `uvm_config_db` Key or Type Mismatch
+#### `uvm_config_db` Key or Type Mismatch
 - **Symptom:** Virtual interface handle is `null`, triggering a runtime fatal crash: `Null object dereference at vif.drv_cb.paddr`.
 - **Root Cause:** A typo in the string key or hierarchical path (e.g., setting `"vif"` but getting `"virtual_if"`), or setting `virtual bus_if` while getting `virtual bus_if.DRV`.
 - **Diagnostic Tool:** Add the command line flag:
   `+UVM_CONFIG_DB_TRACE`
   Logs every `set()` and `get()` call with context, target path, and success/failure status.
 
-#### 3. Premature Test Termination
+#### Premature Test Termination
 - **Symptom:** The simulation terminates at time 0 ns before any transactions are driven.
 - **Root Cause:** The test forgot to call `phase.raise_objection()` inside `run_phase()`. UVM terminates the run phase immediately if the objection count is zero.
 
-#### 4. Topology Inspection
+#### Topology Inspection
 When unsure if child agents or scoreboards were properly constructed in `build_phase`, print the full testbench component tree:
 ```systemverilog
 function void end_of_elaboration_phase(uvm_phase phase);
@@ -78,7 +78,7 @@ endfunction
 
 ---
 
-## 3. Code Coverage vs. Functional Coverage: The Convergence Matrix
+## Code Coverage vs. Functional Coverage: The Convergence Matrix
 
 Relying solely on code coverage or functional coverage creates dangerous blind spots. True verification closure requires evaluating both metrics simultaneously.
 
@@ -95,7 +95,7 @@ Relying solely on code coverage or functional coverage creates dangerous blind s
 
 ---
 
-## 4. Coverage Closure and the Formal Waiver Process
+## Coverage Closure and the Formal Waiver Process
 
 When a design nears tape-out, code coverage often plateaus around 92% to 96%. Reaching 100% requires analyzing **Coverage Holes**.
 
@@ -115,7 +115,7 @@ Dead code must not be left unaddressed; nor should it be deleted from RTL if req
 
 ---
 
-## 5. Automated CI Regression Pipelines
+## Automated CI Regression Pipelines
 
 Modern verification teams do not run tests manually. All test execution, seed randomization, coverage accumulation, and reporting are orchestrated by an automated **Continuous Integration (CI)** pipeline.
 
@@ -141,7 +141,7 @@ Modern verification teams do not run tests manually. All test execution, seed ra
 
 ---
 
-## 6. Learning Resources
+## Learning Resources
 
 - **Books:**
   - *Comprehensive Functional Verification* by Bruce Wile, John Goss, and Wolfgang Roesner (Morgan Kaufmann).
@@ -153,7 +153,7 @@ Modern verification teams do not run tests manually. All test execution, seed ra
 
 ---
 
-## 7. Review Exercises
+## Review Exercises
 
 1. Describe the 4-step debugging funnel. Why should simulation waveform dumping be avoided during large-scale regression farm runs?
 2. A UVM simulation hangs indefinitely at time 500us without completing. What command line flag would you pass to diagnose the issue, and what is the most probable testbench root cause?

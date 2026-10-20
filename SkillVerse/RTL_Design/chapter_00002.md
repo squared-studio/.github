@@ -142,7 +142,7 @@ Digital signals do not change instantaneously. Physics imposes propagation delay
 
 ## Register-to-Register Timing Intuition
 
-### 1. Setup Time Constraint (Maximum Delay Check)
+### Setup Time Constraint (Maximum Delay Check)
 The data launched by the source flip-flop must travel through the combinational logic and arrive at the destination flip-flop at least $t_{setup}$ before the next clock edge:
 
 $$T_{clk} + t_{skew} \ge t_{cq(max)} + t_{comb(max)} + t_{setup}$$
@@ -155,7 +155,7 @@ $$\text{Setup Slack} = (T_{clk} + t_{skew}) - (t_{cq(max)} + t_{comb(max)} + t_{
 
 > **Setup Violation Remedy:** Decrease clock frequency (increase $T_{clk}$), pipeline long combinational paths into multiple stages, or optimize logic depth.
 
-### 2. Hold Time Constraint (Minimum Delay Check)
+### Hold Time Constraint (Minimum Delay Check)
 Data launched on the current clock edge must **not** race ahead and overwrite the previous data at the destination flip-flop before the destination flip-flop satisfies its hold time:
 
 $$t_{cq(min)} + t_{comb(min)} \ge t_{hold} + t_{skew}$$

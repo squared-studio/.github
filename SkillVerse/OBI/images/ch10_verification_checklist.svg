@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 300" width="100%" height="100%">
+  <rect width="880" height="300" fill="#0f172a" rx="10"/>
+  <text x="440" y="35" fill="#f8fafc" font-size="18" font-weight="bold" text-anchor="middle" font-family="sans-serif">OBI Functional Verification &amp; Compliance Checklist</text>
+
+  <rect x="40" y="70" width="250" height="200" fill="#1e293b" stroke="#38bdf8" rx="6"/>
+  <text x="165" y="100" fill="#38bdf8" font-size="14" font-weight="bold" text-anchor="middle" font-family="sans-serif">Request Checks</text>
+  <text x="60" y="130" fill="#cbd5e1" font-size="10" font-family="sans-serif">[x] req stability during wait</text>
+  <text x="60" y="155" fill="#cbd5e1" font-size="10" font-family="sans-serif">[x] addr/we/be valid with req</text>
+  <text x="60" y="180" fill="#cbd5e1" font-size="10" font-family="sans-serif">[x] wdata valid on writes</text>
+  <text x="60" y="205" fill="#cbd5e1" font-size="10" font-family="sans-serif">[x] No req deassert before gnt</text>
+  <text x="60" y="230" fill="#cbd5e1" font-size="10" font-family="sans-serif">[x] Zero-cycle grant backpressure</text>
+
+  <rect x="315" y="70" width="250" height="200" fill="#1e293b" stroke="#4ade80" rx="6"/>
+  <text x="440" y="100" fill="#4ade80" font-size="14" font-weight="bold" text-anchor="middle" font-family="sans-serif">Response Checks</text>
+  <text x="335" y="130" fill="#cbd5e1" font-size="10" font-family="sans-serif">[x] rvalid matches request count</text>
+  <text x="335" y="155" fill="#cbd5e1" font-size="10" font-family="sans-serif">[x] rdata stable during rvalid</text>
+  <text x="335" y="180" fill="#cbd5e1" font-size="10" font-family="sans-serif">[x] err signaling on bad access</text>
+  <text x="335" y="205" fill="#cbd5e1" font-size="10" font-family="sans-serif">[x] Write completion response</text>
+  <text x="335" y="230" fill="#cbd5e1" font-size="10" font-family="sans-serif">[x] Response latency distribution</text>
+
+  <rect x="590" y="70" width="250" height="200" fill="#1e293b" stroke="#c084fc" rx="6"/>
+  <text x="715" y="100" fill="#c084fc" font-size="14" font-weight="bold" text-anchor="middle" font-family="sans-serif">System / Crossbar Checks</text>
+  <text x="610" y="130" fill="#cbd5e1" font-size="10" font-family="sans-serif">[x] Outstanding counter balance</text>
+  <text x="610" y="155" fill="#cbd5e1" font-size="10" font-family="sans-serif">[x] ID routing &amp; demuxing</text>
+  <text x="610" y="180" fill="#cbd5e1" font-size="10" font-family="sans-serif">[x] Crossbar arbiter fairness</text>
+  <text x="610" y="205" fill="#cbd5e1" font-size="10" font-family="sans-serif">[x] Deadlock freedom proof</text>
+  <text x="610" y="230" fill="#cbd5e1" font-size="10" font-family="sans-serif">[x] Atomic operation atomicity</text>
+</svg>

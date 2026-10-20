@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 850 420" width="100%" height="100%">
+  <defs>
+    <linearGradient id="hnfBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1e1b4b"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+  </defs>
+  <rect width="100%" height="100%" fill="url(#hnfBg)"/>
+  <text x="425" y="35" fill="#f8fafc" font-size="20" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">HN-F Internal Microarchitecture: Coherency Hub & Directory</text>
+
+  <!-- HN-F Outer Boundary -->
+  <rect x="60" y="60" width="730" height="320" rx="12" fill="#18182e" stroke="#6366f1" stroke-width="2"/>
+  <text x="90" y="90" fill="#a5b4fc" font-size="16" font-weight="bold" font-family="system-ui, sans-serif">HN-F (Fully Coherent Home Node)</text>
+
+  <!-- Point of Serialization (PoS) -->
+  <g transform="translate(90, 115)">
+    <rect width="200" height="110" rx="8" fill="#312e81" stroke="#818cf8" stroke-width="1.5"/>
+    <text x="100" y="30" fill="#ffffff" font-size="14" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">Point of Serialization</text>
+    <text x="100" y="50" fill="#c7d2fe" font-size="11" text-anchor="middle" font-family="system-ui, sans-serif">(PoS / Arbiter)</text>
+    <text x="100" y="75" fill="#e0e7ff" font-size="10" text-anchor="middle" font-family="system-ui, sans-serif">• Serializes conflicting addresses</text>
+    <text x="100" y="93" fill="#e0e7ff" font-size="10" text-anchor="middle" font-family="system-ui, sans-serif">• Allocates Tracker Entries</text>
+  </g>
+
+  <!-- Snoop Filter / Directory -->
+  <g transform="translate(325, 115)">
+    <rect width="200" height="110" rx="8" fill="#1e3a8a" stroke="#60a5fa" stroke-width="1.5"/>
+    <text x="100" y="30" fill="#ffffff" font-size="14" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">Snoop Filter / Directory</text>
+    <text x="100" y="50" fill="#93c5fd" font-size="11" text-anchor="middle" font-family="system-ui, sans-serif">(SF Tag Array)</text>
+    <text x="100" y="75" fill="#dbeafe" font-size="10" text-anchor="middle" font-family="system-ui, sans-serif">• Tracks RN-F cache state</text>
+    <text x="100" y="93" fill="#dbeafe" font-size="10" text-anchor="middle" font-family="system-ui, sans-serif">• Prunes broadcast snoops</text>
+  </g>
+
+  <!-- System Level Cache (SLC) -->
+  <g transform="translate(560, 115)">
+    <rect width="200" height="110" rx="8" fill="#065f46" stroke="#34d399" stroke-width="1.5"/>
+    <text x="100" y="30" fill="#ffffff" font-size="14" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">System Level Cache</text>
+    <text x="100" y="50" fill="#6ee7b7" font-size="11" text-anchor="middle" font-family="system-ui, sans-serif">(SLC / L3 Data Array)</text>
+    <text x="100" y="75" fill="#d1fae5" font-size="10" text-anchor="middle" font-family="system-ui, sans-serif">• Low latency shared cache</text>
+    <text x="100" y="93" fill="#d1fae5" font-size="10" text-anchor="middle" font-family="system-ui, sans-serif">• Dirty line repository</text>
+  </g>
+
+  <!-- Bottom: Protocol Engines -->
+  <g transform="translate(90, 255)">
+    <rect width="670" height="100" rx="8" fill="#1e293b" stroke="#94a3b8" stroke-width="1.5"/>
+    <text x="335" y="26" fill="#f8fafc" font-size="14" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">Transaction Tracker & Protocol Generation Engine</text>
+    <g transform="translate(30, 45)">
+      <rect width="180" height="40" rx="4" fill="#334155"/>
+      <text x="90" y="25" fill="#e2e8f0" font-size="11" text-anchor="middle" font-family="system-ui, sans-serif">Snoop Generator (SNP Flits)</text>
+    </g>
+    <g transform="translate(245, 45)">
+      <rect width="180" height="40" rx="4" fill="#334155"/>
+      <text x="90" y="25" fill="#e2e8f0" font-size="11" text-anchor="middle" font-family="system-ui, sans-serif">Response Collector (RSP Flits)</text>
+    </g>
+    <g transform="translate(460, 45)">
+      <rect width="180" height="40" rx="4" fill="#334155"/>
+      <text x="90" y="25" fill="#e2e8f0" font-size="11" text-anchor="middle" font-family="system-ui, sans-serif">Memory Interface (To SN-F)</text>
+    </g>
+  </g>
+</svg>

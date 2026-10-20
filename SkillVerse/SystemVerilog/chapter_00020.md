@@ -459,7 +459,7 @@ assert property (memory_write_acknowledgement_check)
 
 ## Practical Exercises to Master SystemVerilog Assertions
 
-### 1. Packet Protocol Assertion Suite
+### Packet Protocol Assertion Suite
 
 Create a SystemVerilog module `packet_protocol_checker` with concurrent assertions to verify a simple packet protocol. Assume the protocol has the following signals:
 
@@ -495,7 +495,7 @@ module packet_protocol_checker(
 endmodule : packet_protocol_checker
 ```
 
-### 2. UART Controller State Machine Coverage
+### UART Controller State Machine Coverage
 
 Define coverage points for a simplified UART (Universal Asynchronous Receiver/Transmitter) controller state machine. Assume the UART has the following states (represented by an `enum`): `IDLE`, `START_BIT_DETECT`, `DATA_RECEIVE`, `PARITY_CHECK`, `STOP_BIT_DETECT`, `ERROR_STATE`.
 
@@ -507,7 +507,7 @@ Define a covergroup with coverpoints to track:
 -   **Error State Coverage**: Cover reaching the `ERROR_STATE` (you'll need to define conditions that lead to the `ERROR_STATE` in your UART design, e.g., parity error, framing error).
 -   **Cross-Coverage**: Create cross-coverage between state transitions and error/success outcomes (e.g., cross between state transitions and whether an error occurred during data reception).
 
-### 3. Memory Access Assertion Suite
+### Memory Access Assertion Suite
 
 Develop concurrent assertions for a simple memory controller interface. Assume the memory controller has the following signals:
 
@@ -527,7 +527,7 @@ Implement concurrent assertions to check:
 -   **Write Enable Pulse Width**: Assert that the `write_enable` pulse is asserted for at least one clock cycle.
 -   **Read-After-Write Hazard Detection (Optional - Advanced)**: If applicable to your memory controller design, try to assert that a read operation to the same address immediately after a write operation returns the written data (or flags a hazard if not supported).
 
-### 4. AMBA AHB Bus Protocol Assertions (Simplified)
+### AMBA AHB Bus Protocol Assertions (Simplified)
 
 Implement simplified concurrent assertions for key aspects of the AMBA AHB (Advanced High-Performance Bus) protocol. Focus on:
 

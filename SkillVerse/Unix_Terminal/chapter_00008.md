@@ -1,4 +1,4 @@
-# Chapter 8: Networking and Remote Workflows
+# Networking and Remote Workflows
 
 ## What You Will Learn
 - Connect to remote systems securely with SSH.

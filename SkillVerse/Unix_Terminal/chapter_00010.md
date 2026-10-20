@@ -1,4 +1,4 @@
-# Chapter 10: Putting It Together
+# Putting It Together
 
 ## What You Will Learn
 - Design and implement a small automation workflow end-to-end.

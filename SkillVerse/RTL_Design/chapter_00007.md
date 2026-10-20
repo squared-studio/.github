@@ -41,7 +41,7 @@ Hazards are situations where the next instruction or data set cannot execute in 
 
 ![Taxonomy of Pipeline Hazards](images/ch7_pipeline_hazards.svg)
 
-### 1. Data Hazards (Read-After-Write - RAW)
+### Data Hazards (Read-After-Write - RAW)
 Occurs when Instruction 2 reads a register that is written by Instruction 1:
 ```
 Inst 1: R1 = R2 + R3   (Writes R1 in Stage 4 - Writeback)
@@ -56,13 +56,13 @@ Inst 2: R5 = R1 * R4   (Needs R1 in Stage 2 - Decode/Operand Fetch)
 
 ![Data Forwarding Mechanism](images/ch7_data_forwarding.svg)
 
-### 2. Control Hazards (Branch Penalty)
+### Control Hazards (Branch Penalty)
 In instruction pipelines, branch outcomes are typically resolved in Stage 3 (Execute). If the branch is taken, instructions already fetched in Stage 1 and 2 are invalid.
 - **Resolution:**
   - **Stall:** Wait until branch resolves.
   - **Branch Prediction:** Speculatively fetch from predicted address; if wrong, **flush** the pipeline (clear valid bits of intermediate stages) and jump to the correct target.
 
-### 3. Structural Hazards
+### Structural Hazards
 Multiple stages compete for the exact same physical resource in the same cycle (e.g., single-port RAM accessed simultaneously for instruction fetch and data read).
 - **Resolution:** Duplicate hardware (e.g., separate instruction and data caches—Harvard architecture, or dual-ported memories).
 

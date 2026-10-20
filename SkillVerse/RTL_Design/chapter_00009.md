@@ -27,7 +27,7 @@ Synthesis tools are optimization engines driven by cost functions. Without const
 
 ### Essential SDC Commands with Examples
 
-#### 1. Clock Definition
+#### Clock Definition
 ```tcl
 # Define a 200 MHz system clock with 50% duty cycle on port 'sys_clk'
 create_clock -name sys_clk -period 5.0 [get_ports sys_clk]
@@ -36,7 +36,7 @@ create_clock -name sys_clk -period 5.0 [get_ports sys_clk]
 set_clock_uncertainty 0.150 [get_clocks sys_clk]
 ```
 
-#### 2. Input and Output Delays
+#### Input and Output Delays
 ```tcl
 # Data arrives up to 1.5 ns after the external clock edge
 set_input_delay -clock sys_clk -max 1.5 [get_ports data_in[*]]
@@ -45,7 +45,7 @@ set_input_delay -clock sys_clk -max 1.5 [get_ports data_in[*]]
 set_output_delay -clock sys_clk -max 1.0 [get_ports data_out[*]]
 ```
 
-#### 3. Timing Exceptions (False Paths and Multi-Cycle Paths)
+#### Timing Exceptions (False Paths and Multi-Cycle Paths)
 ```tcl
 # Treat asynchronous reset release or cross-domain signals as false paths (ignored by STA)
 set_false_path -from [get_ports rst_n_async]
@@ -105,7 +105,7 @@ Once logic synthesis outputs a gate netlist, the design moves into physical back
 
 Synthesis tools can only optimize what your code permits. Certain RTL patterns unintentionally restrict the tool:
 
-### 1. Resource Sharing
+### Resource Sharing
 If an expensive arithmetic operation (like a 32-bit multiplier) is invoked inside multiple branches of an `if-else` statement, the tool may synthesize multiple separate multipliers unless you explicitly restructure the code to share the unit:
 
 ```systemverilog
@@ -125,7 +125,7 @@ always_comb begin
 end
 ```
 
-### 2. Priority Logic vs. Parallel Selection
+### Priority Logic vs. Parallel Selection
 - **Cascaded `if-else if-else`:** Infers a priority chain where each condition is evaluated sequentially. The last condition sits at the bottom of a deep logic tree, hurting timing.
 - **`case` statement:** In modern SystemVerilog, `case` statements where cases are mutually exclusive infer **parallel multiplexers**, reducing logic depth from $O(N)$ to $O(\log N)$!
 

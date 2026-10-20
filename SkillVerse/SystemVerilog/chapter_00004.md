@@ -119,7 +119,7 @@ endmodule
 
 User-defined data types allow you to create custom types, improving code readability, maintainability, and abstraction.
 
-### 1. **`typedef`**: Creating Type Aliases
+### **`typedef`**: Creating Type Aliases
 
 `typedef` lets you define a new name (alias) for an existing data type. This enhances code clarity by using descriptive names and simplifies code modifications.
 
@@ -132,7 +132,7 @@ access_mode_t current_access;   // Use 'access_mode_t' for access mode
 ```
 **Benefit**: `typedef` improves code readability by replacing less descriptive types (like `logic [63:0]`) with meaningful names (`address_t`). If you need to change the underlying type (e.g., to `logic [39:0]`), you only modify the `typedef` definition, not every instance in your code.
 
-### 2. **`enum`**: Defining Named Value Sets
+### **`enum`**: Defining Named Value Sets
 
 `enum` (enumeration) is ideal for creating state machines and representing a fixed set of named values. It improves code readability and prevents magic numbers.
 
@@ -155,7 +155,7 @@ endcase
 ```
 **Benefit**: `enum` makes state machine code much more readable and less error-prone than using raw integer values for states. The optional type declaration (`logic [2:0]`) specifies the underlying packed representation for the enum, allowing type-aware operations. Assigning arbitrary integer values to an enum may require an explicit cast, which helps expose accidental invalid states.
 
-### 3. **`struct`**: Grouping Related Data
+### **`struct`**: Grouping Related Data
 
 `struct` (structure) allows you to group related variables together under a single name, similar to structures in C. This is useful for creating data packets, transaction objects, or any composite data structure.
 
@@ -173,7 +173,7 @@ current_transaction.read_write = 1;
 ```
 **Benefit**: `struct` organizes related data into logical units, improving code structure and making it easier to pass complex data as arguments to tasks and functions. The `packed` keyword makes the members a contiguous, integral bit representation, useful for bit-level manipulation and interfaces. A packed struct's total width is the sum of its packed members; its field ordering follows the declared packed layout and should be checked when mapping to a protocol.
 
-### 4. **`union`**: Sharing Memory Space
+### **`union`**: Sharing Memory Space
 
 `union` allows multiple variables to share the same storage. Writing one member changes the shared bits viewed through the other members; the union does not remember which member is currently intended to be valid. Unions are useful when you need to interpret the same bits in different ways, but they require a clear discriminator or protocol rule.
 

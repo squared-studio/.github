@@ -55,7 +55,7 @@ When a port writes to the exact same address that is currently being read on the
 
 ## Synthesizable Memory Design
 
-### 1. Parameterized Single-Port Synchronous RAM (BRAM Inferable)
+### Parameterized Single-Port Synchronous RAM (BRAM Inferable)
 ```systemverilog
 // sram_single_port.sv - Synthesizable Single-Port RAM
 module sram_single_port #(
@@ -84,7 +84,7 @@ module sram_single_port #(
 endmodule
 ```
 
-### 2. True Dual-Port RAM with Independent Clocks
+### True Dual-Port RAM with Independent Clocks
 ```systemverilog
 // ram_true_dual_port.sv - Dual Clock, Independent Ports
 module ram_true_dual_port #(

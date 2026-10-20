@@ -380,25 +380,25 @@ git stash  # Saves your uncommitted changes to a new stash
 Imagine you are working on a feature on your `main` branch, and suddenly an urgent bug fix is needed on a `hotfix-branch`. Here’s how `git stash` can help:
 
 ```bash
-# 1. You are working on 'main' branch with uncommitted changes
+# You are working on 'main' branch with uncommitted changes
 # ... working on main branch ...
 
-git stash                  # 2. Stash your current changes on 'main'
+git stash                  # Stash your current changes on 'main'
 # Output: Saved working directory and index state ...
 
-git checkout hotfix-branch  # 3. Switch to 'hotfix-branch'
+git checkout hotfix-branch  # Switch to 'hotfix-branch'
 # Output: Switched to branch 'hotfix-branch'
 
-# 4. Fix the urgent bug on 'hotfix-branch'
+# Fix the urgent bug on 'hotfix-branch'
 # ... fix bug ...
 git add .
 git commit -m "fix: urgent bug fix for ..."
 git push origin hotfix-branch
 
-git checkout main         # 5. Switch back to 'main' branch
+git checkout main         # Switch back to 'main' branch
 # Output: Switched to branch 'main'
 
-git stash pop             # 6. Reapply your stashed changes back onto 'main'
+git stash pop             # Reapply your stashed changes back onto 'main'
 # Output: On branch main
 #         ... your stashed changes are now back in your working directory ...
 ```

@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 850 360" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgWave" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0b0f19"/>
+      <stop offset="100%" stop-color="#1e293b"/>
+    </linearGradient>
+  </defs>
+  <rect width="100%" height="100%" fill="url(#bgWave)"/>
+  <text x="425" y="30" fill="#f8fafc" font-size="18" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">Timing Waveform: Link Credit Initialization, Flit Transmit &amp; Credit Return</text>
+
+  <g transform="translate(50, 60)" font-family="monospace" font-size="12">
+    <!-- Clock -->
+    <text x="0" y="25" fill="#94a3b8">CLK</text>
+    <path d="M 90 25 L 130 25 L 130 5 L 170 5 L 170 25 L 210 25 L 210 5 L 250 5 L 250 25 L 290 25 L 290 5 L 330 5 L 330 25 L 370 25 L 370 5 L 410 5 L 410 25 L 450 25 L 450 5 L 490 5 L 490 25 L 530 25 L 530 5 L 570 5 L 570 25 L 610 25 L 610 5 L 650 5 L 650 25 L 690 25 L 690 5 L 730 5 L 730 25" fill="none" stroke="#64748b" stroke-width="1.5"/>
+
+    <!-- TXFLITPEND -->
+    <text x="0" y="75" fill="#94a3b8">TXFLITPEND</text>
+    <path d="M 90 75 L 250 75 L 250 55 L 570 55 L 570 75 L 730 75" fill="none" stroke="#38bdf8" stroke-width="2"/>
+
+    <!-- TXFLITV -->
+    <text x="0" y="125" fill="#94a3b8">TXFLITV</text>
+    <path d="M 90 125 L 290 125 L 290 105 L 370 105 L 370 125 L 450 125 L 450 105 L 530 105 L 530 125 L 730 125" fill="none" stroke="#38bdf8" stroke-width="2"/>
+
+    <!-- TXFLIT -->
+    <text x="0" y="175" fill="#94a3b8">TXFLIT</text>
+    <rect x="290" y="160" width="80" height="20" fill="#0284c7" rx="3"/><text x="330" y="174" fill="#fff" text-anchor="middle" font-size="10">Flit 0</text>
+    <rect x="450" y="160" width="80" height="20" fill="#0284c7" rx="3"/><text x="490" y="174" fill="#fff" text-anchor="middle" font-size="10">Flit 1</text>
+
+    <!-- RXLCRDV -->
+    <text x="0" y="225" fill="#94a3b8">RXLCRDV</text>
+    <path d="M 90 225 L 130 225 L 130 205 L 210 205 L 210 225 L 610 225 L 610 205 L 650 205 L 650 225 L 730 225" fill="none" stroke="#34d399" stroke-width="2"/>
+
+    <!-- Credit Count -->
+    <text x="0" y="275" fill="#94a3b8">Credits</text>
+    <text x="110" y="275" fill="#facc15">0</text>
+    <text x="170" y="275" fill="#facc15">1</text>
+    <text x="230" y="275" fill="#facc15">2</text>
+    <text x="330" y="275" fill="#facc15">1</text>
+    <text x="410" y="275" fill="#facc15">1</text>
+    <text x="490" y="275" fill="#facc15">0</text>
+    <text x="630" y="275" fill="#facc15">1</text>
+  </g>
+</svg>

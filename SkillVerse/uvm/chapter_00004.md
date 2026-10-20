@@ -1,4 +1,4 @@
-# Chapter 4: Agents, Sequences, and End-to-End Data Paths
+# Agents, Sequences, and End-to-End Data Paths
 
 ![UART Transmit Path](uart-transmit-path.png)
 
@@ -15,7 +15,7 @@ By the end, you should understand:
 - how `basic_write_test` proves the transmit path,
 - how `basic_read_test` proves the receive path.
 
-## 4.1 What Is Inside an Agent?
+## What Is Inside an Agent?
 
 An agent is a container for everything needed to work with one interface.
 
@@ -76,7 +76,7 @@ This distinction is essential:
 
 A monitor should never "pretend" the DUT was correct. It must report what it truly saw.
 
-## 4.2 Why APB and UART Use Different Agents
+## Why APB and UART Use Different Agents
 
 A trainee engineer may ask, "Why not have one big agent for the entire DUT?"
 
@@ -106,7 +106,7 @@ It handles:
 
 Keeping these separate makes the environment easier to understand and easier to extend.
 
-## 4.3 The Basic Write Test: APB to UART
+## The Basic Write Test: APB to UART
 
 The most important beginner transmit question is:
 
@@ -167,7 +167,7 @@ If they do not match, the scoreboard flags a failure.
 
 That is a complete end-to-end check from a register write to a serial-line observation.
 
-## 4.4 The Basic Read Test: UART to APB
+## The Basic Read Test: UART to APB
 
 The opposite direction is equally important.
 
@@ -205,7 +205,7 @@ If the APB read value matches the UART receive queue, the receive path is workin
 
 That is the second major end-to-end proof in the environment.
 
-## 4.5 Why Waiting for Idle Matters
+## Why Waiting for Idle Matters
 
 Tests in this environment often wait for APB and UART interfaces to become idle after starting stimulus.
 
@@ -221,7 +221,7 @@ If a phase ends too early, the test can appear to fail randomly or miss valid co
 
 This is one of the most common sources of beginner confusion in protocol-based verification.
 
-## 4.6 What You Should Be Able to Explain Now
+## What You Should Be Able to Explain Now
 
 Before moving on, you should be able to describe the following in your own words:
 

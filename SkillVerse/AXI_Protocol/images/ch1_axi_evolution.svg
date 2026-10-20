@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 360" width="100%" height="100%">
+  <rect width="100%" height="100%" fill="#0f172a"/>
+  <text x="430" y="32" fill="#f8fafc" font-size="18" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">Evolution of the AMBA AXI Protocol Family</text>
+  <text x="430" y="52" fill="#94a3b8" font-size="12" text-anchor="middle" font-family="system-ui, sans-serif">Continuous evolution supporting multi-core scaling, cache coherency, and safety</text>
+
+  <!-- 4 Generation Cards -->
+  <!-- Gen 1: AXI3 -->
+  <g transform="translate(40, 80)">
+    <rect width="175" height="240" rx="8" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+    <rect width="175" height="40" rx="8" fill="#0284c7"/>
+    <text x="87" y="25" fill="#f8fafc" font-size="13" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">AXI3 (AMBA 3.0)</text>
+    <text x="15" y="65" fill="#38bdf8" font-size="11" font-weight="bold" font-family="system-ui, sans-serif">Introduced in 2003:</text>
+    <text x="15" y="85" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">&bull; 5 independent channels</text>
+    <text x="15" y="105" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">&bull; Max burst length: 16</text>
+    <text x="15" y="125" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">&bull; Write interleaving (WID)</text>
+    <text x="15" y="145" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">&bull; Locked transfers</text>
+    <text x="15" y="165" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">&bull; Exclusive access</text>
+    <text x="15" y="210" fill="#94a3b8" font-size="10" font-family="system-ui, sans-serif">Foundational high-speed</text>
+    <text x="15" y="225" fill="#94a3b8" font-size="10" font-family="system-ui, sans-serif">on-chip protocol</text>
+  </g>
+
+  <!-- Gen 2: AXI4 -->
+  <g transform="translate(240, 80)">
+    <rect width="175" height="240" rx="8" fill="#1e293b" stroke="#818cf8" stroke-width="2"/>
+    <rect width="175" height="40" rx="8" fill="#4f46e5"/>
+    <text x="87" y="25" fill="#f8fafc" font-size="13" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">AXI4 (AMBA 4.0)</text>
+    <text x="15" y="65" fill="#818cf8" font-size="11" font-weight="bold" font-family="system-ui, sans-serif">Introduced in 2010:</text>
+    <text x="15" y="85" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">&bull; Burst extended to 256</text>
+    <text x="15" y="105" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">&bull; Removed WID (no interleave)</text>
+    <text x="15" y="125" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">&bull; Quality of Service (QoS)</text>
+    <text x="15" y="145" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">&bull; Multiple Region support</text>
+    <text x="15" y="165" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">&bull; User sidebands (USER)</text>
+    <text x="15" y="210" fill="#34d399" font-size="10" font-family="system-ui, sans-serif">Industry standard for</text>
+    <text x="15" y="225" fill="#34d399" font-size="10" font-family="system-ui, sans-serif">high-bandwidth SoCs</text>
+  </g>
+
+  <!-- Gen 3: AXI4-Lite & Stream -->
+  <g transform="translate(440, 80)">
+    <rect width="175" height="240" rx="8" fill="#1e293b" stroke="#fbbf24" stroke-width="2"/>
+    <rect width="175" height="40" rx="8" fill="#d97706"/>
+    <text x="87" y="25" fill="#f8fafc" font-size="13" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">AXI4-Lite &amp; Stream</text>
+    <text x="15" y="65" fill="#fbbf24" font-size="11" font-weight="bold" font-family="system-ui, sans-serif">Specialized Flavors:</text>
+    <text x="15" y="85" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">&bull; AXI4-Lite: 1-beat only</text>
+    <text x="15" y="100" fill="#94a3b8" font-size="9" font-family="system-ui, sans-serif">No burst, no ID tags</text>
+    <text x="15" y="115" fill="#94a3b8" font-size="9" font-family="system-ui, sans-serif">Low-cost register access</text>
+    <text x="15" y="135" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">&bull; AXI4-Stream: No addr</text>
+    <text x="15" y="150" fill="#94a3b8" font-size="9" font-family="system-ui, sans-serif">Point-to-point packet</text>
+    <text x="15" y="165" fill="#94a3b8" font-size="9" font-family="system-ui, sans-serif">streaming (video/DSP)</text>
+    <text x="15" y="210" fill="#fde68a" font-size="10" font-family="system-ui, sans-serif">Targeted overhead</text>
+    <text x="15" y="225" fill="#fde68a" font-size="10" font-family="system-ui, sans-serif">reduction</text>
+  </g>
+
+  <!-- Gen 4: AXI5 & ACE -->
+  <g transform="translate(640, 80)">
+    <rect width="175" height="240" rx="8" fill="#1e293b" stroke="#34d399" stroke-width="2"/>
+    <rect width="175" height="40" rx="8" fill="#059669"/>
+    <text x="87" y="25" fill="#f8fafc" font-size="13" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">AXI5 &amp; ACE (AMBA 5)</text>
+    <text x="15" y="65" fill="#34d399" font-size="11" font-weight="bold" font-family="system-ui, sans-serif">Modern Advances:</text>
+    <text x="15" y="85" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">&bull; ACE: Hardware coherency</text>
+    <text x="15" y="100" fill="#94a3b8" font-size="9" font-family="system-ui, sans-serif">Snoop address/data buses</text>
+    <text x="15" y="120" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">&bull; AXI5: Parity &amp; ECC check</text>
+    <text x="15" y="140" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">&bull; Low-power wakeup</text>
+    <text x="15" y="160" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">&bull; Atomic memory operations</text>
+    <text x="15" y="210" fill="#a7f3d0" font-size="10" font-family="system-ui, sans-serif">Automotive ASIL-D &amp;</text>
+    <text x="15" y="225" fill="#a7f3d0" font-size="10" font-family="system-ui, sans-serif">Data Center Cloud</text>
+  </g>
+</svg>

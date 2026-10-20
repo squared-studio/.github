@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 850 420" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bg14" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f172a"/>
+      <stop offset="100%" stop-color="#1e293b"/>
+    </linearGradient>
+    <marker id="atmArr" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8"/>
+    </marker>
+  </defs>
+  <rect width="100%" height="100%" fill="url(#bg14)"/>
+  <text x="425" y="32" fill="#f8fafc" font-size="20" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">Far-Memory Atomic Transactions: AtomicStore &amp; AtomicCompare</text>
+
+  <!-- Left Side: Traditional Near-Memory Atomicity -->
+  <g transform="translate(40, 70)">
+    <rect width="360" height="310" rx="10" fill="#1e293b" stroke="#f87171" stroke-width="1.5"/>
+    <text x="180" y="28" fill="#fca5a5" font-size="14" font-weight="bold" text-anchor="middle">Traditional AXI Exclusive Access (LDREX/STREX)</text>
+    
+    <text x="25" y="70" fill="#cbd5e1" font-size="11">1. ReadExclusive: Fetches entire 64B cache line to core</text>
+    <text x="25" y="105" fill="#cbd5e1" font-size="11">2. Core ALU modifies data in private L1 cache</text>
+    <text x="25" y="140" fill="#cbd5e1" font-size="11">3. WriteBack: Flushes dirty line to memory</text>
+    <text x="25" y="175" fill="#cbd5e1" font-size="11">4. High contention causes repeated STREX fails &amp; bus thrashing</text>
+    
+    <rect x="25" y="210" width="310" height="80" rx="6" fill="#3f1212"/>
+    <text x="180" y="240" fill="#fca5a5" font-size="12" font-weight="bold" text-anchor="middle">Heavy Contention Overhead:</text>
+    <text x="180" y="265" fill="#fecaca" font-size="10" text-anchor="middle">Line bounces continuously between cores, degrading throughput</text>
+  </g>
+
+  <!-- Right Side: CHI Far-Memory Atomicity -->
+  <g transform="translate(450, 70)">
+    <rect width="360" height="310" rx="10" fill="#1e293b" stroke="#34d399" stroke-width="1.5"/>
+    <text x="180" y="28" fill="#6ee7b7" font-size="14" font-weight="bold" text-anchor="middle">CHI Far-Memory Atomics (ALU at HN-F/SN-F)</text>
+    
+    <text x="25" y="70" fill="#cbd5e1" font-size="11">1. Core sends single AtomicLoad/AtomicStore flit</text>
+    <text x="25" y="105" fill="#cbd5e1" font-size="11">2. Includes operand &amp; operation (ADD, CAS, SWAP)</text>
+    <text x="25" y="140" fill="#cbd5e1" font-size="11">3. ALU located directly at Home Node (HN-F) executes op</text>
+    <text x="25" y="175" fill="#cbd5e1" font-size="11">4. Returns only old data or completion status to core</text>
+    
+    <rect x="25" y="210" width="310" height="80" rx="6" fill="#064e3b"/>
+    <text x="180" y="240" fill="#a7f3d0" font-size="12" font-weight="bold" text-anchor="middle">Zero Thrashing &amp; High Scalability:</text>
+    <text x="180" y="265" fill="#d1fae5" font-size="10" text-anchor="middle">Data line stays stationary in SLC/DRAM; zero inter-core line bounces</text>
+  </g>
+</svg>

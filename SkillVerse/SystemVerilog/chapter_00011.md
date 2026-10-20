@@ -286,7 +286,7 @@ endmodule
 
 SystemVerilog provides several advanced features to make tasks and functions more versatile and powerful.
 
-### 1. `void` Functions: Functions without Return Values
+### `void` Functions: Functions without Return Values
 
 -   **Functions for Side Effects**:  While functions are primarily designed to return values, SystemVerilog allows you to declare functions with a `void` return type. `void` functions do not return a value and are typically used for performing actions or side effects, such as displaying messages, updating global variables (though generally discouraged for good coding practice in RTL functions), or triggering events.
 -   **Verification Utilities**: `void` functions are more commonly used in verification testbenches for utility procedures that perform actions without needing to return a value directly.
@@ -308,7 +308,7 @@ module test_sequence;
 endmodule
 ```
 
-### 2. Argument Directions: Controlling Data Flow
+### Argument Directions: Controlling Data Flow
 
 SystemVerilog provides flexible argument directions to control how data is passed into and out of tasks and functions:
 
@@ -345,7 +345,7 @@ module argument_direction_example;
 endmodule
 ```
 
-### 3. Default Arguments: Providing Flexibility and Reducing Redundancy
+### Default Arguments: Providing Flexibility and Reducing Redundancy
 
 SystemVerilog allows you to specify default values for function arguments. If a caller omits an argument with a default value, the default value is used. This enhances function flexibility and reduces code duplication when certain argument values are commonly used.
 
