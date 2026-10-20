@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 360" width="100%" height="100%">
+  <rect width="100%" height="100%" fill="#0f172a"/>
+  <text x="420" y="32" fill="#f8fafc" font-size="18" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">Directed Testing vs. Constrained-Random Verification (CRV)</text>
+  <text x="420" y="52" fill="#94a3b8" font-size="12" text-anchor="middle" font-family="system-ui, sans-serif">Exploring the vast state-space of complex digital designs</text>
+
+  <!-- Left: Directed Testing -->
+  <g transform="translate(60, 80)">
+    <rect width="330" height="240" rx="10" fill="#1e293b" stroke="#f87171" stroke-width="2"/>
+    <text x="165" y="30" fill="#f87171" font-size="15" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">Directed Testing</text>
+    <!-- Total Space Circle -->
+    <circle cx="165" cy="130" r="75" fill="#0f172a" stroke="#475569" stroke-width="1.5"/>
+    <text x="165" y="75" fill="#64748b" font-size="10" text-anchor="middle" font-family="system-ui, sans-serif">Total Design State Space</text>
+    <!-- Small isolated dots -->
+    <circle cx="130" cy="115" r="5" fill="#f87171"/>
+    <circle cx="150" cy="140" r="5" fill="#f87171"/>
+    <circle cx="190" cy="120" r="5" fill="#f87171"/>
+    <circle cx="180" cy="160" r="5" fill="#f87171"/>
+    <text x="165" y="190" fill="#fca5a5" font-size="10" text-anchor="middle" font-family="system-ui, sans-serif">Hand-written tests hit only anticipated spots</text>
+    <text x="165" y="225" fill="#94a3b8" font-size="11" text-anchor="middle" font-family="system-ui, sans-serif">Misses complex corner cases &amp; interactions</text>
+  </g>
+
+  <!-- Right: Constrained-Random Verification -->
+  <g transform="translate(450, 80)">
+    <rect width="330" height="240" rx="10" fill="#1e293b" stroke="#34d399" stroke-width="2"/>
+    <text x="165" y="30" fill="#34d399" font-size="15" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">Constrained-Random (CRV)</text>
+    <!-- Total Space Circle -->
+    <circle cx="165" cy="130" r="75" fill="#0f172a" stroke="#475569" stroke-width="1.5"/>
+    <!-- Random cloud -->
+    <ellipse cx="165" cy="130" rx="65" ry="55" fill="#065f46" fill-opacity="0.5" stroke="#34d399" stroke-width="1.5" stroke-dasharray="4 2"/>
+    <!-- Scatter points -->
+    <circle cx="120" cy="110" r="3" fill="#6ee7b7"/><circle cx="140" cy="100" r="3" fill="#6ee7b7"/>
+    <circle cx="180" cy="110" r="3" fill="#6ee7b7"/><circle cx="205" cy="125" r="3" fill="#6ee7b7"/>
+    <circle cx="150" cy="135" r="3" fill="#6ee7b7"/><circle cx="170" cy="145" r="3" fill="#6ee7b7"/>
+    <circle cx="135" cy="155" r="3" fill="#6ee7b7"/><circle cx="185" cy="160" r="3" fill="#6ee7b7"/>
+    <circle cx="155" cy="165" r="3" fill="#6ee7b7"/><circle cx="195" cy="140" r="3" fill="#6ee7b7"/>
+    <text x="165" y="190" fill="#a7f3d0" font-size="10" text-anchor="middle" font-family="system-ui, sans-serif">Broad coverage driven by constraints</text>
+    <text x="165" y="225" fill="#94a3b8" font-size="11" text-anchor="middle" font-family="system-ui, sans-serif">Discovers unexpected bugs &amp; boundary states</text>
+  </g>
+</svg>

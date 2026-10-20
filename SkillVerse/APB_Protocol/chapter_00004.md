@@ -1,4 +1,4 @@
-# Chapter 4: Basic Transfers: Write and Read without Wait States
+# Basic Transfers: Write and Read without Wait States
 
 In the baseline APB protocol (and in APB3/APB4 systems when `PREADY` is driven HIGH), every transaction completes in **strictly two clock cycles**:
 1. The **`SETUP` Phase** (Cycle 1): The bridge drives address, control, and (if writing) data.
@@ -8,7 +8,7 @@ This chapter walks through cycle-by-cycle operational mechanics of basic write a
 
 ---
 
-## 1. APB Basic Write Transfer (Without Wait States)
+## APB Basic Write Transfer (Without Wait States)
 
 A basic write transfer transfers write data (`PWDATA`) from the master (bridge) to the targeted peripheral register.
 
@@ -30,7 +30,7 @@ A basic write transfer transfers write data (`PWDATA`) from the master (bridge) 
 
 ---
 
-## 2. APB Basic Read Transfer (Without Wait States)
+## APB Basic Read Transfer (Without Wait States)
 
 A basic read transfer requests data from a peripheral register and returns it to the master via `PRDATA`.
 
@@ -52,7 +52,7 @@ A basic read transfer requests data from a peripheral register and returns it to
 
 ---
 
-## 3. Back-to-Back (Pipelined) Transfers
+## Back-to-Back (Pipelined) Transfers
 
 When a master has consecutive transfers queued (for example, reading multiple status registers or filling a peripheral FIFO), it does **not** need to return to the `IDLE` state between transfers.
 
@@ -86,7 +86,7 @@ PRDATA     : ----------------------------------------<  Data 2   >---------
 
 ---
 
-## 4. Master and Slave Timing Comparison Matrix
+## Master and Slave Timing Comparison Matrix
 
 | Parameter | Write Transfer (No Wait) | Read Transfer (No Wait) | Back-to-Back Write-to-Read |
 | :--- | :--- | :--- | :--- |
@@ -99,7 +99,7 @@ PRDATA     : ----------------------------------------<  Data 2   >---------
 
 ---
 
-## 5. Key Takeaways and Chapter Summary
+## Key Takeaways and Chapter Summary
 
 - **2-Cycle Baseline:** A standard APB transfer without wait states requires exactly one `SETUP` cycle and one `ACCESS` cycle.
 - **Write Data Timing:** `PWDATA` must be presented during `SETUP` along with `PADDR`; waiting until `ACCESS` is a specification violation.
@@ -108,7 +108,7 @@ PRDATA     : ----------------------------------------<  Data 2   >---------
 
 ---
 
-## 6. Review Questions
+## Review Questions
 
 1. At which clock edge is `PWDATA` first placed on the bus during a basic write transfer?
 2. At which exact clock edge does the APB master latch read data from `PRDATA` during a basic read transfer?

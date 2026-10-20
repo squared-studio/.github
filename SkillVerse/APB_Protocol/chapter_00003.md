@@ -1,4 +1,4 @@
-# Chapter 3: Operational State Machine and Handshake Mechanism
+# Operational State Machine and Handshake Mechanism
 
 The operation of the APB protocol is governed by an elegant, deterministic **three-state finite state machine (FSM)**. Every bus transaction—whether a single-word read, a control register write, or a stalled wait-state operation—moves through these three standardized phases.
 
@@ -6,7 +6,7 @@ Understanding the state machine transitions and the exact handshake completion c
 
 ---
 
-## 1. The APB Three-State Finite State Machine
+## The APB Three-State Finite State Machine
 
 The AMBA APB specification defines three mutually exclusive states: **`IDLE`**, **`SETUP`**, and **`ACCESS`**.
 
@@ -14,7 +14,7 @@ The AMBA APB specification defines three mutually exclusive states: **`IDLE`**, 
 
 ### Detailed State Descriptions
 
-#### 1. `IDLE` (Default Dormant State)
+#### `IDLE` (Default Dormant State)
 - **Definition:** The bus is inactive; no transfer is in progress.
 - **Signal Conditions:** 
   - `PSELx = 0` (for all slaves)
@@ -22,7 +22,7 @@ The AMBA APB specification defines three mutually exclusive states: **`IDLE`**, 
 - **Behavior:** The bridge logic does not drive valid peripheral requests. The address and data buses are don't-care (often parked at previous values to prevent unnecessary wire charging and power dissipation).
 - **Exit Condition:** When the bridge receives a transfer request from the upstream system bus (e.g., AXI/AHB), it transitions to `SETUP` on the next rising clock edge.
 
-#### 2. `SETUP` (Address & Control Strobe Phase)
+#### `SETUP` (Address & Control Strobe Phase)
 - **Definition:** The start of an active bus transfer.
 - **Duration:** Strictly **one clock cycle**.
 - **Signal Conditions:** 
@@ -33,7 +33,7 @@ The AMBA APB specification defines three mutually exclusive states: **`IDLE`**, 
 - **Behavior:** The selected slave detects its `PSELx` going HIGH with `PENABLE = 0` and registers the incoming address and direction.
 - **Exit Condition:** The FSM **unconditionally transitions** from `SETUP` to `ACCESS` on the next rising edge of `PCLK`. It can never remain in `SETUP` for more than one clock cycle.
 
-#### 3. `ACCESS` (Enable & Handshake Phase)
+#### `ACCESS` (Enable & Handshake Phase)
 - **Definition:** The execution and data transfer phase.
 - **Duration:** **One or more clock cycles** (governed by `PREADY`).
 - **Signal Conditions:** 
@@ -52,7 +52,7 @@ The AMBA APB specification defines three mutually exclusive states: **`IDLE`**, 
 
 ---
 
-## 2. State Transition Logic Table
+## State Transition Logic Table
 
 The table below summarizes the exact formal transition conditions for the APB master state machine:
 
@@ -67,7 +67,7 @@ The table below summarizes the exact formal transition conditions for the APB ma
 
 ---
 
-## 3. The Handshake Mechanism: `PSEL`, `PENABLE`, and `PREADY`
+## The Handshake Mechanism: `PSEL`, `PENABLE`, and `PREADY`
 
 The completion of any APB transfer requires a 3-way logical intersection:
 
@@ -120,7 +120,7 @@ Handshake  : (None)        (None)           (Stalled)    (Completed!)
 
 ---
 
-## 4. Key Protocol Invariants and Edge Cases
+## Key Protocol Invariants and Edge Cases
 
 ### Can a Master Deassert `PSELx` or `PENABLE` Before `PREADY = 1`?
 **No.** AMBA APB strictly forbids aborting a transfer once initiated. A master cannot revoke a transfer midway. It must wait until the slave asserts `PREADY = 1`. If a slave hangs permanently with `PREADY = 0`, the entire APB bus is stalled (a hardware watchdog or bus timeout mechanism in the bridge is typically required in safety-critical SoCs to break deadlocks).
@@ -133,7 +133,7 @@ Handshake  : (None)        (None)           (Stalled)    (Completed!)
 
 ---
 
-## 5. Key Takeaways and Chapter Summary
+## Key Takeaways and Chapter Summary
 
 - **Three Protocol States:** `IDLE` (no transfer), `SETUP` (1-cycle address strobe), and `ACCESS` (data phase with wait states).
 - **Handshake Condition:** Completion occurs strictly when `PSELx = 1`, `PENABLE = 1`, and `PREADY = 1` simultaneously on the rising clock edge.
@@ -142,7 +142,7 @@ Handshake  : (None)        (None)           (Stalled)    (Completed!)
 
 ---
 
-## 6. Review Questions
+## Review Questions
 
 1. Describe the exact signal values of `PSELx` and `PENABLE` in each of the three APB states (`IDLE`, `SETUP`, `ACCESS`).
 2. Why is the `SETUP` state strictly limited to exactly one clock cycle?

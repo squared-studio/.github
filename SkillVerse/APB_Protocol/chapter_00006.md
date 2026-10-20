@@ -1,4 +1,4 @@
-# Chapter 6: Byte Strobes (PSTRB) and Protection (PPROT) in APB4
+# Byte Strobes (PSTRB) and Protection (PPROT) in APB4
 
 As System-on-Chip (SoC) architectures grew to support 64-bit multi-core processors, complex operating systems, and hardware-enforced security architectures like **ARM TrustZone**, the baseline APB3 specification revealed two critical architectural limitations:
 1. **Lack of Byte-Granularity Writes:** APB3 lacked native byte-enable strobes, forcing bridges to perform non-atomic read-modify-write sequences or corrupt adjacent register fields when handling sub-word (8-bit or 16-bit) processor stores.
@@ -8,7 +8,7 @@ The **AMBA 4 APB (APB4)** specification solved both problems by introducing **`P
 
 ---
 
-## 1. Write Byte Strobes (`PSTRB`)
+## Write Byte Strobes (`PSTRB`)
 
 The `PSTRB` signal is a multi-bit write strobe bus where each individual bit controls the write validity of one byte lane on the write data bus (`PWDATA`).
 
@@ -49,7 +49,7 @@ Suppose a CPU executes an 8-bit store instruction (`STRB`) to a register at addr
 
 ---
 
-## 2. Protection Attributes (`PPROT`)
+## Protection Attributes (`PPROT`)
 
 The `PPROT` signal is a 3-bit sideband vector that classifies the security, privilege, and access nature of each APB transaction.
 
@@ -71,7 +71,7 @@ The `PPROT` signal is a 3-bit sideband vector that classifies the security, priv
 
 ---
 
-## 3. Peripheral Hardware Firewall Architecture
+## Peripheral Hardware Firewall Architecture
 
 With `PPROT`, an APB peripheral (or an APB bus firewall bridge) can implement granular access control policies in hardware:
 
@@ -99,7 +99,7 @@ When a transaction arrives at the peripheral:
 
 ---
 
-## 4. APB3 vs. APB4 Compatibility Matrix
+## APB3 vs. APB4 Compatibility Matrix
 
 | Feature | APB3 (AMBA 3.0) | APB4 (AMBA 4.0) | Backward Compatibility Strategy |
 | :--- | :--- | :--- | :--- |
@@ -111,7 +111,7 @@ When a transaction arrives at the peripheral:
 
 ---
 
-## 5. Key Takeaways and Chapter Summary
+## Key Takeaways and Chapter Summary
 
 - **`PSTRB` Eliminates Read-Modify-Write:** Write byte strobes allow single-byte and half-word writes to peripheral registers without corrupting neighboring fields.
 - **`PSTRB` Invariant:** `PSTRB` must be all zeros during read operations (`PWRITE = 0`).
@@ -120,7 +120,7 @@ When a transaction arrives at the peripheral:
 
 ---
 
-## 6. Review Questions
+## Review Questions
 
 1. In a 32-bit APB4 system, what value should the master drive on `PSTRB[3:0]` when performing a 16-bit half-word write to an address ending in `0x2`?
 2. What value must `PSTRB` take during any APB read transaction (`PWRITE = 0`)?

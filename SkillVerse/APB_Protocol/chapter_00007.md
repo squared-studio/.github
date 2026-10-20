@@ -1,4 +1,4 @@
-# Chapter 7: System Integration, Bridging, and Slave Design
+# System Integration, Bridging, and Slave Design
 
 In modern System-on-Chip (SoC) architectures, APB never operates in isolation. It forms the final leaf tier of the AMBA interconnect hierarchy, connected to high-performance system buses through dedicated protocol bridges.
 
@@ -6,7 +6,7 @@ This chapter examines the internal microarchitecture of **AXI-to-APB bridges**, 
 
 ---
 
-## 1. The AXI-to-APB Bridge Architecture
+## The AXI-to-APB Bridge Architecture
 
 An **AXI-to-APB Bridge** acts as an AXI Slave (completer) on its upstream interface and an APB Master (requester) on its downstream interface.
 
@@ -31,7 +31,7 @@ An **AXI-to-APB Bridge** acts as an AXI Slave (completer) on its upstream interf
 
 ---
 
-## 2. AXI-to-APB Protocol Translation Mapping
+## AXI-to-APB Protocol Translation Mapping
 
 The following table details the direct signal mappings performed by the bridge during write and read transactions:
 
@@ -50,7 +50,7 @@ The following table details the direct signal mappings performed by the bridge d
 
 ---
 
-## 3. Peripheral Slave Internal Hardware Architecture
+## Peripheral Slave Internal Hardware Architecture
 
 An APB completer (slave) consists of an address decoder, register control logic, internal storage registers, read multiplexing, and status logic.
 
@@ -58,7 +58,7 @@ An APB completer (slave) consists of an address decoder, register control logic,
 
 ### Structural Sub-Blocks of an APB Slave
 
-#### 1. Interface Strobe Generator
+#### Interface Strobe Generator
 The slave monitors `PSELx` and `PENABLE` to generate internal, single-cycle qualified strobes:
 - **Write Strobe (`reg_wr_en`):**
   $$\text{reg\_wr\_en} = \text{PSELx} \ \land \ \text{PENABLE} \ \land \ \text{PREADY} \ \land \ \text{PWRITE}$$
@@ -67,14 +67,14 @@ The slave monitors `PSELx` and `PENABLE` to generate internal, single-cycle qual
   $$\text{reg\_rd\_en} = \text{PSELx} \ \land \ \text{PENABLE} \ \land \ (\lnot \text{PWRITE})$$
   Controls the internal read multiplexer and triggers side-effect reads.
 
-#### 2. Address Offset Decoder
+#### Address Offset Decoder
 The peripheral takes the lower address bits (`PADDR[11:0]`, depending on register aperture size) and decodes them into one-hot select signals for each individual configuration and status register:
 - Base + `0x00`: Control Register (`CTRL_REG`)
 - Base + `0x04`: Status Register (`STATUS_REG`)
 - Base + `0x08`: Interrupt Enable Register (`IER_REG`)
 - Base + `0x0C`: Transmit/Receive FIFO Data Register (`FIFO_REG`)
 
-#### 3. Standard Peripheral Register Access Semantics
+#### Standard Peripheral Register Access Semantics
 
 Modern hardware registers exhibit diverse read/write behaviors:
 - **Read-Write (RW):** Standard configuration register. Software writes update internal flip-flops; software reads return current register values.
@@ -84,7 +84,7 @@ Modern hardware registers exhibit diverse read/write behaviors:
 
 ---
 
-## 4. Power Optimization: Clock Gating with `PSEL`
+## Power Optimization: Clock Gating with `PSEL`
 
 In battery-powered and mobile SoCs, peripheral registers can consume substantial dynamic power if their internal flip-flops clock continuously.
 
@@ -95,7 +95,7 @@ APB provides an inherent low-power advantage through **Architectural Clock Gatin
 
 ---
 
-## 5. Comprehensive Summary of the APB Protocol Series
+## Comprehensive Summary of the APB Protocol Series
 
 Across this 7-chapter study of the APB protocol, we have covered:
 1. **AMBA Hierarchy & Evolution:** Positioning APB as the energy-efficient, low-complexity peripheral backbone across APB2, APB3, APB4, and APB5.
@@ -108,7 +108,7 @@ Across this 7-chapter study of the APB protocol, we have covered:
 
 ---
 
-## 6. Review Questions
+## Review Questions
 
 1. Why must an AXI-to-APB bridge serialize an AXI burst of length 8 into eight separate APB transfers?
 2. What is the fundamental race condition that Write-1-to-Clear (W1C) register semantics prevent during interrupt handling?

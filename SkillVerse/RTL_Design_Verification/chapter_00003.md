@@ -1,343 +1,315 @@
-# Constrained-Random Verification
+# Chapter 3: Constrained-Random Verification
 
-This chapter introduces constrained-random verification, a powerful methodology that significantly enhances the effectiveness of simulation-based verification. We will explore SystemVerilog's randomization features, constraint solving, functional coverage, and techniques for achieving comprehensive verification coverage. This chapter will equip you with the skills to generate realistic and targeted test stimuli and measure verification progress effectively.
+As digital designs surpass millions of equivalent gates, hand-crafted directed tests become inadequate for exploring the combinatorial state space. A directed test exercises only the exact sequence envisioned by the testbench author, systematically missing obscure corner cases and cross-domain race conditions.
 
-*   **Randomization in SystemVerilog: `rand`, `randc`, Constraints, `solve...before`, `dist` Distributions:**
-    *   **Why Randomization?**
-        - **Limitations of Directed Tests:** Directed tests are essential for basic functionality and corner cases, but they are often insufficient to cover the vast input space of complex designs.
-        - **Exploring the Design Space:** Randomization allows for automatically generating a wide variety of test cases, exploring a much larger portion of the design's input space than directed tests alone.
-        - **Bug Finding Efficiency:** Random stimulus can uncover unexpected bugs that might be missed by directed tests, especially in complex interactions and corner cases.
-    *   **`rand` and `randc` Keywords:**
-        - **`rand` Keyword:** Declares a class property or variable as *random*.  When `randomize()` is called on an object of the class, `rand` variables are assigned new random values that satisfy any defined constraints.
-        - **`randc` Keyword (Random-Cyclic):** Declares a class property or variable as *random-cyclic*.  `randc` variables also get randomized, but they cycle through all possible values in a random permutation before repeating any value. Useful for ensuring all possible values are eventually covered in a sequence of randomizations.
-        - **Example:**
-            ```systemverilog
-            class packet;
-                rand bit [7:0] source_address;
-                randc bit [2:0] priority_level; // randc variable
-                rand bit valid_packet;
-            endclass
+**Constrained-Random Verification (CRV)** coupled with **Coverage-Driven Verification (CDV)** is the industry-standard methodology for discovering unexpected bugs and objectively proving verification completeness. This chapter explores SystemVerilog's declarative constraint language, the constraint solver engine, functional coverage modeling, and coverage closure techniques.
 
-            program test;
-                packet pkt = new();
+---
 
-                initial begin
-                    repeat (10) begin
-                        pkt.randomize(); // Randomize pkt object
-                        $display("Source Addr: %0d, Priority: %0d, Valid: %0b", pkt.source_address, pkt.priority_level, pkt.valid_packet);
-                    end
-                end
-            endprogram
-            ```
-    *   **Constraints:**
-        - **Defining Valid Random Values:** Constraints are declarative constructs used to specify restrictions on the values that `rand` and `randc` variables can take during randomization.
-        - **`constraint` Blocks:** Constraints are defined within `constraint` blocks inside classes.
-        - **Constraint Expressions:** Constraints are expressed using SystemVerilog expressions, including:
-            - **Range Constraints:** `variable inside {[min:max]}` or `variable >= min && variable <= max`.
-            - **Equality and Inequality Constraints:** `variable == value`, `variable != value`, `variable < value`, etc.
-            - **Relational Constraints:** Constraints relating multiple random variables.
-            - **Example:**
-                ```systemverilog
-                class packet;
-                    rand bit [7:0] source_address;
-                    rand bit [7:0] destination_address;
-                    rand bit [3:0] packet_length;
+## Learning Goals
 
-                    constraint addr_range_len {
-                        source_address inside {[10:200]}; // Source address between 10 and 200
-                        destination_address != source_address; // Source and destination addresses must be different
-                        packet_length < 16; // Packet length less than 16
-                    }
-                endclass
-                ```
-    *   **`solve...before` Constraints:**
-        - **Constraint Ordering:**  `solve...before` is used to specify the order in which constraints are solved by the constraint solver.
-        - **Dependency Management:**  Useful when the value of one random variable depends on the value of another.  Variables listed in `solve` are solved *before* variables listed in `before`.
-        - **Example:**
-            ```systemverilog
-            class transaction;
-                rand bit [7:0] address;
-                rand bit [7:0] offset;
-                rand bit [15:0] full_address;
+After completing this chapter, you should be able to:
+- Contrast directed testbenches with constrained-random verification across state-space exploration efficiency.
+- Utilize SystemVerilog randomization keywords (`rand`, `randc`) and construct robust declarative constraints (`inside`, `dist`, `solve...before`, `unique`, `foreach`, implication `->`, and `soft`).
+- Dynamically control constraint activity using `constraint_mode()`, `random_mode()`, and inline `randomize() with` blocks.
+- Construct comprehensive functional coverage models using `covergroup`, `coverpoint`, value/transition/illegal bins, and multidimensional `cross` coverage.
+- Execute the closed-loop Coverage-Driven Verification (CDV) flow to locate coverage holes and steer random stimuli to closure.
 
-                constraint addr_offset_relation {
-                    solve address before offset; // Solve address before offset
-                    full_address == {address, offset}; // full_address depends on address and offset
-                    address inside {[0:255]};
-                    offset inside {[0:255]};
-                }
-            endclass
-            ```
-    *   **`dist` Distribution:**
-        - **Controlling Probability Distribution:** The `dist` operator allows you to control the probability distribution of random values. By default, randomization is uniform. `dist` lets you create non-uniform distributions.
-        - **Weighted Distributions:**  Assign different weights to different values or ranges of values to bias the randomization.
-        - **Types of Distributions:**
-            - **Value Distribution:** `variable dist {value1 := weight1, value2 := weight2, ...};`  Assigns weights to specific values.
-            - **Range Distribution:** `variable dist {[range1] := weight1, [range2] := weight2, ...};` Assigns weights to ranges of values.
-            - **Example:**
-                ```systemverilog
-                class packet;
-                    rand bit [2:0] packet_type;
+---
 
-                    constraint type_distribution {
-                        packet_type dist {
-                            0 := 50, // Type 0 with 50% probability
-                            1 := 30, // Type 1 with 30% probability
-                            [2:7] := 20 // Types 2-7 (range) with 20% probability (total for the range)
-                        };
-                    }
-                endclass
-                ```
+## 1. Directed Testing vs. Constrained-Random Verification
 
-*   **Constraint Solving and Coverage-Driven Verification Concepts:**
-    *   **Constraint Solver:**
-        - **Engine for Randomization:** SystemVerilog simulators include a built-in constraint solver. When `randomize()` is called, the solver finds a solution (set of random values) that satisfies all active constraints.
-        - **Backtracking and Iteration:**  The solver may use backtracking and iterative algorithms to find valid solutions, especially when constraints are complex or conflicting.
-        - **Solver Efficiency:** Constraint solving can be computationally intensive, especially with complex constraint sets. Efficient constraint formulation is important for simulation performance.
-    *   **Coverage-Driven Verification (CDV):**
-        - **Guiding Randomization with Coverage:** CDV is a verification methodology where functional coverage metrics are used to guide the constrained-random stimulus generation process.
-        - **Iterative Process:** CDV is an iterative loop:
-            1.  **Define Functional Coverage Goals:** Identify key functional scenarios and corner cases to be verified and define corresponding functional coverage metrics.
-            2.  **Generate Constrained-Random Tests:** Create constrained-random test cases that aim to cover the defined functional coverage points.
-            3.  **Simulate and Collect Coverage:** Run simulations with the generated tests and collect functional coverage data.
-            4.  **Analyze Coverage Reports:** Examine coverage reports to identify uncovered areas (coverage holes).
-            5.  **Refine Constraints and Test Cases:**  Based on coverage analysis, refine constraints to direct randomization towards uncovered areas and/or create new directed test cases to specifically target coverage holes.
-            6.  **Repeat Steps 2-5:** Iterate until desired coverage goals are achieved.
-        - **Benefits of CDV:**
-            - **Systematic Coverage Improvement:**  CDV provides a systematic approach to improve functional coverage and ensure thorough verification.
-            - **Targeted Randomization:**  Constraints guide randomization to focus on relevant and challenging test scenarios.
-            - **Measurable Verification Progress:** Coverage metrics provide quantifiable measures of verification progress and completeness.
-            - **Efficient Bug Finding:**  CDV helps generate tests that are more likely to uncover functional bugs in complex designs.
+In a **Directed Testing** environment, the verification engineer manually specifies every signal sequence, address offset, and payload value.
 
-*   **Functional Coverage: Coverage Groups, Coverage Points, Bins, Cross Coverage, Coverage Options:**
-    *   **Functional Coverage (Review):** Measures whether specific functional scenarios or design features have been exercised during verification. User-defined and based on the design specification.
-    *   **Coverage Groups:**
-        - **Grouping Related Coverage Points:** `covergroup` is a SystemVerilog construct used to group related coverage points together. This helps organize functional coverage specifications and makes coverage reports more structured.
-        - **Sampling Events:**  Coverage groups are sampled at specific events in the simulation (e.g., clock edges, transaction boundaries, state transitions).  The `sample` function within a coverage group specifies the signals to be sampled and the event that triggers sampling.
-        - **Example:**
-            ```systemverilog
-            covergroup address_coverage @(posedge clk); // Coverage group sampled on posedge of clk
-                coverpoint address { // Coverage point for address
-                    bins low_addr = { [0:63] };
-                    bins mid_addr = { [64:127] };
-                    bins high_addr = { [128:255] };
-                }
-            endgroup : address_coverage
+![Directed Testing vs. Constrained-Random Verification (CRV)](images/ch3_crv_vs_directed.svg)
 
-            address_coverage cov_addr = new(); // Instance of coverage group
+### The Limitations of Directed Verification
+1. **Anticipation Bias:** A directed test only verifies scenarios the engineer anticipates. If an engineer assumes a FIFO will never experience a simultaneous push and pop while transitioning out of reset, no test will be written for it.
+2. **Poor Scalability:** A design with $N$ configuration registers of 32 bits each has $2^{32N}$ operational states. Writing manual tests for even 0.001% of this space is physically impossible.
+3. **High Maintenance Overhead:** Small RTL interface modifications break brittle, hardcoded signal timing across hundreds of individual directed tests.
 
-            always @(posedge clk) begin
-                cov_addr.sample(current_address); // Sample coverage group at posedge clk
-            end
-            ```
-    *   **Coverage Points:**
-        - **Individual Coverage Metrics:** `coverpoint` defines a specific metric to be measured within a coverage group. It represents a specific functional scenario or aspect of the design to be covered.
-        - **Bins:** `bins` are used within a `coverpoint` to define ranges or specific values of interest for coverage measurement. Each bin represents a specific coverage bucket. When a sampled value falls into a bin, that bin is considered "covered."
-        - **Automatic Bins:** If `bins` are not explicitly defined, the coverage tool may automatically create bins based on the range of the signal being covered.
-        - **Example (Bins within a coverpoint):**
-            ```systemverilog
-            covergroup instruction_coverage @(transaction_end_event);
-                coverpoint opcode {
-                    bins arithmetic_ops = {ADD, SUB, MUL};
-                    bins memory_ops = {LOAD, STORE};
-                    bins control_ops = default; // Default bin for all other opcodes
-                }
-            endgroup : instruction_coverage
-            ```
-    *   **Cross Coverage:**
-        - **Covering Combinations of Coverage Points:** `cross` coverage is used to measure coverage of combinations of values from two or more coverage points. It helps verify interactions between different design features.
-        - **Example:**  Cross coverage of `opcode` and `address_mode` to ensure all relevant combinations of instruction types and addressing modes are tested.
-            ```systemverilog
-            covergroup instruction_coverage @(transaction_end_event);
-                coverpoint opcode { ... };
-                coverpoint address_mode { ... };
-                cross opcode, address_mode; // Cross coverage of opcode and address_mode
-            endgroup : instruction_coverage
-            ```
-    *   **Coverage Options:**
-        - **Coverage Options within Coverage Groups and Points:** SystemVerilog provides options to customize coverage behavior:
-            - `goal`: Set a target coverage percentage for a coverage group or point.
-            - `weight`: Assign weights to coverage points or bins to prioritize certain coverage metrics.
-            - `at_least`: Specify the minimum number of times each bin must be hit to be considered covered.
-            - `comment`: Add comments to coverage groups and points for documentation.
-            - `ignore_bins`, `illegal_bins`: Define bins to be ignored or considered illegal (not to be covered).
-        - **Example (Coverage Options):**
-            ```systemverilog
-            covergroup address_coverage @(posedge clk);
-                option.goal = 95; // Set goal to 95% coverage for this group
-                coverpoint address {
-                    option.weight = 2; // Double weight for address coverage
-                    bins low_addr = { [0:63] } with (option.goal = 100); // 100% goal for low_addr bin
-                    bins mid_addr = { [64:127] };
-                    bins high_addr = { [128:255] } ignore_bins invalid_high_addr = { [200:255] }; // Ignore bins 200-255
-                }
-            endgroup : address_coverage
-            ```
+### The CRV Advantage
+Constrained-Random Verification automates stimulus generation by defining **valid boundaries** (rules and protocols) rather than specific test values:
+- The verification engineer writes constraints that enforce legal protocol behavior (e.g., "address must be 4-byte aligned and burst length between 1 and 16").
+- The simulator's mathematical constraint solver generates thousands of pseudo-random legal variations across different random seeds (`+ntb_random_seed=<val>` or `-sv_seed <val>`).
+- CRV continually discovers unexpected corner cases, such as back-to-back zero-payload aborts or concurrent buffer wrap-arounds.
 
-*   **Coverage Metrics and Analysis: Coverage Reports, Coverage Databases, Coverage Closure:**
-    *   **Coverage Metrics (Review):** Code coverage and functional coverage are the primary metrics. Coverage percentage is typically reported for each coverage point, bin, and coverage group.
-    *   **Coverage Reports:**
-        - **Generated by Verification Tools:** Simulation tools and coverage tools generate coverage reports after simulations are run.
-        - **Report Formats:** Reports can be in text format, HTML, or other formats.
-        - **Content of Coverage Reports:**
-            - Overall coverage summary (total coverage percentage).
-            - Coverage breakdown by coverage group and coverage point.
-            - Coverage status for each bin (hit count, coverage percentage).
-            - List of uncovered bins (coverage holes).
-            - Links to code sections corresponding to uncovered areas (for code coverage).
-    *   **Coverage Databases:**
-        - **Storing Coverage Data:** Coverage data collected from multiple simulation runs is often stored in a coverage database.
-        - **Merging Coverage Data:**  Coverage databases allow merging coverage data from different simulations to get a cumulative coverage view.
-        - **Trend Analysis:** Coverage databases enable trend analysis to track coverage progress over time as verification progresses.
-    *   **Coverage Closure:**
-        - **Achieving Coverage Goals:** Coverage closure is the process of iteratively improving coverage until the defined coverage goals are met.
-        - **Analyzing Coverage Holes:**  Coverage reports are analyzed to identify coverage holes (uncovered bins or areas with low coverage).
-        - **Targeting Coverage Holes:**  Verification engineers then focus on creating new test cases or refining constraints to specifically target these coverage holes and increase coverage in those areas.
-        - **Iterative Refinement:** Coverage closure is an iterative process of analysis, test case development, simulation, and coverage analysis, repeated until coverage goals are achieved.
-        - **Sign-off Metric:**  Achieving a predefined coverage level (e.g., 90% functional coverage, 95% code coverage for critical modules) is often used as a sign-off criterion for verification.
+---
 
-*   **Techniques for Achieving Coverage Goals and Addressing Coverage Holes:**
-    *   **Analyzing Coverage Reports (Review):**  Carefully examine coverage reports to understand which parts of the design or functionality are not adequately covered.
-    *   **Directed Test Cases for Coverage Holes:**  Write directed test cases specifically designed to target uncovered bins or scenarios identified in coverage reports.  These tests are crafted to force execution through uncovered code paths or to exercise specific functional conditions.
-    *   **Refining Constraints for Randomization:**
-        - **Constraint Adjustment:** Modify existing constraints to bias randomization towards uncovered areas. For example, if a specific range of address values is not covered, adjust address constraints to increase the probability of generating addresses in that range.
-        - **Adding New Constraints:**  Add new constraints to further refine the random stimulus and target specific coverage holes.  For example, add constraints to generate specific sequences of operations or corner case scenarios.
-    *   **Coverage Group and Point Refinement:**
-        - **Adding New Coverage Points:**  If functional coverage is insufficient, define new coverage points to measure coverage of previously unmeasured aspects of the design.
-        - **Refining Bins:**  Adjust bin definitions in coverage points to better target specific ranges or values of interest. Add more fine-grained bins in areas where coverage is low.
-    *   **Using `assert` and `assume` for Coverage:**
-        - **`assert` for Coverage Triggering:**  Assertions can be used to trigger coverage sampling only when certain conditions are met, allowing for more targeted coverage measurement.
-        - **`assume` for Constraining Coverage Space:** `assume` statements can be used to define assumptions about the environment or input conditions. Coverage can be measured only under these assumed conditions, focusing coverage efforts on valid operating scenarios.
-    *   **Coverage Exclusions (Justification and Documentation):**
-        - **Ignoring Unreachable Code or Irrelevant Scenarios:** In some cases, certain code sections or functional scenarios might be intentionally excluded from coverage goals because they are unreachable, irrelevant, or represent error conditions that are not the focus of verification.
-        - **`ignore_bins`, `illegal_bins` (Review):** Use `ignore_bins` and `illegal_bins` to explicitly exclude specific bins from coverage calculation.
-        - **Documentation is Crucial:**  Any coverage exclusions should be carefully justified and documented in the verification plan and coverage reports.  Unjustified exclusions can mask real coverage holes.
+## 2. SystemVerilog Randomization: `rand`, `randc`, and Constraints
 
-*   **Advanced Constraint Techniques: `unique`, `inside`, `foreach` Constraints, Implication Constraints, Dynamic Constraints:**
-    *   **`unique` Constraint:**
-        - **Ensuring Unique Random Values:** The `unique` constraint ensures that a random variable takes on a unique value within a set of random objects. Useful for generating unique IDs, addresses, or transaction tags.
-        - **Example:**
-            ```systemverilog
-            class transaction_set;
-                rand bit [7:0] id[4]; // Array of 5 IDs
-                constraint unique_ids {
-                    unique {id}; // Ensure all IDs are unique within the array
-                }
-            endclass
-            ```
-    *   **`inside` Constraint (Review):**
-        - **Membership in a Set or Range:** The `inside` operator (already covered in basic constraints) is also considered an advanced constraint feature when used with complex sets or ranges, or in combination with other constraints.
-    *   **`foreach` Constraint:**
-        - **Applying Constraints to Array Elements:** The `foreach` constraint allows you to apply constraints to each element of an array or to iterate over array elements and apply constraints based on index or element value.
-        - **Example:**
-            ```systemverilog
-            class memory_transaction;
-                rand bit [31:0] address[8]; // Array of 8 addresses
+### Random Variables: `rand` vs. `randc`
+- **`rand` (Uniform Random):** The variable is assigned a pseudo-random value within its valid range on each call to `randomize()`. Successive calls may return identical values (standard uniform distribution).
+- **`randc` (Random Cyclic):** The variable cycles through every possible permutation of its values without repeating any value until the entire set is exhausted.
 
-                constraint aligned_addresses {
-                    foreach (address[i])
-                        address[i] % 4 == 0; // Ensure each address is 4-byte aligned
-                }
-            endclass
-            ```
-    *   **Implication Constraints (`->` operator):**
-        - **Conditional Constraints:** Implication constraints (`if-then` constraints) use the `->` operator to specify that a constraint should be active *only if* a certain condition is true.
-        - **Example:**  Constrain packet length to be greater than 64 bytes only if the packet type is DATA_PACKET.
-            ```systemverilog
-            class packet;
-                rand packet_type_enum packet_type;
-                rand bit [15:0] packet_length;
+```systemverilog
+class packet;
+    rand  bit [7:0] src_addr;
+    rand  bit [7:0] dest_addr;
+    randc bit [2:0] priority_level; // Cycles through 0..7 without repeats
+    rand  bit       is_encrypted;
+endclass
+```
 
-                constraint length_constraint {
-                    packet_type == DATA_PACKET -> packet_length > 64; // Implication constraint
-                }
-            endclass
-            ```
-    *   **Dynamic Constraints (`constraint_mode()` and `randomize() with { ... }`):**
-        - **Enabling/Disabling Constraints Dynamically:** `constraint_mode()` allows you to enable or disable constraint blocks at runtime, providing flexibility to control which constraints are active for different test scenarios.
-        - **Inline Constraints with `randomize() with { ... }`:** You can add or override constraints directly within the `randomize()` call using `with { ... }`. These inline constraints are applied only for that specific randomization call and do not permanently modify the class constraints.
-        - **Example (Dynamic Constraints):**
-            ```systemverilog
-            class packet;
-                rand bit [7:0] address;
-                constraint base_addr_range { address inside {[0:255]}; }
-                constraint extended_addr_range { address inside {[0:1023]}; } // Extended range constraint
-            endclass
+### Declarative Constraint Blocks
+Constraints are declarative boolean expressions evaluated simultaneously by the simulator's constraint engine:
 
-            program test;
-                packet pkt = new();
+```systemverilog
+class packet;
+    rand bit [7:0]  src_addr;
+    rand bit [7:0]  dest_addr;
+    rand bit [15:0] length;
+    rand bit [3:0]  tag;
 
-                initial begin
-                    // Randomize with base range constraints
-                    pkt.randomize();
-                    $display("Address (Base Range): %0d", pkt.address);
+    // Constraint block enforcing protocol rules
+    constraint valid_packet_c {
+        // Range constraint using inside operator
+        src_addr inside {[8'h10 : 8'hEF]};
 
-                    // Enable extended range constraint, disable base range constraint dynamically
-                    pkt.extended_addr_range.constraint_mode(1); // Enable extended range
-                    pkt.base_addr_range.constraint_mode(0);   // Disable base range
-                    pkt.randomize();
-                    $display("Address (Extended Range): %0d", pkt.address);
+        // Relational constraint
+        dest_addr != src_addr;
 
-                    // Randomize with inline constraint (override base range for this call only)
-                    pkt.randomize() with { address inside {[500:600]}; };
-                    $display("Address (Inline Constraint): %0d", pkt.address);
-                end
-            endprogram
-            ```
+        // Inequality constraint
+        length inside {[64 : 1518]};
 
-## Learning Resources
+        // Inverted set membership
+        !(tag inside {4'h0, 4'hF});
+    }
+endclass
+```
 
-*   **SystemVerilog LRM sections on randomization and constraints:**
-    *   **Search Query:** `SystemVerilog LRM randomization`, `SystemVerilog LRM constraints`.
-    *   **IEEE 1800 Standard (Again):** Refer to the SystemVerilog LRM for the definitive language specification.
-    *   **Focus on Chapters:** Look for chapters specifically dedicated to randomization, constraints, and coverage features in SystemVerilog.
+### Non-Uniform Distributions (`dist`)
+By default, the constraint solver generates uniformly distributed random values. The `dist` operator allows engineers to shape probability distributions using weights:
+- **`:=` Operator:** Assigns the specified weight to every individual value in the range.
+- **`:/` Operator:** Divides the specified weight equally across all values in the range.
 
-*   **"Writing Testbenches using SystemVerilog" by Janick Bergeron et al. (Chapters on randomization and coverage):**
-    *   **Book Link:** [Writing Testbenches Using SystemVerilog - Verification Methodology - Janick Bergeron - Springer](https://link.springer.com/book/10.1007/978-0-387-76542-7)
-    *   **Chapters on Randomization and Coverage:** This book has dedicated chapters that provide in-depth explanations and examples of SystemVerilog randomization and coverage features. These chapters are highly recommended for a thorough understanding.
+```systemverilog
+class memory_trans;
+    rand bit [31:0] addr;
+    rand bit [2:0]  burst_size;
 
-*   **Online tutorials and examples of constrained-random verification:**
-    *   **Search Query:** `constrained random verification tutorial`, `functional coverage examples SystemVerilog`, `SystemVerilog randomization examples`, `SystemVerilog coverage tutorial`.
-    *   **Verification Academy, EDA Vendor Websites, Online Forums:** Explore resources on Verification Academy, EDA vendor websites, and verification-related forums for tutorials, application notes, and code examples on constrained-random verification and functional coverage.
+    constraint size_dist_c {
+        // Weighted distribution: 
+        // Size 1: 50% probability (weight 50 / 100)
+        // Size 2: 30% probability (weight 30 / 100)
+        // Sizes 4, 8: 10% each (weight 20 total divided across 2 values)
+        burst_size dist {
+            3'd1 := 50,
+            3'd2 := 30,
+            [3'd4 : 3'd8] :/ 20
+        };
+    }
+endclass
+```
 
-## Exercises
+### Constraint Ordering with `solve ... before`
+SystemVerilog constraints are evaluated concurrently. In cases where random variables have conditional dependencies, uniform selection of solutions can cause unintentional probability bias. The `solve A before B;` directive instructs the solver to pick the value of `A` first, then solve for `B` within the remaining valid space.
 
-*   **Enhance the FIFO testbench with constrained-random stimulus generation:**
-    *   **Modify FIFO Testbench:** Take the FIFO testbench from earlier exercises.
-    *   **Create Transaction Class:** Define a SystemVerilog class (e.g., `fifo_transaction`) to represent FIFO transactions. Include `rand` properties for transaction attributes like data, operation type (read/write), address (if applicable), etc.
-    *   **Add Constraints:**  Add `constraint` blocks to the transaction class to define valid ranges and relationships for transaction properties. For example:
-        - Constrain data values to be within a certain range.
-        - Constrain the sequence of operations (e.g., ensure a mix of reads and writes, test burst transfers if applicable).
-        - Constrain FIFO to not overflow or underflow (initially, then relax these constraints to test error conditions later).
-    *   **Replace Directed Stimulus:** Replace the procedural directed stimulus generation in your testbench with a constrained-random stimulus generator. Use `randomize()` to generate transaction objects and drive the DUT based on the randomized transaction data.
-    *   **Run Simulations:** Run simulations with the constrained-random testbench and observe the DUT's behavior.
+```systemverilog
+class command_trans;
+    rand bit       is_burst;
+    rand bit [7:0] burst_length;
 
-*   **Implement functional coverage for key features of the FIFO design:**
-    *   **Identify Key FIFO Features:**  Think about the key functionalities of the FIFO that need to be verified (e.g., FIFO depth, full/empty conditions, data integrity, different data patterns, error handling - overflow, underflow).
-    *   **Define Coverage Groups and Points:** Create SystemVerilog `covergroup`s and `coverpoint`s to measure functional coverage for these key features. Examples:
-        - Coverage point for FIFO occupancy level (empty, near-empty, half-full, near-full, full).
-        - Coverage point for data patterns written to FIFO (e.g., all zeros, all ones, alternating patterns, ramp patterns).
-        - Cross coverage of FIFO operation type (read/write) and FIFO status (full/empty).
-    *   **Instantiate Coverage Groups and Sample:** Instantiate your coverage groups in the testbench and sample them at appropriate events (e.g., after each FIFO operation, at clock edges).
-    *   **Run Simulations and Collect Coverage:** Run simulations with your constrained-random testbench and enable coverage collection in your simulation tool.
+    constraint burst_c {
+        solve is_burst before burst_length;
+        if (!is_burst) {
+            burst_length == 8'd1;
+        } else {
+            burst_length inside {[8'd2 : 8'd64]};
+        }
+    }
+endclass
+```
 
-*   **Analyze coverage reports and identify areas with insufficient coverage:**
-    *   **Generate Coverage Reports:** After running simulations, generate coverage reports using your simulation tool.
-    *   **Examine Coverage Reports:** Analyze the coverage reports to:
-        - Check overall coverage percentage.
-        - Examine coverage for each coverage group and coverage point.
-        - Identify bins that have not been hit (coverage holes).
-        - Look for code sections with low code coverage (if code coverage is also enabled).
-    *   **Document Coverage Holes:**  Make a list of the identified coverage holes and areas with insufficient coverage.
+---
 
-*   **Refine constraints to target specific coverage goals and improve coverage metrics:**
-    *   **Analyze Coverage Holes (from previous exercise):**  Focus on the coverage holes you identified in the previous step. Understand why these areas were not covered by the initial constrained-random tests.
-    *   **Refine Constraints:**  Modify the constraints in your transaction class to bias randomization towards the uncovered areas. Examples:
-        - If low FIFO occupancy bins are not covered, add constraints to generate more write operations than read operations.
-        - If specific data patterns are missing from coverage, add constraints to generate those patterns more frequently.
-        - If certain FIFO error conditions (overflow, underflow) are not covered, relax constraints that prevent these conditions and add constraints to encourage them.
-    *   **Re-run Simulations and Re-analyze Coverage:** Re-run simulations with the refined constraints and generate new coverage reports. Compare the new coverage reports with the previous reports. Check if coverage has improved in the targeted areas and if overall coverage has increased.
-    *   **Iterate:** Repeat the process of analyzing coverage, refining constraints, and re-simulating until you achieve your desired coverage goals for the FIFO design.
+## 3. Advanced Constraint Techniques
+
+### Implication (`->`) and `if-else` Constraints
+Conditional constraints restrict variable values only when a specific condition evaluates to true:
+
+```systemverilog
+class ethernet_frame;
+    typedef enum bit [1:0] {DATA_PKT, CTRL_PKT, ERR_PKT} pkt_type_e;
+    rand pkt_type_e pkt_type;
+    rand bit [15:0] payload_bytes;
+    rand bit [7:0]  pause_time;
+
+    constraint frame_rules_c {
+        // Implication operator (->)
+        (pkt_type == CTRL_PKT) -> (payload_bytes == 16'd0);
+        (pkt_type == CTRL_PKT) -> (pause_time > 0);
+
+        // if-else construct
+        if (pkt_type == DATA_PKT) {
+            payload_bytes inside {[16'd46 : 16'd1500]};
+            pause_time == 8'd0;
+        } else if (pkt_type == ERR_PKT) {
+            payload_bytes < 16'd46; // Generate undersized runt frame
+        }
+    }
+endclass
+```
+
+### Array Constraints: `foreach` and `unique`
+When randomizing dynamic arrays or fixed buffers, constraints can iterate over indices:
+
+```systemverilog
+class dma_descriptor_table;
+    rand bit [31:0] buffer_addr[4];
+    rand bit [15:0] transfer_len[4];
+
+    constraint table_c {
+        // Ensure all buffer addresses are distinct
+        unique {buffer_addr};
+
+        // Constrain each array element using foreach
+        foreach (buffer_addr[i]) {
+            buffer_addr[i][1:0] == 2'b00; // Must be 4-byte word aligned
+            transfer_len[i] inside {[64 : 4096]};
+            transfer_len[i][2:0] == 3'b000; // 8-byte burst multiple
+        }
+    }
+endclass
+```
+
+### Soft Constraints (`soft`)
+Introduced in IEEE 1800-2012, the `soft` keyword marks a default constraint that can be overridden at runtime without causing a solver contradiction:
+
+```systemverilog
+class bus_transaction;
+    rand bit [31:0] addr;
+    // Default soft constraint
+    constraint default_addr_c {
+        soft addr inside {[32'h0000_1000 : 32'h0000_FFFF]};
+    }
+endclass
+
+// In test case: override soft constraint seamlessly
+module test;
+    bus_transaction tx = new();
+    initial begin
+        // Overrides soft constraint without solver error!
+        if (!tx.randomize() with { addr == 32'hFFFF_0000; }) begin
+            $error("Randomization failed!");
+        end
+    end
+endmodule
+```
+
+### Dynamic Constraint Management
+Constraints and variables can be selectively enabled or disabled at runtime:
+- **`object.constraint_name.constraint_mode(0/1);`**: Disables or enables an entire named constraint block.
+- **`object.variable_name.rand_mode(0/1);`**: Disables randomization of a specific property, holding it constant.
+- **Inline Constraints (`randomize() with { ... }`):** Appends temporary, high-priority constraints for a single randomization invocation.
+
+---
+
+## 4. Coverage-Driven Verification (CDV)
+
+How do we prevent random testing from aimlessly thrashing in areas that have already been verified? We close the loop using **Coverage-Driven Verification**.
+
+![Coverage-Driven Verification (CDV) Closed-Loop Flow](images/ch3_cdv_feedback_loop.svg)
+
+### The CDV Feedback Loop
+1. **Define Functional Coverage:** Translate features and corner cases from the Verification Plan into SystemVerilog `covergroup` models.
+2. **Execute Random Simulations:** Run automated regression suites with distinct seeds across a server cluster.
+3. **Collect & Merge Coverage:** Simulators aggregate hit counts into a centralized Unified Coverage Database (UCDB).
+4. **Identify Coverage Holes:** Coverage reporting tools pinpoint bins with zero hits (e.g., "Full-duplex collision during back-to-back jumbo frames was never exercised").
+5. **Tune Constraints or Write Directed Tests:** Verification engineers tighten constraints or create targeted sequences to hit the remaining holes until 100% closure is reached.
+
+---
+
+## 5. Functional Coverage Modeling: Covergroups, Coverpoints, and Bins
+
+Functional coverage measures design intent and verification completeness directly in SystemVerilog.
+
+![SystemVerilog Functional Coverage Model Architecture](images/ch3_functional_coverage_matrix.svg)
+
+### Constructing a Production Covergroup
+A `covergroup` encapsulates multiple `coverpoint` specifications and is instantiated as an object:
+
+```systemverilog
+covergroup packet_cg @(posedge clk);
+    option.per_instance = 1; // Track coverage separately for each instance
+    option.goal = 100;       // Sign-off target: 100%
+
+    // Coverpoint 1: Address partition coverage
+    cp_addr: coverpoint pkt.dest_addr {
+        bins zero_addr   = {8'h00};
+        bins low_subnet  = {[8'h01 : 8'h3F]};
+        bins mid_subnet  = {[8'h40 : 8'hBF]};
+        bins high_subnet = {[8'hC0 : 8'hFE]};
+        bins broadcast   = {8'hFF};
+    }
+
+    // Coverpoint 2: Packet length with explicit & transition bins
+    cp_len: coverpoint pkt.length {
+        bins min_len    = {64};
+        bins normal_len = {[65 : 1517]};
+        bins max_len    = {1518};
+        
+        // Transition bin: tests back-to-back minimum to maximum length
+        bins min_to_max = (64 => 1518);
+        
+        // Illegal bins: simulator throws error if sampled!
+        illegal_bins bad_len = {[0 : 63], [1519 : $]};
+    }
+
+    // Coverpoint 3: Protocol opcodes with ignored bins
+    cp_op: coverpoint pkt.opcode {
+        bins read_op  = {2'b00};
+        bins write_op = {2'b01};
+        bins sync_op  = {2'b10};
+        ignore_bins unused = {2'b11}; // Excluded from coverage calculation
+    }
+
+    // Cross Coverage: Evaluates all permutations of (Address x Opcode)
+    cx_addr_op: cross cp_addr, cp_op {
+        // Exclude broadcast reads from the cross metric
+        ignore_bins no_bcast_read = binsof(cp_addr.broadcast) && binsof(cp_op.read_op);
+    }
+endgroup : packet_cg
+```
+
+### Coverpoint Bin Categorization
+
+| Bin Construct | Keyword | Purpose & Behavior |
+| :--- | :--- | :--- |
+| **Explicit Value Bin** | `bins name = {val1, val2};` | Tracks hits for specific individual numerical values. |
+| **Range Bin** | `bins name = {[min : max]};` | Increments the bin counter if any sampled value falls within the range. |
+| **Transition Bin** | `bins name = (A => B => C);` | Tracks sequential temporal transitions across consecutive sample events. |
+| **Ignore Bins** | `ignore_bins name = {val};` | Completely removes specific values from the coverage denominator. |
+| **Illegal Bins** | `illegal_bins name = {val};` | Triggers an immediate simulation runtime error if sampled. |
+
+---
+
+## 6. Coverage Closure Strategy: Eliminating Coverage Holes
+
+Achieving the final 5% to 10% of coverage closure is typically the most challenging phase of a project:
+1. **Analyze Unhit Bins:** Determine why a bin was missed. Is it an unreachable state, a missing stimulus sequence, or an overly restrictive constraint?
+2. **Loosen Over-Constrained Classes:** If a base constraint prohibits a valid state (e.g., `payload_len < 1000` prevents jumbo frame testing), relax or soft-declare the constraint.
+3. **Seed Exploration:** Run short regressions with thousands of distinct seeds. Many corner cases require specific pseudo-random sequences to trigger.
+4. **Targeted Directed Sequences:** For ultra-rare scenarios (e.g., 4-way bus arbiter simultaneous contention on the exact cycle of an ECC uncorrectable fault), write a dedicated sequence to deliberately force the condition.
+5. **Formal Waivers:** If a bin represents a functionally unreachable state (e.g., an address bit tied to zero by hardware strap), document the architectural reason and add an official formal coverage exclusion waiver.
+
+---
+
+## 7. Learning Resources
+
+- **Books:**
+  - *SystemVerilog for Verification* by Chris Spear & Greg Tumbush (Chapters 6 & 9: Randomization and Functional Coverage).
+  - *Writing Testbenches Using SystemVerilog* by Janick Bergeron.
+- **Standards:**
+  - IEEE Std 1800-2023 SystemVerilog LRM (Clause 18: Constrained Random Value Generation, Clause 19: Functional Coverage).
+
+---
+
+## 8. Review Exercises
+
+1. Explain the operational difference between `rand` and `randc`. What occurs when a `randc` variable exhausts all permutations?
+2. Write a SystemVerilog constraint block for an image frame generator where `width` and `height` are between 128 and 1920, `total_pixels == width * height <= 1048576`, and `width` must be divisible by 16.
+3. What is the fundamental difference between an `ignore_bins` construct and an `illegal_bins` construct in a `coverpoint`?
+4. In Coverage-Driven Verification, why is it dangerous to write directed tests for the first 80% of your coverage goals instead of starting with constrained-random stimulus?
 
 ##### Copyright (c) 2026 squared-studio
-

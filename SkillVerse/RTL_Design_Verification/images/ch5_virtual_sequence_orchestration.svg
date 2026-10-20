@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 360" width="100%" height="100%">
+  <rect width="100%" height="100%" fill="#0f172a"/>
+  <defs>
+    <marker id="vArr" viewBox="0 0 10 10" refX="5" refY="6" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 1 0 L 5 8 L 9 0 z" fill="#fbbf24"/>
+    </marker>
+  </defs>
+
+  <text x="430" y="32" fill="#f8fafc" font-size="18" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">Virtual Sequence Orchestration Across Multiple Agents</text>
+  <text x="430" y="52" fill="#94a3b8" font-size="12" text-anchor="middle" font-family="system-ui, sans-serif">Coordinating complex system scenarios across CPU, Ethernet, and PCIe interfaces</text>
+
+  <!-- Top: Virtual Sequence Box -->
+  <g transform="translate(230, 75)">
+    <rect width="400" height="60" rx="8" fill="#78350f" stroke="#fbbf24" stroke-width="2"/>
+    <text x="200" y="28" fill="#ffffff" font-size="14" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">Virtual Sequence (System-Level Scenario)</text>
+    <text x="200" y="48" fill="#fde68a" font-size="11" text-anchor="middle" font-family="system-ui, sans-serif">Coordinates timing, cross-interface dependencies &amp; concurrency</text>
+  </g>
+
+  <!-- Middle: Virtual Sequencer (Handles Container) -->
+  <g transform="translate(280, 165)">
+    <rect width="300" height="45" rx="6" fill="#312e81" stroke="#a78bfa" stroke-width="2"/>
+    <text x="150" y="28" fill="#ede9fe" font-size="12" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">Virtual Sequencer (Sub-Sequencer Handles)</text>
+  </g>
+
+  <!-- Bottom 3 Interface Sub-Sequencers -->
+  <!-- Sub 1: CPU Master -->
+  <g transform="translate(60, 245)">
+    <rect width="210" height="85" rx="6" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+    <rect width="210" height="28" rx="6" fill="#0284c7"/>
+    <text x="105" y="19" fill="#ffffff" font-size="11" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">CPU Master Agent</text>
+    <text x="105" y="48" fill="#38bdf8" font-size="11" text-anchor="middle" font-family="system-ui, sans-serif">cpu_sequencer</text>
+    <text x="105" y="68" fill="#94a3b8" font-size="10" text-anchor="middle" font-family="system-ui, sans-serif">Runs: config_dma_seq</text>
+  </g>
+
+  <!-- Sub 2: Ethernet Ingress -->
+  <g transform="translate(325, 245)">
+    <rect width="210" height="85" rx="6" fill="#1e293b" stroke="#34d399" stroke-width="2"/>
+    <rect width="210" height="28" rx="6" fill="#059669"/>
+    <text x="105" y="19" fill="#ffffff" font-size="11" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">Ethernet Rx Agent</text>
+    <text x="105" y="48" fill="#34d399" font-size="11" text-anchor="middle" font-family="system-ui, sans-serif">eth_sequencer</text>
+    <text x="105" y="68" fill="#94a3b8" font-size="10" text-anchor="middle" font-family="system-ui, sans-serif">Runs: inject_packet_seq</text>
+  </g>
+
+  <!-- Sub 3: PCIe Egress -->
+  <g transform="translate(590, 245)">
+    <rect width="210" height="85" rx="6" fill="#1e293b" stroke="#f472b6" stroke-width="2"/>
+    <rect width="210" height="28" rx="6" fill="#db2777"/>
+    <text x="105" y="19" fill="#ffffff" font-size="11" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">PCIe Memory Agent</text>
+    <text x="105" y="48" fill="#f472b6" font-size="11" text-anchor="middle" font-family="system-ui, sans-serif">pcie_sequencer</text>
+    <text x="105" y="68" fill="#94a3b8" font-size="10" text-anchor="middle" font-family="system-ui, sans-serif">Runs: mem_completer_seq</text>
+  </g>
+
+  <!-- Orchestration Arrows -->
+  <line x1="430" y1="135" x2="430" y2="160" stroke="#fbbf24" stroke-width="2" marker-end="url(#vArr)"/>
+  <path d="M 330 210 L 330 225 L 165 225 L 165 240" fill="none" stroke="#fbbf24" stroke-width="1.5" marker-end="url(#vArr)"/>
+  <line x1="430" y1="210" x2="430" y2="240" stroke="#fbbf24" stroke-width="1.5" marker-end="url(#vArr)"/>
+  <path d="M 530 210 L 530 225 L 695 225 L 695 240" fill="none" stroke="#fbbf24" stroke-width="1.5" marker-end="url(#vArr)"/>
+</svg>

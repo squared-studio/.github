@@ -1,4 +1,4 @@
-# Chapter 5: Wait States and Error Responses (APB3)
+# Wait States and Error Responses (APB3)
 
 The AMBA 3 APB specification introduced two pivotal signals that transformed APB from a rigid, fixed-timing bus into a versatile peripheral interface:
 1. **`PREADY` (Wait State Control):** Enables peripherals to stall bus transfers until internal operations or data synchronization complete.
@@ -8,7 +8,7 @@ This chapter analyzes the cycle-by-cycle mechanics of wait states during write a
 
 ---
 
-## 1. Motivation for Wait States in Peripheral Subsystems
+## Motivation for Wait States in Peripheral Subsystems
 
 In modern SoCs, peripherals frequently operate under clocking and physical constraints that preclude single-cycle register access:
 - **Asynchronous Clock Domains:** Peripherals like UARTs, I2C controllers, or RTC timers often run on slow auxiliary clocks (e.g., 32.768 kHz or 24 MHz) while the APB bus operates at 100+ MHz. Synchronizing write strobes across clock domains requires multiple APB clock cycles.
@@ -17,7 +17,7 @@ In modern SoCs, peripherals frequently operate under clocking and physical const
 
 ---
 
-## 2. Write Transfers with Wait States
+## Write Transfers with Wait States
 
 When an APB slave cannot accept write data within the baseline 2-cycle window, it pulls **`PREADY = 0`** upon entering the `ACCESS` phase.
 
@@ -47,7 +47,7 @@ When an APB slave cannot accept write data within the baseline 2-cycle window, i
 
 ---
 
-## 3. Read Transfers with Wait States
+## Read Transfers with Wait States
 
 During read operations from slow peripherals, the slave drives `PREADY = 0` until valid data is available to place on `PRDATA`.
 
@@ -69,7 +69,7 @@ During read operations from slow peripherals, the slave drives `PREADY = 0` unti
 
 ---
 
-## 4. Slave Error Reporting (`PSLVERR`)
+## Slave Error Reporting (`PSLVERR`)
 
 In AMBA 3, the `PSLVERR` signal provides an in-band method for an APB slave to inform the bridge that a transfer failed.
 
@@ -95,7 +95,7 @@ $$\text{Sample PSLVERR} \iff (\text{PSELx} == 1) \ \land \ (\text{PENABLE} == 1)
 
 ---
 
-## 5. System Bridge Handling of `PSLVERR`
+## System Bridge Handling of `PSLVERR`
 
 Because APB is connected to high-performance system interconnects via a bridge, the bridge must translate `PSLVERR` into the upstream protocol's fault reporting mechanism:
 
@@ -116,7 +116,7 @@ When `PSLVERR` is asserted, the bridge receives the fault and propagates it back
 
 ---
 
-## 6. Key Takeaways and Chapter Summary
+## Key Takeaways and Chapter Summary
 
 - **Wait States via `PREADY`:** Driving `PREADY = 0` during the `ACCESS` phase pauses the APB transfer indefinitely until the peripheral is ready.
 - **Frozen Bus:** Master control, address, and write data lines must remain perfectly stable during all stall cycles.
@@ -125,7 +125,7 @@ When `PSLVERR` is asserted, the bridge receives the fault and propagates it back
 
 ---
 
-## 7. Review Questions
+## Review Questions
 
 1. If an APB slave asserts `PSLVERR = 1` while `PREADY` is still LOW (`0`), will the master register a bus error in that cycle? Why or why not?
 2. Why is dynamic power dissipation reduced when an APB slave keeps `PRDATA` static until `PREADY` transitions to HIGH?

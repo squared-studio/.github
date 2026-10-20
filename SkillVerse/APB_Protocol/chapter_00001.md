@@ -1,4 +1,4 @@
-# Chapter 1: Introduction to the APB Protocol and AMBA Ecosystem
+# Introduction to the APB Protocol and AMBA Ecosystem
 
 The **Advanced Peripheral Bus (APB)** is a foundational component of the **ARM Advanced Microcontroller Bus Architecture (AMBA)** family. Designed specifically for energy-efficient, low-bandwidth, and low-complexity peripheral connectivity, APB provides an unpipelined, synchronous protocol tailored to configure control registers, monitor status flags, and interface with slow system peripherals.
 
@@ -6,7 +6,7 @@ Unlike high-performance interconnects such as AXI or AHB, which feature multi-ch
 
 ---
 
-## 1. The AMBA Interconnect Hierarchy
+## The AMBA Interconnect Hierarchy
 
 Modern System-on-Chip (SoC) architectures divide bus communication into hierarchical layers to balance throughput, memory bandwidth, latency, and power consumption.
 
@@ -24,7 +24,7 @@ In this hierarchy, APB never serves as a primary memory bus. Instead, an **AXI-t
 
 ---
 
-## 2. Evolution of the APB Specification
+## Evolution of the APB Specification
 
 ARM introduced APB in the late 1990s as part of AMBA 2.0. Over successive AMBA releases, APB has evolved to accommodate deeper wait states, standardized error reporting, sub-word memory access, hardware virtualization, and TrustZone security.
 
@@ -56,7 +56,7 @@ Modern AMBA 5 APB introduces enterprise and automotive safety extensions:
 
 ---
 
-## 3. Fundamental Design Principles of APB
+## Fundamental Design Principles of APB
 
 APB achieves its low silicon overhead and low dynamic power consumption through deliberate protocol constraints:
 
@@ -83,7 +83,7 @@ Despite advances in multi-gigahertz interconnect fabrics, APB remains the indust
 
 ---
 
-## 4. Key Takeaways and Chapter Summary
+## Key Takeaways and Chapter Summary
 
 - **Role:** APB is AMBA's lightweight, non-pipelined peripheral bus designed for configuration registers and low-throughput interfaces.
 - **Bridge-Driven:** In modern SoCs, an AXI-to-APB or AHB-to-APB bridge acts as the single master, translating high-speed multi-beat bursts into serialized APB register cycles.
@@ -95,7 +95,7 @@ Despite advances in multi-gigahertz interconnect fabrics, APB remains the indust
 
 ---
 
-## 5. Review Questions
+## Review Questions
 
 1. Why is an unpipelined protocol like APB preferable for peripheral control registers compared to a high-performance pipelined protocol like AXI4?
 2. Which signal was added in APB3 to allow slow peripherals to delay the completion of a transaction, and what are its operational constraints?

@@ -1,272 +1,291 @@
-# SystemVerilog for Verification - Testbench Fundamentals
+# Chapter 2: SystemVerilog for Verification - Testbench Fundamentals
 
-This chapter dives into the practical aspects of building verification environments using SystemVerilog. We will review key SystemVerilog features specifically designed for verification and learn how to construct effective testbenches. The focus is on fundamental testbench components, stimulus generation, response monitoring, and establishing a layered testbench architecture for better organization and reusability.
+SystemVerilog is uniquely distinguished as both a synthesizable Hardware Description Language (HDL) and a powerful, object-oriented **Hardware Verification Language (HVL)**. Standardized under IEEE 1800, its verification features were engineered specifically to overcome the limitations of classic Verilog-1995/2001 testbenches.
 
-*   **Review of SystemVerilog for Verification: Classes, Objects, Interfaces, Packages, Program Blocks, Clocking Blocks:**
+This chapter explores the essential language constructs and architectural patterns required to construct scalable, modular verification environments: Object-Oriented Programming (OOP), interfaces and virtual interfaces, stratified event scheduling regions, clocking blocks, Transaction-Level Modeling (TLM), and layered testbench design.
 
-    *   **SystemVerilog as a Hardware Verification Language (HVL):** SystemVerilog is not just for RTL design; it's a powerful HVL with features specifically tailored for building sophisticated verification environments.
-    *   **Classes and Objects (Object-Oriented Programming - OOP):**
-        - **Classes:** Blueprints for creating objects. Encapsulate data (properties) and behavior (methods). Enable modularity, reusability, and abstraction in testbenches.
-        - **Objects:** Instances of classes. Represent testbench components like stimulus generators, monitors, scoreboards.
-        - **Key OOP Concepts in Verification:**
-            - **Encapsulation:** Bundling data and methods within a class, hiding internal implementation details.
-            - **Abstraction:** Representing complex verification components at a higher level of abstraction.
-            - **Inheritance:** Creating new classes (derived classes) that inherit properties and methods from existing classes (base classes), promoting code reuse and hierarchy.
-            - **Polymorphism:**  Allowing objects of different classes to be treated as objects of a common base class, enabling flexible and generic testbench components.
-    *   **Interfaces:**
-        - **Definition:**  Bundles of signals that define a communication protocol or interface between different parts of a design or between the testbench and the DUT.
-        - **Benefits in Verification:**
-            - **Abstraction of Signal Bundles:**  Instead of passing individual signals, interfaces allow passing a single interface object, simplifying port connections and module instantiation.
-            - **Protocol Specification:** Interfaces can encapsulate the protocol details of an interface, making testbenches more readable and maintainable.
-            - **Reusability:** Interfaces can be reused across different modules and testbenches that use the same protocol.
-    *   **Packages:**
-        - **Namespaces for Organization:**  Packages provide a way to organize and group related SystemVerilog code (classes, interfaces, enums, typedefs, functions, tasks) into namespaces.
-        - **Code Reusability and Avoidance of Naming Conflicts:** Packages prevent naming collisions and promote code reuse across different parts of a project or across projects.
-        - **Example Use:**  Create packages for common verification utilities, interface definitions, transaction classes, etc.
-    *   **Program Blocks:**
-        - **Separation of Testbench Code from RTL Simulation:**  `program` blocks are used to encapsulate testbench code that interacts with the simulator and DUT. `module` blocks are typically used for RTL design and structural testbench elements.
-        - **Execution Semantics:** Code inside `program` blocks executes in the *reactive* region of the simulation time step, after the RTL design in `module` blocks has been evaluated in the *active* and *inactive* regions. This separation helps prevent race conditions and ensures predictable testbench behavior.
-        - **Key Features of Program Blocks:**  Allow use of procedural statements, timing control (`#delay`, `@(event)`), and system tasks for simulation control (`$display`, `$finish`).
-    *   **Clocking Blocks:**
-        - **Synchronizing Testbench Actions with Clock Edges:** Clocking blocks provide a mechanism to synchronize testbench stimulus and response actions with specific clock edges of the DUT.
-        - **Input and Output Clocking:**  Clocking blocks can define input clocking (for driving signals into the DUT synchronized to a clock edge) and output clocking (for sampling signals from the DUT synchronized to a clock edge).
-        - **Synchronization and Race Condition Prevention:** Clocking blocks help prevent race conditions and ensure that testbench actions are correctly synchronized with the DUT's clocking scheme, leading to more reliable and repeatable simulations.
-        - **Example:**
-            ```systemverilog
-            clocking drv_cb @(posedge clk); // Clocking block synchronized to posedge of clk
-                output data; // Output signals driven in this clocking block
-            endclocking
+---
 
-            always @(drv_cb) begin // Actions synchronized to clocking block event
-                drv_cb.data <= ... ; // Drive data signal synchronized to posedge clk
-            end
-            ```
+## Learning Goals
 
-*   **Building Basic Testbenches: Stimulus Generation (Procedural and Declarative), DUT Instantiation, Response Monitoring, and Result Checking:**
-    *   **Basic Testbench Structure (Review):**
-        - Clock and Reset Generation.
-        - DUT Instantiation.
-        - Stimulus Generation.
-        - Response Monitoring.
-        - Result Checking.
-    *   **Stimulus Generation Techniques:**
-        - **Procedural Stimulus:**
-            - **Using `initial` and `always` Blocks:**  Directly writing procedural code within `initial` or `always` blocks to generate stimulus sequences.
-            - **Directed Stimulus:**  Manually crafting specific input sequences to test particular functionalities or scenarios.
-            - **Example (`initial` block for directed stimulus):**
-                ```systemverilog
-                initial begin
-                    input_data = 0; #10; // Apply input 0, wait 10 time units
-                    input_data = 5; #10; // Apply input 5, wait 10 time units
-                    input_data = 10; #10; // Apply input 10, wait 10 time units
-                    // ... more stimulus ...
-                end
-                ```
-            - **Example (`always` block for repetitive stimulus):**
-                ```systemverilog
-                always #5 input_valid = ~input_valid; // Toggle input_valid every 5 time units
-                ```
-            - **Tasks and Functions for Reusable Stimulus:**  Defining tasks and functions to encapsulate stimulus generation sequences, making testbench code more organized and reusable.
-                ```systemverilog
-                task send_data (input integer data_value);
-                    input_data = data_value;
-                    input_valid = 1;
-                    #1; // Pulse width for input_valid
-                    input_valid = 0;
-                    #5; // Wait between transactions
-                endtask
+After completing this chapter, you should be able to:
+- Apply Object-Oriented Programming principles (encapsulation, inheritance, polymorphism) to construct modular testbench components.
+- Explain the SystemVerilog stratified event execution regions and use clocking blocks (`#1step` input skew) to eliminate simulation race conditions.
+- Implement SystemVerilog interfaces, modports, and virtual interfaces to dynamically bind class-based verification environments to static hardware RTL.
+- Structure a modern verification environment using a four-layer testbench architecture.
+- Develop transaction classes, transactors (drivers and monitors), and queue-based self-checking scoreboards.
 
-                initial begin
-                    send_data(10);
-                    send_data(25);
-                    send_data(50);
-                end
-                ```
-        - **Declarative Stimulus (Using Assertions - Introduction):**
-            - **Assertions as Stimulus Constraints:**  While primarily for response checking, assertions can also be used to *constrain* stimulus generation.  For example, you can use assertions to specify valid input ranges or sequences.
-            - **Randomized Stimulus with Constraints (Preview - Covered in detail later):**  SystemVerilog's constrained-random features allow you to declaratively specify constraints on random stimulus generation, guiding the randomization process to generate meaningful and valid test cases. This is a more advanced form of declarative stimulus.
-    *   **DUT Instantiation (Review):**
-        - Instantiating the RTL module (DUT) inside the testbench module or program block.
-        - Connecting DUT ports to signals declared in the testbench.
-    *   **Response Monitoring:**
-        - **Observing DUT Outputs:**  Monitoring signals at the output ports of the DUT to capture its responses to the applied stimuli.
-        - **Using `always` Blocks for Monitoring:**  `always` blocks triggered by events (e.g., clock edges, output signal changes) can be used to sample and record DUT outputs.
-            ```systemverilog
-            always @(posedge clk) begin
-                if (output_valid) begin
-                    monitored_output <= output_data;
-                    $display("@%0t: Output Valid, Data = %0d", $time, output_data);
-                end
-            end
-            ```
-    *   **Result Checking:**
-        - **Comparing Actual vs. Expected Results:**  Verifying if the DUT's responses match the expected behavior.
-        - **Manual Checking (Waveform Inspection):**  Visually inspecting waveforms to verify correctness, useful for simple cases and initial debugging.
-        - **Procedural Checking (in Testbench):**  Writing SystemVerilog code to compare DUT outputs with expected values and report pass/fail status.
-            - **Direct Comparison:**  For simple modules, directly compare DUT outputs to pre-calculated expected values.
-            - **Scoreboards (Introduction):**  Using data structures (like queues) to store expected transactions and compare them with actual transactions observed from the DUT. Scoreboards are essential for verifying complex, pipelined, or out-of-order designs.
-            - **Assertions (Introduction):**  Using SystemVerilog Assertions to formally specify design properties and automatically check them during simulation. Assertions can check for both functional correctness and protocol compliance.
-        - **Example (Procedural Checking - Direct Comparison):**
-            ```systemverilog
-            reg [DATA_WIDTH-1:0] expected_sum;
+---
 
-            always @(posedge clk) begin
-                if (input_valid) begin
-                    expected_sum = input_a + input_b; // Calculate expected sum
-                end
-                if (output_valid) begin
-                    if (output_result == expected_sum) begin
-                        $display("@%0t: PASS - Input A=%0d, Input B=%0d, Output Sum=%0d", $time, input_a, input_b, output_result);
-                    end else begin
-                        $display("@%0t: FAIL - Input A=%0d, Input B=%0d, Expected Sum=%0d, Actual Sum=%0d", $time, input_a, input_b, expected_sum, output_result);
-                    end
-                end
-            end
-            ```
+## 1. SystemVerilog as a Verification Language: Core Constructs
 
-*   **Transaction-Level Modeling (TLM) Concepts for Abstracting Communication:**
-    *   **Need for Abstraction:**  Signal-level testbenches can become complex and difficult to manage, especially for designs with complex interfaces and protocols. TLM provides a higher level of abstraction for modeling communication and data transfer.
-    *   **Transactions:**  Represent a complete unit of data transfer or operation at a higher level of abstraction than individual signals. Examples:  Bus transactions (read, write), packet transfers, function calls.
-    *   **TLM Ports and Interfaces:**  SystemVerilog TLM provides special ports and interfaces for exchanging transactions between testbench components and the DUT.
-        - **TLM Ports:**  `tlm_fifo_port`, `tlm_get_peek_port`, `tlm_put_port`, etc.  Define the type of transaction and the direction of communication.
-        - **TLM Interfaces:**  Define a set of TLM ports to represent a communication channel or interface.
-    *   **Transaction Classes:**  Classes are used to define transaction objects. Transaction classes encapsulate data related to a transaction (e.g., address, data, command, status).
-    *   **Benefits of TLM:**
-        - **Simplified Testbench Development:**  Reduces the complexity of dealing with signal-level details, making testbenches easier to write, understand, and maintain.
-        - **Faster Simulation:**  Transaction-level simulations can be faster than signal-level simulations as they operate at a higher level of abstraction.
-        - **Improved Reusability:**  TLM components can be reused across different testbenches and projects.
-        - **Early Verification:**  TLM can be used for early architectural verification and system-level modeling even before RTL is fully developed.
-    *   **Example (Conceptual TLM):**
-        ```systemverilog
-        // Transaction class
-        class bus_transaction;
-            rand bit [31:0] addr;
-            rand bit [31:0] data;
-            rand bit write_read; // 0 for write, 1 for read
-        endclass
+### Classes, Objects, and Object-Oriented Programming (OOP)
+In classic Verilog, testbenches relied on static `module` blocks and global variables. SystemVerilog introduces dynamic OOP classes:
+- **Classes:** Blueprints declared with the `class ... endclass` keyword. A class encapsulates data attributes (properties) and operational functions/tasks (methods).
+- **Objects:** Dynamic instances created on the heap at runtime using the `new()` constructor. Unlike static hardware modules, objects are created and garbage-collected dynamically.
 
-        // ... Testbench component using TLM ports ...
-        task send_bus_transaction (bus_transaction trans);
-            // ... Use TLM put port to send the transaction ...
-        endtask
+```systemverilog
+// Definition of a basic bus transaction class
+class bus_transaction;
+    // Class properties (data attributes)
+    rand bit [31:0] addr;
+    rand bit [31:0] data;
+    rand bit        write_read; // 1 = Write, 0 = Read
 
-        task get_bus_response (output bus_transaction response_trans);
-            // ... Use TLM get port to receive response transaction ...
-        endtask
-        ```
+    // Constructor method
+    function new(bit [31:0] addr = 32'h0, bit [31:0] data = 32'h0);
+        this.addr = addr;
+        this.data = data;
+        this.write_read = 1'b0;
+    endfunction
 
-*   **Layered Testbench Architectures: Separating Stimulus Generation, DUT Interaction, and Result Checking:**
-    *   **Motivation for Layering:**  For complex verification environments, a monolithic testbench becomes difficult to manage, reuse, and extend. Layered architectures promote modularity, separation of concerns, and reusability.
-    *   **Typical Layers in a Layered Testbench:**
-        - **Transaction Layer:**  Deals with high-level transactions. Defines transaction classes, transaction generators, and transaction-level interfaces.
-        - **Protocol Layer:**  Handles protocol-specific details of communication with the DUT. Converts transactions into signal-level sequences and vice versa.  Drivers and monitors often reside in this layer.
-        - **Signal Layer:**  Deals with the raw signals that interface directly with the DUT. Clock and reset generation, signal-level driving and sampling.
-        - **Verification Core Layer (or Test Layer):**  Contains the test control logic, test sequences, test case management, scoreboards, coverage collectors, and overall verification flow control.
-    *   **Benefits of Layered Architecture:**
-        - **Modularity:**  Each layer is responsible for a specific aspect of verification, making the testbench more modular and easier to understand and maintain.
-        - **Reusability:** Layers and components within layers can be reused across different testbenches and projects.
-        - **Scalability:**  Layered architectures scale better to handle increasing design complexity.
-        - **Abstraction:**  Different layers operate at different levels of abstraction, allowing verification engineers to focus on the appropriate level of detail for each task.
-        - **Parallel Development:**  Different teams can work on different layers concurrently.
-    *   **Example Layered Architecture (Conceptual):**
+    // Utility display method
+    virtual function void print(string tag = "TRANS");
+        $display("[%s] Addr=0x%08h Data=0x%08h Op=%s", 
+                 tag, this.addr, this.data, (write_read ? "WRITE" : "READ"));
+    endfunction
+endclass
+```
 
-        ```
-        [Verification Core Layer]  (Test sequences, test control, scoreboards, coverage)
-                ^
-                | Transaction-Level Communication (TLM Interfaces)
-                v
-        [Transaction Layer]      (Transaction Generators, Transaction Classes)
-                ^
-                | Protocol Layer Interfaces (e.g., Interface Classes, Virtual Interfaces)
-                v
-        [Protocol Layer]         (Drivers, Monitors, Protocol Sequencers, Adapters)
-                ^
-                | Signal Level Interfaces (SystemVerilog Interfaces)
-                v
-        [Signal Layer]           (Clock Generation, Reset Generation, Signal Driving/Sampling)
-                ^
-                | Direct Signal Connections
-                v
-        [DUT]                    (Design Under Test - RTL Module)
-        ```
+### The Four Pillars of OOP in Verification
+1. **Encapsulation:** Grouping data and methods into single units with access control (`local`, `protected`). Prevents external components from directly modifying internal state variables without validation.
+2. **Abstraction:** Presenting high-level transaction interfaces (e.g., `send_packet()`) while hiding low-level cycle-by-cycle pin assertions.
+3. **Inheritance:** Creating specialized derived classes (`class eth_vlan_packet extends eth_packet;`) that inherit and extend base class functionality, minimizing code duplication.
+4. **Polymorphism:** Enabling base-class handles to refer to derived-class objects at runtime. Virtual methods (`virtual function`) ensure that the overriding derived implementation executes dynamically.
 
-*   **Introduction to Interfaces and Virtual Interfaces for Flexible Testbench Connectivity:**
-    *   **Interfaces (Review):**  Bundles of signals that define a communication protocol.  Improve code readability and reusability.
-    *   **Virtual Interfaces:**
-        - **Abstraction of Interface Instances:**  Virtual interfaces are handles (pointers) to actual interface instances. They provide an extra level of indirection and abstraction.
-        - **Dynamic Interface Binding:**  Virtual interfaces allow you to dynamically connect testbench components to different interface instances at run time. This is crucial for layered testbenches and complex verification environments.
-        - **Parameterization and Configuration:**  Virtual interfaces can be parameterized and configured to adapt to different interface configurations or modes of operation.
-        - **Example Use Case: Layered Testbench Connectivity:** In a layered testbench, higher layers (e.g., transaction layer, verification core layer) can use virtual interfaces to access and control interfaces in lower layers (e.g., protocol layer, signal layer) without being directly tied to specific interface instances. This allows for flexibility and reusability.
-    *   **Example (Virtual Interface Concept):**
-        ```systemverilog
-        interface bus_if (input logic clk); // Define an interface
-            logic [31:0] addr;
-            logic [31:0] data;
-            logic read_req;
-            logic write_req;
-            // ... protocol signals ...
-        endinterface
+### Packages: Namespaces for Organization and Reuse
+Packages group related classes, typedefs, enumerations, parameters, and tasks into distinct namespaces, eliminating naming collisions:
 
-        module testbench;
-            bus_if bus_intf_inst (clk); // Interface instance
+```systemverilog
+package bus_pkg;
+    typedef enum bit {READ_OP = 1'b0, WRITE_OP = 1'b1} bus_op_e;
+    `include "bus_transaction.sv"
+    `include "bus_driver.sv"
+    `include "bus_monitor.sv"
+endpackage : bus_pkg
 
-            virtual bus_if v_bus_intf; // Virtual interface
+// In testbench: import the entire package or specific classes
+import bus_pkg::*;
+```
 
-            initial begin
-                v_bus_intf = bus_intf_inst; // Assign virtual interface to actual instance
-                // ... Now use v_bus_intf to access signals of bus_intf_inst ...
-                v_bus_intf.addr <= ... ;
-                v_bus_intf.read_req <= ... ;
-            end
-        endmodule
-        ```
+---
 
-## Learning Resources
+## 2. Eliminating Race Conditions: Simulation Event Regions
 
-*   **SystemVerilog LRM (Language Reference Manual) sections on verification features:**
-    *   **Search Query:** `SystemVerilog LRM verification features` or specifically search for sections on "classes," "interfaces," "packages," "program blocks," "clocking blocks," "assertions," "coverage."
-    *   **IEEE 1800 Standard:** The SystemVerilog LRM is the definitive reference for the language. You can find it online by searching for "IEEE 1800 SystemVerilog LRM."
-    *   **Focus on Verification-Specific Chapters:**  Look for chapters or sections that specifically discuss verification features and constructs.
+One of the most persistent bugs in legacy Verilog testbenches is the **simulation race condition**, where a testbench samples an output on the same delta cycle that the design register updates, yielding non-deterministic values depending on simulator engine ordering.
 
-*   **"SystemVerilog for Verification: A Guide to Learning the Testbench Language Features" by Chris Spear and Greg Tumbush:**
-    *   **Book Link:** [SystemVerilog for Verification - A Guide to Learning the Testbench Language Features | SpringerLink](https://link.springer.com/book/10.1007/978-0-387-69999-9)
-    *   **Targeted for Verification Engineers:** This book is specifically written to teach SystemVerilog from a verification perspective. It covers all the key language features relevant to testbench development.
-    *   **Chapters on Key Topics:**  Look for chapters on classes, interfaces, packages, program blocks, clocking blocks, TLM, assertions, coverage, and advanced verification methodologies.
-    *   **Accessibility:** Check if your institution provides access to this book.
+SystemVerilog eliminates race conditions through **Stratified Event Scheduling Regions**.
 
-*   **Online tutorials and examples of SystemVerilog testbenches:**
-    *   **Search Query:** `SystemVerilog testbench examples`, `layered testbench architecture tutorial`, `SystemVerilog TLM tutorial`, `SystemVerilog interface tutorial`, `SystemVerilog program block example`, `SystemVerilog clocking block tutorial`.
-    *   **Verification Academy, EDA Vendor Websites:** Websites like Verification Academy and EDA tool vendor websites (Cadence, Mentor, Synopsys) often have tutorials, application notes, and code examples on SystemVerilog verification.
-    *   **GitHub and Open Source Verification Projects:** Explore GitHub and other open-source repositories for SystemVerilog verification examples and projects.
+![SystemVerilog Stratified Event Scheduling Regions](images/ch2_sv_event_regions.svg)
 
-## Exercises
+### Major Simulation Regions in an Event Time-Step
 
-*   **Develop a basic SystemVerilog testbench for a simple RTL module (e.g., a FIFO):**
-    *   **Choose a DUT:**  Use a simple FIFO (First-In, First-Out) module as the Design Under Test. You might have designed a FIFO in previous modules, or you can find a simple RTL FIFO example online.
-    *   **Create Testbench Structure:**  Set up a basic SystemVerilog testbench module or program block. Include clock and reset generation, DUT instantiation, and signal declarations for interfacing with the FIFO.
-    *   **Implement Stimulus Generation:**  Create stimulus to test FIFO operations: write data to the FIFO, read data from the FIFO, test FIFO full and empty conditions, try to overflow and underflow the FIFO (if error handling is implemented). Use `initial` blocks, `always` blocks, and tasks to generate stimulus.
-    *   **Implement Response Monitoring:**  Monitor the FIFO's output signals (data output, empty flag, full flag) to observe its behavior. Use `always` blocks and `$display` to print monitored values.
-    *   **Implement Result Checking (Scoreboard):**  Create a simple scoreboard (e.g., using a SystemVerilog queue) to store the data written into the FIFO. When data is read from the FIFO, compare it with the expected data from the scoreboard to verify correct FIFO operation. Report pass/fail status for each transaction.
-    *   **Simulation and Debugging:**  Simulate the testbench and DUT. Debug any issues in the RTL or testbench code using waveform viewers and simulation logs.
+| Event Region Set | Sub-Regions | Primary Responsibility |
+| :--- | :--- | :--- |
+| **Preponed** | Preponed | **Stable Sampling Window:** Values are sampled before any events occur in the time-step. Concurrent assertions (SVA) and clocking block inputs sample here. |
+| **Active Region Set** | Active, Inactive, NBA | **Design Execution:** Evaluates synthesizable RTL. Blocking assignments (`=`) run in Active; `#0` in Inactive; non-blocking register assignments (`<=`) in Non-Blocking Assignment (NBA) region. |
+| **Observed** | Observed | **Property Evaluation:** Concurrent assertions evaluate expressions against values sampled in the Preponed region. |
+| **Reactive Region Set** | Reactive, Re-Inactive, Re-NBA | **Testbench Execution:** Code inside `program` blocks and clocking block drive updates execute here, *after* design RTL has completely settled. |
+| **Postponed** | Postponed | **Final Readout:** System tasks like `$strobe` and waveform dumping routines capture final settled signal states. |
 
-*   **Implement different stimulus generation techniques (e.g., using `initial` blocks, `always` blocks, and tasks):**
-    *   **Extend the FIFO Testbench:**  Use the FIFO testbench from the previous exercise.
-    *   **Directed Stimulus with `initial` blocks:**  Create `initial` blocks to generate directed test sequences to test specific FIFO scenarios (e.g., write a specific sequence of data, read it back, test full condition, test empty condition).
-    *   **Repetitive Stimulus with `always` blocks:**  Use `always` blocks to generate repetitive stimulus patterns (e.g., continuously write data to the FIFO at a certain rate, continuously try to read from the FIFO).
-    *   **Reusable Stimulus with Tasks:**  Define tasks to encapsulate common stimulus sequences (e.g., `write_fifo_data(data)`, `read_fifo_data(output data)`). Use these tasks in `initial` blocks to create more structured and reusable test cases.
-    *   **Compare and Contrast:**  Discuss the advantages and disadvantages of each stimulus generation technique (procedural vs. declarative, `initial` vs. `always` vs. tasks) in terms of code organization, reusability, and flexibility.
+---
 
-*   **Create a simple scoreboard to compare expected and actual results:**
-    *   **Enhance FIFO Testbench Scoreboard:**  Improve the scoreboard in your FIFO testbench.
-    *   **Transaction Tracking:**  Modify the scoreboard to track transactions (write and read operations) rather than just data values. Create a transaction class to represent FIFO transactions (e.g., write transaction with data, read transaction with expected data).
-    *   **Out-of-Order Handling (If applicable to DUT):** If your DUT is more complex (e.g., a pipelined module), consider how your scoreboard would handle out-of-order responses. For a simple FIFO, in-order checking is sufficient.
-    *   **Scoreboard Logic:**  Implement logic in the scoreboard to:
-        - Store expected transactions (e.g., in a queue when data is written to the FIFO through the testbench).
-        - Receive actual transactions from the DUT's outputs (when data is read from the FIFO).
-        - Compare expected and actual transactions.
-        - Report pass/fail status for each transaction.
-        - Keep track of overall test status (pass/fail).
-    *   **Scoreboard Class (Optional):** For better organization, encapsulate the scoreboard logic within a SystemVerilog class.
+## 3. Clocking Blocks: Deterministic Synchronous Interfacing
+
+A **Clocking Block** synchronizes testbench drives and samples to specific clock edges, completely abstracting setup and hold timings.
+
+### Clocking Block Skew Semantics
+- **Input Skew (`default input #1step`):** Tells the simulator to sample input signals in the **Preponed** region—immediately *prior* to the active clock edge. This guarantees sampling the previous stable state of the register, exactly mimicking a physical flip-flop's setup window.
+- **Output Skew (`default output #1ns` or `output #0`):** Drives signals into the design with a defined delay, preventing hold-time violations.
+
+```systemverilog
+interface bus_if (input logic clk, input logic rst_n);
+    logic [31:0] paddr;
+    logic        pwrite;
+    logic        psel;
+    logic        penable;
+    logic [31:0] pwdata;
+    logic [31:0] prdata;
+    logic        pready;
+
+    // Driver Clocking Block (Synchronous Stimulus Driving)
+    clocking drv_cb @(posedge clk);
+        default input #1step output #1ns;
+        output paddr, pwrite, psel, penable, pwdata;
+        input  pready, prdata;
+    endclocking
+
+    // Monitor Clocking Block (Synchronous Passive Observation)
+    clocking mon_cb @(posedge clk);
+        default input #1step;
+        input paddr, pwrite, psel, penable, pwdata, pready, prdata;
+    endclocking
+
+    // Modports defining directionality
+    modport DRV (clocking drv_cb, input rst_n);
+    modport MON (clocking mon_cb, input rst_n);
+endinterface : bus_if
+```
+
+---
+
+## 4. Virtual Interfaces: Bridging Dynamic Classes to Static RTL
+
+In SystemVerilog, synthesizable RTL modules are **static structures** created at elaboration and compiled into fixed memory locations. In contrast, testbench components (drivers, monitors, scoreboards) are **dynamic OOP classes** instantiated at runtime on the heap.
+
+A class cannot directly contain a hardware `module` or `interface` instance. The solution is the **Virtual Interface**.
+
+![Virtual Interface: Bridging Dynamic Classes to Static Hardware](images/ch2_virtual_interface_bridge.svg)
+
+### Virtual Interface Mechanism
+- A **Virtual Interface** is a typed handle (pointer) to a physical interface instance:
+  `virtual bus_if.DRV vif;`
+- During testbench initialization, the physical interface instantiated in the top-level module is passed to the class-based components via a configuration database or constructor argument.
+- Inside class methods, transactors drive and sample hardware pins via `vif.drv_cb.signal <= value;`.
+
+```systemverilog
+class apb_driver;
+    // Virtual interface handle
+    virtual bus_if.DRV vif;
+
+    function new(virtual bus_if.DRV vif);
+        this.vif = vif;
+    endfunction
+
+    // Cycle-accurate bus write task
+    task drive_write(bit [31:0] addr, bit [31:0] data);
+        // Step 1: SETUP phase
+        @(vif.drv_cb);
+        vif.drv_cb.paddr   <= addr;
+        vif.drv_cb.pwrite  <= 1'b1;
+        vif.drv_cb.psel    <= 1'b1;
+        vif.drv_cb.penable <= 1'b0;
+        vif.drv_cb.pwdata  <= data;
+
+        // Step 2: ACCESS phase
+        @(vif.drv_cb);
+        vif.drv_cb.penable <= 1'b1;
+
+        // Step 3: Wait until peripheral asserts PREADY
+        do begin
+            @(vif.drv_cb);
+        end while (vif.drv_cb.pready !== 1'b1);
+
+        // Step 4: Deassert controls back to IDLE
+        vif.drv_cb.psel    <= 1'b0;
+        vif.drv_cb.penable <= 1'b0;
+    endtask
+endclass
+```
+
+---
+
+## 5. Layered Testbench Architecture
+
+Monolithic testbenches where test logic, protocol formatting, and pin wiggling are intermingled become unmaintainable as designs scale. Production verification environments utilize a **Layered Testbench Architecture**.
+
+![Layered Testbench Architecture in SystemVerilog](images/ch2_layered_testbench.svg)
+
+### The Four Architectural Layers
+1. **Signal & Interface Layer (Physical Layer):**
+   - Wires, bidirectional busses, clock generators, reset sequencers, and SystemVerilog interfaces.
+   - Interacts directly with the physical input/output ports of the DUT.
+2. **Command / Transactor Layer (Protocol Layer):**
+   - **Driver:** Converts high-level transaction objects (`bus_transaction`) into pin-level signal toggles.
+   - **Monitor:** Continuously observes pin-level protocol transitions and reconstructs complete transaction objects.
+3. **Scenario / Transaction Layer:**
+   - **Generators & Sequences:** Generates streams of constrained-random transactions.
+   - Operates entirely in terms of abstract data objects (packets, instructions, frames).
+4. **Test & Verification Core Layer:**
+   - **Test Layer:** Controls the top-level test flow, sets environment configurations, and selects scenario sequences.
+   - **Scoreboard:** Houses algorithmic golden models and queues to verify data integrity and transaction ordering.
+   - **Coverage Collector:** Measures protocol and state completeness.
+
+---
+
+## 6. Building a Self-Checking Testbench with a Queue-Based Scoreboard
+
+Below is a complete, working example illustrating a layered, self-checking SystemVerilog testbench for a synchronous processing pipeline using virtual interfaces, transactors, and a queue-based scoreboard.
+
+```systemverilog
+// 1. Transaction Definition
+class alu_transaction;
+    rand bit [7:0] operand_a;
+    rand bit [7:0] operand_b;
+    rand bit [1:0] opcode; // 0=ADD, 1=SUB, 2=AND, 3=OR
+    bit [8:0]      result;
+
+    function void display(string tag = "ALU_TRANS");
+        $display("[%s] A=%0d B=%0d Op=%0d Result=%0d", 
+                 tag, operand_a, operand_b, opcode, result);
+    endfunction
+endclass
+
+// 2. Scoreboard with In-Order Reference Queue
+class alu_scoreboard;
+    alu_transaction expect_q[$]; // SystemVerilog unbounded queue
+    int match_count = 0;
+    int mismatch_count = 0;
+
+    // Push expected transaction calculated by reference model
+    function void push_expected(alu_transaction tx);
+        alu_transaction exp_tx = new tx; // Shallow copy
+        case (tx.opcode)
+            2'b00: exp_tx.result = tx.operand_a + tx.operand_b;
+            2'b01: exp_tx.result = tx.operand_a - tx.operand_b;
+            2'b10: exp_tx.result = tx.operand_a & tx.operand_b;
+            2'b11: exp_tx.result = tx.operand_a | tx.operand_b;
+        endcase
+        expect_q.push_back(exp_tx);
+    endfunction
+
+    // Check actual transaction observed from DUT
+    function void check_actual(alu_transaction actual_tx);
+        alu_transaction exp_tx;
+        if (expect_q.size() == 0) begin
+            $error("[SCOREBOARD_ERROR] Unexpected output from DUT! Queue is empty.");
+            mismatch_count++;
+            return;
+        end
+
+        exp_tx = expect_q.pop_front();
+        if (exp_tx.result === actual_tx.result) begin
+            $display("[SCOREBOARD_PASS] Match! Exp=0x%0h Act=0x%0h", 
+                     exp_tx.result, actual_tx.result);
+            match_count++;
+        end else begin
+            $error("[SCOREBOARD_FAIL] Mismatch! Exp=0x%0h Act=0x%0h (A=%0d B=%0d Op=%0d)",
+                   exp_tx.result, actual_tx.result, exp_tx.operand_a, exp_tx.operand_b, exp_tx.opcode);
+            mismatch_count++;
+        end
+    endfunction
+
+    function void report();
+        $display("-------------------------------------------");
+        $display("SCOREBOARD REPORT: %0d Matches, %0d Mismatches", 
+                 match_count, mismatch_count);
+        $display("-------------------------------------------");
+    endfunction
+endclass
+```
+
+---
+
+## 7. Learning Resources
+
+- **Books:**
+  - *SystemVerilog for Verification: A Guide to Learning the Testbench Language Features* by Chris Spear & Greg Tumbush (Chapters 3-5: OOP, Interfaces, Clocking Blocks).
+  - *Writing Testbenches Using SystemVerilog* by Janick Bergeron.
+- **Reference Standards:**
+  - IEEE Std 1800-2023 SystemVerilog Language Reference Manual (Section 14: Clocking Blocks, Section 24: Program Blocks, Section 25: Interfaces).
+
+---
+
+## 8. Review Exercises
+
+1. Explain the difference between an interface instance and a virtual interface handle in SystemVerilog. Why can a class not contain an interface instance directly?
+2. What happens if a testbench samples an asynchronous output from a DUT inside the Active region versus inside the Preponed region via a clocking block with `#1step` skew?
+3. In a layered testbench architecture, describe the exact transformation that occurs as data moves from the Scenario Layer down through the Command Layer to the Signal Layer.
+4. Modify the `alu_scoreboard` example to support an out-of-order design where transactions carry an identifier tag (`id`). Which SystemVerilog data structure should replace the simple queue?
 
 ##### Copyright (c) 2026 squared-studio
-

@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 340" width="100%" height="100%">
+  <rect width="100%" height="100%" fill="#0f172a"/>
+  <defs>
+    <marker id="rdmArr" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 8 5 L 0 9 z" fill="#38bdf8"/>
+    </marker>
+  </defs>
+
+  <text x="420" y="32" fill="#f8fafc" font-size="18" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">Hardware Verification Project Lifecycle &amp; Sign-off Milestones</text>
+  <text x="420" y="52" fill="#94a3b8" font-size="12" text-anchor="middle" font-family="system-ui, sans-serif">Phase-gated progression from architectural specification to tape-out readiness</text>
+
+  <!-- 4 Milestone Cards -->
+  <!-- M0: Plan & Architecture -->
+  <g transform="translate(50, 90)">
+    <rect width="165" height="170" rx="8" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+    <rect width="165" height="32" rx="8" fill="#0284c7"/>
+    <text x="82" y="21" fill="#ffffff" font-size="12" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">M0: Plan Freeze</text>
+    <text x="12" y="55" fill="#38bdf8" font-size="10" font-weight="bold" font-family="system-ui, sans-serif">Deliverables:</text>
+    <text x="12" y="75" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">&bull; Feature Matrix</text>
+    <text x="12" y="95" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">&bull; Verification Plan</text>
+    <text x="12" y="115" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">&bull; TB Architecture</text>
+    <text x="12" y="135" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">&bull; Coverage Metrics</text>
+  </g>
+
+  <!-- M1: Environment Bring-up -->
+  <g transform="translate(245, 90)">
+    <rect width="165" height="170" rx="8" fill="#1e293b" stroke="#818cf8" stroke-width="2"/>
+    <rect width="165" height="32" rx="8" fill="#4f46e5"/>
+    <text x="82" y="21" fill="#ffffff" font-size="12" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">M1: Smoke &amp; Base</text>
+    <text x="12" y="55" fill="#818cf8" font-size="10" font-weight="bold" font-family="system-ui, sans-serif">Deliverables:</text>
+    <text x="12" y="75" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">&bull; Agents &amp; Monitors</text>
+    <text x="12" y="95" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">&bull; Basic Read/Write</text>
+    <text x="12" y="115" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">&bull; Smoke test passing</text>
+    <text x="12" y="135" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">&bull; CI pipeline alive</text>
+  </g>
+
+  <!-- M2: Feature Complete -->
+  <g transform="translate(440, 90)">
+    <rect width="165" height="170" rx="8" fill="#1e293b" stroke="#fbbf24" stroke-width="2"/>
+    <rect width="165" height="32" rx="8" fill="#d97706"/>
+    <text x="82" y="21" fill="#ffffff" font-size="12" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">M2: Feature Complete</text>
+    <text x="12" y="55" fill="#fbbf24" font-size="10" font-weight="bold" font-family="system-ui, sans-serif">Deliverables:</text>
+    <text x="12" y="75" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">&bull; All sequences done</text>
+    <text x="12" y="95" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">&bull; Scoreboard checks all</text>
+    <text x="12" y="115" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">&bull; Error injection active</text>
+    <text x="12" y="135" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">&bull; >80% coverage</text>
+  </g>
+
+  <!-- M3: Sign-Off (Closure) -->
+  <g transform="translate(635, 90)">
+    <rect width="165" height="170" rx="8" fill="#065f46" stroke="#34d399" stroke-width="2"/>
+    <rect width="165" height="32" rx="8" fill="#059669"/>
+    <text x="82" y="21" fill="#ffffff" font-size="12" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">M3: Tape-out Signoff</text>
+    <text x="12" y="55" fill="#34d399" font-size="10" font-weight="bold" font-family="system-ui, sans-serif">Sign-off Gates:</text>
+    <text x="12" y="75" fill="#d1fae5" font-size="10" font-family="system-ui, sans-serif">&bull; 100% Func Coverage</text>
+    <text x="12" y="95" fill="#d1fae5" font-size="10" font-family="system-ui, sans-serif">&bull; 100% Code Coverage</text>
+    <text x="12" y="115" fill="#d1fae5" font-size="10" font-family="system-ui, sans-serif">&bull; 0 open critical bugs</text>
+    <text x="12" y="135" fill="#d1fae5" font-size="10" font-family="system-ui, sans-serif">&bull; Stable 7-day run</text>
+  </g>
+
+  <!-- Connectors -->
+  <line x1="215" y1="175" x2="240" y2="175" stroke="#38bdf8" stroke-width="2" marker-end="url(#rdmArr)"/>
+  <line x1="410" y1="175" x2="435" y2="175" stroke="#38bdf8" stroke-width="2" marker-end="url(#rdmArr)"/>
+  <line x1="605" y1="175" x2="630" y2="175" stroke="#38bdf8" stroke-width="2" marker-end="url(#rdmArr)"/>
+
+  <text x="420" y="300" fill="#64748b" font-size="11" text-anchor="middle" font-family="system-ui, sans-serif">Rigorous gate reviews prevent premature tape-outs and multimillion-dollar mask losses</text>
+</svg>

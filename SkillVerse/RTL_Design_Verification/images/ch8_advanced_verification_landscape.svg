@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 360" width="100%" height="100%">
+  <rect width="100%" height="100%" fill="#0f172a"/>
+  <text x="430" y="32" fill="#f8fafc" font-size="18" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">Advanced Verification Technologies Landscape</text>
+  <text x="430" y="52" fill="#94a3b8" font-size="12" text-anchor="middle" font-family="system-ui, sans-serif">Next-generation methodologies addressing billion-gate SoC complexity</text>
+
+  <!-- 4 Pillars -->
+  <!-- Pillar 1: Formal Property Verification -->
+  <g transform="translate(40, 85)">
+    <rect width="175" height="235" rx="8" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+    <rect width="175" height="35" rx="8" fill="#0284c7"/>
+    <text x="87" y="22" fill="#ffffff" font-size="12" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">Formal Verification</text>
+    <text x="12" y="60" fill="#38bdf8" font-size="10" font-weight="bold" font-family="system-ui, sans-serif">Key Trends:</text>
+    <text x="12" y="80" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">&bull; Automated APPs</text>
+    <text x="18" y="95" fill="#cbd5e1" font-size="9" font-family="system-ui, sans-serif">(Connectivity, CSRs)</text>
+    <text x="12" y="115" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">&bull; Deep sequential</text>
+    <text x="18" y="130" fill="#cbd5e1" font-size="9" font-family="system-ui, sans-serif">model checking</text>
+    <text x="12" y="150" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">&bull; Equivalence Check</text>
+    <text x="12" y="175" fill="#34d399" font-size="10" font-family="system-ui, sans-serif">Exhaustive corner-case</text>
+    <text x="12" y="190" fill="#34d399" font-size="10" font-family="system-ui, sans-serif">guarantee</text>
+  </g>
+
+  <!-- Pillar 2: Emulation & Prototyping -->
+  <g transform="translate(240, 85)">
+    <rect width="175" height="235" rx="8" fill="#1e293b" stroke="#818cf8" stroke-width="2"/>
+    <rect width="175" height="35" rx="8" fill="#4f46e5"/>
+    <text x="87" y="22" fill="#ffffff" font-size="12" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">Hardware Emulation</text>
+    <text x="12" y="60" fill="#818cf8" font-size="10" font-weight="bold" font-family="system-ui, sans-serif">Key Trends:</text>
+    <text x="12" y="80" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">&bull; Multi-billion gate</text>
+    <text x="18" y="95" fill="#cbd5e1" font-size="9" font-family="system-ui, sans-serif">FPGA/Custom arrays</text>
+    <text x="12" y="115" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">&bull; Virtual Host PCIe/ETH</text>
+    <text x="12" y="135" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">&bull; Linux OS &amp; driver boot</text>
+    <text x="12" y="175" fill="#34d399" font-size="10" font-family="system-ui, sans-serif">10MHz+ execution</text>
+    <text x="12" y="190" fill="#34d399" font-size="10" font-family="system-ui, sans-serif">speedup</text>
+  </g>
+
+  <!-- Pillar 3: Portable Stimulus (PSS) -->
+  <g transform="translate(440, 85)">
+    <rect width="175" height="235" rx="8" fill="#1e293b" stroke="#fbbf24" stroke-width="2"/>
+    <rect width="175" height="35" rx="8" fill="#d97706"/>
+    <text x="87" y="22" fill="#ffffff" font-size="12" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">Portable Stimulus (PSS)</text>
+    <text x="12" y="60" fill="#fbbf24" font-size="10" font-weight="bold" font-family="system-ui, sans-serif">Key Trends:</text>
+    <text x="12" y="80" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">&bull; Accellera PSS 2.0</text>
+    <text x="12" y="100" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">&bull; Single scenario spec</text>
+    <text x="18" y="115" fill="#cbd5e1" font-size="9" font-family="system-ui, sans-serif">targets Sim, Emu, Silicon</text>
+    <text x="12" y="135" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">&bull; Graph-based intent</text>
+    <text x="12" y="175" fill="#34d399" font-size="10" font-family="system-ui, sans-serif">True test reuse across</text>
+    <text x="12" y="190" fill="#34d399" font-size="10" font-family="system-ui, sans-serif">all platforms</text>
+  </g>
+
+  <!-- Pillar 4: AI & ML in Verification -->
+  <g transform="translate(640, 85)">
+    <rect width="175" height="235" rx="8" fill="#1e293b" stroke="#f472b6" stroke-width="2"/>
+    <rect width="175" height="35" rx="8" fill="#db2777"/>
+    <text x="87" y="22" fill="#ffffff" font-size="12" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">AI / ML Verification</text>
+    <text x="12" y="60" fill="#f472b6" font-size="10" font-weight="bold" font-family="system-ui, sans-serif">Key Trends:</text>
+    <text x="12" y="80" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">&bull; Reinforcement learn</text>
+    <text x="18" y="95" fill="#cbd5e1" font-size="9" font-family="system-ui, sans-serif">for coverage closure</text>
+    <text x="12" y="115" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">&bull; Smart seed selection</text>
+    <text x="12" y="135" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">&bull; Auto bug triage &amp; root</text>
+    <text x="18" y="150" fill="#cbd5e1" font-size="9" font-family="system-ui, sans-serif">cause classification</text>
+    <text x="12" y="175" fill="#34d399" font-size="10" font-family="system-ui, sans-serif">3x-10x coverage closure</text>
+    <text x="12" y="190" fill="#34d399" font-size="10" font-family="system-ui, sans-serif">acceleration</text>
+  </g>
+</svg>

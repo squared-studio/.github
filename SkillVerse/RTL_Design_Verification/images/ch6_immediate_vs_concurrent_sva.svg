@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 350" width="100%" height="100%">
+  <rect width="100%" height="100%" fill="#0f172a"/>
+  <text x="420" y="32" fill="#f8fafc" font-size="18" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">SystemVerilog Assertions: Immediate vs. Concurrent</text>
+  <text x="420" y="52" fill="#94a3b8" font-size="12" text-anchor="middle" font-family="system-ui, sans-serif">Procedural simulation checking vs. Cycle-based temporal property evaluation</text>
+
+  <!-- Left: Immediate Assertions -->
+  <g transform="translate(60, 80)">
+    <rect width="330" height="235" rx="10" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+    <rect width="330" height="35" rx="10" fill="#0284c7"/>
+    <text x="165" y="22" fill="#ffffff" font-size="13" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">Immediate Assertions</text>
+    
+    <text x="20" y="65" fill="#38bdf8" font-size="11" font-weight="bold" font-family="system-ui, sans-serif">Characteristics:</text>
+    <text x="20" y="85" fill="#cbd5e1" font-size="11" font-family="system-ui, sans-serif">&bull; Procedural statements inside `always` or `initial`</text>
+    <text x="20" y="105" fill="#cbd5e1" font-size="11" font-family="system-ui, sans-serif">&bull; Evaluates instantaneously as code executes</text>
+    <text x="20" y="125" fill="#cbd5e1" font-size="11" font-family="system-ui, sans-serif">&bull; Prone to simulation delta-cycle glitches</text>
+
+    <rect x="20" y="145" width="290" height="65" rx="6" fill="#0f172a" stroke="#38bdf8"/>
+    <text x="30" y="165" fill="#93c5fd" font-size="11" font-family="monospace">always_comb begin</text>
+    <text x="45" y="183" fill="#38bdf8" font-size="11" font-weight="bold" font-family="monospace">assert (sel &lt; 4);</text>
+    <text x="30" y="201" fill="#93c5fd" font-size="11" font-family="monospace">end</text>
+  </g>
+
+  <!-- Right: Concurrent Assertions -->
+  <g transform="translate(450, 80)">
+    <rect width="330" height="235" rx="10" fill="#1e293b" stroke="#34d399" stroke-width="2"/>
+    <rect width="330" height="35" rx="10" fill="#059669"/>
+    <text x="165" y="22" fill="#ffffff" font-size="13" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">Concurrent Assertions (SVA)</text>
+    
+    <text x="20" y="65" fill="#34d399" font-size="11" font-weight="bold" font-family="system-ui, sans-serif">Characteristics:</text>
+    <text x="20" y="85" fill="#cbd5e1" font-size="11" font-family="system-ui, sans-serif">&bull; Clock-driven multi-cycle temporal sequences</text>
+    <text x="20" y="105" fill="#cbd5e1" font-size="11" font-family="system-ui, sans-serif">&bull; Sampled in Preponed region (zero race!)</text>
+    <text x="20" y="125" fill="#cbd5e1" font-size="11" font-family="system-ui, sans-serif">&bull; Fully synthesizable by formal model checkers</text>
+
+    <rect x="20" y="145" width="290" height="65" rx="6" fill="#0f172a" stroke="#34d399"/>
+    <text x="30" y="165" fill="#a7f3d0" font-size="10" font-family="monospace">property req_ack_p;</text>
+    <text x="45" y="183" fill="#34d399" font-size="10" font-weight="bold" font-family="monospace">@(posedge clk) req |-&gt; ##[1:3] ack;</text>
+    <text x="30" y="201" fill="#a7f3d0" font-size="10" font-family="monospace">endproperty : req_ack_p</text>
+  </g>
+</svg>

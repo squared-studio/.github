@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 380" width="100%" height="100%">
+  <rect width="100%" height="100%" fill="#0f172a"/>
+  <defs>
+    <marker id="treeArr" viewBox="0 0 10 10" refX="5" refY="6" markerWidth="5" markerHeight="5" orient="auto">
+      <path d="M 1 0 L 5 8 L 9 0 z" fill="#64748b"/>
+    </marker>
+  </defs>
+
+  <text x="430" y="32" fill="#f8fafc" font-size="18" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">Standard UVM Testbench Hierarchy (Component Tree)</text>
+  <text x="430" y="52" fill="#94a3b8" font-size="12" text-anchor="middle" font-family="system-ui, sans-serif">Hierarchical structure derived from uvm_component with top-to-bottom instantiation</text>
+
+  <!-- Root: uvm_top -->
+  <g transform="translate(370, 70)">
+    <rect width="120" height="35" rx="6" fill="#0284c7" stroke="#38bdf8"/>
+    <text x="60" y="22" fill="#ffffff" font-size="12" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">uvm_top</text>
+  </g>
+
+  <!-- uvm_test -->
+  <g transform="translate(360, 130)">
+    <rect width="140" height="40" rx="6" fill="#1e3a8a" stroke="#60a5fa" stroke-width="2"/>
+    <text x="70" y="24" fill="#ffffff" font-size="13" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">uvm_test</text>
+  </g>
+
+  <!-- uvm_env -->
+  <g transform="translate(360, 195)">
+    <rect width="140" height="40" rx="6" fill="#312e81" stroke="#a78bfa" stroke-width="2"/>
+    <text x="70" y="24" fill="#ffffff" font-size="13" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">uvm_env</text>
+  </g>
+
+  <!-- Left: uvm_agent (Active) -->
+  <g transform="translate(180, 260)">
+    <rect width="140" height="40" rx="6" fill="#065f46" stroke="#34d399" stroke-width="2"/>
+    <text x="70" y="24" fill="#ffffff" font-size="13" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">uvm_agent</text>
+  </g>
+
+  <!-- Center-Right: Scoreboard -->
+  <g transform="translate(420, 260)">
+    <rect width="130" height="40" rx="6" fill="#78350f" stroke="#fbbf24" stroke-width="2"/>
+    <text x="65" y="24" fill="#ffffff" font-size="12" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">uvm_scoreboard</text>
+  </g>
+
+  <!-- Far-Right: Coverage -->
+  <g transform="translate(600, 260)">
+    <rect width="140" height="40" rx="6" fill="#831843" stroke="#f472b6" stroke-width="2"/>
+    <text x="70" y="24" fill="#ffffff" font-size="12" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">uvm_subscriber</text>
+  </g>
+
+  <!-- Agent Leaves -->
+  <!-- Sequencer -->
+  <g transform="translate(80, 325)">
+    <rect width="100" height="35" rx="5" fill="#1e293b" stroke="#38bdf8"/>
+    <text x="50" y="22" fill="#38bdf8" font-size="11" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">Sequencer</text>
+  </g>
+  <!-- Driver -->
+  <g transform="translate(190, 325)">
+    <rect width="100" height="35" rx="5" fill="#1e293b" stroke="#60a5fa"/>
+    <text x="50" y="22" fill="#60a5fa" font-size="11" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">Driver</text>
+  </g>
+  <!-- Monitor -->
+  <g transform="translate(300, 325)">
+    <rect width="100" height="35" rx="5" fill="#1e293b" stroke="#34d399"/>
+    <text x="50" y="22" fill="#34d399" font-size="11" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">Monitor</text>
+  </g>
+
+  <!-- Tree Lines -->
+  <line x1="430" y1="105" x2="430" y2="125" stroke="#64748b" stroke-width="1.5" marker-end="url(#treeArr)"/>
+  <line x1="430" y1="170" x2="430" y2="190" stroke="#64748b" stroke-width="1.5" marker-end="url(#treeArr)"/>
+  <path d="M 430 235 L 430 248 L 250 248 L 250 255" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#treeArr)"/>
+  <path d="M 430 235 L 430 248 L 485 248 L 485 255" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#treeArr)"/>
+  <path d="M 430 235 L 430 248 L 670 248 L 670 255" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#treeArr)"/>
+
+  <!-- Lines inside Agent -->
+  <path d="M 250 300 L 250 312 L 130 312 L 130 320" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#treeArr)"/>
+  <line x1="250" y1="300" x2="250" y2="320" stroke="#64748b" stroke-width="1.5" marker-end="url(#treeArr)"/>
+  <path d="M 250 300 L 250 312 L 350 312 L 350 320" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#treeArr)"/>
+</svg>

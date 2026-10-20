@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 380" width="100%" height="100%">
+  <rect width="100%" height="100%" fill="#0f172a"/>
+  <defs>
+    <marker id="darr" viewBox="0 0 10 10" refX="5" refY="6" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 1 0 L 5 8 L 9 0 z" fill="#94a3b8"/>
+    </marker>
+  </defs>
+
+  <text x="420" y="32" fill="#f8fafc" font-size="18" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">Layered Testbench Architecture in SystemVerilog</text>
+  <text x="420" y="52" fill="#94a3b8" font-size="12" text-anchor="middle" font-family="system-ui, sans-serif">Separation of concerns across abstraction layers for maximum reuse</text>
+
+  <!-- Layer 4: Test Layer -->
+  <g transform="translate(100, 75)">
+    <rect width="640" height="50" rx="8" fill="#1e3a8a" stroke="#60a5fa" stroke-width="2"/>
+    <text x="320" y="24" fill="#ffffff" font-size="14" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">4. Test Layer (User Test Scenarios)</text>
+    <text x="320" y="42" fill="#bfdbfe" font-size="11" text-anchor="middle" font-family="system-ui, sans-serif">Configures environment, selects sequences (e.g. read_after_write_test, fifo_overflow_test)</text>
+  </g>
+
+  <!-- Layer 3: Scenario Layer -->
+  <g transform="translate(100, 140)">
+    <rect width="640" height="50" rx="8" fill="#065f46" stroke="#34d399" stroke-width="2"/>
+    <text x="320" y="24" fill="#ffffff" font-size="14" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">3. Scenario &amp; Transaction Layer (Sequences &amp; Generators)</text>
+    <text x="320" y="42" fill="#a7f3d0" font-size="11" text-anchor="middle" font-family="system-ui, sans-serif">Creates streams of transaction objects (Packet, BusTransaction) with constrained randomization</text>
+  </g>
+
+  <!-- Layer 2: Functional / Command Layer -->
+  <g transform="translate(100, 205)">
+    <rect width="640" height="50" rx="8" fill="#78350f" stroke="#fbbf24" stroke-width="2"/>
+    <text x="320" y="24" fill="#ffffff" font-size="14" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">2. Command Layer (Drivers, Monitors, Scoreboard, Coverage)</text>
+    <text x="320" y="42" fill="#fde68a" font-size="11" text-anchor="middle" font-family="system-ui, sans-serif">Translates transaction objects into pin-level cycles; unpacks responses back to transactions</text>
+  </g>
+
+  <!-- Layer 1: Signal / Interface Layer -->
+  <g transform="translate(100, 270)">
+    <rect width="640" height="50" rx="8" fill="#831843" stroke="#f472b6" stroke-width="2"/>
+    <text x="320" y="24" fill="#ffffff" font-size="14" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">1. Signal &amp; Interface Layer (Virtual Interface, Clocking Blocks)</text>
+    <text x="320" y="42" fill="#fbcfe8" font-size="11" text-anchor="middle" font-family="system-ui, sans-serif">Direct pin connections to DUT ports; provides synchronous, race-free signal driving &amp; sampling</text>
+  </g>
+
+  <!-- DUT Box at Bottom -->
+  <g transform="translate(250, 335)">
+    <rect width="340" height="35" rx="6" fill="#334155" stroke="#94a3b8" stroke-width="1.5"/>
+    <text x="170" y="22" fill="#f8fafc" font-size="12" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">Design Under Test (DUT RTL)</text>
+  </g>
+
+  <!-- Downward arrows between layers -->
+  <line x1="420" y1="125" x2="420" y2="135" stroke="#94a3b8" stroke-width="2" marker-end="url(#darr)"/>
+  <line x1="420" y1="190" x2="420" y2="200" stroke="#94a3b8" stroke-width="2" marker-end="url(#darr)"/>
+  <line x1="420" y1="255" x2="420" y2="265" stroke="#94a3b8" stroke-width="2" marker-end="url(#darr)"/>
+  <line x1="420" y1="320" x2="420" y2="330" stroke="#94a3b8" stroke-width="2" marker-end="url(#darr)"/>
+</svg>

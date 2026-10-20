@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 370" width="100%" height="100%">
+  <rect width="100%" height="100%" fill="#0f172a"/>
+  <text x="420" y="32" fill="#f8fafc" font-size="18" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">Code Coverage vs. Functional Coverage Convergence Matrix</text>
+  <text x="420" y="52" fill="#94a3b8" font-size="12" text-anchor="middle" font-family="system-ui, sans-serif">Determining true verification closure across the 4 quadrant states</text>
+
+  <!-- 4 Quadrants -->
+  <!-- Q1 (Top Left): Low Code, High Func -->
+  <g transform="translate(100, 80)">
+    <rect width="300" height="120" rx="8" fill="#1e293b" stroke="#f59e0b" stroke-width="2"/>
+    <text x="150" y="28" fill="#f59e0b" font-size="13" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">Low Code Cov / High Func Cov</text>
+    <text x="15" y="55" fill="#fde68a" font-size="10" font-weight="bold" font-family="system-ui, sans-serif">Diagnosis: Incomplete Functional Model</text>
+    <text x="15" y="75" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">&bull; Functional covergroups missing key RTL features</text>
+    <text x="15" y="92" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">&bull; False sense of security! Expand functional plan</text>
+  </g>
+
+  <!-- Q2 (Top Right): High Code, High Func (GOAL) -->
+  <g transform="translate(440, 80)">
+    <rect width="300" height="120" rx="8" fill="#064e3b" stroke="#34d399" stroke-width="2.5"/>
+    <text x="150" y="28" fill="#34d399" font-size="13" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">High Code Cov / High Func Cov</text>
+    <text x="150" y="55" fill="#ffffff" font-size="12" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">&check; VERIFICATION CLOSURE (TAPE-OUT)</text>
+    <text x="15" y="80" fill="#d1fae5" font-size="10" font-family="system-ui, sans-serif">&bull; RTL thoroughly exercised and all spec items hit</text>
+    <text x="15" y="98" fill="#d1fae5" font-size="10" font-family="system-ui, sans-serif">&bull; Sign-off criteria met with zero critical bugs</text>
+  </g>
+
+  <!-- Q3 (Bottom Left): Low Code, Low Func -->
+  <g transform="translate(100, 220)">
+    <rect width="300" height="120" rx="8" fill="#1e293b" stroke="#ef4444" stroke-width="2"/>
+    <text x="150" y="28" fill="#ef4444" font-size="13" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">Low Code Cov / Low Func Cov</text>
+    <text x="15" y="55" fill="#fca5a5" font-size="10" font-weight="bold" font-family="system-ui, sans-serif">Diagnosis: Early Verification Phase</text>
+    <text x="15" y="75" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">&bull; Basic testbench bring-up; few tests written</text>
+    <text x="15" y="92" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">&bull; Need constrained-random regression scale-up</text>
+  </g>
+
+  <!-- Q4 (Bottom Right): High Code, Low Func -->
+  <g transform="translate(440, 220)">
+    <rect width="300" height="120" rx="8" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+    <text x="150" y="28" fill="#38bdf8" font-size="13" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">High Code Cov / Low Func Cov</text>
+    <text x="15" y="55" fill="#bae6fd" font-size="10" font-weight="bold" font-family="system-ui, sans-serif">Diagnosis: Unfocused Stimulus</text>
+    <text x="15" y="75" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">&bull; Code is toggling, but spec features unverified</text>
+    <text x="15" y="92" fill="#cbd5e1" font-size="10" font-family="system-ui, sans-serif">&bull; Write targeted sequences to hit boundary bins</text>
+  </g>
+
+  <!-- Axis labels -->
+  <text x="50" y="210" fill="#94a3b8" font-size="12" font-weight="bold" transform="rotate(-90 50 210)" text-anchor="middle" font-family="system-ui, sans-serif">Functional Coverage &uarr;</text>
+  <text x="420" y="360" fill="#94a3b8" font-size="12" font-weight="bold" text-anchor="middle" font-family="system-ui, sans-serif">Code Coverage &rarr;</text>
+</svg>
