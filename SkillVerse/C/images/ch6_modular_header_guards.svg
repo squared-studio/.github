@@ -1,0 +1,84 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 440" width="100%" height="100%">
+  <defs>
+    <style>
+      .bg { fill: #0b1120; }
+      .card { fill: #131d33; stroke: #1e293b; stroke-width: 1.5; rx: 10; }
+      .title { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 19px; fill: #f8fafc; }
+      .sec-title { font-family: 'Inter', system-ui, sans-serif; font-weight: 600; font-size: 14px; fill: #38bdf8; }
+      .label { font-family: 'Inter', system-ui, sans-serif; font-size: 12px; fill: #cbd5e1; }
+      .sublabel { font-family: 'Inter', system-ui, sans-serif; font-size: 11px; fill: #94a3b8; }
+      .code-txt { font-family: 'JetBrains Mono', Consolas, monospace; font-size: 12px; fill: #34d399; font-weight: 600; }
+      .file-rect { fill: #1e293b; stroke: #38bdf8; stroke-width: 1.8; rx: 6; }
+    </style>
+    <marker id="arr-inc" viewBox="0 0 8 8" refX="5" refY="4" markerWidth="5" markerHeight="5" orient="auto">
+      <path d="M 0 1 L 7 4 L 0 7 z" fill="#38bdf8" />
+    </marker>
+  </defs>
+
+  <rect width="960" height="440" class="bg" rx="14"/>
+  <text x="480" y="36" text-anchor="middle" class="title">Modular C Architecture, Include Graph &amp; Header Guards (#ifndef)</text>
+
+  <!-- Left: Dependency Tree Graph -->
+  <g transform="translate(45, 55)">
+    <rect width="400" height="360" class="card"/>
+    <text x="20" y="28" class="sec-title">Header Dependency Graph</text>
+
+    <!-- Node 1: config.h -->
+    <g transform="translate(130, 45)">
+      <rect x="0" y="0" width="140" height="45" class="file-rect" stroke="#fbbf24"/>
+      <text x="70" y="26" text-anchor="middle" class="code-txt" fill="#fbbf24">config.h</text>
+    </g>
+
+    <!-- Edges from config.h to driver.h and app.h -->
+    <path d="M 170,90 L 90,140" stroke="#38bdf8" stroke-width="2" marker-end="url(#arr-inc)"/>
+    <path d="M 230,90 L 310,140" stroke="#38bdf8" stroke-width="2" marker-end="url(#arr-inc)"/>
+
+    <!-- Node 2: driver.h -->
+    <g transform="translate(20, 140)">
+      <rect x="0" y="0" width="140" height="45" class="file-rect"/>
+      <text x="70" y="26" text-anchor="middle" class="code-txt">driver.h</text>
+    </g>
+
+    <!-- Node 3: sensor.h -->
+    <g transform="translate(240, 140)">
+      <rect x="0" y="0" width="140" height="45" class="file-rect"/>
+      <text x="70" y="26" text-anchor="middle" class="code-txt">sensor.h</text>
+    </g>
+
+    <!-- Edges from driver and sensor to main.c -->
+    <path d="M 90,185 L 170,235" stroke="#38bdf8" stroke-width="2" marker-end="url(#arr-inc)"/>
+    <path d="M 310,185 L 230,235" stroke="#38bdf8" stroke-width="2" marker-end="url(#arr-inc)"/>
+
+    <!-- Node 4: main.c -->
+    <g transform="translate(130, 235)">
+      <rect x="0" y="0" width="140" height="45" class="file-rect" stroke="#34d399"/>
+      <text x="70" y="26" text-anchor="middle" class="code-txt" fill="#34d399">main.c</text>
+    </g>
+
+    <text x="20" y="320" class="sublabel">Without header guards, config.h is included TWICE into main.c,</text>
+    <text x="20" y="338" class="sublabel" style="fill:#f43f5e;">triggering "redefinition of struct/typedef" compile error!</text>
+  </g>
+
+  <!-- Right: Header Guard Pattern -->
+  <g transform="translate(475, 55)">
+    <rect width="440" height="360" class="card"/>
+    <text x="20" y="28" class="sec-title">Standard Header Guard Idiom &amp; #pragma once</text>
+
+    <!-- Classic Idiom -->
+    <rect x="15" y="42" width="410" height="150" rx="6" fill="#0b1120" stroke="#1e293b"/>
+    <text x="25" y="65" class="label" font-weight="bold" fill="#38bdf8">1. Standard Include Guard (Universal ISO C):</text>
+    <text x="25" y="88" class="code-txt">#ifndef DRIVER_H</text>
+    <text x="25" y="108" class="code-txt">#define DRIVER_H</text>
+    <text x="45" y="132" class="sublabel">// Prototypes, structs, extern declarations go here</text>
+    <text x="45" y="152" class="code-txt">void driver_init(void);</text>
+    <text x="25" y="176" class="code-txt">#endif // DRIVER_H</text>
+
+    <!-- Modern pragma once -->
+    <rect x="15" y="205" width="410" height="130" rx="6" fill="#0b1120" stroke="#1e293b"/>
+    <text x="25" y="228" class="label" font-weight="bold" fill="#34d399">2. Non-Standard but Universal #pragma once:</text>
+    <text x="25" y="252" class="code-txt">#pragma once</text>
+    <text x="25" y="274" class="code-txt">void driver_init(void);</text>
+    <text x="25" y="300" class="sublabel">• Supported by GCC, Clang, MSVC, and ARM toolchains.</text>
+    <text x="25" y="318" class="sublabel">• Avoids guard macro naming collisions across libraries.</text>
+  </g>
+</svg>

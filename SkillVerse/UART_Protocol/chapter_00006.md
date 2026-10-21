@@ -1,6 +1,7 @@
 # Error Detection and Handling
 
 ### Learning Objectives
+
 - Master the physical and architectural root causes of the four core UART error conditions: **Framing Error (FE)**, **Parity Error (PE)**, **Overrun Error (OE)**, and **Break Indicator (BI)**.
 - Analyze the status reporting mechanism in the standard **Line Status Register (LSR)**.
 - Understand how error flags are associated with specific bytes in hardware FIFO queues.
@@ -22,6 +23,7 @@ The standard UART specification defines four primary hardware error conditions:
 ## Detailed Analysis of Error Types
 
 ### Framing Error (FE)
+
 - **Definition:** Occurs when the receiver samples the physical line during the expected **Stop bit interval** and observes a **Logic 0 (SPACE)** instead of the mandatory **Logic 1 (MARK)**.
 - **Physical Causes:**
   1. **Baud Rate Mismatch:** If the transmitter and receiver clocks differ by more than $\pm 2.5\%$, the accumulated timing error causes the receiver to sample the Stop bit either too early (sampling the MSB or Parity bit) or too late (sampling the NEXT character's Start bit).
@@ -31,6 +33,7 @@ The standard UART specification defines four primary hardware error conditions:
 - **Hardware Action:** The receiver sets the `FE` bit in the Line Status Register (`LSR[3] = 1`). The corrupted character is still pushed into the RX FIFO or RBR so software can inspect the erroneous byte.
 
 ### Parity Error (PE)
+
 - **Definition:** Occurs when parity checking is enabled, and the received parity bit does not match the parity mathematically recalculated across the received data bits.
 - **Physical Causes:**
   - An electromagnetic noise pulse flipped an odd number of bits (typically a single bit) during transmission across the wire.
@@ -43,6 +46,7 @@ The standard UART specification defines four primary hardware error conditions:
 ![Overrun and Break Errors](images/ch6_overrun_and_break.svg)
 
 ### Overrun Error (OE)
+
 - **Definition:** Occurs when a newly assembled character in the Receiver Shift Register (RSR) is ready to be transferred into the Receiver Buffer Register (RBR) or RX FIFO, but the buffer is **already full and has not been read by software**.
 - **Physical Consequences (Data Loss!):**
   - In most UART implementations, the existing byte in `RBR` is **preserved**, and the newly arrived incoming byte is **discarded (dropped)**.
@@ -52,6 +56,7 @@ The standard UART specification defines four primary hardware error conditions:
 - **Hardware Action:** The receiver asserts `LSR[1] = 1`.
 
 ### Break Indicator (BI)
+
 - **Definition:** Occurs when the incoming `UART_RX` line is held continuously in the **SPACE (Logic 0)** state for longer than an entire frame period (typically $> 10$ to $12$ consecutive bit periods).
 - **Physical Meaning & Use Cases:**
   1. **Deliberate Attention Signal:** In telecom and networking equipment (e.g., Cisco routers), sending a serial "Break" by holding TX LOW for 250 ms forces the remote target into firmware recovery mode or ROM monitor prompt.
@@ -65,16 +70,16 @@ The standard UART specification defines four primary hardware error conditions:
 
 In industry-standard 16550-compatible UART controllers, errors are reported via the read-only **Line Status Register (LSR)** at memory-mapped offset `0x05`:
 
-| Bit Index | Flag Mnemonic | Name | Detailed Architectural Description |
-|:---:|:---:|---|---|
-| `LSR[0]` | **DR** | Data Ready | `1` = At least one valid unread byte is present in RBR or RX FIFO. |
-| `LSR[1]` | **OE** | Overrun Error | `1` = Data loss occurred due to unread buffer overflow. Cleared on read. |
-| `LSR[2]` | **PE** | Parity Error | `1` = Received parity bit did not match calculated parity. |
-| `LSR[3]` | **FE** | Framing Error | `1` = Stop bit was sampled as `0` instead of `1`. |
-| `LSR[4]` | **BI** | Break Indicator | `1` = Line was held LOW for longer than a full frame period. |
-| `LSR[5]` | **THRE** | Transmitter Holding Reg Empty | `1` = THR is empty; software can write the next outbound byte. |
-| `LSR[6]` | **TEMT** | Transmitter Empty | `1` = Both THR and TSR are empty; serial line is completely idle. |
-| `LSR[7]` | **FIFO_ERR** | Error in RX FIFO | `1` = At least one byte currently queued in the RX FIFO has an active PE, FE, or BI error flag. |
+| Bit Index | Flag Mnemonic | Name                          | Detailed Architectural Description                                                              |
+| :-------: | :-----------: | ----------------------------- | ----------------------------------------------------------------------------------------------- |
+| `LSR[0]`  |    **DR**     | Data Ready                    | `1` = At least one valid unread byte is present in RBR or RX FIFO.                              |
+| `LSR[1]`  |    **OE**     | Overrun Error                 | `1` = Data loss occurred due to unread buffer overflow. Cleared on read.                        |
+| `LSR[2]`  |    **PE**     | Parity Error                  | `1` = Received parity bit did not match calculated parity.                                      |
+| `LSR[3]`  |    **FE**     | Framing Error                 | `1` = Stop bit was sampled as `0` instead of `1`.                                               |
+| `LSR[4]`  |    **BI**     | Break Indicator               | `1` = Line was held LOW for longer than a full frame period.                                    |
+| `LSR[5]`  |   **THRE**    | Transmitter Holding Reg Empty | `1` = THR is empty; software can write the next outbound byte.                                  |
+| `LSR[6]`  |   **TEMT**    | Transmitter Empty             | `1` = Both THR and TSR are empty; serial line is completely idle.                               |
+| `LSR[7]`  | **FIFO_ERR**  | Error in RX FIFO              | `1` = At least one byte currently queued in the RX FIFO has an active PE, FE, or BI error flag. |
 
 ---
 
@@ -95,6 +100,7 @@ RX FIFO Memory Word: | Bit 10: BI | Bit 9: FE | Bit 8: PE    |  <-- 3 Error Bits
 ```
 
 ### The 11-Bit FIFO Architecture:
+
 - The RX FIFO is not merely 8 bits wide; it is **11 bits wide** per entry!
 - Bits `[7:0]` store the received data character.
 - Bits `[10:8]` store the status flags (`BI`, `FE`, `PE`) associated with that exact character.
@@ -135,6 +141,7 @@ When a UART error occurs in an embedded system, the device driver must execute a
 ```
 
 ### Key Recovery Steps:
+
 1. **Clear Error Flags:** Reading the `LSR` automatically clears the `OE`, `PE`, `FE`, and `BI` status flags in hardware.
 2. **Flush Corrupted Data:** If a Framing Error or Break condition is detected, the receiver may have lost bit alignment. Software should read and discard the corrupted byte from `RBR` to prevent application software from interpreting noise as commands.
 3. **Upper-Layer Checksums (CRC):** Because single-bit parity cannot detect 2-bit errors, mission-critical communications (such as Modbus RTU or aerospace telemetry) always append a 16-bit or 32-bit **Cyclic Redundancy Check (CRC)** to the payload. If a packet has a CRC mismatch, the entire packet is rejected and retransmitted.
@@ -154,14 +161,18 @@ When a UART error occurs in an embedded system, the device driver must execute a
 ## Review Questions
 
 ### Question 1
+
 A serial terminal connected to an embedded Linux board is displaying random garbled characters (e.g., `~?`). When inspecting the UART Line Status Register, `LSR[3]` (Framing Error) is continuously set. What is the most likely root cause?
+
 <details>
 <summary><b>View Answer</b></summary>
 The most likely root cause is a **Baud Rate Mismatch**. If the board is transmitting at 115,200 baud but the terminal emulator is configured for 9600 baud (or vice versa), the receiver's bit sampling clock will completely misalign with the incoming waveform, causing the Stop bit to be sampled when the line is LOW, triggering continuous Framing Errors and garbled text. Another common cause is mismatched data bit lengths (e.g., 7 bits vs. 8 bits).
 </details>
 
 ### Question 2
+
 Explain why a 2-bit bit-flip error cannot be detected by standard UART Even or Odd parity checking.
+
 <details>
 <summary><b>View Answer</b></summary>
 Parity checking is a single-bit parity (modulo-2) reduction:
@@ -171,14 +182,18 @@ Because adding or subtracting an even number leaves the parity unchanged, the re
 </details>
 
 ### Question 3
+
 How does an 11-bit wide RX FIFO prevent a software driver from mistakenly discarding good bytes when an error occurs in the middle of a multi-byte stream?
+
 <details>
 <summary><b>View Answer</b></summary>
 In an 11-bit wide FIFO, each entry stores 8 data bits plus 3 individual error status flags (`PE`, `FE`, `BI`). The hardware only reflects the error flags of the byte **currently at the head of the FIFO** into the Line Status Register (`LSR`). When software reads the FIFO byte-by-byte, valid bytes precede the corrupted byte with `LSR[3:2] = 00`. When the corrupted byte reaches the read pointer, `LSR` flags the specific error for that byte alone. Subsequent valid bytes in the FIFO retain their clean status.
 </details>
 
 ### Question 4
+
 What distinguishes a Framing Error from a Break Condition?
+
 <details>
 <summary><b>View Answer</b></summary>
 Both involve observing a Logic 0 when Logic 1 was expected. However:
@@ -189,4 +204,3 @@ Both involve observing a Logic 0 when Logic 1 was expected. However:
 ---
 
 ##### Copyright (c) 2026 squared-studio
-

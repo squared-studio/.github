@@ -2,7 +2,7 @@
 
 ## Introduction
 
-Control flow statements are the traffic directors of SystemVerilog, determining the execution order of your code. They empower you to create dynamic and responsive designs and verification environments.  Mastering these constructs is essential for modeling complex hardware behavior, building sophisticated testbenches, and implementing algorithms within SystemVerilog.  Effective control flow leads to code that is not only functional but also readable, maintainable, and efficient for both simulation and hardware synthesis.
+Control flow statements are the traffic directors of SystemVerilog, determining the execution order of your code. They empower you to create dynamic and responsive designs and verification environments. Mastering these constructs is essential for modeling complex hardware behavior, building sophisticated testbenches, and implementing algorithms within SystemVerilog. Effective control flow leads to code that is not only functional but also readable, maintainable, and efficient for both simulation and hardware synthesis.
 
 ## Learning Goals
 
@@ -20,12 +20,12 @@ Conditional statements allow your SystemVerilog code to make decisions, executin
 
 ### `if-else` Statements: Binary and Multi-way Decisions
 
-The `if-else` statement is the cornerstone of conditional logic. It executes one block of code if a condition is true, and optionally another block if the condition is false.  `else if` clauses extend this to handle multiple, mutually exclusive conditions.
+The `if-else` statement is the cornerstone of conditional logic. It executes one block of code if a condition is true, and optionally another block if the condition is false. `else if` clauses extend this to handle multiple, mutually exclusive conditions.
 
 **Key Design and Style Points:**
 
--   **`else if` for Mutually Exclusive Choices**: Use `else if` to efficiently handle a series of conditions where only one branch should execute.
--   **Block Delimiters for Clarity**: While optional for single-line statements following `if`, `else if`, and `else`, using `begin` and `end` consistently enhances readability and avoids potential errors when modifying code. In SystemVerilog, `begin`/`end` are block delimiters; `{}` are concatenation or assignment-pattern delimiters, not procedural braces.
+- **`else if` for Mutually Exclusive Choices**: Use `else if` to efficiently handle a series of conditions where only one branch should execute.
+- **Block Delimiters for Clarity**: While optional for single-line statements following `if`, `else if`, and `else`, using `begin` and `end` consistently enhances readability and avoids potential errors when modifying code. In SystemVerilog, `begin`/`end` are block delimiters; `{}` are concatenation or assignment-pattern delimiters, not procedural braces.
 
 ```systemverilog
 module if_else_example;
@@ -53,9 +53,9 @@ In a four-state expression, an `X` or `Z` condition is not the same as a known `
 
 ### `case`: Exact Value Matching
 
--   **Four-state matching**: A plain `case` compares all bits, including `X` and `Z`. For example, `4'b10x1` matches `4'b10x1`, but does not match `4'b1011`.
--   **Use for known encodings**: This is the usual choice for an opcode, state, or enum whose value must be known exactly.
--   **`default`**: In combinational logic, assign safe defaults and include a `default` branch so every input has a defined output.
+- **Four-state matching**: A plain `case` compares all bits, including `X` and `Z`. For example, `4'b10x1` matches `4'b10x1`, but does not match `4'b1011`.
+- **Use for known encodings**: This is the usual choice for an opcode, state, or enum whose value must be known exactly.
+- **`default`**: In combinational logic, assign safe defaults and include a `default` branch so every input has a defined output.
 
 ```systemverilog
 module case_example (
@@ -78,10 +78,10 @@ If `opcode` contains `2'b0x`, none of the three known patterns matches, so the `
 
 ### `casez`: Wildcards for `Z` and `?`
 
--   **Pattern matching**: In a case item, `?` means “this bit can be either `0` or `1`.” `casez` also treats `Z` as a wildcard in the expression and in case items.
--   **Unknown `X` is different**: `casez` does not treat `X` as a wildcard. An `X` in a significant position prevents a match against either `0` or `1`, which helps expose unknown control signals.
--   **Use for masked encodings**: `casez` is useful when the protocol intentionally ignores some bits, such as address masks or interrupt vectors. Prefer `?` in the case item to document which bits are intentionally ignored.
--   **Overlapping patterns**: The first matching item wins, so put the more specific pattern first.
+- **Pattern matching**: In a case item, `?` means “this bit can be either `0` or `1`.” `casez` also treats `Z` as a wildcard in the expression and in case items.
+- **Unknown `X` is different**: `casez` does not treat `X` as a wildcard. An `X` in a significant position prevents a match against either `0` or `1`, which helps expose unknown control signals.
+- **Use for masked encodings**: `casez` is useful when the protocol intentionally ignores some bits, such as address masks or interrupt vectors. Prefer `?` in the case item to document which bits are intentionally ignored.
+- **Overlapping patterns**: The first matching item wins, so put the more specific pattern first.
 
 ```systemverilog
 module casez_example (
@@ -103,21 +103,21 @@ For example, `request = 4'b0110` selects source 2. `request = 4'b1z00` selects s
 
 The difference between an intentional wildcard and an unknown signal is important:
 
-| Expression | Case item | `casez` result | Reason |
-| --- | --- | --- | --- |
-| `4'b1010` | `4'b10??` | Match | `?` ignores the last two bits |
-| `4'b10z0` | `4'b10??` | Match | `Z` is treated as a wildcard |
-| `4'b10x0` | `4'b10??` | No match | `X` is not a `casez` wildcard |
-| `4'b10x0` | `4'b10x0` | Match | The `X` values match exactly |
+| Expression | Case item | `casez` result | Reason                        |
+| ---------- | --------- | -------------- | ----------------------------- |
+| `4'b1010`  | `4'b10??` | Match          | `?` ignores the last two bits |
+| `4'b10z0`  | `4'b10??` | Match          | `Z` is treated as a wildcard  |
+| `4'b10x0`  | `4'b10??` | No match       | `X` is not a `casez` wildcard |
+| `4'b10x0`  | `4'b10x0` | Match          | The `X` values match exactly  |
 
 The last row is an exact `X` match, not a wildcard match. It only matches another `X` in that same bit position.
 
 ### `casex`: Wildcards for `X`, `Z`, and `?`
 
--   **Aggressive matching**: `casex` treats `X`, `Z`, and `?` as wildcards in both the expression and the case items. A wildcard is not a statement that the signal is valid; it simply removes that bit from the comparison.
--   **Why this is risky**: An uninitialized, disconnected, or not-yet-driven signal can match a valid pattern. Simulation may therefore report a valid operation even though the hardware input is unknown.
--   **No useful distinction between `X` and `Z`**: With `casex`, both unknown (`X`) and high-impedance (`Z`) bits are ignored during matching. This can hide two different classes of wiring or initialization bugs.
--   **RTL guidance**: Avoid `casex` in synthesizable RTL. Prefer plain `case` when values must be known, or a carefully reviewed `casez` pattern when only `Z`/`?` masking is intentional.
+- **Aggressive matching**: `casex` treats `X`, `Z`, and `?` as wildcards in both the expression and the case items. A wildcard is not a statement that the signal is valid; it simply removes that bit from the comparison.
+- **Why this is risky**: An uninitialized, disconnected, or not-yet-driven signal can match a valid pattern. Simulation may therefore report a valid operation even though the hardware input is unknown.
+- **No useful distinction between `X` and `Z`**: With `casex`, both unknown (`X`) and high-impedance (`Z`) bits are ignored during matching. This can hide two different classes of wiring or initialization bugs.
+- **RTL guidance**: Avoid `casex` in synthesizable RTL. Prefer plain `case` when values must be known, or a carefully reviewed `casez` pattern when only `Z`/`?` masking is intentional.
 
 ```systemverilog
 module casex_example;
@@ -156,11 +156,11 @@ endmodule
 
 In `casez`, the `X` in `flags` is significant and does not match `1`. In `casex`, that same `X` is ignored, so the pattern matches. This is why `casex` can conceal bugs that `casez` or plain `case` would reveal.
 
-| Statement | Wildcards | Typical use |
-| --- | --- | --- |
-| `case` | None; `X` and `Z` must match exactly | Known states and opcodes |
-| `casez` | `Z` and `?`; `X` remains significant | Explicit masked patterns |
-| `casex` | `X`, `Z`, and `?` | Usually avoid in RTL |
+| Statement | Wildcards                            | Typical use              |
+| --------- | ------------------------------------ | ------------------------ |
+| `case`    | None; `X` and `Z` must match exactly | Known states and opcodes |
+| `casez`   | `Z` and `?`; `X` remains significant | Explicit masked patterns |
+| `casex`   | `X`, `Z`, and `?`                    | Usually avoid in RTL     |
 
 ### `unique case` and `priority case`
 
@@ -168,9 +168,9 @@ These keywords document intent and enable simulation warnings; they do not chang
 
 **Key `case` Statement Best Practices:**
 
--   **`unique case`**: Use when zero or one item should match. Tools can warn if no item or multiple items match. Keep a `default` when invalid values need an explicit response.
--   **`priority case`**: Use when the first matching item is intentionally highest priority. Tools can warn if no item matches.
--   **Avoid accidental latches**: In `always_comb`, assign outputs a default before the case or handle every possibility with a `default` branch. A `default` in a clocked process does not create reset behavior; reset must still be modeled explicitly.
+- **`unique case`**: Use when zero or one item should match. Tools can warn if no item or multiple items match. Keep a `default` when invalid values need an explicit response.
+- **`priority case`**: Use when the first matching item is intentionally highest priority. Tools can warn if no item matches.
+- **Avoid accidental latches**: In `always_comb`, assign outputs a default before the case or handle every possibility with a `default` branch. A `default` in a clocked process does not create reset behavior; reset must still be modeled explicitly.
 
 ## Loop Constructs: Repetitive Operations
 
@@ -178,7 +178,7 @@ Loop constructs in SystemVerilog enable you to execute code blocks repeatedly, a
 
 ### `repeat` Loop: Fixed Iteration Count
 
--   **Predefined Iterations**: The `repeat` loop executes a block of code a fixed number of times. Its count expression is evaluated when the loop starts, so the count can come from a runtime variable; it does not have to be a compile-time constant.
+- **Predefined Iterations**: The `repeat` loop executes a block of code a fixed number of times. Its count expression is evaluated when the loop starts, so the count can come from a runtime variable; it does not have to be a compile-time constant.
 
 ```systemverilog
 module repeat_example;
@@ -196,7 +196,7 @@ endmodule
 
 ### `while` Loop: Condition-Based Iteration
 
--   **Condition-Controlled Execution**: The `while` loop continues to execute its code block as long as a specified condition remains true.
+- **Condition-Controlled Execution**: The `while` loop continues to execute its code block as long as a specified condition remains true.
 
 ```systemverilog
 module while_example;
@@ -216,7 +216,7 @@ endmodule
 
 ### `for` Loop: Compact Iteration with Initialization, Condition, Increment
 
--   **Combined Loop Control**: The `for` loop provides a concise syntax for loop control, combining initialization, a loop condition, and an increment/decrement step in a single statement.
+- **Combined Loop Control**: The `for` loop provides a concise syntax for loop control, combining initialization, a loop condition, and an increment/decrement step in a single statement.
 
 ```systemverilog
 module for_example;
@@ -234,7 +234,7 @@ endmodule
 
 ### `foreach` Loop: Array Element Iteration
 
--   **Simplified Array Traversal**: The `foreach` loop is specifically designed to iterate over the elements of an array, simplifying array processing.
+- **Simplified Array Traversal**: The `foreach` loop is specifically designed to iterate over the elements of an array, simplifying array processing.
 
 **Syntax**: `foreach (array_name[index_variable]) begin ... end`
 
@@ -254,8 +254,8 @@ endmodule
 
 ### `forever` Loop: Continuous Execution (Testbenches)
 
--   **Infinite Loop**: The `forever` loop executes its code block indefinitely, creating an infinite loop.  It is primarily used in testbenches to generate continuous stimuli or to model systems that run continuously.
--   **Timing Control and Exit Mechanisms**:  **Crucially, always include a timing control (`#delay`) or a loop exit mechanism (like `disable`) within a `forever` loop to prevent simulation from hanging indefinitely.**
+- **Infinite Loop**: The `forever` loop executes its code block indefinitely, creating an infinite loop. It is primarily used in testbenches to generate continuous stimuli or to model systems that run continuously.
+- **Timing Control and Exit Mechanisms**: **Crucially, always include a timing control (`#delay`) or a loop exit mechanism (like `disable`) within a `forever` loop to prevent simulation from hanging indefinitely.**
 
 ```systemverilog
 module forever_example;
@@ -277,9 +277,9 @@ endmodule
 
 **Looping Best Practices for RTL and Verification:**
 
--   **RTL Loops - Static Bounds for Synthesis**: When using loops in RTL designs (within `always` blocks for sequential logic), ensure that loop bounds are statically determinable at compile time (e.g., using parameters or constants).  Synthesizers typically unroll loops with static bounds into combinational or sequential logic.
--   **Avoid Infinite Loops in RTL Synthesis**:  Do not use `forever` loops or `while(1)` loops directly in synthesizable RTL code, as they represent infinite processes and cannot be directly implemented in hardware.  Use them carefully for initialization or specific modeling scenarios if supported by your synthesis tool.
--   **`forever` Loops in Testbenches - Timing is Key**:  `forever` loops are invaluable in testbenches for tasks like clock generation, continuous monitoring, and stimulus generation.  Always incorporate delays (`#`) to control simulation time and prevent runaway simulations. Use `disable` statements or event-based control to terminate `forever` loops in testbenches when needed.
+- **RTL Loops - Static Bounds for Synthesis**: When using loops in RTL designs (within `always` blocks for sequential logic), ensure that loop bounds are statically determinable at compile time (e.g., using parameters or constants). Synthesizers typically unroll loops with static bounds into combinational or sequential logic.
+- **Avoid Infinite Loops in RTL Synthesis**: Do not use `forever` loops or `while(1)` loops directly in synthesizable RTL code, as they represent infinite processes and cannot be directly implemented in hardware. Use them carefully for initialization or specific modeling scenarios if supported by your synthesis tool.
+- **`forever` Loops in Testbenches - Timing is Key**: `forever` loops are invaluable in testbenches for tasks like clock generation, continuous monitoring, and stimulus generation. Always incorporate delays (`#`) to control simulation time and prevent runaway simulations. Use `disable` statements or event-based control to terminate `forever` loops in testbenches when needed.
 
 For a `while` loop, an `X` or `Z` condition is treated as not true, so the loop terminates rather than repeatedly executing on an unknown condition. Guard loop counters and exit conditions explicitly when an unknown value indicates a testbench or DUT failure. `break` exits the nearest loop, `continue` skips to its next iteration, and `return` exits the current task or function; these are often clearer than disabling a large named block.
 
@@ -291,9 +291,8 @@ For a `while` loop, an `X` or `Z` condition is treated as not true, so the loop 
 4.  **Array Traversal (`while` Loop)**: Write a module that initializes an integer array and uses a `while` loop to iterate through the array, displaying each element's value and index.
 5.  **Factorial Calculation (`for` Loop)**: Implement a module that calculates the factorial of a parameterized non-negative integer input using a `for` loop and displays the result.
 6.  **Array Summation (`foreach` Loop)**: Write a module that initializes an integer array and uses a `foreach` loop to calculate and display the sum of all elements in the array.
-7.  **Controlled Clock Generator (`forever` Loop)**: Create a testbench module that uses a `forever` loop with a `#delay` to simulate a clock signal.  Have the simulation run for a fixed number of clock cycles (e.g., 20 cycles) and then terminate using `disable`. Display the cycle count in each iteration.
+7.  **Controlled Clock Generator (`forever` Loop)**: Create a testbench module that uses a `forever` loop with a `#delay` to simulate a clock signal. Have the simulation run for a fixed number of clock cycles (e.g., 20 cycles) and then terminate using `disable`. Display the cycle count in each iteration.
 
 By practicing with these exercises and understanding the nuances of each control flow statement, you'll gain the proficiency to write effective and well-structured SystemVerilog code for a wide range of hardware design and verification tasks.
 
 ##### Copyright (c) 2026 squared-studio
-

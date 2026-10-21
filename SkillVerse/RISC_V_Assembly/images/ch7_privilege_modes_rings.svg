@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 480" width="100%" height="100%">
+  <rect width="960" height="480" fill="#0b1120" rx="8"/>
+  <text x="480" y="38" fill="#f8fafc" font-size="20" font-weight="bold" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" text-anchor="middle">RISC-V Privileged Architecture: The Three Operating Modes</text>
+  <text x="480" y="62" fill="#94a3b8" font-size="13" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" text-anchor="middle">Hardware rings, execution privilege levels, and Control &amp; Status Register (CSR) accessibility</text>
+
+  <!-- Nested Privilege Rings -->
+  <g transform="translate(60, 95)">
+    <!-- Machine Mode (Outer) -->
+    <rect width="840" height="240" rx="12" fill="#1e1b4b" stroke="#818cf8" stroke-width="2"/>
+    <text x="30" y="28" fill="#c7d2fe" font-size="13" font-weight="bold" font-family="sans-serif">Machine Mode (M-Mode: Mode 3) - HIGHEST PRIVILEGE (Mandatory)</text>
+    <text x="30" y="46" fill="#a5b4fc" font-size="10" font-family="sans-serif">Direct, unrestricted access to bare-metal physical memory, interrupts, and all hardware registers</text>
+
+    <!-- Supervisor Mode (Middle) -->
+    <g transform="translate(40, 60)">
+      <rect width="760" height="160" rx="10" fill="#022c22" stroke="#34d399" stroke-width="2"/>
+      <text x="25" y="25" fill="#a7f3d0" font-size="12" font-weight="bold" font-family="sans-serif">Supervisor Mode (S-Mode: Mode 1) - OS Kernel &amp; Hypervisor</text>
+      <text x="25" y="42" fill="#6ee7b7" font-size="10" font-family="sans-serif">Virtual memory address translation (MMU paging via satp register), kernel traps, device drivers</text>
+
+      <!-- User Mode (Inner) -->
+      <g transform="translate(40, 55)">
+        <rect width="680" height="85" rx="8" fill="#082f49" stroke="#38bdf8" stroke-width="2"/>
+        <text x="25" y="24" fill="#7dd3fc" font-size="12" font-weight="bold" font-family="sans-serif">User Mode (U-Mode: Mode 0) - User Applications</text>
+        <text x="25" y="42" fill="#cbd5e1" font-size="10" font-family="sans-serif">Runs sandboxed user processes; zero access to physical registers or privileged CSRs</text>
+        <text x="25" y="60" fill="#fbbf24" font-size="10" font-family="monospace">Must execute 'ecall' to request kernel services via syscalls</text>
+      </g>
+    </g>
+  </g>
+
+  <!-- Bottom Explanatory Box -->
+  <g transform="translate(60, 350)">
+    <rect width="840" height="105" rx="8" fill="#0f172a" stroke="#334155"/>
+    <text x="25" y="26" fill="#fbbf24" font-size="13" font-weight="bold" font-family="sans-serif">CSR Naming &amp; Security Convention:</text>
+    <text x="25" y="48" fill="#cbd5e1" font-size="11" font-family="sans-serif">• Every CSR address specifies the minimum privilege level required to access it: bits [9:8] encode mode (00=User, 01=Supervisor, 11=Machine).</text>
+    <text x="25" y="68" fill="#cbd5e1" font-size="11" font-family="sans-serif">• Prefixes reflect privilege: <tspan font-family="monospace" fill="#818cf8">mstatus, mtvec, mepc</tspan> belong to Machine mode; <tspan font-family="monospace" fill="#34d399">sstatus, stvec, sepc</tspan> belong to Supervisor mode.</text>
+    <text x="25" y="88" fill="#94a3b8" font-size="10" font-family="sans-serif">Attempting to read or write a Machine-mode CSR from User mode immediately raises an Illegal Instruction Exception trap.</text>
+  </g>
+</svg>

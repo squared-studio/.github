@@ -1,6 +1,7 @@
 # Introduction to AMBA 5 CHI & Architecture Evolution
 
 ## The Multi-Core Scaling Wall and the Death of Parallel Buses
+
 Over the past two decades, System-on-Chip (SoC) architectures have evolved from single-processor embedded microcontrollers to massive, heterogeneous computing fabrics containing dozens to hundreds of high-performance processor cores, graphics processing clusters, neural processing units (NPUs), and high-bandwidth memory controllers.
 
 In early multi-core systems, bus-based protocols such as **AMBA 3 AXI** and **AMBA 4 ACE** provided the backbone for on-chip communication. As detailed in the ACE protocol specification, hardware cache coherency was achieved by extending the five standard AXI channels (`AW`, `W`, `B`, `AR`, `R`) with three dedicated snoop channels (`AC`, `CR`, `CD`). While this architecture succeeded admirably for small clusters of 2 to 4 cores, it hit an insurmountable physical scaling wall as core counts expanded toward enterprise servers and high-performance computing:
@@ -19,6 +20,7 @@ To shatter these architectural bottlenecks, ARM introduced the **AMBA 5 Coherent
 ---
 
 ## The Packetized, Layered Network-on-Chip Paradigm
+
 AMBA 5 CHI fundamentally reimagines on-chip communication by borrowing architectural principles from computer networking and telecommunications. Rather than transmitting memory transactions across dedicated physical wires, CHI encapsulates memory commands, coherency snoops, and cache-line data into **packetized messages** that route across a shared **Network-on-Chip (NoC)**.
 
 CHI establishes a formal three-layer protocol stack:
@@ -57,6 +59,7 @@ By decoupling transaction intent (Protocol Layer) from physical routing (Network
 ---
 
 ## CHI Node Taxonomy
+
 In an AMBA CHI system, every functional block attached to the interconnect is formally classified as a **Node**. Each node is assigned a unique physical address called a **NodeID**, analogous to an IP address in a local area network.
 
 Nodes are categorized into four fundamental architectural classes based on their role in transaction generation, coherency management, and memory hosting:
@@ -64,13 +67,17 @@ Nodes are categorized into four fundamental architectural classes based on their
 ![CHI Node Types and Topology](images/ch1_chi_node_types_topology.svg)
 
 ### Request Nodes (RN)
+
 Request Nodes initiate memory transactions into the interconnect.
+
 - **`RN-F` (Fully Coherent Request Node):** Typically a multi-core CPU cluster or high-performance compute core. It maintains hardware-coherent internal caches (L1/L2), supports the full MOESI cache state model, can issue coherent reads/writes, and **accepts incoming snoop requests** from the interconnect.
 - **`RN-D` (DVM-Capable Request Node):** A processing element (such as an advanced GPU or DSP) that does not maintain fully snooped CPU caches, but participates in Distributed Virtual Memory (DVM) operations to synchronize address translation tables.
 - **`RN-I` (I/O Coherent Request Node):** A streaming or master agent (e.g., standard DMA controller, PCIe Root Complex, or Ethernet MAC) that does not maintain a snooped cache. It can read and write memory coherently without software flushes, but cannot receive snoop requests (the CHI counterpart to ACE-Lite).
 
 ### Home Nodes (HN)
+
 Home Nodes serve as the central points of serialization, directory tracking, and memory orchestration for specific address ranges.
+
 - **`HN-F` (Fully Coherent Home Node):** The architectural cornerstone of CHI coherency. Every physical address in the SoC maps to a specific HN-F. The HN-F contains:
   - **Point of Serialization (PoS):** Enforces a deterministic global order for all concurrent accesses to the same cache line.
   - **Snoop Filter / Directory:** Tracks which RN-F nodes currently cache that address.
@@ -78,31 +85,36 @@ Home Nodes serve as the central points of serialization, directory tracking, and
 - **`HN-I` (Non-coherent Home Node):** Orchestrates transactions targeting non-cacheable memory regions, memory-mapped I/O (MMIO) peripherals, configuration registers, or boot ROMs.
 
 ### Subordinate Nodes (SN)
+
 Subordinate Nodes are the ultimate memory endpoints that accept reads and writes forwarded by Home Nodes.
+
 - **`SN-F` (Fully Coherent Subordinate Node):** High-bandwidth external memory controllers (DDR4, DDR5, LPDDR5, or HBM3). They receive clean/dirty cache line writebacks and deliver memory fill data.
 - **`SN-I` (Non-coherent Subordinate Node):** Peripheral bridges (such as AXI-to-APB bridges) and on-chip ROMs.
 
 ### Miscellaneous Nodes (MN)
+
 - Centralized system management nodes responsible for orchestrating global Distributed Virtual Memory (DVM) messages, system profiling, trace collection, and interrupt distribution across the SoC.
 
 ---
 
 ## High-Level Comparison: ACE vs. CHI
+
 To clearly grasp the architectural leap represented by CHI, the following table summarizes the fundamental differences between AMBA 4 ACE and AMBA 5 CHI:
 
-| Architectural Metric | AMBA 4 ACE | AMBA 5 CHI |
-| :--- | :--- | :--- |
-| **Physical Interface** | Dedicated, parallel unidirectional signal channels (AW, W, B, AR, R, AC, CR, CD). | Packetized point-to-point links carrying standardized Flow Control Units (Flits). |
-| **Interconnect Scaling** | Effectively limited to 4–8 coherent clusters due to wire congestion. | Scales seamlessly to 32, 64, 128, or 256+ cores over 2D Mesh and Ring NoCs. |
-| **Flow Control** | Reactive `VALID` / `READY` handshake with potential backpressure stalls. | Proactive, credit-based link flow control (`LCRDV`) with zero backpressure. |
-| **Direct Cache Transfer** | Snoop data returned over CD; interconnect routes data to reader. | Direct Cache Transfer (DCT): Peer cache sends data *directly* to reader without passing through Home Node buffers. |
-| **Atomic Operations** | Near-memory exclusive accesses (`LDREX`/`STREX`) causing cache line bouncing. | Far-memory atomics (`AtomicStore`, `AtomicLoad`, `AtomicCompare`, `AtomicSwap`) executed directly at HN-F/SN-F ALUs. |
-| **Routing Mechanism** | Hardwired mux/demux routing tables inside crossbar logic. | Dimension-Order Routing (DOR) using explicit Source/Target NodeIDs. |
-| **Coherency Directory** | Optional external snoop filter inside interconnect (e.g. CCI-500). | Native, integrated directory at every Home Node (HN-F). |
+| Architectural Metric      | AMBA 4 ACE                                                                        | AMBA 5 CHI                                                                                                           |
+| :------------------------ | :-------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------- |
+| **Physical Interface**    | Dedicated, parallel unidirectional signal channels (AW, W, B, AR, R, AC, CR, CD). | Packetized point-to-point links carrying standardized Flow Control Units (Flits).                                    |
+| **Interconnect Scaling**  | Effectively limited to 4–8 coherent clusters due to wire congestion.              | Scales seamlessly to 32, 64, 128, or 256+ cores over 2D Mesh and Ring NoCs.                                          |
+| **Flow Control**          | Reactive `VALID` / `READY` handshake with potential backpressure stalls.          | Proactive, credit-based link flow control (`LCRDV`) with zero backpressure.                                          |
+| **Direct Cache Transfer** | Snoop data returned over CD; interconnect routes data to reader.                  | Direct Cache Transfer (DCT): Peer cache sends data _directly_ to reader without passing through Home Node buffers.   |
+| **Atomic Operations**     | Near-memory exclusive accesses (`LDREX`/`STREX`) causing cache line bouncing.     | Far-memory atomics (`AtomicStore`, `AtomicLoad`, `AtomicCompare`, `AtomicSwap`) executed directly at HN-F/SN-F ALUs. |
+| **Routing Mechanism**     | Hardwired mux/demux routing tables inside crossbar logic.                         | Dimension-Order Routing (DOR) using explicit Source/Target NodeIDs.                                                  |
+| **Coherency Directory**   | Optional external snoop filter inside interconnect (e.g. CCI-500).                | Native, integrated directory at every Home Node (HN-F).                                                              |
 
 ---
 
 ## The System Topology Lifecycle
+
 In an AMBA 5 CHI SoC, the lifecycle of a memory request operates through a distributed, three-party choreography:
 
 ```
@@ -126,6 +138,7 @@ In an AMBA 5 CHI SoC, the lifecycle of a memory request operates through a distr
 ---
 
 ## Chapter Summary
+
 - As SoCs scaled beyond 8 cores, traditional bus architectures like AMBA ACE hit a **wire routing and pin-count scaling wall**.
 - **AMBA 5 CHI** adopts a packetized, layered Network-on-Chip (NoC) paradigm consisting of Protocol, Network, and Link layers.
 - System agents are structured into discrete **Nodes** identified by **NodeIDs**: Request Nodes (RN-F, RN-I), Home Nodes (HN-F, HN-I), Subordinate Nodes (SN-F, SN-I), and Miscellaneous Nodes (MN).
@@ -162,4 +175,3 @@ In an AMBA 5 CHI SoC, the lifecycle of a memory request operates through a distr
 ---
 
 ##### Copyright (c) 2026 squared-studio
-

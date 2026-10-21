@@ -5,6 +5,7 @@ This chapter provides a foundational understanding of Register-Transfer Level (R
 ## Learning Goals
 
 After completing this chapter, you should be able to:
+
 - Explain what Register-Transfer Level (RTL) abstraction is and how it differs from gate-level and behavioral software models.
 - Apply the RTL mental model: cycle-by-cycle evaluation, state separation, and datapath-control partitioning.
 - Describe the complete digital design flow from specification down to physical FPGA bitstream or ASIC tape-out.
@@ -20,7 +21,7 @@ RTL design is the standard abstraction level used to model digital circuits for 
 - **Definition of RTL:** RTL describes a digital circuit in terms of the flow of digital signals between hardware registers, and the logical operations performed on those signals.
 - **Focus on Registers and Data Transfer:** RTL design is centered around registers (memory elements, typically flip-flops) and combinational logic that transforms data as it moves between these registers across clock cycles.
 - **Abstraction above Gate Level:** RTL is a higher level of abstraction than gate-level design. Instead of dealing with individual logic gates (AND, OR, NOT), RTL uses high-level arithmetic operators (`+`, `-`, `*`), control statements (`if-else`, `case`), and structured data types.
-- **Synthesizable Behavioral Description:** RTL code describes *what* the hardware does on each clock cycle, allowing synthesis tools to optimize the gate-level implementation for area, speed, and power.
+- **Synthesizable Behavioral Description:** RTL code describes _what_ the hardware does on each clock cycle, allowing synthesis tools to optimize the gate-level implementation for area, speed, and power.
 
 ![Synchronous Register-Transfer Cycle](images/ch1_rtl_cycle.svg)
 
@@ -57,11 +58,13 @@ Modern digital design spans multiple levels of abstraction, from conceptual soft
 ## Importance of RTL Design in ASIC and FPGA Development
 
 ### ASIC (Application-Specific Integrated Circuit) Development
+
 - **Synthesis for ASICs:** RTL code is the primary input to ASIC logic synthesis tools (e.g., Synopsys Design Compiler, Cadence Genus). Synthesis translates RTL into a gate-level netlist optimized for target standard cell libraries (e.g., TSMC 7nm, Intel 18A).
 - **Design Complexity Management:** RTL abstraction allows designers to manage the complexity of modern ASICs containing billions of transistors.
 - **Verification Focus:** RTL is the level at which the vast majority of functional verification, linting, formal verification, and simulation takes place before committing to silicon tape-out.
 
 ### FPGA (Field-Programmable Gate Array) Development
+
 - **Synthesis for FPGAs:** RTL is synthesized to target FPGA architectures (AMD/Xilinx Vivado, Intel Quartus Prime). Tools map RTL constructs into Configurable Logic Blocks (CLBs/ALMs), Look-Up Tables (LUTs), flip-flops, block RAMs, and DSP slices.
 - **Rapid Prototyping and Flexibility:** RTL designs can be synthesized and loaded onto an FPGA in minutes or hours, allowing rapid prototyping, hardware-in-the-loop testing, and field reconfigurability.
 - **IP Core Integration:** RTL provides the glue logic and bus infrastructure (AXI, AHB, APB, Wishbone) to integrate pre-verified IP cores (CPUs, PCIe, memory controllers).
@@ -151,10 +154,12 @@ endmodule
 ## Learning Resources
 
 ### Key Books
+
 - **"Digital Design and Computer Architecture"** by David Money Harris & Sarah L. Harris ([Book Link](https://www.elsevier.com/books/digital-design-and-computer-architecture-arm-edition/harris/978-0-12-800056-4)) — Chapter 1 provides an excellent introduction to digital abstraction levels.
 - **"RTL Hardware Design Using VHDL and Verilog"** by Pong P. Chu — Outstanding explanation of the register-transfer level mindset and hardware inference.
 
 ### Recommended Web Resources
+
 - [Nandland](https://nandland.com/) — Practical FPGA and digital design fundamentals with video explanations.
 - [ASIC World](https://www.asic-world.com/) — Comprehensive tutorials on Verilog/SystemVerilog RTL and ASIC design flow.
 
@@ -163,18 +168,24 @@ endmodule
 ## Exercises
 
 ### Exercise 1.1: Identify RTL Blocks in a System
+
 Find or sketch the block diagram of a simple 32-bit RISC-V processor (single-cycle or multi-cycle):
+
 1. Identify all state elements (Program Counter, Register File, Data Memory).
 2. Trace the combinational datapath (ALU, Immediate Generator, Branch Comparators, Multiplexers).
 3. Identify the control unit signals (ALUOp, RegWrite, MemRead, BranchTaken).
 
 ### Exercise 1.2: Cycle-by-Cycle RTL Trace
+
 Given the `accumulator` module above:
+
 - Assuming `rst_n` de-asserts at $t=0$, write out the values of `acc_q` and `ovf_q` across 5 clock cycles with the following input sequence on `data_in`: `16'h0010`, `16'h0020`, `16'h0030`, `16'hFFFF`, `16'h0001` (assume `valid_in = 1` for all cycles).
 - Identify on which cycle `overflow` becomes asserted.
 
 ### Exercise 1.3: Algorithmic to RTL Conversion
+
 Design a **Moving Average Filter** that receives an 8-bit stream of samples and outputs the average of the last 4 samples:
+
 1. Identify how many registers are needed to store past history (a 4-deep shift register).
 2. Write down the combinational calculation: $\text{Average} = (s_0 + s_1 + s_2 + s_3) \gg 2$.
 3. Sketch the register-transfer diagram showing the shift registers and adder tree.

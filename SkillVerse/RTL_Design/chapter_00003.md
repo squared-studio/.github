@@ -5,6 +5,7 @@ This chapter covers the foundational rules and industry best practices for writi
 ## Learning Goals
 
 After completing this chapter, you should be able to:
+
 - Distinguish between synthesizable SystemVerilog constructs (mapped to physical hardware) and non-synthesizable constructs (simulation and verification only).
 - Apply the correct procedural blocks: `always_comb` for combinational logic, `always_ff` for sequential registers, and know why `always_latch` is avoided.
 - Understand the simulation event queue and strictly apply non-blocking assignments (`<=`) in sequential logic and blocking assignments (`=`) in combinational logic.
@@ -21,6 +22,7 @@ SystemVerilog is a dual-purpose language: it describes hardware (HDL) and testbe
 ![Synthesizable vs Non-Synthesizable Constructs](images/ch3_synthesizable_constructs.svg)
 
 ### Synthesizable RTL Constructs
+
 - **Procedural Blocks:** `always_comb`, `always_ff`, `assign`.
 - **Control Flow:** `if-else`, `case`, `casez` (with care), bounded `for` loops with constant bounds.
 - **Operators:** Arithmetic (`+`, `-`, `*`), bitwise (`&`, `|`, `^`, `~`), logical (`&&`, `||`, `!`), relational (`<`, `>`, `==`, `!=`), shifting (`<<`, `>>`, `<<<`, `>>>`), concatenation (`{a, b}`), and replication (`{4{a}}`).
@@ -28,6 +30,7 @@ SystemVerilog is a dual-purpose language: it describes hardware (HDL) and testbe
 - **Types:** `logic`, `bit`, `byte`, packed and unpacked arrays, `struct packed`, `enum`.
 
 ### Non-Synthesizable Constructs (Simulation Only)
+
 - **Time delays:** `#10ns`, `#5`. Hardware timing is determined by physical gate and wire delays, not `#` delays.
 - **Dynamic processes:** `initial` blocks (note: FPGA tools may use `initial` for power-on RAM initialization, but ASICs ignore them), `fork-join`, `wait`.
 - **OOP and Verification:** Classes, virtual methods, mailboxes, semaphores, dynamic arrays (`[]`), queues (`$`).
@@ -42,6 +45,7 @@ Modern SystemVerilog introduced dedicated procedural blocks to replace the ambig
 ![Procedural Blocks: Combinational vs Sequential](images/ch3_procedural_blocks.svg)
 
 ### Combinational Logic: `always_comb` and `assign`
+
 - **`always_comb`:**
   - Evaluates once at simulation time zero, guaranteeing correct initialization.
   - Automatically infers the sensitivity list from all signals read inside the block.
@@ -65,6 +69,7 @@ end
 ```
 
 ### Sequential Logic: `always_ff`
+
 - Enforces that physical hardware registers (flip-flops) are inferred.
 - Explicit clock edge (`posedge clk` or `negedge clk`).
 - Always use **non-blocking assignments (`<=`)**.
@@ -89,12 +94,14 @@ Misunderstanding the difference between blocking and non-blocking assignments is
 ![Event Scheduler: Blocking vs Non-Blocking](images/ch3_event_queue.svg)
 
 ### Golden Rules:
+
 1. **Inside `always_ff`:** Always use **non-blocking (`<=`)**. Never use blocking assignments inside sequential blocks.
 2. **Inside `always_comb`:** Always use **blocking (`=`)**. Never use non-blocking assignments inside combinational blocks.
 3. **Never mix blocking and non-blocking assignments to the same variable.**
 4. **Never assign to the same variable from more than one `always` block.**
 
 #### Example: Shift Register Race Condition
+
 ```systemverilog
 // BAD: Blocking in sequential logic causes race conditions!
 // Depending on simulator order, q2 might capture the NEW or OLD value of q1 in the SAME cycle!
@@ -121,6 +128,7 @@ A latch is inferred when a signal inside an `always_comb` or `always @*` block i
 ![Unintended Latch Inference Hazard](images/ch3_latch_inference.svg)
 
 ### Solution: Assign Default Values at the Top
+
 The most reliable way to prevent latches in complex combinational blocks is to provide a default value to every output at the very beginning of the `always_comb` block:
 
 ```systemverilog
@@ -187,6 +195,7 @@ endmodule
 ```
 
 ### Conditional and Loop Generation: `generate`
+
 SystemVerilog `generate` blocks allow structural hardware repetition or conditional inclusion based on parameters evaluated at compile/elaboration time:
 
 ```systemverilog
@@ -235,19 +244,20 @@ Industry chip design teams enforce strict styling conventions to ensure massive 
 
 ## Common RTL Coding Pitfalls Summary
 
-| Coding Pitfall | Problem | Solution |
-| :--- | :--- | :--- |
-| **Using `=` in `always_ff`** | Simulation race condition between flip-flop stages | Use non-blocking `<=` exclusively in sequential blocks |
-| **Using `<=` in `always_comb`** | Unnecessary event scheduling iterations; subtle simulation bugs | Use blocking `=` exclusively in combinational blocks |
-| **Incomplete `if` or `case`** | Unintended transparent latches inferred | Assign default values at top of block; add `else` and `default` |
-| **Missing signals in sensitivity list** | Simulation/synthesis mismatch in legacy Verilog | Use SystemVerilog `always_comb` (automatic sensitivity) |
-| **Driving a wire from multiple blocks** | Multi-driver conflict (`X` in simulation, short circuit in hardware) | Drive each signal from exactly one `always` block or `assign` |
+| Coding Pitfall                          | Problem                                                              | Solution                                                        |
+| :-------------------------------------- | :------------------------------------------------------------------- | :-------------------------------------------------------------- |
+| **Using `=` in `always_ff`**            | Simulation race condition between flip-flop stages                   | Use non-blocking `<=` exclusively in sequential blocks          |
+| **Using `<=` in `always_comb`**         | Unnecessary event scheduling iterations; subtle simulation bugs      | Use blocking `=` exclusively in combinational blocks            |
+| **Incomplete `if` or `case`**           | Unintended transparent latches inferred                              | Assign default values at top of block; add `else` and `default` |
+| **Missing signals in sensitivity list** | Simulation/synthesis mismatch in legacy Verilog                      | Use SystemVerilog `always_comb` (automatic sensitivity)         |
+| **Driving a wire from multiple blocks** | Multi-driver conflict (`X` in simulation, short circuit in hardware) | Drive each signal from exactly one `always` block or `assign`   |
 
 ---
 
 ## Learning Resources
 
 ### Reference Guides
+
 - **"Effective RTL Design and Coding for SystemVerilog"** by Clifford E. Cummings ([Book Link](https://www.amazon.com/Effective-RTL-Design-Coding-SystemVerilog/dp/0982447705)) — The world's most cited paper on non-blocking assignments and SystemVerilog synthesis guidelines.
 - **"Standard Caveats for SystemVerilog Synthesis"** by Stuart Sutherland (Sutherland HDL).
 - **Vivado Design Suite User Guide: Synthesis (UG901)** — AMD/Xilinx official guide for HDL coding styles.
@@ -257,7 +267,9 @@ Industry chip design teams enforce strict styling conventions to ensure massive 
 ## Exercises
 
 ### Exercise 3.1: Code Review and Refactoring
+
 Review the following buggy Verilog snippet:
+
 ```verilog
 module bad_mux(input a, b, sel, clk, output reg q);
     reg temp;
@@ -267,16 +279,20 @@ module bad_mux(input a, b, sel, clk, output reg q);
     end
 endmodule
 ```
+
 1. Identify at least 3 distinct coding style and synthesis issues.
 2. Rewrite the module in modern synthesizable SystemVerilog using `logic`, `always_ff`, and proper non-blocking assignments.
 
 ### Exercise 3.2: Parameterized Arbiter
+
 Design a 4-request Round-Robin or Fixed-Priority Arbiter in SystemVerilog:
+
 1. Inputs: `clk`, `rst_n`, `req_i[3:0]`.
 2. Outputs: `grant_o[3:0]` (one-hot grant) and `active_o`.
 3. Ensure no latches are inferred and all outputs are assigned under every branch.
 
 ### Exercise 3.3: Synthesis Trade-offs: `case` vs. Cascaded `if-else`
+
 1. Write a 4-to-1 multiplexer using `case`.
 2. Write the same multiplexer using cascaded `if-else` statements.
 3. Explain which structure infers parallel priority-free decoding logic and which infers a priority chain.

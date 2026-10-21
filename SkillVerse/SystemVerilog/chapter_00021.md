@@ -6,15 +6,15 @@ In the realm of hardware verification, coverage serves as an essential metric, p
 
 SystemVerilog recognizes two principal categories of coverage, each offering a distinct but complementary perspective on verification completeness:
 
-1.  **Code Coverage (Automatic)**: Automatically collected by simulation tools, code coverage focuses on the **structural** aspects of the design. It tracks which parts of the design's *RTL code* have been executed during simulation, including statements, branches, conditions, and signal toggles.
-2.  **Functional Coverage (User-Defined)**: Defined explicitly by verification engineers, functional coverage centers on verifying specific *design functionalities*, features, and operational scenarios as outlined in the design specification. It ensures that the *intended behavior* of the design is comprehensively tested.
+1.  **Code Coverage (Automatic)**: Automatically collected by simulation tools, code coverage focuses on the **structural** aspects of the design. It tracks which parts of the design's _RTL code_ have been executed during simulation, including statements, branches, conditions, and signal toggles.
+2.  **Functional Coverage (User-Defined)**: Defined explicitly by verification engineers, functional coverage centers on verifying specific _design functionalities_, features, and operational scenarios as outlined in the design specification. It ensures that the _intended behavior_ of the design is comprehensively tested.
 
 **Key Distinction: Code Coverage vs. Functional Coverage**
 
-* **Code Coverage**: Addresses the question: **"Have we traversed all the paths and exercised all the logic within our RTL implementation?"** It measures the extent to which the *design's structure* has been touched by the simulation stimulus.
-* **Functional Coverage**: Addresses the question: **"Have we hit all the critical operational states, value combinations, and interaction scenarios defined for the design's behavior?"** It measures how well the *intended functionality* has been verified.
+- **Code Coverage**: Addresses the question: **"Have we traversed all the paths and exercised all the logic within our RTL implementation?"** It measures the extent to which the _design's structure_ has been touched by the simulation stimulus.
+- **Functional Coverage**: Addresses the question: **"Have we hit all the critical operational states, value combinations, and interaction scenarios defined for the design's behavior?"** It measures how well the _intended functionality_ has been verified.
 
-*Achieving comprehensive verification and high confidence in a design's correctness necessitates a balanced strategy that effectively leverages both code and functional coverage.*
+_Achieving comprehensive verification and high confidence in a design's correctness necessitates a balanced strategy that effectively leverages both code and functional coverage._
 
 ## Code Coverage: Automatic Metrics of RTL Execution
 
@@ -24,7 +24,7 @@ SystemVerilog simulators typically support the collection of several types of co
 
 ### Statement Coverage: Measuring Executed Lines
 
-**Statement coverage**, often referred to as line coverage, is the most fundamental code coverage metric. It quantifies the percentage of *executable statements* within the RTL code that have been executed at least once during simulation.
+**Statement coverage**, often referred to as line coverage, is the most fundamental code coverage metric. It quantifies the percentage of _executable statements_ within the RTL code that have been executed at least once during simulation.
 
 **Example Illustrating Statement Coverage:**
 
@@ -44,14 +44,14 @@ endmodule
 
 **Coverage Analysis:**
 
-* If a simulation is run with `operation_mode` consistently set to `2'b00`, only "Statement 1" will be executed.
-* **Statement Coverage Result**: 50% (1 out of 2 executable statements covered). To reach 100% statement coverage, the simulation must include a scenario where `operation_mode` is *not* `2'b00`, thereby executing "Statement 2".
+- If a simulation is run with `operation_mode` consistently set to `2'b00`, only "Statement 1" will be executed.
+- **Statement Coverage Result**: 50% (1 out of 2 executable statements covered). To reach 100% statement coverage, the simulation must include a scenario where `operation_mode` is _not_ `2'b00`, thereby executing "Statement 2".
 
 **Usefulness:** Statement coverage is a quick initial check to identify dead code or parts of the design that are never reached. However, it's a coarse metric and does not guarantee the verification of all logical conditions or behaviors. High statement coverage alone does not equate to thorough functional verification.
 
 ### Branch Coverage: Exercising Control Flow
 
-**Branch coverage** measures the percentage of *possible branches* within control flow constructs such as `if-else`, `case` statements, and loops, that have been taken during simulation. It aims to ensure that all alternative execution paths through conditional logic are explored.
+**Branch coverage** measures the percentage of _possible branches_ within control flow constructs such as `if-else`, `case` statements, and loops, that have been taken during simulation. It aims to ensure that all alternative execution paths through conditional logic are explored.
 
 **Example Illustrating Branch Coverage:**
 
@@ -72,14 +72,14 @@ endmodule
 
 **Coverage Analysis:**
 
-* Given that `current_state` is initialized to `2'b01`, only the branch corresponding to `2'b01` will be executed.
-* **Branch Coverage Result**: 25% (1 out of 4 possible branches covered). To achieve 100% branch coverage, simulations are needed that cause `current_state` to take on values `2'b00`, `2'b10`, and any value triggering the `default` case.
+- Given that `current_state` is initialized to `2'b01`, only the branch corresponding to `2'b01` will be executed.
+- **Branch Coverage Result**: 25% (1 out of 4 possible branches covered). To achieve 100% branch coverage, simulations are needed that cause `current_state` to take on values `2'b00`, `2'b10`, and any value triggering the `default` case.
 
-**Usefulness:** Branch coverage provides a more detailed view of control flow testing than statement coverage. It helps confirm that all decision points in the code have been evaluated for different outcomes. However, it still doesn't guarantee that all *functional* scenarios relevant to the design's specification are verified.
+**Usefulness:** Branch coverage provides a more detailed view of control flow testing than statement coverage. It helps confirm that all decision points in the code have been evaluated for different outcomes. However, it still doesn't guarantee that all _functional_ scenarios relevant to the design's specification are verified.
 
 ### Toggle Coverage: Observing Signal Value Changes
 
-**Toggle coverage** tracks the percentage of *signals* in the design that have transitioned between 0 and 1 (and vice versa) at least once during simulation. It helps identify signals that remain static, potentially indicating under-stimulated or unused logic.
+**Toggle coverage** tracks the percentage of _signals_ in the design that have transitioned between 0 and 1 (and vice versa) at least once during simulation. It helps identify signals that remain static, potentially indicating under-stimulated or unused logic.
 
 **Example Illustrating Toggle Coverage:**
 
@@ -99,22 +99,22 @@ endmodule
 
 **Coverage Analysis:**
 
-* In this simulation, `enable_flag` transitions from 0 to 1 and subsequently from 1 to 0.
-* **Toggle Coverage Result**: 100% toggle coverage for `enable_flag` (both 0-to-1 and 1-to-0 transitions observed).
+- In this simulation, `enable_flag` transitions from 0 to 1 and subsequently from 1 to 0.
+- **Toggle Coverage Result**: 100% toggle coverage for `enable_flag` (both 0-to-1 and 1-to-0 transitions observed).
 
 **Usefulness:** Toggle coverage is valuable for identifying signals that are not actively changing, which might suggest issues with stimulus generation or design connectivity. While high toggle coverage can indicate more dynamic stimulus, it does not directly measure functional correctness.
 
 **Limitations of Code Coverage:**
 
-* **Structural, Not Functional**: Code coverage metrics are based purely on the structure of the RTL code and do not inherently confirm that the design is behaving according to its intended functionality or specification.
-* **Potential for Irrelevant Coverage**: Code coverage can include metrics for code that is not functionally critical, such as "don't care" conditions, seldom-used error handling, or automatically generated logic.
-* **Doesn't Ensure Corner Case Verification**: High code coverage does not guarantee that critical functional corner cases, boundary conditions, or complex interactions between design elements have been adequately tested.
+- **Structural, Not Functional**: Code coverage metrics are based purely on the structure of the RTL code and do not inherently confirm that the design is behaving according to its intended functionality or specification.
+- **Potential for Irrelevant Coverage**: Code coverage can include metrics for code that is not functionally critical, such as "don't care" conditions, seldom-used error handling, or automatically generated logic.
+- **Doesn't Ensure Corner Case Verification**: High code coverage does not guarantee that critical functional corner cases, boundary conditions, or complex interactions between design elements have been adequately tested.
 
-*Code coverage serves as a useful **supplement** to functional verification but should not be the sole determinant of verification completeness. Functional coverage is paramount for ensuring the design's intended behavior is correctly implemented and verified.*
+_Code coverage serves as a useful **supplement** to functional verification but should not be the sole determinant of verification completeness. Functional coverage is paramount for ensuring the design's intended behavior is correctly implemented and verified._
 
 ## Functional Coverage: User-Defined Metrics for Specification Verification
 
-Functional coverage is a **user-defined** metric that directly addresses the question: "Has the design's *functionality*, as described in the specification, been thoroughly verified?" It empowers verification engineers to precisely define and measure the coverage of specific operational scenarios, features, corner cases, and critical design behaviors. SystemVerilog provides robust constructs for implementing and analyzing functional coverage.
+Functional coverage is a **user-defined** metric that directly addresses the question: "Has the design's _functionality_, as described in the specification, been thoroughly verified?" It empowers verification engineers to precisely define and measure the coverage of specific operational scenarios, features, corner cases, and critical design behaviors. SystemVerilog provides robust constructs for implementing and analyzing functional coverage.
 
 ### Covergroups: Organizing Functional Coverage Definitions
 
@@ -172,16 +172,16 @@ endmodule : functional_coverage_example
 
 **Key Features of Covergroups:**
 
-* **Temporal Sampling (`@(event)`)**: Covergroups can be sampled synchronously based on specific events (like clock edges), making them suitable for verifying sequential logic.
-* **`option.per_instance = 1;`**: This option configures the covergroup such that each instance maintains its own separate coverage data. This is crucial when instantiating the same covergroup for multiple identical blocks in the design.
-* **Coverage Points (`coverpoint`)**: These specify the variables, signals, or expressions whose values or transitions are to be monitored for coverage.
-* **Bins (`bins`)**: Defined within coverpoints, bins categorize or group the values or sequences that constitute the coverage targets. Different types of bins include:
-    * **Value Lists**: `bins specific_vals = {1, 5, 10};`
-    * **Value Ranges**: `bins addr_range = {[0:255]};`
-    * **`default` Bin**: `bins rest = default;` (Captures any values not explicitly covered by other bins).
-    * **`illegal_bins`**: `illegal_bins err_vals = {0};` (Identifies values that the coverage model considers illegal; simulator reporting may be configurable).
-    * **`ignore_bins`**: `ignore_bins ignore_vals = {3, 4};` (Excludes specific values from contributing to coverage).
-* **Cross Coverage (`cross`)**: This powerful feature allows the measurement of coverage for simultaneous occurrences or combinations of values from two or more defined coverpoints.
+- **Temporal Sampling (`@(event)`)**: Covergroups can be sampled synchronously based on specific events (like clock edges), making them suitable for verifying sequential logic.
+- **`option.per_instance = 1;`**: This option configures the covergroup such that each instance maintains its own separate coverage data. This is crucial when instantiating the same covergroup for multiple identical blocks in the design.
+- **Coverage Points (`coverpoint`)**: These specify the variables, signals, or expressions whose values or transitions are to be monitored for coverage.
+- **Bins (`bins`)**: Defined within coverpoints, bins categorize or group the values or sequences that constitute the coverage targets. Different types of bins include:
+  - **Value Lists**: `bins specific_vals = {1, 5, 10};`
+  - **Value Ranges**: `bins addr_range = {[0:255]};`
+  - **`default` Bin**: `bins rest = default;` (Captures any values not explicitly covered by other bins).
+  - **`illegal_bins`**: `illegal_bins err_vals = {0};` (Identifies values that the coverage model considers illegal; simulator reporting may be configurable).
+  - **`ignore_bins`**: `ignore_bins ignore_vals = {3, 4};` (Excludes specific values from contributing to coverage).
+- **Cross Coverage (`cross`)**: This powerful feature allows the measurement of coverage for simultaneous occurrences or combinations of values from two or more defined coverpoints.
 
 ### Coverpoints: Defining What to Measure
 
@@ -205,56 +205,57 @@ endgroup : data_coverage_group
 
 **Bin Types and Their Purpose:**
 
-* **Value Lists**: Explicitly list specific values to be covered.
-* **Value Ranges**: Define a contiguous range of values for coverage. The `$` symbol denotes the upper bound of the data type's range.
-* **`default` Bin**: Ensures that any values not captured by other explicit bins are accounted for in the coverage report, highlighting potentially unexpected or unbinned values.
-* **`illegal_bins`**: Used to mark values that represent an invalid or erroneous state according to the design specification. A hit in an `illegal_bin` indicates a verification failure or a design bug.
-* **`ignore_bins`**: Used to exclude values from coverage calculations. This is useful for "don't care" states or values that are not relevant to the current verification objective.
-* **Automatic Bins**: If no explicit bins are defined for a coverpoint, the simulator creates automatic bins according to the language rules and tool configuration; it is not always one bin for every possible value. Array-bin syntax such as `bins name[] = {[0:$]};` requests a bin for each value in the range, while `bins name[] = default;` creates automatic bins for values not otherwise covered where supported. Explicit bin limits are often preferable for wide data types.
+- **Value Lists**: Explicitly list specific values to be covered.
+- **Value Ranges**: Define a contiguous range of values for coverage. The `$` symbol denotes the upper bound of the data type's range.
+- **`default` Bin**: Ensures that any values not captured by other explicit bins are accounted for in the coverage report, highlighting potentially unexpected or unbinned values.
+- **`illegal_bins`**: Used to mark values that represent an invalid or erroneous state according to the design specification. A hit in an `illegal_bin` indicates a verification failure or a design bug.
+- **`ignore_bins`**: Used to exclude values from coverage calculations. This is useful for "don't care" states or values that are not relevant to the current verification objective.
+- **Automatic Bins**: If no explicit bins are defined for a coverpoint, the simulator creates automatic bins according to the language rules and tool configuration; it is not always one bin for every possible value. Array-bin syntax such as `bins name[] = {[0:$]};` requests a bin for each value in the range, while `bins name[] = default;` creates automatic bins for values not otherwise covered where supported. Explicit bin limits are often preferable for wide data types.
 
-    **Example of Automatic Bin Creation:**
+  **Example of Automatic Bin Creation:**
 
-    ```systemverilog
-    module automatic_bins_example;
-      logic [2:0] state_reg; // 3-bit variable, values 0-7
+  ```systemverilog
+  module automatic_bins_example;
+    logic [2:0] state_reg; // 3-bit variable, values 0-7
 
-      covergroup state_coverage @(posedge clk);
-        // No explicit bins defined for state_reg_cp.
-        // SystemVerilog will automatically create 8 bins:
-        // auto[0], auto[1], ..., auto[7]
-        state_reg_cp: coverpoint state_reg;
+    covergroup state_coverage @(posedge clk);
+      // No explicit bins defined for state_reg_cp.
+      // SystemVerilog will automatically create 8 bins:
+      // auto[0], auto[1], ..., auto[7]
+      state_reg_cp: coverpoint state_reg;
 
-        // Using explicit syntax for automatic bins (alternative to just leaving it blank)
-        // This also creates 8 bins: auto_explicit[0], auto_explicit[1], ..., auto_explicit[7]
-        state_reg_cp_explicit: coverpoint state_reg {
-          bins auto_explicit[] = {[0:$]};
-        }
-      endgroup : state_coverage
+      // Using explicit syntax for automatic bins (alternative to just leaving it blank)
+      // This also creates 8 bins: auto_explicit[0], auto_explicit[1], ..., auto_explicit[7]
+      state_reg_cp_explicit: coverpoint state_reg {
+        bins auto_explicit[] = {[0:$]};
+      }
+    endgroup : state_coverage
 
-      logic clk;
-      state_coverage cov_inst = new();
+    logic clk;
+    state_coverage cov_inst = new();
 
-      initial begin
-        clk = 0;
-        forever #5 clk = ~clk;
-      end
+    initial begin
+      clk = 0;
+      forever #5 clk = ~clk;
+    end
 
-      initial begin
-        // Drive various states to hit the automatic bins
-        state_reg = 3'b000; @(posedge clk); cov_inst.sample();
-        state_reg = 3'b001; @(posedge clk); cov_inst.sample();
-        state_reg = 3'b010; @(posedge clk); cov_inst.sample();
-        state_reg = 3'b011; @(posedge clk); cov_inst.sample();
-        state_reg = 3'b100; @(posedge clk); cov_inst.sample();
-        state_reg = 3'b101; @(posedge clk); cov_inst.sample();
-        state_reg = 3'b110; @(posedge clk); cov_inst.sample();
-        state_reg = 3'b111; @(posedge clk); cov_inst.sample(); // All 8 bins are hit
+    initial begin
+      // Drive various states to hit the automatic bins
+      state_reg = 3'b000; @(posedge clk); cov_inst.sample();
+      state_reg = 3'b001; @(posedge clk); cov_inst.sample();
+      state_reg = 3'b010; @(posedge clk); cov_inst.sample();
+      state_reg = 3'b011; @(posedge clk); cov_inst.sample();
+      state_reg = 3'b100; @(posedge clk); cov_inst.sample();
+      state_reg = 3'b101; @(posedge clk); cov_inst.sample();
+      state_reg = 3'b110; @(posedge clk); cov_inst.sample();
+      state_reg = 3'b111; @(posedge clk); cov_inst.sample(); // All 8 bins are hit
 
-        #100 $finish;
-      end
-    endmodule : automatic_bins_example
-    ```
-    In the example above, for `state_reg_cp`, the simulator will automatically generate bins for each possible value of `state_reg` (0 through 7). The coverage report would show entries for `state_reg_cp.auto[0]`, `state_reg_cp.auto[1]`, and so on, up to `state_reg_cp.auto[7]`. Similarly for `state_reg_cp_explicit`, bins named `auto_explicit[0]` to `auto_explicit[7]` would be created.
+      #100 $finish;
+    end
+  endmodule : automatic_bins_example
+  ```
+
+  In the example above, for `state_reg_cp`, the simulator will automatically generate bins for each possible value of `state_reg` (0 through 7). The coverage report would show entries for `state_reg_cp.auto[0]`, `state_reg_cp.auto[1]`, and so on, up to `state_reg_cp.auto[7]`. Similarly for `state_reg_cp_explicit`, bins named `auto_explicit[0]` to `auto_explicit[7]` would be created.
 
 ### Cross Coverage: Verifying Value Combinations
 
@@ -282,125 +283,126 @@ endgroup : protocol_mode_speed_coverage
 
 **Usefulness of Cross Coverage:**
 
-* **Interaction Verification**: Crucial for validating the design's behavior when multiple inputs, control signals, or state variables interact. It ensures that all relevant combinations are tested.
-* **Corner Case Detection**: Many complex corner cases involve specific combinations of conditions. Cross coverage is highly effective in identifying and verifying these scenarios.
-* **Comprehensive Scenario Coverage**: By defining crosses between relevant coverpoints, verification engineers can define and measure coverage for complex operational scenarios that involve simultaneous conditions across different parts of the design.
+- **Interaction Verification**: Crucial for validating the design's behavior when multiple inputs, control signals, or state variables interact. It ensures that all relevant combinations are tested.
+- **Corner Case Detection**: Many complex corner cases involve specific combinations of conditions. Cross coverage is highly effective in identifying and verifying these scenarios.
+- **Comprehensive Scenario Coverage**: By defining crosses between relevant coverpoints, verification engineers can define and measure coverage for complex operational scenarios that involve simultaneous conditions across different parts of the design.
 
 ### Accessing Functional Coverage at Runtime: `get_coverage()` and `get_inst_coverage()`
 
-SystemVerilog provides built-in methods to query functional coverage results *during* simulation runtime. This capability is invaluable for implementing dynamic coverage-driven verification (CDV) strategies and for real-time monitoring of verification progress.
+SystemVerilog provides built-in methods to query functional coverage results _during_ simulation runtime. This capability is invaluable for implementing dynamic coverage-driven verification (CDV) strategies and for real-time monitoring of verification progress.
 
-* **`covergroup_instance.sample()`**: As seen in previous examples, this method is called on a specific instance of a covergroup to trigger the collection of coverage data based on the current values of the coverpoint expressions.
+- **`covergroup_instance.sample()`**: As seen in previous examples, this method is called on a specific instance of a covergroup to trigger the collection of coverage data based on the current values of the coverpoint expressions.
 
-* **`covergroup_type::get_coverage()`**: This is a **static method** called directly on the **covergroup type**. It returns the **cumulative coverage percentage (0-100)** for *all instances* of that covergroup type that have been instantiated and sampled up to the point the method is called.
+- **`covergroup_type::get_coverage()`**: This is a **static method** called directly on the **covergroup type**. It returns the **cumulative coverage percentage (0-100)** for _all instances_ of that covergroup type that have been instantiated and sampled up to the point the method is called.
 
-    **Purpose and Scope:**
-    `get_coverage()` provides a high-level view of the overall progress towards covering the functional aspects defined by that covergroup type across your entire testbench environment. It aggregates coverage data from all active instances of that covergroup definition.
+  **Purpose and Scope:**
+  `get_coverage()` provides a high-level view of the overall progress towards covering the functional aspects defined by that covergroup type across your entire testbench environment. It aggregates coverage data from all active instances of that covergroup definition.
 
-    **How it Works:**
-    When invoked, the simulator calculates the total coverage percentage for the specified covergroup type by combining the coverage data from all its instances. This calculation considers hits in all bins and crosses, taking into account any specified weights.
+  **How it Works:**
+  When invoked, the simulator calculates the total coverage percentage for the specified covergroup type by combining the coverage data from all its instances. This calculation considers hits in all bins and crosses, taking into account any specified weights.
 
-    **Usage Context and Applications:**
-    You would typically use `get_coverage()` within your testbench components (like sequences, scoreboards, or coverage monitors) for:
-    * **Monitoring Overall Progress:** Getting a quick sense of how much of a particular functional area has been covered across all relevant parts of the design.
-    * **Coverage-Driven Verification (CDV):** Dynamically adjusting stimulus generation based on the overall coverage level. If coverage for a critical feature is low, the testbench can be steered to generate more targeted tests.
-    * **Runtime Reporting:** Displaying overall coverage percentages in the simulation log for immediate feedback.
-    * **Test Ending Conditions:** Potentially using overall coverage goals as criteria for ending a simulation or moving to the next phase.
+  **Usage Context and Applications:**
+  You would typically use `get_coverage()` within your testbench components (like sequences, scoreboards, or coverage monitors) for:
+  - **Monitoring Overall Progress:** Getting a quick sense of how much of a particular functional area has been covered across all relevant parts of the design.
+  - **Coverage-Driven Verification (CDV):** Dynamically adjusting stimulus generation based on the overall coverage level. If coverage for a critical feature is low, the testbench can be steered to generate more targeted tests.
+  - **Runtime Reporting:** Displaying overall coverage percentages in the simulation log for immediate feedback.
+  - **Test Ending Conditions:** Potentially using overall coverage goals as criteria for ending a simulation or moving to the next phase.
 
-    **Example Illustrating `get_coverage()`:**
+  **Example Illustrating `get_coverage()`:**
 
-    ```systemverilog
-    // Assume my_transaction_covergroup is defined as shown previously
-    covergroup my_transaction_covergroup @(posedge vif.clk);
-      // ... coverpoints and crosses ...
-      trans_type_cp: coverpoint transaction.type;
-      // ...
-    endgroup
+  ```systemverilog
+  // Assume my_transaction_covergroup is defined as shown previously
+  covergroup my_transaction_covergroup @(posedge vif.clk);
+    // ... coverpoints and crosses ...
+    trans_type_cp: coverpoint transaction.type;
+    // ...
+  endgroup
 
-    // In a UVM environment or test
-    class my_env extends uvm_env;
-      // ... components ...
-      real current_total_coverage;
+  // In a UVM environment or test
+  class my_env extends uvm_env;
+    // ... components ...
+    real current_total_coverage;
 
-      // Even with multiple instances, get_coverage() gives a cumulative view
-      my_transaction_covergroup transaction_cg_inst1 = new();
-      my_transaction_covergroup transaction_cg_inst2 = new();
-      // ... potentially more instances ...
+    // Even with multiple instances, get_coverage() gives a cumulative view
+    my_transaction_covergroup transaction_cg_inst1 = new();
+    my_transaction_covergroup transaction_cg_inst2 = new();
+    // ... potentially more instances ...
 
-      task run_phase(uvm_phase phase);
-        // ... test stimulus ...
+    task run_phase(uvm_phase phase);
+      // ... test stimulus ...
 
-        // Periodically check and report the cumulative coverage
-        repeat (10) begin
-          #100; // Wait for simulation time to pass
-          current_total_coverage = my_transaction_covergroup::get_coverage();
-          $display("[%0t] Cumulative coverage for my_transaction_covergroup: %0.2f%%", $time, current_total_coverage);
+      // Periodically check and report the cumulative coverage
+      repeat (10) begin
+        #100; // Wait for simulation time to pass
+        current_total_coverage = my_transaction_covergroup::get_coverage();
+        $display("[%0t] Cumulative coverage for my_transaction_covergroup: %0.2f%%", $time, current_total_coverage);
 
-          // Example: CDV logic based on total coverage
-          if (current_total_coverage < 75) begin
-            $display("[%0t] Cumulative coverage below 75%, adding more targeted stimulus.", $time);
-            // Call a sequence that generates stimulus for uncovered scenarios
-          end else begin
-             $display("[%0t] Cumulative coverage is sufficient for now.", $time);
-          end
+        // Example: CDV logic based on total coverage
+        if (current_total_coverage < 75) begin
+          $display("[%0t] Cumulative coverage below 75%, adding more targeted stimulus.", $time);
+          // Call a sequence that generates stimulus for uncovered scenarios
+        end else begin
+           $display("[%0t] Cumulative coverage is sufficient for now.", $time);
         end
-
-        // ... finish test ...
       end
-    endclass
-    ```
-    In this scenario, `my_transaction_covergroup::get_coverage()` aggregates coverage from both `transaction_cg_inst1` and `transaction_cg_inst2` to provide a single overall percentage for that covergroup type.
 
-* **`covergroup_instance.get_inst_coverage()`**: This method is called on a specific *instance* of a covergroup and returns the coverage percentage (0-100) achieved by that individual instance only. This is particularly useful when `option.per_instance` is set to 1, which also requests that per-instance results be retained and reported separately.
+      // ... finish test ...
+    end
+  endclass
+  ```
 
-    **Contrast:**
-    * `get_coverage()`: `covergroup_type::get_coverage()` -> **Cumulative coverage for the covergroup type.**
-    * `get_inst_coverage()`: `covergroup_instance.get_inst_coverage()` -> **Coverage for a specific covergroup instance.**
+  In this scenario, `my_transaction_covergroup::get_coverage()` aggregates coverage from both `transaction_cg_inst1` and `transaction_cg_inst2` to provide a single overall percentage for that covergroup type.
 
-While these methods allow you to access coverage percentages at runtime for dynamic decision-making, detailed analysis, visualization of covered/uncovered bins and crosses, and merging of coverage from multiple simulation runs are typically performed *post-simulation* using dedicated coverage analysis tools like Synopsys URG and Verdi.
+- **`covergroup_instance.get_inst_coverage()`**: This method is called on a specific _instance_ of a covergroup and returns the coverage percentage (0-100) achieved by that individual instance only. This is particularly useful when `option.per_instance` is set to 1, which also requests that per-instance results be retained and reported separately.
+
+  **Contrast:**
+  - `get_coverage()`: `covergroup_type::get_coverage()` -> **Cumulative coverage for the covergroup type.**
+  - `get_inst_coverage()`: `covergroup_instance.get_inst_coverage()` -> **Coverage for a specific covergroup instance.**
+
+While these methods allow you to access coverage percentages at runtime for dynamic decision-making, detailed analysis, visualization of covered/uncovered bins and crosses, and merging of coverage from multiple simulation runs are typically performed _post-simulation_ using dedicated coverage analysis tools like Synopsys URG and Verdi.
 
 ## Practical Exercises to Solidify Coverage Concepts
 
 To gain hands-on experience with SystemVerilog coverage, try the following exercises with your preferred simulator (like Synopsys VCS) and coverage analysis tool (like Synopsys URG/Verdi):
 
 1.  **Statement Coverage Challenge: 3:1 Multiplexer**
-    * Design a SystemVerilog module for a 3:1 multiplexer with three data inputs (`data_in1`, `data_in2`, `data_in3`), a 2-bit select input (`select_input`), and one output (`mux_output`).
-    * Create a testbench that instantiates the multiplexer.
-    * Develop stimulus to achieve **100% statement coverage** within the multiplexer module.
-    * Generate and analyze the code coverage report using your simulator to confirm the statement coverage result.
+    - Design a SystemVerilog module for a 3:1 multiplexer with three data inputs (`data_in1`, `data_in2`, `data_in3`), a 2-bit select input (`select_input`), and one output (`mux_output`).
+    - Create a testbench that instantiates the multiplexer.
+    - Develop stimulus to achieve **100% statement coverage** within the multiplexer module.
+    - Generate and analyze the code coverage report using your simulator to confirm the statement coverage result.
 
 2.  **Branch Coverage Scenario: Traffic Light Controller State Transitions**
-    * Implement a SystemVerilog module for a simplified traffic light controller with states: `RED`, `YELLOW`, `GREEN`.
-    * The controller should transition through states in the sequence: `RED -> YELLOW -> GREEN -> RED -> ...`
-    * Write a testbench that sequences the traffic light controller through its states, ensuring that **all possible state transitions (branches in your state logic)** are covered.
-    * Examine the branch coverage section of your code coverage report to verify that 100% branch coverage is achieved for the state machine implementation.
+    - Implement a SystemVerilog module for a simplified traffic light controller with states: `RED`, `YELLOW`, `GREEN`.
+    - The controller should transition through states in the sequence: `RED -> YELLOW -> GREEN -> RED -> ...`
+    - Write a testbench that sequences the traffic light controller through its states, ensuring that **all possible state transitions (branches in your state logic)** are covered.
+    - Examine the branch coverage section of your code coverage report to verify that 100% branch coverage is achieved for the state machine implementation.
 
 3.  **Toggle Coverage Task: 4-bit Counter with Asynchronous Reset**
-    * Design a 4-bit binary counter with an asynchronous active-low reset input (`reset_n`).
-    * Simulate the counter for a sufficient number of clock cycles (e.g., 20 cycles), including asserting and deasserting the reset signal at least once.
-    * Measure the **toggle coverage** for all output bits of the 4-bit counter and the `reset_n` input.
-    * Analyze the toggle coverage report to observe the transitions on each signal. Note that achieving exactly 100% toggle coverage for all counter bits might require a longer simulation depending on the counter's behavior.
+    - Design a 4-bit binary counter with an asynchronous active-low reset input (`reset_n`).
+    - Simulate the counter for a sufficient number of clock cycles (e.g., 20 cycles), including asserting and deasserting the reset signal at least once.
+    - Measure the **toggle coverage** for all output bits of the 4-bit counter and the `reset_n` input.
+    - Analyze the toggle coverage report to observe the transitions on each signal. Note that achieving exactly 100% toggle coverage for all counter bits might require a longer simulation depending on the counter's behavior.
 
 4.  **Functional Coverage Implementation: 8-bit Data Bus Bins**
-    * Create a covergroup named `data_bus_coverage` to monitor an 8-bit data bus signal (`data_bus_in`).
-    * Define a coverpoint for `data_bus_in` with the following bins:
-        * `zero_value_bin`: Covers the value 0.
-        * `powers_of_two_bin`: Covers the values 1, 2, 4, 8, 16, 32, 64, 128.
-        * `prime_numbers_bin`: Covers a representative set of prime numbers within the 8-bit range (e.g., 2, 3, 5, 7, 11, 13, ...).
-        * `default_bin`: A default bin to capture any other 8-bit values not included in the above bins.
-    * Write a testbench that drives the `data_bus_in` with values specifically chosen or randomly generated to hit all the defined bins.
-    * Instantiate and sample the covergroup at appropriate times (e.g., when `data_bus_in` is stable).
-    * Generate and analyze the functional coverage report to confirm that all bins in your `data_bus_coverage` covergroup have been hit.
+    - Create a covergroup named `data_bus_coverage` to monitor an 8-bit data bus signal (`data_bus_in`).
+    - Define a coverpoint for `data_bus_in` with the following bins:
+      - `zero_value_bin`: Covers the value 0.
+      - `powers_of_two_bin`: Covers the values 1, 2, 4, 8, 16, 32, 64, 128.
+      - `prime_numbers_bin`: Covers a representative set of prime numbers within the 8-bit range (e.g., 2, 3, 5, 7, 11, 13, ...).
+      - `default_bin`: A default bin to capture any other 8-bit values not included in the above bins.
+    - Write a testbench that drives the `data_bus_in` with values specifically chosen or randomly generated to hit all the defined bins.
+    - Instantiate and sample the covergroup at appropriate times (e.g., when `data_bus_in` is stable).
+    - Generate and analyze the functional coverage report to confirm that all bins in your `data_bus_coverage` covergroup have been hit.
 
 5.  **Cross Coverage Problem: Opcode and Error Flag Combinations**
-    * Consider a simplified module with a 2-bit opcode input (`opcode [1:0]`) and a 1-bit error flag signal (`error_flag`).
-    * Define a covergroup `opcode_error_cross_coverage`.
-    * Create a coverpoint `opcode_cp` for `opcode` with bins for each of the four possible 2-bit values (e.g., `bins opcode_00 = {2'b00};`).
-    * Create a coverpoint `error_flag_cp` for `error_flag` with bins for the error being set (`bins error_set = {1};`) and the error not being set (`bins error_not_set = {0};`).
-    * Define **cross coverage** `opcode_error_cross` between `opcode_cp` and `error_flag_cp` to cover all possible combinations of opcode values and error flag states.
-    * Write a testbench that drives different combinations of `opcode` and `error_flag` values to hit all cross-coverage bins.
-    * Instantiate and sample the covergroup.
-    * Examine the functional coverage report to ensure all combinations in the `opcode_error_cross` are covered.
+    - Consider a simplified module with a 2-bit opcode input (`opcode [1:0]`) and a 1-bit error flag signal (`error_flag`).
+    - Define a covergroup `opcode_error_cross_coverage`.
+    - Create a coverpoint `opcode_cp` for `opcode` with bins for each of the four possible 2-bit values (e.g., `bins opcode_00 = {2'b00};`).
+    - Create a coverpoint `error_flag_cp` for `error_flag` with bins for the error being set (`bins error_set = {1};`) and the error not being set (`bins error_not_set = {0};`).
+    - Define **cross coverage** `opcode_error_cross` between `opcode_cp` and `error_flag_cp` to cover all possible combinations of opcode values and error flag states.
+    - Write a testbench that drives different combinations of `opcode` and `error_flag` values to hit all cross-coverage bins.
+    - Instantiate and sample the covergroup.
+    - Examine the functional coverage report to ensure all combinations in the `opcode_error_cross` are covered.
 
 ## Best Practices for Effective Coverage-Driven Verification
 
@@ -424,20 +426,20 @@ Implementing a successful coverage-driven verification (CDV) strategy involves m
 
 ## Comprehensive Reference Table: SystemVerilog Coverage Constructs and Methods
 
-| Construct/Keyword              | Description                                                                                                | Example                                                                       | Notes                                                                                                                                                                                                                                                                                                                         |
-| :----------------------------- | :--------------------------------------------------------------------------------------------------------- | :---------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| **`covergroup name; ... endgroup`** | Defines a user-defined type for functional coverage specification.                                         | `covergroup transaction_cg @(posedge clk); ... endgroup`                      | Encapsulates coverpoints, crosses, options, and methods for a specific functional aspect. Can be defined within modules, interfaces, or classes.                                                                                                                                                                              |
-| **`coverpoint expression { ... }`** | Defines a point for coverage collection based on the value or transition of an expression.               | `coverpoint address_bus { bins range = {[0:255]}; }`                          | Specifies what to measure. Requires associated bins to define coverage targets.                                                                                                                                                                                                                                                 |
-| **`bins bin_name = {value_list or range};`** | Defines a category or range of values for a coverpoint to track hits.                                      | `bins low_values = {[0:15]};`                                                 | Can be single values, lists of values, ranges, or automatically created. Forms the basis of coverage measurement within a coverpoint.                                                                                                                                                                                          |
-| **`cross cp1, cp2, ... ;`** | Defines cross-coverage between two or more coverpoints to measure combinations of bin hits.                  | `cross opcode_cp, data_type_cp;`                                              | Measures the coverage of simultaneous occurrences of bins from the specified coverpoints. Essential for verifying interactions.                                                                                                                                                                                             |
-| **`option.per_instance = 1;`** | A covergroup option that specifies that each instance of the covergroup should track its coverage independently. | `covergroup cg; option.per_instance = 1; ... endgroup`                        | Useful when multiple instances of the same covergroup are used to monitor corresponding instances of a design block.                                                                                                                                                                                                          |
-| **`default` bin** | A bin within a coverpoint that captures any values not explicitly covered by other defined bins.             | `bins others default;`                                                        | Ensures that all possible input values are accounted for in the coverage analysis, highlighting unbinned values.                                                                                                                                                                                                                |
-| **`illegal_bins bin_name = {value_list or range};`** | Defines values for a coverpoint that are considered illegal according to the specification. Hitting an illegal bin signifies a coverage failure. | `illegal_bins invalid_state = {3'b111};`                                      | Used to detect erroneous or forbidden states/values during simulation. Triggers an error or warning in the coverage report.                                                                                                                                                                                                  |
-| **`ignore_bins bin_name = {value_list or range};`** | Defines values for a coverpoint that should be excluded from coverage consideration.                        | `ignore_bins unused_codes = {[200:255]};`                                     | Used to exclude "don't care" values, testbench artifacts, or irrelevant scenarios from the reported coverage percentage.                                                                                                                                                                                                 |
-| **`covergroup_instance.sample();`** | A method called on a covergroup instance to explicitly trigger the collection of coverage data at that point. | `my_cg_instance.sample();`                                                    | Used for procedural sampling of covergroups, typically in response to specific events or at strategic points in the testbench sequence.                                                                                                                                                                                      |
-| **`covergroup_type::get_coverage()`** | A type-level method that returns the overall coverage percentage (0-100) for the covergroup type. | `real total_cov = my_covergroup::get_coverage();`                            | Provides aggregate coverage for a given covergroup definition according to the simulator's coverage model. Useful for tracking overall progress at a high level or for CDV.                                                                                                                                  |
-| **`covergroup_instance.get_inst_coverage()`** | A method called on a specific covergroup instance to return its individual coverage percentage (0-100).      | `real instance_cov = my_cg_instance.get_inst_coverage();`                      | Provides the coverage percentage for a single, specific instance. `option.per_instance = 1` requests separate per-instance reporting.                                                                                                                                                                                              |
-| **Code Coverage Metrics** | Metrics (Statement, Branch, Toggle, etc.) automatically collected by the simulator based on RTL execution. | (Enabled via simulator command-line options like `-cm` in VCS)              | Provides structural coverage information about the RTL code. Collected automatically without explicit SystemVerilog constructs in the design/testbench (except for potential pragmas for exclusion).                                                                                                                     |
+| Construct/Keyword                                    | Description                                                                                                                                      | Example                                                        | Notes                                                                                                                                                                                                |
+| :--------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **`covergroup name; ... endgroup`**                  | Defines a user-defined type for functional coverage specification.                                                                               | `covergroup transaction_cg @(posedge clk); ... endgroup`       | Encapsulates coverpoints, crosses, options, and methods for a specific functional aspect. Can be defined within modules, interfaces, or classes.                                                     |
+| **`coverpoint expression { ... }`**                  | Defines a point for coverage collection based on the value or transition of an expression.                                                       | `coverpoint address_bus { bins range = {[0:255]}; }`           | Specifies what to measure. Requires associated bins to define coverage targets.                                                                                                                      |
+| **`bins bin_name = {value_list or range};`**         | Defines a category or range of values for a coverpoint to track hits.                                                                            | `bins low_values = {[0:15]};`                                  | Can be single values, lists of values, ranges, or automatically created. Forms the basis of coverage measurement within a coverpoint.                                                                |
+| **`cross cp1, cp2, ... ;`**                          | Defines cross-coverage between two or more coverpoints to measure combinations of bin hits.                                                      | `cross opcode_cp, data_type_cp;`                               | Measures the coverage of simultaneous occurrences of bins from the specified coverpoints. Essential for verifying interactions.                                                                      |
+| **`option.per_instance = 1;`**                       | A covergroup option that specifies that each instance of the covergroup should track its coverage independently.                                 | `covergroup cg; option.per_instance = 1; ... endgroup`         | Useful when multiple instances of the same covergroup are used to monitor corresponding instances of a design block.                                                                                 |
+| **`default` bin**                                    | A bin within a coverpoint that captures any values not explicitly covered by other defined bins.                                                 | `bins others default;`                                         | Ensures that all possible input values are accounted for in the coverage analysis, highlighting unbinned values.                                                                                     |
+| **`illegal_bins bin_name = {value_list or range};`** | Defines values for a coverpoint that are considered illegal according to the specification. Hitting an illegal bin signifies a coverage failure. | `illegal_bins invalid_state = {3'b111};`                       | Used to detect erroneous or forbidden states/values during simulation. Triggers an error or warning in the coverage report.                                                                          |
+| **`ignore_bins bin_name = {value_list or range};`**  | Defines values for a coverpoint that should be excluded from coverage consideration.                                                             | `ignore_bins unused_codes = {[200:255]};`                      | Used to exclude "don't care" values, testbench artifacts, or irrelevant scenarios from the reported coverage percentage.                                                                             |
+| **`covergroup_instance.sample();`**                  | A method called on a covergroup instance to explicitly trigger the collection of coverage data at that point.                                    | `my_cg_instance.sample();`                                     | Used for procedural sampling of covergroups, typically in response to specific events or at strategic points in the testbench sequence.                                                              |
+| **`covergroup_type::get_coverage()`**                | A type-level method that returns the overall coverage percentage (0-100) for the covergroup type.                                                | `real total_cov = my_covergroup::get_coverage();`              | Provides aggregate coverage for a given covergroup definition according to the simulator's coverage model. Useful for tracking overall progress at a high level or for CDV.                          |
+| **`covergroup_instance.get_inst_coverage()`**        | A method called on a specific covergroup instance to return its individual coverage percentage (0-100).                                          | `real instance_cov = my_cg_instance.get_inst_coverage();`      | Provides the coverage percentage for a single, specific instance. `option.per_instance = 1` requests separate per-instance reporting.                                                                |
+| **Code Coverage Metrics**                            | Metrics (Statement, Branch, Toggle, etc.) automatically collected by the simulator based on RTL execution.                                       | (Enabled via simulator command-line options like `-cm` in VCS) | Provides structural coverage information about the RTL code. Collected automatically without explicit SystemVerilog constructs in the design/testbench (except for potential pragmas for exclusion). |
 
 ```systemverilog
 // Refined Sample Solution for Exercise 4: Functional Coverage - 8-bit Data Bus Bins
@@ -485,6 +487,4 @@ module data_bus_coverage_example;
 endmodule : data_bus_coverage_example
 ```
 
-
 ##### Copyright (c) 2026 squared-studio
-

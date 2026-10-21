@@ -1,0 +1,84 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 440" width="100%" height="100%">
+  <defs>
+    <style>
+      .bg { fill: #0b1120; }
+      .card { fill: #131d33; stroke: #1e293b; stroke-width: 1.5; rx: 10; }
+      .title { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 19px; fill: #f8fafc; }
+      .sec-title { font-family: 'Inter', system-ui, sans-serif; font-weight: 600; font-size: 14px; fill: #38bdf8; }
+      .label { font-family: 'Inter', system-ui, sans-serif; font-size: 12px; fill: #cbd5e1; }
+      .sublabel { font-family: 'Inter', system-ui, sans-serif; font-size: 11px; fill: #94a3b8; }
+      .code-txt { font-family: 'JetBrains Mono', Consolas, monospace; font-size: 12px; fill: #34d399; font-weight: 600; }
+      .arr-cell { fill: #1e293b; stroke: #38bdf8; stroke-width: 2; }
+    </style>
+    <marker id="arr-step" viewBox="0 0 8 8" refX="5" refY="4" markerWidth="5" markerHeight="5" orient="auto">
+      <path d="M 0 1 L 7 4 L 0 7 z" fill="#fbbf24" />
+    </marker>
+  </defs>
+
+  <rect width="960" height="440" class="bg" rx="14"/>
+  <text x="480" y="36" text-anchor="middle" class="title">Pointer Arithmetic Scaling &amp; The Array-to-Pointer Decay Equivalence</text>
+
+  <!-- Array in Memory Graphic -->
+  <g transform="translate(45, 60)">
+    <text x="0" y="15" class="code-txt" fill="#38bdf8">int arr[5] = { 10, 20, 30, 40, 50 };   // sizeof(int) == 4 bytes</text>
+
+    <!-- 5 contiguous array cells -->
+    <g transform="translate(0, 35)">
+      <!-- Element 0 -->
+      <rect x="0" y="0" width="170" height="65" class="arr-cell"/>
+      <text x="85" y="30" text-anchor="middle" class="code-txt" style="font-size:16px;">arr[0] = 10</text>
+      <text x="85" y="50" text-anchor="middle" class="sublabel">@ 0x1000</text>
+
+      <!-- Element 1 -->
+      <rect x="170" y="0" width="170" height="65" class="arr-cell"/>
+      <text x="255" y="30" text-anchor="middle" class="code-txt" style="font-size:16px;">arr[1] = 20</text>
+      <text x="255" y="50" text-anchor="middle" class="sublabel">@ 0x1004 (+4B)</text>
+
+      <!-- Element 2 -->
+      <rect x="340" y="0" width="170" height="65" class="arr-cell"/>
+      <text x="425" y="30" text-anchor="middle" class="code-txt" style="font-size:16px;">arr[2] = 30</text>
+      <text x="425" y="50" text-anchor="middle" class="sublabel">@ 0x1008 (+4B)</text>
+
+      <!-- Element 3 -->
+      <rect x="510" y="0" width="170" height="65" class="arr-cell"/>
+      <text x="595" y="30" text-anchor="middle" class="code-txt" style="font-size:16px;">arr[3] = 40</text>
+      <text x="595" y="50" text-anchor="middle" class="sublabel">@ 0x100C (+4B)</text>
+
+      <!-- Element 4 -->
+      <rect x="680" y="0" width="170" height="65" class="arr-cell"/>
+      <text x="765" y="30" text-anchor="middle" class="code-txt" style="font-size:16px;">arr[4] = 50</text>
+      <text x="765" y="50" text-anchor="middle" class="sublabel">@ 0x1010 (+4B)</text>
+    </g>
+
+    <!-- Pointer step arrows -->
+    <g transform="translate(0, 115)">
+      <path d="M 85,15 Q 170,-10 255,15" stroke="#fbbf24" stroke-width="2" fill="none" marker-end="url(#arr-step)"/>
+      <text x="170" y="-3" text-anchor="middle" class="code-txt" fill="#fbbf24">ptr + 1 (+4 bytes)</text>
+
+      <path d="M 255,15 Q 340,-10 425,15" stroke="#fbbf24" stroke-width="2" fill="none" marker-end="url(#arr-step)"/>
+      <text x="340" y="-3" text-anchor="middle" class="code-txt" fill="#fbbf24">ptr + 2 (+8 bytes)</text>
+    </g>
+  </g>
+
+  <!-- Bottom Explanatory Panels -->
+  <g transform="translate(45, 230)">
+    <rect width="420" height="180" class="card"/>
+    <text x="20" y="28" class="sec-title">Universal Pointer Arithmetic Scaling Law</text>
+    <rect x="15" y="42" width="390" height="120" rx="6" fill="#0b1120" stroke="#1e293b"/>
+    <text x="25" y="68" class="code-txt" fill="#38bdf8">ptr + i == Address + (i * sizeof(*ptr))</text>
+    <text x="25" y="92" class="sublabel">• For char*  (1 byte) : ptr + 1 advances by 1 byte</text>
+    <text x="25" y="112" class="sublabel">• For int*   (4 bytes): ptr + 1 advances by 4 bytes</text>
+    <text x="25" y="132" class="sublabel">• For struct (64 bytes): ptr + 1 advances by 64 bytes</text>
+    <text x="25" y="150" class="sublabel" style="fill:#f43f5e;">void* pointer arithmetic is forbidden in ISO C!</text>
+  </g>
+
+  <g transform="translate(495, 230)">
+    <rect width="420" height="180" class="card"/>
+    <text x="20" y="28" class="sec-title">The Array-to-Pointer Decay Identity</text>
+    <rect x="15" y="42" width="390" height="120" rx="6" fill="#0b1120" stroke="#1e293b"/>
+    <text x="25" y="68" class="code-txt" fill="#34d399">arr[i]  &lt;=== Exact Equivalent ===&gt;  *(arr + i)</text>
+    <text x="25" y="95" class="sublabel">When passed to a function, arrays decay into a pointer</text>
+    <text x="25" y="112" class="sublabel">to their first element (&amp;arr[0]), losing sizeof array bounds!</text>
+    <text x="25" y="135" class="code-txt" style="font-size:11px;">void process(int *ptr, size_t len)  // Always pass size!</text>
+  </g>
+</svg>

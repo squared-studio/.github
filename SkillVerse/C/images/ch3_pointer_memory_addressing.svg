@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 440" width="100%" height="100%">
+  <defs>
+    <style>
+      .bg { fill: #0b1120; }
+      .card { fill: #131d33; stroke: #1e293b; stroke-width: 1.5; rx: 10; }
+      .title { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 19px; fill: #f8fafc; }
+      .sec-title { font-family: 'Inter', system-ui, sans-serif; font-weight: 600; font-size: 14px; fill: #38bdf8; }
+      .label { font-family: 'Inter', system-ui, sans-serif; font-size: 12px; fill: #cbd5e1; }
+      .sublabel { font-family: 'Inter', system-ui, sans-serif; font-size: 11px; fill: #94a3b8; }
+      .code-txt { font-family: 'JetBrains Mono', Consolas, monospace; font-size: 12px; fill: #34d399; font-weight: 600; }
+      .mem-cell { fill: #1e293b; stroke: #38bdf8; stroke-width: 2; rx: 6; }
+    </style>
+    <marker id="arr-ptr" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8" />
+    </marker>
+  </defs>
+
+  <rect width="960" height="440" class="bg" rx="14"/>
+  <text x="480" y="36" text-anchor="middle" class="title">Pointers in C: Memory Addresses, References (&amp;) &amp; Dereferencing (*)</text>
+
+  <!-- Left: Memory Diagram -->
+  <g transform="translate(60, 55)">
+    <!-- Pointer variable (ptr) -->
+    <g transform="translate(0, 30)">
+      <text x="0" y="-12" class="code-txt" fill="#38bdf8">int *ptr = &amp;x;</text>
+      <rect x="0" y="0" width="180" height="70" class="mem-cell"/>
+      <text x="90" y="32" text-anchor="middle" class="code-txt" style="font-size:14px;">0x7FFD50</text>
+      <text x="90" y="52" text-anchor="middle" class="sublabel">Stored Value (Address of x)</text>
+      <text x="90" y="88" text-anchor="middle" class="code-txt" fill="#94a3b8">@ 0x7FFDF8</text>
+      <text x="90" y="102" text-anchor="middle" class="sublabel">Address of ptr (&amp;ptr)</text>
+    </g>
+
+    <!-- Dereferencing Arrow -->
+    <path d="M 180,65 C 280,65 240,180 340,180" stroke="#38bdf8" stroke-width="3" fill="none" marker-end="url(#arr-ptr)"/>
+    <text x="250" y="115" class="code-txt" fill="#38bdf8">*ptr Dereference</text>
+
+    <!-- Target variable (x) -->
+    <g transform="translate(350, 145)">
+      <text x="0" y="-12" class="code-txt" fill="#34d399">int x = 42;</text>
+      <rect x="0" y="0" width="180" height="70" class="mem-cell" stroke="#34d399"/>
+      <text x="90" y="35" text-anchor="middle" class="code-txt" style="font-size:18px; fill:#34d399;">42</text>
+      <text x="90" y="54" text-anchor="middle" class="sublabel">Stored Value of x</text>
+      <text x="90" y="88" text-anchor="middle" class="code-txt" fill="#94a3b8">@ 0x7FFD50</text>
+      <text x="90" y="102" text-anchor="middle" class="sublabel">Address of x (&amp;x)</text>
+    </g>
+  </g>
+
+  <!-- Right: Operators & Rules Card -->
+  <g transform="translate(635, 55)">
+    <rect width="300" height="360" class="card"/>
+    <text x="20" y="28" class="sec-title">Core Pointer Operators</text>
+
+    <rect x="15" y="42" width="270" height="295" rx="6" fill="#0b1120" stroke="#1e293b"/>
+    <g transform="translate(25, 65)">
+      <text x="0" y="0" class="code-txt" fill="#38bdf8">&amp; (Address-Of Operator):</text>
+      <text x="0" y="20" class="sublabel">Extracts the physical memory</text>
+      <text x="0" y="34" class="sublabel">address of any variable: &amp;x</text>
+
+      <line x1="0" y1="48" x2="250" y2="48" stroke="#1e293b"/>
+
+      <text x="0" y="68" class="code-txt" fill="#34d399">* (Dereference Operator):</text>
+      <text x="0" y="88" class="sublabel">Reads or modifies the value at the</text>
+      <text x="0" y="102" class="sublabel">memory address stored in the pointer:</text>
+      <text x="0" y="122" class="code-txt" style="font-size:11px;">*ptr = 99;  // Changes x to 99</text>
+
+      <line x1="0" y1="138" x2="250" y2="138" stroke="#1e293b"/>
+
+      <text x="0" y="158" class="code-txt" fill="#fbbf24">NULL Pointer:</text>
+      <text x="0" y="178" class="sublabel">Points to address 0x0 (invalid).</text>
+      <text x="0" y="194" class="sublabel">Dereferencing causes Segfault (SIGSEGV).</text>
+
+      <line x1="0" y1="210" x2="250" y2="210" stroke="#1e293b"/>
+
+      <text x="0" y="230" class="code-txt" fill="#f43f5e">void* (Generic Pointer):</text>
+      <text x="0" y="248" class="sublabel">Can hold any address; must cast</text>
+      <text x="0" y="262" class="sublabel">before dereferencing or arithmetic.</text>
+    </g>
+  </g>
+</svg>

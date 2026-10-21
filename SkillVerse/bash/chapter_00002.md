@@ -6,57 +6,57 @@ Let's break down the "Hello, World!" script to grasp the fundamental concepts of
 
 ### **Step-by-Step Breakdown**
 
-1.  **Create `hello_world.sh`**: Open your text editor and create a new file named `hello_world.sh`.  Add the following lines:
+1.  **Create `hello_world.sh`**: Open your text editor and create a new file named `hello_world.sh`. Add the following lines:
 
     ```bash
     #!/bin/bash  #  The "Shebang" -  Specifies Bash as the script interpreter
     echo "Hello, World!"  #  The 'echo' command - Prints text to your terminal
     ```
 
-    *   **Explanation:**
-        - `#!/bin/bash`:  This is the **shebang** line (pronounced "sha-bang"). It's the very first line of your script and is crucial. It tells the operating system which interpreter should be used to execute the script. In this case, we're specifying `/bin/bash`, which is the path to the Bash executable.  Without this line, the system might not know how to run your script directly.
-        - `echo "Hello, World!"`:  `echo` is a built-in Bash command that displays text (or variables) to the standard output, which is typically your terminal screen.  Here, it will print the literal text "Hello, World!".
+    - **Explanation:**
+      - `#!/bin/bash`: This is the **shebang** line (pronounced "sha-bang"). It's the very first line of your script and is crucial. It tells the operating system which interpreter should be used to execute the script. In this case, we're specifying `/bin/bash`, which is the path to the Bash executable. Without this line, the system might not know how to run your script directly.
+      - `echo "Hello, World!"`: `echo` is a built-in Bash command that displays text (or variables) to the standard output, which is typically your terminal screen. Here, it will print the literal text "Hello, World!".
 
-2.  **Make the Script Executable**: In your terminal, navigate to the directory where you saved `hello_world.sh`.  Use the `chmod` command to add execute permissions:
+2.  **Make the Script Executable**: In your terminal, navigate to the directory where you saved `hello_world.sh`. Use the `chmod` command to add execute permissions:
 
     ```bash
     chmod +x hello_world.sh  #  'chmod +x' - Grants execute permission to the script file
     ```
 
-    *   **Explanation:**  By default, newly created files are not executable for security reasons.  The `chmod +x` command modifies the file's permissions, specifically adding the "execute" permission (`+x`) for the user, group, and others. This allows you to run the script directly.
+    - **Explanation:** By default, newly created files are not executable for security reasons. The `chmod +x` command modifies the file's permissions, specifically adding the "execute" permission (`+x`) for the user, group, and others. This allows you to run the script directly.
 
-3.  **Run Your Script**:  Execute the script from your current directory:
+3.  **Run Your Script**: Execute the script from your current directory:
 
     ```bash
     ./hello_world.sh  #  Executes the script located in the current directory
     ```
 
-    *   **Explanation:**  `./`  is a shorthand way to tell your shell to look in the *current directory* for the executable named `hello_world.sh`. Without `./`, the shell would search for `hello_world.sh` in the directories listed in your system's `PATH` environment variable (which usually doesn't include the current directory for security reasons).
+    - **Explanation:** `./` is a shorthand way to tell your shell to look in the _current directory_ for the executable named `hello_world.sh`. Without `./`, the shell would search for `hello_world.sh` in the directories listed in your system's `PATH` environment variable (which usually doesn't include the current directory for security reasons).
 
-**Pro Tip**:  You can also run the script using the `bash` command directly, even without execute permissions: `bash hello_world.sh`. This explicitly tells Bash to interpret and run the script, regardless of its execute permissions. This is useful for testing scripts before making them executable or in situations where you don't have permission to change file permissions.
+**Pro Tip**: You can also run the script using the `bash` command directly, even without execute permissions: `bash hello_world.sh`. This explicitly tells Bash to interpret and run the script, regardless of its execute permissions. This is useful for testing scripts before making them executable or in situations where you don't have permission to change file permissions.
 
 **Troubleshooting**:
 
-*   **"Permission denied" error?**  Double-check that you ran `chmod +x hello_world.sh`.  If you just created the file, this step is essential.
-*   **"Command not found" error?**
-    *   Ensure you are in the same directory where you saved `hello_world.sh` when you run `./hello_world.sh`. Use `pwd` to check your current directory and `ls` to see if `hello_world.sh` is there.
-    *   Verify the shebang line `#!/bin/bash` is correctly typed and is the very first line of the file.
+- **"Permission denied" error?** Double-check that you ran `chmod +x hello_world.sh`. If you just created the file, this step is essential.
+- **"Command not found" error?**
+  - Ensure you are in the same directory where you saved `hello_world.sh` when you run `./hello_world.sh`. Use `pwd` to check your current directory and `ls` to see if `hello_world.sh` is there.
+  - Verify the shebang line `#!/bin/bash` is correctly typed and is the very first line of the file.
 
 ## **Core Shell Commands: Your Navigation and File Management Toolkit**
 
 Master these fundamental commands to navigate your file system and manage files and directories efficiently. These are the building blocks for more complex scripts.
 
-| Command   | Description                                   | Common Flags & Usage Examples                                                  |
-| :-------- | :-------------------------------------------- | :----------------------------------------------------------------------------- |
-| `ls`      | **List files and directories**                | `-l`:  **Detailed list** (permissions, size, date). `ls -l`<br> `-a`: **Show all** (including hidden files/directories starting with `.`). `ls -a`<br> `-h`: **Human-readable sizes**. `ls -lh`<br> `ls <directory>`: List contents of a specific directory. `ls /home/user/documents` |
-| `cd`      | **Change directory**                          | `cd <directory>`: Change to a specific directory. `cd documents`<br> `cd ~`: Go to your **home directory**. `cd ~`<br> `cd -`: Go to the **previous directory**. `cd -`<br> `cd ..`: Go **up one directory level**. `cd ..`                                  |
-| `pwd`     | **Print working directory** (show current path) | No common flags. Simply `pwd` to display the full path of your current location. |
-| `cp`      | **Copy files and directories**                | `cp <source> <destination>`: Copy a file. `cp file.txt backup.txt`<br> `-r`: **Recursive copy** for directories (copy directory and its contents). `cp -r directory1 directory_backup`<br> `cp file.txt directory2/`: Copy file into a directory. `cp file.txt documents/` |
-| `mv`      | **Move or rename files and directories**      | `mv <source> <destination>`: Move a file (or rename if destination is in the same directory). `mv old_file.txt new_file.txt`<br> `mv file.txt documents/`: Move file to a different directory. `mv file.txt documents/`<br> `-i`: **Interactive mode** (prompt before overwriting). `mv -i file1.txt existing_file.txt` |
-| `rm`      | **Remove (delete) files and directories**      | `rm <file>`: Delete a file. `rm temp_file.txt`<br> `-r`: **Recursive removal** for directories (delete directory and its contents). `rm -r directory_to_delete` <br> `-f`: **Force removal** (ignore non-existent files, no prompts). **Use with extreme caution, especially with `-rf`!** `rm -rf directory_to_delete` |
-| `mkdir`   | **Make directory** (create directories)       | `mkdir <directory_name>`: Create a directory. `mkdir new_directory`<br> `-p`: **Parents** - Create parent directories if they don't exist. `mkdir -p projects/bash_scripts/utilities`                                  |
+| Command | Description                                     | Common Flags & Usage Examples                                                                                                                                                                                                                                                                                           |
+| :------ | :---------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ls`    | **List files and directories**                  | `-l`: **Detailed list** (permissions, size, date). `ls -l`<br> `-a`: **Show all** (including hidden files/directories starting with `.`). `ls -a`<br> `-h`: **Human-readable sizes**. `ls -lh`<br> `ls <directory>`: List contents of a specific directory. `ls /home/user/documents`                                   |
+| `cd`    | **Change directory**                            | `cd <directory>`: Change to a specific directory. `cd documents`<br> `cd ~`: Go to your **home directory**. `cd ~`<br> `cd -`: Go to the **previous directory**. `cd -`<br> `cd ..`: Go **up one directory level**. `cd ..`                                                                                             |
+| `pwd`   | **Print working directory** (show current path) | No common flags. Simply `pwd` to display the full path of your current location.                                                                                                                                                                                                                                        |
+| `cp`    | **Copy files and directories**                  | `cp <source> <destination>`: Copy a file. `cp file.txt backup.txt`<br> `-r`: **Recursive copy** for directories (copy directory and its contents). `cp -r directory1 directory_backup`<br> `cp file.txt directory2/`: Copy file into a directory. `cp file.txt documents/`                                              |
+| `mv`    | **Move or rename files and directories**        | `mv <source> <destination>`: Move a file (or rename if destination is in the same directory). `mv old_file.txt new_file.txt`<br> `mv file.txt documents/`: Move file to a different directory. `mv file.txt documents/`<br> `-i`: **Interactive mode** (prompt before overwriting). `mv -i file1.txt existing_file.txt` |
+| `rm`    | **Remove (delete) files and directories**       | `rm <file>`: Delete a file. `rm temp_file.txt`<br> `-r`: **Recursive removal** for directories (delete directory and its contents). `rm -r directory_to_delete` <br> `-f`: **Force removal** (ignore non-existent files, no prompts). **Use with extreme caution, especially with `-rf`!** `rm -rf directory_to_delete` |
+| `mkdir` | **Make directory** (create directories)         | `mkdir <directory_name>`: Create a directory. `mkdir new_directory`<br> `-p`: **Parents** - Create parent directories if they don't exist. `mkdir -p projects/bash_scripts/utilities`                                                                                                                                   |
 
-**Example Workflow**:  Let's say you want to organize your scripts:
+**Example Workflow**: Let's say you want to organize your scripts:
 
 ```bash
 mkdir -p ~/projects/bash_scripts  # Create nested directories: projects, then bash_scripts inside projects, if they don't exist in your home directory (~)
@@ -71,9 +71,9 @@ Bash variables are used to store information that your scripts can use and manip
 
 ### **Key Concepts**:
 
-*   **String-Based**: In Bash, **all variables are treated as strings by default**, even if they contain numbers. Bash automatically handles type conversion when needed for arithmetic or comparisons.
-*   **Declaration and Assignment**: You assign a value to a variable using the syntax: `var_name="value"`.  **Crucially, there should be no spaces around the `=` sign.**
-*   **Accessing Variable Values**: To use the value stored in a variable, you need to **dereference** it using a `$` prefix: `$var_name` or `${var_name}`.  Using curly braces `${var_name}` is often recommended as it can prevent ambiguity in more complex cases.
+- **String-Based**: In Bash, **all variables are treated as strings by default**, even if they contain numbers. Bash automatically handles type conversion when needed for arithmetic or comparisons.
+- **Declaration and Assignment**: You assign a value to a variable using the syntax: `var_name="value"`. **Crucially, there should be no spaces around the `=` sign.**
+- **Accessing Variable Values**: To use the value stored in a variable, you need to **dereference** it using a `$` prefix: `$var_name` or `${var_name}`. Using curly braces `${var_name}` is often recommended as it can prevent ambiguity in more complex cases.
 
 **Best Practices for Variable Naming and Usage**:
 
@@ -120,15 +120,15 @@ fruits+=("Elderberry" "Fig") # Append new elements to the array
 echo "Updated fruits: ${fruits[@]}" # Output: Apple Banana Cherry Date Elderberry Fig
 ```
 
-**Pro Tip**: While Bash arrays are dynamically typed, if you want to be explicit about declaring an array, you can use `declare -a array_name`:  `declare -a my_array`. This is good practice for code clarity, especially in larger scripts.
+**Pro Tip**: While Bash arrays are dynamically typed, if you want to be explicit about declaring an array, you can use `declare -a array_name`: `declare -a my_array`. This is good practice for code clarity, especially in larger scripts.
 
-## **Operators:  Performing Math, Logic, and Comparisons**
+## **Operators: Performing Math, Logic, and Comparisons**
 
 Bash provides a range of operators for arithmetic calculations, logical evaluations, and comparisons.
 
 ### **Arithmetic Operations**
 
-Bash uses `$(( ... ))` (preferred) or the older `let` command for arithmetic operations.  `$(( ... ))` is generally recommended for its clarity and versatility.
+Bash uses `$(( ... ))` (preferred) or the older `let` command for arithmetic operations. `$(( ... ))` is generally recommended for its clarity and versatility.
 
 ```bash
 #!/bin/bash
@@ -159,21 +159,21 @@ echo "Decremented count: $count" # Output: Decremented count: 10
 
 ### **Comparison Operators**
 
-Bash offers distinct sets of operators for comparing numbers and strings.  It's important to use the correct set to avoid unexpected results.
+Bash offers distinct sets of operators for comparing numbers and strings. It's important to use the correct set to avoid unexpected results.
 
-| Operator Type | Numeric Operators | String Operators | Purpose                               | Example                                      |
-| :------------ | :---------------- | :--------------- | :------------------------------------ | :------------------------------------------- |
-| **Equality**  | `-eq`             | `==` or `=`      | **Equal to**                          | `if [ "$num" -eq "10" ]` or `if [ "$str1" == "$str2" ]` |
-| **Inequality**| `-ne`             | `!=`             | **Not equal to**                      | `if [ "$num" -ne "20" ]` or `if [ "$str1" != "$str3" ]` |
-| **Less Than** | `-lt`             | `<`              | **Less than**                         | `if [ "$num" -lt "100" ]` or `if [[ "$str1" < "$str2" ]]`<sup>\*</sup> |
-| **Greater Than**| `-gt`             | `>`              | **Greater than**                      | `if [ "$num" -gt "5" ]` or `if [[ "$str1" > "$str2" ]]`<sup>\*</sup> |
-| Less or Equal| `-le`             |                  | **Less than or equal to**             | `if [ "$num" -le "10" ]`                     |
-| Greater or Equal| `-ge`             |                  | **Greater than or equal to**          | `if [ "$num" -ge "0" ]`                      |
+| Operator Type    | Numeric Operators | String Operators | Purpose                      | Example                                                                |
+| :--------------- | :---------------- | :--------------- | :--------------------------- | :--------------------------------------------------------------------- |
+| **Equality**     | `-eq`             | `==` or `=`      | **Equal to**                 | `if [ "$num" -eq "10" ]` or `if [ "$str1" == "$str2" ]`                |
+| **Inequality**   | `-ne`             | `!=`             | **Not equal to**             | `if [ "$num" -ne "20" ]` or `if [ "$str1" != "$str3" ]`                |
+| **Less Than**    | `-lt`             | `<`              | **Less than**                | `if [ "$num" -lt "100" ]` or `if [[ "$str1" < "$str2" ]]`<sup>\*</sup> |
+| **Greater Than** | `-gt`             | `>`              | **Greater than**             | `if [ "$num" -gt "5" ]` or `if [[ "$str1" > "$str2" ]]`<sup>\*</sup>   |
+| Less or Equal    | `-le`             |                  | **Less than or equal to**    | `if [ "$num" -le "10" ]`                                               |
+| Greater or Equal | `-ge`             |                  | **Greater than or equal to** | `if [ "$num" -ge "0" ]`                                                |
 
 **Important Notes on String Comparisons:**
 
-*   For string comparisons with `<`, `>`, use **double square brackets `[[ ... ]]`** instead of single square brackets `[ ... ]`.  Within `[[ ... ]]`,  `<` and `>` perform lexicographical (dictionary) ordering. In `[ ... ]`, they redirect input/output.
-*   When using `==` or `!=` for string equality in `[ ... ]`, quoting variables is crucial: `[ "$str1" == "$str2" ]`.
+- For string comparisons with `<`, `>`, use **double square brackets `[[ ... ]]`** instead of single square brackets `[ ... ]`. Within `[[ ... ]]`, `<` and `>` perform lexicographical (dictionary) ordering. In `[ ... ]`, they redirect input/output.
+- When using `==` or `!=` for string equality in `[ ... ]`, quoting variables is crucial: `[ "$str1" == "$str2" ]`.
 
 **Example**:
 
@@ -196,9 +196,9 @@ fi
 
 Use logical operators to create more complex conditions by combining simpler ones.
 
-*   `&&` (**AND**):  Both conditions must be true for the combined condition to be true.
-*   `||` (**OR**):  At least one of the conditions must be true for the combined condition to be true.
-*   `!`  (**NOT**):  Negates a condition.
+- `&&` (**AND**): Both conditions must be true for the combined condition to be true.
+- `||` (**OR**): At least one of the conditions must be true for the combined condition to be true.
+- `!` (**NOT**): Negates a condition.
 
 **Example**:
 
@@ -218,13 +218,13 @@ fi
 
 ## **Exercise: Build a Dynamic Greeting System - Enhanced!**
 
-**Task**:  Create a script named `greet.sh` that:
+**Task**: Create a script named `greet.sh` that:
 
 1.  **Takes a username as a command-line argument.**
 2.  **Greets the user personally** (e.g., "Hello, Alice!") along with the current time in HH:MM format.
 3.  **Bonus Feature: Error Handling**:
-    *   If no username argument is provided, the script should print an informative error message to the standard error stream (stderr) and exit with an error code (non-zero).
-    *   If the username provided is "root", print a special greeting "Greetings, root administrator!".
+    - If no username argument is provided, the script should print an informative error message to the standard error stream (stderr) and exit with an error code (non-zero).
+    - If the username provided is "root", print a special greeting "Greetings, root administrator!".
 
 **Example Solution**:
 
@@ -268,12 +268,12 @@ exit 0 # Exit with success code 0
 
 ## **Pro Tips for Bash Beginners (and Beyond!)**
 
-1.  **Always Quote Your Variables**:  Get into the habit of quoting your variables (`"$var"`) unless you have a very specific reason not to.  Quoting prevents word splitting and pathname expansion, which can lead to unexpected behavior and errors, especially when dealing with filenames or strings containing spaces or special characters.
+1.  **Always Quote Your Variables**: Get into the habit of quoting your variables (`"$var"`) unless you have a very specific reason not to. Quoting prevents word splitting and pathname expansion, which can lead to unexpected behavior and errors, especially when dealing with filenames or strings containing spaces or special characters.
 
-2.  **Use `[[ ]]` for Advanced Conditional Checks**:  The `[[ ... ]]` construct is a more modern and robust alternative to `[ ... ]` for conditional expressions.  It offers several advantages, including:
-    *   **Regular Expression Matching**:  Supports regex matching using `=~`.
-    *   **No Pathname Splitting or Word Splitting**: Less prone to errors with unquoted variables.
-    *   **Logical Operators**: `&&`, `||`, `!` work as expected within `[[ ]]`.
+2.  **Use `[[ ]]` for Advanced Conditional Checks**: The `[[ ... ]]` construct is a more modern and robust alternative to `[ ... ]` for conditional expressions. It offers several advantages, including:
+    - **Regular Expression Matching**: Supports regex matching using `=~`.
+    - **No Pathname Splitting or Word Splitting**: Less prone to errors with unquoted variables.
+    - **Logical Operators**: `&&`, `||`, `!` work as expected within `[[ ]]`.
 
     ```bash
     #!/bin/bash
@@ -290,12 +290,11 @@ exit 0 # Exit with success code 0
     fi
     ```
 
-3.  **Enable Debug Mode with `bash -x script.sh`**:  When your script isn't behaving as expected, run it with `bash -x script.sh`.  This turns on **xtrace** mode, which prints each command to the terminal *before* it is executed.  This is invaluable for tracing the script's execution flow, variable values, and identifying where things go wrong.
+3.  **Enable Debug Mode with `bash -x script.sh`**: When your script isn't behaving as expected, run it with `bash -x script.sh`. This turns on **xtrace** mode, which prints each command to the terminal _before_ it is executed. This is invaluable for tracing the script's execution flow, variable values, and identifying where things go wrong.
 
 **Important Gotcha Alerts**:
 
-*   **Variable Assignment vs. Arithmetic**:  Be careful with variable assignment and arithmetic.  `var=5+2`  assigns the *string* `"5+2"` to `var`, not the number 7.  To perform arithmetic, always use `$(( ... ))`: `var=$((5+2))`.
-*   **Unquoted Variables and `rm` (Danger!)**:  Never use unquoted variables with commands like `rm`, `mv`, or `cp` if there's any chance the variable might contain spaces or special characters.  For example, if `$file` is unquoted and contains `"file1 file2"`,  `rm $file` will be interpreted as `rm file1 file2`, deleting both `file1` and `file2`!  **Always quote variables in commands: `rm "$file"`**.
+- **Variable Assignment vs. Arithmetic**: Be careful with variable assignment and arithmetic. `var=5+2` assigns the _string_ `"5+2"` to `var`, not the number 7. To perform arithmetic, always use `$(( ... ))`: `var=$((5+2))`.
+- **Unquoted Variables and `rm` (Danger!)**: Never use unquoted variables with commands like `rm`, `mv`, or `cp` if there's any chance the variable might contain spaces or special characters. For example, if `$file` is unquoted and contains `"file1 file2"`, `rm $file` will be interpreted as `rm file1 file2`, deleting both `file1` and `file2`! **Always quote variables in commands: `rm "$file"`**.
 
 ##### Copyright (c) 2026 squared-studio
-

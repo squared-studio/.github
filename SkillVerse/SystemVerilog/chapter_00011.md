@@ -2,7 +2,7 @@
 
 ## Introduction
 
-Tasks and functions are fundamental building blocks for creating modular, reusable, and well-structured SystemVerilog code. They are essential for breaking down complex designs and verification environments into manageable, self-contained units.  By encapsulating code into tasks and functions, you can significantly improve code organization, readability, and maintainability, leading to more efficient design and verification processes. This guide delves into the key features, differences, and best practices for effectively using tasks and functions in SystemVerilog for both RTL design and verification.
+Tasks and functions are fundamental building blocks for creating modular, reusable, and well-structured SystemVerilog code. They are essential for breaking down complex designs and verification environments into manageable, self-contained units. By encapsulating code into tasks and functions, you can significantly improve code organization, readability, and maintainability, leading to more efficient design and verification processes. This guide delves into the key features, differences, and best practices for effectively using tasks and functions in SystemVerilog for both RTL design and verification.
 
 ### Learning Goals
 
@@ -17,20 +17,20 @@ By the end of this chapter, you should be able to:
 
 SystemVerilog offers two primary mechanisms for code modularization: tasks and functions. While both promote reusability, they have distinct characteristics that dictate their appropriate use cases. Understanding these differences is crucial for effective SystemVerilog coding.
 
-| Feature                     | Tasks                                     | Functions                                    |
-| --------------------------- | ----------------------------------------- | -------------------------------------------- |
-| **Timing Controls**         | **Allowed** (`#`, `@`, `wait`, events)   | **Prohibited** (must execute in zero simulation time) |
-| **Return Value**            | **None** (results passed via `output` or `inout` arguments) | **Mandatory** (must return a single value) |
-| **Call Hierarchy**          | Can call **both tasks and functions**     | Can call **only functions**           |
-| **Execution Time**          | **Can consume simulation time** (due to timing controls) | **Zero-time execution** (combinational behavior) |
-| **Typical Use Cases**       | **Testbench stimulus generation**, sequences, protocol modeling, operations involving delays | **RTL combinational logic**, data transformations, calculations, assertions, quick value lookups |
-| **Synthesis for RTL**      | **Generally not synthesizable** if containing timing controls. Can be synthesizable if used as purely behavioral abstractions without delays. | **Synthesizable** (if adhering to function synthesis rules - combinational logic) |
-| **Variable Scope**          | Uses arguments plus variables visible in its declaration scope; `ref` can directly reference caller storage | Uses arguments plus variables visible in its declaration scope; `ref` can directly reference caller storage |
+| Feature               | Tasks                                                                                                                                         | Functions                                                                                                   |
+| --------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| **Timing Controls**   | **Allowed** (`#`, `@`, `wait`, events)                                                                                                        | **Prohibited** (must execute in zero simulation time)                                                       |
+| **Return Value**      | **None** (results passed via `output` or `inout` arguments)                                                                                   | **Mandatory** (must return a single value)                                                                  |
+| **Call Hierarchy**    | Can call **both tasks and functions**                                                                                                         | Can call **only functions**                                                                                 |
+| **Execution Time**    | **Can consume simulation time** (due to timing controls)                                                                                      | **Zero-time execution** (combinational behavior)                                                            |
+| **Typical Use Cases** | **Testbench stimulus generation**, sequences, protocol modeling, operations involving delays                                                  | **RTL combinational logic**, data transformations, calculations, assertions, quick value lookups            |
+| **Synthesis for RTL** | **Generally not synthesizable** if containing timing controls. Can be synthesizable if used as purely behavioral abstractions without delays. | **Synthesizable** (if adhering to function synthesis rules - combinational logic)                           |
+| **Variable Scope**    | Uses arguments plus variables visible in its declaration scope; `ref` can directly reference caller storage                                   | Uses arguments plus variables visible in its declaration scope; `ref` can directly reference caller storage |
 
 **In essence:**
 
--   **Tasks** are procedures that can model sequential behavior, consume simulation time, and are ideal for testbench operations and complex sequences.
--   **Functions** are primarily for combinational logic, calculations, and quick value returns, executing in zero simulation time and being synthesizable for RTL designs.
+- **Tasks** are procedures that can model sequential behavior, consume simulation time, and are ideal for testbench operations and complex sequences.
+- **Functions** are primarily for combinational logic, calculations, and quick value returns, executing in zero simulation time and being synthesizable for RTL designs.
 
 ## Task Implementation: Modeling Sequential Behavior
 
@@ -49,18 +49,18 @@ task [automatic] task_name ( [argument_direction] [data_type] argument_name, ...
 endtask
 ```
 
--   **`task` Keyword**:  Declares the beginning of a task definition.
--   **`[automatic]` (Optional but Recommended)**: Specifies automatic storage.  Crucial for tasks called concurrently or recursively to prevent variable sharing issues.
--   **`task_name`**:  The identifier used to call the task.
--   **`(arguments)`**:  Optional list of arguments passed to the task.
-    -   **Argument Directions**:
-        -   `input`:  Data is passed into the task; task cannot modify the original variable.
-        -   `output`: Data is passed out of the task; task modifies the variable passed as argument.
-        -   `inout`:  Data is passed in and out; task can modify the original variable.
-        -   `ref`: (Pass by reference)  Task directly operates on the original variable in the calling scope (efficient for large data structures).
-    -   **Data Types**: Specify the data type (e.g., `logic`, `integer`, `bit`) for each argument.
--   **`begin ... end`**: Enclose the task's code block.
--   **Timing Controls**: Tasks can contain timing control statements (`#delay`, `@(event)`, `wait(condition)`) to model time-dependent behavior.
+- **`task` Keyword**: Declares the beginning of a task definition.
+- **`[automatic]` (Optional but Recommended)**: Specifies automatic storage. Crucial for tasks called concurrently or recursively to prevent variable sharing issues.
+- **`task_name`**: The identifier used to call the task.
+- **`(arguments)`**: Optional list of arguments passed to the task.
+  - **Argument Directions**:
+    - `input`: Data is passed into the task; task cannot modify the original variable.
+    - `output`: Data is passed out of the task; task modifies the variable passed as argument.
+    - `inout`: Data is passed in and out; task can modify the original variable.
+    - `ref`: (Pass by reference) Task directly operates on the original variable in the calling scope (efficient for large data structures).
+  - **Data Types**: Specify the data type (e.g., `logic`, `integer`, `bit`) for each argument.
+- **`begin ... end`**: Enclose the task's code block.
+- **Timing Controls**: Tasks can contain timing control statements (`#delay`, `@(event)`, `wait(condition)`) to model time-dependent behavior.
 
 ### Example: Testbench Transaction Generation Task
 
@@ -136,10 +136,10 @@ endmodule
 
 **Explanation:**
 
--   The `send_data` task drives a data item and holds `valid` high until the receiver raises `ready`.
--   The `recv_data` task raises `ready`, waits for `valid`, and returns the captured data through its `output` argument.
--   Both tasks use `@(posedge clk)` inside a `do...while` loop to synchronize the ready/valid handshake.
--   The `automatic` keyword gives each task invocation its own local storage, making the tasks safe to call concurrently.
+- The `send_data` task drives a data item and holds `valid` high until the receiver raises `ready`.
+- The `recv_data` task raises `ready`, waits for `valid`, and returns the captured data through its `output` argument.
+- Both tasks use `@(posedge clk)` inside a `do...while` loop to synchronize the ready/valid handshake.
+- The `automatic` keyword gives each task invocation its own local storage, making the tasks safe to call concurrently.
 
 ## Function Implementation: Combinational Logic and Calculations
 
@@ -159,14 +159,14 @@ function [automatic] [return_data_type] function_name ( [input] [data_type] argu
 endfunction
 ```
 
--   **`function` Keyword**: Declares the beginning of a function definition.
--   **`[automatic]` (Optional but Recommended)**:  Specifies automatic storage, essential for reentrant functions, especially in class-based verification.
--   **`[return_data_type]`**:  The return data type of a value-returning function (e.g., `integer`, `logic [7:0]`, `real`). Use `void` for functions that do not return a value, primarily for side effects in verification.
--   **`function_name`**:  Identifier to call the function.
--   **`(arguments)`**: Optional list of arguments. An omitted direction defaults to `input`; SystemVerilog also permits `output`, `inout`, and `ref` formals with restrictions. Use `ref` deliberately because it aliases caller storage and can introduce side effects.
--   **`begin ... end`**: Enclose the function's code block.
--   **`return function_return_value;`**:  A value-returning function can use `return` to provide its result. Alternatively, assign the return value to the `function_name` itself; this style is widely supported and useful for compatibility. A `void` function does not return a value.
--   **No Timing Controls**: Functions **cannot contain any timing control statements** (`#delay`, `@event`, `wait`). They must execute in zero simulation time, representing combinational logic.
+- **`function` Keyword**: Declares the beginning of a function definition.
+- **`[automatic]` (Optional but Recommended)**: Specifies automatic storage, essential for reentrant functions, especially in class-based verification.
+- **`[return_data_type]`**: The return data type of a value-returning function (e.g., `integer`, `logic [7:0]`, `real`). Use `void` for functions that do not return a value, primarily for side effects in verification.
+- **`function_name`**: Identifier to call the function.
+- **`(arguments)`**: Optional list of arguments. An omitted direction defaults to `input`; SystemVerilog also permits `output`, `inout`, and `ref` formals with restrictions. Use `ref` deliberately because it aliases caller storage and can introduce side effects.
+- **`begin ... end`**: Enclose the function's code block.
+- **`return function_return_value;`**: A value-returning function can use `return` to provide its result. Alternatively, assign the return value to the `function_name` itself; this style is widely supported and useful for compatibility. A `void` function does not return a value.
+- **No Timing Controls**: Functions **cannot contain any timing control statements** (`#delay`, `@event`, `wait`). They must execute in zero simulation time, representing combinational logic.
 
 ### Example: RTL Parity Calculation Function
 
@@ -191,25 +191,25 @@ endmodule
 
 **Explanation:**
 
--   The `parity_calculate` function is designed to compute the parity of an 8-bit input.
--   It is declared as `automatic` for reentrancy.
--   It has a `logic` return type, indicating it returns a single bit representing the parity.
--   It uses a reduction XOR operator (`^`) and NOT (`~`) for efficient parity calculation, typical for combinational logic.
--   The function is called within a continuous assignment (`assign parity_bit = ...`) to create combinational logic that continuously updates `parity_bit` whenever `data_bus` changes. It is also called in the `initial` block for simulation and display.
+- The `parity_calculate` function is designed to compute the parity of an 8-bit input.
+- It is declared as `automatic` for reentrancy.
+- It has a `logic` return type, indicating it returns a single bit representing the parity.
+- It uses a reduction XOR operator (`^`) and NOT (`~`) for efficient parity calculation, typical for combinational logic.
+- The function is called within a continuous assignment (`assign parity_bit = ...`) to create combinational logic that continuously updates `parity_bit` whenever `data_bus` changes. It is also called in the `initial` block for simulation and display.
 
 ## Storage Classes: `static` vs. `automatic` - Memory Management
 
 SystemVerilog tasks and functions can have two storage classes: `static` (the default for routines declared in modules) and `automatic` (the default for class methods, and recommended for most reusable verification routines). The storage class determines whether local variables persist in shared routine storage or receive a separate lifetime for each invocation, especially when a routine is called multiple times or concurrently.
 
-| Characteristic            | `static` Storage                               | `automatic` Storage                              |
-| ------------------------- | ---------------------------------------------- | ------------------------------------------------- |
-| **Memory Allocation**     | **Persistent, shared (global-like)**            | **Separate per-call activation storage**                 |
-| **Variable Lifetime**     | Variables retain their values between calls.   | Variables are created on each call and destroyed on exit. |
-| **Recursion Support**     | **Not reentrant, no recursion** (shared variables can lead to corruption) | **Reentrant, supports recursion** (each call has its own variables) |
-| **Concurrency Handling**  | Shared variables can cause race conditions in concurrent calls. | Safe for concurrent calls; each call has isolated variables. |
-| **Default in Modules**    | Tasks in modules are `static` by default.      | Functions in modules are `static` by default.     |
-| **Default in Classes**     | Tasks in classes are `automatic` by default.   | Functions in classes are `automatic` by default.  |
-| **Recommendation**        | **Avoid `static` in most cases** in modern SystemVerilog, especially for tasks and functions intended for reuse or concurrency. | **Use `automatic` for most tasks and functions**, especially in verification and class-based environments. |
+| Characteristic           | `static` Storage                                                                                                                | `automatic` Storage                                                                                        |
+| ------------------------ | ------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| **Memory Allocation**    | **Persistent, shared (global-like)**                                                                                            | **Separate per-call activation storage**                                                                   |
+| **Variable Lifetime**    | Variables retain their values between calls.                                                                                    | Variables are created on each call and destroyed on exit.                                                  |
+| **Recursion Support**    | **Not reentrant, no recursion** (shared variables can lead to corruption)                                                       | **Reentrant, supports recursion** (each call has its own variables)                                        |
+| **Concurrency Handling** | Shared variables can cause race conditions in concurrent calls.                                                                 | Safe for concurrent calls; each call has isolated variables.                                               |
+| **Default in Modules**   | Tasks in modules are `static` by default.                                                                                       | Functions in modules are `static` by default.                                                              |
+| **Default in Classes**   | Tasks in classes are `automatic` by default.                                                                                    | Functions in classes are `automatic` by default.                                                           |
+| **Recommendation**       | **Avoid `static` in most cases** in modern SystemVerilog, especially for tasks and functions intended for reuse or concurrency. | **Use `automatic` for most tasks and functions**, especially in verification and class-based environments. |
 
 ### Pitfall of `static` Variables: Shared State and Concurrency Issues
 
@@ -237,9 +237,9 @@ endmodule
 
 **Explanation of `static` Pitfall:**
 
--   The `call_count` variable in `static_counter_task` is `static`. This means it is allocated **once** and is shared across all calls to `static_counter_task`.
--   When `static_counter_task` is called concurrently using `fork-join`, both calls operate on the **same `call_count` variable**. This can lead to **race conditions** and unpredictable results because the increment and display operations might interleave in unexpected ways.
--   Even in sequential calls, the `call_count` persists between calls, which might not be desired in all situations if you expect each call to have its own independent counter.
+- The `call_count` variable in `static_counter_task` is `static`. This means it is allocated **once** and is shared across all calls to `static_counter_task`.
+- When `static_counter_task` is called concurrently using `fork-join`, both calls operate on the **same `call_count` variable**. This can lead to **race conditions** and unpredictable results because the increment and display operations might interleave in unexpected ways.
+- Even in sequential calls, the `call_count` persists between calls, which might not be desired in all situations if you expect each call to have its own independent counter.
 
 ### `automatic` Tasks and Functions: Reentrancy and Recursion
 
@@ -278,9 +278,9 @@ endmodule
 
 **Explanation of `automatic` Benefits:**
 
--   **Reentrancy and Recursion**:  The `automatic` keyword makes tasks and functions reentrant. Each time an `automatic` task or function is called, a new set of local variables (like `call_count` in `automatic_counter_task` or the activation records in `recursive_factorial`) is created. These variables are local to that specific invocation and are released when the task or function completes. This enables recursion and safe concurrent calls.
--   **Local Variable Scope**: Variables declared inside `automatic` tasks and functions are local to each call. They do not retain values between calls and do not interfere with variables in other concurrent calls.
--   **Recommended for Modern SystemVerilog**: In modern SystemVerilog, especially for verification environments and reusable code, it is highly recommended to use `automatic` for most tasks and functions to ensure reentrancy, avoid unintended side effects, and enable safe concurrent operations.
+- **Reentrancy and Recursion**: The `automatic` keyword makes tasks and functions reentrant. Each time an `automatic` task or function is called, a new set of local variables (like `call_count` in `automatic_counter_task` or the activation records in `recursive_factorial`) is created. These variables are local to that specific invocation and are released when the task or function completes. This enables recursion and safe concurrent calls.
+- **Local Variable Scope**: Variables declared inside `automatic` tasks and functions are local to each call. They do not retain values between calls and do not interfere with variables in other concurrent calls.
+- **Recommended for Modern SystemVerilog**: In modern SystemVerilog, especially for verification environments and reusable code, it is highly recommended to use `automatic` for most tasks and functions to ensure reentrancy, avoid unintended side effects, and enable safe concurrent operations.
 
 ## Advanced Features: Enhancing Task and Function Capabilities
 
@@ -288,8 +288,8 @@ SystemVerilog provides several advanced features to make tasks and functions mor
 
 ### `void` Functions: Functions without Return Values
 
--   **Functions for Side Effects**:  While functions are primarily designed to return values, SystemVerilog allows you to declare functions with a `void` return type. `void` functions do not return a value and are typically used for performing actions or side effects, such as displaying messages, updating global variables (though generally discouraged for good coding practice in RTL functions), or triggering events.
--   **Verification Utilities**: `void` functions are more commonly used in verification testbenches for utility procedures that perform actions without needing to return a value directly.
+- **Functions for Side Effects**: While functions are primarily designed to return values, SystemVerilog allows you to declare functions with a `void` return type. `void` functions do not return a value and are typically used for performing actions or side effects, such as displaying messages, updating global variables (though generally discouraged for good coding practice in RTL functions), or triggering events.
+- **Verification Utilities**: `void` functions are more commonly used in verification testbenches for utility procedures that perform actions without needing to return a value directly.
 
 ```systemverilog
 class verification_utils;
@@ -312,10 +312,10 @@ endmodule
 
 SystemVerilog provides flexible argument directions to control how data is passed into and out of tasks and functions:
 
--   **`input` (Default)**: Data flows into the task/function. The task/function cannot modify the original variable passed as input.
--   **`output`**: Data flows out of the task/function. The task/function modifies the variable passed as output, and the modified value is available to the caller after the task/function completes.
--   **`inout`**: Data flows both into and out of the task/function. The task/function can modify the original variable, and the modified value is reflected in the caller's scope.
--   **`ref` (Pass by Reference)**:  Passes a reference (pointer) to the original variable.  The task/function directly operates on the original variable in the calling scope.  This is efficient for passing large data structures as it avoids copying data.
+- **`input` (Default)**: Data flows into the task/function. The task/function cannot modify the original variable passed as input.
+- **`output`**: Data flows out of the task/function. The task/function modifies the variable passed as output, and the modified value is available to the caller after the task/function completes.
+- **`inout`**: Data flows both into and out of the task/function. The task/function can modify the original variable, and the modified value is reflected in the caller's scope.
+- **`ref` (Pass by Reference)**: Passes a reference (pointer) to the original variable. The task/function directly operates on the original variable in the calling scope. This is efficient for passing large data structures as it avoids copying data.
 
 ```systemverilog
 task automatic data_manipulation_task (input integer input_val, output integer output_val, inout integer inout_val, ref integer ref_val);
@@ -367,16 +367,16 @@ endmodule
 ## Best Practices for Tasks and Functions
 
 1.  **RTL Design Guidelines**:
-    -   **Functions for Combinational Logic in RTL**: Use functions extensively to model combinational logic in RTL designs. Functions are synthesizable and promote modularity. Keep functions short, focused on specific calculations or data transformations, and ensure they are purely combinational (no timing controls).
-    -   **Avoid Tasks in Synthesizable RTL**: Generally, avoid using tasks directly in synthesizable RTL code, especially if they contain timing controls or complex sequential behavior. Tasks are primarily for testbenches and behavioral modeling. For sequential logic in RTL, use `always_ff` blocks.  However, tasks *can* be used as purely behavioral abstractions in RTL if they are synthesizable (no timing controls) and simplify complex logic, but functions are often preferred for clarity and synthesis tool optimization.
+    - **Functions for Combinational Logic in RTL**: Use functions extensively to model combinational logic in RTL designs. Functions are synthesizable and promote modularity. Keep functions short, focused on specific calculations or data transformations, and ensure they are purely combinational (no timing controls).
+    - **Avoid Tasks in Synthesizable RTL**: Generally, avoid using tasks directly in synthesizable RTL code, especially if they contain timing controls or complex sequential behavior. Tasks are primarily for testbenches and behavioral modeling. For sequential logic in RTL, use `always_ff` blocks. However, tasks _can_ be used as purely behavioral abstractions in RTL if they are synthesizable (no timing controls) and simplify complex logic, but functions are often preferred for clarity and synthesis tool optimization.
 
 2.  **Testbench Development Best Practices**:
-    -   **Tasks for Test Sequences and Protocols**: Use tasks extensively in testbenches to create reusable test sequences, protocol drivers, and monitor procedures. Tasks are ideal for modeling timed behavior and managing complex verification flows.
-    -   **`automatic` Storage for Testbench Tasks and Functions**:  Always use the `automatic` keyword for tasks and functions in testbenches, especially in class-based verification environments, to ensure reentrancy and prevent unintended variable sharing in concurrent test scenarios.
-    -   **Functions for Testbench Utilities**: Use functions in testbenches for utility operations like data packing/unpacking, data conversions, scoreboarding calculations, and assertion checks.  `void` functions are useful for actions like printing test status banners or logging messages.
+    - **Tasks for Test Sequences and Protocols**: Use tasks extensively in testbenches to create reusable test sequences, protocol drivers, and monitor procedures. Tasks are ideal for modeling timed behavior and managing complex verification flows.
+    - **`automatic` Storage for Testbench Tasks and Functions**: Always use the `automatic` keyword for tasks and functions in testbenches, especially in class-based verification environments, to ensure reentrancy and prevent unintended variable sharing in concurrent test scenarios.
+    - **Functions for Testbench Utilities**: Use functions in testbenches for utility operations like data packing/unpacking, data conversions, scoreboarding calculations, and assertion checks. `void` functions are useful for actions like printing test status banners or logging messages.
 
 3.  **Debugging and Verification**:
-    -   **Portable Function Debugging**: There is no universally portable `$debug` system task with standardized verbosity behavior. Use standard reporting tasks such as `$display`, `$info`, `$warning`, or `$error` as appropriate, or use a simulator-specific logging facility behind a project-defined wrapper. Keep diagnostic side effects out of synthesizable RTL functions.
+    - **Portable Function Debugging**: There is no universally portable `$debug` system task with standardized verbosity behavior. Use standard reporting tasks such as `$display`, `$info`, `$warning`, or `$error` as appropriate, or use a simulator-specific logging facility behind a project-defined wrapper. Keep diagnostic side effects out of synthesizable RTL functions.
 
     ```systemverilog
     function automatic integer calculate_checksum(input bit [63:0] data);
@@ -386,10 +386,10 @@ endmodule
     ```
 
 4.  **Code Style and Readability**:
-    -   **Meaningful Names**: Choose descriptive and meaningful names for tasks and functions that clearly indicate their purpose.
-    -   **Keep Tasks and Functions Focused**: Design tasks and functions to perform specific, well-defined operations. Avoid creating overly long or complex tasks and functions that try to do too much. Break down complex logic into smaller, more manageable units.
-    -   **Consistent Argument Passing**: Use appropriate argument directions (`input`, `output`, `inout`, `ref`) to clearly define data flow into and out of tasks and functions.
-    -   **Use Parentheses for Clarity in Function Calls**: When calling functions, especially with multiple arguments, use parentheses to improve readability, even if arguments are optional.
+    - **Meaningful Names**: Choose descriptive and meaningful names for tasks and functions that clearly indicate their purpose.
+    - **Keep Tasks and Functions Focused**: Design tasks and functions to perform specific, well-defined operations. Avoid creating overly long or complex tasks and functions that try to do too much. Break down complex logic into smaller, more manageable units.
+    - **Consistent Argument Passing**: Use appropriate argument directions (`input`, `output`, `inout`, `ref`) to clearly define data flow into and out of tasks and functions.
+    - **Use Parentheses for Clarity in Function Calls**: When calling functions, especially with multiple arguments, use parentheses to improve readability, even if arguments are optional.
 
 ## Exercises to Solidify Task and Function Concepts
 
@@ -404,4 +404,3 @@ endmodule
 By mastering tasks and functions and practicing with these exercises, you will be well-equipped to write modular, reusable, and efficient SystemVerilog code for complex hardware designs and sophisticated verification environments.
 
 ##### Copyright (c) 2026 squared-studio
-

@@ -1,0 +1,84 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 440" width="100%" height="100%">
+  <defs>
+    <style>
+      .bg { fill: #0b1120; }
+      .card { fill: #131d33; stroke: #1e293b; stroke-width: 1.5; rx: 10; }
+      .title { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 19px; fill: #f8fafc; }
+      .sec-title { font-family: 'Inter', system-ui, sans-serif; font-weight: 600; font-size: 14px; fill: #38bdf8; }
+      .label { font-family: 'Inter', system-ui, sans-serif; font-size: 12px; fill: #cbd5e1; }
+      .sublabel { font-family: 'Inter', system-ui, sans-serif; font-size: 11px; fill: #94a3b8; }
+      .code-txt { font-family: 'JetBrains Mono', Consolas, monospace; font-size: 12px; fill: #34d399; font-weight: 600; }
+      .func-cell { fill: #1e293b; stroke: #38bdf8; stroke-width: 1.8; rx: 4; }
+    </style>
+    <marker id="arr-call" viewBox="0 0 8 8" refX="5" refY="4" markerWidth="5" markerHeight="5" orient="auto">
+      <path d="M 0 1 L 7 4 L 0 7 z" fill="#38bdf8" />
+    </marker>
+  </defs>
+
+  <rect width="960" height="440" class="bg" rx="14"/>
+  <text x="480" y="36" text-anchor="middle" class="title">Function Pointers, Callbacks &amp; Polymorphic Dispatch Tables in C</text>
+
+  <!-- Left: Dispatch Table Graphic -->
+  <g transform="translate(45, 55)">
+    <rect width="440" height="360" class="card"/>
+    <text x="20" y="28" class="sec-title">Function Pointer Jump / Dispatch Table</text>
+
+    <!-- Table array in memory -->
+    <g transform="translate(25, 45)">
+      <text x="0" y="16" class="code-txt" fill="#fbbf24">int (*dispatch_table[3])(int, int) = { add, sub, mul };</text>
+
+      <!-- Slot 0: add -->
+      <rect x="0" y="30" width="180" height="40" class="func-cell"/>
+      <text x="90" y="55" text-anchor="middle" class="code-txt">&amp;add (0x401020)</text>
+
+      <!-- Slot 1: sub -->
+      <rect x="0" y="80" width="180" height="40" class="func-cell"/>
+      <text x="90" y="105" text-anchor="middle" class="code-txt">&amp;sub (0x401080)</text>
+
+      <!-- Slot 2: mul -->
+      <rect x="0" y="130" width="180" height="40" class="func-cell"/>
+      <text x="90" y="155" text-anchor="middle" class="code-txt">&amp;mul (0x401120)</text>
+
+      <!-- Arrows to functions in .text -->
+      <path d="M 180,50 L 260,50" stroke="#38bdf8" stroke-width="2" marker-end="url(#arr-call)"/>
+      <rect x="265" y="35" width="120" height="30" rx="3" fill="#334155"/>
+      <text x="325" y="55" text-anchor="middle" class="code-txt" fill="#fff">int add(a, b)</text>
+
+      <path d="M 180,100 L 260,100" stroke="#38bdf8" stroke-width="2" marker-end="url(#arr-call)"/>
+      <rect x="265" y="85" width="120" height="30" rx="3" fill="#334155"/>
+      <text x="325" y="105" text-anchor="middle" class="code-txt" fill="#fff">int sub(a, b)</text>
+
+      <path d="M 180,150 L 260,150" stroke="#38bdf8" stroke-width="2" marker-end="url(#arr-call)"/>
+      <rect x="265" y="135" width="120" height="30" rx="3" fill="#334155"/>
+      <text x="325" y="155" text-anchor="middle" class="code-txt" fill="#fff">int mul(a, b)</text>
+    </g>
+
+    <!-- Usage code -->
+    <rect x="20" y="240" width="400" height="95" rx="6" fill="#0b1120" stroke="#1e293b"/>
+    <text x="30" y="265" class="code-txt">// Dynamic O(1) branchless dispatching:</text>
+    <text x="30" y="285" class="code-txt">int result = dispatch_table[op_code](10, 5);</text>
+    <text x="30" y="310" class="sublabel">Eliminates large switch-case statements in device drivers.</text>
+  </g>
+
+  <!-- Right: Syntax & Callbacks -->
+  <g transform="translate(515, 55)">
+    <rect width="400" height="360" class="card"/>
+    <text x="20" y="28" class="sec-title">Syntax, Typedefs &amp; Callback Architecture</text>
+
+    <!-- Syntax box -->
+    <rect x="15" y="42" width="370" height="120" rx="6" fill="#0b1120" stroke="#1e293b"/>
+    <text x="25" y="65" class="label" font-weight="bold" fill="#38bdf8">1. Declaration Syntax:</text>
+    <text x="25" y="86" class="code-txt">return_type (*ptr_name)(arg_types);</text>
+    <text x="25" y="106" class="sublabel">Parentheses around (*ptr_name) are mandatory!</text>
+    <text x="25" y="124" class="sublabel">Without them: return_type *ptr() is a function returning ptr!</text>
+
+    <!-- Callback Pattern -->
+    <rect x="15" y="175" width="370" height="160" rx="6" fill="#0b1120" stroke="#1e293b"/>
+    <text x="25" y="200" class="label" font-weight="bold" fill="#34d399">2. Standard qsort() Callback Example:</text>
+    <text x="25" y="222" class="code-txt">typedef int (*cmp_func_t)(const void*, const void*);</text>
+    <text x="25" y="246" class="code-txt">int compare_ints(const void *a, const void *b) {</text>
+    <text x="45" y="266" class="code-txt">return (*(int*)a - *(int*)b);</text>
+    <text x="25" y="286" class="code-txt">}</text>
+    <text x="25" y="312" class="code-txt" fill="#fbbf24">qsort(array, len, sizeof(int), compare_ints);</text>
+  </g>
+</svg>

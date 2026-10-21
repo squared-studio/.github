@@ -23,4 +23,3 @@ Vivado is a comprehensive design suite developed by Xilinx for the synthesis and
 Vivado's comprehensive toolset and advanced features make it an essential tool for modern digital design and development, enabling engineers to create efficient and high-performance systems.
 
 ##### Copyright (c) 2026 squared-studio
-

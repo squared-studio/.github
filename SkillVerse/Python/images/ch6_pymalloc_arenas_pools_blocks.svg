@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 480" width="100%" height="100%">
+  <rect width="960" height="480" fill="#0b1120" rx="8"/>
+  <text x="480" y="38" fill="#f8fafc" font-size="20" font-weight="bold" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" text-anchor="middle">CPython PyMalloc Memory Allocator Hierarchy</text>
+  <text x="480" y="62" fill="#94a3b8" font-size="13" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" text-anchor="middle">Fast, low-fragmentation small-object allocation (&lt;= 512 bytes) using Arenas, Pools, and Blocks</text>
+
+  <!-- Hierarchy Container -->
+  <g transform="translate(50, 95)">
+    <!-- Level 1: Arena -->
+    <rect x="0" y="0" width="860" height="65" rx="8" fill="#1e1b4b" stroke="#818cf8" stroke-width="2"/>
+    <text x="25" y="25" fill="#c7d2fe" font-size="13" font-weight="bold" font-family="sans-serif">Level 1: Arenas (256 KB each)</text>
+    <text x="25" y="45" fill="#a5b4fc" font-size="11" font-family="sans-serif">Allocated via OS virtual memory (mmap / VirtualAlloc). Divided into 64 contiguous 4KB Pools.</text>
+    <text x="750" y="35" fill="#818cf8" font-size="12" font-family="monospace">256 KB Chunk</text>
+
+    <!-- Level 2: Pools -->
+    <g transform="translate(20, 80)">
+      <rect x="0" y="0" width="820" height="85" rx="6" fill="#0f172a" stroke="#38bdf8" stroke-width="1.5"/>
+      <text x="20" y="24" fill="#38bdf8" font-size="12" font-weight="bold" font-family="sans-serif">Level 2: Pools (4 KB = 1 Virtual Page each)</text>
+      <text x="20" y="42" fill="#94a3b8" font-size="10" font-family="sans-serif">Each pool is dedicated to a single fixed size-class (8, 16, 24, 32 ... 512 bytes). 64 size-classes total.</text>
+      
+      <!-- Pools boxes -->
+      <g transform="translate(20, 50)">
+        <rect x="0" y="0" width="160" height="25" rx="3" fill="#0369a1"/>
+        <text x="80" y="16" fill="#fff" font-size="10" font-family="monospace" text-anchor="middle">Pool 0: 16B Blocks</text>
+
+        <rect x="180" y="0" width="160" height="25" rx="3" fill="#0369a1"/>
+        <text x="260" y="16" fill="#fff" font-size="10" font-family="monospace" text-anchor="middle">Pool 1: 32B Blocks</text>
+
+        <rect x="360" y="0" width="160" height="25" rx="3" fill="#0369a1"/>
+        <text x="440" y="16" fill="#fff" font-size="10" font-family="monospace" text-anchor="middle">Pool 2: 64B Blocks</text>
+
+        <rect x="540" y="0" width="220" height="25" rx="3" fill="#334155"/>
+        <text x="650" y="16" fill="#94a3b8" font-size="10" font-family="monospace" text-anchor="middle">Pool N: 512B Blocks (Max)</text>
+      </g>
+    </g>
+
+    <!-- Level 3: Blocks Inside Pool 1 (32 Bytes) -->
+    <g transform="translate(20, 180)">
+      <rect x="0" y="0" width="820" height="60" rx="6" fill="#064e3b" stroke="#34d399" stroke-width="1.5"/>
+      <text x="20" y="22" fill="#34d399" font-size="11" font-weight="bold" font-family="sans-serif">Level 3: Fixed-Size Blocks inside Pool (32-byte size class)</text>
+      
+      <!-- Sub blocks -->
+      <g transform="translate(20, 30)">
+        <rect x="0" y="0" width="55" height="22" rx="2" fill="#059669" stroke="#34d399"/>
+        <text x="27" y="15" fill="#fff" font-size="9" font-family="monospace" text-anchor="middle">Used</text>
+
+        <rect x="62" y="0" width="55" height="22" rx="2" fill="#059669" stroke="#34d399"/>
+        <text x="89" y="15" fill="#fff" font-size="9" font-family="monospace" text-anchor="middle">Used</text>
+
+        <rect x="124" y="0" width="55" height="22" rx="2" fill="#1e293b" stroke="#64748b"/>
+        <text x="151" y="15" fill="#94a3b8" font-size="9" font-family="monospace" text-anchor="middle">Free</text>
+
+        <rect x="186" y="0" width="55" height="22" rx="2" fill="#059669" stroke="#34d399"/>
+        <text x="213" y="15" fill="#fff" font-size="9" font-family="monospace" text-anchor="middle">Used</text>
+
+        <rect x="248" y="0" width="55" height="22" rx="2" fill="#1e293b" stroke="#64748b"/>
+        <text x="275" y="15" fill="#94a3b8" font-size="9" font-family="monospace" text-anchor="middle">Free</text>
+
+        <text x="450" y="15" fill="#a7f3d0" font-size="10" font-family="sans-serif">Free blocks tracked via singly linked list inside unallocated payload</text>
+      </g>
+    </g>
+  </g>
+
+  <!-- Bottom Details -->
+  <g transform="translate(50, 355)">
+    <rect width="860" height="100" rx="8" fill="#0f172a" stroke="#334155"/>
+    <text x="25" y="26" fill="#fbbf24" font-size="13" font-weight="bold" font-family="sans-serif">Why PyMalloc is Crucial for Python Speed:</text>
+    <text x="25" y="48" fill="#cbd5e1" font-size="11" font-family="sans-serif">• <tspan fill="#34d399" font-weight="bold">Zero External Fragmentation</tspan>: All objects in a pool share identical byte sizes, completely preventing fragmentation within pools.</text>
+    <text x="25" y="68" fill="#cbd5e1" font-size="11" font-family="sans-serif">• <tspan fill="#38bdf8" font-weight="bold">Blazing Fast O(1) Allocation</tspan>: Allocating a new small object simply pops the head of the pool's free list (two CPU instructions).</text>
+    <text x="25" y="88" fill="#cbd5e1" font-size="11" font-family="sans-serif">• Objects larger than <tspan font-weight="bold" fill="#f43f5e">512 bytes</tspan> bypass PyMalloc and are routed directly to standard OS <tspan font-family="monospace">malloc()</tspan>.</text>
+  </g>
+</svg>

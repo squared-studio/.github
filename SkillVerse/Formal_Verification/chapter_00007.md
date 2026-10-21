@@ -1,9 +1,11 @@
 # Learn Advanced Formal Concepts
 
 ## Bounded Model Checking (BMC)
+
 BMC is a technique used to check the correctness of a design up to a certain depth. It is useful for finding bugs that occur within a limited number of steps.
 
 ### Key Concepts:
+
 - **Bounded Depth**: The maximum number of steps to check.
   - **Example**: Checking the design for up to 10 clock cycles.
 - **Unrolling**: Expanding the design over time to check properties.
@@ -12,9 +14,11 @@ BMC is a technique used to check the correctness of a design up to a certain dep
   - **Example**: Using a SAT solver to determine if a property holds within the bounded depth.
 
 ## Equivalence Checking
+
 Equivalence checking is used to ensure that two versions of a design are functionally identical. This is important when making optimizations or changes to a design.
 
 ### Key Concepts:
+
 - **Combinational Equivalence Checking**: Checking equivalence of combinational logic.
   - **Example**: Ensuring that two different implementations of an adder produce the same result.
 - **Sequential Equivalence Checking**: Checking equivalence of sequential logic.
@@ -23,4 +27,3 @@ Equivalence checking is used to ensure that two versions of a design are functio
   - **Example**: Using formal proofs to show that two designs are equivalent under all possible inputs.
 
 ##### Copyright (c) 2026 squared-studio
-

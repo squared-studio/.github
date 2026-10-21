@@ -57,6 +57,7 @@ Here are some common options for `xvlog`, `xelab`, and `xsim` that you might fin
 - **-i <include_dir>**: Specifies the directory to search for include files.
 
 Example:
+
 ```bash
 xvlog -sv -d SIMULATION -i ./include my_design.sv
 ```
@@ -67,6 +68,7 @@ xvlog -sv -d SIMULATION -i ./include my_design.sv
 - **-s <snapshot>**: Names the simulation snapshot.
 
 Example:
+
 ```bash
 xelab -debug typical my_testbench -s my_sim_snapshot
 ```
@@ -77,6 +79,7 @@ xelab -debug typical my_testbench -s my_sim_snapshot
 - **-R**: Runs the simulation without entering the interactive mode.
 
 Example:
+
 ```bash
 xsim my_sim_snapshot -R -gui
 ```
@@ -113,4 +116,3 @@ chmod +x run_simulation.sh
 By following these steps, you can perform RTL simulation using Vivado's command-line tools, allowing for greater flexibility and automation in your design verification process.
 
 ##### Copyright (c) 2026 squared-studio
-

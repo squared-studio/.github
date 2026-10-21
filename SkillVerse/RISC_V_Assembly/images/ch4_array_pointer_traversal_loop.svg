@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 480" width="100%" height="100%">
+  <rect width="960" height="480" fill="#0b1120" rx="8"/>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8"/>
+    </marker>
+  </defs>
+
+  <text x="480" y="38" fill="#f8fafc" font-size="20" font-weight="bold" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" text-anchor="middle">Assembly Pointer Arithmetic &amp; Array Traversal Loop</text>
+  <text x="480" y="62" fill="#94a3b8" font-size="13" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" text-anchor="middle">High-performance memory access using base-pointer auto-increment and end-of-buffer comparison</text>
+
+  <!-- Left: Contiguous Memory Buffer -->
+  <g transform="translate(60, 95)">
+    <rect width="380" height="240" rx="8" fill="#1e293b" stroke="#38bdf8" stroke-width="1.5"/>
+    <text x="190" y="25" fill="#38bdf8" font-size="13" font-weight="bold" font-family="sans-serif" text-anchor="middle">Contiguous 32-bit Array: arr[4]</text>
+
+    <!-- Elements -->
+    <g transform="translate(20, 42)">
+      <rect width="340" height="38" rx="3" fill="#082f49" stroke="#38bdf8"/>
+      <text x="20" y="23" fill="#7dd3fc" font-size="11" font-family="monospace">arr[0] @ 0x80001000 = 10</text>
+      <text x="290" y="23" fill="#38bdf8" font-size="10" font-family="sans-serif">&lt;- a0 (ptr)</text>
+
+      <rect y="46" width="340" height="38" rx="3" fill="#0f172a" stroke="#334155"/>
+      <text x="20" y="69" fill="#cbd5e1" font-size="11" font-family="monospace">arr[1] @ 0x80001004 = 25</text>
+      <text x="280" y="69" fill="#94a3b8" font-size="10" font-family="sans-serif">+ 4 Bytes</text>
+
+      <rect y="92" width="340" height="38" rx="3" fill="#0f172a" stroke="#334155"/>
+      <text x="20" y="115" fill="#cbd5e1" font-size="11" font-family="monospace">arr[2] @ 0x80001008 = 42</text>
+      <text x="280" y="115" fill="#94a3b8" font-size="10" font-family="sans-serif">+ 8 Bytes</text>
+
+      <rect y="138" width="340" height="38" rx="3" fill="#0f172a" stroke="#334155"/>
+      <text x="20" y="161" fill="#cbd5e1" font-size="11" font-family="monospace">arr[3] @ 0x8000100C = 99</text>
+      <text x="280" y="161" fill="#94a3b8" font-size="10" font-family="sans-serif">+ 12 Bytes</text>
+    </g>
+
+    <text x="190" y="228" fill="#fbbf24" font-size="10" font-family="monospace" text-anchor="middle">End Pointer: a1 = a0 + (len &lt;&lt; 2) = 0x80001010</text>
+  </g>
+
+  <!-- Right: Loop Execution Assembly -->
+  <g transform="translate(480, 95)">
+    <rect width="420" height="240" rx="8" fill="#1e293b" stroke="#34d399" stroke-width="1.5"/>
+    <text x="210" y="25" fill="#34d399" font-size="13" font-weight="bold" font-family="sans-serif" text-anchor="middle">Accumulation Loop Assembly (sum_array)</text>
+
+    <!-- Code Block -->
+    <rect x="20" y="40" width="380" height="180" rx="4" fill="#0f172a" stroke="#334155"/>
+    <text x="30" y="60" fill="#94a3b8" font-size="10" font-family="monospace"># a0 = &amp;arr[0], a1 = len (4)</text>
+    <text x="30" y="76" fill="#34d399" font-size="10" font-family="monospace">slli a1, a1, 2          # a1 = bytes (len * 4)</text>
+    <text x="30" y="92" fill="#34d399" font-size="10" font-family="monospace">add  a1, a0, a1         # a1 = end pointer limit</text>
+    <text x="30" y="108" fill="#f8fafc" font-size="10" font-family="monospace">li   a2, 0              # a2 = sum accumulator</text>
+    
+    <text x="30" y="128" fill="#fbbf24" font-size="10" font-family="monospace">loop_start:</text>
+    <text x="45" y="144" fill="#fde047" font-size="10" font-family="monospace">bge  a0, a1, loop_exit  # If ptr &gt;= end, done</text>
+    <text x="45" y="160" fill="#38bdf8" font-size="10" font-family="monospace">lw   t0, 0(a0)          # Load word at ptr</text>
+    <text x="45" y="176" fill="#38bdf8" font-size="10" font-family="monospace">add  a2, a2, t0         # sum += *ptr</text>
+    <text x="45" y="192" fill="#38bdf8" font-size="10" font-family="monospace">addi a0, a0, 4          # ptr++ (stride by 4B)</text>
+    <text x="45" y="208" fill="#38bdf8" font-size="10" font-family="monospace">j    loop_start</text>
+  </g>
+
+  <!-- Bottom Details -->
+  <g transform="translate(60, 350)">
+    <rect width="840" height="105" rx="8" fill="#0f172a" stroke="#334155"/>
+    <text x="25" y="26" fill="#38bdf8" font-size="13" font-weight="bold" font-family="sans-serif">Pipeline Optimization Tip: Pointer Comparison vs. Decrement Counter</text>
+    <text x="25" y="48" fill="#cbd5e1" font-size="11" font-family="sans-serif">• Comparing the running pointer directly against the pre-calculated end address (<tspan font-family="monospace" fill="#34d399">bge a0, a1, exit</tspan>) eliminates a separate loop decrement variable.</text>
+    <text x="25" y="68" fill="#cbd5e1" font-size="11" font-family="sans-serif">• Saves 1 instruction per loop iteration, yielding a 20% throughput increase on deep numerical/DSP loops in microcontrollers.</text>
+    <text x="25" y="88" fill="#94a3b8" font-size="10" font-family="sans-serif">In superscalar RISC-V cores, loop unrolling across 4 words avoids branch penalty flushes.</text>
+  </g>
+</svg>

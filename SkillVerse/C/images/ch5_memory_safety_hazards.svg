@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 440" width="100%" height="100%">
+  <defs>
+    <style>
+      .bg { fill: #0b1120; }
+      .card { fill: #131d33; stroke: #1e293b; stroke-width: 1.5; rx: 10; }
+      .title { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 19px; fill: #f8fafc; }
+      .sec-title { font-family: 'Inter', system-ui, sans-serif; font-weight: 600; font-size: 14px; fill: #f43f5e; }
+      .label { font-family: 'Inter', system-ui, sans-serif; font-size: 12px; fill: #cbd5e1; }
+      .sublabel { font-family: 'Inter', system-ui, sans-serif; font-size: 11px; fill: #94a3b8; }
+      .code-txt { font-family: 'JetBrains Mono', Consolas, monospace; font-size: 12px; fill: #34d399; font-weight: 600; }
+    </style>
+  </defs>
+
+  <rect width="960" height="440" class="bg" rx="14"/>
+  <text x="480" y="36" text-anchor="middle" class="title">The 4 Classic C Memory Bugs &amp; How to Prevent Them</text>
+
+  <!-- Bug 1: Memory Leak -->
+  <g transform="translate(25, 55)">
+    <rect width="440" height="165" class="card"/>
+    <text x="20" y="28" class="sec-title">1. Memory Leak (Orphaned Heap Memory)</text>
+    <rect x="15" y="42" width="410" height="65" rx="6" fill="#0b1120" stroke="#1e293b"/>
+    <text x="25" y="64" class="code-txt" fill="#f43f5e">void leak() { int *p = malloc(1024); } // Exits without free()</text>
+    <text x="25" y="85" class="sublabel">Pointer p is destroyed on stack; 1024 bytes stay allocated forever!</text>
+    <text x="20" y="132" class="label" font-weight="bold">Consequence &amp; Prevention:</text>
+    <text x="20" y="150" class="sublabel">Server runs out of RAM (OOM killer). Audit with Valgrind / LeakSanitizer.</text>
+  </g>
+
+  <!-- Bug 2: Use-After-Free -->
+  <g transform="translate(495, 55)">
+    <rect width="440" height="165" class="card"/>
+    <text x="20" y="28" class="sec-title">2. Use-After-Free (Dangling Pointer)</text>
+    <rect x="15" y="42" width="410" height="65" rx="6" fill="#0b1120" stroke="#1e293b"/>
+    <text x="25" y="64" class="code-txt" fill="#f43f5e">free(p);</text>
+    <text x="25" y="85" class="code-txt" fill="#f43f5e">printf("%d
+", *p);  // UNDEFINED BEHAVIOR: Reading freed chunk!</text>
+    <text x="20" y="132" class="label" font-weight="bold">Consequence &amp; Prevention:</text>
+    <text x="20" y="150" class="sublabel">Security vulnerability / silent corruption. Always assign p = NULL immediately.</text>
+  </g>
+
+  <!-- Bug 3: Double Free -->
+  <g transform="translate(25, 240)">
+    <rect width="440" height="165" class="card"/>
+    <text x="20" y="28" class="sec-title">3. Double Free (Metadata Corruption)</text>
+    <rect x="15" y="42" width="410" height="65" rx="6" fill="#0b1120" stroke="#1e293b"/>
+    <text x="25" y="64" class="code-txt" fill="#f43f5e">free(p);</text>
+    <text x="25" y="85" class="code-txt" fill="#f43f5e">free(p); // FATAL: corrupts heap allocator bins/lists</text>
+    <text x="20" y="132" class="label" font-weight="bold">Consequence &amp; Prevention:</text>
+    <text x="20" y="150" class="sublabel">Process crashes with "double free or corruption" abort. NULL checks help.</text>
+  </g>
+
+  <!-- Bug 4: Buffer Overflow -->
+  <g transform="translate(495, 240)">
+    <rect width="440" height="165" class="card"/>
+    <text x="20" y="28" class="sec-title">4. Buffer Overflow (Out-of-Bounds Write)</text>
+    <rect x="15" y="42" width="410" height="65" rx="6" fill="#0b1120" stroke="#1e293b"/>
+    <text x="25" y="64" class="code-txt" fill="#f43f5e">int arr[5];</text>
+    <text x="25" y="85" class="code-txt" fill="#f43f5e">arr[10] = 999; // C performs NO runtime bounds checking!</text>
+    <text x="20" y="132" class="label" font-weight="bold">Consequence &amp; Prevention:</text>
+    <text x="20" y="150" class="sublabel">Clobbers adjacent variables / return addresses. Compile with -fsanitize=address.</text>
+  </g>
+</svg>

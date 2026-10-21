@@ -5,21 +5,24 @@ SystemVerilog provides a rich set of built-in system tasks and functions, identi
 Below is a categorized list of common SystemVerilog system tasks and functions:
 
 ## Simulation Control Tasks
+
 These tasks are used to control the execution flow of a simulation.
+
 ### `$finish`
 
 **Description:**
 The `$realtime` function returns the current simulation time as a `real` number, expressed in the calling scope's time unit. It preserves fractional time when the scope's precision allows it.
 The `$finish` task terminates a simulation after the simulator performs its normal end-of-simulation processing. You can optionally provide an argument to select the amount of termination information reported; exact formatting is simulator-dependent.
 
--   `$finish;` or `$finish(0);`: Terminates simulation with no additional messages.
--   `$finish(1);`: Terminates simulation and prints the simulation time and location.
-The `$stime` function returns the current simulation time as a 32-bit integer, expressed in the calling scope's time unit. Any fractional part is rounded according to the simulator's time conversion rules, and the result can overflow its 32-bit range.
+- `$finish;` or `$finish(0);`: Terminates simulation with no additional messages.
+- `$finish(1);`: Terminates simulation and prints the simulation time and location.
+  The `$stime` function returns the current simulation time as a 32-bit integer, expressed in the calling scope's time unit. Any fractional part is rounded according to the simulator's time conversion rules, and the result can overflow its 32-bit range.
 
 It is the most commonly used task for ending a simulation gracefully.
 
 **Example:**
-The `$time` function returns the current simulation time as a 64-bit integer, expressed in the calling scope's time unit. It differs from `$realtime$ because fractional values are converted to an integer according to the simulator's time conversion rules. The effective time unit comes from the module/program/interface declaration or the applicable `` `timescale`` directive; use an explicit time unit or `` `timescale`` rather than relying on a tool default.
+The `$time` function returns the current simulation time as a 64-bit integer, expressed in the calling scope's time unit. It differs from `$realtime$ because fractional values are converted to an integer according to the simulator's time conversion rules. The effective time unit comes from the module/program/interface declaration or the applicable `` `timescale`directive; use an explicit time unit or` `timescale`` rather than relying on a tool default.
+
 ```systemverilog
 module finish_example;
 
@@ -54,9 +57,9 @@ This example shows a simple module with an `initial` block. The simulation start
 
 The `$stop` task pauses the simulation and leaves the simulator in an interactive mode (if supported by the simulator). This allows the user to examine signal values, set breakpoints, and continue the simulation manually. It's particularly useful for debugging. Similar to `$finish`, you can provide an optional argument to control reporting.
 
--   `$stop;` or `$stop(0);`: Pauses simulation with no additional messages.
--   `$stop(1);`: Pauses simulation and prints the simulation time and location.
--   `$stop(2);`: Pauses simulation and prints the simulation time, location, and statistics.
+- `$stop;` or `$stop(0);`: Pauses simulation with no additional messages.
+- `$stop(1);`: Pauses simulation and prints the simulation time and location.
+- `$stop(2);`: Pauses simulation and prints the simulation time, location, and statistics.
 
 **Example:**
 
@@ -96,8 +99,8 @@ In this example, the simulation starts, prints messages, waits for 50 time units
 
 `$exit` is not a portable IEEE SystemVerilog simulation-control task. Some simulators provide it as an extension that terminates the simulation or the simulator process immediately, sometimes with an exit code. Prefer `$finish` for portable, orderly termination and document the simulator requirement when `$exit` is used.
 
--   `$exit;` or `$exit(0);`: In simulators that support this extension, requests immediate termination with a zero exit code.
--   `$exit(code);`: In simulators that support this extension, requests termination with the specified implementation-defined process status.
+- `$exit;` or `$exit(0);`: In simulators that support this extension, requests immediate termination with a zero exit code.
+- `$exit(code);`: In simulators that support this extension, requests termination with the specified implementation-defined process status.
 
 **Example:**
 
@@ -136,7 +139,9 @@ endmodule
 This example simulates a clock and increments a `cycle_count`. When the `cycle_count` reaches 50, the code prints a message and calls `$exit(1)`. The simulation terminates immediately at that point, and the operating system process running the simulation will exit with a status code of 1. The code after the `if` block will not be executed. Using `$exit` means normal simulation shutdown procedures might be skipped, so use it cautiously.
 
 ## Simulation Time Functions
+
 Functions to retrieve the current simulation time in various formats.
+
 ### `$realtime`
 
 **Description:**
@@ -205,35 +210,37 @@ endmodule
 
 With `` `timescale 1ns / 1ps``:
 
-* **`$realtime`**: Returns the time in nanoseconds (the time unit) as a real number, including the precision.
-    * At time 0: `0.000000`
-    * After `#10`: `10.000000` (10ns)
-    * After `#0.5`: `10.500000` (10.5ns)
-    * After `#100ps`: `10.600000` (10.5ns + 0.1ns = 10.6ns)
+- **`$realtime`**: Returns the time in nanoseconds (the time unit) as a real number, including the precision.
+  - At time 0: `0.000000`
+  - After `#10`: `10.000000` (10ns)
+  - After `#0.5`: `10.500000` (10.5ns)
+  - After `#100ps`: `10.600000` (10.5ns + 0.1ns = 10.6ns)
 
-* **`$stime`**: Returns the time in nanoseconds (the time unit) as a 32-bit integer, rounded to the local time unit.
-    * At time 0: `0`
-    * After `#10`: `10` (10ns)
-    * After `#0.5`: approximately `11` (10.5ns rounded to the local time unit)
-    * After `#100ps`: approximately `11` (10.6ns rounded to the local time unit)
+- **`$stime`**: Returns the time in nanoseconds (the time unit) as a 32-bit integer, rounded to the local time unit.
+  - At time 0: `0`
+  - After `#10`: `10` (10ns)
+  - After `#0.5`: approximately `11` (10.5ns rounded to the local time unit)
+  - After `#100ps`: approximately `11` (10.6ns rounded to the local time unit)
 
-* **`$time`**: Returns the time in the local time unit as a 64-bit integer. Since the time unit is already 1ns, `$time` and `$stime` have the same values here except for their different widths.
-    * At time 0: `0`
-    * After `#10`: `10` (10ns scaled to 1ns is 10)
-    * After `#0.5`: approximately `11` (10.5ns rounded to the local time unit)
-    * After `#100ps`: approximately `11` (10.6ns rounded to the local time unit)
+- **`$time`**: Returns the time in the local time unit as a 64-bit integer. Since the time unit is already 1ns, `$time` and `$stime` have the same values here except for their different widths.
+  - At time 0: `0`
+  - After `#10`: `10` (10ns scaled to 1ns is 10)
+  - After `#0.5`: approximately `11` (10.5ns rounded to the local time unit)
+  - After `#100ps`: approximately `11` (10.6ns rounded to the local time unit)
 
 **Consider what would happen if the timescale was different, e.g., `` `timescale 1us / 1ns``:**
 
-* A delay of `#10` would be 10 microseconds.
-* `$realtime` would return the time in microseconds (e.g., `10.0` after `#10`).
-* `$stime` would return the time in microseconds (e.g., `10` after `#10`).
-* `$time` would return the time in microseconds. So after `#10us`, `$time` would return `10`. A delay of `#1.5us` would be converted according to the local precision and rounded when returned as an integer.
+- A delay of `#10` would be 10 microseconds.
+- `$realtime` would return the time in microseconds (e.g., `10.0` after `#10`).
+- `$stime` would return the time in microseconds (e.g., `10` after `#10`).
+- `$time` would return the time in microseconds. So after `#10us`, `$time` would return `10`. A delay of `#1.5us` would be converted according to the local precision and rounded when returned as an integer.
 
 This illustrates the key difference: `$realtime`, `$stime`, and `$time` are expressed in the calling scope's time unit; `$realtime` preserves fractional values, while `$stime` and `$time` provide integer values with different widths.
 
 ## Timescale Tasks
+
 Tasks related to querying or setting timescale information.
+
 ### `$printtimescale`
 
 **Description:**
@@ -242,8 +249,8 @@ The `$printtimescale` task is used to display the timescale and time precision i
 
 **Usage:**
 
--   `$printtimescale;`: Prints the timescale for the current module (the module where `$printtimescale` is called).
--   `$printtimescale(hierarchical_name);`: Prints the timescale for the module or instance specified by the `hierarchical_name`.
+- `$printtimescale;`: Prints the timescale for the current module (the module where `$printtimescale` is called).
+- `$printtimescale(hierarchical_name);`: Prints the timescale for the module or instance specified by the `hierarchical_name`.
 
 **Example:**
 
@@ -286,8 +293,9 @@ endmodule
 This example defines three modules with different `timescale` directives. The `top` module instantiates `module_a` and `module_b`. The `initial` block in `top` calls `$printtimescale` for itself and then uses hierarchical names to call it for the instances `instance_a` and `instance_b`.
 
 When simulated, the output will show the respective timescales:
--   For `top` and `instance_a` (which inherits from `module_a`): likely `10ns / 1ns`
--   For `instance_b` (which inherits from `module_b`): likely `1us / 100ps`
+
+- For `top` and `instance_a` (which inherits from `module_a`): likely `10ns / 1ns`
+- For `instance_b` (which inherits from `module_b`): likely `1us / 100ps`
 
 This helps confirm that the correct timescale is applied to each part of the design hierarchy.
 
@@ -301,10 +309,10 @@ The `$timeformat` task controls how time values are displayed by the standard di
 
 `$timeformat(units, precision, suffix, minimum_field_width);`
 
--   `units`: An integer specifying the time units for display (e.g., -12 for ps, -9 for ns, -6 for us, -3 for ms, 0 for s). You can also use constants defined in the `uvm_pkg` like `UVM_FS`, `UVM_PS`, etc.
--   `precision`: An integer specifying the number of decimal places to display (0 or greater).
--   `suffix`: A string to be appended to the time value (e.g., " ns", " us"). Use `""` for no suffix.
--   `minimum_field_width`: An integer specifying the minimum width of the field for printing the time value. Useful for aligning output. Use 0 for no minimum width.
+- `units`: An integer specifying the time units for display (e.g., -12 for ps, -9 for ns, -6 for us, -3 for ms, 0 for s). You can also use constants defined in the `uvm_pkg` like `UVM_FS`, `UVM_PS`, etc.
+- `precision`: An integer specifying the number of decimal places to display (0 or greater).
+- `suffix`: A string to be appended to the time value (e.g., " ns", " us"). Use `""` for no suffix.
+- `minimum_field_width`: An integer specifying the minimum width of the field for printing the time value. Useful for aligning output. Use 0 for no minimum width.
 
 A call to `$timeformat` affects subsequent time formatting in the simulation; it is a simulator-wide setting rather than a per-module formatting setting. Later calls replace the earlier setting.
 
@@ -346,21 +354,23 @@ endmodule
 
 The example starts with a timescale of 1us / 100ns. It then uses `$timeformat` multiple times to change how `$display` (specifically using the `%0t` format specifier for time) prints the simulation time.
 
--   Initially, `%0t` prints the time scaled to the reference unit (1 us), which might show unexpected results without a custom format.
--   The first `$timeformat` sets the display to nanoseconds (`-9`) with 0 decimal places and " ns" suffix, right-aligned in a field of 10.
--   The second `$timeformat` sets the display to microseconds (`-6`) with 2 decimal places and " us" suffix, right-aligned in a field of 8.
--   The third `$timeformat` sets the display to picoseconds (`-12`) with 0 decimal places and no suffix or minimum width.
+- Initially, `%0t` prints the time scaled to the reference unit (1 us), which might show unexpected results without a custom format.
+- The first `$timeformat` sets the display to nanoseconds (`-9`) with 0 decimal places and " ns" suffix, right-aligned in a field of 10.
+- The second `$timeformat` sets the display to microseconds (`-6`) with 2 decimal places and " us" suffix, right-aligned in a field of 8.
+- The third `$timeformat` sets the display to picoseconds (`-12`) with 0 decimal places and no suffix or minimum width.
 
 The output clearly demonstrates how `$timeformat` controls the appearance of time in display messages, making simulation logs more readable and interpretable according to the desired time units.
 
 ## Conversion Functions
+
 Functions for converting between different data types, such as real to bits and vice-versa, or signed/unsigned conversions.
+
 ### `$bitstoreal` and `$realtobits`
 
 **Descriptions:**
 
--   `$bitstoreal(expression)`: This function interprets the bit pattern of a 64-bit expression as an IEEE 754 double-precision floating-point number and returns its equivalent `real` value. The input expression must be 64 bits wide.
--   `$realtobits(expression)`: This function takes a `real` number and returns its 64-bit representation as an IEEE 754 double-precision floating-point bit pattern.
+- `$bitstoreal(expression)`: This function interprets the bit pattern of a 64-bit expression as an IEEE 754 double-precision floating-point number and returns its equivalent `real` value. The input expression must be 64 bits wide.
+- `$realtobits(expression)`: This function takes a `real` number and returns its 64-bit representation as an IEEE 754 double-precision floating-point bit pattern.
 
 **Example:**
 
@@ -397,8 +407,8 @@ The example demonstrates converting a `real` number (pi) into its 64-bit binary 
 
 **Descriptions:**
 
--   `$bitstoshortreal(expression)`: Similar to `$bitstoreal`, but interprets a 32-bit expression as an IEEE 754 single-precision floating-point number and returns its `shortreal` value. The input expression must be 32 bits wide.
--   `$shortrealtobits(expression)`: Takes a `shortreal` number and returns its 32-bit representation as an IEEE 754 single-precision floating-point bit pattern.
+- `$bitstoshortreal(expression)`: Similar to `$bitstoreal`, but interprets a 32-bit expression as an IEEE 754 single-precision floating-point number and returns its `shortreal` value. The input expression must be 32 bits wide.
+- `$shortrealtobits(expression)`: Takes a `shortreal` number and returns its 32-bit representation as an IEEE 754 single-precision floating-point bit pattern.
 
 **Example:**
 
@@ -435,8 +445,8 @@ This example is analogous to the `$bitstoreal`/`$realtobits` example but uses `s
 
 **Descriptions:**
 
--   `$itor(expression)`: Converts an integer expression (e.g., `int`, `integer`, `logic`, `bit`) to a `real` value.
--   `$rtoi(expression)`: Converts a `real` or `shortreal` expression to an integer by truncating the fractional part toward zero. This differs from an explicit integral cast, which rounds a real value to the nearest integer.
+- `$itor(expression)`: Converts an integer expression (e.g., `int`, `integer`, `logic`, `bit`) to a `real` value.
+- `$rtoi(expression)`: Converts a `real` or `shortreal` expression to an integer by truncating the fractional part toward zero. This differs from an explicit integral cast, which rounds a real value to the nearest integer.
 
 **Example:**
 
@@ -474,8 +484,8 @@ This example shows how `$itor` converts the integer `123` into the real value `1
 
 **Descriptions:**
 
--   `$signed(expression)`: Treats the given expression as a signed value for the purpose of the current operation or assignment. This is useful when you need to ensure that operations on bit vectors are performed using signed arithmetic. The size of the expression is preserved.
--   `$unsigned(expression)`: Treats the given expression as an unsigned value for the purpose of the current operation or assignment. This is useful when you need to ensure that operations on bit vectors are performed using unsigned arithmetic. The size of the expression is preserved.
+- `$signed(expression)`: Treats the given expression as a signed value for the purpose of the current operation or assignment. This is useful when you need to ensure that operations on bit vectors are performed using signed arithmetic. The size of the expression is preserved.
+- `$unsigned(expression)`: Treats the given expression as an unsigned value for the purpose of the current operation or assignment. This is useful when you need to ensure that operations on bit vectors are performed using unsigned arithmetic. The size of the expression is preserved.
 
 **Example:**
 
@@ -511,10 +521,10 @@ endmodule
 
 The `logic [7:0]` variable `byte_data` holds the bit pattern `8'hFF`. When treated as unsigned, this is 255. When treated as a signed 8-bit value (using two's complement), it's -1.
 
--   `$signed(byte_data)` explicitly tells the simulator to interpret `byte_data` as signed, resulting in -1.
--   `$unsigned(byte_data)` explicitly tells the simulator to interpret `byte_data` as unsigned, resulting in 255.
--   The addition examples show how the explicit `$signed` or `$unsigned` cast affects the arithmetic operation result.
--   Assigning to signed/unsigned integers also demonstrates the effect of the cast during assignment, where the value is sign-extended or zero-extended based on the cast and the destination type.
+- `$signed(byte_data)` explicitly tells the simulator to interpret `byte_data` as signed, resulting in -1.
+- `$unsigned(byte_data)` explicitly tells the simulator to interpret `byte_data` as unsigned, resulting in 255.
+- The addition examples show how the explicit `$signed` or `$unsigned` cast affects the arithmetic operation result.
+- Assigning to signed/unsigned integers also demonstrates the effect of the cast during assignment, where the value is sign-extended or zero-extended based on the cast and the destination type.
 
 ### `$cast`
 
@@ -564,13 +574,15 @@ endmodule
 
 This example shows `$cast` used for value conversion:
 
--   It attempts to cast a `real` value (`r_val`) to an `integer` (`i_val`). This is a valid scalar conversion, and an explicit integral cast rounds the real value according to SystemVerilog's casting rules.
--   It attempts to cast a `shortreal` literal (`25.67f`) to a `real` variable (`r_val`). This is also a valid scalar conversion and will succeed, assigning the `shortreal` value converted to `real` format to `r_val`.
+- It attempts to cast a `real` value (`r_val`) to an `integer` (`i_val`). This is a valid scalar conversion, and an explicit integral cast rounds the real value according to SystemVerilog's casting rules.
+- It attempts to cast a `shortreal` literal (`25.67f`) to a `real` variable (`r_val`). This is also a valid scalar conversion and will succeed, assigning the `shortreal` value converted to `real` format to `r_val`.
 
 While explicit conversions like `$rtoi` are often used for simple scalar conversions, `$cast` provides a more general mechanism, especially powerful for polymorphic object handle assignments where the type is determined at runtime.
 
 ## Data Query Functions
+
 Functions used to query information about data types and variables.
+
 ### `$bits`
 
 **Description:**
@@ -636,15 +648,16 @@ endmodule
 **Explanation:**
 
 The example shows how `$bits` reports the total number of bits for various data types:
--   Single bit (`logic`): 1
--   Vector (`logic [7:0]`): 8
--   Built-in integer type (`int`): typically 32
--   Floating-point type (`real`): typically 64
--   Enumeration: The size is determined by the minimum number of bits needed to represent the range of enumeration values. In this case, 3 values (0, 1, 2) need 2 bits.
--   Packed multi-dimensional array (`logic [3:0][7:0]`): 4 * 8 = 32 bits.
--   Unpacked array (`logic [7:0] [0:2]`): 3 elements * 8 bits/element = 24 bits. `$bits` on an unpacked array gives the total bits of all elements.
--   Packed struct: Sum of the bits of its members (2 + 8 = 10).
--   Unpacked struct: Sum of the bits of its members (Size of int + 16).
+
+- Single bit (`logic`): 1
+- Vector (`logic [7:0]`): 8
+- Built-in integer type (`int`): typically 32
+- Floating-point type (`real`): typically 64
+- Enumeration: The size is determined by the minimum number of bits needed to represent the range of enumeration values. In this case, 3 values (0, 1, 2) need 2 bits.
+- Packed multi-dimensional array (`logic [3:0][7:0]`): 4 \* 8 = 32 bits.
+- Unpacked array (`logic [7:0] [0:2]`): 3 elements \* 8 bits/element = 24 bits. `$bits` on an unpacked array gives the total bits of all elements.
+- Packed struct: Sum of the bits of its members (2 + 8 = 10).
+- Unpacked struct: Sum of the bits of its members (Size of int + 16).
 
 ### `$isunbounded`
 
@@ -738,19 +751,20 @@ endmodule
 
 This example uses `$typename` to print the type name of various variables and a typedef. The output will be strings corresponding to the SystemVerilog type names:
 
--   `logic [15:0]`
--   `integer`
--   `string`
--   `real`
--   The name of the enum type (might be internal or based on definition)
--   The name of the enum type itself
--   The name of the `packet_t` struct type
--   The name of the `packet_t` typedef
--   The type name including the unpacked dimension for the array (e.g., `packet_t [0:3]`)
+- `logic [15:0]`
+- `integer`
+- `string`
+- `real`
+- The name of the enum type (might be internal or based on definition)
+- The name of the enum type itself
+- The name of the `packet_t` struct type
+- The name of the `packet_t` typedef
+- The type name including the unpacked dimension for the array (e.g., `packet_t [0:3]`)
 
 This function is valuable for introspection and dynamic behavior based on data types.
 
 ## Array Query Functions
+
 Functions to obtain information about arrays, including dimensions, bounds, and size.
 Consider the following SystemVerilog array declarations to illustrate these functions:
 
@@ -856,133 +870,142 @@ Let's break down the functions based on the example:
 
 ### `$unpacked_dimensions`
 
-**Description:** Returns the number of *unpacked* dimensions of an array. Returns 0 for packed vectors or packed multi-dimensional arrays.
+**Description:** Returns the number of _unpacked_ dimensions of an array. Returns 0 for packed vectors or packed multi-dimensional arrays.
 
 **Example Output (based on the code):**
--   `packed_vec`: 0
--   `unpacked_arr`: 1
--   `descending_arr`: 1
--   `packed_2d`: 0
--   `unpacked_2d`: 2
--   `mixed_array`: 2
+
+- `packed_vec`: 0
+- `unpacked_arr`: 1
+- `descending_arr`: 1
+- `packed_2d`: 0
+- `unpacked_2d`: 2
+- `mixed_array`: 2
 
 ### `$dimensions`
 
 **Description:** Returns the total number of dimensions, which is the sum of unpacked dimensions and packed dimensions.
 
 **Example Output:**
--   `packed_vec`: 1
--   `unpacked_arr`: 1
--   `descending_arr`: 1
--   `packed_2d`: 2
--   `unpacked_2d`: 2
--   `mixed_array`: 3 (2 unpacked + 1 packed)
+
+- `packed_vec`: 1
+- `unpacked_arr`: 1
+- `descending_arr`: 1
+- `packed_2d`: 2
+- `unpacked_2d`: 2
+- `mixed_array`: 3 (2 unpacked + 1 packed)
 
 ### `$left(array, dimension)`
 
 **Description:** Returns the left-hand index bound of the specified `dimension`. Dimensions are numbered starting from 1. Unpacked dimensions are numbered first, followed by packed dimensions.
 
 **Example Output:**
--   `packed_vec, 1`: 7
--   `unpacked_arr, 1`: 0
--   `descending_arr, 1`: 99
--   `packed_2d, 1`: 3 (1st packed dim)
--   `packed_2d, 2`: 7 (2nd packed dim)
--   `unpacked_2d, 1`: 0 (1st unpacked dim)
--   `unpacked_2d, 2`: 0 (2nd unpacked dim)
--   `mixed_array, 1`: 0 (1st unpacked dim)
--   `mixed_array, 2`: 3 (2nd unpacked dim)
--   `mixed_array, 3`: 1 (1st packed dim, indexed after the 2 unpacked dims)
+
+- `packed_vec, 1`: 7
+- `unpacked_arr, 1`: 0
+- `descending_arr, 1`: 99
+- `packed_2d, 1`: 3 (1st packed dim)
+- `packed_2d, 2`: 7 (2nd packed dim)
+- `unpacked_2d, 1`: 0 (1st unpacked dim)
+- `unpacked_2d, 2`: 0 (2nd unpacked dim)
+- `mixed_array, 1`: 0 (1st unpacked dim)
+- `mixed_array, 2`: 3 (2nd unpacked dim)
+- `mixed_array, 3`: 1 (1st packed dim, indexed after the 2 unpacked dims)
 
 ### `$right(array, dimension)`
 
 **Description:** Returns the right-hand index bound of the specified `dimension`. Dimensions are numbered starting from 1. Unpacked dimensions are numbered first, followed by packed dimensions.
 
 **Example Output:**
--   `packed_vec, 1`: 0
--   `unpacked_arr, 1`: 9
--   `descending_arr, 1`: 10
--   `packed_2d, 1`: 0
--   `packed_2d, 2`: 0
--   `unpacked_2d, 1`: 4
--   `unpacked_2d, 2`: 9
--   `mixed_array, 1`: 2
--   `mixed_array, 2`: 4
--   `mixed_array, 3`: 0
+
+- `packed_vec, 1`: 0
+- `unpacked_arr, 1`: 9
+- `descending_arr, 1`: 10
+- `packed_2d, 1`: 0
+- `packed_2d, 2`: 0
+- `unpacked_2d, 1`: 4
+- `unpacked_2d, 2`: 9
+- `mixed_array, 1`: 2
+- `mixed_array, 2`: 4
+- `mixed_array, 3`: 0
 
 ### `$low(array, dimension)`
 
 **Description:** Returns the lower bound of the specified `dimension` (minimum of the left and right bounds).
 
 **Example Output:**
--   `packed_vec, 1`: 0 (min(7, 0))
--   `unpacked_arr, 1`: 0 (min(0, 9))
--   `descending_arr, 1`: 10 (min(99, 10))
--   `packed_2d, 1`: 0
--   `packed_2d, 2`: 0
--   `unpacked_2d, 1`: 0
--   `unpacked_2d, 2`: 0
--   `mixed_array, 1`: 0
--   `mixed_array, 2`: 3
--   `mixed_array, 3`: 0
+
+- `packed_vec, 1`: 0 (min(7, 0))
+- `unpacked_arr, 1`: 0 (min(0, 9))
+- `descending_arr, 1`: 10 (min(99, 10))
+- `packed_2d, 1`: 0
+- `packed_2d, 2`: 0
+- `unpacked_2d, 1`: 0
+- `unpacked_2d, 2`: 0
+- `mixed_array, 1`: 0
+- `mixed_array, 2`: 3
+- `mixed_array, 3`: 0
 
 ### `$high(array, dimension)`
 
 **Description:** Returns the upper bound of the specified `dimension` (maximum of the left and right bounds).
 
 **Example Output:**
--   `packed_vec, 1`: 7 (max(7, 0))
--   `unpacked_arr, 1`: 9 (max(0, 9))
--   `descending_arr, 1`: 99 (max(99, 10))
--   `packed_2d, 1`: 3
--   `packed_2d, 2`: 7
--   `unpacked_2d, 1`: 4
--   `unpacked_2d, 2`: 9
--   `mixed_array, 1`: 2
--   `mixed_array, 2`: 4
--   `mixed_array, 3`: 1
+
+- `packed_vec, 1`: 7 (max(7, 0))
+- `unpacked_arr, 1`: 9 (max(0, 9))
+- `descending_arr, 1`: 99 (max(99, 10))
+- `packed_2d, 1`: 3
+- `packed_2d, 2`: 7
+- `unpacked_2d, 1`: 4
+- `unpacked_2d, 2`: 9
+- `mixed_array, 1`: 2
+- `mixed_array, 2`: 4
+- `mixed_array, 3`: 1
 
 ### `$increment(array, dimension)`
 
 **Description:** Returns 1 if the specified `dimension` has an ascending index range (left <= right), and -1 if it has a descending index range (left > right).
 
 **Example Output:**
--   `packed_vec, 1`: -1 (7 down to 0)
--   `unpacked_arr, 1`: 1 (0 up to 9)
--   `descending_arr, 1`: -1 (99 down to 10)
--   `packed_2d, 1`: -1
--   `packed_2d, 2`: -1
--   `unpacked_2d, 1`: 1
--   `unpacked_2d, 2`: 1
--   `mixed_array, 1`: 1
--   `mixed_array, 2`: 1
--   `mixed_array, 3`: -1
+
+- `packed_vec, 1`: -1 (7 down to 0)
+- `unpacked_arr, 1`: 1 (0 up to 9)
+- `descending_arr, 1`: -1 (99 down to 10)
+- `packed_2d, 1`: -1
+- `packed_2d, 2`: -1
+- `unpacked_2d, 1`: 1
+- `unpacked_2d, 2`: 1
+- `mixed_array, 1`: 1
+- `mixed_array, 2`: 1
+- `mixed_array, 3`: -1
 
 ### `$size(array, dimension)` and `$size(array)`
 
 **Description:**
 
--   `$size(array, dimension)`: Returns the number of elements in the specified `dimension`. Calculated as `$high(array, dimension) - $low(array, dimension) + 1`.
--   `$size(array)`: Returns the total number of elements in all *unpacked* dimensions of the array. For an array with N unpacked dimensions with sizes S1, S2, ..., SN, this is S1 \* S2 \* ... \* SN. For a packed array, this returns 1 (representing the single 'element' which is the entire vector).
+- `$size(array, dimension)`: Returns the number of elements in the specified `dimension`. Calculated as `$high(array, dimension) - $low(array, dimension) + 1`.
+- `$size(array)`: Returns the total number of elements in all _unpacked_ dimensions of the array. For an array with N unpacked dimensions with sizes S1, S2, ..., SN, this is S1 \* S2 \* ... \* SN. For a packed array, this returns 1 (representing the single 'element' which is the entire vector).
 
 **Example Output:**
--   `packed_vec, 1`: 8 (Size of the 8-bit vector)
--   `unpacked_arr, 1`: 10 (Size of the 10-element unpacked array)
--   `unpacked_arr`: 10 (Total elements in unpacked dimensions)
--   `descending_arr, 1`: 90 (Size of the 90-element unpacked array)
--   `packed_2d, 1`: 4 (Size of the 4-element outer packed dim)
--   `packed_2d, 2`: 8 (Size of the 8-bit inner packed dim)
--   `unpacked_2d, 1`: 5 (Size of the 5-element 1st unpacked dim)
--   `unpacked_2d, 2`: 10 (Size of the 10-element 2nd unpacked dim)
--   `unpacked_2d`: 50 (Total elements in unpacked dims: 5 * 10)
--   `mixed_array, 1`: 3 (Size of the 1st unpacked dim)
--   `mixed_array, 2`: 2 (Size of the 2nd unpacked dim)
--   `mixed_array`: 6 (Total elements in unpacked dims: 3 * 2)
--   `mixed_array, 3`: 2 (Size of the packed dimension)
+
+- `packed_vec, 1`: 8 (Size of the 8-bit vector)
+- `unpacked_arr, 1`: 10 (Size of the 10-element unpacked array)
+- `unpacked_arr`: 10 (Total elements in unpacked dimensions)
+- `descending_arr, 1`: 90 (Size of the 90-element unpacked array)
+- `packed_2d, 1`: 4 (Size of the 4-element outer packed dim)
+- `packed_2d, 2`: 8 (Size of the 8-bit inner packed dim)
+- `unpacked_2d, 1`: 5 (Size of the 5-element 1st unpacked dim)
+- `unpacked_2d, 2`: 10 (Size of the 10-element 2nd unpacked dim)
+- `unpacked_2d`: 50 (Total elements in unpacked dims: 5 \* 10)
+- `mixed_array, 1`: 3 (Size of the 1st unpacked dim)
+- `mixed_array, 2`: 2 (Size of the 2nd unpacked dim)
+- `mixed_array`: 6 (Total elements in unpacked dims: 3 \* 2)
+- `mixed_array, 3`: 2 (Size of the packed dimension)
 
 These functions are essential for writing generic code that operates on arrays of different sizes and dimensions without hardcoding the bounds.
 
 ## Math Functions
+
 A comprehensive set of mathematical functions for use within SystemVerilog.
 All trigonometric, hyperbolic, and inverse hyperbolic functions operate on and return `real` type values. Angles for trigonometric functions are specified in radians.
 
@@ -990,8 +1013,8 @@ All trigonometric, hyperbolic, and inverse hyperbolic functions operate on and r
 
 These functions adjust a real number to the nearest integer value based on different rules.
 
--   `$ceil(real_expression)`: Returns the smallest integer value that is greater than or equal to `real_expression`.
--   `$floor(real_expression)`: Returns the largest integer value that is less than or equal to `real_expression`.
+- `$ceil(real_expression)`: Returns the smallest integer value that is greater than or equal to `real_expression`.
+- `$floor(real_expression)`: Returns the largest integer value that is less than or equal to `real_expression`.
 
 **Example:**
 
@@ -1023,21 +1046,21 @@ endmodule
 
 **Explanation:**
 
--   `$ceil(3.14)` and `$ceil(3.99)` both round up to 4.0.
--   `$ceil(-2.1)` and `$ceil(-2.9)` both round up towards zero, resulting in -2.0.
--   `$floor(3.14)` and `$floor(3.99)` both round down to 3.0.
--   `$floor(-2.1)` and `$floor(-2.9)` both round down away from zero, resulting in -3.0.
+- `$ceil(3.14)` and `$ceil(3.99)` both round up to 4.0.
+- `$ceil(-2.1)` and `$ceil(-2.9)` both round up towards zero, resulting in -2.0.
+- `$floor(3.14)` and `$floor(3.99)` both round down to 3.0.
+- `$floor(-2.1)` and `$floor(-2.9)` both round down away from zero, resulting in -3.0.
 
 ### Exponent and Logarithmic Functions
 
 These functions handle powers and logarithms.
 
--   `$pow(base, exponent)`: Returns `base` raised to the power of `exponent`. Both inputs and the output are `real`.
--   `$sqrt(real_expression)`: Returns the square root of `real_expression`. Input must be non-negative.
--   `$clog2(integer_expression)`: Returns the ceiling of the base-2 logarithm of the positive `integer_expression`. This is commonly used to determine the minimum number of bits required to represent `integer_expression` unique values. The input is an integer type, the output is an integer type.
--   `$log10(real_expression)`: Returns the base-10 logarithm of `real_expression`. Input must be positive.
--   `$exp(real_expression)`: Returns the base of the natural logarithm, *e*, raised to the power of `real_expression` ($e^{real\_expression}$).
--   `$ln(real_expression)`: Returns the natural logarithm (base *e*) of `real_expression`. Input must be positive.
+- `$pow(base, exponent)`: Returns `base` raised to the power of `exponent`. Both inputs and the output are `real`.
+- `$sqrt(real_expression)`: Returns the square root of `real_expression`. Input must be non-negative.
+- `$clog2(integer_expression)`: Returns the ceiling of the base-2 logarithm of the positive `integer_expression`. This is commonly used to determine the minimum number of bits required to represent `integer_expression` unique values. The input is an integer type, the output is an integer type.
+- `$log10(real_expression)`: Returns the base-10 logarithm of `real_expression`. Input must be positive.
+- `$exp(real_expression)`: Returns the base of the natural logarithm, _e_, raised to the power of `real_expression` ($e^{real\_expression}$).
+- `$ln(real_expression)`: Returns the natural logarithm (base _e_) of `real_expression`. Input must be positive.
 
 **Example:**
 
@@ -1070,31 +1093,31 @@ endmodule
 
 **Explanation:**
 
--   `$pow(2.0, 3.0)` calculates $2^3 = 8.0$.
--   `$sqrt(16.0)` calculates $\sqrt{16.0} = 4.0$.
--   `$clog2(10)` calculates $\lceil\log_2(10)\rceil$. $\log_2(10)$ is approximately 3.32, so the ceiling is 4. This means you need 4 bits to represent values from 0 to 9 (10 unique values).
--   `$log10(100.0)` calculates $\log_{10}(100.0) = 2.0$.
--   `$exp(1.0)` calculates $e^1$, which is approximately 2.71828.
--   `$ln(2.71828)` calculates $\ln(2.71828)$, which is approximately 1.0.
+- `$pow(2.0, 3.0)` calculates $2^3 = 8.0$.
+- `$sqrt(16.0)` calculates $\sqrt{16.0} = 4.0$.
+- `$clog2(10)` calculates $\lceil\log_2(10)\rceil$. $\log_2(10)$ is approximately 3.32, so the ceiling is 4. This means you need 4 bits to represent values from 0 to 9 (10 unique values).
+- `$log10(100.0)` calculates $\log_{10}(100.0) = 2.0$.
+- `$exp(1.0)` calculates $e^1$, which is approximately 2.71828.
+- `$ln(2.71828)` calculates $\ln(2.71828)$, which is approximately 1.0.
 
 ### Trigonometric and Hyperbolic Functions
 
 These functions perform standard trigonometric and hyperbolic calculations, along with their inverse operations. Angles for trigonometric functions are in radians.
 
--   `$sin(real_expression)`: Returns the sine of `real_expression` (in radians).
--   `$sinh(real_expression)`: Returns the hyperbolic sine of `real_expression`.
--   `$asin(real_expression)`: Returns the arc sine (inverse sine) of `real_expression`. Input must be between -1.0 and 1.0. Returns an angle in radians between $-\pi/2$ and $\pi/2$.
--   `$asinh(real_expression)`: Returns the inverse hyperbolic sine of `real_expression`.
--   `$cos(real_expression)`: Returns the cosine of `real_expression` (in radians).
--   `$cosh(real_expression)`: Returns the hyperbolic cosine of `real_expression`.
--   `$acos(real_expression)`: Returns the arc cosine (inverse cosine) of `real_expression`. Input must be between -1.0 and 1.0. Returns an angle in radians between 0 and $\pi$.
--   `$acosh(real_expression)`: Returns the inverse hyperbolic cosine of `real_expression`. Input must be greater than or equal to 1.0.
--   `$tan(real_expression)`: Returns the tangent of `real_expression` (in radians).
--   `$tanh(real_expression)`: Returns the hyperbolic tangent of `real_expression`.
--   `$atan(real_expression)`: Returns the arc tangent (inverse tangent) of `real_expression`. Returns an angle in radians between $-\pi/2$ and $\pi/2$.
--   `$atanh(real_expression)`: Returns the inverse hyperbolic tangent of `real_expression`. Input must be between -1.0 and 1.0 (exclusive).
--   `$atan2(y_expression, x_expression)`: Returns the arc tangent of y/x, using the signs of both arguments to determine the quadrant of the result. Returns an angle in radians between $-\pi$ and $\pi$. Useful for converting Cartesian coordinates (x, y) to polar coordinates (r, $\theta$).
--   `$hypot(x_expression, y_expression)`: Returns the length of the hypotenuse of a right triangle with sides x and y, calculated as $\sqrt{x^2 + y^2}$.
+- `$sin(real_expression)`: Returns the sine of `real_expression` (in radians).
+- `$sinh(real_expression)`: Returns the hyperbolic sine of `real_expression`.
+- `$asin(real_expression)`: Returns the arc sine (inverse sine) of `real_expression`. Input must be between -1.0 and 1.0. Returns an angle in radians between $-\pi/2$ and $\pi/2$.
+- `$asinh(real_expression)`: Returns the inverse hyperbolic sine of `real_expression`.
+- `$cos(real_expression)`: Returns the cosine of `real_expression` (in radians).
+- `$cosh(real_expression)`: Returns the hyperbolic cosine of `real_expression`.
+- `$acos(real_expression)`: Returns the arc cosine (inverse cosine) of `real_expression`. Input must be between -1.0 and 1.0. Returns an angle in radians between 0 and $\pi$.
+- `$acosh(real_expression)`: Returns the inverse hyperbolic cosine of `real_expression`. Input must be greater than or equal to 1.0.
+- `$tan(real_expression)`: Returns the tangent of `real_expression` (in radians).
+- `$tanh(real_expression)`: Returns the hyperbolic tangent of `real_expression`.
+- `$atan(real_expression)`: Returns the arc tangent (inverse tangent) of `real_expression`. Returns an angle in radians between $-\pi/2$ and $\pi/2$.
+- `$atanh(real_expression)`: Returns the inverse hyperbolic tangent of `real_expression`. Input must be between -1.0 and 1.0 (exclusive).
+- `$atan2(y_expression, x_expression)`: Returns the arc tangent of y/x, using the signs of both arguments to determine the quadrant of the result. Returns an angle in radians between $-\pi$ and $\pi$. Useful for converting Cartesian coordinates (x, y) to polar coordinates (r, $\theta$).
+- `$hypot(x_expression, y_expression)`: Returns the length of the hypotenuse of a right triangle with sides x and y, calculated as $\sqrt{x^2 + y^2}$.
 
 **Example:**
 
@@ -1159,15 +1182,17 @@ endmodule
 
 **Explanation:**
 
--   The trigonometric functions calculate sin, cos, and tan for a given angle in radians. `$sin(PI/2)` is approximately 1.0, `$cos(PI/2)` is approximately 0.0, and `$tan(PI/4)` is approximately 1.0.
--   The inverse trigonometric functions (`$asin`, `$acos`, `$atan`, `$atan2`) return the angle in radians. `$asin(1.0)` returns approximately $\pi/2$, `$acos(0.0)` returns approximately $\pi/2$, `$atan(1.0)` returns approximately $\pi/4$, and `$atan2(1.0, 1.0)` returns approximately $\pi/4$. `$atan2` is useful as it considers the signs of both inputs to determine the correct quadrant.
--   The hyperbolic functions (`$sinh`, `$cosh`, `$tanh`) and their inverses (`$asinh`, `$acosh`, `$atanh`) perform calculations based on the hyperbolic functions related to the hyperbola $x^2 - y^2 = 1$.
--   `$hypot(3.0, 4.0)` calculates $\sqrt{3^2 + 4^2} = \sqrt{9 + 16} = \sqrt{25} = 5.0$.
+- The trigonometric functions calculate sin, cos, and tan for a given angle in radians. `$sin(PI/2)` is approximately 1.0, `$cos(PI/2)` is approximately 0.0, and `$tan(PI/4)` is approximately 1.0.
+- The inverse trigonometric functions (`$asin`, `$acos`, `$atan`, `$atan2`) return the angle in radians. `$asin(1.0)` returns approximately $\pi/2$, `$acos(0.0)` returns approximately $\pi/2$, `$atan(1.0)` returns approximately $\pi/4$, and `$atan2(1.0, 1.0)` returns approximately $\pi/4$. `$atan2` is useful as it considers the signs of both inputs to determine the correct quadrant.
+- The hyperbolic functions (`$sinh`, `$cosh`, `$tanh`) and their inverses (`$asinh`, `$acosh`, `$atanh`) perform calculations based on the hyperbolic functions related to the hyperbola $x^2 - y^2 = 1$.
+- `$hypot(3.0, 4.0)` calculates $\sqrt{3^2 + 4^2} = \sqrt{9 + 16} = \sqrt{25} = 5.0$.
 
 These math functions provide the necessary tools for performing complex numerical calculations within your SystemVerilog simulation environment.
-  
+
 ## Bit Vector System Functions
+
 Functions for operating on bit vectors, such as counting bits or checking for one-hot encoding.
+
 ### `$countbits`
 
 **Description:**
@@ -1275,15 +1300,16 @@ endmodule
 
 **Explanation:**
 
--   **`$countbits`**: Shows how to count specific bit values, including 'x' and 'z', and how to count multiple values at once. For `data5` (`10x1_z010`), it correctly identifies 3 ones, 2 zeros, 1 X, and 1 Z.
--   **`$countones`**: Directly counts the '1' bits. For `data1` (4 ones), `data2` (0 ones), `data3` (1 one), `data4` (8 ones), and `data5` (3 ones), it returns the correct counts.
--   **`$onehot`**: Checks for exactly one '1'. It returns 1 only for `data3` (`1000_0000`). For `data1`, `data2`, `data4`, and `data5`, it returns 0.
--   **`$onehot0`**: Checks for at most one '1'. It returns 1 for `data2` (zero ones) and `data3` (exactly one '1'). It returns 0 for `data1`, `data4`, and `data5`.
--   **`$isunknown`**: Checks for 'x' or 'z'. It returns 0 for `data1`, `data2`, `data3`, and `data4` (which contain only 0s and 1s). It returns 1 for `data5` because it contains 'x' and 'z'.
+- **`$countbits`**: Shows how to count specific bit values, including 'x' and 'z', and how to count multiple values at once. For `data5` (`10x1_z010`), it correctly identifies 3 ones, 2 zeros, 1 X, and 1 Z.
+- **`$countones`**: Directly counts the '1' bits. For `data1` (4 ones), `data2` (0 ones), `data3` (1 one), `data4` (8 ones), and `data5` (3 ones), it returns the correct counts.
+- **`$onehot`**: Checks for exactly one '1'. It returns 1 only for `data3` (`1000_0000`). For `data1`, `data2`, `data4`, and `data5`, it returns 0.
+- **`$onehot0`**: Checks for at most one '1'. It returns 1 for `data2` (zero ones) and `data3` (exactly one '1'). It returns 0 for `data1`, `data4`, and `data5`.
+- **`$isunknown`**: Checks for 'x' or 'z'. It returns 0 for `data1`, `data2`, `data3`, and `data4` (which contain only 0s and 1s). It returns 1 for `data5` because it contains 'x' and 'z'.
 
 These functions are very useful for checking control signals, state encodings, or detecting the presence of unknown values in a design or testbench. When an expression contains X or Z, consult the function's 4-state semantics: `$isunknown` explicitly reports their presence, while one-hot checks are not a substitute for an explicit unknown check.
 
 ## Severity Tasks
+
 Tasks used to report messages with different severity levels during simulation or elaboration.
 Okay, let's describe the SystemVerilog severity tasks: `$fatal`, `$error`, `$warning`, and `$info`. These tasks are used to report messages during simulation or elaboration with standard severity levels, helping to categorize and manage simulation output.
 
@@ -1299,9 +1325,9 @@ The `$fatal` task reports a severe error message and immediately terminates the 
 
 `$fatal([severity_level,] message_string [, arguments]);`
 
-* `severity_level`: An optional integer (usually 0) which is often ignored but part of the standard.
-* `message_string`: The string to display, can contain format specifiers.
-* `arguments`: Optional variables or expressions to be formatted into the string.
+- `severity_level`: An optional integer (usually 0) which is often ignored but part of the standard.
+- `message_string`: The string to display, can contain format specifiers.
+- `arguments`: Optional variables or expressions to be formatted into the string.
 
 ### `$error`
 
@@ -1377,17 +1403,18 @@ endmodule
 
 This example sets up a simple clocked process that increments a counter.
 
--   At the beginning of the simulation, an `$info` message is printed.
--   When the counter reaches 5, a `$warning` is issued.
--   When the counter reaches 10, an `$error` is issued.
--   When the counter reaches 12, another `$info` message is printed.
--   When the counter reaches 15, a `$fatal` error is reported, and the simulation immediately stops at that point. The final `$display` after the `$fatal` call will not be executed.
+- At the beginning of the simulation, an `$info` message is printed.
+- When the counter reaches 5, a `$warning` is issued.
+- When the counter reaches 10, an `$error` is issued.
+- When the counter reaches 12, another `$info` message is printed.
+- When the counter reaches 15, a `$fatal` error is reported, and the simulation immediately stops at that point. The final `$display` after the `$fatal` call will not be executed.
 
 When you run this code in a simulator, you will see the messages printed with prefixes or highlighting that indicate their severity (e.g., "INFO:", "WARNING:", "ERROR:", "FATAL:"). The simulation will stop after the `$fatal` message is displayed. This provides a structured way to report events during simulation and helps quickly identify the nature of issues.
 
-*Note: The specific output format and whether the simulator stops on `$error` by default can vary between simulation tools.*
+_Note: The specific output format and whether the simulator stops on `$error` by default can vary between simulation tools._
 
 ## Assertion Control Tasks
+
 Tasks to enable, disable, or control the behavior of assertions.
 Consider a simple SystemVerilog module with a basic assertion to demonstrate these tasks:
 
@@ -1503,9 +1530,9 @@ Let's describe the tasks and their effects in the context of this example:
 
 `$assertcontrol(control_type, assertion_instance/property, mode);`
 
-* `control_type`: Specifies what to control (e.g., pass reporting, fail reporting, evaluation).
-* `assertion_instance/property`: The specific assertion or property to control (can be hierarchical name).
-* `mode`: Enable (1) or Disable (0).
+- `control_type`: Specifies what to control (e.g., pass reporting, fail reporting, evaluation).
+- `assertion_instance/property`: The specific assertion or property to control (can be hierarchical name).
+- `mode`: Enable (1) or Disable (0).
 
 **Example Usage (Conceptual, not in simplified example):**
 `$assertcontrol(SV_ASSERT_PASS_ENABLE, top.my_module.my_assertion_label, 0);` // Disable pass reporting for a specific assertion
@@ -1570,10 +1597,11 @@ Let's describe the tasks and their effects in the context of this example:
 Using these tasks, you can selectively enable or disable assertion checking and control the verbosity of your simulation logs based on assertion outcomes. This is very useful for focusing debugging efforts or speeding up simulations where assertion checks are not currently relevant.
 
 ## Sampled Value System Functions
-Functions used within assertion properties to refer to sampled values at different points in time or with respect to a global clock.
-Assertions evaluate expressions at specific clock events (the sampling clock, defined by `@(posedge clk)` or `@(negedge clk)` in the property or sequence). The sampled value functions allow you to access the value of a signal or expression *at* these clock ticks.
 
-Some functions have `_gclk` suffixes. These variants operate relative to a separate, explicitly defined *global clock*, allowing you to sample signals based on a clock different from the one driving the assertion property.
+Functions used within assertion properties to refer to sampled values at different points in time or with respect to a global clock.
+Assertions evaluate expressions at specific clock events (the sampling clock, defined by `@(posedge clk)` or `@(negedge clk)` in the property or sequence). The sampled value functions allow you to access the value of a signal or expression _at_ these clock ticks.
+
+Some functions have `_gclk` suffixes. These variants operate relative to a separate, explicitly defined _global clock_, allowing you to sample signals based on a clock different from the one driving the assertion property.
 
 Consider the following example module with a clock and a data signal to demonstrate these functions within properties:
 
@@ -1739,23 +1767,24 @@ Let's explain the functions based on the example and general usage:
 ### `$past(expression [, number_of_ticks [, clocking_event [, enabling_condition]]])`
 
 **Description:** Returns the value of `expression` from a previous clock tick.
--   `number_of_ticks`: How many clock ticks ago to look (default is 1).
--   `clocking_event`: The clocking event for counting ticks (default is the property's clock).
--   `enabling_condition`: An optional expression that must be true at each intermediate clock tick for the tick count to advance.
+
+- `number_of_ticks`: How many clock ticks ago to look (default is 1).
+- `clocking_event`: The clocking event for counting ticks (default is the property's clock).
+- `enabling_condition`: An optional expression that must be true at each intermediate clock tick for the tick count to advance.
 
 **Example Usage (P1):** Used as `$past(data)` to get the value of `data` at the immediately preceding `posedge clk`.
 
 ### `_gclk` Functions (`$past_gclk`, `$rose_gclk`, `$fell_gclk`, `$stable_gclk`, `$changed_gclk`)
 
-**Description:** These functions are similar to their non-`_gclk` counterparts (`$past`, `$rose`, etc.) but sample the expression relative to an explicitly specified *global clocking event*, independent of the property's sampling clock. They take the expression, optionally the number of ticks ago, and the global clocking event as arguments.
+**Description:** These functions are similar to their non-`_gclk` counterparts (`$past`, `$rose`, etc.) but sample the expression relative to an explicitly specified _global clocking event_, independent of the property's sampling clock. They take the expression, optionally the number of ticks ago, and the global clocking event as arguments.
 
 **Usage:**
 
--   `$past_gclk(expression, number_of_ticks, @(global_clock_event))`
--   `$rose_gclk(expression, number_of_ticks_ago, @(global_clock_event))`
--   `$fell_gclk(expression, number_of_ticks_ago, @(global_clock_event))`
--   `$stable_gclk(expression, number_of_ticks_ago, @(global_clock_event))`
--   `$changed_gclk(expression, number_of_ticks_ago, @(global_clock_event))`
+- `$past_gclk(expression, number_of_ticks, @(global_clock_event))`
+- `$rose_gclk(expression, number_of_ticks_ago, @(global_clock_event))`
+- `$fell_gclk(expression, number_of_ticks_ago, @(global_clock_event))`
+- `$stable_gclk(expression, number_of_ticks_ago, @(global_clock_event))`
+- `$changed_gclk(expression, number_of_ticks_ago, @(global_clock_event))`
 
 **Example Usage (P6, P7):** P6 uses `$past_gclk(data, 2, @(posedge global_clk))` to get the value of `data` from two `posedge global_clk` ticks ago, evaluated relative to the current `posedge clk`. P7 uses `$rose_gclk(data, 1, @(posedge global_clk))` to check if `data` rose on the `posedge global_clk` that occurred one global clock tick prior to the current `posedge clk`.
 
@@ -1789,7 +1818,7 @@ Let's explain the functions based on the example and general usage:
 
 ### `$steady_gclk(expression, start_offset, end_offset, @(global_clock_event))`
 
-**Description:** Checks if `expression` held a constant value over an interval defined by offsets from the current time relative to the `global_clock_event`. The interval is from `start_offset` ticks to `end_offset` ticks *after* the current time.
+**Description:** Checks if `expression` held a constant value over an interval defined by offsets from the current time relative to the `global_clock_event`. The interval is from `start_offset` ticks to `end_offset` ticks _after_ the current time.
 
 **Usage:**
 
@@ -1797,7 +1826,7 @@ Let's explain the functions based on the example and general usage:
 
 ### `$changing_gclk(expression, start_offset, end_offset, @(global_clock_event))`
 
-**Description:** Checks if `expression` changed its value at least once over an interval defined by offsets from the current time relative to the `global_clock_event`. The interval is from `start_offset` ticks to `end_offset` ticks *after* the current time. Equivalent to `!$steady_gclk(...)`.
+**Description:** Checks if `expression` changed its value at least once over an interval defined by offsets from the current time relative to the `global_clock_event`. The interval is from `start_offset` ticks to `end_offset` ticks _after_ the current time. Equivalent to `!$steady_gclk(...)`.
 
 **Usage:**
 
@@ -1806,12 +1835,14 @@ Let's explain the functions based on the example and general usage:
 These sampled value functions, especially the `_gclk` variants, provide powerful capabilities for writing complex assertions that relate signal behavior across different clock domains or examine historical and future values relative to a clock edge.
 
 ## Coverage Control Functions
+
 Functions for controlling and querying coverage information.
 These tasks and functions allow you to:
-* Control when coverage is collected.
-* Query the state of coverage points.
-* Save and load coverage data.
-* Merge coverage results from different simulation runs.
+
+- Control when coverage is collected.
+- Query the state of coverage points.
+- Save and load coverage data.
+- Merge coverage results from different simulation runs.
 
 Consider the following example module with a simple `covergroup` to illustrate some of these functions. Coverage database naming, saving, loading, and merging are commonly simulator-specific even when a tool supports similarly named system tasks, so verify the target simulator's syntax.
 
@@ -1918,9 +1949,10 @@ Let's describe the functions based on the example and general usage:
 ### `$coverage_control`
 
 **Description:** Controls whether coverage collection is active.
-* `$coverage_control(1);`: Enables coverage collection.
-* `$coverage_control(0);`: Disables coverage collection.
-* You can optionally specify a specific covergroup instance or scope to control collection more granularly.
+
+- `$coverage_control(1);`: Enables coverage collection.
+- `$coverage_control(0);`: Disables coverage collection.
+- You can optionally specify a specific covergroup instance or scope to control collection more granularly.
 
 **Example Usage (in the code):** Used to turn coverage off between time 75 and 115, demonstrating that samples occurring during this period are not recorded. The exact sampled values depend on the clock edge and assignment ordering.
 
@@ -1962,7 +1994,7 @@ Let's describe the functions based on the example and general usage:
 
 `$set_coverage_db_name(string_file_name)`
 
-**Example Usage (commented out in the code):** Shows how you would specify a custom name like "my\_coverage.ucdb".
+**Example Usage (commented out in the code):** Shows how you would specify a custom name like "my_coverage.ucdb".
 
 ### `$coverage_save`
 
@@ -1997,6 +2029,7 @@ Let's describe the functions based on the example and general usage:
 These coverage tasks and functions provide powerful capabilities for managing the complex process of functional coverage sign-off in verification.
 
 ## Probabilistic Distribution Functions
+
 Functions for generating random numbers based on various statistical distributions.
 These functions are often seeded using the `$random` function's seed argument to ensure repeatable random sequences for debugging.
 
@@ -2008,8 +2041,8 @@ The `$random` function is the basic built-in random number generator. When calle
 
 **Usage:**
 
--   `$random`: Returns a new 32-bit signed random integer.
--   `$random(seed)`: Reseeds the generator with the given `seed` and returns a new 32-bit signed random integer.
+- `$random`: Returns a new 32-bit signed random integer.
+- `$random(seed)`: Reseeds the generator with the given `seed` and returns a new 32-bit signed random integer.
 
 **Return Type:** `integer` (32-bit signed)
 
@@ -2021,9 +2054,9 @@ The `$dist_uniform(seed, low, high)` function generates a random integer uniform
 
 **Parameters:**
 
--   `seed`: An integer state variable used to seed and update the random sequence for this distribution.
--   `low`: The lower bound of the uniform range (integer).
--   `high`: The upper bound of the uniform range (integer). `low` must be less than or equal to `high`.
+- `seed`: An integer state variable used to seed and update the random sequence for this distribution.
+- `low`: The lower bound of the uniform range (integer).
+- `high`: The upper bound of the uniform range (integer). `low` must be less than or equal to `high`.
 
 **Return Type:** `integer`
 
@@ -2035,9 +2068,9 @@ The `$dist_normal(seed, mean, standard_deviation)` function generates a random i
 
 **Parameters:**
 
--   `seed`: An integer state variable that is updated by the call.
--   `mean`: The integer mean (average) of the distribution.
--   `standard_deviation`: An integer measure of the spread of the distribution (must be non-negative).
+- `seed`: An integer state variable that is updated by the call.
+- `mean`: The integer mean (average) of the distribution.
+- `standard_deviation`: An integer measure of the spread of the distribution (must be non-negative).
 
 **Return Type:** `integer`
 
@@ -2049,8 +2082,8 @@ The `$dist_exponential(seed, mean)` function generates a random integer followin
 
 **Parameters:**
 
--   `seed`: An integer seed.
--   `mean`: The positive integer mean of the distribution.
+- `seed`: An integer seed.
+- `mean`: The positive integer mean of the distribution.
 
 **Return Type:** `integer`
 
@@ -2062,8 +2095,8 @@ The `$dist_poisson(seed, mean)` function generates a random integer following a 
 
 **Parameters:**
 
--   `seed`: An integer seed.
--   `mean`: The positive integer mean number of events.
+- `seed`: An integer seed.
+- `mean`: The positive integer mean number of events.
 
 **Return Type:** `integer`
 
@@ -2075,8 +2108,8 @@ The `$dist_chi_square(seed, degrees_of_freedom)` function generates a random int
 
 **Parameters:**
 
--   `seed`: An integer seed.
--   `degrees_of_freedom`: The number of degrees of freedom (`integer`, must be positive).
+- `seed`: An integer seed.
+- `degrees_of_freedom`: The number of degrees of freedom (`integer`, must be positive).
 
 **Return Type:** `integer`
 
@@ -2084,13 +2117,13 @@ The `$dist_chi_square(seed, degrees_of_freedom)` function generates a random int
 
 **Description:**
 
-The `$dist_erlang(seed, k, mean)` function generates a random integer following an Erlang distribution. The Erlang distribution is related to the exponential distribution; it describes the time until *k* events occur in a Poisson process with a certain mean time between events.
+The `$dist_erlang(seed, k, mean)` function generates a random integer following an Erlang distribution. The Erlang distribution is related to the exponential distribution; it describes the time until _k_ events occur in a Poisson process with a certain mean time between events.
 
 **Parameters:**
 
--   `seed`: An integer seed.
--   `k`: The shape parameter (number of events) (`integer`, must be positive).
--   `mean`: The positive integer mean of the related exponential distribution. Note that the mean of the Erlang distribution itself is $k \times mean$.
+- `seed`: An integer seed.
+- `k`: The shape parameter (number of events) (`integer`, must be positive).
+- `mean`: The positive integer mean of the related exponential distribution. Note that the mean of the Erlang distribution itself is $k \times mean$.
 
 **Return Type:** `integer`
 
@@ -2102,8 +2135,8 @@ The `$dist_t(seed, degrees_of_freedom)` function generates a random integer foll
 
 **Parameters:**
 
--   `seed`: An integer seed.
--   `degrees_of_freedom`: The number of degrees of freedom (`integer`, must be positive).
+- `seed`: An integer seed.
+- `degrees_of_freedom`: The number of degrees of freedom (`integer`, must be positive).
 
 **Return Type:** `integer`
 
@@ -2169,14 +2202,15 @@ endmodule
 
 The example demonstrates how to call each distribution function.
 
--   For `$random`, it shows how subsequent calls without a seed continue the sequence, while a call with a seed reseeds the generator.
--   For all `$dist_` functions, the first argument is a mutable integer seed state. Each call updates that variable, so repeated calls continue the sequence. To reproduce a sequence, reinitialize the seed variable to the same value before rerunning the same calls.
--   The subsequent arguments are the parameters specific to the distribution (e.g., high/low for uniform, mean/std\_dev for normal, etc.).
--   Notice that `$dist_uniform` and `$dist_poisson` return integers, while the others return `real` values.
+- For `$random`, it shows how subsequent calls without a seed continue the sequence, while a call with a seed reseeds the generator.
+- For all `$dist_` functions, the first argument is a mutable integer seed state. Each call updates that variable, so repeated calls continue the sequence. To reproduce a sequence, reinitialize the seed variable to the same value before rerunning the same calls.
+- The subsequent arguments are the parameters specific to the distribution (e.g., high/low for uniform, mean/std_dev for normal, etc.).
+- Notice that `$dist_uniform` and `$dist_poisson` return integers, while the others return `real` values.
 
 By using these distribution functions, you can generate stimulus that mimics real-world conditions or stress test specific scenarios based on statistical models, which is a key part of effective testbench development.
 
 ## Stochastic Analysis Tasks and Functions
+
 Tasks and functions related to modeling queues for performance analysis.
 These functions model a first-in, first-out (FIFO) queue and allow you to track its size, fullness, and get statistical data without needing to build a detailed RTL model of the queue itself.
 
@@ -2190,8 +2224,8 @@ Initializes a queue model for stochastic analysis. You provide a queue identifie
 
 `$q_initialize(queue_id [, capacity]);`
 
--   `queue_id`: An integer or bit vector identifier for the queue.
--   `capacity`: An optional integer specifying the maximum number of items the queue can hold. If omitted, the queue has unlimited capacity.
+- `queue_id`: An integer or bit vector identifier for the queue.
+- `capacity`: An optional integer specifying the maximum number of items the queue can hold. If omitted, the queue has unlimited capacity.
 
 ### `$q_add`
 
@@ -2203,7 +2237,7 @@ Adds an item to the specified queue. If the queue has a finite capacity and is f
 
 `$q_add(queue_id);`
 
--   `queue_id`: The identifier of the queue to add an item to.
+- `queue_id`: The identifier of the queue to add an item to.
 
 ### `$q_remove`
 
@@ -2215,7 +2249,7 @@ Removes an item from the specified queue. If the queue is empty, no item is remo
 
 `$q_remove(queue_id);`
 
--   `queue_id`: The identifier of the queue to remove an item from.
+- `queue_id`: The identifier of the queue to remove an item from.
 
 ### `$q_full`
 
@@ -2227,7 +2261,7 @@ A function that returns a boolean value (1 for true, 0 for false) indicating whe
 
 `$q_full(queue_id)`
 
--   `queue_id`: The identifier of the queue to check.
+- `queue_id`: The identifier of the queue to check.
 
 **Return Type:** `integer` (1 or 0)
 
@@ -2241,16 +2275,16 @@ Retrieves statistical data about the specified queue. You provide the queue iden
 
 `$q_exam(queue_id, code)`
 
--   `queue_id`: The identifier of the queue to examine.
--   `code`: An integer specifying the statistic to return:
-    -   `1`: Returns the current number of items in the queue.
-    -   `2`: Returns the maximum number of items that have been in the queue simultaneously since initialization.
-    -   `3`: Returns the average number of items in the queue over time.
-    -   `4`: Returns the total number of items that have been added to the queue.
-    -   `5`: Returns the total number of items that have been removed from the queue.
-    -   `6`: Returns the total time that the queue has been empty.
-    -   `7`: Returns the total time that the queue has been full (only for finite capacity queues).
-    -   `8`: Returns the total time the queue has existed since initialization.
+- `queue_id`: The identifier of the queue to examine.
+- `code`: An integer specifying the statistic to return:
+  - `1`: Returns the current number of items in the queue.
+  - `2`: Returns the maximum number of items that have been in the queue simultaneously since initialization.
+  - `3`: Returns the average number of items in the queue over time.
+  - `4`: Returns the total number of items that have been added to the queue.
+  - `5`: Returns the total number of items that have been removed from the queue.
+  - `6`: Returns the total time that the queue has been empty.
+  - `7`: Returns the total time that the queue has been full (only for finite capacity queues).
+  - `8`: Returns the total time the queue has existed since initialization.
 
 **Return Type:** `real` (for average time, total time statistics) or `integer` (for counts, max size).
 
@@ -2341,35 +2375,37 @@ The example simulates a queue with a capacity of 3.
 3.  **Adding to Full Queue:** An attempt to add an item at @45 fails because `$q_full(1)` returns 1. The item count remains at 3.
 4.  **Removing Items:** Items are removed at @60 and @70 using `$q_remove`, reducing the item count.
 5.  **Examining Statistics:** At the end of the simulation (@90), `$q_exam` is used with different codes to print various statistics:
-    * Code 1: Current items (1 at @90).
-    * Code 4: Total added (3 successful additions).
-    * Code 5: Total removed (2 removals).
-    * Code 2: Maximum items (reached 3).
-    * Code 8: Total time the queue existed (@90).
-    * Code 6: Total time the queue was empty (from time 0 to @15, and from @70 to @90).
-    * Code 7: Total time the queue was full (from @35 to @60).
-    * Code 3: Average items in the queue over the simulation time.
+    - Code 1: Current items (1 at @90).
+    - Code 4: Total added (3 successful additions).
+    - Code 5: Total removed (2 removals).
+    - Code 2: Maximum items (reached 3).
+    - Code 8: Total time the queue existed (@90).
+    - Code 6: Total time the queue was empty (from time 0 to @15, and from @70 to @90).
+    - Code 7: Total time the queue was full (from @35 to @60).
+    - Code 3: Average items in the queue over the simulation time.
 
 These queue modeling functions provide a high-level way to analyze the performance characteristics of queuing systems within your SystemVerilog simulation.
 
 ## PLA Modeling Tasks
+
 Legacy or simulator-specific tasks for modeling Programmable Logic Arrays (PLAs). These are not portable IEEE SystemVerilog constructs; consult the target simulator's documentation before compiling them.
 The names of these tasks follow a pattern:
 `$async/sync $logic_type $output_type ( outputs, inputs, [control_signals] );`
 
--   **`async` vs `sync`**: Determines if the outputs are combinatorial (`async`) or registered on a clock edge (`sync`). Synchronous tasks require clock and potentially set/reset inputs.
--   **`logic_type`**: Specifies the type of logic performed by the **second stage**.
-    * `and`/`nand`: The second stage gates perform AND or NAND on the product terms from the AND plane.
-    * `or`/`nor`: The second stage gates perform OR or NOR on the product terms from the AND plane (this is the most common PLA structure - Sum of Products).
--   **`output_type`**: Specifies what outputs are being modeled.
-    * `plane`: The outputs represent the individual product terms *from the AND plane*.
-    * `array`: The outputs represent the results *from the second stage logic* (the combined "sum of products" or equivalent).
+- **`async` vs `sync`**: Determines if the outputs are combinatorial (`async`) or registered on a clock edge (`sync`). Synchronous tasks require clock and potentially set/reset inputs.
+- **`logic_type`**: Specifies the type of logic performed by the **second stage**.
+  - `and`/`nand`: The second stage gates perform AND or NAND on the product terms from the AND plane.
+  - `or`/`nor`: The second stage gates perform OR or NOR on the product terms from the AND plane (this is the most common PLA structure - Sum of Products).
+- **`output_type`**: Specifies what outputs are being modeled.
+  - `plane`: The outputs represent the individual product terms _from the AND plane_.
+  - `array`: The outputs represent the results _from the second stage logic_ (the combined "sum of products" or equivalent).
 
 The inputs to these tasks typically define the connectivity of the AND plane (which inputs form which product terms) and the second stage (which product terms connect to which output gates). The exact syntax is simulator-specific and is not made portable by the SystemVerilog language. For simplicity in the examples below, we'll represent the AND/OR plane logic conceptually in comments and focus on the task calls and resulting behavior.
 
 ### Example Demonstrating PLA Tasks
 
 Let's model a simple PLA that takes two inputs (`a`, `b`) and generates:
+
 1.  The individual product terms (`a&b`, `a&~b`, `~a&b`, `~a&~b`).
 2.  A sum-of-products output (`a OR b`).
 
@@ -2469,9 +2505,10 @@ Let's describe the tasks used in the example:
 **Usage:**
 
 `$async$or$array(output_vector, inputs, [connection_parameters]);`
-* `output_vector`: The output representing the ORed product terms.
-* `inputs`: The inputs to the AND plane.
-* `connection_parameters`: Defines the AND and OR plane connections (complex, often implicit or via arguments).
+
+- `output_vector`: The output representing the ORed product terms.
+- `inputs`: The inputs to the AND plane.
+- `connection_parameters`: Defines the AND and OR plane connections (complex, often implicit or via arguments).
 
 **Example Usage (in the code):** Used to model the `a OR b` logic, which is a sum-of-products using the four product terms from the AND plane. The `async_or_array_out` will reflect `a | b` combinatorially.
 
@@ -2482,31 +2519,34 @@ Let's describe the tasks used in the example:
 **Usage:**
 
 `$sync$or$array(output_vector, inputs, clock, [reset, ...], [connection_parameters]);`
-* `output_vector`: The registered output.
-* `inputs`: Inputs to the AND plane.
-* `clock`: The clocking event (e.g., `posedge clk`).
-* `reset`: Optional reset signal(s).
-* `connection_parameters`: Defines AND/OR plane connections.
+
+- `output_vector`: The registered output.
+- `inputs`: Inputs to the AND plane.
+- `clock`: The clocking event (e.g., `posedge clk`).
+- `reset`: Optional reset signal(s).
+- `connection_parameters`: Defines AND/OR plane connections.
 
 **Example Usage (in the code):** Used to model the `a OR b` logic, but the output `sync_or_array_out` only updates on the `posedge clk` and is affected by the `reset` signal (which is active high in this example).
 
 ### Other Tasks:
 
--   **`$async/sync$and/nand$plane`**: Model AND/NAND plane outputs (individual product terms), asynchronous or synchronous.
--   **`$async/sync$and/nand$array`**: Model AND/NAND second stage logic (AND or NAND of product terms), asynchronous or synchronous.
--   **`$async/sync$nor$array`**: Model NOR second stage logic (NOR of product terms), asynchronous or synchronous.
--   **`$async/sync$or/nor$plane`**: Model OR/NOR plane outputs. *Note: This type of task is less common or may have specific interpretations, as the primary 'plane' output usually refers to the AND plane product terms.* The documentation for these might refer to modeling the outputs *before* the OR/NOR gates, which effectively means the AND plane outputs.
+- **`$async/sync$and/nand$plane`**: Model AND/NAND plane outputs (individual product terms), asynchronous or synchronous.
+- **`$async/sync$and/nand$array`**: Model AND/NAND second stage logic (AND or NAND of product terms), asynchronous or synchronous.
+- **`$async/sync$nor$array`**: Model NOR second stage logic (NOR of product terms), asynchronous or synchronous.
+- **`$async/sync$or/nor$plane`**: Model OR/NOR plane outputs. _Note: This type of task is less common or may have specific interpretations, as the primary 'plane' output usually refers to the AND plane product terms._ The documentation for these might refer to modeling the outputs _before_ the OR/NOR gates, which effectively means the AND plane outputs.
 
 **Expected Behavior in the Example:**
 
--   `async_and_plane_out`: Will immediately reflect the results of the four AND product terms based on the current values of `a` and `b`.
--   `async_or_array_out`: Will immediately reflect the result of `a | b` based on the current values of `a` and `b`.
--   `sync_or_array_out`: Will reflect the result of `a | b` from the *previous* `posedge clk`. When `reset` is high, it will likely go to a default reset value (often 0).
+- `async_and_plane_out`: Will immediately reflect the results of the four AND product terms based on the current values of `a` and `b`.
+- `async_or_array_out`: Will immediately reflect the result of `a | b` based on the current values of `a` and `b`.
+- `sync_or_array_out`: Will reflect the result of `a | b` from the _previous_ `posedge clk`. When `reset` is high, it will likely go to a default reset value (often 0).
 
 These PLA modeling tasks are specialized and less frequently used in modern SystemVerilog verification compared to higher-level abstraction like classes or SystemVerilog assertions. They are primarily for modeling legacy or specific hardware structures at a behavioral level. The complexity lies primarily in correctly specifying the AND and second-stage logic connections within the task arguments, which is heavily dependent on the simulator's interpretation of the standard.
 
 ## Miscellaneous Tasks and Functions
+
 Other general-purpose system tasks and functions.
+
 ### `$system`
 
 **Description:**
@@ -2514,21 +2554,22 @@ Other general-purpose system tasks and functions.
 The `$system` task allows you to execute an operating system command directly from within your SystemVerilog simulation. When `$system` is called, the simulation's execution is suspended, the specified command is executed by the operating system, and once the command finishes, the simulation resumes from where it left off.
 
 This task is useful for performing tasks like:
-* Running external scripts or tools during simulation.
-* Manipulating files (copying, deleting, moving) that are needed by the simulation or testbench.
-* Printing information about the simulation environment or files.
+
+- Running external scripts or tools during simulation.
+- Manipulating files (copying, deleting, moving) that are needed by the simulation or testbench.
+- Printing information about the simulation environment or files.
 
 **Important Considerations:**
 
-* **Security:** Executing arbitrary system commands can be a security risk. Be cautious when using `$system`, especially if the command string is derived from external inputs.
-* **Portability:** The behavior and availability of specific operating system commands vary depending on the OS where the simulator is running (Windows, Linux, macOS, etc.). Use commands that are likely to be available and behave consistently across your target environments if portability is important.
-* **Simulator Dependence:** While `$system` is part of the SystemVerilog standard, specific simulator implementations might have nuances or limitations.
+- **Security:** Executing arbitrary system commands can be a security risk. Be cautious when using `$system`, especially if the command string is derived from external inputs.
+- **Portability:** The behavior and availability of specific operating system commands vary depending on the OS where the simulator is running (Windows, Linux, macOS, etc.). Use commands that are likely to be available and behave consistently across your target environments if portability is important.
+- **Simulator Dependence:** While `$system` is part of the SystemVerilog standard, specific simulator implementations might have nuances or limitations.
 
 **Usage:**
 
 `$system(command_string);`
 
--   `command_string`: A string containing the operating system command to execute.
+- `command_string`: A string containing the operating system command to execute.
 
 **Example:**
 
@@ -2569,8 +2610,8 @@ This example demonstrates using the `$system` task to execute an operating syste
 1.  The simulation starts and prints a message.
 2.  After a delay of 20 time units, another message indicates that the `$system` task is about to be called.
 3.  The code uses `ifdef` directives (`verilog_on_windows` is a common, though not standard, macro used to detect the OS) to choose the appropriate command for listing directory contents:
-    * `"dir"` for Windows.
-    * `"ls -l"` for Linux/macOS (lists in long format).
+    - `"dir"` for Windows.
+    - `"ls -l"` for Linux/macOS (lists in long format).
 4.  The simulator pauses, executes the specified command in a sub-process, and waits for it to complete. The output of the OS command will typically appear in the simulator's console.
 5.  Once the OS command finishes, the `$system` task returns, and the simulation resumes. A message confirming the return from the `$system` call is printed.
 6.  The simulation continues for another 30 time units and then finishes.
@@ -2578,6 +2619,7 @@ This example demonstrates using the `$system` task to execute an operating syste
 This illustrates how `$system` allows you to integrate external command execution into your simulation flow.
 
 ## Display Tasks
+
 Tasks for outputting text to the console or logs in various formats.
 All of these tasks use format specifiers similar to the C `printf` function (e.g., `%d` for decimal, `%h` for hexadecimal, `%b` for binary, `%s` for string, `%f` for real, `%0t` for time) within a format string.
 
@@ -2585,10 +2627,10 @@ All of these tasks use format specifiers similar to the C `printf` function (e.g
 
 **Descriptions:**
 
--   `$display(message_string [, arguments]);`: Evaluates the arguments and prints the formatted `message_string` immediately when the task is executed. Appends a newline character to the output.
--   `$write(message_string [, arguments]);`: Similar to `$display`, but does **not** append a newline character. Useful for printing parts of a line.
+- `$display(message_string [, arguments]);`: Evaluates the arguments and prints the formatted `message_string` immediately when the task is executed. Appends a newline character to the output.
+- `$write(message_string [, arguments]);`: Similar to `$display`, but does **not** append a newline character. Useful for printing parts of a line.
 
-The variants (`$displayb`, `$displayo`, `$displayh`, `$writeb`, `$writeo`, `$writeh`) behave identically to `$display` and `$write` respectively, but they set the *default* format for integer and logic values (`%v`, `%V`) to binary (`b`), octal (`o`), or hexadecimal (`h`) for that specific task call. Explicit format specifiers (like `%d`, `%h`) override the default.
+The variants (`$displayb`, `$displayo`, `$displayh`, `$writeb`, `$writeo`, `$writeh`) behave identically to `$display` and `$write` respectively, but they set the _default_ format for integer and logic values (`%v`, `%V`) to binary (`b`), octal (`o`), or hexadecimal (`h`) for that specific task call. Explicit format specifiers (like `%d`, `%h`) override the default.
 
 **Example:**
 
@@ -2628,19 +2670,20 @@ endmodule
 **Explanation:**
 
 This example shows:
--   `$display` printing time and a decimal value, each on a new line.
--   `$write` printing a hexadecimal value without a newline, followed by `$display` completing the line with a decimal value.
--   `$displayh`, `$displayb`, and `$displayo` setting the default format for `%v` within that task call, showing the same byte in hex, binary, and octal.
--   Displaying a `real` number using `%f`.
+
+- `$display` printing time and a decimal value, each on a new line.
+- `$write` printing a hexadecimal value without a newline, followed by `$display` completing the line with a decimal value.
+- `$displayh`, `$displayb`, and `$displayo` setting the default format for `%v` within that task call, showing the same byte in hex, binary, and octal.
+- Displaying a `real` number using `%f`.
 
 ### `$monitor` (Change-Triggered Output)
 
 **Description:**
 
-The `$monitor` task registers a list of variables or expressions to be monitored. A message is printed *only* when the value of any item in the monitored list changes. There can only be one active `$monitor` list globally at any given time. A new `$monitor` call replaces the previous active list.
+The `$monitor` task registers a list of variables or expressions to be monitored. A message is printed _only_ when the value of any item in the monitored list changes. There can only be one active `$monitor` list globally at any given time. A new `$monitor` call replaces the previous active list.
 
--   `$monitoron`: Enables the active `$monitor` list if it was previously disabled by `$monitoroff`. `$monitor` is typically on by default after the first call.
--   `$monitoroff`: Disables the active `$monitor` list. Messages will not be printed until `$monitoron` is called again.
+- `$monitoron`: Enables the active `$monitor` list if it was previously disabled by `$monitoroff`. `$monitor` is typically on by default after the first call.
+- `$monitoroff`: Disables the active `$monitor` list. Messages will not be printed until `$monitoron` is called again.
 
 The variants (`$monitorb`, `$monitoro`, `$monitorh`) set the default format for `%v`, `%V` in the monitored message string.
 
@@ -2683,11 +2726,11 @@ endmodule
 
 **Explanation:**
 
--   `$monitor` is called once to set up the message and the variables (`$time`, `a`, `b`, `count`) to watch.
--   A message is printed initially when the `$monitor` is set up.
--   Subsequently, a message is printed *only* when `a`, `b`, or `count` changes value. Notice that when `a` changes, `b` also changes simultaneously, triggering a single monitor event.
--   `$monitoroff` stops the output. Changes to `a` and `count` between time 30 and 45 do not produce output.
--   `$monitoron` resumes output, and changes after time 45 trigger messages again.
+- `$monitor` is called once to set up the message and the variables (`$time`, `a`, `b`, `count`) to watch.
+- A message is printed initially when the `$monitor` is set up.
+- Subsequently, a message is printed _only_ when `a`, `b`, or `count` changes value. Notice that when `a` changes, `b` also changes simultaneously, triggering a single monitor event.
+- `$monitoroff` stops the output. Changes to `a` and `count` between time 30 and 45 do not produce output.
+- `$monitoron` resumes output, and changes after time 45 trigger messages again.
 
 ### `$strobe` (End-of-Time-Step Output)
 
@@ -2733,28 +2776,30 @@ endmodule
 
 **Explanation:**
 
--   At time 0, both `$display` and `$strobe` are called. `$display` prints immediately. `$strobe` schedules its print for the very end of the time 0 step, but since nothing else happens at time 0 after the initial block, it prints shortly after the display. Both see `data` as 0.
--   At time 10, `data` is changed to 1.
--   The `$display` at time 10 executes immediately *after* `data` changes but *before* the end of the time 10 step. It prints `data` as 1.
--   The `$strobe` at time 10 is scheduled for the end of the time 10 step. By the time it executes, all activity for time 10 is complete, and the final value of `data` (which is 1) is printed.
--   At time 20, no changes occur, so both `$display` and `$strobe` print the stable value of `data` (which is still 1) at the end of the time step.
+- At time 0, both `$display` and `$strobe` are called. `$display` prints immediately. `$strobe` schedules its print for the very end of the time 0 step, but since nothing else happens at time 0 after the initial block, it prints shortly after the display. Both see `data` as 0.
+- At time 10, `data` is changed to 1.
+- The `$display` at time 10 executes immediately _after_ `data` changes but _before_ the end of the time 10 step. It prints `data` as 1.
+- The `$strobe` at time 10 is scheduled for the end of the time 10 step. By the time it executes, all activity for time 10 is complete, and the final value of `data` (which is 1) is printed.
+- At time 20, no changes occur, so both `$display` and `$strobe` print the stable value of `data` (which is still 1) at the end of the time step.
 
 The key difference is timing: `$display` and `$write` print when executed, while `$strobe` waits until the end of the current simulation time step, ensuring it reports the final values for that time step. `$monitor` is unique as it triggers based on value changes across time steps.
 
 ## File I/O Tasks and Functions
+
 Tasks and functions for interacting with files, including opening, closing, reading, and writing.
+
 ### File Handling
 
 These tasks manage the connection between your simulation and external files.
 
--   `$fopen(string_file_name [, string_mode])`: Opens a file specified by `string_file_name`.
-    * `string_mode`: Specifies the file access mode. Common modes include:
-        * `"r"`: Read mode. File must exist.
-        * `"w"`: Write mode. Creates the file if it doesn't exist, overwrites if it does.
-        * `"a"`: Append mode. Creates the file if it doesn't exist, writes to the end if it does.
-        * `"r+"`, `"w+"`, `"a+"`: Read and update modes.
-    * Returns a multi-channel descriptor (an integer). A value of 0 indicates failure. This descriptor is used by subsequent file I/O tasks. SystemVerilog allows writing to multiple files simultaneously using bit flags in the descriptor. Standard output is represented by descriptor 1, standard error by 2.
--   `$fclose(multi_channel_descriptor)`: Closes the file(s) associated with the given descriptor. Returns 0 on success, EOF on failure.
+- `$fopen(string_file_name [, string_mode])`: Opens a file specified by `string_file_name`.
+  - `string_mode`: Specifies the file access mode. Common modes include:
+    - `"r"`: Read mode. File must exist.
+    - `"w"`: Write mode. Creates the file if it doesn't exist, overwrites if it does.
+    - `"a"`: Append mode. Creates the file if it doesn't exist, writes to the end if it does.
+    - `"r+"`, `"w+"`, `"a+"`: Read and update modes.
+  - Returns a multi-channel descriptor (an integer). A value of 0 indicates failure. This descriptor is used by subsequent file I/O tasks. SystemVerilog allows writing to multiple files simultaneously using bit flags in the descriptor. Standard output is represented by descriptor 1, standard error by 2.
+- `$fclose(multi_channel_descriptor)`: Closes the file(s) associated with the given descriptor. Returns 0 on success, EOF on failure.
 
 **Example:**
 
@@ -2803,8 +2848,8 @@ This example attempts to open a file named "output.txt" in write mode. If succes
 
 These functions check the state of a file connection.
 
--   `$feof(file_descriptor)`: Returns 1 (true) if the end-of-file (EOF) has been reached for the file associated with the descriptor during a read operation, otherwise returns 0 (false).
--   `$ferror(file_descriptor)`: Returns a non-zero integer if an error has occurred during a previous file operation on the descriptor, otherwise returns 0.
+- `$feof(file_descriptor)`: Returns 1 (true) if the end-of-file (EOF) has been reached for the file associated with the descriptor during a read operation, otherwise returns 0 (false).
+- `$ferror(file_descriptor)`: Returns a non-zero integer if an error has occurred during a previous file operation on the descriptor, otherwise returns 0.
 
 **Example:**
 
@@ -2863,10 +2908,10 @@ This example first creates and writes to a temporary file. Then it opens the sam
 
 These functions read data from an opened file.
 
--   `$fgetc(file_descriptor)`: Reads a single character from the file specified by the descriptor and returns its ASCII value as an integer. Returns EOF (typically -1) if the end of the file is reached or if an error occurs.
--   `$fgets(string_variable, file_descriptor)`: Reads a line of text from the file into `string_variable`. The newline, when present, is included. The function returns the number of characters read, or 0 at EOF or on failure.
--   `$fread(data_variable, file_descriptor [, start [, count]])`: Reads binary data into an integral variable, memory, or unpacked array. The optional `start` and `count` arguments select array elements; `$fread` does not take a format string.
--   `$fscanf(file_descriptor, format_string, argument1 [, argument2, ...])`: Reads data from the file, parses it according to the `format_string`, and assigns the results to the specified arguments. Similar to the C `fscanf`. Returns the number of input items successfully matched and assigned, or EOF if the end-of-file is reached before any items are matched.
+- `$fgetc(file_descriptor)`: Reads a single character from the file specified by the descriptor and returns its ASCII value as an integer. Returns EOF (typically -1) if the end of the file is reached or if an error occurs.
+- `$fgets(string_variable, file_descriptor)`: Reads a line of text from the file into `string_variable`. The newline, when present, is included. The function returns the number of characters read, or 0 at EOF or on failure.
+- `$fread(data_variable, file_descriptor [, start [, count]])`: Reads binary data into an integral variable, memory, or unpacked array. The optional `start` and `count` arguments select array elements; `$fread` does not take a format string.
+- `$fscanf(file_descriptor, format_string, argument1 [, argument2, ...])`: Reads data from the file, parses it according to the `format_string`, and assigns the results to the specified arguments. Similar to the C `fscanf`. Returns the number of input items successfully matched and assigned, or EOF if the end-of-file is reached before any items are matched.
 
 **Example:**
 
@@ -2943,18 +2988,19 @@ endmodule
 **Explanation:**
 
 This example demonstrates reading different data types from a file:
--   `$fgetc` reads the first character.
--   `$fgets` reads two full lines (including the newline characters).
--   `$fscanf` is used with format strings to parse integers and a real number from lines that follow specific patterns. It checks the return value to confirm the expected number of items were successfully read.
+
+- `$fgetc` reads the first character.
+- `$fgets` reads two full lines (including the newline characters).
+- `$fscanf` is used with format strings to parse integers and a real number from lines that follow specific patterns. It checks the return value to confirm the expected number of items were successfully read.
 
 ### String Formatting (to Memory)
 
 These tasks format data into a string variable in memory.
 
--   `$swrite(string_variable, format_string [, arguments])`: Formats the arguments according to `format_string` and writes the result into `string_variable`. Does **not** append a newline.
--   `$swriteb`, `$swriteo`, `$swriteh`: Variants of `$swrite` that set the default format for `%v`, `%V` to binary, octal, or hexadecimal.
--   `$sformat(string_variable, format_string [, arguments])`: A formatting task that writes into `string_variable`. Use `$sformatf` when a formatted string is needed as an expression result.
--   `$sformatf(format_string [, arguments])`: Formats the arguments according to `format_string` and returns the result as a `string`. This is very useful for creating strings dynamically.
+- `$swrite(string_variable, format_string [, arguments])`: Formats the arguments according to `format_string` and writes the result into `string_variable`. Does **not** append a newline.
+- `$swriteb`, `$swriteo`, `$swriteh`: Variants of `$swrite` that set the default format for `%v`, `%V` to binary, octal, or hexadecimal.
+- `$sformat(string_variable, format_string [, arguments])`: A formatting task that writes into `string_variable`. Use `$sformatf` when a formatted string is needed as an expression result.
+- `$sformatf(format_string [, arguments])`: Formats the arguments according to `format_string` and returns the result as a `string`. This is very useful for creating strings dynamically.
 
 **Example:**
 
@@ -2995,17 +3041,17 @@ endmodule
 
 **Explanation:**
 
--   `$swrite` formats data into `message_str`.
--   `$swriteb` demonstrates how the default format can be changed for a single call.
--   `$sformatf` formats data and directly returns a `string`, which is assigned to `formatted_str`. This is very convenient.
--   `$sformat` is shown assigning a value to `message_str` and returning an integer indicating success.
+- `$swrite` formats data into `message_str`.
+- `$swriteb` demonstrates how the default format can be changed for a single call.
+- `$sformatf` formats data and directly returns a `string`, which is assigned to `formatted_str`. This is very convenient.
+- `$sformat` is shown assigning a value to `message_str` and returning an integer indicating success.
 
 ### File Writing (from Memory)
 
 These tasks write formatted data from memory to an opened file.
 
--   `$fwrite(multi_channel_descriptor, format_string [, arguments])`: Formats data according to `format_string` and writes the result to the file(s) specified by the descriptor. Does **not** append a newline.
--   `$fwriteb`, `$fwriteo`, `$fwriteh`: Variants of `$fwrite` that set the default format for `%v`, `%V` to binary, octal, or hexadecimal for that task call.
+- `$fwrite(multi_channel_descriptor, format_string [, arguments])`: Formats data according to `format_string` and writes the result to the file(s) specified by the descriptor. Does **not** append a newline.
+- `$fwriteb`, `$fwriteo`, `$fwriteh`: Variants of `$fwrite` that set the default format for `%v`, `%V` to binary, octal, or hexadecimal for that task call.
 
 **Example:** (See `file_handling_example` above for a basic `$fwrite` usage)
 
@@ -3050,8 +3096,8 @@ This example opens a file and uses `$fwrite` and its variants to write formatted
 
 These tasks write formatted data from memory to an opened file and append a newline.
 
--   `$fdisplay(multi_channel_descriptor, format_string [, arguments])`: Formats data and writes to the file(s), appending a newline.
--   `$fdisplayb`, `$fdisplayo`, `$fdisplayh`: Variants of `$fdisplay` that set the default format for `%v`, `%V` to binary, octal, or hexadecimal.
+- `$fdisplay(multi_channel_descriptor, format_string [, arguments])`: Formats data and writes to the file(s), appending a newline.
+- `$fdisplayb`, `$fdisplayo`, `$fdisplayh`: Variants of `$fdisplay` that set the default format for `%v`, `%V` to binary, octal, or hexadecimal.
 
 **Example:** (See `file_handling_example` above for a basic `$fdisplay` usage)
 
@@ -3090,8 +3136,8 @@ This example opens a file and uses `$fdisplay` to write formatted messages. Each
 
 These tasks register variables to monitor and write to a file whenever any of the monitored variables change.
 
--   `$fmonitor(multi_channel_descriptor, format_string [, arguments])`: Registers a list of variables/expressions associated with a format string to be monitored. Whenever any of the registered items change value, the formatted message is written to the specified file(s). Like `$monitor`, a new `$fmonitor` call replaces the active monitor list.
--   `$fmonitorb`, `$fmonitoro`, `$fmonitorh`: Variants of `$fmonitor` that set the default format for `%v`, `%V`.
+- `$fmonitor(multi_channel_descriptor, format_string [, arguments])`: Registers a list of variables/expressions associated with a format string to be monitored. Whenever any of the registered items change value, the formatted message is written to the specified file(s). Like `$monitor`, a new `$fmonitor` call replaces the active monitor list.
+- `$fmonitorb`, `$fmonitoro`, `$fmonitorh`: Variants of `$fmonitor` that set the default format for `%v`, `%V`.
 
 **Example:**
 
@@ -3139,14 +3185,14 @@ endmodule
 
 **Explanation:**
 
-This example opens a file and uses `$fmonitor` to set up monitoring for `sig1` and `counter`. Whenever either `sig1` or `counter` changes value during the simulation, a line is written to "fmonitor\_test.txt" showing the current time and the values of the monitored variables. Closing the file with `$fclose` disables monitoring to that specific file descriptor.
+This example opens a file and uses `$fmonitor` to set up monitoring for `sig1` and `counter`. Whenever either `sig1` or `counter` changes value during the simulation, a line is written to "fmonitor_test.txt" showing the current time and the values of the monitored variables. Closing the file with `$fclose` disables monitoring to that specific file descriptor.
 
 ### File Strobing (End-of-Time-Step)
 
 These tasks write formatted data to a file at the very end of the current simulation time step.
 
--   `$fstrobe(multi_channel_descriptor, format_string [, arguments])`: Schedules a formatted message to be written to the file(s) at the end of the current simulation time step, after all other activity at that time is complete. Appends a newline.
--   `$fstrobeb`, `$fstrobeo`, `$fstrobeh`: Variants of `$fstrobe` that set the default format for `%v`, `%V`.
+- `$fstrobe(multi_channel_descriptor, format_string [, arguments])`: Schedules a formatted message to be written to the file(s) at the end of the current simulation time step, after all other activity at that time is complete. Appends a newline.
+- `$fstrobeb`, `$fstrobeo`, `$fstrobeh`: Variants of `$fstrobe` that set the default format for `%v`, `%V`.
 
 **Example:** (Similar to `$strobe` example, but writing to file)
 
@@ -3201,13 +3247,13 @@ Similar to the `$strobe` example, this shows that `$fdisplay` writes immediately
 
 These tasks allow you to move the read/write position within a file and manage file buffers.
 
--   `$fseek(file_descriptor, offset [, origin])`: Sets the file pointer to a specific position.
-    * `offset`: The number of bytes to move.
-    * `origin`: Optional integer specifying the starting point for the offset: 0 for beginning of file (SEEK_SET), 1 for current position (SEEK_CUR), 2 for end of file (SEEK_END). Default is 0. Returns 0 on success, non-zero on failure.
--   `$ftell(file_descriptor)`: Returns the current position of the file pointer as an integer (number of bytes from the beginning of the file). Returns -1 on failure.
--   `$rewind(file_descriptor)`: Sets the file pointer to the beginning of the file. Equivalent to `$fseek(file_descriptor, 0, 0)`.
--   `$ungetc(character, file_descriptor)`: Pushes a single character back onto the input stream for the file. The next read operation will read this character first. Useful for character-by-character parsing where you might read one character too many to determine a token. Returns the character on success, EOF on failure.
--   `$fflush(multi_channel_descriptor)`: Forces any buffered output data for the specified descriptor to be written to the file(s). Useful to ensure data is written immediately, even if the buffer isn't full. Returns 0 on success, EOF on failure.
+- `$fseek(file_descriptor, offset [, origin])`: Sets the file pointer to a specific position.
+  - `offset`: The number of bytes to move.
+  - `origin`: Optional integer specifying the starting point for the offset: 0 for beginning of file (SEEK_SET), 1 for current position (SEEK_CUR), 2 for end of file (SEEK_END). Default is 0. Returns 0 on success, non-zero on failure.
+- `$ftell(file_descriptor)`: Returns the current position of the file pointer as an integer (number of bytes from the beginning of the file). Returns -1 on failure.
+- `$rewind(file_descriptor)`: Sets the file pointer to the beginning of the file. Equivalent to `$fseek(file_descriptor, 0, 0)`.
+- `$ungetc(character, file_descriptor)`: Pushes a single character back onto the input stream for the file. The next read operation will read this character first. Useful for character-by-character parsing where you might read one character too many to determine a token. Returns the character on success, EOF on failure.
+- `$fflush(multi_channel_descriptor)`: Forces any buffered output data for the specified descriptor to be written to the file(s). Useful to ensure data is written immediately, even if the buffer isn't full. Returns 0 on success, EOF on failure.
 
 **Example:**
 
@@ -3283,17 +3329,18 @@ endmodule
 **Explanation:**
 
 This example opens a file in read/write mode.
--   It writes data, then uses `$ftell` to get the position.
--   `$rewind` sets the position back to the start.
--   `$fgetc` reads a character, advancing the position.
--   `$fseek` is demonstrated with different origins (current position, end of file) to move the pointer.
--   `$ungetc` puts a character back, allowing it to be reread.
--   Writing after seeking demonstrates modifying the file content at a specific location.
--   `$fflush` ensures that any data waiting in the simulator's internal file buffer is written to the actual file.
+
+- It writes data, then uses `$ftell` to get the position.
+- `$rewind` sets the position back to the start.
+- `$fgetc` reads a character, advancing the position.
+- `$fseek` is demonstrated with different origins (current position, end of file) to move the pointer.
+- `$ungetc` puts a character back, allowing it to be reread.
+- Writing after seeking demonstrates modifying the file content at a specific location.
+- `$fflush` ensures that any data waiting in the simulator's internal file buffer is written to the actual file.
 
 ### String Scanning (from Memory)
 
--   `$sscanf(string_variable, format_string, argument1 [, argument2, ...])`: Parses data from a `string_variable` according to the `format_string` and assigns the results to the specified arguments. Similar to the C `sscanf`. Returns the number of input items successfully matched and assigned.
+- `$sscanf(string_variable, format_string, argument1 [, argument2, ...])`: Parses data from a `string_variable` according to the `format_string` and assigns the results to the specified arguments. Similar to the C `sscanf`. Returns the number of input items successfully matched and assigned.
 
 **Example:**
 
@@ -3337,14 +3384,16 @@ endmodule
 **Explanation:**
 
 This example demonstrates how `$sscanf` can be used to extract structured data from a string.
--   It defines a string `data_str` containing formatted data.
--   A `format_str` is defined to match the pattern in `data_str`.
--   `$sscanf` attempts to parse the string according to the format, assigning the matched parts to `name_str`, `age_val`, and `id_val`.
--   The return value (`items_matched`) indicates how many items were successfully matched and assigned. This allows you to check if the parsing was successful.
+
+- It defines a string `data_str` containing formatted data.
+- A `format_str` is defined to match the pattern in `data_str`.
+- `$sscanf` attempts to parse the string according to the format, assigning the matched parts to `name_str`, `age_val`, and `id_val`.
+- The return value (`items_matched`) indicates how many items were successfully matched and assigned. This allows you to check if the parsing was successful.
 
 These file I/O and string functions provide a wide range of capabilities for integrating your SystemVerilog testbenches with the external environment and manipulating data in flexible ways.
 
 ## Memory Load Tasks
+
 Tasks for loading memory contents from a file.
 Both tasks read a text file containing data values. The difference lies in the expected format of the data values within the file.
 
@@ -3358,18 +3407,18 @@ The `$readmemb` task reads binary data from a text file and loads it into a spec
 
 `$readmemb("file_name", memory_name [, start_address [, end_address]]);`
 
--   `file_name`: A string specifying the name of the text file to read.
--   `memory_name`: The name of the SystemVerilog memory array (declared as an array of `reg` or `logic`) to load the data into.
--   `start_address`: An optional integer specifying the starting address (index) in the `memory_name` array where loading should begin. If omitted, loading starts from the lowest index of the memory array.
--   `end_address`: An optional integer specifying the ending address (index) in the `memory_name` array where loading should end. If omitted, loading continues to the highest index of the memory array.
+- `file_name`: A string specifying the name of the text file to read.
+- `memory_name`: The name of the SystemVerilog memory array (declared as an array of `reg` or `logic`) to load the data into.
+- `start_address`: An optional integer specifying the starting address (index) in the `memory_name` array where loading should begin. If omitted, loading starts from the lowest index of the memory array.
+- `end_address`: An optional integer specifying the ending address (index) in the `memory_name` array where loading should end. If omitted, loading continues to the highest index of the memory array.
 
 **File Format for `$readmemb`:**
 
 The file should contain one data value per line. The values are binary numbers, using `0`, `1`, `x`, `z`. Whitespace and underscores within the binary number are ignored.
 
--   Lines starting with `//` are treated as comments.
--   Lines starting with `@` specify an address (in hexadecimal) for the data that follows. Subsequent data lines will be loaded sequentially starting from this address until another `@` line is encountered.
--   If the first line is not an `@` line, loading starts at the `start_address` (or the memory's lowest index if `start_address` is omitted).
+- Lines starting with `//` are treated as comments.
+- Lines starting with `@` specify an address (in hexadecimal) for the data that follows. Subsequent data lines will be loaded sequentially starting from this address until another `@` line is encountered.
+- If the first line is not an `@` line, loading starts at the `start_address` (or the memory's lowest index if `start_address` is omitted).
 
 ### `$readmemh`
 
@@ -3381,18 +3430,18 @@ The `$readmemh` task reads hexadecimal data from a text file and loads it into a
 
 `$readmemh("file_name", memory_name [, start_address [, end_address]]);`
 
--   `file_name`: A string specifying the name of the text file to read.
--   `memory_name`: The name of the SystemVerilog memory array to load data into.
--   `start_address`: An optional integer specifying the starting address (index).
--   `end_address`: An optional integer specifying the ending address (index).
+- `file_name`: A string specifying the name of the text file to read.
+- `memory_name`: The name of the SystemVerilog memory array to load data into.
+- `start_address`: An optional integer specifying the starting address (index).
+- `end_address`: An optional integer specifying the ending address (index).
 
 **File Format for `$readmemh`:**
 
 The file should contain one data value per line. The values are hexadecimal numbers, using `0-9`, `a-f`, `A-F`, `x`, `z`. Whitespace and underscores within the hexadecimal number are ignored.
 
--   Lines starting with `//` are treated as comments.
--   Lines starting with `@` specify an address (in hexadecimal).
--   If the first line is not an `@` line, loading starts at the `start_address` (or the memory's lowest index).
+- Lines starting with `//` are treated as comments.
+- Lines starting with `@` specify an address (in hexadecimal).
+- If the first line is not an `@` line, loading starts at the `start_address` (or the memory's lowest index).
 
 ### Example Demonstrating `$readmemb` and `$readmemh`
 
@@ -3481,28 +3530,29 @@ endmodule
 
 1.  **Memory Declaration:** Two memory arrays, `my_memory_b` and `my_memory_h`, are declared as arrays of 8-bit `logic`.
 2.  **`$readmemb` Usage:**
-    * `$readmemb("memory_data_b.txt", my_memory_b);` reads the binary data from `memory_data_b.txt`.
-    * The file starts with `@00`, so loading begins at address 0 of `my_memory_b`.
-    * The first four data lines (10101010, 01010101, etc.) are loaded into `my_memory_b[0]` through `my_memory_b[3]`.
-    * The `@08` line moves the loading address to 8.
-    * The next three data lines (11111111, 00000000, 10101010) are loaded into `my_memory_b[8]` through `my_memory_b[10]`.
-    * Addresses 4-7 and 11-15 in `my_memory_b` will retain their initial values (typically 'x' or whatever the reset value is, depending on simulator and declaration).
+    - `$readmemb("memory_data_b.txt", my_memory_b);` reads the binary data from `memory_data_b.txt`.
+    - The file starts with `@00`, so loading begins at address 0 of `my_memory_b`.
+    - The first four data lines (10101010, 01010101, etc.) are loaded into `my_memory_b[0]` through `my_memory_b[3]`.
+    - The `@08` line moves the loading address to 8.
+    - The next three data lines (11111111, 00000000, 10101010) are loaded into `my_memory_b[8]` through `my_memory_b[10]`.
+    - Addresses 4-7 and 11-15 in `my_memory_b` will retain their initial values (typically 'x' or whatever the reset value is, depending on simulator and declaration).
 3.  **`$readmemh` Usage:**
-    * `$readmemh("memory_data_h.txt", my_memory_h, 16, 20);` reads hexadecimal data from `memory_data_h.txt`.
-    * The `start_address` is specified as 16 (decimal). The `end_address` is 20 (decimal). This means data will be loaded into `my_memory_h[16]` through `my_memory_h[20]`.
-    * The file starts with data without an `@` address. Those first four values load at addresses 16 through 19, because the specified range starts at address 16.
-    * The `@10` line changes the file address pointer to hexadecimal 10 (decimal 16), so the following values overwrite addresses 16 through 20:
-        * FF goes into `my_memory_h[16]` (file address 16)
-        * 11 goes into `my_memory_h[17]` (file address 17)
-        * 22 goes into `my_memory_h[18]` (file address 18)
-        * 33 goes into `my_memory_h[19]` (file address 19)
-        * 44 goes into `my_memory_h[20]` (file address 20)
-    * Subsequent data in the file (if any) would be ignored as they are past the `end_address` 20. Addresses in `my_memory_h` outside the 16-20 range are unaffected.
+    - `$readmemh("memory_data_h.txt", my_memory_h, 16, 20);` reads hexadecimal data from `memory_data_h.txt`.
+    - The `start_address` is specified as 16 (decimal). The `end_address` is 20 (decimal). This means data will be loaded into `my_memory_h[16]` through `my_memory_h[20]`.
+    - The file starts with data without an `@` address. Those first four values load at addresses 16 through 19, because the specified range starts at address 16.
+    - The `@10` line changes the file address pointer to hexadecimal 10 (decimal 16), so the following values overwrite addresses 16 through 20:
+      - FF goes into `my_memory_h[16]` (file address 16)
+      - 11 goes into `my_memory_h[17]` (file address 17)
+      - 22 goes into `my_memory_h[18]` (file address 18)
+      - 33 goes into `my_memory_h[19]` (file address 19)
+      - 44 goes into `my_memory_h[20]` (file address 20)
+    - Subsequent data in the file (if any) would be ignored as they are past the `end_address` 20. Addresses in `my_memory_h` outside the 16-20 range are unaffected.
 4.  **Displaying Contents:** The `for` loops iterate through parts of the memories and display the loaded contents using `%b` for binary and `%h` for hexadecimal.
 
 These tasks provide a simple and effective way to initialize memories based on data stored in external files, separating data from your SystemVerilog code.
 
 ## Memory Dump Tasks
+
 Tasks for writing memory contents to a file.
 Both tasks write the data in a format compatible with the `@` addressing used by `$readmemb` and `$readmemh`, making it easy to dump a memory state and then potentially load it back later.
 
@@ -3516,17 +3566,18 @@ The `$writememb` task writes the contents of a specified memory array to a text 
 
 `$writememb("file_name", memory_name [, start_address [, end_address]]);`
 
--   `file_name`: A string specifying the name of the text file to create or overwrite.
--   `memory_name`: The name of the SystemVerilog memory array whose contents are to be written.
--   `start_address`: An optional integer specifying the starting address (index) in the `memory_name` array from where writing should begin. If omitted, writing starts from the lowest index.
--   `end_address`: An optional integer specifying the ending address (index) in the `memory_name` array where writing should end. If omitted, writing continues to the highest index.
+- `file_name`: A string specifying the name of the text file to create or overwrite.
+- `memory_name`: The name of the SystemVerilog memory array whose contents are to be written.
+- `start_address`: An optional integer specifying the starting address (index) in the `memory_name` array from where writing should begin. If omitted, writing starts from the lowest index.
+- `end_address`: An optional integer specifying the ending address (index) in the `memory_name` array where writing should end. If omitted, writing continues to the highest index.
 
 **Output File Format for `$writememb`:**
 
 The generated file will contain:
--   Lines starting with `@` followed by the address in hexadecimal. The address is written whenever there is a gap in the addresses being dumped or at the start of the dump.
--   Subsequent lines contain the binary values of the memory contents, one value per line, corresponding to sequential addresses starting from the last `@` address.
--   Binary values use `0`, `1`, `x`, `z`.
+
+- Lines starting with `@` followed by the address in hexadecimal. The address is written whenever there is a gap in the addresses being dumped or at the start of the dump.
+- Subsequent lines contain the binary values of the memory contents, one value per line, corresponding to sequential addresses starting from the last `@` address.
+- Binary values use `0`, `1`, `x`, `z`.
 
 ### `$writememh`
 
@@ -3538,18 +3589,18 @@ The `$writememh` task writes the contents of a specified memory array to a text 
 
 `$writememh("file_name", memory_name [, start_address [, end_address]]);`
 
--   `file_name`: A string specifying the name of the text file to create or overwrite.
--   `memory_name`: The name of the memory array to dump.
--   `start_address`: An optional integer specifying the starting address (index).
--   `end_address`: An optional integer specifying the ending address (index).
+- `file_name`: A string specifying the name of the text file to create or overwrite.
+- `memory_name`: The name of the memory array to dump.
+- `start_address`: An optional integer specifying the starting address (index).
+- `end_address`: An optional integer specifying the ending address (index).
 
 **Output File Format for `$writememh`:**
 
 The generated file is similar to `$writememb`, but the data values are in hexadecimal (`0-9`, `a-f`).
 
--   Lines starting with `@` followed by the address in hexadecimal.
--   Subsequent lines contain the hexadecimal values of the memory contents.
--   Hexadecimal values use `0-9`, `a-f`, `x`, `z`.
+- Lines starting with `@` followed by the address in hexadecimal.
+- Subsequent lines contain the hexadecimal values of the memory contents.
+- Hexadecimal values use `0-9`, `a-f`, `x`, `z`.
 
 ### Example Demonstrating `$writememb` and `$writememh`
 
@@ -3643,12 +3694,13 @@ f00d // Address 31
 **Explanation:**
 
 1.  **Memory Initialization:** A memory array `instruction_memory` is declared and partially initialized in the `initial` block. Locations 0-9 are initialized with a pattern, and locations 15, 16, 30, and 31 are initialized with specific hexadecimal values. Other locations will likely be initialized to 'x' by the simulator default.
-2.  **`$writememb`:** The first call `$writememb("instruction_memory.bin", instruction_memory);` dumps the *entire* memory (addresses 0 to 63) to `instruction_memory.bin` in binary format. The output file will include `@` lines indicating address jumps and show the binary values of all 64 locations.
+2.  **`$writememb`:** The first call `$writememb("instruction_memory.bin", instruction_memory);` dumps the _entire_ memory (addresses 0 to 63) to `instruction_memory.bin` in binary format. The output file will include `@` lines indicating address jumps and show the binary values of all 64 locations.
 3.  **`$writememh`:** The second call `$writememh("instruction_memory_partial.hex", instruction_memory, 15, 31);` dumps only the contents of addresses 15 through 31 (decimal) to `instruction_memory_partial.hex` in hexadecimal format. The output file starts with an `@` line for address 15 (hex F) and then lists the hexadecimal values for addresses 15 through 31.
 
 These tasks are valuable for examining the state of your memories during simulation and creating initialization files based on simulation results.
 
 ## Command Line Input
+
 Functions for accessing values passed from the command line.
 These tasks work with command-line arguments that start with a plus sign (`+`), often referred to as "plusargs".
 
@@ -3662,7 +3714,7 @@ The `$test$plusargs` system function checks whether a plusarg whose name begins 
 
 `$test$plusargs(format_string)`
 
--   `format_string`: A string prefix to look for, commonly just the plusarg name such as `"ENABLE_FEATURE_X"`.
+- `format_string`: A string prefix to look for, commonly just the plusarg name such as `"ENABLE_FEATURE_X"`.
 
 **Command Line Syntax:**
 
@@ -3678,8 +3730,8 @@ The `$value$plusargs` system function searches the command line for a plusarg ma
 
 `$value$plusargs(format_string, output_variable)`
 
--   `format_string`: A string specifying the plusarg name and a format specifier (`%s`, `%d`, `%h`, `%b`, `%f`) indicating the type of value to expect after the equals sign. The format should look like `"plusarg_name=%specifier"`.
--   `output_variable`: The SystemVerilog variable where the extracted and converted value will be stored. The type of the variable must be compatible with the format specifier.
+- `format_string`: A string specifying the plusarg name and a format specifier (`%s`, `%d`, `%h`, `%b`, `%f`) indicating the type of value to expect after the equals sign. The format should look like `"plusarg_name=%specifier"`.
+- `output_variable`: The SystemVerilog variable where the extracted and converted value will be stored. The type of the variable must be compatible with the format specifier.
 
 **Command Line Syntax:**
 
@@ -3764,36 +3816,43 @@ endmodule
 To run this example using a simulator (replace `vsim` with your simulator's command):
 
 **Command Line 1 (No plusargs):**
+
 ```bash
 vsim plusargs_example.sv
 ```
-* Expected Output: Shows messages indicating plusargs are NOT present and `$value$plusargs` calls fail. Variables retain their default/initial values.
+
+- Expected Output: Shows messages indicating plusargs are NOT present and `$value$plusargs` calls fail. Variables retain their default/initial values.
 
 **Command Line 2 (Some plusargs):**
+
 ```bash
 vsim plusargs_example.sv +ENABLE_FEATURE_X +TEST_CASE=5 +CONFIG_BYTE=A3
 ```
-* Expected Output: Shows messages indicating `+ENABLE_FEATURE_X` is present. `$value$plusargs` for `TEST_CASE` succeeds (test\_case\_id = 5), `CONFIG_BYTE` succeeds (config\_byte = A3), `TEST_NAME` and `DELAY` fail.
+
+- Expected Output: Shows messages indicating `+ENABLE_FEATURE_X` is present. `$value$plusargs` for `TEST_CASE` succeeds (test_case_id = 5), `CONFIG_BYTE` succeeds (config_byte = A3), `TEST_NAME` and `DELAY` fail.
 
 **Command Line 3 (All plusargs):**
+
 ```bash
 vsim plusargs_example.sv +ENABLE_FEATURE_X +TEST_CASE=10 +TEST_NAME=SmokeTest +CONFIG_BYTE=FF +DELAY=15.7
 ```
-* Expected Output: Shows messages indicating `+ENABLE_FEATURE_X` is present. All `$value$plusargs` calls succeed and variables are assigned the provided values.
+
+- Expected Output: Shows messages indicating `+ENABLE_FEATURE_X` is present. All `$value$plusargs` calls succeed and variables are assigned the provided values.
 
 **Explanation:**
 
 The example demonstrates:
 
--   `$test$plusargs("ENABLE_FEATURE_X")` checks if a plusarg named `+ENABLE_FEATURE_X` exists.
--   `$test$plusargs("TEST_CASE=%0d")` checks if any plusarg matches the pattern `+TEST_CASE=` followed by a decimal number. Note that this only checks the pattern, not the value itself.
--   `$value$plusargs("TEST_CASE=%0d", test_case_id)` attempts to find a plusarg matching `+TEST_CASE=` and convert the value after `=` as a decimal integer into the `test_case_id` variable.
--   Other `$value$plusargs` calls show how to read different data types (`%s`, `%h`, `%f`) into compatible variables.
--   The return value of `$value$plusargs` is checked to see if the operation was successful.
+- `$test$plusargs("ENABLE_FEATURE_X")` checks if a plusarg named `+ENABLE_FEATURE_X` exists.
+- `$test$plusargs("TEST_CASE=%0d")` checks if any plusarg matches the pattern `+TEST_CASE=` followed by a decimal number. Note that this only checks the pattern, not the value itself.
+- `$value$plusargs("TEST_CASE=%0d", test_case_id)` attempts to find a plusarg matching `+TEST_CASE=` and convert the value after `=` as a decimal integer into the `test_case_id` variable.
+- Other `$value$plusargs` calls show how to read different data types (`%s`, `%h`, `%f`) into compatible variables.
+- The return value of `$value$plusargs` is checked to see if the operation was successful.
 
 These tasks are very powerful for creating reusable testbenches that can be configured easily from the command line without modifying the source code.
 
 ## VCD Tasks
+
 Tasks for controlling the dumping of simulation activity to a Value Change Dump (VCD) file for waveform viewing.
 SystemVerilog provides two main sets of tasks for generating VCD: the older `$dump` tasks and the newer `$dumpports` tasks.
 
@@ -3801,15 +3860,15 @@ SystemVerilog provides two main sets of tasks for generating VCD: the older `$du
 
 These tasks provide basic control over generating a VCD file.
 
--   `$dumpfile(string_file_name)`: Specifies the name of the VCD file that will be created to store the simulation data. Only one VCD file can be specified at a time. If not called, simulators might use a default name.
--   `$dumpvars([levels], hierarchy_or_variable1 [, hierarchy_or_variable2, ...])`: Starts the process of dumping signal activity into the VCD file specified by `$dumpfile`.
-    * `levels`: An optional integer specifying the number of hierarchical levels below the specified `hierarchy_or_variable` to dump. If omitted, only the specified level is dumped. If 0 or a negative number is specified, all levels below are dumped.
-    * `hierarchy_or_variable`: Specifies a hierarchical scope (like a module instance) or a specific variable to dump. You can list multiple scopes/variables. If omitted, all variables in the top-level scope are dumped.
--   `$dumpoff()`: Temporarily suspends the dumping of signal activity. No new data is added to the VCD file while dumping is off.
--   `$dumpon()`: Resumes the dumping of signal activity after it has been suspended by `$dumpoff()`.
--   `$dumpall()`: Dumps the current values of all variables that are being monitored by `$dumpvars` or `$dumpports`, even if they haven't changed since the last value dump. This is useful for getting a snapshot of the system state.
--   `$dumplimit(real_limit)`: Specifies a maximum size (in bytes) for the VCD file. Dumping will automatically stop once the file reaches this size limit.
--   `$dumpflush()`: Forces any buffered VCD data to be written to the output file immediately. VCD data is often buffered for performance.
+- `$dumpfile(string_file_name)`: Specifies the name of the VCD file that will be created to store the simulation data. Only one VCD file can be specified at a time. If not called, simulators might use a default name.
+- `$dumpvars([levels], hierarchy_or_variable1 [, hierarchy_or_variable2, ...])`: Starts the process of dumping signal activity into the VCD file specified by `$dumpfile`.
+  - `levels`: An optional integer specifying the number of hierarchical levels below the specified `hierarchy_or_variable` to dump. If omitted, only the specified level is dumped. If 0 or a negative number is specified, all levels below are dumped.
+  - `hierarchy_or_variable`: Specifies a hierarchical scope (like a module instance) or a specific variable to dump. You can list multiple scopes/variables. If omitted, all variables in the top-level scope are dumped.
+- `$dumpoff()`: Temporarily suspends the dumping of signal activity. No new data is added to the VCD file while dumping is off.
+- `$dumpon()`: Resumes the dumping of signal activity after it has been suspended by `$dumpoff()`.
+- `$dumpall()`: Dumps the current values of all variables that are being monitored by `$dumpvars` or `$dumpports`, even if they haven't changed since the last value dump. This is useful for getting a snapshot of the system state.
+- `$dumplimit(real_limit)`: Specifies a maximum size (in bytes) for the VCD file. Dumping will automatically stop once the file reaches this size limit.
+- `$dumpflush()`: Forces any buffered VCD data to be written to the output file immediately. VCD data is often buffered for performance.
 
 **Example (using `$dump` tasks):**
 
@@ -3873,25 +3932,25 @@ endmodule
 
 **Explanation:**
 
-1.  `$dumpfile("dump_output.vcd");` sets the output file name to "dump\_output.vcd".
+1.  `$dumpfile("dump_output.vcd");` sets the output file name to "dump_output.vcd".
 2.  `$dumpvars(0, clk, count, state);` starts dumping the listed items. A depth of `0` means unlimited descent below a specified scope; for these scalar and vector items the distinction is not visible. `$dumpvars(1, top);` dumps `top` and the first level below it. Support for an omitted scope or `this` is simulator-dependent.
-3.  As the simulation runs, changes in `clk`, `count`, and `state` are recorded in "dump\_output.vcd".
+3.  As the simulation runs, changes in `clk`, `count`, and `state` are recorded in "dump_output.vcd".
 4.  `$dumpoff()` pauses the recording.
 5.  `$dumpon()` resumes it.
 6.  `$dumpall()` forces the current values of the monitored signals to be written, regardless of whether they changed at that exact time.
 
-After running this simulation, you would find a file named "dump\_output.vcd" in your simulation directory, which you can open with a waveform viewer.
+After running this simulation, you would find a file named "dump_output.vcd" in your simulation directory, which you can open with a waveform viewer.
 
 ### VCD Dump Ports Tasks (Newer Style)
 
 These tasks are intended to provide a more efficient way to specify what to dump, focusing on the ports of modules and optionally including internal signals. The syntax is slightly different and they are generally considered more performant for large designs.
 
--   `$dumpports([levels], hierarchy_or_variable1 [, hierarchy_or_variable2, ...])`: Similar to `$dumpvars`, but typically more optimized for dumping module ports. The parameters are the same.
--   `$dumpportsoff()`: Temporarily suspends dumping initiated by `$dumpports`.
--   `$dumpportson()`: Resumes dumping initiated by `$dumpports`.
--   `$dumpportsall([levels], hierarchy_or_variable1 [, hierarchy_or_variable2, ...])`: Dumps the current values of signals specified by a `$dumpports` list, similar to `$dumpall`. Can also be used to specify a new set of signals to dump all values for.
--   `$dumpportslimit(real_limit)`: Specifies a maximum size for the VCD file generated by `$dumpports`.
--   `$dumpportsflush()`: Forces buffered data from `$dumpports` to be written to the file.
+- `$dumpports([levels], hierarchy_or_variable1 [, hierarchy_or_variable2, ...])`: Similar to `$dumpvars`, but typically more optimized for dumping module ports. The parameters are the same.
+- `$dumpportsoff()`: Temporarily suspends dumping initiated by `$dumpports`.
+- `$dumpportson()`: Resumes dumping initiated by `$dumpports`.
+- `$dumpportsall([levels], hierarchy_or_variable1 [, hierarchy_or_variable2, ...])`: Dumps the current values of signals specified by a `$dumpports` list, similar to `$dumpall`. Can also be used to specify a new set of signals to dump all values for.
+- `$dumpportslimit(real_limit)`: Specifies a maximum size for the VCD file generated by `$dumpports`.
+- `$dumpportsflush()`: Forces buffered data from `$dumpports` to be written to the file.
 
 **Conceptual Example (using `$dumpports`):**
 
@@ -3962,6 +4021,4 @@ This example is functionally very similar to the `$dump` example, but it uses th
 
 In practice, you would typically choose either the `$dump` tasks or the `$dumpports` tasks based on your simulator's recommendations and your specific needs for dumping granularity and performance.
 
-
 ##### Copyright (c) 2026 squared-studio
-

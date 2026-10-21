@@ -1,7 +1,9 @@
 # Credit-Based Flow Control & Link Layer Handshake
 
 ## The Flaws of Reactive `VALID`/`READY` Handshaking
+
 In classical bus protocols such as AXI and ACE, every channel uses a two-way reactive handshake:
+
 - The transmitter asserts `VALID` when data is ready.
 - The receiver asserts `READY` when it has capacity to accept data.
 - The transfer commits on the clock cycle where both `VALID` and `READY` are HIGH.
@@ -23,6 +25,7 @@ If a receiver's internal FIFO fills up, it must immediately deassert `READY`. Th
 ---
 
 ## Proactive Credit-Based Flow Control (`LCRDV`)
+
 To eliminate reactive stalls, AMBA 5 CHI replaces `VALID`/`READY` with **Proactive Credit-Based Flow Control**.
 
 In a credit-based regime, the transmitter does not ask permission to send a flit. Instead, the receiver grants **Link Credits** in advance. Each credit represents a guaranteed, pre-allocated storage slot in the receiver's input buffer.
@@ -30,6 +33,7 @@ In a credit-based regime, the transmitter does not ask permission to send a flit
 ![Link Layer Credit Flow](images/ch4_link_credit_flow.svg)
 
 ### The Core Invariants of the Credit Protocol:
+
 1. **Transmitter Credit Counter:**
    - The transmitter maintains an internal integer counter tracking available link credits.
    - Upon system reset, the counter initializes to `0`.
@@ -40,11 +44,12 @@ In a credit-based regime, the transmitter does not ask permission to send a flit
    - The transmitter is permitted to assert **`TXFLITV`** and drive flit data if and only if its credit counter is strictly greater than zero ($\text{Credits} > 0$).
    - Driving a flit automatically decrements the credit counter by 1.
 4. **Guaranteed Buffer Capacity:**
-   - Because a flit is only launched when a credit has been pre-allocated, the receiver is **physically incapable of being full**. The receiver *must* accept the flit unconditionally on that clock cycle. There is zero backpressure!
+   - Because a flit is only launched when a credit has been pre-allocated, the receiver is **physically incapable of being full**. The receiver _must_ accept the flit unconditionally on that clock cycle. There is zero backpressure!
 
 ---
 
 ## Link Initialization and Credit Exchange
+
 Before any memory transaction can cross a CHI link, the link must undergo an explicit initialization handshake to exchange buffer credits.
 
 ```
@@ -56,6 +61,7 @@ Cycle Phase:
 ```
 
 ### The Initialization Sequence:
+
 1. **Reset Phase:** During active reset (`RESETn = 0`), all link outputs are driven LOW (`TXFLITV = 0`, `TXFLITPEND = 0`, `TXLCRDV = 0`), and the transmitter's credit counter is cleared to `0`.
 2. **Credit Granting Phase:** Upon coming out of reset, the receiver inspects its available input FIFO depth (e.g., 4 buffer slots). Over the next 4 clock cycles, the receiver pulses `TXLCRDV` HIGH four times.
 3. **Credit Registration:** The transmitter samples each incoming credit pulse and increments its credit counter until it reaches `4`.
@@ -64,6 +70,7 @@ Cycle Phase:
 ---
 
 ## Flit Pending Signaling (`TXFLITPEND`) and Power Optimization
+
 In battery-powered mobile devices and energy-conscious data centers, idle interconnect links are aggressively power-gated or clock-gated. If the link clock is disabled, how can the transmitter notify the receiver that it has traffic to send?
 
 CHI solves this using the **`TXFLITPEND`** (Transmitter Flit Pending) signal:
@@ -77,12 +84,13 @@ CHI solves this using the **`TXFLITPEND`** (Transmitter Flit Pending) signal:
 ```
 
 - **`TXFLITPEND`** is driven asynchronously or synchronously ahead of the actual flit transmission.
-- It indicates: *"I have at least one flit queued and intend to transmit as soon as credits and clocks are ready."*
+- It indicates: _"I have at least one flit queued and intend to transmit as soon as credits and clocks are ready."_
 - This early warning signal allows the receiver's power management logic to un-gate local clocks and wake up input buffer FIFOs before the first data flit arrives, avoiding dropped packets or pipeline stalls.
 
 ---
 
 ## Detailed Timing Waveform Analysis
+
 The timing diagram below illustrates a complete sequence: link credit acquisition, back-to-back flit transmission, credit exhaustion, and credit restoration via `RXLCRDV`:
 
 ![Credit Waveform Timing](images/ch4_credit_waveform_timing.svg)
@@ -111,6 +119,7 @@ TXFLIT:      ---------------------< Flit0 >-------------< Flit1 >-----------
 ---
 
 ## Link Deactivation and Low-Power Disconnect
+
 When an SoC enters deep sleep or when a CPU cluster is dynamically powered down (CPU Hotplug), the CHI link must be cleanly deactivated to ensure that in-flight credits and flits are not corrupted:
 
 1. **Deactivation Request:** The transmitter stops issuing new flits and waits for all outstanding flits to cross the link.
@@ -120,6 +129,7 @@ When an SoC enters deep sleep or when a CPU cluster is dynamically powered down 
 ---
 
 ## Chapter Summary
+
 - Classical `VALID`/`READY` handshakes suffer from **combinational feedback paths** that restrict operating frequencies at high core counts.
 - AMBA 5 CHI replaces reactive handshaking with **Proactive Credit-Based Flow Control (`LCRDV`)**.
 - A transmitter may only drive flits when its internal **Credit Counter > 0**; the receiver is guaranteed to have pre-allocated buffer space.
@@ -157,4 +167,3 @@ When an SoC enters deep sleep or when a CPU cluster is dynamically powered down 
 ---
 
 ##### Copyright (c) 2026 squared-studio
-

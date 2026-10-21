@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 440" width="100%" height="100%">
+  <defs>
+    <style>
+      .bg { fill: #0b1120; }
+      .card { fill: #131d33; stroke: #1e293b; stroke-width: 1.5; rx: 10; }
+      .title { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 19px; fill: #f8fafc; }
+      .sec-title { font-family: 'Inter', system-ui, sans-serif; font-weight: 600; font-size: 14px; fill: #38bdf8; }
+      .label { font-family: 'Inter', system-ui, sans-serif; font-size: 12px; fill: #cbd5e1; }
+      .sublabel { font-family: 'Inter', system-ui, sans-serif; font-size: 11px; fill: #94a3b8; }
+      .code-txt { font-family: 'JetBrains Mono', Consolas, monospace; font-size: 12px; fill: #34d399; font-weight: 600; }
+    </style>
+  </defs>
+
+  <rect width="960" height="440" class="bg" rx="14"/>
+  <text x="480" y="36" text-anchor="middle" class="title">The C Preprocessor: Macro Expansion Pitfalls, # Stringification &amp; ## Token-Pasting</text>
+
+  <!-- Left: The Classic Macro Bug -->
+  <g transform="translate(25, 55)">
+    <rect width="440" height="360" class="card"/>
+    <text x="20" y="28" class="sec-title" style="fill:#f43f5e;">The Parenthesization Trap in Macros</text>
+
+    <!-- Bad Macro -->
+    <rect x="15" y="42" width="410" height="110" rx="6" fill="#0b1120" stroke="#1e293b"/>
+    <text x="25" y="64" class="code-txt" fill="#f43f5e">#define SQUARE(x)  x * x   // DANGEROUS BUG!</text>
+    <text x="25" y="88" class="code-txt">int result = SQUARE(2 + 3);</text>
+    <text x="25" y="110" class="code-txt" fill="#f43f5e">Expands to:  2 + 3 * 2 + 3  == 11 !  (Expected 25)</text>
+    <text x="25" y="132" class="sublabel">Operator precedence causes 3 * 2 to evaluate first!</text>
+
+    <!-- Good Macro -->
+    <rect x="15" y="165" width="410" height="95" rx="6" fill="#0b1120" stroke="#1e293b"/>
+    <text x="25" y="188" class="code-txt" fill="#34d399">#define SQUARE(x)  ((x) * (x))  // SAFE</text>
+    <text x="25" y="212" class="code-txt">int result = SQUARE(2 + 3);</text>
+    <text x="25" y="234" class="code-txt" fill="#34d399">Expands to:  ((2 + 3) * (2 + 3)) == 25</text>
+
+    <text x="20" y="285" class="sublabel" style="fill:#fbbf24; font-weight:bold;">Rule: Always wrap both the argument and entire macro body</text>
+    <text x="20" y="305" class="sublabel" style="fill:#fbbf24; font-weight:bold;">in rigorous parentheses! Or prefer static inline functions.</text>
+  </g>
+
+  <!-- Right: Stringification & Token Pasting -->
+  <g transform="translate(485, 55)">
+    <rect width="450" height="360" class="card"/>
+    <text x="20" y="28" class="sec-title">Stringification (#) &amp; Token-Pasting (##)</text>
+
+    <!-- # Stringification -->
+    <rect x="15" y="42" width="420" height="120" rx="6" fill="#0b1120" stroke="#1e293b"/>
+    <text x="25" y="64" class="label" font-weight="bold" fill="#38bdf8">1. Stringification Operator (#): Converts token to "string"</text>
+    <text x="25" y="88" class="code-txt">#define PRINT_VAR(var)  printf(#var " = %d\n", var)</text>
+    <text x="25" y="112" class="code-txt">int sensor_val = 42;</text>
+    <text x="25" y="132" class="code-txt">PRINT_VAR(sensor_val);  // Prints: sensor_val = 42</text>
+
+    <!-- ## Token Pasting -->
+    <rect x="15" y="175" width="420" height="160" rx="6" fill="#0b1120" stroke="#1e293b"/>
+    <text x="25" y="198" class="label" font-weight="bold" fill="#34d399">2. Token-Pasting Operator (##): Glues tokens together</text>
+    <text x="25" y="222" class="code-txt">#define MAKE_PIN(port, num)  GPIO_##port##_PIN_##num</text>
+    <text x="25" y="246" class="code-txt">int my_pin = MAKE_PIN(A, 5);</text>
+    <text x="25" y="268" class="code-txt" fill="#38bdf8">Expands to:  int my_pin = GPIO_A_PIN_5;</text>
+    <text x="25" y="295" class="sublabel">Essential for generating boilerplate peripheral drivers</text>
+    <text x="25" y="312" class="sublabel">and state-machine jump handlers in embedded C.</text>
+  </g>
+</svg>

@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 480" width="100%" height="100%">
+  <rect width="960" height="480" fill="#0b1120" rx="8"/>
+  <text x="480" y="38" fill="#f8fafc" font-size="20" font-weight="bold" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" text-anchor="middle">RISC-V Barrel Shifter &amp; Bit Manipulation Datapath</text>
+  <text x="480" y="62" fill="#94a3b8" font-size="13" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" text-anchor="middle">Comparing SLL (Shift Left), SRL (Logical Shift Right), and SRA (Arithmetic Shift Right with Sign-Extension)</text>
+
+  <!-- Left: SLL -->
+  <g transform="translate(60, 95)">
+    <rect width="260" height="240" rx="8" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+    <rect width="260" height="30" rx="8" fill="#0369a1"/>
+    <text x="130" y="20" fill="#fff" font-size="12" font-weight="bold" font-family="monospace" text-anchor="middle">SLL / SLLI (Shift Left)</text>
+
+    <text x="15" y="55" fill="#38bdf8" font-size="11" font-family="monospace">slli rd, rs1, 4</text>
+    <text x="15" y="75" fill="#94a3b8" font-size="10" font-family="sans-serif">Multiplies by 2^shamt (16)</text>
+
+    <!-- Shift visualization -->
+    <g transform="translate(15, 95)">
+      <rect width="180" height="32" rx="3" fill="#082f49" stroke="#38bdf8"/>
+      <text x="90" y="20" fill="#7dd3fc" font-size="10" font-family="monospace" text-anchor="middle">Bits [31:4] Shifted</text>
+
+      <rect x="185" y="0" width="45" height="32" rx="3" fill="#0284c7" stroke="#38bdf8"/>
+      <text x="207" y="20" fill="#fff" font-size="9" font-family="monospace" text-anchor="middle">0000</text>
+    </g>
+
+    <text x="130" y="160" fill="#38bdf8" font-size="10" font-weight="bold" font-family="sans-serif" text-anchor="middle">Zero-Filled at LSB</text>
+    <text x="15" y="190" fill="#cbd5e1" font-size="9" font-family="sans-serif">Discards upper 4 bits.</text>
+    <text x="15" y="210" fill="#cbd5e1" font-size="9" font-family="sans-serif">Used for array offset calculation.</text>
+  </g>
+
+  <!-- Middle: SRL -->
+  <g transform="translate(350, 95)">
+    <rect width="260" height="240" rx="8" fill="#1e293b" stroke="#34d399" stroke-width="2"/>
+    <rect width="260" height="30" rx="8" fill="#047857"/>
+    <text x="130" y="20" fill="#fff" font-size="12" font-weight="bold" font-family="monospace" text-anchor="middle">SRL / SRLI (Logical Right)</text>
+
+    <text x="15" y="55" fill="#34d399" font-size="11" font-family="monospace">srli rd, rs1, 4</text>
+    <text x="15" y="75" fill="#94a3b8" font-size="10" font-family="sans-serif">Unsigned division by 16</text>
+
+    <!-- Shift visualization -->
+    <g transform="translate(15, 95)">
+      <rect width="45" height="32" rx="3" fill="#059669" stroke="#34d399"/>
+      <text x="22" y="20" fill="#fff" font-size="9" font-family="monospace" text-anchor="middle">0000</text>
+
+      <rect x="50" y="0" width="180" height="32" rx="3" fill="#064e3b" stroke="#34d399"/>
+      <text x="140" y="20" fill="#a7f3d0" font-size="10" font-family="monospace" text-anchor="middle">Bits [31:4] Shifted</text>
+    </g>
+
+    <text x="130" y="160" fill="#34d399" font-size="10" font-weight="bold" font-family="sans-serif" text-anchor="middle">Zero-Filled at MSB</text>
+    <text x="15" y="190" fill="#cbd5e1" font-size="9" font-family="sans-serif">Discards lower 4 bits.</text>
+    <text x="15" y="210" fill="#cbd5e1" font-size="9" font-family="sans-serif">Used for bitfield unpacking.</text>
+  </g>
+
+  <!-- Right: SRA -->
+  <g transform="translate(640, 95)">
+    <rect width="260" height="240" rx="8" fill="#1e293b" stroke="#f43f5e" stroke-width="2"/>
+    <rect width="260" height="30" rx="8" fill="#9f1239"/>
+    <text x="130" y="20" fill="#fff" font-size="12" font-weight="bold" font-family="monospace" text-anchor="middle">SRA / SRAI (Arithmetic Right)</text>
+
+    <text x="15" y="55" fill="#f43f5e" font-size="11" font-family="monospace">srai rd, rs1, 4</text>
+    <text x="15" y="75" fill="#94a3b8" font-size="10" font-family="sans-serif">Signed division by 16</text>
+
+    <!-- Shift visualization -->
+    <g transform="translate(15, 95)">
+      <rect width="45" height="32" rx="3" fill="#be123c" stroke="#f43f5e"/>
+      <text x="22" y="20" fill="#fff" font-size="9" font-family="monospace" text-anchor="middle">Sign</text>
+
+      <rect x="50" y="0" width="180" height="32" rx="3" fill="#4c0519" stroke="#f43f5e"/>
+      <text x="140" y="20" fill="#fda4af" font-size="10" font-family="monospace" text-anchor="middle">Bits [31:4] Shifted</text>
+    </g>
+
+    <text x="130" y="160" fill="#f43f5e" font-size="10" font-weight="bold" font-family="sans-serif" text-anchor="middle">Replicates Sign Bit (bit 31)</text>
+    <text x="15" y="190" fill="#cbd5e1" font-size="9" font-family="sans-serif">Preserves negative sign for two's</text>
+    <text x="15" y="210" fill="#cbd5e1" font-size="9" font-family="sans-serif">complement signed numbers.</text>
+  </g>
+
+  <!-- Bottom Details -->
+  <g transform="translate(60, 350)">
+    <rect width="840" height="105" rx="8" fill="#0f172a" stroke="#334155"/>
+    <text x="25" y="26" fill="#fbbf24" font-size="13" font-weight="bold" font-family="sans-serif">Hardware Distinguishing Bit (funct7):</text>
+    <text x="25" y="48" fill="#cbd5e1" font-size="11" font-family="sans-serif">• <tspan font-family="monospace" fill="#34d399">srli</tspan> and <tspan font-family="monospace" fill="#f43f5e">srai</tspan> share the exact same <tspan font-family="monospace">opcode (0010011)</tspan> and <tspan font-family="monospace">funct3 (101)</tspan>!</text>
+    <text x="25" y="68" fill="#cbd5e1" font-size="11" font-family="sans-serif">• The ONLY bit that tells the hardware ALU to arithmetic sign-extend is <tspan font-weight="bold" fill="#f43f5e">bit 30 (funct7[5])</tspan>: 0 for logical, 1 for arithmetic.</text>
+    <text x="25" y="88" fill="#94a3b8" font-size="10" font-family="sans-serif">In RV32I, shift amounts are 5 bits (0 to 31); in RV64I, shift amounts are 6 bits (0 to 63).</text>
+  </g>
+</svg>

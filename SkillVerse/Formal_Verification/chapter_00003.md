@@ -1,9 +1,11 @@
 # Master Assertion-Based Verification (ABV)
 
 ## SystemVerilog Assertions (SVA)
+
 SVA is a language used to specify properties of digital designs. It allows designers to write assertions that can be checked during simulation or formal verification.
 
 ### Key Concepts:
+
 - **Immediate Assertions**: Checked at a specific point in time.
   - **Example**: assert (a == b); // Checks if a is equal to b at the current time.
 - **Concurrent Assertions**: Checked over a period of time.
@@ -15,9 +17,11 @@ SVA is a language used to specify properties of digital designs. It allows desig
     - **Example**: property p1; @(posedge clk) s1 |=> c; endproperty // Defines a property that checks if c is true when sequence s1 occurs.
 
 ## Property Specification Language (PSL)
+
 PSL is another language for specifying properties of digital designs. It is similar to SVA but can be used with multiple hardware description languages.
 
 ### Key Concepts:
+
 - **Assertions**: Statements about the expected behavior of a design.
   - **Example**: assert always (req -> next (ack)); // Checks if ack follows req.
 - **Temporal Expressions**: Used to describe sequences of events.
@@ -26,4 +30,3 @@ PSL is another language for specifying properties of digital designs. It is simi
   - **Example**: assume property (a); // Assumes a is always true during verification.
 
 ##### Copyright (c) 2026 squared-studio
-

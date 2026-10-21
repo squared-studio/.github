@@ -265,5 +265,5 @@ Each child refers to that iteration's `index`, rather than racing to read the lo
 ## Summary
 
 `fork` starts concurrent child processes, while the join keyword controls when the parent may continue. `join` waits for all branches, `join_any` waits for one and leaves the others active, and `join_none` does not wait. Use `wait fork` when a parent needs to wait for its outstanding children, and use named process scopes or other explicit coordination to clean up work safely. Predictable fork-join code depends on deliberate synchronization, scoped process ownership, and avoiding unsynchronized access to shared state.
-##### Copyright (c) 2026 squared-studio
 
+##### Copyright (c) 2026 squared-studio

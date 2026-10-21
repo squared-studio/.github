@@ -11,6 +11,7 @@ This chapter explores immediate versus concurrent assertions, the SVA temporal l
 ## Learning Goals
 
 After completing this chapter, you should be able to:
+
 - Contrast the execution semantics and simulation regions of Immediate Assertions with Concurrent Assertions.
 - Construct complex multi-cycle temporal sequences using delay (`##n`), consecutive repetition (`[*n]`), goto repetition (`[->n]`), and non-consecutive repetition (`[=n]`).
 - Differentiate between Overlapping (`|->`) and Non-Overlapping (`|=>`) implication operators.
@@ -28,13 +29,13 @@ SystemVerilog provides two fundamentally distinct categories of assertions to ba
 
 ### Comparative Breakdown
 
-| Attribute | Immediate Assertions | Concurrent Assertions (SVA) |
-| :--- | :--- | :--- |
-| **Execution Trigger** | Procedural flow inside `always` or `initial` blocks. | Clock edge events (`@(posedge clk)`). |
-| **Temporal Horizon** | Zero-time; evaluates single-cycle expressions instantaneous with simulation code. | Multi-cycle temporal relationships spanning tens or hundreds of clock cycles. |
-| **Sampling Region** | Active region (can experience delta-cycle glitches during combinational evaluation). | **Preponed region** (values sampled immediately before the clock edge; zero race!). |
-| **Formal Tool Synthesis** | Typically ignored or restricted in formal tools. | Primary input to formal property checkers and model checkers. |
-| **Syntax** | `assert (a == b) else $error(...);` | `assert property (@(posedge clk) a |=> b);` |
+| Attribute                 | Immediate Assertions                                                                 | Concurrent Assertions (SVA)                                                         |
+| :------------------------ | :----------------------------------------------------------------------------------- | :---------------------------------------------------------------------------------- | ------- |
+| **Execution Trigger**     | Procedural flow inside `always` or `initial` blocks.                                 | Clock edge events (`@(posedge clk)`).                                               |
+| **Temporal Horizon**      | Zero-time; evaluates single-cycle expressions instantaneous with simulation code.    | Multi-cycle temporal relationships spanning tens or hundreds of clock cycles.       |
+| **Sampling Region**       | Active region (can experience delta-cycle glitches during combinational evaluation). | **Preponed region** (values sampled immediately before the clock edge; zero race!). |
+| **Formal Tool Synthesis** | Typically ignored or restricted in formal tools.                                     | Primary input to formal property checkers and model checkers.                       |
+| **Syntax**                | `assert (a == b) else $error(...);`                                                  | `assert property (@(posedge clk) a                                                  | => b);` |
 
 ---
 
@@ -44,6 +45,7 @@ Concurrent assertions are built hierarchically:
 $$\text{Boolean Expressions} \longrightarrow \text{Sequences} \longrightarrow \text{Properties} \longrightarrow \text{Directives}$$
 
 ### Delay Operators (`##`)
+
 - **Fixed Delay (`##n`):** The subsequent condition must hold exactly $n$ clocks later.
   `req ##2 gnt` (If `req` is true at $T$, `gnt` must be true at $T+2$).
 - **Range Delay (`##[min:max]`):** The condition must match at least once between `min` and `max` clock cycles.
@@ -51,6 +53,7 @@ $$\text{Boolean Expressions} \longrightarrow \text{Sequences} \longrightarrow \t
 - **Unbounded Delay (`##[1:$]`):** The event must eventually happen at some point in the future.
 
 ### Repetition Operators
+
 - **Consecutive Repetition (`expr [*n]`):** Expression must hold continuously for $n$ consecutive clocks.
   `frame_valid [*4]` (Valid must stay asserted for exactly 4 consecutive cycles).
 - **Goto Repetition (`expr [->n]`):** Expression must match $n$ times non-consecutively, and the sequence ends on the exact cycle of the $n$-th match.
@@ -76,6 +79,7 @@ If the **Antecedent** does not match, the property is **vacuously true** (passes
 ![SVA Implication Operators: Overlapping vs. Non-Overlapping](images/ch6_sva_implication_operators.svg)
 
 ### Operator Timing Mechanics
+
 1. **Overlapping Implication (`|->`):**
    - The consequent begins evaluation in the **exact same clock cycle** that the antecedent completes.
    - Example: `valid |-> ready;` (If valid is high at clock $T$, ready must also be high at clock $T$).
@@ -99,15 +103,15 @@ assert property (p_axi_wdata_stable) else
 
 SVA provides specialized system functions to inspect past cycles, detect signal transitions, and check bus encoding:
 
-| SVA Function | Operational Meaning | Hardware Use Case |
-| :--- | :--- | :--- |
-| **`$rose(sig)`** | Evaluates true if `sig` changed from `0 -> 1` on the current clock edge. | Detecting start-of-frame strobes and enable edges. |
-| **`$fell(sig)`** | Evaluates true if `sig` changed from `1 -> 0` on the current clock edge. | Detecting deassertion of interrupt or busy flags. |
-| **`$stable(sig)`** | Evaluates true if `sig` has not changed value since the prior clock edge. | Verifying bus hold rules during wait states. |
-| **`$past(sig, n)`** | Returns the value of `sig` exactly $n$ clock cycles in the past. | Comparing register output against past input values. |
-| **`$onehot(bus)`** | Returns true if **strictly one bit** of `bus` is logic 1 (all others 0). | Verifying one-hot FSM states and grant arbiters. |
-| **`$onehot0(bus)`** | Returns true if **at most one bit** is logic 1 (all 0s or one-hot). | Verifying priority encoders and optional select lines. |
-| **`$isunknown(sig)`**| Returns true if any bit of `sig` is `X` or `Z`. | Trapping uninitialized register reads on reset exit. |
+| SVA Function          | Operational Meaning                                                       | Hardware Use Case                                      |
+| :-------------------- | :------------------------------------------------------------------------ | :----------------------------------------------------- |
+| **`$rose(sig)`**      | Evaluates true if `sig` changed from `0 -> 1` on the current clock edge.  | Detecting start-of-frame strobes and enable edges.     |
+| **`$fell(sig)`**      | Evaluates true if `sig` changed from `1 -> 0` on the current clock edge.  | Detecting deassertion of interrupt or busy flags.      |
+| **`$stable(sig)`**    | Evaluates true if `sig` has not changed value since the prior clock edge. | Verifying bus hold rules during wait states.           |
+| **`$past(sig, n)`**   | Returns the value of `sig` exactly $n$ clock cycles in the past.          | Comparing register output against past input values.   |
+| **`$onehot(bus)`**    | Returns true if **strictly one bit** of `bus` is logic 1 (all others 0).  | Verifying one-hot FSM states and grant arbiters.       |
+| **`$onehot0(bus)`**   | Returns true if **at most one bit** is logic 1 (all 0s or one-hot).       | Verifying priority encoders and optional select lines. |
+| **`$isunknown(sig)`** | Returns true if any bit of `sig` is `X` or `Z`.                           | Trapping uninitialized register reads on reset exit.   |
 
 ```systemverilog
 // Protocol Check: Arbiter Grant must always be strictly one-hot
@@ -167,6 +171,7 @@ A major advantage of SVA is that the exact same properties serve two distinct ve
 ![Assertion-Based Verification (ABV) Dual-Engine Flow](images/ch6_abv_verification_workflow.svg)
 
 ### Dual-Engine Synergy
+
 1. **In Dynamic Simulation:**
    - SVA properties act as passive watchers, checking valid transactions during test executions.
    - **Assertion Coverage** tracks how many times each property antecedent was triggered, identifying unexercised assertions.
@@ -181,8 +186,8 @@ A major advantage of SVA is that the exact same properties serve two distinct ve
 ## Learning Resources
 
 - **Books:**
-  - *SystemVerilog Assertions Handbook* by Ben Cohen, Srinivasan Venkataramanan, and Ajeetha Kumari.
-  - *Applied Formal Verification* by Douglas L. Perry and Harry D. Foster (McGraw-Hill).
+  - _SystemVerilog Assertions Handbook_ by Ben Cohen, Srinivasan Venkataramanan, and Ajeetha Kumari.
+  - _Applied Formal Verification_ by Douglas L. Perry and Harry D. Foster (McGraw-Hill).
 - **Standards:**
   - IEEE Std 1800-2023 SystemVerilog LRM (Clause 16: Assertions).
 

@@ -9,6 +9,7 @@ This chapter explores advanced UVM features: the sequence-driver handshake proto
 ## Learning Goals
 
 After completing this chapter, you should be able to:
+
 - Trace and implement the step-by-step handshake protocol between a `uvm_sequence`, `uvm_sequencer`, and `uvm_driver`.
 - Architect **Virtual Sequences** and **Virtual Sequencers** to coordinate concurrent stimulus across multiple heterogeneous interface agents.
 - Construct a UVM **Register Abstraction Layer (RAL)** model with custom bus adapters, frontdoor read/write operations, backdoor access, and automatic prediction.
@@ -63,7 +64,8 @@ endtask
 ```
 
 ### Why Late Randomization Matters
-Notice that `req.randomize()` is called **between `start_item()` and `finish_item()`**. This pattern is called **Late Randomization**. It guarantees that transaction variables are randomized only *after* the sequencer has granted bus access, allowing constraints to evaluate real-time DUT state flags (e.g., buffer almost-full signals) right before pin assertion.
+
+Notice that `req.randomize()` is called **between `start_item()` and `finish_item()`**. This pattern is called **Late Randomization**. It guarantees that transaction variables are randomized only _after_ the sequencer has granted bus access, allowing constraints to evaluate real-time DUT state flags (e.g., buffer almost-full signals) right before pin assertion.
 
 ---
 
@@ -76,6 +78,7 @@ The solution is the **Virtual Sequence**.
 ![Virtual Sequence Orchestration Across Multiple Agents](images/ch5_virtual_sequence_orchestration.svg)
 
 ### Virtual Sequence Architecture
+
 - **Virtual Sequencer:** A component derived from `uvm_sequencer` that does not drive physical pins. Instead, it holds handle references to the sub-sequencers of all physical agents in the environment.
 - **Virtual Sequence:** Executes on the virtual sequencer, starting sub-sequences concurrently or sequentially across multiple agents using SystemVerilog `fork ... join` blocks.
 
@@ -123,6 +126,7 @@ The **UVM Register Abstraction Layer (RAL)** provides an object-oriented high-le
 ![UVM Register Abstraction Layer (RAL) Architecture](images/ch5_uvm_ral_architecture.svg)
 
 ### Key RAL Classes
+
 - **`uvm_reg_field`:** Represents an individual bit-slice inside a register (e.g., `enable` bit [0], `baud_rate` bits [15:4]). Tracks access policies (`RW`, `RO`, `W1C`, `WO`).
 - **`uvm_reg`:** Represents a complete register containing one or more fields. Tracks current **Desired Value** and **Mirrored Value**.
 - **`uvm_reg_block`:** Hierarchical container representing a complete peripheral register bank or entire chip register map.
@@ -130,6 +134,7 @@ The **UVM Register Abstraction Layer (RAL)** provides an object-oriented high-le
 - **`uvm_reg_predictor`:** Observes bus transactions from the bus monitor and updates the register model's mirrored value automatically (**Auto-Prediction**).
 
 ### Frontdoor vs. Backdoor Access
+
 - **Frontdoor Access (`UVM_FRONTDOOR`):** Reads or writes the register by physically driving bus cycles through the driver and virtual interface (consumes simulation time).
 - **Backdoor Access (`UVM_BACKDOOR`):** Reads or writes internal design flip-flops directly using SystemVerilog DPI/VPI hierarchical simulator handles (zero simulation time).
 
@@ -141,10 +146,10 @@ task verify_control_reg(my_reg_block regmodel);
 
     // Frontdoor write: generates real APB/AXI bus cycles
     regmodel.ctrl_reg.write(status, 32'h0000_0001, UVM_FRONTDOOR);
-    
+
     // Frontdoor read: reads physical register value
     regmodel.ctrl_reg.read(status, read_val, UVM_FRONTDOOR);
-    
+
     // Check mirror consistency: compares hardware state to software model
     if (read_val !== regmodel.ctrl_reg.get_mirrored_value()) begin
         `uvm_error("RAL_MISMATCH", "Hardware value does not match mirrored value!")
@@ -161,6 +166,7 @@ While drivers and sequencers use point-to-point, blocking TLM ports to transfer 
 ![TLM Analysis Port Broadcast Architecture (1-to-Many)](images/ch5_tlm_analysis_ports.svg)
 
 ### Implementation Mechanics
+
 - **Publisher (Monitor):** Declares `uvm_analysis_port #(T) ap;` and broadcasts transactions via `ap.write(trans);`. The `write()` method is a `void function` that executes instantaneously in zero simulation time.
 - **Subscribers (Scoreboard / Coverage Collector):** Implement `uvm_analysis_imp #(T, SubscriberClass)` and define the `write(T t)` method to receive and process the transaction.
 
@@ -205,15 +211,19 @@ endclass
 The **UVM Factory** is an implementation of the classic Software Design Pattern that enables dynamically substituting one class with another derived class **without altering existing code or module instantiations**.
 
 ### Factory Registration
+
 All UVM classes must register with the factory using macros:
+
 - Objects: `` `uvm_object_utils(class_name) ``
 - Components: `` `uvm_component_utils(class_name) ``
 
 ### Factory Creation Rule
+
 Never instantiate UVM classes using direct `new()`. Always invoke the factory's `create()` method:
 `comp = comp_type::type_id::create("comp_name", this);`
 
 ### Factory Overrides: Type vs. Instance
+
 1. **Type Override (`set_type_override_by_type`):** Replaces **every** instance of a base type throughout the entire testbench hierarchy with a derived replacement.
 2. **Instance Override (`set_inst_override_by_type`):** Replaces a **specific** instance located at a targeted hierarchical path (e.g., only replace `env.agent[0].driver` with `error_injecting_driver`).
 
@@ -226,8 +236,8 @@ class err_inject_test extends uvm_test;
         base_driver::type_id::set_type_override(error_driver::get_type());
 
         // Target a specific sequence override
-        set_inst_override_by_type("env.agent[1].seqr.*", 
-                                  normal_seq::get_type(), 
+        set_inst_override_by_type("env.agent[1].seqr.*",
+                                  normal_seq::get_type(),
                                   stress_seq::get_type());
 
         super.build_phase(phase); // Factory overrides applied as tree builds!
@@ -249,6 +259,7 @@ UVM provides a centralized, severity-classified reporting mechanism through four
 ```
 
 ### Verbosity Thresholds
+
 Messages are filtered based on the active simulation verbosity setting:
 $$\text{Display Condition: } \text{Message Verbosity} \le \text{Active Simulation Verbosity}$$
 
@@ -285,7 +296,8 @@ endtask
 ```
 
 ### Drain Time
-Dropping an objection does not mean the design has finished processing. Data packets injected into the DUT may take tens of cycles to traverse internal processing pipelines before exiting at output pins. 
+
+Dropping an objection does not mean the design has finished processing. Data packets injected into the DUT may take tens of cycles to traverse internal processing pipelines before exiting at output pins.
 
 Setting a **Drain Time** (`set_drain_time()`) ensures that the `run_phase` lingers for a defined duration after the last objection is dropped, allowing downstream monitors and scoreboards to capture and verify trailing transactions.
 
@@ -294,11 +306,11 @@ Setting a **Drain Time** (`set_drain_time()`) ensures that the `run_phase` linge
 ## Learning Resources
 
 - **Books:**
-  - *UVM Primer* by Ray Salemi (Chapters 14-22: Sequences, Factory, and Objections).
-  - *A Practical Guide to Adopting UVM* by Sharon Rosenberg & Kathleen Meade.
+  - _UVM Primer_ by Ray Salemi (Chapters 14-22: Sequences, Factory, and Objections).
+  - _A Practical Guide to Adopting UVM_ by Sharon Rosenberg & Kathleen Meade.
 - **Reference Documentation:**
   - IEEE Std 1800.2-2020 UVM LRM (Clause 8: Factory, Clause 13: Sequences, Clause 18: Register Abstraction Layer).
-  - Accellera Systems Initiative: *UVM RAL User Guide and Reference*.
+  - Accellera Systems Initiative: _UVM RAL User Guide and Reference_.
 
 ---
 

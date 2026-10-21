@@ -9,6 +9,7 @@ In addition, we examine the cutting edge of semiconductor verification: **Hardwa
 ## Learning Goals
 
 After completing this chapter, you should be able to:
+
 - Formulate and execute a complete verification lifecycle through four phase-gated milestones (M0 Plan Freeze, M1 Smoke Bring-Up, M2 Feature Complete, M3 Tape-Out Sign-Off).
 - Structure project deliverables: Verification Plan, UVM agent/environment architecture, constrained-random sequence libraries, functional coverage models, SVA monitors, and final sign-off documentation.
 - Contrast software simulation with **Hardware Emulation** and **In-Circuit Prototyping (ICE)** for multi-billion gate SoC validation.
@@ -44,21 +45,25 @@ Executing a complex verification project requires disciplined milestone gating t
 ```
 
 #### Milestone 0 (M0): Plan & Architecture Freeze
+
 - **Requirements Decomposition:** Convert textual specifications into a structured Feature Matrix.
 - **Verification Plan (vPlan):** Document the verification topology, coverage targets, test scenarios, and resource allocations.
 - **Interface Protocol Audit:** Define signal bus interfaces, modports, and clocking blocks.
 
 #### Milestone 1 (M1): Environment Bring-Up & Smoke Test
+
 - **Infrastructure Assembly:** Construct base UVM components (`uvm_agent`, `uvm_env`, `uvm_test`).
 - **Virtual Interface Hookup:** Bind physical signals from `tb_top` into `uvm_config_db`.
 - **Smoke Sanity:** Execute simple deterministic sequences to verify clock, reset, and basic register read/write operations without hangs.
 
 #### Milestone 2 (M2): Feature Complete & Stress Regressions
+
 - **Sequence Library Completion:** Implement basic, corner-case, boundary, and error-injection sequences.
 - **Scoreboard Integration:** Algorithmic golden models actively compare observed DUT transactions against expectations.
 - **Coverage Ramp:** Constrained-random regression suite reaches $>80\%$ functional and code coverage.
 
 #### Milestone 3 (M3): Verification Closure & Sign-Off
+
 - **100% Functional Coverage:** Every bin in all defined covergroups hit or formally waived.
 - **100% Code Coverage:** Line, branch, toggle, and FSM transition coverage closed (unreachable logic waived with formal proofs).
 - **Zero Bug Tolerance:** Zero open Severity-1 (critical crash/data corruption) or Severity-2 (major spec violation) defects.
@@ -71,6 +76,7 @@ Executing a complex verification project requires disciplined milestone gating t
 Students and engineers can select from three representative industry-standard project targets:
 
 ### Project Option A: In-Order 5-Stage RISC-V Processor Pipeline
+
 - **DUT Scope:** RV32I base integer instruction set (Fetch, Decode, Execute, Memory, Write-Back) with bypass forwarding and hazard stall logic.
 - **Key Verification Challenges:**
   - Data forwarding paths (RAW, WAR, WAW dependencies).
@@ -79,6 +85,7 @@ Students and engineers can select from three representative industry-standard pr
   - Instruction set compliance using RISC-V architectural golden reference models (Spike, Sail).
 
 ### Project Option B: Multi-Channel Synchronous Memory Controller
+
 - **DUT Scope:** SDRAM / DDR memory controller with command arbitration (Read, Write, Precharge, Auto-Refresh), bank interleaving, and FIFO buffers.
 - **Key Verification Challenges:**
   - JEDEC protocol timing parameters ($t_{RCD}$, $t_{RP}$, $t_{CAS}$, $t_{RFC}$).
@@ -87,6 +94,7 @@ Students and engineers can select from three representative industry-standard pr
   - Error-Correcting Code (ECC) single-bit correction and double-bit detection.
 
 ### Project Option C: High-Throughput AMBA AXI-to-APB Interconnect Bridge
+
 - **DUT Scope:** Translates high-performance multi-beat AXI4 bursts into serialized APB4 peripheral register cycles with Clock Domain Crossing (CDC).
 - **Key Verification Challenges:**
   - Asynchronous clock ratio synchronization (`ACLK` at 800 MHz, `PCLK` at 100 MHz).
@@ -103,7 +111,9 @@ As semiconductor designs scale toward billion-transistor chiplets and multi-die 
 ![Advanced Verification Technologies Landscape](images/ch8_advanced_verification_landscape.svg)
 
 ### Hardware Emulation and In-Circuit Prototyping
+
 Software simulators execute at roughly 10 Hz to 1,000 Hz, requiring weeks to simulate a few seconds of real-time hardware operation.
+
 - **Hardware Emulators (e.g., Cadence Palladium, Synopsys ZeBu, Siemens Veloce):** Map synthesizable RTL onto custom processor arrays or massive FPGA matrices, operating at **1 MHz to 20 MHz** (a $10,000\times$ to $100,000\times$ speedup).
 - **Capabilities:**
   - Boot complete Linux operating systems and hypervisors on pre-silicon RTL in minutes.
@@ -111,13 +121,17 @@ Software simulators execute at roughly 10 Hz to 1,000 Hz, requiring weeks to sim
   - In-Circuit Emulation (ICE): Connect physical cable interfaces (PCIe, USB, Ethernet) directly to virtual hardware.
 
 ### Deep Formal Verification and Equivalence Checking
+
 Formal verification utilizes mathematical solvers to prove properties across infinite time horizons:
+
 - **Formal Property Verification (FPV):** Proves complex arbiter fairness, cache coherency protocols, and deadlock freedom without requiring test stimuli.
 - **Automated Formal Apps:** Push-button tools for checking bus connectivity, CSR register access policies, and X-propagation without writing manual properties.
 - **Equivalence Checking (Logic Equivalence):** Mathematically verifies that a post-synthesis gate-level netlist or physical layout perfectly matches the golden RTL description.
 
 ### Low-Power Verification (UPF / IEEE 1801)
+
 Modern mobile and IoT processors dynamically power down idle blocks:
+
 - **Unified Power Format (UPF):** A standardized declarative language describing power intent: power domains, isolation cells, retention registers, and level shifters.
 - **Verification Focus:**
   - Verifying that power-domain isolation cells clamp outputs to safe logic levels before voltage shuts down.
@@ -125,20 +139,26 @@ Modern mobile and IoT processors dynamically power down idle blocks:
   - Trapping sneak-path leakage currents through un-level-shifted voltage domain boundaries.
 
 ### Hardware Security Verification
+
 With rising threats of physical tampering and microarchitectural exploits (Spectre, Meltdown):
+
 - **Privilege Separation:** Verifying that unprivileged user transactions (`PPROT[0]=0`) cannot access supervisor crypto key stores.
 - **Side-Channel Analysis:** Ensuring cryptographic hardware (AES, RSA, ECC) does not leak secret keys through data-dependent power dissipation or execution timing jitter.
 - **Hardware Trojan Detection:** Employing formal reachability analysis to detect malicious trigger circuits hidden in third-party IP cores.
 
 ### Portable Test and Stimulus Standard (PSS 2.0)
+
 Accellera developed the **Portable Stimulus Standard (PSS)** to address verification fragmentation across platforms:
+
 - **The Portability Problem:** Tests written in UVM cannot be reused on hardware emulators, FPGA prototypes, or post-silicon validation boards.
 - **The PSS Solution:** Defines verification intent as an abstract behavioral graph. A PSS tool compiles this single graph into:
   - SystemVerilog/UVM sequences for software simulation.
   - C/C++ embedded firmware routines for emulation and silicon validation.
 
 ### AI and Machine Learning in Verification
+
 Artificial Intelligence is transforming verification productivity:
+
 - **Coverage Closure Acceleration:** Reinforcement learning agents observe unhit functional coverage bins and dynamically tune UVM constraint weights to hit boundary states $5\times$ to $10\times$ faster than pseudo-random guessing.
 - **Automated Bug Triage:** Natural Language Processing (NLP) and clustering algorithms parse thousands of regression log files, automatically grouping identical root causes and routing bug tickets to the responsible RTL designers.
 
@@ -185,7 +205,7 @@ Before submitting a verification project for final sign-off, verify every requir
   - ACM/IEEE Design Automation Conference (DAC) and Design, Automation & Test in Europe (DATE).
   - Formal Methods in Computer-Aided Design (FMCAD).
 - **Standards & Industry Initiatives:**
-  - Accellera Systems Initiative: *Portable Test and Stimulus Standard (PSS 2.0)*.
+  - Accellera Systems Initiative: _Portable Test and Stimulus Standard (PSS 2.0)_.
   - IEEE Std 1801-2018 (Unified Power Format - UPF).
 
 ---

@@ -1,0 +1,116 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 480" width="100%" height="100%">
+  <rect width="960" height="480" fill="#0b1120" rx="8"/>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8"/>
+    </marker>
+  </defs>
+
+  <text x="480" y="38" fill="#f8fafc" font-size="20" font-weight="bold" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" text-anchor="middle">B-Type &amp; J-Type Immediate Bit Slicing &amp; Sign Extension</text>
+  <text x="480" y="62" fill="#94a3b8" font-size="13" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" text-anchor="middle">Why RISC-V scrambles branch/jump immediate fields to minimize silicon multiplexer fan-in</text>
+
+  <!-- B-Type Dissection -->
+  <g transform="translate(60, 95)">
+    <rect width="840" height="110" rx="8" fill="#1e293b" stroke="#c026d3" stroke-width="1.5"/>
+    <text x="25" y="24" fill="#e879f9" font-size="12" font-weight="bold" font-family="sans-serif">B-Type (Conditional Branches: beq, bne, blt, bge)</text>
+
+    <!-- Raw instruction bits -->
+    <g transform="translate(25, 38)">
+      <rect x="0" y="0" width="50" height="26" fill="#a21caf" stroke="#e879f9" rx="2"/>
+      <text x="25" y="17" fill="#fff" font-size="10" font-family="monospace" text-anchor="middle">[31]</text>
+
+      <rect x="55" y="0" width="140" height="26" fill="#701a75" stroke="#c026d3" rx="2"/>
+      <text x="125" y="17" fill="#fff" font-size="10" font-family="monospace" text-anchor="middle">[30:25]</text>
+
+      <rect x="200" y="0" width="220" height="26" fill="#334155" rx="2"/>
+      <text x="310" y="17" fill="#94a3b8" font-size="10" font-family="monospace" text-anchor="middle">rs2 (24:20) | rs1 (19:15) | funct3 (14:12)</text>
+
+      <rect x="425" y="0" width="110" height="26" fill="#701a75" stroke="#c026d3" rx="2"/>
+      <text x="480" y="17" fill="#fff" font-size="10" font-family="monospace" text-anchor="middle">[11:8]</text>
+
+      <rect x="540" y="0" width="50" height="26" fill="#a21caf" stroke="#e879f9" rx="2"/>
+      <text x="565" y="17" fill="#fff" font-size="10" font-family="monospace" text-anchor="middle">[7]</text>
+
+      <rect x="595" y="0" width="195" height="26" fill="#334155" rx="2"/>
+      <text x="692" y="17" fill="#94a3b8" font-size="10" font-family="monospace" text-anchor="middle">opcode (6:0)</text>
+    </g>
+
+    <!-- Reconstructed 13-bit offset -->
+    <g transform="translate(25, 75)">
+      <text x="0" y="18" fill="#cbd5e1" font-size="11" font-family="sans-serif">Reconstructed 32-bit offset:</text>
+      <rect x="180" y="2" width="220" height="22" fill="#0f172a" stroke="#a21caf" rx="2"/>
+      <text x="290" y="17" fill="#e879f9" font-size="10" font-family="monospace" text-anchor="middle">Sign Ext [31:12] = inst[31]</text>
+
+      <rect x="405" y="2" width="45" height="22" fill="#701a75" stroke="#c026d3" rx="2"/>
+      <text x="427" y="17" fill="#fff" font-size="9" font-family="monospace" text-anchor="middle">[11]=i[7]</text>
+
+      <rect x="455" y="2" width="95" height="22" fill="#701a75" stroke="#c026d3" rx="2"/>
+      <text x="502" y="17" fill="#fff" font-size="9" font-family="monospace" text-anchor="middle">[10:5]=i[30:25]</text>
+
+      <rect x="555" y="2" width="85" height="22" fill="#701a75" stroke="#c026d3" rx="2"/>
+      <text x="597" y="17" fill="#fff" font-size="9" font-family="monospace" text-anchor="middle">[4:1]=i[11:8]</text>
+
+      <rect x="645" y="2" width="40" height="22" fill="#0284c7" stroke="#38bdf8" rx="2"/>
+      <text x="665" y="17" fill="#fff" font-size="9" font-family="monospace" text-anchor="middle">[0]=0</text>
+      
+      <text x="705" y="17" fill="#38bdf8" font-size="10" font-family="sans-serif">±4KB Range</text>
+    </g>
+  </g>
+
+  <!-- J-Type Dissection -->
+  <g transform="translate(60, 220)">
+    <rect width="840" height="110" rx="8" fill="#1e293b" stroke="#38bdf8" stroke-width="1.5"/>
+    <text x="25" y="24" fill="#38bdf8" font-size="12" font-weight="bold" font-family="sans-serif">J-Type (Unconditional Jumps: jal)</text>
+
+    <!-- Raw instruction bits -->
+    <g transform="translate(25, 38)">
+      <rect x="0" y="0" width="50" height="26" fill="#0284c7" stroke="#38bdf8" rx="2"/>
+      <text x="25" y="17" fill="#fff" font-size="10" font-family="monospace" text-anchor="middle">[31]</text>
+
+      <rect x="55" y="0" width="180" height="26" fill="#0369a1" stroke="#0284c7" rx="2"/>
+      <text x="145" y="17" fill="#fff" font-size="10" font-family="monospace" text-anchor="middle">imm[10:1] (bits 30:21)</text>
+
+      <rect x="240" y="0" width="50" height="26" fill="#0284c7" stroke="#38bdf8" rx="2"/>
+      <text x="265" y="17" fill="#fff" font-size="10" font-family="monospace" text-anchor="middle">[20]</text>
+
+      <rect x="295" y="0" width="160" height="26" fill="#0369a1" stroke="#0284c7" rx="2"/>
+      <text x="375" y="17" fill="#fff" font-size="10" font-family="monospace" text-anchor="middle">imm[19:12] (bits 19:12)</text>
+
+      <rect x="460" y="0" width="160" height="26" fill="#334155" rx="2"/>
+      <text x="540" y="17" fill="#94a3b8" font-size="10" font-family="monospace" text-anchor="middle">rd (11:7)</text>
+
+      <rect x="625" y="0" width="165" height="26" fill="#334155" rx="2"/>
+      <text x="707" y="17" fill="#94a3b8" font-size="10" font-family="monospace" text-anchor="middle">opcode (6:0)</text>
+    </g>
+
+    <!-- Reconstructed 21-bit offset -->
+    <g transform="translate(25, 75)">
+      <text x="0" y="18" fill="#cbd5e1" font-size="11" font-family="sans-serif">Reconstructed 32-bit offset:</text>
+      <rect x="180" y="2" width="160" height="22" fill="#0f172a" stroke="#0284c7" rx="2"/>
+      <text x="260" y="17" fill="#7dd3fc" font-size="10" font-family="monospace" text-anchor="middle">Sign Ext [31:20] = i[31]</text>
+
+      <rect x="345" y="2" width="120" height="22" fill="#0369a1" stroke="#0284c7" rx="2"/>
+      <text x="405" y="17" fill="#fff" font-size="9" font-family="monospace" text-anchor="middle">[19:12]=i[19:12]</text>
+
+      <rect x="470" y="2" width="45" height="22" fill="#0284c7" stroke="#38bdf8" rx="2"/>
+      <text x="492" y="17" fill="#fff" font-size="9" font-family="monospace" text-anchor="middle">[11]=i[20]</text>
+
+      <rect x="520" y="2" width="125" height="22" fill="#0369a1" stroke="#0284c7" rx="2"/>
+      <text x="582" y="17" fill="#fff" font-size="9" font-family="monospace" text-anchor="middle">[10:1]=i[30:21]</text>
+
+      <rect x="650" y="2" width="40" height="22" fill="#065f46" stroke="#34d399" rx="2"/>
+      <text x="670" y="17" fill="#fff" font-size="9" font-family="monospace" text-anchor="middle">[0]=0</text>
+
+      <text x="705" y="17" fill="#34d399" font-size="10" font-family="sans-serif">±1MB Range</text>
+    </g>
+  </g>
+
+  <!-- Bottom Explanatory Box -->
+  <g transform="translate(60, 350)">
+    <rect width="840" height="105" rx="8" fill="#0f172a" stroke="#334155"/>
+    <text x="25" y="26" fill="#fbbf24" font-size="13" font-weight="bold" font-family="sans-serif">Why bit 0 is ALWAYS zero (Implicit 2-Byte Alignment):</text>
+    <text x="25" y="48" fill="#cbd5e1" font-size="11" font-family="sans-serif">• All RISC-V instructions are multiples of 2 bytes in length (16-bit compressed or 32-bit standard). Therefore, branch/jump targets are ALWAYS even.</text>
+    <text x="25" y="68" fill="#cbd5e1" font-size="11" font-family="sans-serif">• Omitting bit 0 from the encoding effectively doubles the branch/jump range without wasting a single bit in the instruction word.</text>
+    <text x="25" y="88" fill="#94a3b8" font-size="10" font-family="sans-serif">The hardware immediate generator shifts the extracted bits left by 1 bit (<tspan font-family="monospace">imm &lt;&lt; 1</tspan>) before adding to PC.</text>
+  </g>
+</svg>

@@ -61,13 +61,13 @@ So when you see UART monitor traffic, think, "this is what actually happened on 
 
 You do not need the full register map memorized to understand the training flow. A few addresses are enough.
 
-| Address | Register | Why it matters |
-|---------|----------|----------------|
-| `0x00` | `CTRL` | Turns the UART on and controls flush behavior |
-| `0x04` | `CLK_DIV` | Sets the baud-rate divider |
-| `0x08` | `CFG` | Controls parity and stop-bit format |
-| `0x14` | `TX_DATA` | APB writes a byte here for transmission |
-| `0x18` | `RX_DATA` | APB reads a received byte here |
+| Address | Register  | Why it matters                                |
+| ------- | --------- | --------------------------------------------- |
+| `0x00`  | `CTRL`    | Turns the UART on and controls flush behavior |
+| `0x04`  | `CLK_DIV` | Sets the baud-rate divider                    |
+| `0x08`  | `CFG`     | Controls parity and stop-bit format           |
+| `0x14`  | `TX_DATA` | APB writes a byte here for transmission       |
+| `0x18`  | `RX_DATA` | APB reads a received byte here                |
 
 If you remember only two addresses, remember these:
 
@@ -100,19 +100,19 @@ Those two questions are simple, strong, and easy to measure.
 
 Before moving further, it helps to translate the main UVM terms into simple engineering language.
 
-| UVM term | Plain meaning | Why it exists |
-|----------|---------------|---------------|
-| `DUT` | The hardware block being verified | We need a short way to refer to the design under test |
-| `transaction` | One meaningful operation such as an APB read, APB write, or UART byte event | Easier to reason about than raw signals |
-| `sequence item` | The object that holds one transaction | Carries address, data, direction, and control information |
-| `sequence` | A generator of one or more sequence items | Describes what stimulus we want |
-| `sequencer` | The coordinator between sequence and driver | Hands transactions to the driver |
-| `driver` | The component that converts a transaction into interface signal activity | Talks to the DUT |
-| `monitor` | The component that observes interface signals and reconstructs transactions | Reports what really happened |
-| `agent` | The container for sequencer, driver, and monitor of one interface | Organizes one protocol's verification logic |
-| `environment` | The container that gathers multiple agents and checkers | Builds the full verification system |
-| `scoreboard` | The checker that compares results | Detects mismatches |
-| `functional coverage` | A measurement of which important situations were exercised | Helps answer what has been tested |
+| UVM term              | Plain meaning                                                               | Why it exists                                             |
+| --------------------- | --------------------------------------------------------------------------- | --------------------------------------------------------- |
+| `DUT`                 | The hardware block being verified                                           | We need a short way to refer to the design under test     |
+| `transaction`         | One meaningful operation such as an APB read, APB write, or UART byte event | Easier to reason about than raw signals                   |
+| `sequence item`       | The object that holds one transaction                                       | Carries address, data, direction, and control information |
+| `sequence`            | A generator of one or more sequence items                                   | Describes what stimulus we want                           |
+| `sequencer`           | The coordinator between sequence and driver                                 | Hands transactions to the driver                          |
+| `driver`              | The component that converts a transaction into interface signal activity    | Talks to the DUT                                          |
+| `monitor`             | The component that observes interface signals and reconstructs transactions | Reports what really happened                              |
+| `agent`               | The container for sequencer, driver, and monitor of one interface           | Organizes one protocol's verification logic               |
+| `environment`         | The container that gathers multiple agents and checkers                     | Builds the full verification system                       |
+| `scoreboard`          | The checker that compares results                                           | Detects mismatches                                        |
+| `functional coverage` | A measurement of which important situations were exercised                  | Helps answer what has been tested                         |
 
 A simple trainee-friendly memory trick is:
 
@@ -162,5 +162,5 @@ If not, go back to the APB and UART descriptions and the two main verification q
 ## Next Chapter
 
 Continue to [Chapter 2: Testbench Architecture and Top-Level Flow](02-testbench-architecture-and-top-level-flow.md).
-##### Copyright (c) 2026 squared-studio
 
+##### Copyright (c) 2026 squared-studio

@@ -31,7 +31,6 @@ Using the command line interface (CLI) offers a direct and efficient way to mana
 
 4.  **Stage Your Project Files**:
     Tell Git which files you want to include in your first commit. The `git add` command stages files, preparing them for a snapshot (commit).
-
     - **Stage all files in the current directory and subdirectories**:
 
       ```bash
@@ -90,7 +89,6 @@ Creating a repository directly on the GitHub website is an excellent option, esp
 
 3.  **Configure Your Repository**:
     You'll be taken to the "Create a new repository" page where you need to configure a few settings:
-
     - **Repository name**: Enter a name for your repository in the "Repository name" field. Keep it concise and descriptive, using hyphens instead of spaces (e.g., `my-new-project`).
     - **Description** (Optional): Add a brief description of your project. This helps others understand what your repository is about.
     - **Visibility**: Choose between:
@@ -135,7 +133,6 @@ After creating your repository on GitHub, you'll likely want to work on it local
 
 1.  **Get the Repository URL**:
     Navigate to the repository on GitHub (or the platform where it's hosted). Click on the **"Code"** button. You'll be presented with URLs. Choose either:
-
     - **HTTPS URL**: Starts with `https://`. Easier to use initially, generally requires username and password for push operations unless using a credential manager. Example: `https://github.com/username/repo.git`
     - **SSH URL**: Starts with `git@github.com`. Requires SSH keys to be set up for authentication but is more secure for frequent push/pull operations. Example: `git@github.com:username/repo.git`
 
@@ -213,7 +210,6 @@ Using the command line interface (CLI) to create a Git repository offers more co
 
 4.  **Stage Your Project Files**:
     Prepare your files for the first commit by adding them to the staging area. This tells Git which changes you want to include in the next snapshot.
-
     - **To stage all files in your project**:
 
       ```bash
@@ -281,7 +277,6 @@ Creating a repository directly on the GitHub website is a straightforward approa
 
 3.  **Configure Your Repository**:
     You'll be directed to a page to set up your new repository.
-
     - **Repository name**: Enter a name for your repository in the "Repository name" field. Choose a concise and descriptive name (e.g., `your-repo-name`). Avoid spaces; use hyphens or underscores instead.
     - **Description (optional)**: Provide a brief description of your project to help others understand its purpose.
     - **Visibility**:
@@ -320,7 +315,6 @@ Cloning in Git means creating a local copy of a repository that already exists r
 
 1.  **Get the Repository URL**:
     Navigate to the repository on GitHub (or the platform where it's hosted) that you want to clone. Click on the **"Code"** button. You'll see options for the repository URL.
-
     - **HTTPS URL**: Looks like `https://github.com/username/repo.git`. Use this if you prefer using HTTPS for cloning, which generally works through firewalls and is simpler to set up initially.
     - **SSH URL**: Looks like `git@github.com:username/repo.git`. SSH is recommended for secure access and when you plan to frequently push changes. It requires setting up SSH keys but avoids needing to enter your username and password every time. Choose the URL type based on your preference and setup. For beginners, HTTPS is often easier to start with.
 

@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 480" width="100%" height="100%">
+  <rect width="960" height="480" fill="#0b1120" rx="8"/>
+  <text x="480" y="38" fill="#f8fafc" font-size="20" font-weight="bold" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" text-anchor="middle">RISC-V Control Flow: Branch vs. Jump Addressing Ranges</text>
+  <text x="480" y="62" fill="#94a3b8" font-size="13" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" text-anchor="middle">PC-Relative Branching (B-Type), PC-Relative Jumps (JAL), and Absolute Indirect Jumps (JALR)</text>
+
+  <!-- 3 Boxes -->
+  <!-- Box 1: B-Type -->
+  <g transform="translate(60, 95)">
+    <rect width="260" height="240" rx="8" fill="#1e293b" stroke="#c026d3" stroke-width="2"/>
+    <rect width="260" height="30" rx="8" fill="#701a75"/>
+    <text x="130" y="20" fill="#fff" font-size="12" font-weight="bold" font-family="sans-serif" text-anchor="middle">Conditional Branch (B-Type)</text>
+
+    <text x="15" y="55" fill="#e879f9" font-size="11" font-family="monospace">beq, bne, blt, bge</text>
+    <text x="15" y="75" fill="#cbd5e1" font-size="10" font-family="sans-serif">Target: PC + (imm &lt;&lt; 1)</text>
+
+    <rect x="15" y="90" width="230" height="45" rx="4" fill="#0f172a" stroke="#a21caf"/>
+    <text x="115" y="110" fill="#f5d0fe" font-size="11" font-weight="bold" font-family="sans-serif" text-anchor="middle">12-bit Signed Immediate</text>
+    <text x="115" y="125" fill="#e879f9" font-size="10" font-family="monospace" text-anchor="middle">Range: ±4 KB from PC</text>
+
+    <text x="15" y="160" fill="#cbd5e1" font-size="10" font-family="sans-serif">Use Case: Local <tspan font-family="monospace">if/else</tspan> blocks,</text>
+    <text x="15" y="178" fill="#cbd5e1" font-size="10" font-family="sans-serif">loop bounds, and guard checks.</text>
+    <text x="15" y="205" fill="#f43f5e" font-size="9" font-family="sans-serif">Fails if target exceeds ±4096B.</text>
+  </g>
+
+  <!-- Box 2: J-Type (JAL) -->
+  <g transform="translate(350, 95)">
+    <rect width="260" height="240" rx="8" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+    <rect width="260" height="30" rx="8" fill="#0369a1"/>
+    <text x="130" y="20" fill="#fff" font-size="12" font-weight="bold" font-family="sans-serif" text-anchor="middle">Jump and Link (J-Type / JAL)</text>
+
+    <text x="15" y="55" fill="#38bdf8" font-size="11" font-family="monospace">jal rd, label</text>
+    <text x="15" y="75" fill="#cbd5e1" font-size="10" font-family="sans-serif">Target: PC + (imm &lt;&lt; 1)</text>
+
+    <rect x="15" y="90" width="230" height="45" rx="4" fill="#0f172a" stroke="#0284c7"/>
+    <text x="115" y="110" fill="#7dd3fc" font-size="11" font-weight="bold" font-family="sans-serif" text-anchor="middle">20-bit Signed Immediate</text>
+    <text x="115" y="125" fill="#38bdf8" font-size="10" font-family="monospace" text-anchor="middle">Range: ±1 MB from PC</text>
+
+    <text x="15" y="160" fill="#cbd5e1" font-size="10" font-family="sans-serif">Hardware Action:</text>
+    <text x="15" y="178" fill="#38bdf8" font-size="10" font-family="monospace">rd = PC + 4; PC += offset</text>
+    <text x="15" y="205" fill="#34d399" font-size="9" font-family="sans-serif">Standard intra-module function call.</text>
+  </g>
+
+  <!-- Box 3: I-Type (JALR) -->
+  <g transform="translate(640, 95)">
+    <rect width="260" height="240" rx="8" fill="#1e293b" stroke="#34d399" stroke-width="2"/>
+    <rect width="260" height="30" rx="8" fill="#047857"/>
+    <text x="130" y="20" fill="#fff" font-size="12" font-weight="bold" font-family="sans-serif" text-anchor="middle">Indirect Jump (I-Type / JALR)</text>
+
+    <text x="15" y="55" fill="#34d399" font-size="11" font-family="monospace">jalr rd, offset(rs1)</text>
+    <text x="15" y="75" fill="#cbd5e1" font-size="10" font-family="sans-serif">Target: (rs1 + offset) &amp; ~1</text>
+
+    <rect x="15" y="90" width="230" height="45" rx="4" fill="#0f172a" stroke="#059669"/>
+    <text x="115" y="110" fill="#a7f3d0" font-size="11" font-weight="bold" font-family="sans-serif" text-anchor="middle">Full 32-bit Dynamic Target</text>
+    <text x="115" y="125" fill="#34d399" font-size="10" font-family="monospace" text-anchor="middle">Range: Anywhere in 4GB</text>
+
+    <text x="15" y="160" fill="#cbd5e1" font-size="10" font-family="sans-serif">Use Case: Function pointers,</text>
+    <text x="15" y="178" fill="#cbd5e1" font-size="10" font-family="sans-serif">switch jump tables, subroutine return</text>
+    <text x="15" y="205" fill="#fbbf24" font-size="9" font-family="sans-serif">Clears bit 0 automatically.</text>
+  </g>
+
+  <!-- Bottom Details -->
+  <g transform="translate(60, 350)">
+    <rect width="840" height="105" rx="8" fill="#0f172a" stroke="#334155"/>
+    <text x="25" y="26" fill="#fbbf24" font-size="13" font-weight="bold" font-family="sans-serif">The 'call' Pseudo-Instruction (Combining AUIPC + JALR):</text>
+    <text x="25" y="48" fill="#cbd5e1" font-size="11" font-family="sans-serif">• When calling a function located beyond the ±1MB range of <tspan font-family="monospace">jal</tspan>, the assembler emits a 2-instruction sequence:</text>
+    <text x="40" y="68" fill="#38bdf8" font-size="10" font-family="monospace">auipc ra, offset_hi;  jalr ra, offset_lo(ra)</text>
+    <text x="25" y="88" fill="#cbd5e1" font-size="11" font-family="sans-serif">• This reaches ANY address within <tspan font-weight="bold" fill="#34d399">±2 GB of the current PC</tspan>, covering the entire 32-bit user virtual memory space.</text>
+  </g>
+</svg>

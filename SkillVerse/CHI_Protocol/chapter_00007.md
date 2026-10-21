@@ -1,6 +1,7 @@
 # Snoop Mechanics, Response Tracking, and Cache Coherency
 
 ## The Inbound Snoop Pipeline
+
 In an AMBA 5 CHI system, cache coherency is maintained through proactive snooping coordinated by the Home Node (**`HN-F`**). When a core executes a memory transaction requiring cache line status checks or peer invalidations, the Home Node dispatches **Snoop Flits (`SNP`)** across the NoC to the target Request Nodes (**`RN-F`**).
 
 Upon arriving at an RN-F, a snoop flit enters the core's **Inbound Snoop Pipeline**:
@@ -35,42 +36,49 @@ Upon arriving at an RN-F, a snoop flit enters the core's **Inbound Snoop Pipelin
 ---
 
 ## The Snoop Request and Response Resolution Matrix
+
 The matrix below catalogs the primary snoop request types dispatched by the Home Node, how they interact with each private cache state, and the resulting response flits:
 
 ![Snoop Request vs Response Matrix](images/ch7_snoop_request_response_matrix.svg)
 
-| Inbound Snoop Opcode | Initial Cache State | Required Master Action | Snoop Response Opcode | Final Cache State |
-| :--- | :---: | :--- | :--- | :---: |
-| **`SnpShared`** | **UD** (Modified) | Supply dirty data; retain copy. | `DAT (SnpRespData_SD_PD)` | **SD** (Shared Dirty) |
-| **`SnpShared`** | **UC** (Exclusive) | Retain shared copy. | `RSP (SnpResp_SC)` | **SC** (Shared Clean) |
-| **`SnpShared`** | **SC** (Shared) | Retain shared copy. | `RSP (SnpResp_SC)` | **SC** (Shared Clean) |
-| **`SnpShared`** | **I** (Invalid) | Snoop Miss. | `RSP (SnpResp_I)` | **I** (Invalid) |
-| **`SnpUnique`** | **UD** (Modified) | Supply dirty data; **invalidate**. | `DAT (SnpRespData_I_PD)` | **I** (Invalid) |
-| **`SnpUnique`** | **UC** (Exclusive) | Invalidate copy; no data needed. | `RSP (SnpResp_I)` | **I** (Invalid) |
-| **`SnpUnique`** | **SC** (Shared) | Invalidate copy; no data needed. | `RSP (SnpResp_I)` | **I** (Invalid) |
-| **`SnpCleanInvalid`**| **UD** / **SD** | Flush dirty data to Home; invalidate.| `DAT (SnpRespData_I_PD)` | **I** (Invalid) |
-| **`SnpMakeInvalid`** | Any State | Discard copy immediately without data.| `RSP (SnpResp_I)` | **I** (Invalid) |
+| Inbound Snoop Opcode  | Initial Cache State | Required Master Action                 | Snoop Response Opcode     |   Final Cache State   |
+| :-------------------- | :-----------------: | :------------------------------------- | :------------------------ | :-------------------: |
+| **`SnpShared`**       |  **UD** (Modified)  | Supply dirty data; retain copy.        | `DAT (SnpRespData_SD_PD)` | **SD** (Shared Dirty) |
+| **`SnpShared`**       | **UC** (Exclusive)  | Retain shared copy.                    | `RSP (SnpResp_SC)`        | **SC** (Shared Clean) |
+| **`SnpShared`**       |   **SC** (Shared)   | Retain shared copy.                    | `RSP (SnpResp_SC)`        | **SC** (Shared Clean) |
+| **`SnpShared`**       |   **I** (Invalid)   | Snoop Miss.                            | `RSP (SnpResp_I)`         |    **I** (Invalid)    |
+| **`SnpUnique`**       |  **UD** (Modified)  | Supply dirty data; **invalidate**.     | `DAT (SnpRespData_I_PD)`  |    **I** (Invalid)    |
+| **`SnpUnique`**       | **UC** (Exclusive)  | Invalidate copy; no data needed.       | `RSP (SnpResp_I)`         |    **I** (Invalid)    |
+| **`SnpUnique`**       |   **SC** (Shared)   | Invalidate copy; no data needed.       | `RSP (SnpResp_I)`         |    **I** (Invalid)    |
+| **`SnpCleanInvalid`** |   **UD** / **SD**   | Flush dirty data to Home; invalidate.  | `DAT (SnpRespData_I_PD)`  |    **I** (Invalid)    |
+| **`SnpMakeInvalid`**  |      Any State      | Discard copy immediately without data. | `RSP (SnpResp_I)`         |    **I** (Invalid)    |
 
 ---
 
 ## Snoop Response Flit Semantics
 
 ### Pure Status Responses (`RSP` Flits)
+
 When a snoop hits a clean line or misses entirely, no data payload is returned. The master drives a Response Flit:
+
 - **`SnpResp_I`:** The master holds no valid copy of the line (either a snoop miss or a clean invalidation).
 - **`SnpResp_SC`:** The master continues to retain a valid copy in the **Shared Clean (SC)** state.
 
 ### Data-Carrying Responses (`DAT` Flits)
+
 When an inbound snoop hits a line containing modified (dirty) data, or when the Home Node requests data forwarding, the master transmits a Data Flit:
+
 - **`SnpRespData`:** Carries the full 64-byte cache line back to the Home Node.
 - **`PassDirty` (`PD`):** Embedded inside the response opcode, indicating that dirty writeback responsibility has been transferred out of this core.
 
 ### Forwarding Responses (`SnpRespDataFwd`)
+
 During Direct Cache Transfer (DCT), the core transmits the data flit directly to the requesting peer core, and concurrently returns `RSP (SnpRespFwd)` back to the Home Node to report that the forwarding obligation has been discharged.
 
 ---
 
 ## Multi-Core Response Aggregation at the Home Node
+
 When a transaction requires snooping multiple cores (e.g., a core issuing `ReadUnique` to an address cached across four separate RN-F clusters in the Shared state), the Home Node must **aggregate** all responses before committing the transaction:
 
 ```
@@ -85,11 +93,13 @@ When a transaction requires snooping multiple cores (e.g., a core issuing `ReadU
 ```
 
 ### The Invariant Rule of Response Aggregation:
+
 The Home Node **must never return `Comp` or `CompData` granting unique ownership** to a requesting master until **every single dispatched snoop has been acknowledged**. If the Home Node granted write ownership while an in-flight snoop was still traveling across the mesh toward a peer, that peer could read stale data or overwrite memory, causing catastrophic coherency violations.
 
 ---
 
 ## Resolving Cross-Snoop Races at the Point of Serialization
+
 A notorious race condition occurs when **two CPU cores simultaneously issue write invalidation requests for the exact same cache line**:
 
 ```
@@ -104,6 +114,7 @@ If Core 0 waits for Core 1 to invalidate, and Core 1 simultaneously waits for Co
 ![Point of Serialization Resolving Races](images/ch7_snoop_race_serialization.svg)
 
 ### The Point of Serialization (PoS) Resolution Invariant:
+
 1. **Physical Arrival Arbitration:** Whichever `REQ` flit reaches the Home Node's internal Point of Serialization (PoS) first is declared the **Winner** (e.g., `Core 0`).
 2. **Winner Granted Exclusivity:**
    - The PoS locks address `0x8000`.
@@ -121,6 +132,7 @@ This hardware serialization deterministically resolves race conditions without s
 ---
 
 ## Chapter Summary
+
 - Inbound snoops query private core tag arrays concurrently without interrupting CPU instruction execution.
 - Inbound snoop requests must **never be backpressured** or stalled by local core memory reads/writes.
 - The Home Node **aggregates all peer snoop responses** before granting write ownership or retiring tracker entries.
@@ -157,4 +169,3 @@ This hardware serialization deterministically resolves race conditions without s
 ---
 
 ##### Copyright (c) 2026 squared-studio
-

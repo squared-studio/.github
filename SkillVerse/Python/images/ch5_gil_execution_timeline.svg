@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 480" width="100%" height="100%">
+  <rect width="960" height="480" fill="#0b1120" rx="8"/>
+  <text x="480" y="38" fill="#f8fafc" font-size="20" font-weight="bold" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" text-anchor="middle">The Global Interpreter Lock (GIL) Execution Timeline</text>
+  <text x="480" y="62" fill="#94a3b8" font-size="13" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" text-anchor="middle">Why Python multi-threading executes CPU-bound tasks sequentially on a single core</text>
+
+  <!-- Timeline Canvas -->
+  <g transform="translate(60, 100)">
+    <!-- Time Axis -->
+    <line x1="120" y1="20" x2="800" y2="20" stroke="#475569" stroke-width="2"/>
+    <polygon points="800,16 810,20 800,24" fill="#475569"/>
+    <text x="815" y="24" fill="#94a3b8" font-size="11" font-family="sans-serif">Time (t)</text>
+
+    <!-- Thread 1 Label -->
+    <rect x="0" y="45" width="100" height="32" rx="4" fill="#0369a1"/>
+    <text x="50" y="66" fill="#fff" font-size="11" font-weight="bold" font-family="sans-serif" text-anchor="middle">Thread 1 (CPU)</text>
+
+    <!-- Thread 2 Label -->
+    <rect x="0" y="95" width="100" height="32" rx="4" fill="#047857"/>
+    <text x="50" y="116" fill="#fff" font-size="11" font-weight="bold" font-family="sans-serif" text-anchor="middle">Thread 2 (CPU)</text>
+
+    <!-- Thread 3 (I/O) Label -->
+    <rect x="0" y="145" width="100" height="32" rx="4" fill="#854d0e"/>
+    <text x="50" y="166" fill="#fff" font-size="11" font-weight="bold" font-family="sans-serif" text-anchor="middle">Thread 3 (I/O)</text>
+
+    <!-- Thread 1 Activity Blocks -->
+    <rect x="130" y="48" width="160" height="26" rx="4" fill="#38bdf8" stroke="#0284c7"/>
+    <text x="210" y="65" fill="#0f172a" font-size="10" font-weight="bold" font-family="monospace" text-anchor="middle">HOLDS GIL (Compute)</text>
+
+    <rect x="290" y="48" width="180" height="26" rx="4" fill="#1e293b" stroke="#f43f5e" stroke-dasharray="2,2"/>
+    <text x="380" y="65" fill="#f43f5e" font-size="10" font-family="sans-serif" text-anchor="middle">Blocked waiting for GIL</text>
+
+    <rect x="470" y="48" width="150" height="26" rx="4" fill="#38bdf8" stroke="#0284c7"/>
+    <text x="545" y="65" fill="#0f172a" font-size="10" font-weight="bold" font-family="monospace" text-anchor="middle">HOLDS GIL (Compute)</text>
+
+    <!-- Thread 2 Activity Blocks -->
+    <rect x="130" y="98" width="160" height="26" rx="4" fill="#1e293b" stroke="#f43f5e" stroke-dasharray="2,2"/>
+    <text x="210" y="115" fill="#f43f5e" font-size="10" font-family="sans-serif" text-anchor="middle">Blocked waiting for GIL</text>
+
+    <rect x="290" y="98" width="180" height="26" rx="4" fill="#34d399" stroke="#059669"/>
+    <text x="380" y="115" fill="#0f172a" font-size="10" font-weight="bold" font-family="monospace" text-anchor="middle">HOLDS GIL (Compute)</text>
+
+    <rect x="470" y="98" width="150" height="26" rx="4" fill="#1e293b" stroke="#f43f5e" stroke-dasharray="2,2"/>
+    <text x="545" y="115" fill="#f43f5e" font-size="10" font-family="sans-serif" text-anchor="middle">Blocked waiting for GIL</text>
+
+    <!-- Thread 3 Activity (I/O releases GIL!) -->
+    <rect x="130" y="148" width="80" height="26" rx="4" fill="#fbbf24" stroke="#d97706"/>
+    <text x="170" y="165" fill="#0f172a" font-size="9" font-weight="bold" font-family="monospace" text-anchor="middle">GIL</text>
+
+    <rect x="210" y="148" width="360" height="26" rx="4" fill="#064e3b" stroke="#34d399"/>
+    <text x="390" y="165" fill="#a7f3d0" font-size="10" font-weight="bold" font-family="sans-serif" text-anchor="middle">GIL RELEASED: Kernel socket / disk / C-extension</text>
+
+    <rect x="570" y="148" width="120" height="26" rx="4" fill="#fbbf24" stroke="#d97706"/>
+    <text x="630" y="165" fill="#0f172a" font-size="9" font-weight="bold" font-family="monospace" text-anchor="middle">RE-ACQUIRES</text>
+
+    <!-- GIL Switch Marker -->
+    <line x1="290" y1="35" x2="290" y2="190" stroke="#f43f5e" stroke-width="1.5" stroke-dasharray="3,3"/>
+    <text x="290" y="205" fill="#f43f5e" font-size="10" font-family="sans-serif" text-anchor="middle">GIL Switch (5ms interval)</text>
+  </g>
+
+  <!-- Bottom Explanatory Box -->
+  <g transform="translate(60, 335)">
+    <rect width="840" height="120" rx="8" fill="#0f172a" stroke="#334155"/>
+    <text x="25" y="26" fill="#38bdf8" font-size="13" font-weight="bold" font-family="sans-serif">Systems Engineering Strategy:</text>
+    <text x="25" y="48" fill="#f43f5e" font-size="11" font-sans-serif font-weight="bold">• CPU-Bound Tasks (e.g. Matrix multiplication, parsing RTL ASTs):</text>
+    <text x="40" y="65" fill="#cbd5e1" font-size="11" font-family="sans-serif">Multi-threading in Python runs SLOWER than single-threaded code due to lock contention overhead! Use <tspan font-family="monospace" fill="#34d399">multiprocessing</tspan> or NumPy/C-extensions.</text>
+    <text x="25" y="85" fill="#34d399" font-size="11" font-sans-serif font-weight="bold">• I/O-Bound Tasks (e.g. Network sockets, file logs, hardware serial ports):</text>
+    <text x="40" y="102" fill="#cbd5e1" font-size="11" font-family="sans-serif">Multi-threading and <tspan font-family="monospace" fill="#38bdf8">asyncio</tspan> excel because Python releases the GIL during OS blocking calls.</text>
+  </g>
+</svg>

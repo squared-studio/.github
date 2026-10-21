@@ -1,12 +1,13 @@
 # Cache States and the MOESI / MESI Coherency Model
 
 ## The Foundations of Cache Line States
+
 To coordinate multiple caches deterministically without continuously broadcasting data or locking entire memory regions, hardware coherency protocols attach metadata bits to every line in a cache. In modern architectures, a cache line typically spans 64 contiguous bytes (512 bits) aligned to a 64-byte boundary.
 
 Every cache tag directory stores not only the physical address tag and data bytes, but also **coherency state bits**. These bits characterize the line along three fundamental orthogonal axes:
 
 1. **Validity:** Does the line contain valid data that the local core can read without generating a bus transaction?
-2. **Exclusivity (Uniqueness):** Is this line guaranteed to exist *only* in this local cache, or do peer caches potentially hold copies of the same physical address?
+2. **Exclusivity (Uniqueness):** Is this line guaranteed to exist _only_ in this local cache, or do peer caches potentially hold copies of the same physical address?
 3. **Dirty Ownership (Memory Consistency):** Has the line been modified locally relative to main memory (DRAM), and is this local cache responsible for eventually writing the line back to memory upon eviction?
 
 ![Cache Line Attributes](images/ch2_cache_line_attributes.svg)
@@ -14,41 +15,47 @@ Every cache tag directory stores not only the physical address tag and data byte
 ---
 
 ## The Five MOESI Cache States
+
 The **MOESI** protocol represents the most comprehensive snooping coherency model in mainstream computer architecture. It extends the classic 4-state **MESI** protocol (Modified, Exclusive, Shared, Invalid) by introducing a fifth state: **Owned (O)**.
 
 The AMBA ACE specification formally maps all coherent master transactions to these five fundamental states:
 
-| State | Name | Valid? | Unique? | Dirty? | Memory Consistent? | Writeback Responsibility |
-| :---: | :--- | :---: | :---: | :---: | :---: | :--- |
-| **M** | **Modified** | **Yes** | **Yes** (Unique) | **Yes** (Dirty) | **No** (Stale DRAM) | **Yes** (Must write back upon eviction) |
-| **O** | **Owned** | **Yes** | **No** (Shared) | **Yes** (Dirty) | **No** (Stale DRAM) | **Yes** (Responsible for writing back to DRAM) |
-| **E** | **Exclusive** | **Yes** | **Yes** (Unique) | **No** (Clean) | **Yes** (DRAM is identical) | **No** (May be silently discarded upon eviction) |
-| **S** | **Shared** | **Yes** | **No** (Shared) | **No** (Clean or non-owning) | **Depends** (May be clean or stale DRAM) | **No** (Does not write back to DRAM upon eviction) |
-| **I** | **Invalid** | **No** | **N/A** | **N/A** | **N/A** | **No** (Line contains no valid data) |
+| State | Name          | Valid?  |     Unique?      |            Dirty?            |            Memory Consistent?            | Writeback Responsibility                           |
+| :---: | :------------ | :-----: | :--------------: | :--------------------------: | :--------------------------------------: | :------------------------------------------------- |
+| **M** | **Modified**  | **Yes** | **Yes** (Unique) |       **Yes** (Dirty)        |           **No** (Stale DRAM)            | **Yes** (Must write back upon eviction)            |
+| **O** | **Owned**     | **Yes** | **No** (Shared)  |       **Yes** (Dirty)        |           **No** (Stale DRAM)            | **Yes** (Responsible for writing back to DRAM)     |
+| **E** | **Exclusive** | **Yes** | **Yes** (Unique) |        **No** (Clean)        |       **Yes** (DRAM is identical)        | **No** (May be silently discarded upon eviction)   |
+| **S** | **Shared**    | **Yes** | **No** (Shared)  | **No** (Clean or non-owning) | **Depends** (May be clean or stale DRAM) | **No** (Does not write back to DRAM upon eviction) |
+| **I** | **Invalid**   | **No**  |     **N/A**      |           **N/A**            |                 **N/A**                  | **No** (Line contains no valid data)               |
 
 ### State-by-State Architectural Breakdown
 
 ### Invalid (I)
+
 - The cache line is empty, unallocated, or has been invalidated by a peer write.
 - The local processor cannot read or write this line. Any load or store instruction hitting an Invalid line causes a **cache miss** and triggers an external bus transaction.
 
 ### Exclusive (E)
+
 - The cache line is valid and exists **only** in this local cache.
 - The data is identical to main memory (Clean).
 - **Key Advantage:** The local processor can perform a store instruction to this line immediately without notifying the interconnect or snooping other cores, transitioning silently from `Exclusive` to `Modified`. This saves bus bandwidth during private memory operations.
 
 ### Modified (M)
+
 - The cache line is valid and exists **only** in this local cache (Unique).
 - The data has been modified locally and is **dirty** (main memory contains stale data).
 - The local processor has exclusive ownership. If another master requests this address, this core must supply the modified data and/or push it to memory.
 
 ### Shared (S)
+
 - The cache line is valid and may be present in one or more other peer caches.
 - The local core can freely read this line without bus transactions.
 - The local core **cannot write** to this line directly. To execute a store, it must issue an invalidation transaction across the bus to force all peer caches to transition their copies to `Invalid`.
 - In MESI, a line in `Shared` is always clean relative to memory. In MOESI, a line in `Shared` may be dirty relative to DRAM if another core currently holds the line in the `Owned` state!
 
 ### Owned (O)
+
 - The cache line is valid and shared among multiple caches, but it is **dirty** with respect to main memory.
 - Exactly **one** cache in the entire SoC holds the line in the `Owned` state; all other caches caching this address hold it in the `Shared` state.
 - The `Owner` is the sole designated custodian of the dirty line. It is responsible for supplying data to peer snoop requests and performing the eventual writeback to DRAM when evicting the line.
@@ -56,7 +63,9 @@ The AMBA ACE specification formally maps all coherent master transactions to the
 ---
 
 ## MOESI State Transition Dynamics
+
 Cache line state transitions are triggered by two distinct classes of events:
+
 1. **Local Core Events:** Load (Read) or Store (Write) operations executed by the processor core attached to this cache.
 2. **External Snoop Events:** Inbound snoop requests received from the interconnect via the ACE snoop channels (`AC`), initiated by peer masters.
 
@@ -66,17 +75,18 @@ Cache line state transitions are triggered by two distinct classes of events:
 
 The table below details state transitions for both local processor actions and external snoop requests:
 
-| Current State | Local Load (Read) | Local Store (Write) | External Snoop Read (`ReadShared`) | External Snoop Invalidate (`CleanInvalid` / `MakeUnique`) | Local Eviction |
-| :---: | :--- | :--- | :--- | :--- | :--- |
-| **I** | Miss $\rightarrow$ Issue `ReadShared` / `ReadOnce` $\rightarrow$ **E** or **S** | Miss $\rightarrow$ Issue `ReadUnique` $\rightarrow$ **M** | N/A (Ignore snoop) | N/A (Ignore snoop) | No action needed |
-| **S** | Hit $\rightarrow$ Remain in **S** | Hit $\rightarrow$ Issue `CleanUnique` $\rightarrow$ **M** | Hit $\rightarrow$ Remain in **S** (Peer reads line) | Invalidate $\rightarrow$ **I** | Silent discard $\rightarrow$ **I** |
-| **E** | Hit $\rightarrow$ Remain in **E** | Hit $\rightarrow$ Silent upgrade $\rightarrow$ **M** (No bus transaction!) | Hit $\rightarrow$ Transition to **S** (Supply data to peer) | Invalidate $\rightarrow$ **I** | Silent discard $\rightarrow$ **I** |
-| **O** | Hit $\rightarrow$ Remain in **O** | Hit $\rightarrow$ Issue `CleanUnique` $\rightarrow$ **M** (Invalidate peers) | Hit $\rightarrow$ Remain in **O** (Supply data on CD channel) | Invalidate $\rightarrow$ Writeback to memory $\rightarrow$ **I** | Must Writeback $\rightarrow$ **I** |
-| **M** | Hit $\rightarrow$ Remain in **M** | Hit $\rightarrow$ Remain in **M** | Hit $\rightarrow$ Transition to **O** (MOESI) or **S** + writeback (MESI) | Invalidate $\rightarrow$ Writeback to memory $\rightarrow$ **I** | Must Writeback $\rightarrow$ **I** |
+| Current State | Local Load (Read)                                                               | Local Store (Write)                                                          | External Snoop Read (`ReadShared`)                                        | External Snoop Invalidate (`CleanInvalid` / `MakeUnique`)        | Local Eviction                     |
+| :-----------: | :------------------------------------------------------------------------------ | :--------------------------------------------------------------------------- | :------------------------------------------------------------------------ | :--------------------------------------------------------------- | :--------------------------------- |
+|     **I**     | Miss $\rightarrow$ Issue `ReadShared` / `ReadOnce` $\rightarrow$ **E** or **S** | Miss $\rightarrow$ Issue `ReadUnique` $\rightarrow$ **M**                    | N/A (Ignore snoop)                                                        | N/A (Ignore snoop)                                               | No action needed                   |
+|     **S**     | Hit $\rightarrow$ Remain in **S**                                               | Hit $\rightarrow$ Issue `CleanUnique` $\rightarrow$ **M**                    | Hit $\rightarrow$ Remain in **S** (Peer reads line)                       | Invalidate $\rightarrow$ **I**                                   | Silent discard $\rightarrow$ **I** |
+|     **E**     | Hit $\rightarrow$ Remain in **E**                                               | Hit $\rightarrow$ Silent upgrade $\rightarrow$ **M** (No bus transaction!)   | Hit $\rightarrow$ Transition to **S** (Supply data to peer)               | Invalidate $\rightarrow$ **I**                                   | Silent discard $\rightarrow$ **I** |
+|     **O**     | Hit $\rightarrow$ Remain in **O**                                               | Hit $\rightarrow$ Issue `CleanUnique` $\rightarrow$ **M** (Invalidate peers) | Hit $\rightarrow$ Remain in **O** (Supply data on CD channel)             | Invalidate $\rightarrow$ Writeback to memory $\rightarrow$ **I** | Must Writeback $\rightarrow$ **I** |
+|     **M**     | Hit $\rightarrow$ Remain in **M**                                               | Hit $\rightarrow$ Remain in **M**                                            | Hit $\rightarrow$ Transition to **O** (MOESI) or **S** + writeback (MESI) | Invalidate $\rightarrow$ Writeback to memory $\rightarrow$ **I** | Must Writeback $\rightarrow$ **I** |
 
 ---
 
 ## The Critical Advantage of MOESI Over MESI
+
 To appreciate why high-performance ARM architectures adopt MOESI, consider what occurs when Core 0 holds a line in the `Modified` state, and Core 1 attempts to read that same line:
 
 ```
@@ -110,6 +120,7 @@ By allowing dirty data to be shared directly between peer caches without forcing
 ---
 
 ## State Invariants in Coherent Systems
+
 For any coherent address $A$ across the entire multi-core system, a set of fundamental **protocol invariants** must be upheld at all times:
 
 1. **Single-Writer Invariant (SWMR - Single Writer, Multiple Readers):**
@@ -127,6 +138,7 @@ For any coherent address $A$ across the entire multi-core system, a set of funda
 ---
 
 ## Chapter Summary
+
 - Cache lines are defined by three orthogonal attributes: **Validity**, **Uniqueness**, and **Dirty Ownership**.
 - The **MOESI** model defines five discrete states: Modified, Owned, Exclusive, Shared, and Invalid.
 - The **Owned (O)** state permits sharing of dirty data between multiple caches without forcing an immediate writeback to main memory.
@@ -164,4 +176,3 @@ For any coherent address $A$ across the entire multi-core system, a set of funda
 ---
 
 ##### Copyright (c) 2026 squared-studio
-

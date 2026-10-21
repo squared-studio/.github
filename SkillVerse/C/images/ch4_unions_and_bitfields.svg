@@ -1,0 +1,96 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 440" width="100%" height="100%">
+  <defs>
+    <style>
+      .bg { fill: #0b1120; }
+      .card { fill: #131d33; stroke: #1e293b; stroke-width: 1.5; rx: 10; }
+      .title { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 19px; fill: #f8fafc; }
+      .sec-title { font-family: 'Inter', system-ui, sans-serif; font-weight: 600; font-size: 14px; fill: #38bdf8; }
+      .label { font-family: 'Inter', system-ui, sans-serif; font-size: 12px; fill: #cbd5e1; }
+      .sublabel { font-family: 'Inter', system-ui, sans-serif; font-size: 11px; fill: #94a3b8; }
+      .code-txt { font-family: 'JetBrains Mono', Consolas, monospace; font-size: 12px; fill: #34d399; font-weight: 600; }
+      .bitfield-cell { fill: #1e293b; stroke: #38bdf8; stroke-width: 1.5; }
+    </style>
+  </defs>
+
+  <rect width="960" height="440" class="bg" rx="14"/>
+  <text x="480" y="36" text-anchor="middle" class="title">C Unions (Shared Memory) &amp; Hardware Register Bitfields</text>
+
+  <!-- Left: Union Shared Memory Overlay -->
+  <g transform="translate(25, 55)">
+    <rect width="440" height="360" class="card"/>
+    <text x="20" y="28" class="sec-title">1. Union Memory Sharing (Type Punning)</text>
+
+    <!-- Code Box -->
+    <rect x="15" y="42" width="410" height="85" rx="6" fill="#0b1120" stroke="#1e293b"/>
+    <text x="25" y="64" class="code-txt">union DataWord {</text>
+    <text x="45" y="82" class="code-txt">uint32_t as_uint32;  // 4 Bytes</text>
+    <text x="45" y="100" class="code-txt">uint8_t  bytes[4];   // 4 Bytes</text>
+    <text x="220" y="82" class="code-txt">float as_float;</text>
+    <text x="220" y="100" class="code-txt">}; // sizeof == 4 Bytes</text>
+
+    <!-- Memory Overlay Graphic -->
+    <g transform="translate(25, 150)">
+      <!-- 4 Bytes block -->
+      <rect x="0" y="0" width="380" height="30" fill="#38bdf8" fill-opacity="0.3" stroke="#38bdf8" stroke-width="2"/>
+      <text x="190" y="20" text-anchor="middle" class="code-txt" fill="#38bdf8">as_uint32 (32-Bit Word)</text>
+
+      <!-- 4 Individual Bytes -->
+      <rect x="0" y="35" width="90" height="30" fill="#34d399" fill-opacity="0.3" stroke="#34d399" stroke-width="1.8"/>
+      <text x="45" y="55" text-anchor="middle" class="code-txt" fill="#34d399">bytes[0]</text>
+      <rect x="95" y="35" width="90" height="30" fill="#34d399" fill-opacity="0.3" stroke="#34d399" stroke-width="1.8"/>
+      <text x="140" y="55" text-anchor="middle" class="code-txt" fill="#34d399">bytes[1]</text>
+      <rect x="190" y="35" width="90" height="30" fill="#34d399" fill-opacity="0.3" stroke="#34d399" stroke-width="1.8"/>
+      <text x="235" y="55" text-anchor="middle" class="code-txt" fill="#34d399">bytes[2]</text>
+      <rect x="285" y="35" width="95" height="30" fill="#34d399" fill-opacity="0.3" stroke="#34d399" stroke-width="1.8"/>
+      <text x="332" y="55" text-anchor="middle" class="code-txt" fill="#34d399">bytes[3]</text>
+    </g>
+
+    <rect x="15" y="245" width="410" height="95" rx="6" fill="#0b1120" stroke="#1e293b"/>
+    <text x="25" y="268" class="code-txt">All union members share the SAME base address!</text>
+    <text x="25" y="288" class="sublabel">Modifying bytes[0] instantly changes the lower 8 bits</text>
+    <text x="25" y="304" class="sublabel">of as_uint32 without requiring manual bit shifts.</text>
+    <text x="25" y="324" class="sublabel" style="fill:#fbbf24;">Essential for hardware serialization &amp; network packets.</text>
+  </g>
+
+  <!-- Right: Hardware Register Bitfields -->
+  <g transform="translate(485, 55)">
+    <rect width="450" height="360" class="card"/>
+    <text x="20" y="28" class="sec-title">2. Hardware Register Bitfields</text>
+
+    <!-- Code Snippet -->
+    <rect x="15" y="42" width="420" height="110" rx="6" fill="#0b1120" stroke="#1e293b"/>
+    <text x="25" y="62" class="code-txt">struct UART_Control {</text>
+    <text x="45" y="80" class="code-txt">uint32_t enable    : 1;  // Bit 0</text>
+    <text x="45" y="98" class="code-txt">uint32_t parity    : 2;  // Bits 1-2</text>
+    <text x="45" y="116" class="code-txt">uint32_t baud_div  : 16; // Bits 3-18</text>
+    <text x="45" y="134" class="code-txt">uint32_t reserved  : 13; // Bits 19-31</text>
+    <text x="25" y="148" class="code-txt">};</text>
+
+    <!-- Bitfield Strip -->
+    <g transform="translate(20, 175)">
+      <rect x="0" y="0" width="160" height="40" class="bitfield-cell" fill="#64748b" fill-opacity="0.3"/>
+      <text x="80" y="25" text-anchor="middle" class="sublabel">Reserved (13b)</text>
+
+      <rect x="160" y="0" width="160" height="40" class="bitfield-cell" fill="#38bdf8" fill-opacity="0.3"/>
+      <text x="240" y="25" text-anchor="middle" class="code-txt" fill="#38bdf8">baud_div (16b)</text>
+
+      <rect x="320" y="0" width="45" height="40" class="bitfield-cell" fill="#fbbf24" fill-opacity="0.3"/>
+      <text x="342" y="25" text-anchor="middle" class="code-txt" fill="#fbbf24" style="font-size:10px;">par(2)</text>
+
+      <rect x="365" y="0" width="45" height="40" class="bitfield-cell" fill="#34d399" fill-opacity="0.3"/>
+      <text x="387" y="25" text-anchor="middle" class="code-txt" fill="#34d399" style="font-size:10px;">en(1)</text>
+
+      <!-- Bit index numbers -->
+      <text x="0" y="-8" class="sublabel">31</text>
+      <text x="160" y="-8" class="sublabel">18</text>
+      <text x="320" y="-8" class="sublabel">2</text>
+      <text x="365" y="-8" class="sublabel">1</text>
+      <text x="405" y="-8" class="sublabel">0</text>
+    </g>
+
+    <rect x="15" y="245" width="420" height="95" rx="6" fill="#0b1120" stroke="#1e293b"/>
+    <text x="25" y="268" class="code-txt">Clean member syntax without manual bitmasking:</text>
+    <text x="25" y="290" class="code-txt" fill="#34d399">uart_reg-&gt;enable = 1;     // Compiler handles shifts!</text>
+    <text x="25" y="310" class="code-txt" fill="#38bdf8">uart_reg-&gt;baud_div = 115200;</text>
+  </g>
+</svg>

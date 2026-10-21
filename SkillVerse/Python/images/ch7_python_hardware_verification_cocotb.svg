@@ -1,0 +1,88 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 480" width="100%" height="100%">
+  <rect width="960" height="480" fill="#0b1120" rx="8"/>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8"/>
+    </marker>
+    <marker id="arrow-green" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#34d399"/>
+    </marker>
+  </defs>
+
+  <text x="480" y="38" fill="#f8fafc" font-size="20" font-weight="bold" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" text-anchor="middle">Python Hardware Verification Architecture (Cocotb &amp; PyUVM)</text>
+  <text x="480" y="62" fill="#94a3b8" font-size="13" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" text-anchor="middle">Bridging Python coroutines to RTL simulators via C++ GPI and VPI / VHPI / FLI interfaces</text>
+
+  <!-- Left: Python Testbench -->
+  <g transform="translate(50, 100)">
+    <rect width="260" height="230" rx="8" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+    <rect width="260" height="32" rx="8" fill="#0369a1"/>
+    <text x="130" y="21" fill="#ffffff" font-size="12" font-weight="bold" font-family="sans-serif" text-anchor="middle">Python Testbench (Cocotb / PyUVM)</text>
+
+    <!-- Code Block -->
+    <rect x="15" y="48" width="230" height="110" rx="4" fill="#0f172a" stroke="#334155"/>
+    <text x="25" y="68" fill="#fbbf24" font-size="10" font-family="monospace">@cocotb.test()</text>
+    <text x="25" y="85" fill="#f8fafc" font-size="10" font-family="monospace">async def test_axi_write(dut):</text>
+    <text x="35" y="102" fill="#34d399" font-size="10" font-family="monospace">dut.awvalid.value = 1</text>
+    <text x="35" y="119" fill="#34d399" font-size="10" font-family="monospace">dut.awaddr.value = 0x1000</text>
+    <text x="35" y="136" fill="#38bdf8" font-size="10" font-family="monospace">await RisingEdge(dut.clk)</text>
+    <text x="35" y="150" fill="#cbd5e1" font-size="9" font-family="monospace">assert dut.bresp.value == 0</text>
+
+    <text x="130" y="180" fill="#38bdf8" font-size="11" font-weight="bold" font-family="sans-serif" text-anchor="middle">Python Async Coroutines</text>
+    <text x="130" y="198" fill="#94a3b8" font-size="9" font-family="sans-serif" text-anchor="middle">Expresses verification sequences,</text>
+    <text x="130" y="210" fill="#94a3b8" font-size="9" font-family="sans-serif" text-anchor="middle">scoreboards &amp; functional coverage</text>
+  </g>
+
+  <!-- Middle: GPI Bridge (C++) -->
+  <g transform="translate(345, 100)">
+    <rect width="260" height="230" rx="8" fill="#1e293b" stroke="#fbbf24" stroke-width="2"/>
+    <rect width="260" height="32" rx="8" fill="#b45309"/>
+    <text x="130" y="21" fill="#ffffff" font-size="12" font-weight="bold" font-family="sans-serif" text-anchor="middle">General Purpose Interface (GPI)</text>
+
+    <rect x="20" y="48" width="220" height="42" rx="4" fill="#0f172a" stroke="#fbbf24"/>
+    <text x="130" y="68" fill="#fbbf24" font-size="11" font-weight="bold" font-family="sans-serif" text-anchor="middle">C++ GPI Dynamic Library</text>
+    <text x="130" y="82" fill="#cbd5e1" font-size="9" font-family="sans-serif" text-anchor="middle">libcocotbutils.so</text>
+
+    <text x="130" y="112" fill="#94a3b8" font-size="10" font-family="sans-serif" text-anchor="middle">Simulator Standard Abstraction:</text>
+
+    <rect x="20" y="125" width="220" height="26" rx="3" fill="#334155"/>
+    <text x="130" y="142" fill="#fff" font-size="10" font-family="monospace" text-anchor="middle">VPI (Verilog / SystemVerilog)</text>
+
+    <rect x="20" y="155" width="220" height="26" rx="3" fill="#334155"/>
+    <text x="130" y="172" fill="#fff" font-size="10" font-family="monospace" text-anchor="middle">VHPI / FLI (VHDL)</text>
+
+    <text x="130" y="205" fill="#a7f3d0" font-size="9" font-family="sans-serif" text-anchor="middle">Zero-delay callback scheduler</text>
+    <text x="130" y="218" fill="#94a3b8" font-size="9" font-family="sans-serif" text-anchor="middle">Synchronizes time step with HDL engine</text>
+  </g>
+
+  <!-- Right: RTL Simulator -->
+  <g transform="translate(640, 100)">
+    <rect width="270" height="230" rx="8" fill="#1e293b" stroke="#34d399" stroke-width="2"/>
+    <rect width="270" height="32" rx="8" fill="#047857"/>
+    <text x="135" y="21" fill="#ffffff" font-size="12" font-weight="bold" font-family="sans-serif" text-anchor="middle">HDL / RTL Simulator Engine</text>
+
+    <!-- Verilog DUT Box -->
+    <rect x="15" y="48" width="240" height="90" rx="4" fill="#064e3b" stroke="#34d399"/>
+    <text x="25" y="68" fill="#a7f3d0" font-size="10" font-family="monospace">module axi_slave_controller (</text>
+    <text x="35" y="85" fill="#fde047" font-size="10" font-family="monospace">input  wire clk, rst_n,</text>
+    <text x="35" y="102" fill="#fde047" font-size="10" font-family="monospace">input  wire [31:0] awaddr,</text>
+    <text x="35" y="120" fill="#a7f3d0" font-size="10" font-family="monospace">... );</text>
+
+    <text x="135" y="165" fill="#34d399" font-size="11" font-weight="bold" font-family="sans-serif" text-anchor="middle">Supported Simulators:</text>
+    <text x="135" y="185" fill="#e2e8f0" font-size="10" font-family="sans-serif" text-anchor="middle">Icarus Verilog, Verilator, Synopsys VCS,</text>
+    <text x="135" y="202" fill="#e2e8f0" font-size="10" font-family="sans-serif" text-anchor="middle">Siemens Questa, Cadence Xcelium</text>
+    <text x="135" y="220" fill="#94a3b8" font-size="9" font-family="sans-serif" text-anchor="middle">Native C-level signal access</text>
+  </g>
+
+  <!-- Connectors -->
+  <path d="M 310 215 L 340 215" stroke="#38bdf8" stroke-width="2" marker-end="url(#arrow)"/>
+  <path d="M 605 215 L 635 215" stroke="#34d399" stroke-width="2" marker-end="url(#arrow-green)"/>
+
+  <!-- Bottom Details -->
+  <g transform="translate(50, 350)">
+    <rect width="860" height="105" rx="8" fill="#0f172a" stroke="#334155"/>
+    <text x="25" y="26" fill="#fbbf24" font-size="13" font-weight="bold" font-family="sans-serif">Why Hardware Engineers Choose Python for Verification:</text>
+    <text x="25" y="48" fill="#e2e8f0" font-size="11" font-family="sans-serif">• <tspan fill="#34d399" font-weight="bold">No SystemVerilog License Overhead</tspan>: Write advanced object-oriented testbenches in pure Python with standard open-source tools.</text>
+    <text x="25" y="68" fill="#e2e8f0" font-size="11" font-family="sans-serif">• <tspan fill="#38bdf8" font-weight="bold">Massive Python Ecosystem</tspan>: Directly connect your RTL simulation to NumPy, PyTorch (AI model verification), and Matplotlib (waveform analysis).</text>
+    <text x="25" y="88" fill="#94a3b8" font-size="10" font-family="sans-serif">• Seamless co-simulation: The Python testbench runs inside the same process memory as the simulator, eliminating slow socket IPC.</text>
+  </g>
+</svg>

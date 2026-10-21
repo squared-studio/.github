@@ -1,0 +1,101 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 440" width="100%" height="100%">
+  <defs>
+    <style>
+      .bg { fill: #0b1120; }
+      .card { fill: #131d33; stroke: #1e293b; stroke-width: 1.5; rx: 10; }
+      .title { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 19px; fill: #f8fafc; }
+      .sec-title { font-family: 'Inter', system-ui, sans-serif; font-weight: 600; font-size: 14px; fill: #38bdf8; }
+      .label { font-family: 'Inter', system-ui, sans-serif; font-size: 12px; fill: #cbd5e1; }
+      .sublabel { font-family: 'Inter', system-ui, sans-serif; font-size: 11px; fill: #94a3b8; }
+      .code-txt { font-family: 'JetBrains Mono', Consolas, monospace; font-size: 12px; fill: #34d399; font-weight: 600; }
+      .hdr { font-family: 'Inter', system-ui, sans-serif; font-size: 11px; font-weight: bold; fill: #38bdf8; text-transform: uppercase; }
+    </style>
+  </defs>
+
+  <rect width="960" height="440" class="bg" rx="14"/>
+  <text x="480" y="36" text-anchor="middle" class="title">C Storage Classes, Variable Scope, Lifetime &amp; Linkage</text>
+
+  <!-- Table Card -->
+  <g transform="translate(25, 55)">
+    <rect width="910" height="235" class="card"/>
+    <text x="20" y="28" class="sec-title">Storage Classes Comparison Matrix</text>
+
+    <!-- Table Header -->
+    <rect x="15" y="42" width="880" height="26" fill="#0b1120" rx="4"/>
+    <text x="25" y="59" class="hdr">Storage Class</text>
+    <text x="145" y="59" class="hdr">Storage Location</text>
+    <text x="280" y="59" class="hdr">Scope (Visibility)</text>
+    <text x="440" y="59" class="hdr">Lifetime (Duration)</text>
+    <text x="600" y="59" class="hdr">Linkage</text>
+    <text x="730" y="59" class="hdr">Initial Default</text>
+
+    <!-- Rows -->
+    <g transform="translate(15, 78)">
+      <!-- auto -->
+      <text x="10" y="16" class="code-txt">auto (default)</text>
+      <text x="130" y="16" class="sublabel">Stack</text>
+      <text x="265" y="16" class="sublabel">Local (Block { ... })</text>
+      <text x="425" y="16" class="sublabel">Function execution</text>
+      <text x="585" y="16" class="sublabel">None</text>
+      <text x="715" y="16" class="sublabel" fill="#f43f5e">Garbage / Undefined</text>
+
+      <line x1="10" y1="28" x2="870" y2="28" stroke="#1e293b"/>
+
+      <!-- register -->
+      <text x="10" y="46" class="code-txt">register</text>
+      <text x="130" y="46" class="sublabel">CPU Register / Stack</text>
+      <text x="265" y="46" class="sublabel">Local (Block)</text>
+      <text x="425" y="46" class="sublabel">Function execution</text>
+      <text x="585" y="46" class="sublabel">None (&amp; illegal)</text>
+      <text x="715" y="46" class="sublabel" fill="#f43f5e">Garbage</text>
+
+      <line x1="10" y1="58" x2="870" y2="58" stroke="#1e293b"/>
+
+      <!-- static local -->
+      <text x="10" y="76" class="code-txt" fill="#fbbf24">static (local)</text>
+      <text x="130" y="76" class="sublabel" fill="#fbbf24">.data / .bss</text>
+      <text x="265" y="76" class="sublabel">Local (Block)</text>
+      <text x="425" y="76" class="sublabel" fill="#34d399">Entire Process</text>
+      <text x="585" y="76" class="sublabel">None</text>
+      <text x="715" y="76" class="sublabel" fill="#34d399">Zero (0)</text>
+
+      <line x1="10" y1="88" x2="870" y2="88" stroke="#1e293b"/>
+
+      <!-- static global -->
+      <text x="10" y="106" class="code-txt" fill="#38bdf8">static (file)</text>
+      <text x="130" y="106" class="sublabel">.data / .bss</text>
+      <text x="265" y="106" class="sublabel">Current File (.c only)</text>
+      <text x="425" y="106" class="sublabel" fill="#34d399">Entire Process</text>
+      <text x="585" y="106" class="sublabel" fill="#38bdf8">Internal Linkage</text>
+      <text x="715" y="106" class="sublabel" fill="#34d399">Zero (0)</text>
+
+      <line x1="10" y1="118" x2="870" y2="118" stroke="#1e293b"/>
+
+      <!-- extern global -->
+      <text x="10" y="136" class="code-txt" fill="#34d399">extern (global)</text>
+      <text x="130" y="136" class="sublabel">.data / .bss</text>
+      <text x="265" y="136" class="sublabel">Global (All modules)</text>
+      <text x="425" y="136" class="sublabel" fill="#34d399">Entire Process</text>
+      <text x="585" y="136" class="sublabel" fill="#34d399">External Linkage</text>
+      <text x="715" y="136" class="sublabel" fill="#34d399">Zero (0)</text>
+    </g>
+  </g>
+
+  <!-- Bottom: Critical Rules Callouts -->
+  <g transform="translate(25, 305)">
+    <rect width="445" height="110" class="card"/>
+    <text x="20" y="24" class="sec-title">Encapsulation with static in C</text>
+    <text x="20" y="46" class="sublabel">Marking functions or global variables as static limits their scope</text>
+    <text x="20" y="62" class="sublabel">strictly to their translation unit, preventing global namespace</text>
+    <text x="20" y="78" class="sublabel">pollution and linking collisions across large codebases.</text>
+    <text x="20" y="98" class="code-txt" style="font-size:11px;">static int private_counter = 0;</text>
+  </g>
+
+  <g transform="translate(490, 305)">
+    <rect width="445" height="110" class="card"/>
+    <text x="20" y="24" class="sec-title" style="fill:#f43f5e;">The volatile Qualifier</text>
+    <text x="20" y="46" class="sublabel">Tells compiler: variable can change unexpectedly (ISR, hardware MMIO).</text>
+    <text x="20" y="62" class="sublabel">Prevents compiler from optimizing away reads or caching value in register!</text>
+    <text x="20" y="82" class="code-txt" fill="#f43f5e" style="font-size:11px;">volatile uint32_t *const UART_STATUS = (uint32_t*)0x40001000;</text>
+  </g>
+</svg>

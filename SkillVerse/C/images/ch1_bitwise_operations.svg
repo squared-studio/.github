@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 440" width="100%" height="100%">
+  <defs>
+    <style>
+      .bg { fill: #0b1120; }
+      .card { fill: #131d33; stroke: #1e293b; stroke-width: 1.5; rx: 10; }
+      .title { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 19px; fill: #f8fafc; }
+      .sec-title { font-family: 'Inter', system-ui, sans-serif; font-weight: 600; font-size: 14px; fill: #38bdf8; }
+      .label { font-family: 'Inter', system-ui, sans-serif; font-size: 12px; fill: #cbd5e1; }
+      .sublabel { font-family: 'Inter', system-ui, sans-serif; font-size: 11px; fill: #94a3b8; }
+      .code-txt { font-family: 'JetBrains Mono', Consolas, monospace; font-size: 12px; fill: #34d399; font-weight: 600; }
+    </style>
+  </defs>
+
+  <rect width="960" height="440" class="bg" rx="14"/>
+  <text x="480" y="36" text-anchor="middle" class="title">C Bitwise Operators &amp; Low-Level Hardware Bitmasking Idioms</text>
+
+  <!-- Panel 1: Operators Reference -->
+  <g transform="translate(25, 55)">
+    <rect width="360" height="360" class="card"/>
+    <text x="20" y="28" class="sec-title">C Bitwise Operators</text>
+
+    <rect x="15" y="42" width="330" height="295" rx="6" fill="#0b1120" stroke="#1e293b"/>
+    <g transform="translate(25, 65)">
+      <text x="0" y="0" class="code-txt" fill="#38bdf8">&amp; (Bitwise AND)</text>
+      <text x="0" y="18" class="sublabel">1 &amp; 1 = 1; else 0 (Used to clear bits / mask)</text>
+
+      <text x="0" y="48" class="code-txt" fill="#38bdf8">| (Bitwise OR)</text>
+      <text x="0" y="66" class="sublabel">0 | 0 = 0; else 1 (Used to set bits to 1)</text>
+
+      <text x="0" y="96" class="code-txt" fill="#38bdf8">^ (Bitwise XOR)</text>
+      <text x="0" y="114" class="sublabel">Different bits = 1; Identical = 0 (Toggle)</text>
+
+      <text x="0" y="144" class="code-txt" fill="#38bdf8">~ (Bitwise NOT / Inversion)</text>
+      <text x="0" y="162" class="sublabel">Flips every bit (0→1, 1→0, ones' complement)</text>
+
+      <text x="0" y="192" class="code-txt" fill="#fbbf24">&lt;&lt; (Left Shift: x &lt;&lt; n)</text>
+      <text x="0" y="210" class="sublabel">Shifts bits left by n; multiplies by 2ⁿ</text>
+
+      <text x="0" y="238" class="code-txt" fill="#fbbf24">&gt;&gt; (Right Shift: x &gt;&gt; n)</text>
+      <text x="0" y="256" class="sublabel">Shifts bits right by n; divides by 2ⁿ</text>
+    </g>
+  </g>
+
+  <!-- Panel 2: Register Manipulation Idioms -->
+  <g transform="translate(405, 55)">
+    <rect width="530" height="360" class="card"/>
+    <text x="20" y="28" class="sec-title">Essential Embedded Bit Manipulation Patterns</text>
+
+    <!-- Idiom 1: Set Bit -->
+    <rect x="15" y="42" width="500" height="65" rx="6" fill="#0b1120" stroke="#1e293b"/>
+    <text x="25" y="64" class="code-txt" fill="#34d399">1. Set Bit n to 1 (Bitwise OR with 1U &lt;&lt; n):</text>
+    <text x="25" y="85" class="code-txt">REG |= (1U &lt;&lt; 3);   // Sets bit 3 to 1 without touching others</text>
+
+    <!-- Idiom 2: Clear Bit -->
+    <rect x="15" y="115" width="500" height="65" rx="6" fill="#0b1120" stroke="#1e293b"/>
+    <text x="25" y="137" class="code-txt" fill="#f43f5e">2. Clear Bit n to 0 (Bitwise AND with ~(1U &lt;&lt; n)):</text>
+    <text x="25" y="158" class="code-txt">REG &amp;= ~(1U &lt;&lt; 3);  // Forces bit 3 to 0</text>
+
+    <!-- Idiom 3: Toggle Bit -->
+    <rect x="15" y="188" width="500" height="65" rx="6" fill="#0b1120" stroke="#1e293b"/>
+    <text x="25" y="210" class="code-txt" fill="#fbbf24">3. Toggle Bit n (Bitwise XOR with 1U &lt;&lt; n):</text>
+    <text x="25" y="231" class="code-txt">REG ^= (1U &lt;&lt; 3);   // Inverts bit 3 (1→0 or 0→1)</text>
+
+    <!-- Idiom 4: Test Bit -->
+    <rect x="15" y="261" width="500" height="75" rx="6" fill="#0b1120" stroke="#1e293b"/>
+    <text x="25" y="283" class="code-txt" fill="#38bdf8">4. Test / Check Bit n:</text>
+    <text x="25" y="304" class="code-txt">if (REG &amp; (1U &lt;&lt; 3)) { /* Bit is 1 (Active) */ }</text>
+    <text x="25" y="322" class="sublabel">Use unsigned literal (1U &lt;&lt; n) to prevent signed integer overflow UB!</text>
+  </g>
+</svg>

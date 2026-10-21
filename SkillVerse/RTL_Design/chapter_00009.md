@@ -5,6 +5,7 @@ Writing RTL is only the first step in creating hardware. Logic synthesis and phy
 ## Learning Goals
 
 After completing this chapter, you should be able to:
+
 - Explain the four stages of logic synthesis: **Parsing/Elaboration**, **Technology-Independent Optimization**, **Technology Mapping**, and **Gate-Level Optimization**.
 - Write and interpret industry-standard **Synopsys Design Constraints (SDC)** for clock definitions, I/O delays, false paths, and multi-cycle paths.
 - Perform **Static Timing Analysis (STA)**, calculating Data Arrival Time, Data Required Time, and Setup/Hold Slack.
@@ -28,6 +29,7 @@ Synthesis tools are optimization engines driven by cost functions. Without const
 ### Essential SDC Commands with Examples
 
 #### Clock Definition
+
 ```tcl
 # Define a 200 MHz system clock with 50% duty cycle on port 'sys_clk'
 create_clock -name sys_clk -period 5.0 [get_ports sys_clk]
@@ -37,6 +39,7 @@ set_clock_uncertainty 0.150 [get_clocks sys_clk]
 ```
 
 #### Input and Output Delays
+
 ```tcl
 # Data arrives up to 1.5 ns after the external clock edge
 set_input_delay -clock sys_clk -max 1.5 [get_ports data_in[*]]
@@ -46,6 +49,7 @@ set_output_delay -clock sys_clk -max 1.0 [get_ports data_out[*]]
 ```
 
 #### Timing Exceptions (False Paths and Multi-Cycle Paths)
+
 ```tcl
 # Treat asynchronous reset release or cross-domain signals as false paths (ignored by STA)
 set_false_path -from [get_ports rst_n_async]
@@ -64,6 +68,7 @@ Static Timing Analysis verifies that every register-to-register, input-to-regist
 ![Static Timing Analysis Setup Slack](images/ch9_sta_slack.svg)
 
 ### Example Timing Report Interpretation
+
 ```
   Path 1: MET (Setup Check)
   Endpoint: sub_block/acc_q_reg[7]/D (rising edge-triggered flip-flop clocked by sys_clk)
@@ -106,6 +111,7 @@ Once logic synthesis outputs a gate netlist, the design moves into physical back
 Synthesis tools can only optimize what your code permits. Certain RTL patterns unintentionally restrict the tool:
 
 ### Resource Sharing
+
 If an expensive arithmetic operation (like a 32-bit multiplier) is invoked inside multiple branches of an `if-else` statement, the tool may synthesize multiple separate multipliers unless you explicitly restructure the code to share the unit:
 
 ```systemverilog
@@ -126,6 +132,7 @@ end
 ```
 
 ### Priority Logic vs. Parallel Selection
+
 - **Cascaded `if-else if-else`:** Infers a priority chain where each condition is evaluated sequentially. The last condition sits at the bottom of a deep logic tree, hurting timing.
 - **`case` statement:** In modern SystemVerilog, `case` statements where cases are mutually exclusive infer **parallel multiplexers**, reducing logic depth from $O(N)$ to $O(\log N)$!
 
@@ -134,6 +141,7 @@ end
 ## Learning Resources
 
 ### Authoritative Literature
+
 - **"Advanced ASIC Chip Synthesis: Using Synopsys Design Compiler, Physical Compiler, and PrimeTime"** by Himanshu Bhatnagar.
 - **"Constraining Designs for Synthesis and Timing Analysis: A Practical Guide to SDC"** by Sridhar Gangadharan.
 - **AMD Xilinx UG901 (Vivado Synthesis) & UG904 (Vivado Implementation).**
@@ -143,14 +151,18 @@ end
 ## Exercises
 
 ### Exercise 9.1: SDC Constraint Writing
+
 Write an SDC constraints file for a network packet processor with:
+
 1. Primary clock `core_clk` at 250 MHz (period 4.0 ns) with 100 ps uncertainty.
 2. Input bus `rx_data[7:0]` has an external arrival delay of up to 1.2 ns relative to `core_clk`.
 3. Output bus `tx_data[7:0]` feeds an external PHY requiring 0.8 ns setup time.
 4. An asynchronous reset line `rst_n` that should be marked as a false path.
 
 ### Exercise 9.2: Timing Slack Calculation
+
 Given:
+
 - Clock period $T_{clk} = 4.0\text{ ns}$
 - Launch clock latency = $0.2\text{ ns}$, Capture clock latency = $0.25\text{ ns}$
 - Source DFF: $t_{cq} = 0.35\text{ ns}$
@@ -159,6 +171,7 @@ Given:
 - Clock uncertainty = $0.1\text{ ns}$
 
 **Task:**
+
 1. Compute the Data Arrival Time.
 2. Compute the Data Required Time.
 3. Determine the Setup Slack. Does the path meet timing?

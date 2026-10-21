@@ -2,11 +2,11 @@
 
 ## Writing Readable Code
 
-Writing readable code is crucial for maintainability and collaboration.  Well-structured code is easier to understand, debug, and modify, especially in the long run or when others need to work with your scripts.
+Writing readable code is crucial for maintainability and collaboration. Well-structured code is easier to understand, debug, and modify, especially in the long run or when others need to work with your scripts.
 
 ### Use Meaningful Variable Names
 
-Choose variable names that clearly indicate the purpose and content of the variable.  Avoid single-letter or cryptic names.  Descriptive names make your code self-documenting.
+Choose variable names that clearly indicate the purpose and content of the variable. Avoid single-letter or cryptic names. Descriptive names make your code self-documenting.
 
 **Example:**
 
@@ -37,7 +37,7 @@ done
 
 ### Use Indentation and Consistent Spacing
 
-Indent your code blocks (like loops, conditionals, and functions) to visually represent the code's structure and control flow. Consistent indentation and spacing significantly improve readability, making it easier to follow the logic.  Generally, two or four spaces are preferred for indentation.  Avoid tabs, as their display can vary across editors.
+Indent your code blocks (like loops, conditionals, and functions) to visually represent the code's structure and control flow. Consistent indentation and spacing significantly improve readability, making it easier to follow the logic. Generally, two or four spaces are preferred for indentation. Avoid tabs, as their display can vary across editors.
 
 **Example:**
 
@@ -60,7 +60,7 @@ fi
 
 ## Commenting and Documentation
 
-Comments are essential for explaining what your code does, especially for complex logic or scripts intended for reuse.  Good comments explain the *why* and the *how* of your code, not just the *what* which should be evident from the code itself.  For longer scripts, consider adding a header comment block outlining the script's purpose, author, and date.
+Comments are essential for explaining what your code does, especially for complex logic or scripts intended for reuse. Good comments explain the _why_ and the _how_ of your code, not just the _what_ which should be evident from the code itself. For longer scripts, consider adding a header comment block outlining the script's purpose, author, and date.
 
 **Example:**
 
@@ -90,7 +90,7 @@ Optimizing your scripts is important for efficiency, especially when dealing wit
 
 ### Avoid Unnecessary Commands and Operations
 
-Eliminate commands and operations that don't contribute to the script's functionality.  Piping data through multiple commands when a single command can achieve the same result is inefficient.
+Eliminate commands and operations that don't contribute to the script's functionality. Piping data through multiple commands when a single command can achieve the same result is inefficient.
 
 **Example:**
 
@@ -105,7 +105,7 @@ count=$(grep -c "error" file.txt) # -c option counts matching lines
 
 ### Use Built-in Commands and Features
 
-Bash built-in commands are generally faster than external commands because they are executed directly by the shell without forking a new process.  Utilize shell built-ins and features like parameter expansion and built-in commands whenever possible.
+Bash built-in commands are generally faster than external commands because they are executed directly by the shell without forking a new process. Utilize shell built-ins and features like parameter expansion and built-in commands whenever possible.
 
 **Example:**
 
@@ -125,7 +125,7 @@ echo "Date: $date"
 
 ### Efficient Looping and File Processing
 
-Optimize loops for faster execution, especially when processing files.  Globbing is often more efficient than using `ls` in loops.  For file processing, consider using tools like `awk` or `sed` for efficient text manipulation.
+Optimize loops for faster execution, especially when processing files. Globbing is often more efficient than using `ls` in loops. For file processing, consider using tools like `awk` or `sed` for efficient text manipulation.
 
 **Example:**
 
@@ -147,7 +147,7 @@ awk '/keyword/ {print FILENAME, $0}' *.txt
 
 ## Error Handling
 
-Robust scripts should include error handling to manage unexpected situations gracefully.  Use `set -e` to exit immediately if a command fails, and check command exit codes to handle errors explicitly.
+Robust scripts should include error handling to manage unexpected situations gracefully. Use `set -e` to exit immediately if a command fails, and check command exit codes to handle errors explicitly.
 
 **Example:**
 
@@ -172,7 +172,7 @@ echo "Script continuing..."
 
 ## Input Validation
 
-Always validate user input to prevent unexpected behavior and security vulnerabilities.  Check for the correct number of arguments, validate argument types, and handle missing or invalid input gracefully.
+Always validate user input to prevent unexpected behavior and security vulnerabilities. Check for the correct number of arguments, validate argument types, and handle missing or invalid input gracefully.
 
 **Example:**
 
@@ -201,7 +201,7 @@ echo "Number of files: $file_count"
 
 ## Use Functions for Reusability
 
-Organize your code into functions to promote modularity and reusability. Functions make scripts easier to read, test, and maintain.  They also avoid code duplication.
+Organize your code into functions to promote modularity and reusability. Functions make scripts easier to read, test, and maintain. They also avoid code duplication.
 
 **Example:**
 
@@ -251,10 +251,10 @@ ls "$file_name" # Correctly handles filenames with spaces
 
 Start your scripts with `set -euxo pipefail`. This command enhances script robustness and helps in debugging:
 
-*   `set -e` or `set -o errexit`:  Exit immediately if a command exits with a non-zero status (indicating failure).
-*   `set -u` or `set -o nounset`:  Treat unset variables as an error and exit. This helps catch typos and uninitialized variables.
-*   `set -x` or `set -o xtrace`:  Print each command before executing it. Useful for debugging.
-*   `set -o pipefail`:  Make the script exit if any command in a pipeline fails, not just the last one.
+- `set -e` or `set -o errexit`: Exit immediately if a command exits with a non-zero status (indicating failure).
+- `set -u` or `set -o nounset`: Treat unset variables as an error and exit. This helps catch typos and uninitialized variables.
+- `set -x` or `set -o xtrace`: Print each command before executing it. Useful for debugging.
+- `set -o pipefail`: Make the script exit if any command in a pipeline fails, not just the last one.
 
 **Example:**
 
@@ -270,14 +270,14 @@ touch test_file.txt
 
 ## Exercise
 
-Create a script that takes a directory path as an argument, counts the number of files in that directory, and prints the result.  The script should include:
+Create a script that takes a directory path as an argument, counts the number of files in that directory, and prints the result. The script should include:
 
-*   Meaningful variable names
-*   Proper indentation
-*   Comments explaining the code
-*   Input validation to ensure the argument is a valid directory
-*   Error handling using `set -e` and exit codes
-*   Use of a function to encapsulate the file counting logic
+- Meaningful variable names
+- Proper indentation
+- Comments explaining the code
+- Input validation to ensure the argument is a valid directory
+- Error handling using `set -e` and exit codes
+- Use of a function to encapsulate the file counting logic
 
 **Example Solution:**
 
@@ -324,4 +324,3 @@ fi
 ```
 
 ##### Copyright (c) 2026 squared-studio
-

@@ -1,6 +1,7 @@
 # Byte Strobes (PSTRB) and Protection (PPROT) in APB4
 
 As System-on-Chip (SoC) architectures grew to support 64-bit multi-core processors, complex operating systems, and hardware-enforced security architectures like **ARM TrustZone**, the baseline APB3 specification revealed two critical architectural limitations:
+
 1. **Lack of Byte-Granularity Writes:** APB3 lacked native byte-enable strobes, forcing bridges to perform non-atomic read-modify-write sequences or corrupt adjacent register fields when handling sub-word (8-bit or 16-bit) processor stores.
 2. **Absence of Security Attributes:** APB3 could not communicate transaction privilege levels or secure vs. non-secure states, preventing peripherals from enforcing hardware security firewalls.
 
@@ -20,16 +21,17 @@ For a 32-bit APB4 data bus, `PSTRB` has a width of 4 bits:
 
 $$\text{PSTRB}[n] \iff \text{PWDATA}[(8 \times n) + 7 : 8 \times n]$$
 
-| Strobe Bit | Controlled Byte Lane | Data Bus Bit Slice | Target Address Offset |
-| :--- | :--- | :--- | :--- |
-| **`PSTRB[0]`** | Byte Lane 0 | `PWDATA[7:0]` | Base Address + `0x0` |
-| **`PSTRB[1]`** | Byte Lane 1 | `PWDATA[15:8]` | Base Address + `0x1` |
-| **`PSTRB[2]`** | Byte Lane 2 | `PWDATA[23:16]` | Base Address + `0x2` |
-| **`PSTRB[3]`** | Byte Lane 3 | `PWDATA[31:24]` | Base Address + `0x3` |
+| Strobe Bit     | Controlled Byte Lane | Data Bus Bit Slice | Target Address Offset |
+| :------------- | :------------------- | :----------------- | :-------------------- |
+| **`PSTRB[0]`** | Byte Lane 0          | `PWDATA[7:0]`      | Base Address + `0x0`  |
+| **`PSTRB[1]`** | Byte Lane 1          | `PWDATA[15:8]`     | Base Address + `0x1`  |
+| **`PSTRB[2]`** | Byte Lane 2          | `PWDATA[23:16]`    | Base Address + `0x2`  |
+| **`PSTRB[3]`** | Byte Lane 3          | `PWDATA[31:24]`    | Base Address + `0x3`  |
 
 For a 64-bit APB4 data bus, `PSTRB` is 8 bits wide (`PSTRB[7:0]`), covering `PWDATA[63:0]`.
 
 ### Protocol Rules for `PSTRB`:
+
 1. **Write Transfers (`PWRITE = 1`):**
    - The master sets each bit of `PSTRB` to `1` if that corresponding byte lane contains valid write data.
    - The master sets a bit of `PSTRB` to `0` if that byte lane is invalid and must not modify peripheral register contents.
@@ -41,7 +43,9 @@ For a 64-bit APB4 data bus, `PSTRB` is 8 bits wide (`PSTRB[7:0]`), covering `PWD
    - This directly maps to AXI `WSTRB` without requiring read-modify-write overhead.
 
 ### Sub-Word Write Example (8-bit Byte Store)
+
 Suppose a CPU executes an 8-bit store instruction (`STRB`) to a register at address `0x4000_0002`:
+
 - Address driven: `PADDR = 0x4000_0002` (or aligned word address `0x4000_0000`).
 - Data placed: Byte value driven on `PWDATA[23:16]`.
 - Strobe driven: `PSTRB = 4'b0100`.
@@ -57,17 +61,18 @@ The `PPROT` signal is a 3-bit sideband vector that classifies the security, priv
 
 ### Bit Definitions and Semantic Encoding
 
-| Bit | Name | Logic '0' Semantic | Logic '1' Semantic | Architectural Purpose |
-| :--- | :--- | :--- | :--- | :--- |
-| **`PPROT[0]`** | **Privilege Level** | **Normal (User) Access** | **Privileged Access** | Prevents unprivileged user applications from tampering with OS-level peripheral configurations. |
-| **`PPROT[1]`** | **Security Level** | **Secure Access** | **Non-Secure (Normal) Access** | Integrates with ARM TrustZone to block untrusted Rich OS environments from accessing secure peripherals. |
-| **`PPROT[2]`** | **Access Type** | **Data Access** | **Instruction Access** | Differentiates data read/writes from processor instruction fetches (preventing execution from register space). |
+| Bit            | Name                | Logic '0' Semantic       | Logic '1' Semantic             | Architectural Purpose                                                                                          |
+| :------------- | :------------------ | :----------------------- | :----------------------------- | :------------------------------------------------------------------------------------------------------------- |
+| **`PPROT[0]`** | **Privilege Level** | **Normal (User) Access** | **Privileged Access**          | Prevents unprivileged user applications from tampering with OS-level peripheral configurations.                |
+| **`PPROT[1]`** | **Security Level**  | **Secure Access**        | **Non-Secure (Normal) Access** | Integrates with ARM TrustZone to block untrusted Rich OS environments from accessing secure peripherals.       |
+| **`PPROT[2]`** | **Access Type**     | **Data Access**          | **Instruction Access**         | Differentiates data read/writes from processor instruction fetches (preventing execution from register space). |
 
 > [!IMPORTANT]
 > Note the active-polarity convention of `PPROT[1]`:
+>
 > - `PPROT[1] = 0` denotes a **Secure** transaction.
 > - `PPROT[1] = 1` denotes a **Non-Secure** transaction.
-> This inverted convention matches the upstream AXI `ARPROT[1]` / `AWPROT[1]` definitions.
+>   This inverted convention matches the upstream AXI `ARPROT[1]` / `AWPROT[1]` definitions.
 
 ---
 
@@ -89,7 +94,9 @@ With `PPROT`, an APB peripheral (or an APB bus firewall bridge) can implement gr
 ```
 
 ### Hardware Enforcement Mechanism
+
 When a transaction arrives at the peripheral:
+
 1. The slave checks the incoming `PPROT` against its internal configuration registers.
 2. If `PPROT[1] == 1` (Non-Secure access) targeting a Secure-only register:
    - The write is **discarded** (internal registers are not modified).
@@ -101,13 +108,13 @@ When a transaction arrives at the peripheral:
 
 ## APB3 vs. APB4 Compatibility Matrix
 
-| Feature | APB3 (AMBA 3.0) | APB4 (AMBA 4.0) | Backward Compatibility Strategy |
-| :--- | :--- | :--- | :--- |
-| **Write Byte Strobes** | Not available | Supported via `PSTRB` | An APB3 slave connecting to an APB4 bridge ignores `PSTRB` (assumes all bytes valid). |
-| **Protection Attributes** | Not available | Supported via `PPROT` | An APB3 slave connecting to an APB4 bridge leaves `PPROT` unconnected. |
-| **Data Bus Widths** | Typically 32 bits | 32 or 64 bits | 64-bit APB4 systems use 8-bit `PSTRB[7:0]`. |
-| **Wait State Control** | Supported (`PREADY`) | Supported (`PREADY`) | Identical handshake behavior across APB3 and APB4. |
-| **Error Signaling** | Supported (`PSLVERR`) | Supported (`PSLVERR`) | Identical error sampling rules. |
+| Feature                   | APB3 (AMBA 3.0)       | APB4 (AMBA 4.0)       | Backward Compatibility Strategy                                                       |
+| :------------------------ | :-------------------- | :-------------------- | :------------------------------------------------------------------------------------ |
+| **Write Byte Strobes**    | Not available         | Supported via `PSTRB` | An APB3 slave connecting to an APB4 bridge ignores `PSTRB` (assumes all bytes valid). |
+| **Protection Attributes** | Not available         | Supported via `PPROT` | An APB3 slave connecting to an APB4 bridge leaves `PPROT` unconnected.                |
+| **Data Bus Widths**       | Typically 32 bits     | 32 or 64 bits         | 64-bit APB4 systems use 8-bit `PSTRB[7:0]`.                                           |
+| **Wait State Control**    | Supported (`PREADY`)  | Supported (`PREADY`)  | Identical handshake behavior across APB3 and APB4.                                    |
+| **Error Signaling**       | Supported (`PSLVERR`) | Supported (`PSLVERR`) | Identical error sampling rules.                                                       |
 
 ---
 
@@ -128,4 +135,3 @@ When a transaction arrives at the peripheral:
 4. How does an APB peripheral hardware firewall respond when an unprivileged Non-Secure user program attempts to write to a Secure Privileged AES encryption key register?
 
 ##### Copyright (c) 2026 squared-studio
-

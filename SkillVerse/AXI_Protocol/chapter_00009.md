@@ -1,6 +1,7 @@
 # Atomic and Exclusive Accesses
 
 ### Learning Objectives
+
 - Understand the need for atomic primitives (semaphores, mutexes, spinlocks) in shared-memory multi-core SoCs.
 - Contrast legacy **Locked Accesses** (AXI3) with scalable **Exclusive Accesses** (AXI4).
 - Master the step-by-step transaction flow of an Exclusive Read / Exclusive Write sequence.
@@ -30,12 +31,12 @@ To resolve this, hardware must guarantee **atomicity**: ensuring that no other m
 
 The AXI specification provides two mechanisms to achieve atomicity:
 
-| Feature | Locked Access (`AxLOCK` in AXI3) | Exclusive Access (`AxLOCK` in AXI3 & AXI4) |
-|---|---|---|
-| **Protocol Support** | AXI3 only (`AxLOCK = 2'b10`). **Removed in AXI4**. | Supported in AXI3 (`AxLOCK = 2'b01`) and **AXI4 (`AxLOCK = 1'b1`)**. |
+| Feature                | Locked Access (`AxLOCK` in AXI3)                                                       | Exclusive Access (`AxLOCK` in AXI3 & AXI4)                                                   |
+| ---------------------- | -------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| **Protocol Support**   | AXI3 only (`AxLOCK = 2'b10`). **Removed in AXI4**.                                     | Supported in AXI3 (`AxLOCK = 2'b01`) and **AXI4 (`AxLOCK = 1'b1`)**.                         |
 | **Hardware Mechanism** | Physically locks the interconnect arbiter. All other masters are stalled until unlock. | Optimistic concurrency: non-blocking. Monitors track address modifications without stalling. |
-| **System Impact** | Severe bus latency degradation; starves real-time masters. | Zero interconnect stalls; highly scalable to dozens of cores. |
-| **Silicon Cost** | Heavy crossbar arbitration lock-out logic. | Small address comparison tracking monitor (Exclusive Monitor). |
+| **System Impact**      | Severe bus latency degradation; starves real-time masters.                             | Zero interconnect stalls; highly scalable to dozens of cores.                                |
+| **Silicon Cost**       | Heavy crossbar arbitration lock-out logic.                                             | Small address comparison tracking monitor (Exclusive Monitor).                               |
 
 Because locked accesses created severe latency spikes and degraded multi-core performance, **AXI4 completely removed locked transfers**, standardizing entirely on **Exclusive Accesses**.
 
@@ -45,7 +46,7 @@ Because locked accesses created severe latency spikes and degraded multi-core pe
 
 The exclusive access protocol operates on an **optimistic concurrency** model (similar to Load-Link / Store-Conditional or Compare-And-Swap):
 
-1. **Step 1: Exclusive Read:** A master reads a memory location with `ARLOCK = 1`. An **Exclusive Monitor** records the master ID and the target address, transitioning to the *Exclusive State*.
+1. **Step 1: Exclusive Read:** A master reads a memory location with `ARLOCK = 1`. An **Exclusive Monitor** records the master ID and the target address, transitioning to the _Exclusive State_.
 2. **Step 2: Local Modification:** The master modifies the retrieved value locally in its CPU registers.
 3. **Step 3: Exclusive Write:** The master attempts to write back the updated value with `AWLOCK = 1`.
 4. **Step 4: Monitor Evaluation:**
@@ -64,6 +65,7 @@ The heart of the exclusive access mechanism is the **Exclusive Access Monitor**.
 ![AXI Exclusive Monitor FSM](images/ch9_exclusive_monitor_fsm.svg)
 
 ### State Machine Analysis:
+
 - **Reset / Open Access State:**
   - The monitor is idle. No address is exclusively locked by this master.
   - Normal read and write transactions pass through without affecting monitor state.
@@ -83,11 +85,13 @@ The heart of the exclusive access mechanism is the **Exclusive Access Monitor**.
 In real-world SoC implementations, exclusive monitors are divided into two physical categories:
 
 ### Internal Exclusive Monitors
+
 - Reside **inside the CPU core or cluster** (at the L1/L2 cache boundary).
 - Track exclusive accesses targeting **Cacheable / Normal Memory**.
 - When an exclusive read hits in the CPU's local L1/L2 cache, the internal monitor tracks the cache line tag. No AXI traffic ever reaches the external bus, saving massive interconnect bandwidth!
 
 ### External Exclusive Monitors
+
 - Reside **in the AXI interconnect fabric or DDR memory controller**.
 - Track exclusive accesses targeting **Non-cacheable or Shared Device Memory**.
 - When an exclusive access reaches the external interconnect (`AxLOCK = 1`), the external monitor hardware records the address and master ID to manage hardware reservations across multiple masters.
@@ -97,6 +101,7 @@ In real-world SoC implementations, exclusive monitors are divided into two physi
 ## Protocol Restrictions for Exclusive Accesses
 
 To ensure deterministic monitor tracking, AXI imposes strict constraints on exclusive bursts:
+
 1. **Burst Size and Alignment:** The address must be naturally aligned to the total byte count of the transfer:
    $$\text{Address} \pmod{2^{\text{AxSIZE}}} = 0$$
 2. **Burst Length Limit:** The burst length must not exceed **16 beats** (`AxLEN` $\le 15$).
@@ -121,28 +126,36 @@ To ensure deterministic monitor tracking, AXI imposes strict constraints on excl
 ## Review Questions
 
 ### Question 1
+
 Why were locked accesses (`AxLOCK = 2'b10`) completely removed in the AXI4 specification?
+
 <details>
 <summary><b>View Answer</b></summary>
 Locked accesses required the interconnect arbiter to physically lock the bus fabric, preventing any other master from accessing memory until the locked master released the bus. In modern multi-core SoCs, this created catastrophic latency spikes, ruined real-time deadlines for video/display engines, and did not scale beyond a few cores. Exclusive accesses achieve atomicity without stalling unrelated bus traffic.
 </details>
 
 ### Question 2
+
 If an exclusive write transaction fails because another core modified the monitored address, what response code does the slave return on `BRESP`? Does the write modify memory?
+
 <details>
 <summary><b>View Answer</b></summary>
 The slave returns `BRESP = 2'b00` (`OKAY`), indicating that the bus transaction completed normally without an electrical bus error, but the exclusive access failed. The write data **must not** be committed to memory; the memory remains unchanged. The master detects that `BRESP` is not `EXOKAY` and retries the atomic operation.
 </details>
 
 ### Question 3
+
 What happens to an active exclusive monitor reservation if an unrelated DMA engine writes to the monitored address?
+
 <details>
 <summary><b>View Answer</b></summary>
 The Exclusive Monitor observes the write address broadcast on the bus. Because the write address overlaps the monitored address region, the monitor immediately clears its reservation and transitions from the Exclusive Access state to the Open Access state. When the original master later attempts its Exclusive Write, the monitor detects that the reservation was broken and rejects the write.
 </details>
 
 ### Question 4
+
 Can an exclusive transaction have a burst length of 64 beats in AXI4?
+
 <details>
 <summary><b>View Answer</b></summary>
 No. The AXI specification strictly limits exclusive accesses to a maximum of 16 beats (`AxLEN` $\le 15$). Long bursts are prohibited because tracking large address spans in hardware exclusive monitors would require prohibitively expensive and complex address comparison logic.
@@ -151,4 +164,3 @@ No. The AXI specification strictly limits exclusive accesses to a maximum of 16 
 ---
 
 ##### Copyright (c) 2026 squared-studio
-

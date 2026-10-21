@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 480" width="100%" height="100%">
+  <rect width="960" height="480" fill="#0b1120" rx="8"/>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8"/>
+    </marker>
+    <marker id="arrow-red" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#f43f5e"/>
+    </marker>
+  </defs>
+
+  <text x="480" y="38" fill="#f8fafc" font-size="20" font-weight="bold" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" text-anchor="middle">Python Generator Frame Suspension State Machine</text>
+  <text x="480" y="62" fill="#94a3b8" font-size="13" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" text-anchor="middle">How yield freezes the evaluation frame in heap memory without releasing local state</text>
+
+  <!-- State 1: GEN_CREATED -->
+  <g transform="translate(60, 110)">
+    <rect width="180" height="180" rx="8" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+    <rect width="180" height="32" rx="8" fill="#0369a1"/>
+    <text x="90" y="21" fill="#ffffff" font-size="12" font-weight="bold" font-family="sans-serif" text-anchor="middle">GEN_CREATED</text>
+    <text x="15" y="60" fill="#cbd5e1" font-size="11" font-family="monospace">g = sample_gen()</text>
+    <text x="15" y="85" fill="#94a3b8" font-size="10" font-family="sans-serif">Function called, but</text>
+    <text x="15" y="100" fill="#94a3b8" font-size="10" font-family="sans-serif">NO code has executed.</text>
+    <rect x="15" y="125" width="150" height="36" rx="4" fill="#0f172a" stroke="#334155"/>
+    <text x="90" y="142" fill="#38bdf8" font-size="10" font-family="monospace" text-anchor="middle">PyGenObject created</text>
+    <text x="90" y="154" fill="#94a3b8" font-size="9" font-family="monospace" text-anchor="middle">gi_frame allocated</text>
+  </g>
+
+  <!-- Arrow 1 -> 2 -->
+  <path d="M 240 180 L 320 180" stroke="#38bdf8" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="280" y="170" fill="#38bdf8" font-size="11" font-family="monospace" text-anchor="middle">next(g)</text>
+
+  <!-- State 2: GEN_RUNNING -->
+  <g transform="translate(325, 110)">
+    <rect width="180" height="180" rx="8" fill="#1e293b" stroke="#34d399" stroke-width="2"/>
+    <rect width="180" height="32" rx="8" fill="#047857"/>
+    <text x="90" y="21" fill="#ffffff" font-size="12" font-weight="bold" font-family="sans-serif" text-anchor="middle">GEN_RUNNING</text>
+    <text x="15" y="60" fill="#a7f3d0" font-size="10" font-family="monospace">Running Bytecode</text>
+    <text x="15" y="80" fill="#94a3b8" font-size="10" font-family="sans-serif">Evaluates instructions</text>
+    <text x="15" y="95" fill="#94a3b8" font-size="10" font-family="sans-serif">until 'yield' keyword</text>
+    <rect x="15" y="125" width="150" height="36" rx="4" fill="#064e3b" stroke="#34d399"/>
+    <text x="90" y="142" fill="#34d399" font-size="10" font-family="monospace" text-anchor="middle">CPU actively executing</text>
+    <text x="90" y="154" fill="#a7f3d0" font-size="9" font-family="monospace" text-anchor="middle">local registers hot</text>
+  </g>
+
+  <!-- Transition 2 -> 3 (yield) & 3 -> 2 (next) -->
+  <path d="M 505 165 L 585 165" stroke="#fbbf24" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="545" y="155" fill="#fbbf24" font-size="10" font-family="monospace" text-anchor="middle">yield val</text>
+
+  <path d="M 585 210 L 515 210" stroke="#38bdf8" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="550" y="230" fill="#38bdf8" font-size="10" font-family="monospace" text-anchor="middle">next(g) / send()</text>
+
+  <!-- State 3: GEN_SUSPENDED -->
+  <g transform="translate(590, 110)">
+    <rect width="180" height="180" rx="8" fill="#1e293b" stroke="#fbbf24" stroke-width="2"/>
+    <rect width="180" height="32" rx="8" fill="#b45309"/>
+    <text x="90" y="21" fill="#ffffff" font-size="12" font-weight="bold" font-family="sans-serif" text-anchor="middle">GEN_SUSPENDED</text>
+    <text x="15" y="55" fill="#fde047" font-size="10" font-family="monospace">Frame Frozen</text>
+    <text x="15" y="75" fill="#94a3b8" font-size="10" font-family="sans-serif">Instruction pointer</text>
+    <text x="15" y="90" fill="#94a3b8" font-size="10" font-family="sans-serif">(f_lasti) saved.</text>
+    <text x="15" y="105" fill="#94a3b8" font-size="10" font-family="sans-serif">Local variables saved.</text>
+    <rect x="15" y="125" width="150" height="36" rx="4" fill="#451a03" stroke="#f59e0b"/>
+    <text x="90" y="142" fill="#fbbf24" font-size="10" font-family="monospace" text-anchor="middle">0 bytes reallocated</text>
+    <text x="90" y="154" fill="#fde047" font-size="9" font-family="monospace" text-anchor="middle">Control returns to caller</text>
+  </g>
+
+  <!-- Arrow 3 -> 4 (StopIteration) -->
+  <path d="M 770 200 L 810 200" stroke="#f43f5e" stroke-width="2" marker-end="url(#arrow-red)"/>
+  <text x="790" y="190" fill="#f43f5e" font-size="9" font-family="sans-serif" text-anchor="middle">Return</text>
+
+  <!-- State 4: GEN_CLOSED -->
+  <g transform="translate(815, 110)">
+    <rect width="115" height="180" rx="8" fill="#1e293b" stroke="#f43f5e" stroke-width="1.5"/>
+    <rect width="115" height="32" rx="8" fill="#9f1239"/>
+    <text x="57" y="21" fill="#ffffff" font-size="11" font-weight="bold" font-family="sans-serif" text-anchor="middle">GEN_CLOSED</text>
+    <text x="10" y="60" fill="#fda4af" font-size="9" font-family="monospace">StopIteration</text>
+    <text x="10" y="85" fill="#94a3b8" font-size="9" font-family="sans-serif">Frame released.</text>
+    <text x="10" y="105" fill="#94a3b8" font-size="9" font-family="sans-serif">gi_frame = NULL</text>
+    <text x="10" y="145" fill="#f43f5e" font-size="9" font-family="sans-serif">Subsequent calls raise error</text>
+  </g>
+
+  <!-- Bottom Explanatory Box -->
+  <g transform="translate(60, 340)">
+    <rect width="870" height="115" rx="8" fill="#0f172a" stroke="#334155"/>
+    <text x="25" y="28" fill="#38bdf8" font-size="13" font-weight="bold" font-family="sans-serif">Streaming Big Data &amp; Hardware Waveform Logs with O(1) Memory:</text>
+    <text x="25" y="52" fill="#cbd5e1" font-size="12" font-family="sans-serif">• A function returning a list of 100 million waveform samples exhausts 3.6 GB of RAM. A generator uses <tspan fill="#34d399" font-weight="bold">under 1 KB</tspan> of memory.</text>
+    <text x="25" y="74" fill="#cbd5e1" font-size="12" font-family="sans-serif">• <tspan fill="#fbbf24" font-weight="bold">Bi-directional Communication</tspan>: The <tspan font-family="monospace" fill="#fbbf24">generator.send(val)</tspan> method passes values BACK into the suspended frame at the yield expression.</text>
+    <text x="25" y="96" fill="#cbd5e1" font-size="12" font-family="sans-serif">• This suspension mechanic forms the conceptual foundation for Python's modern <tspan font-family="monospace" fill="#38bdf8">async / await</tspan> asynchronous coroutine event loops.</text>
+  </g>
+</svg>

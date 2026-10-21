@@ -5,6 +5,7 @@ Pipelining is the most important technique in high-performance digital hardware 
 ## Learning Goals
 
 After completing this chapter, you should be able to:
+
 - Explain the fundamental difference between **Latency** (time for one operation to complete) and **Throughput** (rate of completed operations per second).
 - Calculate maximum clock frequency, speedup, and efficiency for pipelined architectures.
 - Identify and resolve the three classical pipeline hazards: **Structural Hazards**, **Data Hazards** (RAW dependencies), and **Control Hazards** (branching).
@@ -23,12 +24,12 @@ In a non-pipelined circuit, the clock period $T_{clk}$ must be long enough to al
 
 ## Throughput vs. Latency
 
-| Metric | Definition | Unpipelined | $k$-Stage Ideal Pipeline |
-| :--- | :--- | :--- | :--- |
-| **Latency (Clock Cycles)** | Cycles required for one operation from input to output | $1$ cycle | $k$ cycles |
-| **Clock Period ($T_{clk}$)** | Minimum duration of one clock cycle | $T_{unpiped}$ | $T_{pipe} \approx \frac{T_{unpiped}}{k} + t_{cq} + t_{setup}$ |
-| **Latency (Time, ns)** | Physical time for a single item to emerge | $T_{unpiped}$ | $k \cdot T_{pipe}$ *(slightly longer due to register overhead)* |
-| **Throughput (Ops/sec)** | Number of completed operations per second | $\frac{1}{T_{unpiped}}$ | $\frac{1}{T_{pipe}}$ **(Significantly Higher!)** |
+| Metric                       | Definition                                             | Unpipelined             | $k$-Stage Ideal Pipeline                                        |
+| :--------------------------- | :----------------------------------------------------- | :---------------------- | :-------------------------------------------------------------- |
+| **Latency (Clock Cycles)**   | Cycles required for one operation from input to output | $1$ cycle               | $k$ cycles                                                      |
+| **Clock Period ($T_{clk}$)** | Minimum duration of one clock cycle                    | $T_{unpiped}$           | $T_{pipe} \approx \frac{T_{unpiped}}{k} + t_{cq} + t_{setup}$   |
+| **Latency (Time, ns)**       | Physical time for a single item to emerge              | $T_{unpiped}$           | $k \cdot T_{pipe}$ _(slightly longer due to register overhead)_ |
+| **Throughput (Ops/sec)**     | Number of completed operations per second              | $\frac{1}{T_{unpiped}}$ | $\frac{1}{T_{pipe}}$ **(Significantly Higher!)**                |
 
 > [!NOTE]
 > Pipelining does **not** make a single calculation finish faster in absolute time (latency). In fact, latency slightly increases due to flip-flop setup and clock-to-Q overheads. Pipelining increases **throughput**: the volume of completed work per unit time.
@@ -42,13 +43,16 @@ Hazards are situations where the next instruction or data set cannot execute in 
 ![Taxonomy of Pipeline Hazards](images/ch7_pipeline_hazards.svg)
 
 ### Data Hazards (Read-After-Write - RAW)
+
 Occurs when Instruction 2 reads a register that is written by Instruction 1:
+
 ```
 Inst 1: R1 = R2 + R3   (Writes R1 in Stage 4 - Writeback)
 Inst 2: R5 = R1 * R4   (Needs R1 in Stage 2 - Decode/Operand Fetch)
 ```
 
 #### Resolutions:
+
 1. **Data Forwarding (Bypassing):**
    Route the intermediate result directly from the output of Stage 3 (Execute) or Stage 4 back to the ALU input multiplexer of Stage 2. Eliminates stalls for most ALU-to-ALU operations!
 2. **Pipeline Stall (Bubble Insertion):**
@@ -57,13 +61,17 @@ Inst 2: R5 = R1 * R4   (Needs R1 in Stage 2 - Decode/Operand Fetch)
 ![Data Forwarding Mechanism](images/ch7_data_forwarding.svg)
 
 ### Control Hazards (Branch Penalty)
+
 In instruction pipelines, branch outcomes are typically resolved in Stage 3 (Execute). If the branch is taken, instructions already fetched in Stage 1 and 2 are invalid.
+
 - **Resolution:**
   - **Stall:** Wait until branch resolves.
   - **Branch Prediction:** Speculatively fetch from predicted address; if wrong, **flush** the pipeline (clear valid bits of intermediate stages) and jump to the correct target.
 
 ### Structural Hazards
+
 Multiple stages compete for the exact same physical resource in the same cycle (e.g., single-port RAM accessed simultaneously for instruction fetch and data read).
+
 - **Resolution:** Duplicate hardware (e.g., separate instruction and data caches—Harvard architecture, or dual-ported memories).
 
 ---
@@ -71,6 +79,7 @@ Multiple stages compete for the exact same physical resource in the same cycle (
 ## Synthesizable Pipelined Datapath with Valid-Ready Flow Control
 
 In modular SoC design, stages must pass data smoothly without dropping words or overflowing when downstream logic stalls. The industry standard protocol is the **Valid-Ready Handshake**:
+
 - `valid`: Producer asserts when output payload is valid.
 - `ready`: Consumer asserts when able to accept data.
 - **Transfer occurs on clock edge only when `valid && ready` is TRUE.**
@@ -148,6 +157,7 @@ endmodule
 ## Learning Resources
 
 ### Classical Literature
+
 - **"Computer Organization and Design: The Hardware/Software Interface"** by David A. Patterson & John L. Hennessy — Chapters 4 & 5 (The canonical guide to CPU pipelining, hazards, and forwarding).
 - **"Computer Architecture: A Quantitative Approach"** by John L. Hennessy & David A. Patterson.
 
@@ -156,23 +166,30 @@ endmodule
 ## Exercises
 
 ### Exercise 7.1: Pipeline Balancing and Max Frequency
+
 A non-pipelined floating-point logic block has 4 sequential sub-steps with the following combinational propagation delays:
+
 - Sub-step 1: $1.2\text{ ns}$
 - Sub-step 2: $3.8\text{ ns}$
 - Sub-step 3: $1.5\text{ ns}$
 - Sub-step 4: $2.5\text{ ns}$
 
 Each flip-flop has $t_{cq} = 0.2\text{ ns}$ and $t_{setup} = 0.1\text{ ns}$.
+
 1. What is the maximum operating frequency of the unpipelined design?
 2. If partitioned into a 4-stage pipeline where each sub-step forms one stage, what is the bottleneck stage delay, and what is the new maximum frequency?
 3. Calculate the ideal throughput speedup.
 
 ### Exercise 7.2: Implement Data Forwarding Logic
+
 Consider a 3-stage ALU pipeline with stages `FETCH`, `EXECUTE`, `WRITEBACK`:
+
 - Write the SystemVerilog combinational logic for an operand forwarding multiplexer that compares the destination register index of the `WRITEBACK` stage with the source register indices of the `EXECUTE` stage, bypassing the writeback data if the indices match.
 
 ### Exercise 7.3: Skid Buffer (Pipeline Decoupler)
+
 When a downstream module de-asserts `ready`, a standard pipelined module must stall immediately. If the ready signal has a high fanout or timing delay, this creates a critical timing path.
+
 - Design a **Skid Buffer** (a 2-entry register buffer) that isolates the input ready timing from the output ready timing while maintaining 100% throughput (zero bubble insertion).
 
 ##### Copyright (c) 2026 squared-studio

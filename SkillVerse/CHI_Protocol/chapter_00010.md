@@ -1,6 +1,7 @@
 # Advanced CHI Features, Verification, and Future Horizons
 
 ## The Continuous Evolution of the AMBA CHI Specification
+
 Since its inception, the AMBA Coherent Hub Interface (CHI) has expanded continuously to meet the demands of enterprise cloud computing, artificial intelligence accelerators, confidential computing, and off-chip memory disaggregation.
 
 Unlike rigid parallel bus standards, the layered, packetized nature of CHI has allowed ARM to release successive protocol iterations (termed **Issues**) while preserving fundamental backward compatibility across protocol, network, and link layers.
@@ -12,12 +13,14 @@ Unlike rigid parallel bus standards, the layered, packetized nature of CHI has a
 ## Architectural Milestones: Issue A through Issue G
 
 ### CHI Issue A & Issue B (The Architectural Foundation)
+
 - Established the 3-layer stack (Protocol, Network, Link).
 - Introduced standardized Flit formats (`REQ`, `RSP`, `DAT`, `SNP`) and `LCRDV` credit-based flow control.
 - Pioneered **Direct Cache Transfer (DCT)** and **Far-Memory Atomics** (`AtomicStore`, `AtomicLoad`, `AtomicCompare`, `AtomicSwap`).
 - Established the fundamental Node taxonomy (RN-F, RN-I, HN-F, HN-I, SN-F, SN-I, MN).
 
 ### CHI Issue C & Issue D (Scalability, Security & QoS)
+
 - **Memory System Resource Partitioning and Monitoring (MPAM):**
   - Allows hypervisors and operating systems to partition System Level Cache (SLC) capacity and memory bandwidth among different virtual machines (VMs) to prevent "noisy neighbor" cache thrashing.
 - **Memory Tagging Extension (MTE) Support:**
@@ -26,6 +29,7 @@ Unlike rigid parallel bus standards, the layered, packetized nature of CHI has a
   - Expanded data flits from 128/256 bits to native 512-bit wide channels, allowing a full 64-byte cache line to transfer in a **single clock cycle**.
 
 ### CHI Issue E, Issue F & Issue G (Confidential Compute & Disaggregation)
+
 - **Arm Confidential Compute Architecture (Arm CCA / Realms):**
   - Introduces hardware isolation mechanisms that protect virtualized workloads and sensitive AI model weights even from root hypervisors.
   - Adds Realm physical address space filtering and cryptographic memory encryption tags.
@@ -37,6 +41,7 @@ Unlike rigid parallel bus standards, the layered, packetized nature of CHI has a
 ---
 
 ## Bridging On-Chip AMBA CHI to Off-Chip Compute Express Link (CXL)
+
 In modern hyperscale cloud data centers, single-socket servers are giving way to **Composable, Disaggregated Rack Architectures**. A CPU host needs to share a single, massive pool of external DDR5 or HBM3 memory with high-performance GPUs, TPUs, and FPGA accelerators located across physical circuit boards.
 
 To bridge on-chip coherency across external PCIe Gen5/Gen6 SerDes physical layers, the industry established **Compute Express Link (CXL)**. Because both AMBA CHI and CXL are layered, packetized coherency protocols, they map onto one another with extraordinary architectural synergy!
@@ -44,7 +49,9 @@ To bridge on-chip coherency across external PCIe Gen5/Gen6 SerDes physical layer
 ![Bridging CHI to CXL](images/ch10_chi_to_cxl_bridge.svg)
 
 ### The CHI-to-CXL Protocol Translation:
+
 Inside the SoC, a dedicated **CHI-to-CXL Bridge** translates transactions at line rate:
+
 1. **`CHI REQ` $\leftrightarrow$ `CXL.mem M2S (Master to Subordinate)`:**
    - A CHI read (`ReadShared` or `ReadOnce`) targeting an external memory address is converted into a `CXL.mem` read request packet routed across PCIe lanes.
 2. **`CHI SNP` $\leftrightarrow$ `CXL.cache D2H / H2D`:**
@@ -57,6 +64,7 @@ This bridge enables heterogeneous accelerators to participate in a single, hardw
 ---
 
 ## System-Level Verification Challenges in CHI Designs
+
 Designing and verifying an AMBA 5 CHI interconnect is among the most demanding tasks in modern digital hardware engineering. A subtle bug in coherency tracking, credit counting, or race arbitration can cause silent data corruption or permanent system lockup that only manifests after billions of operating cycles.
 
 Verification teams deploy rigorous, multi-layered verification strategies:
@@ -80,6 +88,7 @@ Verification teams deploy rigorous, multi-layered verification strategies:
 ```
 
 ### Critical Verification Imperatives:
+
 1. **Link Credit Conservation Assertions:**
    $$\text{Transmitter Credits} + \text{In-Flight Flits} + \text{In-Flight LCRDV Pulses} + \text{Occupied RX Slots} == \text{Total Buffer Capacity}$$
    Formal mathematical assertions verify that this sum remains invariant across every clock cycle, guaranteeing zero credit leakage or phantom credit creation.
@@ -91,6 +100,7 @@ Verification teams deploy rigorous, multi-layered verification strategies:
 ---
 
 ## Course Conclusion: The Global Ubiquity of AMBA CHI
+
 From high-end mobile application processors to the world's most powerful 128-core and 256-core supercomputing processors (such as AWS Graviton, Nvidia Grace, Ampere Altra, and Arm Neoverse), **AMBA 5 CHI is the undisputed world standard for high-performance on-chip communication**.
 
 By replacing physical wire bundles with packetized NoC flits, separating concerns across clean architectural layers, and introducing proactive flow control, Direct Cache Transfers, and Far-Memory Atomics, AMBA CHI has established the architectural foundation that will power heterogeneous computing for decades to come.
@@ -98,6 +108,7 @@ By replacing physical wire bundles with packetized NoC flits, separating concern
 ---
 
 ## Chapter Summary
+
 - AMBA CHI has evolved through successive specification milestones: **Issue A/B** (foundations), **Issue C/D** (MPAM, MTE, 512-bit datapaths), and **Issue E/F/G** (Confidential Compute / Arm CCA, CXL bridging).
 - **MPAM** provides memory partitioning to eliminate noisy-neighbor issues, while **MTE** provides hardware memory safety tagging.
 - CHI bridges seamlessly to **Compute Express Link (CXL)**, extending on-chip cache coherency across physical PCIe SerDes links to disaggregated memory pools.
@@ -134,4 +145,3 @@ By replacing physical wire bundles with packetized NoC flits, separating concern
 ---
 
 ##### Copyright (c) 2026 squared-studio
-

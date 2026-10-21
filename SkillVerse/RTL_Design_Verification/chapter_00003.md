@@ -9,6 +9,7 @@ As digital designs surpass millions of equivalent gates, hand-crafted directed t
 ## Learning Goals
 
 After completing this chapter, you should be able to:
+
 - Contrast directed testbenches with constrained-random verification across state-space exploration efficiency.
 - Utilize SystemVerilog randomization keywords (`rand`, `randc`) and construct robust declarative constraints (`inside`, `dist`, `solve...before`, `unique`, `foreach`, implication `->`, and `soft`).
 - Dynamically control constraint activity using `constraint_mode()`, `random_mode()`, and inline `randomize() with` blocks.
@@ -24,12 +25,15 @@ In a **Directed Testing** environment, the verification engineer manually specif
 ![Directed Testing vs. Constrained-Random Verification (CRV)](images/ch3_crv_vs_directed.svg)
 
 ### The Limitations of Directed Verification
+
 1. **Anticipation Bias:** A directed test only verifies scenarios the engineer anticipates. If an engineer assumes a FIFO will never experience a simultaneous push and pop while transitioning out of reset, no test will be written for it.
 2. **Poor Scalability:** A design with $N$ configuration registers of 32 bits each has $2^{32N}$ operational states. Writing manual tests for even 0.001% of this space is physically impossible.
 3. **High Maintenance Overhead:** Small RTL interface modifications break brittle, hardcoded signal timing across hundreds of individual directed tests.
 
 ### The CRV Advantage
+
 Constrained-Random Verification automates stimulus generation by defining **valid boundaries** (rules and protocols) rather than specific test values:
+
 - The verification engineer writes constraints that enforce legal protocol behavior (e.g., "address must be 4-byte aligned and burst length between 1 and 16").
 - The simulator's mathematical constraint solver generates thousands of pseudo-random legal variations across different random seeds (`+ntb_random_seed=<val>` or `-sv_seed <val>`).
 - CRV continually discovers unexpected corner cases, such as back-to-back zero-payload aborts or concurrent buffer wrap-arounds.
@@ -39,6 +43,7 @@ Constrained-Random Verification automates stimulus generation by defining **vali
 ## SystemVerilog Randomization: `rand`, `randc`, and Constraints
 
 ### Random Variables: `rand` vs. `randc`
+
 - **`rand` (Uniform Random):** The variable is assigned a pseudo-random value within its valid range on each call to `randomize()`. Successive calls may return identical values (standard uniform distribution).
 - **`randc` (Random Cyclic):** The variable cycles through every possible permutation of its values without repeating any value until the entire set is exhausted.
 
@@ -52,6 +57,7 @@ endclass
 ```
 
 ### Declarative Constraint Blocks
+
 Constraints are declarative boolean expressions evaluated simultaneously by the simulator's constraint engine:
 
 ```systemverilog
@@ -79,7 +85,9 @@ endclass
 ```
 
 ### Non-Uniform Distributions (`dist`)
+
 By default, the constraint solver generates uniformly distributed random values. The `dist` operator allows engineers to shape probability distributions using weights:
+
 - **`:=` Operator:** Assigns the specified weight to every individual value in the range.
 - **`:/` Operator:** Divides the specified weight equally across all values in the range.
 
@@ -89,7 +97,7 @@ class memory_trans;
     rand bit [2:0]  burst_size;
 
     constraint size_dist_c {
-        // Weighted distribution: 
+        // Weighted distribution:
         // Size 1: 50% probability (weight 50 / 100)
         // Size 2: 30% probability (weight 30 / 100)
         // Sizes 4, 8: 10% each (weight 20 total divided across 2 values)
@@ -103,6 +111,7 @@ endclass
 ```
 
 ### Constraint Ordering with `solve ... before`
+
 SystemVerilog constraints are evaluated concurrently. In cases where random variables have conditional dependencies, uniform selection of solutions can cause unintentional probability bias. The `solve A before B;` directive instructs the solver to pick the value of `A` first, then solve for `B` within the remaining valid space.
 
 ```systemverilog
@@ -126,6 +135,7 @@ endclass
 ## Advanced Constraint Techniques
 
 ### Implication (`->`) and `if-else` Constraints
+
 Conditional constraints restrict variable values only when a specific condition evaluates to true:
 
 ```systemverilog
@@ -152,6 +162,7 @@ endclass
 ```
 
 ### Array Constraints: `foreach` and `unique`
+
 When randomizing dynamic arrays or fixed buffers, constraints can iterate over indices:
 
 ```systemverilog
@@ -174,6 +185,7 @@ endclass
 ```
 
 ### Soft Constraints (`soft`)
+
 Introduced in IEEE 1800-2012, the `soft` keyword marks a default constraint that can be overridden at runtime without causing a solver contradiction:
 
 ```systemverilog
@@ -198,7 +210,9 @@ endmodule
 ```
 
 ### Dynamic Constraint Management
+
 Constraints and variables can be selectively enabled or disabled at runtime:
+
 - **`object.constraint_name.constraint_mode(0/1);`**: Disables or enables an entire named constraint block.
 - **`object.variable_name.rand_mode(0/1);`**: Disables randomization of a specific property, holding it constant.
 - **Inline Constraints (`randomize() with { ... }`):** Appends temporary, high-priority constraints for a single randomization invocation.
@@ -212,6 +226,7 @@ How do we prevent random testing from aimlessly thrashing in areas that have alr
 ![Coverage-Driven Verification (CDV) Closed-Loop Flow](images/ch3_cdv_feedback_loop.svg)
 
 ### The CDV Feedback Loop
+
 1. **Define Functional Coverage:** Translate features and corner cases from the Verification Plan into SystemVerilog `covergroup` models.
 2. **Execute Random Simulations:** Run automated regression suites with distinct seeds across a server cluster.
 3. **Collect & Merge Coverage:** Simulators aggregate hit counts into a centralized Unified Coverage Database (UCDB).
@@ -227,6 +242,7 @@ Functional coverage measures design intent and verification completeness directl
 ![SystemVerilog Functional Coverage Model Architecture](images/ch3_functional_coverage_matrix.svg)
 
 ### Constructing a Production Covergroup
+
 A `covergroup` encapsulates multiple `coverpoint` specifications and is instantiated as an object:
 
 ```systemverilog
@@ -248,10 +264,10 @@ covergroup packet_cg @(posedge clk);
         bins min_len    = {64};
         bins normal_len = {[65 : 1517]};
         bins max_len    = {1518};
-        
+
         // Transition bin: tests back-to-back minimum to maximum length
         bins min_to_max = (64 => 1518);
-        
+
         // Illegal bins: simulator throws error if sampled!
         illegal_bins bad_len = {[0 : 63], [1519 : $]};
     }
@@ -274,19 +290,20 @@ endgroup : packet_cg
 
 ### Coverpoint Bin Categorization
 
-| Bin Construct | Keyword | Purpose & Behavior |
-| :--- | :--- | :--- |
-| **Explicit Value Bin** | `bins name = {val1, val2};` | Tracks hits for specific individual numerical values. |
-| **Range Bin** | `bins name = {[min : max]};` | Increments the bin counter if any sampled value falls within the range. |
-| **Transition Bin** | `bins name = (A => B => C);` | Tracks sequential temporal transitions across consecutive sample events. |
-| **Ignore Bins** | `ignore_bins name = {val};` | Completely removes specific values from the coverage denominator. |
-| **Illegal Bins** | `illegal_bins name = {val};` | Triggers an immediate simulation runtime error if sampled. |
+| Bin Construct          | Keyword                      | Purpose & Behavior                                                       |
+| :--------------------- | :--------------------------- | :----------------------------------------------------------------------- |
+| **Explicit Value Bin** | `bins name = {val1, val2};`  | Tracks hits for specific individual numerical values.                    |
+| **Range Bin**          | `bins name = {[min : max]};` | Increments the bin counter if any sampled value falls within the range.  |
+| **Transition Bin**     | `bins name = (A => B => C);` | Tracks sequential temporal transitions across consecutive sample events. |
+| **Ignore Bins**        | `ignore_bins name = {val};`  | Completely removes specific values from the coverage denominator.        |
+| **Illegal Bins**       | `illegal_bins name = {val};` | Triggers an immediate simulation runtime error if sampled.               |
 
 ---
 
 ## Coverage Closure Strategy: Eliminating Coverage Holes
 
 Achieving the final 5% to 10% of coverage closure is typically the most challenging phase of a project:
+
 1. **Analyze Unhit Bins:** Determine why a bin was missed. Is it an unreachable state, a missing stimulus sequence, or an overly restrictive constraint?
 2. **Loosen Over-Constrained Classes:** If a base constraint prohibits a valid state (e.g., `payload_len < 1000` prevents jumbo frame testing), relax or soft-declare the constraint.
 3. **Seed Exploration:** Run short regressions with thousands of distinct seeds. Many corner cases require specific pseudo-random sequences to trigger.
@@ -298,8 +315,8 @@ Achieving the final 5% to 10% of coverage closure is typically the most challeng
 ## Learning Resources
 
 - **Books:**
-  - *SystemVerilog for Verification* by Chris Spear & Greg Tumbush (Chapters 6 & 9: Randomization and Functional Coverage).
-  - *Writing Testbenches Using SystemVerilog* by Janick Bergeron.
+  - _SystemVerilog for Verification_ by Chris Spear & Greg Tumbush (Chapters 6 & 9: Randomization and Functional Coverage).
+  - _Writing Testbenches Using SystemVerilog_ by Janick Bergeron.
 - **Standards:**
   - IEEE Std 1800-2023 SystemVerilog LRM (Clause 18: Constrained Random Value Generation, Clause 19: Functional Coverage).
 

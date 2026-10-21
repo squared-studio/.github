@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 480" width="100%" height="100%">
+  <rect width="960" height="480" fill="#0b1120" rx="8"/>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8"/>
+    </marker>
+  </defs>
+
+  <text x="480" y="38" fill="#f8fafc" font-size="20" font-weight="bold" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" text-anchor="middle">The CPython Object Model: Anatomy of PyObject &amp; PyVarObject</text>
+  <text x="480" y="62" fill="#94a3b8" font-size="13" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" text-anchor="middle">Everything in Python is a heap-allocated C struct wrapping metadata headers and payload</text>
+
+  <!-- Box 1: PyObject Header -->
+  <g transform="translate(60, 100)">
+    <rect width="260" height="230" rx="8" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+    <rect width="260" height="34" rx="8" fill="#0369a1"/>
+    <text x="130" y="23" fill="#ffffff" font-size="14" font-weight="bold" font-family="sans-serif" text-anchor="middle">Base PyObject (16 Bytes)</text>
+    
+    <!-- ob_refcnt -->
+    <rect x="15" y="50" width="230" height="46" rx="4" fill="#0f172a" stroke="#0284c7"/>
+    <text x="25" y="70" fill="#38bdf8" font-size="12" font-family="monospace">Py_ssize_t ob_refcnt</text>
+    <text x="25" y="87" fill="#94a3b8" font-size="10" font-family="sans-serif">8 Bytes: Reference counter for GC deallocation</text>
+
+    <!-- ob_type -->
+    <rect x="15" y="108" width="230" height="46" rx="4" fill="#0f172a" stroke="#0284c7"/>
+    <text x="25" y="128" fill="#38bdf8" font-size="12" font-family="monospace">PyTypeObject *ob_type</text>
+    <text x="25" y="145" fill="#94a3b8" font-size="10" font-family="sans-serif">8 Bytes: Pointer to type struct (e.g. &amp;PyLong_Type)</text>
+
+    <!-- Total -->
+    <rect x="15" y="168" width="230" height="46" rx="4" fill="#082f49" stroke="#38bdf8"/>
+    <text x="130" y="188" fill="#7dd3fc" font-size="11" font-weight="bold" font-family="sans-serif" text-anchor="middle">Fixed Header Overhead</text>
+    <text x="130" y="205" fill="#bae6fd" font-size="10" font-family="sans-serif" text-anchor="middle">Present in EVERY Python object on heap</text>
+  </g>
+
+  <!-- Box 2: PyLongObject Example -->
+  <g transform="translate(360, 100)">
+    <rect width="260" height="230" rx="8" fill="#1e293b" stroke="#34d399" stroke-width="2"/>
+    <rect width="260" height="34" rx="8" fill="#047857"/>
+    <text x="130" y="23" fill="#ffffff" font-size="14" font-weight="bold" font-family="sans-serif" text-anchor="middle">PyLongObject (x = 100)</text>
+
+    <rect x="15" y="50" width="230" height="30" rx="4" fill="#0f172a" stroke="#334155"/>
+    <text x="25" y="70" fill="#6ee7b7" font-size="11" font-family="monospace">ob_refcnt: 1</text>
+
+    <rect x="15" y="86" width="230" height="30" rx="4" fill="#0f172a" stroke="#334155"/>
+    <text x="25" y="106" fill="#6ee7b7" font-size="11" font-family="monospace">ob_type: &amp;PyLong_Type</text>
+
+    <rect x="15" y="122" width="230" height="30" rx="4" fill="#0f172a" stroke="#059669"/>
+    <text x="25" y="142" fill="#34d399" font-size="11" font-family="monospace">Py_ssize_t ob_size: 1</text>
+
+    <rect x="15" y="158" width="230" height="30" rx="4" fill="#064e3b" stroke="#34d399"/>
+    <text x="25" y="178" fill="#a7f3d0" font-size="11" font-family="monospace">digit ob_digit[1]: 100</text>
+
+    <text x="130" y="215" fill="#6ee7b7" font-size="12" font-weight="bold" font-family="sans-serif" text-anchor="middle">Total Size = 28 Bytes</text>
+  </g>
+
+  <!-- Box 3: PyListObject (PyVarObject) -->
+  <g transform="translate(660, 100)">
+    <rect width="240" height="230" rx="8" fill="#1e293b" stroke="#fbbf24" stroke-width="2"/>
+    <rect width="240" height="34" rx="8" fill="#b45309"/>
+    <text x="120" y="23" fill="#ffffff" font-size="14" font-weight="bold" font-family="sans-serif" text-anchor="middle">PyListObject (items=[...])</text>
+
+    <rect x="15" y="48" width="210" height="26" rx="4" fill="#0f172a" stroke="#334155"/>
+    <text x="25" y="66" fill="#fde047" font-size="10" font-family="monospace">ob_refcnt: 1</text>
+
+    <rect x="15" y="78" width="210" height="26" rx="4" fill="#0f172a" stroke="#334155"/>
+    <text x="25" y="96" fill="#fde047" font-size="10" font-family="monospace">ob_type: &amp;PyList_Type</text>
+
+    <rect x="15" y="108" width="210" height="26" rx="4" fill="#0f172a" stroke="#d97706"/>
+    <text x="25" y="126" fill="#fde047" font-size="10" font-family="monospace">ob_size: 3 (current len)</text>
+
+    <rect x="15" y="138" width="210" height="26" rx="4" fill="#0f172a" stroke="#d97706"/>
+    <text x="25" y="156" fill="#fde047" font-size="10" font-family="monospace">allocated: 6 (capacity)</text>
+
+    <rect x="15" y="168" width="210" height="26" rx="4" fill="#451a03" stroke="#f59e0b"/>
+    <text x="25" y="186" fill="#fef08a" font-size="10" font-family="monospace">PyObject **ob_item -> [ptr, ptr, ptr]</text>
+
+    <text x="120" y="215" fill="#fde047" font-size="12" font-weight="bold" font-family="sans-serif" text-anchor="middle">Total Size = 56+ Bytes</text>
+  </g>
+
+  <!-- Bottom Explanatory Comparison -->
+  <g transform="translate(60, 350)">
+    <rect width="840" height="105" rx="8" fill="#0f172a" stroke="#334155"/>
+    <text x="20" y="28" fill="#38bdf8" font-size="13" font-weight="bold" font-family="sans-serif">Memory Implication for Systems &amp; Hardware Engineers:</text>
+    <text x="20" y="52" fill="#cbd5e1" font-size="12" font-family="sans-serif">• In C, a 32-bit integer occupies exactly <tspan fill="#34d399" font-weight="bold">4 bytes</tspan> on the stack. In Python, an integer is a dynamic heap object consuming <tspan fill="#f43f5e" font-weight="bold">28 bytes</tspan>.</text>
+    <text x="20" y="74" fill="#cbd5e1" font-size="12" font-family="sans-serif">• Storing 1,000,000 integers in a Python <tspan font-family="monospace" fill="#fbbf24">list</tspan> consumes ~<tspan fill="#f43f5e">36 MB</tspan> (pointers + PyLongObjects) vs ~<tspan fill="#34d399">4 MB</tspan> in a raw C array or NumPy buffer.</text>
+    <text x="20" y="94" fill="#94a3b8" font-size="11" font-family="sans-serif">Arbitrary precision integers: Python 3 integers never overflow; when magnitude exceeds 30 bits, <tspan font-family="monospace">ob_digit</tspan> dynamically expands.</text>
+  </g>
+</svg>

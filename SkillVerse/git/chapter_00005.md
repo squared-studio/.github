@@ -23,7 +23,6 @@ Merge conflicts arise when Git encounters ambiguities while trying to combine ch
 2.  **Conflicting File Operations (Deletion vs. Modification)**: A conflict arises when one branch modifies a file, while another branch deletes it. Git is unsure whether to keep the modified version or acknowledge the deletion.
 
     For example:
-
     - Branch `feature-update-docs` modifies `README.md`.
     - Branch `feature-cleanup` deletes `README.md` because it's been moved elsewhere.
 
@@ -32,7 +31,6 @@ Merge conflicts arise when Git encounters ambiguities while trying to combine ch
 3.  **Structural Conflicts (e.g., Directory Reorganization)**: Although less frequent, conflicts can also occur due to structural changes, like when branches reorganize directories in incompatible ways.
 
     Imagine:
-
     - Branch `feature-restructure-a` moves files from `src/utils/` to `src/helpers/`.
     - Branch `feature-restructure-b` moves _some_ files from `src/utils/` to `src/utilities/` and modifies others in place within `src/utils/`.
 
@@ -98,7 +96,6 @@ The core of resolving merge conflicts lies in manually editing the conflicted fi
 
 1.  **Open the Conflicted File**: Open the file listed by `git status` in VS Code. VS Code (and many other modern IDEs) often automatically detect merge conflicts and highlight them. You might see options like "Accept Current Change," "Accept Incoming Change," "Accept Both Changes," or "Compare Changes" directly within the editor.
 2.  **Use the Merge Editor**: VS Code provides a dedicated "Merge Editor" interface which can be very helpful. You might see a button or option like **"Resolve in Merge Editor"** at the top of the conflicted file. Clicking this will typically present a side-by-side view, showing:
-
     - **Your Version**: The code in your current branch (marked `HEAD`).
     - **Incoming Version**: The code from the branch being merged.
     - **Result**: A section where you manually construct the resolved code, choosing or combining parts from both versions.

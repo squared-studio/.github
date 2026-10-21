@@ -1,6 +1,7 @@
 # Transaction IDs, Routing, and Out-of-Order Execution
 
 ### Learning Objectives
+
 - Master the role and encoding of OBI Transaction Identifiers: **Address ID (`aid`)**, **Master ID (`mid`)**, and **Response ID (`rid`)**.
 - Analyze how multi-master crossbars implement **ID Widening (Prefix Prepending)** to disambiguate concurrent master requests.
 - Contrast strict **Intra-ID In-Order Execution** with flexible **Inter-ID Out-of-Order Completion**.
@@ -14,6 +15,7 @@
 In a single-master, single-slave system, transaction IDs are unnecessary because all responses return in the exact order they were issued.
 
 However, in modern multi-core RISC-V SoCs:
+
 1. Multiple cores (e.g., Core 0 and Core 1) concurrently access shared memory across an interconnect crossbar.
 2. Individual cores access wildly different targets: on-chip SRAM (1-cycle latency), tightly coupled peripherals (2-cycle latency), and external DDR memory (20-cycle latency).
 
@@ -24,6 +26,7 @@ To prevent this bottleneck, OBI defines standardized **Transaction Identifiers**
 ![OBI Transaction ID Routing](images/ch6_transaction_id_routing.svg)
 
 ### The OBI ID Signals:
+
 - **`aid[N:0]` (Address ID):** An identification tag driven by the master on the Request Channel alongside `addr`.
 - **`mid[M:0]` (Master ID):** An identifier assigned by the interconnect crossbar to denote which master port initiated the request.
 - **`rid[R:0]` (Response ID):** Driven by the slave on the Response Channel alongside `rvalid`. It matches the `aid` / `mid` of the transaction being completed.
@@ -45,6 +48,7 @@ Core 1 (aid = 2'b01) ----/     Prepends Master Port Index:
 ```
 
 ### The ID Extension Mechanism:
+
 1. When Core 0 issues a request, the crossbar prepends Core 0's port index:
    $$\text{Slave\_ID} = \{\text{mid}, \ \text{aid}\} = \{2'b00, \ \text{aid}\}$$
 2. The slave receives the widened ID and stores it in its internal memory pipeline.
@@ -60,12 +64,14 @@ OBI enforces precise ordering semantics to ensure that software memory operation
 ![OBI Out of Order Responses](images/ch6_out_of_order_responses.svg)
 
 ### Rule 1: Strict Intra-ID In-Order Execution
+
 > **Transactions that share the same transaction ID (`aid`) MUST be completed and retired in the exact chronological order in which they were granted.**
 
 - If a master issues Request A (`aid = 1`) and then Request B (`aid = 1`), the slave or interconnect **must return Response A before returning Response B**.
 - This guarantees that sequential memory loads within the same instruction thread retain sequential consistency.
 
 ### Rule 2: Inter-ID Out-of-Order Execution
+
 > **Transactions that possess different transaction IDs (`aid`) have NO ordering restrictions. The interconnect or slave is fully permitted to return responses out-of-order.**
 
 - If a master issues Request A (`aid = 1`, targeting slow DDR) and then Request B (`aid = 2`, targeting fast SRAM):
@@ -79,13 +85,14 @@ OBI enforces precise ordering semantics to ensure that software memory operation
 
 To support out-of-order responses across complex crossbars, the interconnect switch maintains an internal hardware table called the **Pending Transaction Table (PTT)**:
 
-| Table Entry Index | Master Port Source (`mid`) | Master Original `aid` | Target Slave Port | Transaction Status |
-|:---:|:---:|:---:|:---:|:---:|
-| **Entry 0** | Core 0 (`2'b00`) | `4'h1` | Slave 2 (DDR) | Pending (Cycle 1) |
-| **Entry 1** | Core 1 (`2'b01`) | `4'h0` | Slave 0 (SRAM) | **Completed (Cycle 3)** $\rightarrow$ Retired |
-| **Entry 2** | Core 0 (`2'b00`) | `4'h2` | Slave 1 (UART) | Pending (Cycle 2) |
+| Table Entry Index | Master Port Source (`mid`) | Master Original `aid` | Target Slave Port |              Transaction Status               |
+| :---------------: | :------------------------: | :-------------------: | :---------------: | :-------------------------------------------: |
+|    **Entry 0**    |      Core 0 (`2'b00`)      |        `4'h1`         |   Slave 2 (DDR)   |               Pending (Cycle 1)               |
+|    **Entry 1**    |      Core 1 (`2'b01`)      |        `4'h0`         |  Slave 0 (SRAM)   | **Completed (Cycle 3)** $\rightarrow$ Retired |
+|    **Entry 2**    |      Core 0 (`2'b00`)      |        `4'h2`         |  Slave 1 (UART)   |               Pending (Cycle 2)               |
 
 When a slave asserts `rvalid`, the crossbar matches `rid` against the PTT:
+
 1. The crossbar immediately identifies which master port must receive the data.
 2. The crossbar verifies that no Intra-ID ordering rules are violated.
 3. The table entry is deallocated, returning credit back to the master.
@@ -119,7 +126,9 @@ In multi-threaded RISC-V systems, out-of-order bus responses must strictly compl
 ## Review Questions
 
 ### Question 1
+
 A dual-core processor connects to an OBI crossbar. Core 0 issues a request with `aid = 4'h3`. Core 1 simultaneously issues a request with `aid = 4'h3`. How does the crossbar prevent these two identical IDs from colliding at a shared slave?
+
 <details>
 <summary><b>View Answer</b></summary>
 The crossbar performs ID Widening (prefix prepending). It prepends the master's hardware port index (`mid`) to the request's `aid`. For example:
@@ -129,21 +138,27 @@ When the slave completes the access and returns `rid`, the crossbar decodes the 
 </details>
 
 ### Question 2
+
 Under what conditions is an OBI slave permitted to return responses out-of-order relative to the order in which the requests were accepted?
+
 <details>
 <summary><b>View Answer</b></summary>
 An OBI slave (or interconnect) is permitted to return responses out-of-order **if and only if the transactions possess different Transaction IDs (`aid` / `rid`)**. Transactions that share the exact same ID value are subject to strict Intra-ID ordering rules and must always complete in the order they were granted.
 </details>
 
 ### Question 3
+
 How does a RISC-V processor core ensure that a `FENCE` instruction is respected when connecting over an out-of-order OBI interconnect?
+
 <details>
 <summary><b>View Answer</b></summary>
 When the processor pipeline decodes a `FENCE` instruction, it halts the issuance of any new memory requests on the OBI Request Channel. It then monitors its internal in-flight transaction counter. Only when all pending requests have returned their corresponding `rvalid` responses (in-flight counter reaches zero) does the core consider the `FENCE` satisfied. The processor then resumes issuing subsequent memory requests.
 </details>
 
 ### Question 4
+
 Why is out-of-order execution particularly beneficial in heterogenous SoCs with both on-chip SRAM and external flash memory?
+
 <details>
 <summary><b>View Answer</b></summary>
 On-chip SRAM has a very low latency (typically 1 clock cycle), whereas external SPI NOR flash or DDR memory has a latency of dozens to hundreds of clock cycles. Without out-of-order execution, an access to SRAM issued after a flash access would be blocked until the slow flash read completed (head-of-line blocking). With out-of-order OBI support (using different IDs), the SRAM access completes immediately in 1 cycle, allowing the CPU to continue executing code while the flash access completes in the background.

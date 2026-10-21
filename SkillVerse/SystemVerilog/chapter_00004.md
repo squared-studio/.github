@@ -26,12 +26,12 @@ SystemVerilog's built-in types are the fundamental building blocks for represent
 - **X**: Unknown logic value (initial state, contention, or uninitialized).
 - **Z**: High impedance, floating state (often from tri-state buffers).
 
-| Type         | Description                                  | Use Case                               | Example                       |
-|--------------|----------------------------------------------|----------------------------------------|-------------------------------|
-| **`reg`**      | 4-state variable (legacy Verilog name)       | Modeling flip-flops, registers, memory | `reg [31:0] instruction_reg;` |
-| **`wire`**     | 4-state net with driver resolution           | Interconnecting modules, signals       | `wire interrupt_line;`       |
-| **`logic`**    | 4-state variable data type                   | RTL design, commonly replacing `reg`   | `logic [15:0] data_bus;`      |
-| **`integer`**  | 4-state, 32-bit signed integer               | Counters, loop indices, general-purpose integers in RTL | `integer loop_count = 0;`    |
+| Type          | Description                            | Use Case                                                | Example                       |
+| ------------- | -------------------------------------- | ------------------------------------------------------- | ----------------------------- |
+| **`reg`**     | 4-state variable (legacy Verilog name) | Modeling flip-flops, registers, memory                  | `reg [31:0] instruction_reg;` |
+| **`wire`**    | 4-state net with driver resolution     | Interconnecting modules, signals                        | `wire interrupt_line;`        |
+| **`logic`**   | 4-state variable data type             | RTL design, commonly replacing `reg`                    | `logic [15:0] data_bus;`      |
+| **`integer`** | 4-state, 32-bit signed integer         | Counters, loop indices, general-purpose integers in RTL | `integer loop_count = 0;`     |
 
 ```systemverilog
 module rtl_module;
@@ -42,6 +42,7 @@ module rtl_module;
   // ... design logic using address, chip_select, error_count ...
 endmodule
 ```
+
 **Explanation**: In `rtl_module`, `logic` is used for the `address` bus as it is a modern, versatile variable type suitable for RTL signals with a controlled driver. `wire` is used for `chip_select` to represent a net connection. `integer` is used for `error_count`, a 4-state, signed, 32-bit integer. In modern RTL, an explicitly sized `logic` or `int unsigned` is often clearer for a hardware counter.
 
 ### **2-State Types: Speed and Efficiency (Verification)**
@@ -51,17 +52,17 @@ endmodule
 - **0**: Logical zero, false condition.
 - **1**: Logical one, true condition.
 
-| Type          | Description                                  | Use Case                               | Example                         |
-|---------------|----------------------------------------------|----------------------------------------|---------------------------------|
-| **`bit`**       | 2-state, unsigned (default bit width: 1)     | Flags, simple binary variables         | `bit valid_packet = 0;`         |
-| **`byte`**      | 2-state, 8-bit signed integer                | Byte-level data, memory access         | `byte data_byte = 8'hA5;`       |
-| **`shortint`**  | 2-state, 16-bit signed integer               | Small integers, offsets               | `shortint offset = -1024;`      |
-| **`int`**       | 2-state, 32-bit signed integer               | General-purpose integers in verification | `int transaction_count = 1000;` |
-| **`longint`**   | 2-state, 64-bit signed integer               | Large integers, counters               | `longint memory_address;`        |
-| **`shortreal`** | 2-state, 32-bit floating-point               | Single-precision floating-point values | `shortreal tolerance = 0.01;`   |
-| **`real`**      | 2-state, 64-bit floating-point               | Double-precision floating-point values | `real simulation_time = 12.5;`  |
-| **`time`**      | 4-state, unsigned time value                | Storing simulation timestamps          | `time event_time;`              |
-| **`realtime`**  | 2-state, Real-number time                     | Representing delays, time intervals    | `realtime delay_time = 3.14e-9;`|
+| Type            | Description                              | Use Case                                 | Example                          |
+| --------------- | ---------------------------------------- | ---------------------------------------- | -------------------------------- |
+| **`bit`**       | 2-state, unsigned (default bit width: 1) | Flags, simple binary variables           | `bit valid_packet = 0;`          |
+| **`byte`**      | 2-state, 8-bit signed integer            | Byte-level data, memory access           | `byte data_byte = 8'hA5;`        |
+| **`shortint`**  | 2-state, 16-bit signed integer           | Small integers, offsets                  | `shortint offset = -1024;`       |
+| **`int`**       | 2-state, 32-bit signed integer           | General-purpose integers in verification | `int transaction_count = 1000;`  |
+| **`longint`**   | 2-state, 64-bit signed integer           | Large integers, counters                 | `longint memory_address;`        |
+| **`shortreal`** | 2-state, 32-bit floating-point           | Single-precision floating-point values   | `shortreal tolerance = 0.01;`    |
+| **`real`**      | 2-state, 64-bit floating-point           | Double-precision floating-point values   | `real simulation_time = 12.5;`   |
+| **`time`**      | 4-state, unsigned time value             | Storing simulation timestamps            | `time event_time;`               |
+| **`realtime`**  | 2-state, Real-number time                | Representing delays, time intervals      | `realtime delay_time = 3.14e-9;` |
 
 ```systemverilog
 module verification_env;
@@ -72,6 +73,7 @@ module verification_env;
   // ... verification logic using 2-state types for efficiency ...
 endmodule
 ```
+
 **Explanation**: In `verification_env`, 2-state types like `bit`, `int`, and `real` are used where unknown and high-impedance values are not meaningful. This can optimize simulation speed, but using 2-state values can also hide an `X` or `Z` that would reveal an initialization, reset, or connectivity problem. Use 4-state types at boundaries where those conditions matter.
 
 ### Signedness and Width
@@ -97,13 +99,13 @@ SystemVerilog includes advanced net types designed to model specific hardware sc
 
 These types are used to model situations where multiple sources can drive a signal, and the resulting value depends on the driver types and strengths.
 
-| Type      | Description                                      | Use Case                                  | Example                       |
-|-----------|--------------------------------------------------|-------------------------------------------|-------------------------------|
-| **`tri`**      | Tri-state bus (functionally identical to `wire`) | Modeling tri-state buses (less common now) | `tri [15:0] data_bus;`        |
-| **`tri0`**     | Pull-down behavior when no driver is active      | Default low state for undriven signals    | `tri0 memory_select;`         |
-| **`tri1`**     | Pull-up behavior when no driver is active        | Default high state for undriven signals   | `tri1 interrupt_enable;`     |
-| **`wand`**     | Wired-AND resolution (dominant 0)              | Multiple drivers ANDed together           | `wand arbitration_grant;`    |
-| **`wor`**      | Wired-OR resolution (dominant 1)               | Multiple drivers ORed together            | `wor data_available;`        |
+| Type       | Description                                      | Use Case                                   | Example                   |
+| ---------- | ------------------------------------------------ | ------------------------------------------ | ------------------------- |
+| **`tri`**  | Tri-state bus (functionally identical to `wire`) | Modeling tri-state buses (less common now) | `tri [15:0] data_bus;`    |
+| **`tri0`** | Pull-down behavior when no driver is active      | Default low state for undriven signals     | `tri0 memory_select;`     |
+| **`tri1`** | Pull-up behavior when no driver is active        | Default high state for undriven signals    | `tri1 interrupt_enable;`  |
+| **`wand`** | Wired-AND resolution (dominant 0)                | Multiple drivers ANDed together            | `wand arbitration_grant;` |
+| **`wor`**  | Wired-OR resolution (dominant 1)                 | Multiple drivers ORed together             | `wor data_available;`     |
 
 ```systemverilog
 module multi_driver_example;
@@ -113,6 +115,7 @@ module multi_driver_example;
   // ... logic driving address_bus and control_line ...
 endmodule
 ```
+
 **Explanation**: `tri1 address_bus` models a net with a weak pull-up when no stronger driver is active; it does not guarantee a high value against every possible driver. `wand control_line` represents a control signal where multiple sources can drive it low to assert control (wired-AND behavior). Multi-driver nets should be used only when the physical or protocol model requires them.
 
 ## **User-Defined Data Types: Enhancing Readability and Abstraction**
@@ -130,6 +133,7 @@ typedef enum {READ, WRITE} access_mode_t; // Define 'access_mode_t' enum
 address_t memory_location;       // Use 'address_t' for address variables
 access_mode_t current_access;   // Use 'access_mode_t' for access mode
 ```
+
 **Benefit**: `typedef` improves code readability by replacing less descriptive types (like `logic [63:0]`) with meaningful names (`address_t`). If you need to change the underlying type (e.g., to `logic [39:0]`), you only modify the `typedef` definition, not every instance in your code.
 
 ### **`enum`**: Defining Named Value Sets
@@ -153,6 +157,7 @@ case (current_state)
   // ...
 endcase
 ```
+
 **Benefit**: `enum` makes state machine code much more readable and less error-prone than using raw integer values for states. The optional type declaration (`logic [2:0]`) specifies the underlying packed representation for the enum, allowing type-aware operations. Assigning arbitrary integer values to an enum may require an explicit cast, which helps expose accidental invalid states.
 
 ### **`struct`**: Grouping Related Data
@@ -171,6 +176,7 @@ current_transaction.address = 8'h40;    // Access struct members using dot notat
 current_transaction.data = 32'h1234_5678;
 current_transaction.read_write = 1;
 ```
+
 **Benefit**: `struct` organizes related data into logical units, improving code structure and making it easier to pass complex data as arguments to tasks and functions. The `packed` keyword makes the members a contiguous, integral bit representation, useful for bit-level manipulation and interfaces. A packed struct's total width is the sum of its packed members; its field ordering follows the declared packed layout and should be checked when mapping to a protocol.
 
 ### **`union`**: Sharing Memory Space
@@ -190,6 +196,7 @@ $display("Union as integer: %0d", data_var.integer_val); // Interpret float bits
 data_var.bit_pattern = 32'hABCDEF01; // Overwrite with bit pattern
 $display("Union as float: %0.2f", data_var.float_val);   // Interpret bit pattern as float
 ```
+
 **Caution**: Using unions requires careful management as writing to one member will overwrite the value of other members because they share the same memory location.
 
 ## **Packed vs. Unpacked Arrays: Memory Layout Matters**
@@ -207,6 +214,7 @@ logic [3:0][7:0] byte_array_packed; // Packed 2D array (4 bytes, 32 bits total)
 assign byte_array_packed = 32'h1122_3344; // Assign a 32-bit value
 $display("Byte 0 (packed): %h", byte_array_packed[0]); // Access as bit vector
 ```
+
 **Key Feature**: Packed arrays are treated as a single vector. Indexing into packed arrays accesses bit or bit ranges within this contiguous vector. They are ideal for representing hardware signals, registers, and fields where bit-level manipulation is common. For `logic [3:0][7:0] byte_array_packed`, `byte_array_packed[0]` is the low-index packed slice, not necessarily the first byte in a protocol's printed or wire-order convention.
 
 ### **Unpacked Arrays: Collections of Elements**
@@ -220,20 +228,21 @@ bit flag_array [64];               // Unpacked array of 64 bits
 integer_array_unpacked[0] = 123;     // Access individual integer elements
 flag_array[5] = 1;
 ```
+
 **Key Feature**: Unpacked arrays are collections of individual elements. Indexing accesses elements, not bits. Their storage layout and memory efficiency are implementation-dependent, so choose them for element-level modeling rather than assuming a particular physical layout.
 
 **Choosing Between Packed and Unpacked Arrays**:
 
 - Use **packed arrays** for:
-    - Modeling hardware signals and buses.
-    - Bit-level operations (slicing, concatenation, bitwise logic).
-    - When you need to treat data as a contiguous bit stream.
+  - Modeling hardware signals and buses.
+  - Bit-level operations (slicing, concatenation, bitwise logic).
+  - When you need to treat data as a contiguous bit stream.
 
 - Use **unpacked arrays** for:
-    - Verification testbenches.
-    - Large data storage (memories, lookup tables).
-    - Element-wise access and manipulation.
-   - When element-level access and variable-shaped data are more important than bit-level packing. Memory efficiency depends on the type and tool implementation.
+  - Verification testbenches.
+  - Large data storage (memories, lookup tables).
+  - Element-wise access and manipulation.
+  - When element-level access and variable-shaped data are more important than bit-level packing. Memory efficiency depends on the type and tool implementation.
 
 ## A Practical Type-Selection Checklist
 
@@ -261,6 +270,7 @@ Test your knowledge of SystemVerilog data types with these exercises. Solutions 
 The examples below are small declarations intended to illustrate type syntax. When compiling them as a single file, place declarations inside an appropriate module, package, or procedural block, and use a SystemVerilog compilation mode. Declaration-time initialization is simulation initialization; it should not be confused with a hardware reset requirement.
 
 1. **Declare and Initialize a `reg`**:
+
    ```systemverilog
    reg [15:0] config_reg;
    initial config_reg = 16'hABCD;
@@ -268,6 +278,7 @@ The examples below are small declarations intended to illustrate type syntax. Wh
    ```
 
 2. **Connect a `wire` to a `logic` signal**:
+
    ```systemverilog
    logic data_enable_logic;
    wire data_enable_wire;
@@ -276,6 +287,7 @@ The examples below are small declarations intended to illustrate type syntax. Wh
    ```
 
 3. **Perform Arithmetic with `integer` Types**:
+
    ```systemverilog
    integer count_start = 50;
    integer count_end = 150;
@@ -284,12 +296,14 @@ The examples below are small declarations intended to illustrate type syntax. Wh
    ```
 
 4. **Declare and Assign a `real` Value**:
+
    ```systemverilog
    real frequency_GHz = 2.4;
    // Solution: Declares a real variable 'frequency_GHz' and assigns it the floating-point value 2.4.
    ```
 
 5. **Capture Simulation Time in a `time` Variable**:
+
    ```systemverilog
    time event_timestamp;
    initial event_timestamp = $time;
@@ -297,6 +311,7 @@ The examples below are small declarations intended to illustrate type syntax. Wh
    ```
 
 6. **Perform Bitwise AND on `logic` Vectors**:
+
    ```systemverilog
    logic [7:0] pattern = 8'b1011_0101;
    logic [7:0] mask_logic = 8'b1111_0000;
@@ -305,6 +320,7 @@ The examples below are small declarations intended to illustrate type syntax. Wh
    ```
 
 7. **Define and Instantiate a `struct`**:
+
    ```systemverilog
    typedef struct packed { logic [7:0] opcode; logic [23:0] operand; } instruction_t;
    instruction_t current_instruction;
@@ -314,6 +330,7 @@ The examples below are small declarations intended to illustrate type syntax. Wh
    ```
 
 8. **Use `enum` for State Machine States**:
+
    ```systemverilog
    typedef enum {STATE_RESET, STATE_WAIT, STATE_PROCESS} control_state_t;
    control_state_t current_control_state = STATE_RESET;
@@ -321,6 +338,7 @@ The examples below are small declarations intended to illustrate type syntax. Wh
    ```
 
 9. **Initialize a Packed Array with Literal Values**:
+
    ```systemverilog
    logic [1:0][3:0] nibble_matrix = {4'h3, 4'h6, 4'h9, 4'hC};
    // Solution: Initializes a 2x4 packed array 'nibble_matrix' with hexadecimal nibble values.
@@ -341,4 +359,3 @@ The examples below are small declarations intended to illustrate type syntax. Wh
 By understanding and effectively using SystemVerilog's data types, you can create accurate, efficient, and maintainable hardware designs and verification environments. Experiment with these types and exercises to deepen your mastery.
 
 ##### Copyright (c) 2026 squared-studio
-

@@ -1,7 +1,9 @@
 # Barrier Transactions and Memory Ordering
 
 ## The Reality of Relaxed Memory Ordering
+
 Modern high-performance architectures (such as ARMv8-A, ARMv9-A, and RISC-V) implement **weakly ordered (relaxed) memory consistency models**. To maximize instruction-level parallelism and hide memory access latency, hardware incorporates aggressive performance optimizations:
+
 - Out-of-order execution pipelines.
 - Deep, speculative store buffers and fill buffers.
 - Non-blocking L1/L2 caches supporting hit-under-miss and miss-under-miss.
@@ -16,38 +18,41 @@ Store 2: Write Flag = 1          Store 1: Write Data     (Arrives SECOND!)
                                  --> HAZARD: Peer sees Flag=1 and reads garbage!
 ```
 
-In multi-threaded software algorithms—such as spinlocks, ring buffers, producer-consumer queues, and message passing—program correctness relies entirely on **strict ordering guarantees**. A producer must ensure that all buffer data stores are globally visible before setting a "ready" flag. 
+In multi-threaded software algorithms—such as spinlocks, ring buffers, producer-consumer queues, and message passing—program correctness relies entirely on **strict ordering guarantees**. A producer must ensure that all buffer data stores are globally visible before setting a "ready" flag.
 
 To enforce this ordering across a distributed, pipelined hardware bus, the AMBA ACE protocol integrates native **Hardware Barrier Transactions**.
 
 ---
 
 ## Barrier Signaling on Address Channels (`AxBAR[1:0]`)
+
 In AMBA ACE, memory barriers are not sideband signals or proprietary interrupts; they are transmitted directly as in-band transactions across the standard Read Address (`AR`) and Write Address (`AW`) channels using the **`AxBAR[1:0]`** bitfield.
 
 ![Barrier Types Matrix](images/ch8_barrier_types_matrix.svg)
 
 ### `AxBAR[1:0]` Encoding Table
 
-| `AxBAR[1:0]` | Barrier Type | Architectural Purpose | Behavior Across the Interconnect |
-| :---: | :--- | :--- | :--- |
-| **`0b00`** | **Normal Access** | Standard read or write. | Subject to standard AXI ordering rules; can be pipelined and re-ordered freely relative to other normal accesses. |
-| **`0b01`** | **Memory Barrier** | Enforces ordering between normal transactions across the interconnect. | Flushes and serializes normal memory transactions issued before the barrier relative to transactions issued after the barrier. |
-| **`0b10`** | **Reserved** | Reserved for future AMBA extensions. | Must not be driven by compliant masters. |
-| **`0b11`** | **Synchronization Barrier** | The strongest barrier level. | Stalls until all transactions before the barrier are globally observed **and** all peer side-effects have completed. |
+| `AxBAR[1:0]` | Barrier Type                | Architectural Purpose                                                  | Behavior Across the Interconnect                                                                                               |
+| :----------: | :-------------------------- | :--------------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------- |
+|  **`0b00`**  | **Normal Access**           | Standard read or write.                                                | Subject to standard AXI ordering rules; can be pipelined and re-ordered freely relative to other normal accesses.              |
+|  **`0b01`**  | **Memory Barrier**          | Enforces ordering between normal transactions across the interconnect. | Flushes and serializes normal memory transactions issued before the barrier relative to transactions issued after the barrier. |
+|  **`0b10`**  | **Reserved**                | Reserved for future AMBA extensions.                                   | Must not be driven by compliant masters.                                                                                       |
+|  **`0b11`**  | **Synchronization Barrier** | The strongest barrier level.                                           | Stalls until all transactions before the barrier are globally observed **and** all peer side-effects have completed.           |
 
 ---
 
 ## Memory Barrier vs. Synchronization Barrier
 
 ### Memory Barrier (`AxBAR = 0b01`)
+
 - Maps directly to software **Data Memory Barrier (`DMB`)** instructions.
-- A Memory Barrier establishes a strict temporal divider between memory accesses initiated *before* the barrier and memory accesses initiated *after* the barrier.
+- A Memory Barrier establishes a strict temporal divider between memory accesses initiated _before_ the barrier and memory accesses initiated _after_ the barrier.
 - **Rules Enforced by the Interconnect:**
   - All transactions issued on this master interface **prior** to the barrier must be observed by all participating masters before any transaction issued **after** the barrier is observed.
   - Transactions do not necessarily have to reach final DRAM before the barrier finishes, provided that subsequent transactions cannot bypass them in interconnect buffers.
 
 ### Synchronization Barrier (`AxBAR = 0b11`)
+
 - Maps directly to software **Data Synchronization Barrier (`DSB`)** instructions.
 - A Synchronization Barrier is far more stringent: it guarantees that all outstanding memory transactions issued before the barrier have reached **full completion**.
 - The barrier transaction itself will not receive its read or write response (`RRESP` / `BRESP`) until:
@@ -58,6 +63,7 @@ In AMBA ACE, memory barriers are not sideband signals or proprietary interrupts;
 ---
 
 ## Barrier Scoping via Shareability Domains
+
 A barrier transaction is not necessarily global to the entire SoC. Just like coherent memory reads and writes, an ACE barrier is qualified by **`AxDOMAIN[1:0]`**:
 
 1. **Non-shareable Barrier (`AxDOMAIN = 0b00`):**
@@ -72,6 +78,7 @@ A barrier transaction is not necessarily global to the entire SoC. Just like coh
 ---
 
 ## Step-by-Step Interconnect Execution of Barrier Transactions
+
 When an ACE master issues a barrier transaction, the coherent interconnect acts as a serialization gatekeeper.
 
 ![Barrier Transaction Flow](images/ch8_barrier_transaction_flow.svg)
@@ -88,26 +95,31 @@ Cycle Phase:
 ```
 
 ### Phase 1: Pre-Barrier Draining
+
 1. The master issues one or more normal memory writes (e.g., storing a payload to a shared ring buffer).
 2. The master's execution pipeline hits a barrier instruction (`DMB` or `DSB`) and drives a barrier transaction onto the bus (`AWBAR = 0b01` or `0b11`, accompanied by dummy write address and control attributes).
 3. The interconnect captures the barrier request. The interconnect's internal serialization logic **freezes** the barrier's response. It inspects its outstanding transaction queues to identify all pre-barrier reads and writes issued by this master.
 
 ### Phase 2: Outstanding Transaction Resolution
+
 1. Pre-barrier write transactions propagate to their downstream targets (DRAM controller, peer caches).
 2. Peer caches process any invalidation or clean snoops generated by those writes and return their `CRRESP` snoop responses.
 3. Downstream memory controllers commit write data and drive `BVALID` write responses back into the interconnect.
 
 ### Phase 3: Barrier Completion Handshake
+
 1. Once **all** pre-barrier transactions have completed and their responses have been registered, the interconnect generates a write response (`BVALID` with `BRESP = OKAY`) specifically for the barrier transaction.
 2. The master accepts `BVALID` with `BREADY`. The barrier is now officially **retired**.
 
 ### Phase 4: Post-Barrier Execution
+
 1. Only after the barrier transaction has completed is the master permitted to issue subsequent memory writes (e.g., setting the `Flag = 1` release lock).
 2. Because all pre-barrier traffic has been drained, any peer master in the SoC that observes `Flag = 1` is mathematically guaranteed to observe the updated buffer data.
 
 ---
 
 ## Deadlock Prevention in Barrier Implementations
+
 Barrier transactions inherently stall bus forward progress until dependent transactions complete. If an interconnect is poorly designed, barriers can easily cause deadlock:
 
 - **The Dependency Hazard:** If a barrier transaction on `AW` blocks the interconnect from accepting new transactions, but an outstanding pre-barrier transaction requires a read data beat on `R` to complete, a circular stall occurs.
@@ -116,6 +128,7 @@ Barrier transactions inherently stall bus forward progress until dependent trans
 ---
 
 ## Chapter Summary
+
 - Weakly ordered architectures allow memory transactions to be re-ordered, risking software synchronization bugs in multi-threaded programs.
 - AMBA ACE provides in-band **Hardware Barrier Transactions** encoded on **`AxBAR[1:0]`** over standard `AR` and `AW` channels.
 - **`AxBAR = 0b01`** (Memory Barrier / DMB) serializes memory access ordering across observers.
@@ -153,4 +166,3 @@ Barrier transactions inherently stall bus forward progress until dependent trans
 ---
 
 ##### Copyright (c) 2026 squared-studio
-

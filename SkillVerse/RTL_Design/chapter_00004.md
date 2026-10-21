@@ -5,6 +5,7 @@ Proper clock and reset design is the bedrock of stable, reliable digital hardwar
 ## Learning Goals
 
 After completing this chapter, you should be able to:
+
 - Define clock domains and explain why asynchronous signal transfers cause metastability.
 - Calculate and understand Mean Time Between Failures (MTBF) and how 2-Flip-Flop synchronizers mitigate metastability for single-bit control signals.
 - Explain why multi-bit buses cannot be synchronized using independent flip-flop synchronizers and identify safe alternatives (handshakes, FIFOs).
@@ -22,16 +23,19 @@ In modern SoCs and FPGAs, a single chip contains dozens of clock domains running
 ![Clock Domain Crossing (CDC) Metastability Hazard](images/ch4_cdc_hazard.svg)
 
 ### The Metastability Phenomenon
+
 When an input signal changes within the narrow setup-and-hold aperture ($t_{setup} + t_{hold}$) of a flip-flop, the internal master latch can become balanced between logic `0` and logic `1`. The output voltage hovers at an indeterminate intermediate voltage for an unpredictable duration before settling randomly to `0` or `1`.
 
 If the metastable signal propagates to downstream combinational logic before settling, different receiving gates may interpret it differently (one gate sees `1`, another sees `0`), leading to catastrophic state corruption.
 
 ### MTBF (Mean Time Between Failures)
+
 The reliability of a synchronizer is quantified by Mean Time Between Failures:
 
 $$\text{MTBF} = \frac{e^{t_r / \tau}}{T_0 \cdot f_{clk} \cdot f_{data}}$$
 
 Where:
+
 - $f_{clk}$ is the destination clock frequency.
 - $f_{data}$ is the toggle rate of the crossing asynchronous signal.
 - $t_r$ is the available resolving time (slack between clock edge and setup time of next stage).
@@ -48,6 +52,7 @@ For a single-bit, slowly changing control signal crossing between unrelated cloc
 ![Two-Flip-Flop (2-FF) Synchronizer](images/ch4_2ff_synchronizer.svg)
 
 ### Synthesizable SystemVerilog 2-FF Synchronizer
+
 ```systemverilog
 // cdc_2ff_sync.sv - Industry-standard 2-FF Synchronizer
 (* dont_touch = "true" *) // Prevents synthesis optimization from removing FFs
@@ -95,16 +100,18 @@ Reset logic brings all sequential state elements to a known starting state upon 
 
 ### Detailed Comparison
 
-| Feature | Synchronous Reset | Asynchronous Reset |
-| :--- | :--- | :--- |
-| **Response Time** | Delayed until next rising clock edge | Immediate (combinational path to clear pin) |
-| **Clock Dependency** | **Requires clock to be running** | Operates even if clock is dead or unstable |
-| **Noise & Glitches** | Highly robust; glitches between edges ignored | Highly sensitive; noise glitch resets the chip |
-| **Timing Analysis** | Standard register-to-register setup/hold check | Requires **Recovery and Removal** timing checks |
-| **Silicon Area** | May require extra multiplexer logic before D-input | Dedicated asynchronous clear pin on standard cell |
+| Feature              | Synchronous Reset                                  | Asynchronous Reset                                |
+| :------------------- | :------------------------------------------------- | :------------------------------------------------ |
+| **Response Time**    | Delayed until next rising clock edge               | Immediate (combinational path to clear pin)       |
+| **Clock Dependency** | **Requires clock to be running**                   | Operates even if clock is dead or unstable        |
+| **Noise & Glitches** | Highly robust; glitches between edges ignored      | Highly sensitive; noise glitch resets the chip    |
+| **Timing Analysis**  | Standard register-to-register setup/hold check     | Requires **Recovery and Removal** timing checks   |
+| **Silicon Area**     | May require extra multiplexer logic before D-input | Dedicated asynchronous clear pin on standard cell |
 
 ### Recovery and Removal Time
+
 Asynchronous resets have a hidden timing catch: **Reset De-assertion (Release)**!
+
 - **Recovery Time ($t_{rec}$):** The minimum time the reset signal must be de-asserted **before** the active clock edge.
 - **Removal Time ($t_{rem}$):** The minimum time the reset signal must remain asserted **after** the active clock edge before being released.
 
@@ -119,10 +126,12 @@ To achieve the best of both worlds—guaranteeing immediate reset even if clocks
 ![Reset Synchronizer Bridge](images/ch4_reset_synchronizer.svg)
 
 ### How it Works:
+
 1. **Assertion:** When `async_rst_n_in` goes low, it immediately asserts the asynchronous reset pins of both flip-flops. `sync_rst_n_out` goes to `0` instantly, without waiting for the clock.
 2. **De-assertion:** When `async_rst_n_in` returns to `1`, the flip-flops shift `1'b1` through the chain, releasing the reset synchronously aligned to the target clock rising edge!
 
 ### Synthesizable SystemVerilog Reset Synchronizer
+
 ```systemverilog
 // rst_sync.sv - Industry Standard Reset Synchronizer
 module rst_sync (
@@ -164,6 +173,7 @@ In high-speed designs, distributing a clock across millions of flip-flops requir
 ## Learning Resources
 
 ### Industry Papers & Standards
+
 - **"Clock Domain Crossing (CDC) Design & Verification Techniques Using SystemVerilog"** by Clifford E. Cummings (SNUG) — Essential reading for every hardware engineer.
 - **"Asynchronous & Synchronous Reset Design Techniques - Part Deux"** by Clifford E. Cummings and Don Mills.
 - **AMD Xilinx UG903:** Vivado Design Suite User Guide: Using Constraints (CDC & Timing Exceptions).
@@ -173,18 +183,23 @@ In high-speed designs, distributing a clock across millions of flip-flops requir
 ## Exercises
 
 ### Exercise 4.1: Single-Bit vs. Multi-Bit CDC Hazard
+
 1. Explain why sampling a 4-bit binary counter transitioning from `4'b0011` (3) to `4'b0100` (4) through 4 separate 2-FF synchronizers can result in any value from 0 to 7.
 2. What is the Gray-code representation of 3 and 4?
 3. Explain why Gray coding prevents this multi-bit sampling error.
 
 ### Exercise 4.2: Reset Synchronizer Integration
+
 Design a top-level module `chip_core` that accepts a global active-low push-button reset `btn_rst_n` and a 100 MHz clock `clk_100m`:
+
 1. Instantiate the `rst_sync` module to generate a local clean `rst_n`.
 2. Connect `rst_n` to a 16-bit up-counter.
 3. Simulate what happens when `btn_rst_n` is pulsed low asynchronously for 5 ns, and observe how `rst_n` de-asserts synchronously on the clock edge.
 
 ### Exercise 4.3: Pulse Synchronizer Design
+
 Design a **Pulse Synchronizer** circuit that takes a single-cycle pulse from a 100 MHz clock domain and reliably generates a single-cycle pulse in a slower 25 MHz clock domain:
+
 - Hint: Toggle a flip-flop in the source domain on every incoming pulse, pass the toggle signal through a 2-FF synchronizer into the destination domain, and use an edge detector (XOR with delayed version) in the destination domain.
 
 ##### Copyright (c) 2026 squared-studio

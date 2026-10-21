@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 480" width="100%" height="100%">
+  <rect width="960" height="480" fill="#0b1120" rx="8"/>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8"/>
+    </marker>
+    <marker id="arrow-green" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#34d399"/>
+    </marker>
+  </defs>
+
+  <text x="480" y="38" fill="#f8fafc" font-size="20" font-weight="bold" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" text-anchor="middle">Multiple Inheritance &amp; C3 Superclass Linearization (MRO)</text>
+  <text x="480" y="62" fill="#94a3b8" font-size="13" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" text-anchor="middle">How Python resolves the classic Diamond Problem into a monotonic search order</text>
+
+  <!-- Left: Diamond Inheritance Diagram -->
+  <g transform="translate(60, 95)">
+    <rect width="360" height="235" rx="8" fill="#1e293b" stroke="#38bdf8" stroke-width="1.5"/>
+    <text x="180" y="25" fill="#38bdf8" font-size="13" font-weight="bold" font-family="sans-serif" text-anchor="middle">Diamond Inheritance Hierarchy</text>
+
+    <!-- Base Class A -->
+    <rect x="130" y="45" width="100" height="35" rx="6" fill="#0369a1" stroke="#38bdf8"/>
+    <text x="180" y="67" fill="#ffffff" font-size="12" font-weight="bold" font-family="monospace" text-anchor="middle">class A</text>
+
+    <!-- Subclasses B and C -->
+    <rect x="50" y="115" width="100" height="35" rx="6" fill="#065f46" stroke="#34d399"/>
+    <text x="100" y="137" fill="#ffffff" font-size="12" font-weight="bold" font-family="monospace" text-anchor="middle">class B(A)</text>
+
+    <rect x="210" y="115" width="100" height="35" rx="6" fill="#065f46" stroke="#34d399"/>
+    <text x="260" y="137" fill="#ffffff" font-size="12" font-weight="bold" font-family="monospace" text-anchor="middle">class C(A)</text>
+
+    <!-- Derived Class D -->
+    <rect x="130" y="185" width="100" height="35" rx="6" fill="#854d0e" stroke="#fbbf24"/>
+    <text x="180" y="207" fill="#ffffff" font-size="12" font-weight="bold" font-family="monospace" text-anchor="middle">class D(B, C)</text>
+
+    <!-- Arrows upwards to bases -->
+    <path d="M 155 185 L 115 150" stroke="#fbbf24" stroke-width="1.5" marker-end="url(#arrow)"/>
+    <path d="M 205 185 L 245 150" stroke="#fbbf24" stroke-width="1.5" marker-end="url(#arrow)"/>
+    <path d="M 115 115 L 155 80" stroke="#34d399" stroke-width="1.5" marker-end="url(#arrow)"/>
+    <path d="M 245 115 L 205 80" stroke="#34d399" stroke-width="1.5" marker-end="url(#arrow)"/>
+  </g>
+
+  <!-- Right: Linearization Math & Output -->
+  <g transform="translate(450, 95)">
+    <rect width="450" height="235" rx="8" fill="#1e293b" stroke="#34d399" stroke-width="1.5"/>
+    <text x="225" y="25" fill="#34d399" font-size="13" font-weight="bold" font-family="sans-serif" text-anchor="middle">C3 Linearization Algorithm: L[C] = C + merge(L[B1]..L[BN], B1..BN)</text>
+
+    <rect x="20" y="45" width="410" height="85" rx="4" fill="#0f172a" stroke="#334155"/>
+    <text x="30" y="65" fill="#94a3b8" font-size="10" font-family="monospace">L[A] = [A, object]</text>
+    <text x="30" y="82" fill="#94a3b8" font-size="10" font-family="monospace">L[B] = [B, A, object]</text>
+    <text x="30" y="99" fill="#94a3b8" font-size="10" font-family="monospace">L[C] = [C, A, object]</text>
+    <text x="30" y="116" fill="#38bdf8" font-size="10" font-family="monospace">L[D] = D + merge([B, A, obj], [C, A, obj], [B, C])</text>
+
+    <text x="225" y="152" fill="#e2e8f0" font-size="11" font-weight="bold" font-family="sans-serif" text-anchor="middle">Final Computed MRO tuple (D.__mro__):</text>
+
+    <!-- Linear Chain Boxes -->
+    <g transform="translate(25, 170)">
+      <rect x="0" y="0" width="60" height="36" rx="4" fill="#854d0e" stroke="#fbbf24"/>
+      <text x="30" y="22" fill="#fff" font-size="11" font-family="monospace" text-anchor="middle">D</text>
+
+      <path d="M 60 18 L 80 18" stroke="#34d399" stroke-width="2" marker-end="url(#arrow-green)"/>
+
+      <rect x="85" y="0" width="60" height="36" rx="4" fill="#065f46" stroke="#34d399"/>
+      <text x="115" y="22" fill="#fff" font-size="11" font-family="monospace" text-anchor="middle">B</text>
+
+      <path d="M 145 18 L 165 18" stroke="#34d399" stroke-width="2" marker-end="url(#arrow-green)"/>
+
+      <rect x="170" y="0" width="60" height="36" rx="4" fill="#065f46" stroke="#34d399"/>
+      <text x="200" y="22" fill="#fff" font-size="11" font-family="monospace" text-anchor="middle">C</text>
+
+      <path d="M 230 18 L 250 18" stroke="#34d399" stroke-width="2" marker-end="url(#arrow-green)"/>
+
+      <rect x="255" y="0" width="60" height="36" rx="4" fill="#0369a1" stroke="#38bdf8"/>
+      <text x="285" y="22" fill="#fff" font-size="11" font-family="monospace" text-anchor="middle">A</text>
+
+      <path d="M 315 18 L 335 18" stroke="#34d399" stroke-width="2" marker-end="url(#arrow-green)"/>
+
+      <rect x="340" y="0" width="60" height="36" rx="4" fill="#334155" stroke="#64748b"/>
+      <text x="370" y="22" fill="#fff" font-size="10" font-family="monospace" text-anchor="middle">object</text>
+    </g>
+  </g>
+
+  <!-- Bottom Explanatory Box -->
+  <g transform="translate(60, 350)">
+    <rect width="840" height="105" rx="8" fill="#0f172a" stroke="#334155"/>
+    <text x="25" y="26" fill="#fbbf24" font-size="13" font-weight="bold" font-family="sans-serif">The Role of super() in Cooperative Multiple Inheritance:</text>
+    <text x="25" y="48" fill="#e2e8f0" font-size="11" font-family="sans-serif">• <tspan font-family="monospace" fill="#38bdf8">super()</tspan> does NOT simply call the parent class; it dynamically traverses to the <tspan font-weight="bold">next class in the MRO</tspan> of the current instance.</text>
+    <text x="25" y="68" fill="#e2e8f0" font-size="11" font-family="sans-serif">• Inside <tspan font-family="monospace">B.method()</tspan>, calling <tspan font-family="monospace">super().method()</tspan> actually executes <tspan font-family="monospace" fill="#34d399">C.method()</tspan>, not <tspan font-family="monospace">A</tspan>!</text>
+    <text x="25" y="88" fill="#e2e8f0" font-size="11" font-family="sans-serif">• Guarantee: C3 preserves local precedence order and monotonicity, preventing duplicate execution of base initializers.</text>
+  </g>
+</svg>

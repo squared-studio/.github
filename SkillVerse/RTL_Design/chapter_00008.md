@@ -5,6 +5,7 @@ In modern integrated circuit engineering, **verification accounts for over 60–
 ## Learning Goals
 
 After completing this chapter, you should be able to:
+
 - Compare verification methodologies: Dynamic Simulation, Static Formal Verification, and Hardware Emulation.
 - Understand the SystemVerilog Stratified Event Queue to avoid testbench/DUT race conditions.
 - Construct a modular, layered, **self-checking testbench** with clock/reset generators, stimulus drivers, monitors, and scoreboards.
@@ -220,13 +221,17 @@ endmodule
 Assertions express designer intent directly in the source code or verification bind files.
 
 ### Immediate Assertions
+
 Executed like procedural statements inside `always` blocks or tasks:
+
 ```systemverilog
 assert (divisor != 0) else $error("Division by zero error!");
 ```
 
 ### Concurrent Assertions
+
 Sample values across clock edges over multiple cycles:
+
 - **Overlapping Implication (`|->`):** If condition antecedent matches on current edge, consequent must hold on the **same clock edge**.
 - **Non-Overlapping Implication (`|=>`):** If condition antecedent matches on current edge, consequent must hold on the **next clock edge** (equivalent to `|-> ##1`).
 
@@ -245,6 +250,7 @@ assert property (req_held_until_ack)
 ## Learning Resources
 
 ### Classical Textbooks
+
 - **"Writing Testbenches using SystemVerilog"** by Janick Bergeron (The foundational book for verification methodology).
 - **"SystemVerilog for Verification: A Guide to Learning the Testbench Language Features"** by Chris Spear & Greg Tumbush.
 - **"SystemVerilog Assertions Handbook"** by Ben Cohen, Srinivasan Venkataramanan, Anurag Meygevand.
@@ -254,7 +260,9 @@ assert property (req_held_until_ack)
 ## Exercises
 
 ### Exercise 8.1: Testbench for Synchronous FIFO
+
 Write a self-checking testbench for the `sync_fifo` module designed in Chapter 5:
+
 1. Generate a 100 MHz clock and proper reset.
 2. Write a driver task `fifo_write(data)` and a checker task `fifo_read_and_check(expected_data)`.
 3. Test edge conditions:
@@ -263,7 +271,9 @@ Write a self-checking testbench for the `sync_fifo` module designed in Chapter 5
    - Perform simultaneous writes and reads on each clock cycle when half-full.
 
 ### Exercise 8.2: SVA Protocol Checking
+
 Write concurrent SVA assertions for an AXI-Stream interface:
+
 1. `tvalid` must never drop while `tready` is low (payload stability rule: once `tvalid` is asserted, `tdata` must remain constant until `tready` is high).
 2. After `aresetn` is de-asserted, `tvalid` must be de-asserted (`1'b0`) in the very first clock cycle.
 

@@ -1,6 +1,7 @@
 # The Five Independent AXI Channels & Signal Dictionary
 
 ### Learning Objectives
+
 - Master the architectural separation of the five independent AXI channels.
 - Distinguish the signal responsibilities and directionality across Master, Interconnect, and Slave interfaces.
 - Explore the complete AXI signal dictionary, including bus widths, standard default values, and functional roles.
@@ -16,13 +17,14 @@ The cornerstone of the AXI protocol is the complete decoupling of information fl
 ![The Five Independent AXI Channels](images/ch2_five_channels.svg)
 
 ### The Channels:
+
 1. **Write Address Channel (AW):** Transmits control and address information for a write burst from Master to Slave.
 2. **Write Data Channel (W):** Transmits payload data beats and byte-lane qualifiers (`WSTRB`) from Master to Slave.
 3. **Write Response Channel (B):** Returns the completion status of the write burst from Slave to Master.
 4. **Read Address Channel (AR):** Transmits control and start address information for a read burst from Master to Slave.
 5. **Read Data Channel (R):** Returns data beats and read completion status from Slave to Master.
 
-Notice a fundamental asymmetry: **The Read Data Channel combines data payload and response status (`RRESP`), whereas the Write operation requires a dedicated Write Response Channel (`B`).** 
+Notice a fundamental asymmetry: **The Read Data Channel combines data payload and response status (`RRESP`), whereas the Write operation requires a dedicated Write Response Channel (`B`).**
 Why is this necessary? Because read data flows from slave to master, meaning the slave can effortlessly append status flags (`RRESP`) directly alongside the returned data beats. In contrast, write data travels from master to slave; therefore, the slave requires a separate return path (`B` channel) to acknowledge whether the data was successfully committed to memory.
 
 ---
@@ -116,15 +118,19 @@ The following tables define the standard AXI4 signals across all five channels, 
 The AXI specification establishes strict invariants governing the relationship between the clock (`ACLK`) and the active-LOW reset (`ARESETn`):
 
 ### Reset Assertion
+
 `ARESETn` may be asserted asynchronously by hardware reset generators, but it must be deasserted synchronously with respect to the rising edge of `ACLK`.
 
 ### Default Signal Values During Reset
+
 During any clock cycle where `ARESETn` is LOW:
+
 - All Master output `VALID` signals (`AWVALID`, `WVALID`, `ARVALID`) **must be driven LOW**.
 - All Slave output `VALID` signals (`RVALID`, `BVALID`) **must be driven LOW**.
 - All other payload and control signals (such as `AWADDR`, `WDATA`, `ARLEN`) are considered "don't care" and need not be driven to specific logic levels, minimizing flip-flop reset gate overhead.
 
 ### Post-Reset Handshake State
+
 The earliest cycle a master or slave is permitted to assert a `VALID` signal is the first rising clock edge **after** `ARESETn` is observed HIGH. `READY` signals may be asserted HIGH or LOW during or immediately following reset.
 
 ---
@@ -132,6 +138,7 @@ The earliest cycle a master or slave is permitted to assert a `VALID` signal is 
 ## Channel Independence and Real-World Concurrency
 
 Because the five channels have distinct physical wires and separate handshake pairs:
+
 - **Write Address before Write Data:** The master can drive `AWVALID` before, during, or after `WVALID`.
 - **Write Data before Write Address:** A master with pre-buffered data can assert `WVALID` and transmit write data beats into an interconnect buffer even before the slave accepts `AWVALID`!
 - **Simultaneous Read and Write:** A master can stream 256 bytes on `WDATA` to DDR memory while concurrently fetching 256 bytes on `RDATA` from an internal SRAM block.
@@ -152,21 +159,27 @@ Because the five channels have distinct physical wires and separate handshake pa
 ## Review Questions
 
 ### Question 1
+
 Why does the AXI protocol provide a separate Write Response Channel (`B`), but no separate Read Response Channel?
+
 <details>
 <summary><b>View Answer</b></summary>
 In a read transaction, data travels from Slave to Master. The slave can easily encode the response status (`RRESP`) alongside the returned data bits on the same physical channel (`R`). In a write transaction, data travels from Master to Slave. Because the master cannot know whether the slave encountered a bus error or successfully committed the data to memory, the slave must have a dedicated channel (`B`) traveling in the reverse direction to return completion status (`BRESP`).
 </details>
 
 ### Question 2
+
 What is the legal behavior of `AWREADY` when `ARESETn` is held LOW?
+
 <details>
 <summary><b>View Answer</b></summary>
 The specification only mandates that `VALID` signals (`AWVALID`, `WVALID`, `BVALID`, `ARVALID`, `RVALID`) must be driven LOW during reset. `READY` signals (`AWREADY`, `WREADY`, `BREADY`, `ARREADY`, `RREADY`) may be driven LOW or HIGH during reset. However, it is standard design practice to drive `READY` LOW to prevent spurious handshakes before the interface fully initializes.
 </details>
 
 ### Question 3
+
 If an AXI4 master sets `AWLEN = 8'h0F` and `AWSIZE = 3'b011`, how many total bytes will be transferred in the write burst?
+
 <details>
 <summary><b>View Answer</b></summary>
 - Number of beats = `AWLEN + 1` = $15 + 1 = 16\text{ beats}$.
@@ -175,7 +188,9 @@ If an AXI4 master sets `AWLEN = 8'h0F` and `AWSIZE = 3'b011`, how many total byt
 </details>
 
 ### Question 4
+
 Can a master assert `WVALID` and begin transferring data before the slave asserts `AWREADY` to accept the write address?
+
 <details>
 <summary><b>View Answer</b></summary>
 Yes. In AXI, the Write Address and Write Data channels are decoupled. A master may assert `WVALID` and present write data prior to or concurrently with the address handshake on the AW channel. However, the slave cannot commit the data to memory until it receives the target address.
@@ -184,4 +199,3 @@ Yes. In AXI, the Write Address and Write Data channels are decoupled. A master m
 ---
 
 ##### Copyright (c) 2026 squared-studio
-

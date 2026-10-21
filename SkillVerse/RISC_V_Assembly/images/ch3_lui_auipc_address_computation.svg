@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 480" width="100%" height="100%">
+  <rect width="960" height="480" fill="#0b1120" rx="8"/>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8"/>
+    </marker>
+  </defs>
+
+  <text x="480" y="38" fill="#f8fafc" font-size="20" font-weight="bold" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" text-anchor="middle">Large Address Generation: LUI vs. AUIPC Mechanics</text>
+  <text x="480" y="62" fill="#94a3b8" font-size="13" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" text-anchor="middle">Synthesizing full 32-bit absolute addresses vs. position-independent relocatable addresses</text>
+
+  <!-- Left: LUI (Load Upper Immediate) -->
+  <g transform="translate(60, 95)">
+    <rect width="390" height="240" rx="8" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+    <rect width="390" height="30" rx="8" fill="#0369a1"/>
+    <text x="195" y="20" fill="#fff" font-size="12" font-weight="bold" font-family="sans-serif" text-anchor="middle">LUI (Load Upper Immediate) - Absolute 32-bit</text>
+
+    <text x="20" y="55" fill="#38bdf8" font-size="11" font-family="monospace">lui rd, 0x40001 # Places in bits [31:12]</text>
+    <text x="20" y="73" fill="#38bdf8" font-size="11" font-family="monospace">addi rd, rd, 0x018 # Adds signed lower 12 bits</text>
+
+    <!-- Visual Register -->
+    <g transform="translate(20, 90)">
+      <rect width="210" height="34" rx="3" fill="#082f49" stroke="#38bdf8"/>
+      <text x="105" y="22" fill="#7dd3fc" font-size="11" font-family="monospace" text-anchor="middle">Upper 20 bits: 0x40001</text>
+
+      <rect x="215" y="0" width="135" height="34" rx="3" fill="#0f172a" stroke="#334155"/>
+      <text x="282" y="22" fill="#94a3b8" font-size="11" font-family="monospace" text-anchor="middle">0x000 (12 zeros)</text>
+    </g>
+
+    <text x="195" y="150" fill="#fde047" font-size="11" font-family="monospace" text-anchor="middle">rd = 0x40001000 + 0x018 = 0x40001018</text>
+    
+    <rect x="20" y="170" width="350" height="50" rx="4" fill="#0f172a" stroke="#334155"/>
+    <text x="195" y="190" fill="#38bdf8" font-size="10" font-weight="bold" font-family="sans-serif" text-anchor="middle">Fixed Absolute Address</text>
+    <text x="195" y="208" fill="#cbd5e1" font-size="9" font-family="sans-serif" text-anchor="middle">Ideal for Memory-Mapped Peripheral Registers (UART, SPI)</text>
+  </g>
+
+  <!-- Right: AUIPC (Add Upper Immediate to PC) -->
+  <g transform="translate(510, 95)">
+    <rect width="390" height="240" rx="8" fill="#1e293b" stroke="#34d399" stroke-width="2"/>
+    <rect width="390" height="30" rx="8" fill="#047857"/>
+    <text x="195" y="20" fill="#fff" font-size="12" font-weight="bold" font-family="sans-serif" text-anchor="middle">AUIPC (Add Upper Imm to PC) - Position-Independent</text>
+
+    <text x="20" y="55" fill="#34d399" font-size="11" font-family="monospace">auipc rd, 0x00004 # rd = PC + (0x4 &lt;&lt; 12)</text>
+    <text x="20" y="73" fill="#34d399" font-size="11" font-family="monospace">addi  rd, rd, -0x20 # Offsets relative to PC</text>
+
+    <!-- Visual Register -->
+    <g transform="translate(20, 90)">
+      <rect width="170" height="34" rx="3" fill="#064e3b" stroke="#34d399"/>
+      <text x="85" y="22" fill="#a7f3d0" font-size="10" font-family="monospace" text-anchor="middle">Current PC (0x80000100)</text>
+
+      <text x="180" y="22" fill="#fff" font-size="12" font-family="monospace">+</text>
+
+      <rect x="195" y="0" width="155" height="34" rx="3" fill="#047857" stroke="#34d399"/>
+      <text x="272" y="22" fill="#fff" font-size="10" font-family="monospace" text-anchor="middle">(imm &lt;&lt; 12) = 0x4000</text>
+    </g>
+
+    <text x="195" y="150" fill="#fde047" font-size="11" font-family="monospace" text-anchor="middle">Target = 0x80004100 - 0x20 = 0x800040E0</text>
+
+    <rect x="20" y="170" width="350" height="50" rx="4" fill="#0f172a" stroke="#334155"/>
+    <text x="195" y="190" fill="#34d399" font-size="10" font-weight="bold" font-family="sans-serif" text-anchor="middle">Position-Independent Code (PIC)</text>
+    <text x="195" y="208" fill="#cbd5e1" font-size="9" font-family="sans-serif" text-anchor="middle">Allows code to run at ANY memory location without relocation</text>
+  </g>
+
+  <!-- Bottom Explanatory Box -->
+  <g transform="translate(60, 350)">
+    <rect width="840" height="105" rx="8" fill="#0f172a" stroke="#334155"/>
+    <text x="25" y="26" fill="#fbbf24" font-size="13" font-weight="bold" font-family="sans-serif">The Sign-Extension Gotcha with addi:</text>
+    <text x="25" y="48" fill="#cbd5e1" font-size="11" font-family="sans-serif">• <tspan font-family="monospace" fill="#f43f5e">addi</tspan> sign-extends its 12-bit immediate. If bit 11 is 1 (e.g. immediate is <tspan font-family="monospace">0x800</tspan> or higher), it adds a NEGATIVE value!</text>
+    <text x="25" y="68" fill="#cbd5e1" font-size="11" font-family="sans-serif">• The assembler automatically compensates by adding 1 to the upper immediate: <tspan font-family="monospace">lui rd, (addr + 0x800) &gt;&gt; 12</tspan>.</text>
+    <text x="25" y="88" fill="#94a3b8" font-size="10" font-family="sans-serif">Always use the assembler pseudo-instruction <tspan font-family="monospace" fill="#38bdf8">la rd, symbol</tspan> to let the toolchain compute exact compensation.</text>
+  </g>
+</svg>

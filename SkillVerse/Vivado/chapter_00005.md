@@ -29,6 +29,7 @@ Here are some common options you might use during synthesis:
 - **-retiming**: Enables or disables retiming optimization.
 
 Example:
+
 ```tcl
 synth_design -top top_module -flatten_hierarchy full -opt_mode Performance -retiming
 ```
@@ -36,4 +37,3 @@ synth_design -top top_module -flatten_hierarchy full -opt_mode Performance -reti
 By following these steps, you can synthesize your RTL design using Vivado and analyze the results to ensure your design meets the required specifications.
 
 ##### Copyright (c) 2026 squared-studio
-

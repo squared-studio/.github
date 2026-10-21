@@ -1,0 +1,105 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 440" width="100%" height="100%">
+  <defs>
+    <style>
+      .bg { fill: #0b1120; }
+      .card { fill: #131d33; stroke: #1e293b; stroke-width: 1.5; rx: 10; }
+      .title { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 19px; fill: #f8fafc; }
+      .sec-title { font-family: 'Inter', system-ui, sans-serif; font-weight: 600; font-size: 14px; fill: #38bdf8; }
+      .label { font-family: 'Inter', system-ui, sans-serif; font-size: 12px; fill: #cbd5e1; }
+      .sublabel { font-family: 'Inter', system-ui, sans-serif; font-size: 11px; fill: #94a3b8; }
+      .code-txt { font-family: 'JetBrains Mono', Consolas, monospace; font-size: 12px; fill: #34d399; font-weight: 600; }
+      .bit-box { fill: #1e293b; stroke: #38bdf8; stroke-width: 1.5; }
+    </style>
+  </defs>
+
+  <rect width="960" height="440" class="bg" rx="14"/>
+  <text x="480" y="36" text-anchor="middle" class="title">C Data Type Bit-Widths, Memory Footprints &amp; Fixed-Width Types</text>
+
+  <!-- Left: Standard Types Table -->
+  <g transform="translate(25, 55)">
+    <rect width="450" height="360" class="card"/>
+    <text x="20" y="28" class="sec-title">Primitive Data Types (ILP32 vs LP64 Architecture)</text>
+
+    <!-- Table Header -->
+    <rect x="15" y="42" width="420" height="24" fill="#0b1120" rx="4"/>
+    <text x="25" y="58" class="label" font-weight="bold">Type</text>
+    <text x="140" y="58" class="label" font-weight="bold">Bytes</text>
+    <text x="200" y="58" class="label" font-weight="bold">Bits</text>
+    <text x="260" y="58" class="label" font-weight="bold">Standard Value Range</text>
+
+    <!-- Rows -->
+    <g transform="translate(15, 74)">
+      <text x="10" y="16" class="code-txt">char</text><text x="130" y="16" class="sublabel">1 B</text><text x="190" y="16" class="sublabel">8</text><text x="250" y="16" class="sublabel">-128 to +127 (or 0 to 255)</text>
+      <text x="10" y="42" class="code-txt">short</text><text x="130" y="42" class="sublabel">2 B</text><text x="190" y="42" class="sublabel">16</text><text x="250" y="42" class="sublabel">-32,768 to +32,767</text>
+      <text x="10" y="68" class="code-txt" fill="#38bdf8">int</text><text x="130" y="68" class="sublabel" fill="#38bdf8">4 B</text><text x="190" y="68" class="sublabel" fill="#38bdf8">32</text><text x="250" y="68" class="sublabel" fill="#38bdf8">≈ -2.14 Billion to +2.14 Billion</text>
+      <text x="10" y="94" class="code-txt">long</text><text x="130" y="94" class="sublabel">4 / 8 B</text><text x="190" y="94" class="sublabel">32/64</text><text x="250" y="94" class="sublabel">Platform dependent (LP64: 64b)</text>
+      <text x="10" y="120" class="code-txt">long long</text><text x="130" y="120" class="sublabel">8 B</text><text x="190" y="120" class="sublabel">64</text><text x="250" y="120" class="sublabel">-9.22 × 10¹⁸ to +9.22 × 10¹⁸</text>
+      <text x="10" y="146" class="code-txt" fill="#fbbf24">float</text><text x="130" y="146" class="sublabel">4 B</text><text x="190" y="146" class="sublabel">32</text><text x="250" y="146" class="sublabel">IEEE 754 Single (~7 dec digits)</text>
+      <text x="10" y="172" class="code-txt" fill="#fbbf24">double</text><text x="130" y="172" class="sublabel">8 B</text><text x="190" y="172" class="sublabel">64</text><text x="250" y="172" class="sublabel">IEEE 754 Double (~15-17 digits)</text>
+      <text x="10" y="198" class="code-txt" fill="#f43f5e">void* (ptr)</text><text x="130" y="198" class="sublabel">4 / 8 B</text><text x="190" y="198" class="sublabel">32/64</text><text x="250" y="198" class="sublabel">Matches CPU address bus width</text>
+    </g>
+
+    <rect x="15" y="295" width="420" height="45" rx="6" fill="#0b1120" stroke="#1e293b"/>
+    <text x="25" y="314" class="code-txt" style="font-size:11px;">sizeof(char) == 1 strictly guaranteed by C standard.</text>
+    <text x="25" y="330" class="sublabel">sizeof(short) ≤ sizeof(int) ≤ sizeof(long) ≤ sizeof(long long)</text>
+  </g>
+
+  <!-- Right: stdint.h & Two's Complement -->
+  <g transform="translate(495, 55)">
+    <rect width="440" height="360" class="card"/>
+    <text x="20" y="28" class="sec-title">Exact-Width Types &amp; Two's Complement Encoding</text>
+
+    <!-- stdint.h box -->
+    <rect x="15" y="42" width="410" height="110" rx="6" fill="#0b1120" stroke="#1e293b"/>
+    <text x="25" y="64" class="code-txt" fill="#38bdf8">#include &lt;stdint.h&gt;  // Recommended for portable code</text>
+    <text x="25" y="86" class="code-txt">int8_t  / uint8_t   :  8-bit signed / unsigned</text>
+    <text x="25" y="104" class="code-txt">int16_t / uint16_t  : 16-bit signed / unsigned</text>
+    <text x="25" y="122" class="code-txt">int32_t / uint32_t  : 32-bit signed / unsigned</text>
+    <text x="25" y="140" class="code-txt">int64_t / uint64_t  : 64-bit signed / unsigned</text>
+
+    <!-- Two's complement representation diagram -->
+    <text x="20" y="175" class="sec-title" style="font-size:13px; fill:#fbbf24;">8-Bit Signed Two's Complement (Example: -5)</text>
+    
+    <g transform="translate(25, 188)">
+      <!-- 8 bit boxes -->
+      <!-- MSB Sign bit -->
+      <rect x="0" y="0" width="45" height="35" rx="3" fill="#f43f5e" stroke="#ef4444" stroke-width="2"/>
+      <text x="22" y="22" text-anchor="middle" class="code-txt" fill="#fff">1</text>
+      <text x="22" y="48" text-anchor="middle" class="sublabel" style="font-size:9px; fill:#f43f5e;">-2⁷ (-128)</text>
+
+      <rect x="48" y="0" width="45" height="35" rx="3" class="bit-box"/>
+      <text x="70" y="22" text-anchor="middle" class="code-txt">1</text>
+      <text x="70" y="48" text-anchor="middle" class="sublabel" style="font-size:9px;">+64</text>
+
+      <rect x="96" y="0" width="45" height="35" rx="3" class="bit-box"/>
+      <text x="118" y="22" text-anchor="middle" class="code-txt">1</text>
+      <text x="118" y="48" text-anchor="middle" class="sublabel" style="font-size:9px;">+32</text>
+
+      <rect x="144" y="0" width="45" height="35" rx="3" class="bit-box"/>
+      <text x="166" y="22" text-anchor="middle" class="code-txt">1</text>
+      <text x="166" y="48" text-anchor="middle" class="sublabel" style="font-size:9px;">+16</text>
+
+      <rect x="192" y="0" width="45" height="35" rx="3" class="bit-box"/>
+      <text x="214" y="22" text-anchor="middle" class="code-txt">1</text>
+      <text x="214" y="48" text-anchor="middle" class="sublabel" style="font-size:9px;">+8</text>
+
+      <rect x="240" y="0" width="45" height="35" rx="3" class="bit-box"/>
+      <text x="262" y="22" text-anchor="middle" class="code-txt">0</text>
+      <text x="262" y="48" text-anchor="middle" class="sublabel" style="font-size:9px;">0</text>
+
+      <rect x="288" y="0" width="45" height="35" rx="3" class="bit-box"/>
+      <text x="310" y="22" text-anchor="middle" class="code-txt">1</text>
+      <text x="310" y="48" text-anchor="middle" class="sublabel" style="font-size:9px;">+2</text>
+
+      <rect x="336" y="0" width="45" height="35" rx="3" class="bit-box"/>
+      <text x="358" y="22" text-anchor="middle" class="code-txt">1</text>
+      <text x="358" y="48" text-anchor="middle" class="sublabel" style="font-size:9px;">+1</text>
+    </g>
+
+    <!-- Calculation sum -->
+    <rect x="15" y="258" width="410" height="85" rx="6" fill="#0b1120" stroke="#1e293b"/>
+    <text x="25" y="280" class="code-txt">-128 + 64 + 32 + 16 + 8 + 0 + 2 + 1 = -5</text>
+    <text x="25" y="302" class="sublabel">Conversion Algorithm for -X:</text>
+    <text x="25" y="322" class="sublabel">1. Invert all bits (~X)    2. Add 1  (Two's complement = ~X + 1)</text>
+  </g>
+</svg>

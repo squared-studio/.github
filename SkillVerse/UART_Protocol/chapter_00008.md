@@ -1,6 +1,7 @@
 # FIFO Buffering, DMA, and Interrupt Architecture
 
 ### Learning Objectives
+
 - Quantify the severe CPU interrupt overhead caused by legacy non-FIFO UARTs at high baud rates.
 - Master the internal architecture of **16550-compatible Hardware FIFO Queues** (TX and RX FIFOs).
 - Configure programmable **FIFO Trigger Levels (Interrupt Watermarks)** to balance interrupt frequency against latency.
@@ -25,6 +26,7 @@ Interrupt Period = 1 / 92,160 = 10.85 microseconds per interrupt!
 ```
 
 ### The Interrupt Latency Crisis:
+
 1. In a multi-tasking operating system (like Linux or RTOS), taking an interrupt requires:
    - Saving CPU registers to the stack (context save),
    - Executing the Interrupt Service Routine (ISR),
@@ -45,12 +47,14 @@ Modern UART controller IPs integrate dedicated circular memory buffers for both 
 ![16550 FIFO Architecture](images/ch8_fifo_architecture.svg)
 
 ### Transmitter FIFO (TX FIFO)
+
 - Capacity: Typically **16, 32, 64, or 128 bytes**.
 - When software wants to transmit a packet, it writes up to the full FIFO capacity in a fast, tight loop.
 - The hardware TX engine autonomously pops bytes out of the FIFO and serializes them onto the pin.
 - **THRE Interrupt:** The CPU is only interrupted when the TX FIFO becomes empty (or falls below a programmable low watermark).
 
 ### Receiver FIFO (RX FIFO)
+
 - Capacity: Matches TX FIFO depth (e.g., 16 to 128 bytes).
 - Stores incoming assembled data bytes alongside their 3 associated error flags (`FE`, `PE`, `BI`).
 - The CPU is not interrupted on every single byte. Instead, interrupts are held until the number of queued bytes crosses a **Programmable Trigger Level**.
@@ -61,12 +65,12 @@ Modern UART controller IPs integrate dedicated circular memory buffers for both 
 
 The 16550 **FIFO Control Register (FCR)** allows software to program the RX interrupt trigger threshold via bits `FCR[7:6]`:
 
-| `FCR[7:6]` | 16-Byte FIFO Trigger Level | 64-Byte FIFO Equivalent | Architectural Tradeoff |
-|:---:|:---:|:---:|---|
-| **`2'b00`** | **1 Byte** | 1 Byte | Low latency; identical to legacy non-FIFO mode. High CPU load. |
-| **`2'b01`** | **4 Bytes** | 16 Bytes | Moderate interrupt reduction. |
-| **`2'b10`** | **8 Bytes** | 32 Bytes | Balanced throughput and latency for typical terminal workloads. |
-| **`2'b11`** | **14 Bytes** | 56 Bytes | **Maximum throughput.** Reduces CPU interrupt frequency by $14\times$! |
+| `FCR[7:6]`  | 16-Byte FIFO Trigger Level | 64-Byte FIFO Equivalent | Architectural Tradeoff                                                 |
+| :---------: | :------------------------: | :---------------------: | ---------------------------------------------------------------------- |
+| **`2'b00`** |         **1 Byte**         |         1 Byte          | Low latency; identical to legacy non-FIFO mode. High CPU load.         |
+| **`2'b01`** |        **4 Bytes**         |        16 Bytes         | Moderate interrupt reduction.                                          |
+| **`2'b10`** |        **8 Bytes**         |        32 Bytes         | Balanced throughput and latency for typical terminal workloads.        |
+| **`2'b11`** |        **14 Bytes**        |        56 Bytes         | **Maximum throughput.** Reduces CPU interrupt frequency by $14\times$! |
 
 When the RX FIFO reaches the programmed threshold (e.g., 14 bytes), the UART asserts the **Received Data Available Interrupt (`RDA`)**. The CPU responds by executing a single ISR that reads all 14 bytes out in a burst, amortizing the context switch cost across the entire batch!
 
@@ -77,13 +81,16 @@ When the RX FIFO reaches the programmed threshold (e.g., 14 bytes), the UART ass
 While high trigger levels (like 14 bytes) maximize throughput during continuous streaming, they introduce a catastrophic flaw for interactive or short-packet communication:
 
 ### The "Stranded Byte" Dilemma:
+
 Suppose an operator types a 4-letter command (`"help"`) into a serial terminal:
+
 - The 4 bytes (`'h'`, `'e'`, `'l'`, `'p'`) arrive and enter the RX FIFO.
 - Because the trigger level is set to **14 bytes**, the FIFO depth is only 4!
 - **The trigger threshold is never reached!**
 - The CPU is never interrupted, and the 4 bytes sit stranded inside the FIFO forever. The application never sees the command!
 
 ### The Solution: The Character Timeout Timer
+
 To resolve this, the 16550 specification incorporates an internal **Character Timeout Timer**:
 
 ```
@@ -107,7 +114,9 @@ To resolve this, the 16550 specification incorporates an internal **Character Ti
 ```
 
 ### The Timeout Rule:
+
 If:
+
 1. There is **at least one byte** sitting in the RX FIFO, **AND**
 2. The trigger threshold has **not** been reached, **AND**
 3. No new serial character has arrived on the RX pin for **4 consecutive character periods** (approximately 40 bit times),
@@ -126,6 +135,7 @@ The ultimate architectural solution is **Direct Memory Access (DMA)**:
 ![DMA UART Subsystem](images/ch8_dma_uart_subsystem.svg)
 
 ### Hardware Operation of a DMA-Driven UART:
+
 1. **DMA Channel Configuration:** Software configures the system DMA controller with:
    - Target Peripheral Address (UART `RBR` or `THR`),
    - Destination Memory Address (System RAM Circular Ring Buffer),
@@ -141,13 +151,13 @@ The ultimate architectural solution is **Direct Memory Access (DMA)**:
 
 ## Comparison: Polling vs. Interrupts vs. DMA
 
-| Architecture Metric | Polling (Status Polling) | Interrupt-Driven (with FIFO) | DMA-Driven Streaming |
-|---|---|---|---|
-| **CPU Utilization** | **100% busy-wait** (CPU cannot do other work) | Low to Moderate (Context switch per burst) | **Near 0%** (CPU involved only at block boundaries) |
-| **Max Safe Baud Rate** | Low (< 57,600 bps) | High (Up to 460,800 bps) | **Ultra-High (3+ Mbps)** |
-| **Overrun Error Risk** | High (Any task delay causes OE) | Low (Protected by FIFO trigger margin) | **Zero** (Dedicated bus master hardware) |
-| **Hardware Complexity** | Minimal (Zero extra hardware) | Moderate (16550 FIFO registers) | High (Requires system DMA controller & bus arbitration) |
-| **Typical Use Case** | Boot ROM, bare-metal bringup | Interactive terminal consoles | Audio streaming, firmware flashing, high-rate telemetry |
+| Architecture Metric     | Polling (Status Polling)                      | Interrupt-Driven (with FIFO)               | DMA-Driven Streaming                                    |
+| ----------------------- | --------------------------------------------- | ------------------------------------------ | ------------------------------------------------------- |
+| **CPU Utilization**     | **100% busy-wait** (CPU cannot do other work) | Low to Moderate (Context switch per burst) | **Near 0%** (CPU involved only at block boundaries)     |
+| **Max Safe Baud Rate**  | Low (< 57,600 bps)                            | High (Up to 460,800 bps)                   | **Ultra-High (3+ Mbps)**                                |
+| **Overrun Error Risk**  | High (Any task delay causes OE)               | Low (Protected by FIFO trigger margin)     | **Zero** (Dedicated bus master hardware)                |
+| **Hardware Complexity** | Minimal (Zero extra hardware)                 | Moderate (16550 FIFO registers)            | High (Requires system DMA controller & bus arbitration) |
+| **Typical Use Case**    | Boot ROM, bare-metal bringup                  | Interactive terminal consoles              | Audio streaming, firmware flashing, high-rate telemetry |
 
 ---
 
@@ -164,7 +174,9 @@ The ultimate architectural solution is **Direct Memory Access (DMA)**:
 ## Review Questions
 
 ### Question 1
+
 Why does a legacy non-FIFO UART running at 460,800 baud pose a severe risk of data corruption in an RTOS environment?
+
 <details>
 <summary><b>View Answer</b></summary>
 At 460,800 baud with 8-N-1 framing, a new byte arrives every:
@@ -173,7 +185,9 @@ In a non-FIFO UART, the CPU has only a single-byte buffer (`RBR`). If an RTOS ta
 </details>
 
 ### Question 2
+
 Explain the purpose of the 16550 Character Timeout Interrupt (CTI). Under what exact conditions does it fire?
+
 <details>
 <summary><b>View Answer</b></summary>
 The Character Timeout Interrupt prevents "stranded bytes" when an incoming message is shorter than the configured FIFO trigger threshold. It fires when:
@@ -183,14 +197,18 @@ The Character Timeout Interrupt prevents "stranded bytes" when an incoming messa
 </details>
 
 ### Question 3
+
 How does Direct Memory Access (DMA) eliminate CPU context switch overhead during high-speed UART communication?
+
 <details>
 <summary><b>View Answer</b></summary>
 In a DMA-driven architecture, the UART hardware directly triggers a DMA channel via a hardware handshake line (`DREQ`) whenever data is available. The DMA controller acts as an independent bus master, transferring data directly from the UART register into a memory buffer in RAM across the system crossbar. The CPU is completely bypassed and does not incur any interrupt context switches until an entire multi-kilobyte buffer has been transferred, reducing CPU utilization from 50%+ down to near 0%.
 </details>
 
 ### Question 4
+
 In a 16550 UART, how does software clear the Character Timeout Interrupt?
+
 <details>
 <summary><b>View Answer</b></summary>
 Software clears the Character Timeout Interrupt simply by **reading a byte from the Receiver Buffer Register (RBR)**. Alternatively, reading the Interrupt Identification Register (IIR) or clearing the RX FIFO via the FIFO Control Register (FCR) will clear the pending timeout interrupt condition.
@@ -199,4 +217,3 @@ Software clears the Character Timeout Interrupt simply by **reading a byte from 
 ---
 
 ##### Copyright (c) 2026 squared-studio
-

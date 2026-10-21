@@ -1,9 +1,11 @@
 # Dive into Formal Methods Basics
 
 ## Mathematical Logic
+
 Mathematical logic is the foundation of formal methods. It involves the use of formal languages to represent logical statements and reasoning.
 
 ### Key Concepts:
+
 - **Propositional Logic**: Logic dealing with propositions and their connectives.
   - **Example**: "If it rains, then the ground is wet" can be represented as R → W.
   - **Connectives**: AND (∧), OR (∨), NOT (¬), IMPLIES (→)
@@ -17,9 +19,11 @@ Mathematical logic is the foundation of formal methods. It involves the use of f
     - **Example**: Proving that √2 is irrational by assuming it is rational and deriving a contradiction.
 
 ## Temporal Logic
+
 Temporal logic is used to reason about sequences of events in time, which is crucial for verifying the behavior of systems over time.
 
 ### Key Concepts:
+
 - **Linear Temporal Logic (LTL)**: Focuses on linear sequences of states.
   - **Example**: "Eventually, the system will reach a safe state" can be represented as F Safe.
   - **Operators**: Always (G), Eventually (F), Next (X), Until (U)
@@ -33,4 +37,3 @@ Temporal logic is used to reason about sequences of events in time, which is cru
   - **Until (U)**: A condition that must be true until another condition becomes true.
 
 ##### Copyright (c) 2026 squared-studio
-

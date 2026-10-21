@@ -1,6 +1,7 @@
 # Signal Architecture and Channel Decomposition
 
 ### Learning Objectives
+
 - Master the architectural decomposition of OBI into two decoupled logical channels: the **Request Channel (A Channel)** and the **Response Channel (R Channel)**.
 - Memorize the complete OBI signal dictionary, including signal directionality, widths, and reset invariants.
 - Understand the role of optional architectural sideband signals: `atop[5:0]`, `prot[2:0]`, `dbg`, and transaction ID tags (`aid`, `mid`, `rid`).
@@ -16,13 +17,17 @@ The Open Bus Interface decomposes all bus communications into two unidirectional
 ![OBI Channel Decomposition](images/ch2_obi_signals_channels.svg)
 
 ### The Request Channel (A Channel)
+
 Carries all transfer initiation information from the Master to the Slave.
+
 - **Handshake signals:** `req` (Master $\rightarrow$ Slave) and `gnt` (Slave $\rightarrow$ Master).
 - **Payload signals:** `addr`, `we`, `be`, and `wdata`.
 - **Sideband attributes:** `atop` (atomic operation), `prot` (privilege/security), `dbg` (debug access), and `aid`/`mid` (transaction IDs).
 
 ### The Response Channel (R Channel)
+
 Carries completion status, error reporting, and read data from the Slave back to the Master.
+
 - **Handshake signal:** `rvalid` (Slave $\rightarrow$ Master).
 - **Payload signals:** `rdata` (read data payload) and `err` (error indication).
 - **Sideband attributes:** `rid` (response transaction ID matching).
@@ -71,15 +76,19 @@ The following table provides the exhaustive specification for all signals define
 The OBI specification enforces strict behavioral invariants regarding reset behavior to prevent spurious transaction launches and electrical bus conflicts:
 
 ### Reset Invariant: Validity Suppression
+
 During any clock cycle where `reset_n` is sampled LOW (`0`):
+
 - The master **must drive `req = 1'b0`**.
 - The slave **must drive `rvalid = 1'b0`**.
 - All payload buses (`addr`, `wdata`, `be`, `rdata`) are considered "don't care" and do not require reset registers, saving significant flip-flop silicon area and reset routing capacitance.
 
 ### Post-Reset Operation
+
 The earliest clock cycle a master is permitted to assert `req = 1'b1` is the **first active rising clock edge after `reset_n` has transitioned from 0 to 1**.
 
 ### Synchronous Sampling Invariant
+
 All signals across both Request and Response channels are sampled strictly on the **rising edge of `clk`**. There are no falling-edge transfers, dual-data-rate transitions, or transparent latch dependencies.
 
 ---
@@ -119,7 +128,9 @@ $$\text{Byte Lane } n \iff \text{Data Bits } [8n+7 : 8n]$$
 ## Review Questions
 
 ### Question 1
+
 Which specific signals must be driven to a known logic value during reset (`reset_n = 0`) in an OBI system? What is the status of the remaining signals?
+
 <details>
 <summary><b>View Answer</b></summary>
 Only the handshake validation signals must be driven to a known logic level:
@@ -129,7 +140,9 @@ All other address, control, and data signals (`addr`, `we`, `be`, `wdata`, `rdat
 </details>
 
 ### Question 2
+
 What is the functional difference between `we` and `be` on the OBI Request Channel?
+
 <details>
 <summary><b>View Answer</b></summary>
 - **`we` (Write Enable):** A 1-bit control signal that specifies the overall direction of the transaction (`1'b1` for a write, `1'b0` for a read).  
@@ -137,7 +150,9 @@ What is the functional difference between `we` and `be` on the OBI Request Chann
 </details>
 
 ### Question 3
+
 In a 64-bit OBI interface, what is the width of the byte enable (`be`) bus? If the master performs a 32-bit word write targeting the upper 32 bits of a 64-bit doubleword, what is the binary value of `be`?
+
 <details>
 <summary><b>View Answer</b></summary>
 - Width of `be` = $\text{Data Width} / 8 = 64 / 8 = \mathbf{8\text{ bits}}$ (`be[7:0]`).
@@ -146,7 +161,9 @@ In a 64-bit OBI interface, what is the width of the byte enable (`be`) bus? If t
 </details>
 
 ### Question 4
+
 Why is unidirectional point-to-point wiring an advantage in deep-submicron SoC physical synthesis?
+
 <details>
 <summary><b>View Answer</b></summary>
 Unidirectional wiring means every signal has exactly one driver and travels in a single, predictable direction. There are no shared multi-driver tri-state buses, which avoids electrical contention, bus hold delays, and complex timing constraints. Furthermore, because each channel is decoupled, digital designers can easily insert pipeline registers (register slices) on long cross-chip routing wires to meet high clock frequency targets without violating protocol semantics.

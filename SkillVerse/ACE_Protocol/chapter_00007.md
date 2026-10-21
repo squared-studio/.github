@@ -1,7 +1,9 @@
 # Snoop Channel Mechanics & `CRRESP` Response Decoding
 
 ## The Inbound Snoop Pipeline
+
 In an AMBA ACE coherent system, a cached master is not merely an initiator of bus traffic; it is also a **listener**. The coherent interconnect acts as a master to the cached core, driving memory inquiries into the core via the three snoop channels:
+
 - **`AC` (Snoop Address):** Delivers the physical address and snoop transaction type.
 - **`CR` (Snoop Response):** Returns the core's cache hit status and line disposition.
 - **`CD` (Snoop Data):** Transmits data bytes if the snoop hits dirty or requested cache lines.
@@ -36,6 +38,7 @@ When an inbound snoop request arrives at the master's interface, it enters a ded
 ---
 
 ## Detailed Decoding of the `CRRESP[4:0]` Bitfield
+
 The Snoop Response bus signal **`CRRESP[4:0]`** is the heart of the ACE snoop protocol. It compresses the complete cache outcome into a 5-bit status vector:
 
 ![CRRESP Bitfield Matrix](images/ch7_crresp_bitfield_matrix.svg)
@@ -43,22 +46,27 @@ The Snoop Response bus signal **`CRRESP[4:0]`** is the heart of the ACE snoop pr
 ### Bit-by-Bit Breakdown:
 
 ### `CRRESP[0]` — `DataTransfer`
+
 - **`0` (No Data Transfer):** The master will **not** transmit data on the `CD` channel. The snoop transaction is completed solely via the `CR` channel handshake.
 - **`1` (Data Transfer Follows):** The master asserts that it will transmit the cache line data across the `CD` channel using `CDVALID` and `CDLAST`.
 
 ### `CRRESP[1]` — `Error`
+
 - **`0` (Normal):** No error occurred during tag or data array access.
 - **`1` (Error Detected):** An uncorrectable hardware error occurred (e.g., an unrecoverable multi-bit ECC error in the cache SRAM). The interconnect handles this as a slave error (`SLVERR`).
 
 ### `CRRESP[2]` — `PassDirty`
+
 - **`0` (Clean or Retained Dirty):** The master does not transfer dirty writeback responsibility to the interconnect.
 - **`1` (Dirty Responsibility Transferred):** The master held dirty data and is transferring the sole responsibility for eventually writing that dirty data back to main memory to the recipient/interconnect.
 
 ### `CRRESP[3]` — `IsShared`
+
 - **`0` (Unique):** The master is invalidating its local copy or held no valid copy. After this snoop completes, this master will hold **no valid copy** of the line.
 - **`1` (Shared):** The master continues to retain a valid copy of the line in the `Shared` (S) state.
 
 ### `CRRESP[4]` — `WasUnique` (or Reserved)
+
 - In standard ACE configurations, bit 4 can indicate whether the line was held uniquely prior to this snoop transaction, aiding advanced interconnect directories in tracking tag exclusivity without secondary lookups.
 
 ---
@@ -67,19 +75,20 @@ The Snoop Response bus signal **`CRRESP[4:0]`** is the heart of the ACE snoop pr
 
 The table below catalogs the most critical and common `CRRESP` response vectors encountered in silicon operation:
 
-| `CRRESP[4:0]` | Binary | `IsShared` | `PassDirty` | `Error` | `DataTransfer` | Architectural Meaning |
-| :--- | :---: | :---: | :---: | :---: | :---: | :--- |
-| **Miss / Invalid** | `0b00000` | 0 | 0 | 0 | 0 | Snoop Miss. Master does not hold the line. No data sent. |
-| **Clean Shared Hit** | `0b01000` | 1 | 0 | 0 | 0 | Master holds clean copy in **S** state. Retains copy. No data sent. |
-| **Clean Invalidate** | `0b00000` | 0 | 0 | 0 | 0 | Master invalidated a clean copy (**E** or **S** $\rightarrow$ **I**). No data sent. |
-| **Shared Data Fwd** | `0b01001` | 1 | 0 | 0 | 1 | Master supplies clean data via `CD`, retains shared copy. |
-| **Dirty Shared (Owner)**| `0b01101` | 1 | 1 | 0 | 1 | Master holds line in **O** state. Supplies dirty data via `CD`, retains copy, and passes dirty responsibility. |
-| **Dirty Invalidate** | `0b00101` | 0 | 1 | 0 | 1 | Master was in **M** state. Supplies dirty data via `CD`, invalidates copy (**M** $\rightarrow$ **I**), and passes dirty responsibility. |
-| **ECC Hardware Fault** | `0b00010` | 0 | 0 | 1 | 0 | Parity/ECC failure during tag or cache read. |
+| `CRRESP[4:0]`            |  Binary   | `IsShared` | `PassDirty` | `Error` | `DataTransfer` | Architectural Meaning                                                                                                                   |
+| :----------------------- | :-------: | :--------: | :---------: | :-----: | :------------: | :-------------------------------------------------------------------------------------------------------------------------------------- |
+| **Miss / Invalid**       | `0b00000` |     0      |      0      |    0    |       0        | Snoop Miss. Master does not hold the line. No data sent.                                                                                |
+| **Clean Shared Hit**     | `0b01000` |     1      |      0      |    0    |       0        | Master holds clean copy in **S** state. Retains copy. No data sent.                                                                     |
+| **Clean Invalidate**     | `0b00000` |     0      |      0      |    0    |       0        | Master invalidated a clean copy (**E** or **S** $\rightarrow$ **I**). No data sent.                                                     |
+| **Shared Data Fwd**      | `0b01001` |     1      |      0      |    0    |       1        | Master supplies clean data via `CD`, retains shared copy.                                                                               |
+| **Dirty Shared (Owner)** | `0b01101` |     1      |      1      |    0    |       1        | Master holds line in **O** state. Supplies dirty data via `CD`, retains copy, and passes dirty responsibility.                          |
+| **Dirty Invalidate**     | `0b00101` |     0      |      1      |    0    |       1        | Master was in **M** state. Supplies dirty data via `CD`, invalidates copy (**M** $\rightarrow$ **I**), and passes dirty responsibility. |
+| **ECC Hardware Fault**   | `0b00010` |     0      |      0      |    1    |       0        | Parity/ECC failure during tag or cache read.                                                                                            |
 
 ---
 
 ## Snoop Handshake Dynamics and Waveforms
+
 The snoop channels execute their transfers using the standard AMBA two-way handshake (`VALID` / `READY`):
 
 ![Snoop Transaction Timing](images/ch7_snoop_transaction_timing.svg)
@@ -114,6 +123,7 @@ CDLAST:      ___________________________________________/¯¯¯¯¯¯\______
 ---
 
 ## Resolving Simultaneous Cross-Snooping Races
+
 In a distributed multi-core system, a classic race condition occurs when **two masters simultaneously attempt to write to the exact same cache line**:
 
 ```
@@ -126,7 +136,9 @@ Interconnect receives BOTH requests concurrently!
 If Master A waits for Master B to invalidate, and Master B simultaneously waits for Master A to invalidate, the system could deadlock.
 
 ### The ACE Serialization Invariant:
+
 To resolve cross-snooping races deterministically:
+
 1. **The Interconnect is the Sole Serializing Arbiter:**
    - The interconnect's internal address arbiter assigns a strict physical arrival order to conflicting transactions. Whichever transaction is granted arbitration first (e.g., Master A) becomes the **Winner**.
 2. **Winner Proceed, Loser Snooped:**
@@ -140,6 +152,7 @@ This strict hardware serialization guarantees that exactly one master gains writ
 ---
 
 ## Chapter Summary
+
 - Inbound snoops arrive over **`AC`**, query the core's private tag directories, and return status over **`CR`** and data over **`CD`**.
 - **`CRRESP[4:0]`** conveys five discrete bits: `DataTransfer`, `Error`, `PassDirty`, `IsShared`, and `WasUnique`.
 - If `CRRESP[0]` (`DataTransfer`) is asserted, the master **must** provide the cache line data across `CD` terminated by `CDLAST`.
@@ -176,4 +189,3 @@ This strict hardware serialization guarantees that exactly one master gains writ
 ---
 
 ##### Copyright (c) 2026 squared-studio
-

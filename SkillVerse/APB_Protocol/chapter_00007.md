@@ -35,18 +35,18 @@ An **AXI-to-APB Bridge** acts as an AXI Slave (completer) on its upstream interf
 
 The following table details the direct signal mappings performed by the bridge during write and read transactions:
 
-| AXI Channel & Signal | APB Destination Signal | Conversion Logic / Notes |
-| :--- | :--- | :--- |
-| **`AWADDR`** (Write Address) | **`PADDR`** | Forwarded to APB during the `SETUP` phase of each burst beat. |
-| **`AWPROT`** (Write Protection) | **`PPROT`** | Directly mapped to preserve security and privilege level. |
-| **`WDATA`** (Write Data) | **`PWDATA`** | Latched from AXI `W` channel and driven during APB `SETUP`. |
-| **`WSTRB`** (Write Strobes) | **`PSTRB`** | Directly mapped (available in APB4). |
-| **`BREADY` / `BVALID`** | Internal FSM | `BVALID` asserted only after APB `ACCESS` completes with `PREADY = 1`. |
-| **`BRESP`** (Write Response) | Driven by **`PSLVERR`** | `PSLVERR = 0` $\rightarrow$ `OKAY (0b00)`; `PSLVERR = 1` $\rightarrow$ `SLVERR (0b10)`. |
-| **`ARADDR`** (Read Address) | **`PADDR`** | Forwarded to APB with `PWRITE = 0` during `SETUP`. |
-| **`ARPROT`** (Read Protection) | **`PPROT`** | Directly mapped. |
-| **`RDATA`** (Read Data) | Captured from **`PRDATA`** | Sampled on APB `PREADY = 1` and forwarded to AXI `R` channel. |
-| **`RRESP`** (Read Response) | Driven by **`PSLVERR`** | `PSLVERR = 0` $\rightarrow$ `OKAY (0b00)`; `PSLVERR = 1` $\rightarrow$ `SLVERR (0b10)`. |
+| AXI Channel & Signal            | APB Destination Signal     | Conversion Logic / Notes                                                                |
+| :------------------------------ | :------------------------- | :-------------------------------------------------------------------------------------- |
+| **`AWADDR`** (Write Address)    | **`PADDR`**                | Forwarded to APB during the `SETUP` phase of each burst beat.                           |
+| **`AWPROT`** (Write Protection) | **`PPROT`**                | Directly mapped to preserve security and privilege level.                               |
+| **`WDATA`** (Write Data)        | **`PWDATA`**               | Latched from AXI `W` channel and driven during APB `SETUP`.                             |
+| **`WSTRB`** (Write Strobes)     | **`PSTRB`**                | Directly mapped (available in APB4).                                                    |
+| **`BREADY` / `BVALID`**         | Internal FSM               | `BVALID` asserted only after APB `ACCESS` completes with `PREADY = 1`.                  |
+| **`BRESP`** (Write Response)    | Driven by **`PSLVERR`**    | `PSLVERR = 0` $\rightarrow$ `OKAY (0b00)`; `PSLVERR = 1` $\rightarrow$ `SLVERR (0b10)`. |
+| **`ARADDR`** (Read Address)     | **`PADDR`**                | Forwarded to APB with `PWRITE = 0` during `SETUP`.                                      |
+| **`ARPROT`** (Read Protection)  | **`PPROT`**                | Directly mapped.                                                                        |
+| **`RDATA`** (Read Data)         | Captured from **`PRDATA`** | Sampled on APB `PREADY = 1` and forwarded to AXI `R` channel.                           |
+| **`RRESP`** (Read Response)     | Driven by **`PSLVERR`**    | `PSLVERR = 0` $\rightarrow$ `OKAY (0b00)`; `PSLVERR = 1` $\rightarrow$ `SLVERR (0b10)`. |
 
 ---
 
@@ -59,7 +59,9 @@ An APB completer (slave) consists of an address decoder, register control logic,
 ### Structural Sub-Blocks of an APB Slave
 
 #### Interface Strobe Generator
+
 The slave monitors `PSELx` and `PENABLE` to generate internal, single-cycle qualified strobes:
+
 - **Write Strobe (`reg_wr_en`):**
   $$\text{reg\_wr\_en} = \text{PSELx} \ \land \ \text{PENABLE} \ \land \ \text{PREADY} \ \land \ \text{PWRITE}$$
   Registers sample `PWDATA` exclusively when this qualified strobe is active.
@@ -68,7 +70,9 @@ The slave monitors `PSELx` and `PENABLE` to generate internal, single-cycle qual
   Controls the internal read multiplexer and triggers side-effect reads.
 
 #### Address Offset Decoder
+
 The peripheral takes the lower address bits (`PADDR[11:0]`, depending on register aperture size) and decodes them into one-hot select signals for each individual configuration and status register:
+
 - Base + `0x00`: Control Register (`CTRL_REG`)
 - Base + `0x04`: Status Register (`STATUS_REG`)
 - Base + `0x08`: Interrupt Enable Register (`IER_REG`)
@@ -77,6 +81,7 @@ The peripheral takes the lower address bits (`PADDR[11:0]`, depending on registe
 #### Standard Peripheral Register Access Semantics
 
 Modern hardware registers exhibit diverse read/write behaviors:
+
 - **Read-Write (RW):** Standard configuration register. Software writes update internal flip-flops; software reads return current register values.
 - **Read-Only (RO):** Hardware status flags (e.g., peripheral busy, FIFO empty, external pin states). Writes to RO registers are ignored or trigger `PSLVERR`.
 - **Write-1-to-Clear (W1C):** Used for interrupt status flags. Writing a `1` clears the specific flag bit to `0`; writing a `0` has no effect. This prevents race conditions where an OS clearing one interrupt inadvertently clears another newly arrived interrupt.
@@ -89,6 +94,7 @@ Modern hardware registers exhibit diverse read/write behaviors:
 In battery-powered and mobile SoCs, peripheral registers can consume substantial dynamic power if their internal flip-flops clock continuously.
 
 APB provides an inherent low-power advantage through **Architectural Clock Gating**:
+
 - The peripheral clock can be gated at the top level whenever `PSELx = 0`.
 - Sequential register logic toggles only during cycles when the peripheral is addressed.
 - When the peripheral is idle, clock trees to its register file remain completely dark, reducing dynamic power consumption to near zero.
@@ -98,6 +104,7 @@ APB provides an inherent low-power advantage through **Architectural Clock Gatin
 ## Comprehensive Summary of the APB Protocol Series
 
 Across this 7-chapter study of the APB protocol, we have covered:
+
 1. **AMBA Hierarchy & Evolution:** Positioning APB as the energy-efficient, low-complexity peripheral backbone across APB2, APB3, APB4, and APB5.
 2. **Signal Architecture:** Complete signal dictionary, clock and reset constraints, central decoding, and read data multiplexing.
 3. **State Machine & Handshakes:** The 3-state FSM (`IDLE`, `SETUP`, `ACCESS`) and the fundamental three-way completion condition (`PSEL && PENABLE && PREADY`).
@@ -116,4 +123,3 @@ Across this 7-chapter study of the APB protocol, we have covered:
 4. How does an APB bridge translate an asserted `PSLVERR = 1` back to an upstream AXI master?
 
 ##### Copyright (c) 2026 squared-studio
-

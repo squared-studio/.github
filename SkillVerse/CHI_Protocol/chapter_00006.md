@@ -1,9 +1,11 @@
 # Coherent Write, Eviction, and Direct Write Transactions
 
 ## The Mechanics of Coherent Writes in CHI
+
 Modifying shared memory in a distributed multi-core system requires absolute enforcement of the **Single-Writer Multiple-Readers (SWMR)** invariant. Before any core can write to a cache line, hardware must ensure that all peer caches holding copies are invalidated, and any existing dirty data is either preserved or cleanly overwritten.
 
 In AMBA 5 CHI, write operations are categorized into three distinct operational domains:
+
 1. **Ownership Acquisition (Cache-Allocating Stores):** Transactions like `ReadUnique`, `MakeUnique`, and `CleanUnique` that acquire exclusive write permission for private L1/L2 caches.
 2. **Non-CopyBack Writes (Direct Writes):** Transactions like `WriteUniquePtl` and `WriteUniqueFull` that write data out onto the interconnect without allocating the line locally (used by DMA, GPUs, and streaming CPU stores).
 3. **CopyBack Evictions:** Transactions like `WriteEvictFull` and `WriteCleanFull` that flush dirty or unique cache lines back to the Home Node or main memory upon replacement.
@@ -11,17 +13,19 @@ In AMBA 5 CHI, write operations are categorized into three distinct operational 
 ---
 
 ## Ownership Acquisition: `ReadUnique`, `MakeUnique`, `CleanUnique`
+
 When a CPU core executes a store instruction to an address that is not uniquely owned in its local cache, it must acquire write exclusivity:
 
-| Transaction Opcode | Initial Local State | Data Fetched? | Peer Action | Description |
-| :--- | :---: | :---: | :---: | :--- |
-| **`ReadUnique`** | **I** (Miss) | **Yes** (64B line) | Invalidate all peer copies; dirty peer provides data. | Standard store miss. Line data is fetched into L1, peers invalidated, line becomes **UD** (Unique Dirty). |
-| **`MakeUnique`** | **I** or **SC** | **No** (Zero bytes) | Invalidate all peer copies; discard dirty peer data. | Master intends to overwrite the entire 64-byte line (e.g. `memset`). Zero read bandwidth consumed! |
-| **`CleanUnique`** | **SC** (Shared Hit) | **No** (Zero bytes) | Invalidate all peer copies. | Core already holds valid data in Shared state. Upgrades line to **UC** / **UD** without re-reading. |
+| Transaction Opcode | Initial Local State |    Data Fetched?    |                      Peer Action                      | Description                                                                                               |
+| :----------------- | :-----------------: | :-----------------: | :---------------------------------------------------: | :-------------------------------------------------------------------------------------------------------- |
+| **`ReadUnique`**   |    **I** (Miss)     | **Yes** (64B line)  | Invalidate all peer copies; dirty peer provides data. | Standard store miss. Line data is fetched into L1, peers invalidated, line becomes **UD** (Unique Dirty). |
+| **`MakeUnique`**   |   **I** or **SC**   | **No** (Zero bytes) | Invalidate all peer copies; discard dirty peer data.  | Master intends to overwrite the entire 64-byte line (e.g. `memset`). Zero read bandwidth consumed!        |
+| **`CleanUnique`**  | **SC** (Shared Hit) | **No** (Zero bytes) |              Invalidate all peer copies.              | Core already holds valid data in Shared state. Upgrades line to **UC** / **UD** without re-reading.       |
 
 ---
 
 ## Non-CopyBack (NCB) Writes and the `DBIDResp` Credit Protocol
+
 When an agent writes data out onto the interconnect (e.g., an `RN-I` DMA engine writing an incoming network packet, or a CPU executing non-temporal streaming writes), the master issues a **Non-CopyBack (NCB) Write**.
 
 Unlike read transactions where data flows toward the requestor, write transactions require the requestor to send data. However, **a master cannot simply dump write data onto the NoC without prior coordination!** The receiving Home Node must first allocate an internal write buffer to receive the payload.
@@ -31,14 +35,15 @@ This coordination is governed by the **`DBIDResp` (Data Buffer ID Response)** pr
 ![WriteUnique Transaction Flow](images/ch6_write_unique_flow.svg)
 
 ### Step-by-Step Execution Sequence:
+
 1. **Step 1 (Write Request):**
-   The master (`RN-F`) issues a Request Flit: `REQ (WriteUniquePtl, TxnID = 0x4)`. It does *not* transmit the data yet.
+   The master (`RN-F`) issues a Request Flit: `REQ (WriteUniquePtl, TxnID = 0x4)`. It does _not_ transmit the data yet.
 2. **Step 2 (Write Buffer Allocation via `DBIDResp`):**
    The Home Node (`HN-F`) serializes the request, invalidates any peer caches holding the line, allocates an internal write buffer slot (e.g., Buffer Slot `0xA`), and returns a Response Flit:
    - `Opcode = DBIDResp`
    - **`DBID = 0xA`** (Data Buffer Identifier)
    - `TxnID = 0x4` (Matches the master's original transaction ID)
-   *This `DBIDResp` serves as an explicit grant of Write Credit!*
+     _This `DBIDResp` serves as an explicit grant of Write Credit!_
 3. **Step 3 (Write Data Transmission):**
    Having received write credit, the master transmits the data payload using a Data Flit:
    - `Opcode = NCBWrData`
@@ -49,6 +54,7 @@ This coordination is governed by the **`DBIDResp` (Data Buffer ID Response)** pr
 ---
 
 ## Direct Write-data Transfer (DWT)
+
 In enterprise server SoCs, routing write data from an RN-F into the Home Node, and then from the Home Node out to the external memory controller (`SN-F`), creates a severe throughput bottleneck inside the HN-F data buffers.
 
 To achieve maximum write bandwidth, AMBA 5 CHI provides **Direct Write-data Transfer (DWT)**.
@@ -56,6 +62,7 @@ To achieve maximum write bandwidth, AMBA 5 CHI provides **Direct Write-data Tran
 ![Direct Write-data Transfer Flow](images/ch6_dwt_memory_flow.svg)
 
 ### How Direct Write-data Transfer Operates:
+
 1. **Request:** The master issues `REQ (WriteNoSnoop)` or `REQ (WriteUniqueFull)` to the Home Node.
 2. **Memory Buffer Reservation:** The `HN-F` serializes the address and sends a request to the target memory controller (`SN-F`), asking the memory controller to allocate an internal write FIFO slot.
 3. **SN-F Grants DBID:** The memory controller (`SN-F`) allocates a buffer slot (`DBID = 0x7F`) and informs the `HN-F`.
@@ -66,6 +73,7 @@ To achieve maximum write bandwidth, AMBA 5 CHI provides **Direct Write-data Tran
 5. **DIRECT WRITE STREAMING:** The master transmits the write data flits: `DAT (NCBWrData)` **directly across the mesh to the `SN-F`**, completely bypassing the Home Node!
 
 ### Architectural Benefits of DWT:
+
 - **Zero HN-F Data Buffer Consumption:** Eliminates 100% of write data buffering from the Home Node.
 - **Lower Memory Latency:** Write data takes the shortest physical mesh route directly to the DRAM controller queues.
 - **Maximized Bus Utilization:** Frees up Home Node routers to focus entirely on low-latency read orchestration and snoop filtering.
@@ -73,6 +81,7 @@ To achieve maximum write bandwidth, AMBA 5 CHI provides **Direct Write-data Tran
 ---
 
 ## Eviction and CopyBack Transactions
+
 When a master's private L1/L2 cache becomes full, the replacement algorithm must evict an existing cache line (the "victim") to make room for newly fetched data.
 
 ```
@@ -91,6 +100,7 @@ When a master's private L1/L2 cache becomes full, the replacement algorithm must
 ```
 
 ### The Eviction Transaction Catalog:
+
 1. **`WriteEvictFull`:**
    - Used when evicting a **dirty** cache line.
    - Master issues `REQ (WriteEvictFull)`, receives a `DBIDResp` from the Home Node, and transfers the 64-byte dirty payload using `DAT (CopyBackWrData)`.
@@ -98,12 +108,13 @@ When a master's private L1/L2 cache becomes full, the replacement algorithm must
    - Used when evicting a line held in the **Unique Clean (UC)** state when the master desires to write it back to the System Level Cache (SLC) to prevent a DRAM read if another core needs it later.
 3. **`Evict` (Address-Only Eviction):**
    - Transmits **zero data**.
-   - Serves as a vital notification to the Home Node's Snoop Filter: *"I have silently dropped address X from my local cache. Please clear my bit in your sharer bitmask."*
+   - Serves as a vital notification to the Home Node's Snoop Filter: _"I have silently dropped address X from my local cache. Please clear my bit in your sharer bitmask."_
    - This prevents the directory from sending future useless snoop broadcasts to this core.
 
 ---
 
 ## Chapter Summary
+
 - Coherent store allocation relies on **`ReadUnique`** (fetches data + invalidates peers), **`MakeUnique`** (invalidates peers without data fetch), and **`CleanUnique`** (upgrades shared lines).
 - Non-CopyBack writes use the **`DBIDResp` write credit protocol** to ensure buffer space is pre-allocated at the receiver before data is launched.
 - **Direct Write-data Transfer (DWT)** streams write data **directly to the memory controller (`SN-F`)**, completely bypassing Home Node data buffers.
@@ -140,4 +151,3 @@ When a master's private L1/L2 cache becomes full, the replacement algorithm must
 ---
 
 ##### Copyright (c) 2026 squared-studio
-

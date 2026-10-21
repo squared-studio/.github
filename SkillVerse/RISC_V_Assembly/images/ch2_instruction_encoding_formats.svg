@@ -1,0 +1,120 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 480" width="100%" height="100%">
+  <rect width="960" height="480" fill="#0b1120" rx="8"/>
+  <text x="480" y="38" fill="#f8fafc" font-size="20" font-weight="bold" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" text-anchor="middle">The 6 Core RISC-V Instruction Encoding Formats</text>
+  <text x="480" y="62" fill="#94a3b8" font-size="13" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" text-anchor="middle">Fixed 32-bit width with uniformly positioned opcode, rd, rs1, rs2, and funct3 fields</text>
+
+  <!-- Bit Positions Header -->
+  <g transform="translate(60, 95)">
+    <rect width="840" height="24" fill="#0f172a" rx="4"/>
+    <text x="100" y="16" fill="#38bdf8" font-size="10" font-family="monospace" text-anchor="middle">bits [31:25] (7)</text>
+    <text x="270" y="16" fill="#34d399" font-size="10" font-family="monospace" text-anchor="middle">bits [24:20] (5)</text>
+    <text x="410" y="16" fill="#fbbf24" font-size="10" font-family="monospace" text-anchor="middle">bits [19:15] (5)</text>
+    <text x="530" y="16" fill="#818cf8" font-size="10" font-family="monospace" text-anchor="middle">bits [14:12] (3)</text>
+    <text x="650" y="16" fill="#f43f5e" font-size="10" font-family="monospace" text-anchor="middle">bits [11:7] (5)</text>
+    <text x="770" y="16" fill="#94a3b8" font-size="10" font-family="monospace" text-anchor="middle">bits [6:0] (7)</text>
+
+    <!-- Format 1: R-Type -->
+    <g transform="translate(0, 32)">
+      <rect width="70" height="28" fill="#1e293b" rx="3"/>
+      <text x="35" y="18" fill="#38bdf8" font-size="11" font-weight="bold" font-family="monospace" text-anchor="middle">R-type</text>
+      <!-- Fields -->
+      <rect x="75" y="0" width="135" height="28" fill="#0369a1" stroke="#38bdf8" rx="2"/>
+      <text x="142" y="18" fill="#fff" font-size="10" font-family="monospace" text-anchor="middle">funct7</text>
+      <rect x="215" y="0" width="115" height="28" fill="#065f46" stroke="#34d399" rx="2"/>
+      <text x="272" y="18" fill="#fff" font-size="10" font-family="monospace" text-anchor="middle">rs2</text>
+      <rect x="335" y="0" width="145" height="28" fill="#854d0e" stroke="#fbbf24" rx="2"/>
+      <text x="407" y="18" fill="#fff" font-size="10" font-family="monospace" text-anchor="middle">rs1</text>
+      <rect x="485" y="0" width="95" height="28" fill="#312e81" stroke="#818cf8" rx="2"/>
+      <text x="532" y="18" fill="#fff" font-size="10" font-family="monospace" text-anchor="middle">funct3</text>
+      <rect x="585" y="0" width="135" height="28" fill="#9f1239" stroke="#f43f5e" rx="2"/>
+      <text x="652" y="18" fill="#fff" font-size="10" font-family="monospace" text-anchor="middle">rd</text>
+      <rect x="725" y="0" width="115" height="28" fill="#334155" stroke="#64748b" rx="2"/>
+      <text x="782" y="18" fill="#fff" font-size="10" font-family="monospace" text-anchor="middle">opcode</text>
+    </g>
+
+    <!-- Format 2: I-Type -->
+    <g transform="translate(0, 68)">
+      <rect width="70" height="28" fill="#1e293b" rx="3"/>
+      <text x="35" y="18" fill="#38bdf8" font-size="11" font-weight="bold" font-family="monospace" text-anchor="middle">I-type</text>
+      <rect x="75" y="0" width="255" height="28" fill="#0284c7" stroke="#38bdf8" rx="2"/>
+      <text x="202" y="18" fill="#fff" font-size="10" font-family="monospace" text-anchor="middle">imm[11:0] (12 bits)</text>
+      <rect x="335" y="0" width="145" height="28" fill="#854d0e" stroke="#fbbf24" rx="2"/>
+      <text x="407" y="18" fill="#fff" font-size="10" font-family="monospace" text-anchor="middle">rs1</text>
+      <rect x="485" y="0" width="95" height="28" fill="#312e81" stroke="#818cf8" rx="2"/>
+      <text x="532" y="18" fill="#fff" font-size="10" font-family="monospace" text-anchor="middle">funct3</text>
+      <rect x="585" y="0" width="135" height="28" fill="#9f1239" stroke="#f43f5e" rx="2"/>
+      <text x="652" y="18" fill="#fff" font-size="10" font-family="monospace" text-anchor="middle">rd</text>
+      <rect x="725" y="0" width="115" height="28" fill="#334155" stroke="#64748b" rx="2"/>
+      <text x="782" y="18" fill="#fff" font-size="10" font-family="monospace" text-anchor="middle">opcode</text>
+    </g>
+
+    <!-- Format 3: S-Type -->
+    <g transform="translate(0, 104)">
+      <rect width="70" height="28" fill="#1e293b" rx="3"/>
+      <text x="35" y="18" fill="#38bdf8" font-size="11" font-weight="bold" font-family="monospace" text-anchor="middle">S-type</text>
+      <rect x="75" y="0" width="135" height="28" fill="#0284c7" stroke="#38bdf8" rx="2"/>
+      <text x="142" y="18" fill="#fff" font-size="10" font-family="monospace" text-anchor="middle">imm[11:5]</text>
+      <rect x="215" y="0" width="115" height="28" fill="#065f46" stroke="#34d399" rx="2"/>
+      <text x="272" y="18" fill="#fff" font-size="10" font-family="monospace" text-anchor="middle">rs2</text>
+      <rect x="335" y="0" width="145" height="28" fill="#854d0e" stroke="#fbbf24" rx="2"/>
+      <text x="407" y="18" fill="#fff" font-size="10" font-family="monospace" text-anchor="middle">rs1</text>
+      <rect x="485" y="0" width="95" height="28" fill="#312e81" stroke="#818cf8" rx="2"/>
+      <text x="532" y="18" fill="#fff" font-size="10" font-family="monospace" text-anchor="middle">funct3</text>
+      <rect x="585" y="0" width="135" height="28" fill="#0284c7" stroke="#38bdf8" rx="2"/>
+      <text x="652" y="18" fill="#fff" font-size="10" font-family="monospace" text-anchor="middle">imm[4:0]</text>
+      <rect x="725" y="0" width="115" height="28" fill="#334155" stroke="#64748b" rx="2"/>
+      <text x="782" y="18" fill="#fff" font-size="10" font-family="monospace" text-anchor="middle">opcode</text>
+    </g>
+
+    <!-- Format 4: B-Type -->
+    <g transform="translate(0, 140)">
+      <rect width="70" height="28" fill="#1e293b" rx="3"/>
+      <text x="35" y="18" fill="#38bdf8" font-size="11" font-weight="bold" font-family="monospace" text-anchor="middle">B-type</text>
+      <rect x="75" y="0" width="135" height="28" fill="#c026d3" stroke="#e879f9" rx="2"/>
+      <text x="142" y="18" fill="#fff" font-size="9" font-family="monospace" text-anchor="middle">imm[12|10:5]</text>
+      <rect x="215" y="0" width="115" height="28" fill="#065f46" stroke="#34d399" rx="2"/>
+      <text x="272" y="18" fill="#fff" font-size="10" font-family="monospace" text-anchor="middle">rs2</text>
+      <rect x="335" y="0" width="145" height="28" fill="#854d0e" stroke="#fbbf24" rx="2"/>
+      <text x="407" y="18" fill="#fff" font-size="10" font-family="monospace" text-anchor="middle">rs1</text>
+      <rect x="485" y="0" width="95" height="28" fill="#312e81" stroke="#818cf8" rx="2"/>
+      <text x="532" y="18" fill="#fff" font-size="10" font-family="monospace" text-anchor="middle">funct3</text>
+      <rect x="585" y="0" width="135" height="28" fill="#c026d3" stroke="#e879f9" rx="2"/>
+      <text x="652" y="18" fill="#fff" font-size="9" font-family="monospace" text-anchor="middle">imm[4:1|11]</text>
+      <rect x="725" y="0" width="115" height="28" fill="#334155" stroke="#64748b" rx="2"/>
+      <text x="782" y="18" fill="#fff" font-size="10" font-family="monospace" text-anchor="middle">opcode</text>
+    </g>
+
+    <!-- Format 5: U-Type -->
+    <g transform="translate(0, 176)">
+      <rect width="70" height="28" fill="#1e293b" rx="3"/>
+      <text x="35" y="18" fill="#38bdf8" font-size="11" font-weight="bold" font-family="monospace" text-anchor="middle">U-type</text>
+      <rect x="75" y="0" width="505" height="28" fill="#0284c7" stroke="#38bdf8" rx="2"/>
+      <text x="327" y="18" fill="#fff" font-size="10" font-family="monospace" text-anchor="middle">imm[31:12] (Upper 20 bits)</text>
+      <rect x="585" y="0" width="135" height="28" fill="#9f1239" stroke="#f43f5e" rx="2"/>
+      <text x="652" y="18" fill="#fff" font-size="10" font-family="monospace" text-anchor="middle">rd</text>
+      <rect x="725" y="0" width="115" height="28" fill="#334155" stroke="#64748b" rx="2"/>
+      <text x="782" y="18" fill="#fff" font-size="10" font-family="monospace" text-anchor="middle">opcode</text>
+    </g>
+
+    <!-- Format 6: J-Type -->
+    <g transform="translate(0, 212)">
+      <rect width="70" height="28" fill="#1e293b" rx="3"/>
+      <text x="35" y="18" fill="#38bdf8" font-size="11" font-weight="bold" font-family="monospace" text-anchor="middle">J-type</text>
+      <rect x="75" y="0" width="505" height="28" fill="#c026d3" stroke="#e879f9" rx="2"/>
+      <text x="327" y="18" fill="#fff" font-size="10" font-family="monospace" text-anchor="middle">imm[20 | 10:1 | 11 | 19:12] (Jump Target)</text>
+      <rect x="585" y="0" width="135" height="28" fill="#9f1239" stroke="#f43f5e" rx="2"/>
+      <text x="652" y="18" fill="#fff" font-size="10" font-family="monospace" text-anchor="middle">rd</text>
+      <rect x="725" y="0" width="115" height="28" fill="#334155" stroke="#64748b" rx="2"/>
+      <text x="782" y="18" fill="#fff" font-size="10" font-family="monospace" text-anchor="middle">opcode</text>
+    </g>
+  </g>
+
+  <!-- Bottom Explanatory Box -->
+  <g transform="translate(60, 350)">
+    <rect width="840" height="105" rx="8" fill="#0f172a" stroke="#334155"/>
+    <text x="25" y="26" fill="#38bdf8" font-size="13" font-weight="bold" font-family="sans-serif">Hardware Designer's Insight: Consistent Field Positions</text>
+    <text x="25" y="48" fill="#cbd5e1" font-size="11" font-family="sans-serif">• <tspan fill="#fbbf24" font-weight="bold">Source registers (rs1, rs2)</tspan> always sit at bit positions 19:15 and 24:20 across ALL instruction formats.</text>
+    <text x="25" y="68" fill="#cbd5e1" font-size="11" font-family="sans-serif">• <tspan fill="#f43f5e" font-weight="bold">Destination register (rd)</tspan> always sits at bit positions 11:7. Register file reads can occur BEFORE instruction decoding finishes!</text>
+    <text x="25" y="88" fill="#cbd5e1" font-size="11" font-family="sans-serif">• Sign bit (bit 31) is ALWAYS mapped to the immediate's sign bit, meaning sign extension logic is hardwired directly to bit 31.</text>
+  </g>
+</svg>

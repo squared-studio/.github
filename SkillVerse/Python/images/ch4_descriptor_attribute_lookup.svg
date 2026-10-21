@@ -1,0 +1,104 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 480" width="100%" height="100%">
+  <rect width="960" height="480" fill="#0b1120" rx="8"/>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8"/>
+    </marker>
+    <marker id="arrow-green" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#34d399"/>
+    </marker>
+  </defs>
+
+  <text x="480" y="38" fill="#f8fafc" font-size="20" font-weight="bold" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" text-anchor="middle">Python Attribute Resolution Order &amp; Descriptor Protocol</text>
+  <text x="480" y="62" fill="#94a3b8" font-size="13" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" text-anchor="middle">The exact algorithmic sequence executed on every 'obj.attr' evaluation (__getattribute__)</text>
+
+  <!-- Step 1: Data Descriptor -->
+  <g transform="translate(50, 110)">
+    <rect width="180" height="200" rx="6" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+    <rect width="180" height="30" rx="6" fill="#0369a1"/>
+    <text x="90" y="20" fill="#ffffff" font-size="11" font-weight="bold" font-family="sans-serif" text-anchor="middle">Step 1: Data Descriptor?</text>
+    
+    <text x="15" y="55" fill="#94a3b8" font-size="10" font-family="sans-serif">Checks type(obj).__mro__</text>
+    <text x="15" y="70" fill="#94a3b8" font-size="10" font-family="sans-serif">for descriptor defining:</text>
+    
+    <rect x="15" y="85" width="150" height="35" rx="4" fill="#0f172a" stroke="#0284c7"/>
+    <text x="90" y="100" fill="#38bdf8" font-size="10" font-family="monospace" text-anchor="middle">__set__ AND</text>
+    <text x="90" y="113" fill="#38bdf8" font-size="10" font-family="monospace" text-anchor="middle">__get__</text>
+
+    <text x="15" y="145" fill="#34d399" font-size="10" font-weight="bold" font-family="sans-serif">If Found: Invokes</text>
+    <text x="15" y="160" fill="#a7f3d0" font-size="9" font-family="monospace">type(obj).__dict__['attr']</text>
+    <text x="15" y="172" fill="#a7f3d0" font-size="9" font-family="monospace">.__get__(obj, type(obj))</text>
+    <text x="90" y="192" fill="#6ee7b7" font-size="9" font-family="sans-serif" text-anchor="middle">(Overrides instance dict!)</text>
+  </g>
+
+  <!-- Arrow -->
+  <path d="M 230 200 L 270 200" stroke="#38bdf8" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="250" y="190" fill="#94a3b8" font-size="9" font-family="sans-serif" text-anchor="middle">No</text>
+
+  <!-- Step 2: Instance __dict__ -->
+  <g transform="translate(275, 110)">
+    <rect width="180" height="200" rx="6" fill="#1e293b" stroke="#34d399" stroke-width="2"/>
+    <rect width="180" height="30" rx="6" fill="#047857"/>
+    <text x="90" y="20" fill="#ffffff" font-size="11" font-weight="bold" font-family="sans-serif" text-anchor="middle">Step 2: Instance __dict__?</text>
+
+    <text x="15" y="55" fill="#94a3b8" font-size="10" font-family="sans-serif">Checks object's own</text>
+    <text x="15" y="70" fill="#94a3b8" font-size="10" font-family="sans-serif">dictionary / slots:</text>
+
+    <rect x="15" y="85" width="150" height="35" rx="4" fill="#064e3b" stroke="#34d399"/>
+    <text x="90" y="106" fill="#a7f3d0" font-size="10" font-family="monospace" text-anchor="middle">'attr' in obj.__dict__</text>
+
+    <text x="15" y="145" fill="#34d399" font-size="10" font-weight="bold" font-family="sans-serif">If Found: Returns</text>
+    <text x="15" y="165" fill="#6ee7b7" font-size="10" font-family="monospace">obj.__dict__['attr']</text>
+    <text x="90" y="192" fill="#a7f3d0" font-size="9" font-family="sans-serif" text-anchor="middle">Standard instance variable</text>
+  </g>
+
+  <!-- Arrow -->
+  <path d="M 455 200 L 495 200" stroke="#38bdf8" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="475" y="190" fill="#94a3b8" font-size="9" font-family="sans-serif" text-anchor="middle">No</text>
+
+  <!-- Step 3: Non-Data Descriptor / Class Dict -->
+  <g transform="translate(500, 110)">
+    <rect width="190" height="200" rx="6" fill="#1e293b" stroke="#fbbf24" stroke-width="2"/>
+    <rect width="190" height="30" rx="6" fill="#b45309"/>
+    <text x="95" y="20" fill="#ffffff" font-size="10" font-weight="bold" font-family="sans-serif" text-anchor="middle">Step 3: Non-Data Desc / Class</text>
+
+    <text x="15" y="55" fill="#94a3b8" font-size="10" font-family="sans-serif">Checks class MRO for:</text>
+    
+    <rect x="15" y="75" width="160" height="45" rx="4" fill="#451a03" stroke="#f59e0b"/>
+    <text x="95" y="92" fill="#fde047" font-size="9" font-family="monospace" text-anchor="middle">Method (has __get__ only)</text>
+    <text x="95" y="107" fill="#fde047" font-size="9" font-family="monospace" text-anchor="middle">OR regular Class Attr</text>
+
+    <text x="15" y="145" fill="#fbbf24" font-size="10" font-weight="bold" font-family="sans-serif">If Found: Invokes</text>
+    <text x="15" y="165" fill="#fef08a" font-size="9" font-family="monospace">desc.__get__(obj, type(obj))</text>
+    <text x="95" y="192" fill="#fde047" font-size="9" font-family="sans-serif" text-anchor="middle">Produces Bound Method</text>
+  </g>
+
+  <!-- Arrow -->
+  <path d="M 690 200 L 730 200" stroke="#38bdf8" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="710" y="190" fill="#94a3b8" font-size="9" font-family="sans-serif" text-anchor="middle">No</text>
+
+  <!-- Step 4: __getattr__ Fallback -->
+  <g transform="translate(735, 110)">
+    <rect width="175" height="200" rx="6" fill="#1e293b" stroke="#f43f5e" stroke-width="2"/>
+    <rect width="175" height="30" rx="6" fill="#9f1239"/>
+    <text x="87" y="20" fill="#ffffff" font-size="11" font-weight="bold" font-family="sans-serif" text-anchor="middle">Step 4: __getattr__</text>
+
+    <text x="15" y="55" fill="#94a3b8" font-size="10" font-family="sans-serif">If defined on class:</text>
+    
+    <rect x="15" y="80" width="145" height="35" rx="4" fill="#4c0519" stroke="#f43f5e"/>
+    <text x="87" y="102" fill="#fda4af" font-size="10" font-family="monospace" text-anchor="middle">obj.__getattr__('attr')</text>
+
+    <text x="15" y="140" fill="#fda4af" font-size="10" font-family="sans-serif">Otherwise raises:</text>
+    <rect x="15" y="155" width="145" height="28" rx="4" fill="#0f172a" stroke="#f43f5e"/>
+    <text x="87" y="173" fill="#f43f5e" font-size="10" font-family="monospace" font-weight="bold" text-anchor="middle">AttributeError</text>
+  </g>
+
+  <!-- Bottom Explanatory Box -->
+  <g transform="translate(50, 345)">
+    <rect width="860" height="110" rx="8" fill="#0f172a" stroke="#334155"/>
+    <text x="25" y="26" fill="#38bdf8" font-size="13" font-weight="bold" font-family="sans-serif">The Power of Descriptors in Frameworks (@property, Methods, ORMs):</text>
+    <text x="25" y="48" fill="#e2e8f0" font-size="11" font-family="sans-serif">• <tspan fill="#38bdf8" font-weight="bold">@property</tspan> is a Data Descriptor: It implements <tspan font-family="monospace">__get__</tspan> and <tspan font-family="monospace">__set__</tspan>, intercepting attribute reads before instance dictionaries.</text>
+    <text x="25" y="68" fill="#e2e8f0" font-size="11" font-family="sans-serif">• <tspan fill="#34d399" font-weight="bold">Python Functions are Descriptors</tspan>: Regular methods define <tspan font-family="monospace">__get__</tspan>. When accessed through an instance, <tspan font-family="monospace">func.__get__(obj)</tspan> binds <tspan font-family="monospace">self</tspan> as the first argument!</text>
+    <text x="25" y="88" fill="#e2e8f0" font-size="11" font-family="sans-serif">• Used extensively in Hardware Register model abstraction layers to trigger side-effect bus transactions on register writes.</text>
+  </g>
+</svg>

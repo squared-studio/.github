@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 440" width="100%" height="100%">
+  <defs>
+    <style>
+      .bg { fill: #0b1120; }
+      .card { fill: #131d33; stroke: #1e293b; stroke-width: 1.5; rx: 10; }
+      .title { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 19px; fill: #f8fafc; }
+      .sec-title { font-family: 'Inter', system-ui, sans-serif; font-weight: 600; font-size: 14px; fill: #38bdf8; }
+      .label { font-family: 'Inter', system-ui, sans-serif; font-size: 12px; fill: #cbd5e1; }
+      .sublabel { font-family: 'Inter', system-ui, sans-serif; font-size: 11px; fill: #94a3b8; }
+      .code-txt { font-family: 'JetBrains Mono', Consolas, monospace; font-size: 12px; fill: #34d399; font-weight: 600; }
+      .frame-cell { stroke: #38bdf8; stroke-width: 1.8; }
+    </style>
+  </defs>
+
+  <rect width="960" height="440" class="bg" rx="14"/>
+  <text x="480" y="36" text-anchor="middle" class="title">x86-64 / ARM Call Stack Frame Anatomy during Function Execution</text>
+
+  <!-- Left: Stack Frame Cells -->
+  <g transform="translate(60, 55)">
+    <text x="0" y="15" class="code-txt" fill="#94a3b8">Higher Memory (Caller Frame)</text>
+
+    <!-- Stack Box -->
+    <g transform="translate(190, 5)">
+      <!-- Caller Parameters -->
+      <rect x="0" y="0" width="240" height="45" fill="#334155" class="frame-cell"/>
+      <text x="120" y="27" text-anchor="middle" class="label">Caller Function Arguments</text>
+
+      <!-- Return Address -->
+      <rect x="0" y="45" width="240" height="45" fill="#f43f5e" fill-opacity="0.3" class="frame-cell"/>
+      <text x="120" y="72" text-anchor="middle" class="code-txt" fill="#f43f5e">Return Address (EIP / RIP)</text>
+
+      <!-- Saved Frame Pointer -->
+      <rect x="0" y="90" width="240" height="45" fill="#fbbf24" fill-opacity="0.3" class="frame-cell"/>
+      <text x="120" y="117" text-anchor="middle" class="code-txt" fill="#fbbf24">Saved Base Pointer (EBP/RBP)</text>
+      <!-- Register pointer marker -->
+      <text x="255" y="117" class="code-txt" fill="#fbbf24">← %rbp (Base)</text>
+
+      <!-- Local Variable a -->
+      <rect x="0" y="135" width="240" height="45" fill="#1e293b" class="frame-cell"/>
+      <text x="120" y="162" text-anchor="middle" class="code-txt">int a = 10;   [%rbp - 4]</text>
+
+      <!-- Local Variable b -->
+      <rect x="0" y="180" width="240" height="45" fill="#1e293b" class="frame-cell"/>
+      <text x="120" y="207" text-anchor="middle" class="code-txt">int b = 20;   [%rbp - 8]</text>
+
+      <!-- Local Buffer -->
+      <rect x="0" y="225" width="240" height="45" fill="#1e293b" class="frame-cell"/>
+      <text x="120" y="252" text-anchor="middle" class="code-txt">char buf[16]; [%rbp - 24]</text>
+
+      <!-- Top of Stack marker -->
+      <text x="255" y="275" class="code-txt" fill="#38bdf8">← %rsp (Stack Top)</text>
+    </g>
+
+    <text x="0" y="340" class="code-txt" fill="#94a3b8">Lower Memory (Stack Growth)</text>
+  </g>
+
+  <!-- Right: Assembly Prologue & Epilogue -->
+  <g transform="translate(560, 55)">
+    <rect width="370" height="360" class="card"/>
+    <text x="20" y="28" class="sec-title">Function Prologue &amp; Epilogue (x86-64)</text>
+
+    <!-- Prologue Box -->
+    <rect x="15" y="42" width="340" height="135" rx="6" fill="#0b1120" stroke="#1e293b"/>
+    <text x="25" y="65" class="label" font-weight="bold" fill="#38bdf8">1. Function Prologue (Setup):</text>
+    <text x="25" y="88" class="code-txt">push   %rbp         // Save caller's base</text>
+    <text x="25" y="108" class="code-txt">mov    %rsp, %rbp   // Establish new frame</text>
+    <text x="25" y="128" class="code-txt">sub    $32, %rsp    // Allocate locals</text>
+    <text x="25" y="152" class="sublabel">Executed on every function invocation.</text>
+
+    <!-- Epilogue Box -->
+    <rect x="15" y="195" width="340" height="145" rx="6" fill="#0b1120" stroke="#1e293b"/>
+    <text x="25" y="218" class="label" font-weight="bold" fill="#34d399">2. Function Epilogue (Cleanup):</text>
+    <text x="25" y="241" class="code-txt">mov    %rbp, %rsp   // Deallocate locals</text>
+    <text x="25" y="261" class="code-txt">pop    %rbp         // Restore caller's base</text>
+    <text x="25" y="281" class="code-txt">ret                 // Pop return address</text>
+    <text x="25" y="305" class="sublabel" style="fill:#f43f5e;">Stack Overflow:</text>
+    <text x="25" y="322" class="sublabel">Unbounded recursion consumes stack memory!</text>
+  </g>
+</svg>

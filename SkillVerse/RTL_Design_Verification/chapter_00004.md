@@ -9,6 +9,7 @@ UVM provides a standardized, object-oriented SystemVerilog class library designe
 ## Learning Goals
 
 After completing this chapter, you should be able to:
+
 - Explain why the semiconductor industry standardized on UVM and contrast `uvm_object` (transient data) with `uvm_component` (quasi-static infrastructure).
 - Construct a standard UVM testbench hierarchy: `uvm_test`, `uvm_env`, `uvm_agent`, `uvm_sequencer`, `uvm_driver`, `uvm_monitor`, and `uvm_scoreboard`.
 - Differentiate between **Active** and **Passive** UVM agents and configure their behavior dynamically.
@@ -21,11 +22,13 @@ After completing this chapter, you should be able to:
 ## Motivation for UVM: Industry Standardization and Reuse
 
 Before UVM, verification teams built ad-hoc testbenches or vendor-locked frameworks. This led to:
+
 - **Zero Interoperability:** A PCIe verification IP developed for Mentor tools could not be integrated into a Cadence or Synopsys testbench without extensive rewriting.
 - **Lost Investment:** When migrating from block-level verification to SoC-level verification, testbenches were frequently scrapped and rebuilt from scratch.
 - **Steep Learning Curve:** New hires spent months learning proprietary in-house scripting harnesses before becoming productive.
 
 UVM solved these challenges through Accellera and IEEE standardization:
+
 1. **Verification IP (VIP) Portability:** A commercial AMBA AXI4 VIP adheres to standard UVM interface ports, plugging seamlessly into any compliant environment.
 2. **Horizontal & Vertical Reuse:** An agent developed to verify a SPI peripheral at the block level is reused directly at the subsystem and full-chip SoC level simply by toggling it from **Active** to **Passive** mode.
 3. **Structured Execution:** A strictly enforced simulation lifecycle eliminates race conditions during testbench bring-up, configuration, and shutdown.
@@ -55,13 +58,13 @@ Every class in UVM ultimately inherits from the root abstract class `uvm_void`. 
 
 ### `uvm_object` vs. `uvm_component`
 
-| Dimension | `uvm_object` | `uvm_component` |
-| :--- | :--- | :--- |
-| **Lifecycle** | Transient, dynamic. Created and destroyed continuously during simulation. | Quasi-static. Created during `build_phase` at time zero; lives until end of test. |
-| **Hierarchy** | No fixed position in the testbench hierarchy tree. | Fixed, parent-child hierarchical tree (`uvm_top.env.agent.driver`). |
-| **Phasing** | Does not participate in UVM phases. | Driven strictly through UVM phases (`build_phase`, `connect_phase`, `run_phase`). |
-| **Examples** | Transaction packets, configuration settings, sequences. | Drivers, monitors, sequencers, agents, scoreboards, environments, tests. |
-| **Constructor** | `function new(string name = "uvm_object");` | `function new(string name, uvm_component parent);` |
+| Dimension       | `uvm_object`                                                              | `uvm_component`                                                                   |
+| :-------------- | :------------------------------------------------------------------------ | :-------------------------------------------------------------------------------- |
+| **Lifecycle**   | Transient, dynamic. Created and destroyed continuously during simulation. | Quasi-static. Created during `build_phase` at time zero; lives until end of test. |
+| **Hierarchy**   | No fixed position in the testbench hierarchy tree.                        | Fixed, parent-child hierarchical tree (`uvm_top.env.agent.driver`).               |
+| **Phasing**     | Does not participate in UVM phases.                                       | Driven strictly through UVM phases (`build_phase`, `connect_phase`, `run_phase`). |
+| **Examples**    | Transaction packets, configuration settings, sequences.                   | Drivers, monitors, sequencers, agents, scoreboards, environments, tests.          |
+| **Constructor** | `function new(string name = "uvm_object");`                               | `function new(string name, uvm_component parent);`                                |
 
 ---
 
@@ -72,6 +75,7 @@ A production UVM verification environment is structured as a hierarchical tree o
 ![Standard UVM Testbench Hierarchy (Component Tree)](images/ch4_uvm_component_tree.svg)
 
 ### Key Component Roles
+
 1. **`uvm_test`:** The root container instantiated by `run_test()`. Selects and executes specific test scenarios, overrides configurations, and enforces testbench termination criteria.
 2. **`uvm_env` (Environment):** The top-level verification container. Assembles one or more agents, scoreboards, coverage collectors, and register models into a cohesive verification system.
 3. **`uvm_agent`:** An encapsulated subsystem responsible for verifying a single physical protocol interface. Contains a sequencer, driver, and monitor.
@@ -140,20 +144,21 @@ To ensure predictable initialization, execution, and cleanup, UVM executes a str
 ![UVM Phasing Architecture: Execution Order & Directions](images/ch4_uvm_phases_flow.svg)
 
 ### Execution Traversal: Functions vs. Tasks
+
 - **Function Phases (Zero Simulation Time):** Execute instantaneously in delta time.
 - **Task Phases (Time Consuming):** Run concurrently during simulation time (`run_phase`).
 
-| Phase Group | Phase Name | Type | Direction | Primary Responsibility |
-| :--- | :--- | :--- | :--- | :--- |
-| **Build & Setup** | `build_phase` | `function` | **Top-Down** | Construct child components via factory (`create()`), read/write `uvm_config_db`. |
-| | `connect_phase` | `function` | **Bottom-Up** | Connect TLM ports, exports, analysis ports, and bind virtual interfaces. |
-| | `end_of_elaboration` | `function` | **Bottom-Up** | Final topology checks, display testbench hierarchy, set verbosity. |
-| | `start_of_simulation`| `function` | **Bottom-Up** | Print test start banner, initialize lookup tables. |
-| **Run-Time** | `run_phase` | `task` | **Parallel** | Main simulation activity. Sequence execution, stimulus driving. Consumes time. |
-| **Cleanup & Signoff**| `extract_phase` | `function` | **Bottom-Up** | Extract coverage scores, drain remaining FIFOs. |
-| | `check_phase` | `function` | **Bottom-Up** | Verify scoreboards are empty; flag un-matched transactions as errors. |
-| | `report_phase` | `function` | **Bottom-Up** | Print simulation summary, total error count, test PASS/FAIL verdict. |
-| | `final_phase` | `function` | **Top-Down** | Final resource deallocation, close file handles. |
+| Phase Group           | Phase Name            | Type       | Direction     | Primary Responsibility                                                           |
+| :-------------------- | :-------------------- | :--------- | :------------ | :------------------------------------------------------------------------------- |
+| **Build & Setup**     | `build_phase`         | `function` | **Top-Down**  | Construct child components via factory (`create()`), read/write `uvm_config_db`. |
+|                       | `connect_phase`       | `function` | **Bottom-Up** | Connect TLM ports, exports, analysis ports, and bind virtual interfaces.         |
+|                       | `end_of_elaboration`  | `function` | **Bottom-Up** | Final topology checks, display testbench hierarchy, set verbosity.               |
+|                       | `start_of_simulation` | `function` | **Bottom-Up** | Print test start banner, initialize lookup tables.                               |
+| **Run-Time**          | `run_phase`           | `task`     | **Parallel**  | Main simulation activity. Sequence execution, stimulus driving. Consumes time.   |
+| **Cleanup & Signoff** | `extract_phase`       | `function` | **Bottom-Up** | Extract coverage scores, drain remaining FIFOs.                                  |
+|                       | `check_phase`         | `function` | **Bottom-Up** | Verify scoreboards are empty; flag un-matched transactions as errors.            |
+|                       | `report_phase`        | `function` | **Bottom-Up** | Print simulation summary, total error count, test PASS/FAIL verdict.             |
+|                       | `final_phase`         | `function` | **Top-Down**  | Final resource deallocation, close file handles.                                 |
 
 ---
 
@@ -162,7 +167,9 @@ To ensure predictable initialization, execution, and cleanup, UVM executes a str
 The `uvm_config_db` is a type-safe, string-indexed hierarchical database used to configure testbench components without hardcoding variables or passing values through multiple constructor layers.
 
 ### Context, Hierarchy, and Wildcards
+
 The static method signatures are:
+
 ```systemverilog
 uvm_config_db#(TYPE)::set(uvm_component cntxt, string inst_name, string field_name, TYPE value);
 uvm_config_db#(TYPE)::get(uvm_component cntxt, string inst_name, string field_name, output TYPE value);
@@ -174,6 +181,7 @@ uvm_config_db#(TYPE)::get(uvm_component cntxt, string inst_name, string field_na
 - **`value`:** The typed data payload (e.g., virtual interface handle, integer, configuration class object).
 
 ### Passing a Virtual Interface Example
+
 ```systemverilog
 // In top-level testbench module (tb_top.sv):
 module tb_top;
@@ -295,11 +303,11 @@ endmodule
 ## Learning Resources
 
 - **Official Standards & User Guides:**
-  - Accellera Systems Initiative: *UVM 1.2 User's Guide* and *UVM 1.2 Class Reference*.
+  - Accellera Systems Initiative: _UVM 1.2 User's Guide_ and _UVM 1.2 Class Reference_.
   - IEEE Std 1800.2-2020 (Standard for Universal Verification Methodology Language Reference Manual).
 - **Recommended Textbooks:**
-  - *A Practical Guide to Adopting the Universal Verification Methodology (UVM)* by Sharon Rosenberg and Kathleen Meade.
-  - *UVM Primer* by Ray Salemi.
+  - _A Practical Guide to Adopting the Universal Verification Methodology (UVM)_ by Sharon Rosenberg and Kathleen Meade.
+  - _UVM Primer_ by Ray Salemi.
 
 ---
 

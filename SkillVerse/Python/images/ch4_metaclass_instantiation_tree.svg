@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 480" width="100%" height="100%">
+  <rect width="960" height="480" fill="#0b1120" rx="8"/>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8"/>
+    </marker>
+    <marker id="arrow-green" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#34d399"/>
+    </marker>
+  </defs>
+
+  <text x="480" y="38" fill="#f8fafc" font-size="20" font-weight="bold" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" text-anchor="middle">Metaclasses: Classes as Objects &amp; Construction Interception</text>
+  <text x="480" y="62" fill="#94a3b8" font-size="13" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" text-anchor="middle">Just as an object is an instance of a class, a class is an instance of a metaclass (type)</text>
+
+  <!-- Level 1: type (Metaclass of Metaclasses) -->
+  <g transform="translate(380, 95)">
+    <rect width="200" height="55" rx="8" fill="#312e81" stroke="#818cf8" stroke-width="2"/>
+    <text x="100" y="26" fill="#ffffff" font-size="13" font-weight="bold" font-family="monospace" text-anchor="middle">metaclass 'type'</text>
+    <text x="100" y="44" fill="#a5b4fc" font-size="10" font-family="sans-serif" text-anchor="middle">type is an instance of itself!</text>
+  </g>
+
+  <!-- Arrow down to Custom Metaclass -->
+  <path d="M 480 150 L 480 180" stroke="#818cf8" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="495" y="168" fill="#818cf8" font-size="10" font-family="sans-serif">subclass</text>
+
+  <!-- Level 2: Custom Metaclass -->
+  <g transform="translate(330, 185)">
+    <rect width="300" height="65" rx="8" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+    <text x="150" y="24" fill="#38bdf8" font-size="13" font-weight="bold" font-family="monospace" text-anchor="middle">class RegisterMeta(type):</text>
+    <text x="150" y="44" fill="#cbd5e1" font-size="10" font-family="monospace" text-anchor="middle">def __new__(mcls, name, bases, dct)</text>
+    <text x="150" y="58" fill="#94a3b8" font-size="9" font-family="sans-serif" text-anchor="middle">Intercepts, validates &amp; auto-registers hardware fields</text>
+  </g>
+
+  <!-- Arrow down to Class Definition -->
+  <path d="M 480 250 L 480 280" stroke="#38bdf8" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="495" y="268" fill="#38bdf8" font-size="10" font-family="sans-serif">instantiates</text>
+
+  <!-- Level 3: Class Definition -->
+  <g transform="translate(330, 285)">
+    <rect width="300" height="65" rx="8" fill="#064e3b" stroke="#34d399" stroke-width="2"/>
+    <text x="150" y="24" fill="#34d399" font-size="13" font-weight="bold" font-family="monospace" text-anchor="middle">class UARTControl(metaclass=RegisterMeta):</text>
+    <text x="150" y="44" fill="#a7f3d0" font-size="10" font-family="monospace" text-anchor="middle">addr = 0x4000; baud = 115200</text>
+    <text x="150" y="58" fill="#6ee7b7" font-size="9" font-family="sans-serif" text-anchor="middle">Class object created by RegisterMeta.__new__()</text>
+  </g>
+
+  <!-- Arrow down to Instances -->
+  <path d="M 480 350 L 480 375" stroke="#34d399" stroke-width="2" marker-end="url(#arrow-green)"/>
+  <text x="495" y="365" fill="#34d399" font-size="10" font-family="sans-serif">instantiates</text>
+
+  <!-- Level 4: Instances -->
+  <g transform="translate(380, 380)">
+    <rect width="200" height="45" rx="8" fill="#451a03" stroke="#fbbf24" stroke-width="2"/>
+    <text x="100" y="22" fill="#fbbf24" font-size="12" font-weight="bold" font-family="monospace" text-anchor="middle">dev = UARTControl()</text>
+    <text x="100" y="38" fill="#fef08a" font-size="9" font-family="sans-serif" text-anchor="middle">Runtime Instance of UARTControl</text>
+  </g>
+
+  <!-- Left Side Note -->
+  <g transform="translate(50, 185)">
+    <rect width="240" height="150" rx="6" fill="#0f172a" stroke="#334155"/>
+    <text x="120" y="24" fill="#38bdf8" font-size="11" font-weight="bold" font-family="sans-serif" text-anchor="middle">Class Creation Hook Sequence:</text>
+    <text x="15" y="50" fill="#cbd5e1" font-size="10" font-family="monospace">1. __prepare__(mcls)</text>
+    <text x="15" y="68" fill="#cbd5e1" font-size="10" font-family="monospace">2. class body executes</text>
+    <text x="15" y="86" fill="#cbd5e1" font-size="10" font-family="monospace">3. mcls.__new__()</text>
+    <text x="15" y="104" fill="#cbd5e1" font-size="10" font-family="monospace">4. mcls.__init__()</text>
+    <text x="15" y="122" fill="#cbd5e1" font-size="10" font-family="monospace">5. __init_subclass__()</text>
+  </g>
+
+  <!-- Right Side Note -->
+  <g transform="translate(670, 185)">
+    <rect width="240" height="150" rx="6" fill="#0f172a" stroke="#334155"/>
+    <text x="120" y="24" fill="#fbbf24" font-size="11" font-weight="bold" font-family="sans-serif" text-anchor="middle">Modern Alternative (PEP 487):</text>
+    <text x="15" y="52" fill="#cbd5e1" font-size="10" font-family="sans-serif">In Python 3.6+, 90% of</text>
+    <text x="15" y="68" fill="#cbd5e1" font-size="10" font-family="sans-serif">metaclass use cases can be</text>
+    <text x="15" y="84" fill="#cbd5e1" font-size="10" font-family="sans-serif">replaced cleanly with:</text>
+    <rect x="15" y="96" width="210" height="36" rx="4" fill="#1e293b" stroke="#f59e0b"/>
+    <text x="120" y="112" fill="#fde047" font-size="9" font-family="monospace" text-anchor="middle">def __init_subclass__(cls):</text>
+    <text x="120" y="125" fill="#fde047" font-size="9" font-family="monospace" text-anchor="middle">... automatic validation</text>
+  </g>
+</svg>

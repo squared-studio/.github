@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 440" width="100%" height="100%">
+  <defs>
+    <style>
+      .bg { fill: #0b1120; }
+      .card { fill: #131d33; stroke: #1e293b; stroke-width: 1.5; rx: 10; }
+      .title { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 19px; fill: #f8fafc; }
+      .sec-title { font-family: 'Inter', system-ui, sans-serif; font-weight: 600; font-size: 14px; fill: #38bdf8; }
+      .label { font-family: 'Inter', system-ui, sans-serif; font-size: 12px; fill: #cbd5e1; }
+      .sublabel { font-family: 'Inter', system-ui, sans-serif; font-size: 11px; fill: #94a3b8; }
+      .code-txt { font-family: 'JetBrains Mono', Consolas, monospace; font-size: 12px; fill: #34d399; font-weight: 600; }
+    </style>
+    <marker id="arr-io" viewBox="0 0 8 8" refX="5" refY="4" markerWidth="5" markerHeight="5" orient="auto">
+      <path d="M 0 1 L 7 4 L 0 7 z" fill="#38bdf8" />
+    </marker>
+  </defs>
+
+  <rect width="960" height="440" class="bg" rx="14"/>
+  <text x="480" y="36" text-anchor="middle" class="title">Standard C I/O Architecture: Buffering Layers, Syscalls &amp; fflush()</text>
+
+  <!-- Flowchart Layers -->
+  <g transform="translate(60, 65)">
+    <!-- Layer 1: User Application -->
+    <rect x="0" y="0" width="840" height="60" rx="6" fill="#1e293b" stroke="#38bdf8" stroke-width="1.8"/>
+    <text x="25" y="26" class="code-txt" fill="#38bdf8">1. User Application (stdio.h API)</text>
+    <text x="25" y="46" class="sublabel">Calls: fprintf(fp, ...), fputs(), fwrite(), fgetc() — Fast user-space execution</text>
+
+    <!-- Down arrow -->
+    <line x1="420" y1="60" x2="420" y2="85" stroke="#38bdf8" stroke-width="2.5" marker-end="url(#arr-io)"/>
+
+    <!-- Layer 2: C Runtime Stream Buffer -->
+    <rect x="0" y="90" width="840" height="65" rx="6" fill="#1e293b" stroke="#fbbf24" stroke-width="1.8"/>
+    <text x="25" y="116" class="code-txt" fill="#fbbf24">2. C Standard Library Stream Buffer (FILE* internal struct)</text>
+    <text x="25" y="136" class="sublabel">Accumulates small writes in a 4KB/8KB RAM buffer. Prevents slow repeated context switches.</text>
+    <!-- fflush trigger -->
+    <text x="650" y="126" class="code-txt" fill="#f43f5e">fflush(fp) forces flush!</text>
+
+    <!-- Down arrow -->
+    <line x1="420" y1="155" x2="420" y2="180" stroke="#fbbf24" stroke-width="2.5" marker-end="url(#arr-io)"/>
+
+    <!-- Layer 3: Kernel Page Cache & Syscalls -->
+    <rect x="0" y="185" width="840" height="60" rx="6" fill="#1e293b" stroke="#34d399" stroke-width="1.8"/>
+    <text x="25" y="211" class="code-txt" fill="#34d399">3. Operating System Kernel &amp; Page Cache</text>
+    <text x="25" y="231" class="sublabel">System Calls: write(fd, buf, count), read(fd, ...) — Traps into Ring 0 kernel mode</text>
+
+    <!-- Down arrow -->
+    <line x1="420" y1="245" x2="420" y2="270" stroke="#34d399" stroke-width="2.5" marker-end="url(#arr-io)"/>
+
+    <!-- Layer 4: Storage Hardware -->
+    <rect x="0" y="275" width="840" height="60" rx="6" fill="#334155" stroke="#64748b" stroke-width="1.8"/>
+    <text x="25" y="301" class="code-txt" fill="#cbd5e1">4. Physical Non-Volatile Storage Hardware</text>
+    <text x="25" y="321" class="sublabel">NVMe SSD, SATA HDD, or Microcontroller SPI Flash memory block write</text>
+  </g>
+</svg>

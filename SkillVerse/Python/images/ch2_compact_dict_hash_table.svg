@@ -1,0 +1,104 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 480" width="100%" height="100%">
+  <rect width="960" height="480" fill="#0b1120" rx="8"/>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8"/>
+    </marker>
+  </defs>
+
+  <text x="480" y="38" fill="#f8fafc" font-size="20" font-weight="bold" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" text-anchor="middle">CPython 3.6+ Compact Dictionary Architecture</text>
+  <text x="480" y="62" fill="#94a3b8" font-size="13" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" text-anchor="middle">Sparse Indices Array mapping to a Dense Entries Array preserves insertion order and cuts RAM by 40%</text>
+
+  <!-- Left: Hash Computation -->
+  <g transform="translate(50, 100)">
+    <rect width="200" height="190" rx="6" fill="#1e293b" stroke="#38bdf8" stroke-width="1.5"/>
+    <text x="100" y="28" fill="#38bdf8" font-size="13" font-weight="bold" font-family="sans-serif" text-anchor="middle">Lookup / Key Hash</text>
+
+    <rect x="20" y="45" width="160" height="30" rx="4" fill="#0f172a" stroke="#334155"/>
+    <text x="100" y="65" fill="#f8fafc" font-size="11" font-family="monospace" text-anchor="middle">key = 'reg_ctrl'</text>
+
+    <text x="100" y="95" fill="#94a3b8" font-size="11" font-family="sans-serif" text-anchor="middle">hash(key) % 8</text>
+
+    <rect x="20" y="110" width="160" height="30" rx="4" fill="#082f49" stroke="#38bdf8"/>
+    <text x="100" y="130" fill="#7dd3fc" font-size="11" font-family="monospace" text-anchor="middle">Hash Index = 3</text>
+
+    <text x="100" y="165" fill="#cbd5e1" font-size="10" font-family="sans-serif" text-anchor="middle">SipHash-2-4 Algorithm</text>
+  </g>
+
+  <!-- Arrow -->
+  <path d="M 255 180 L 295 180" stroke="#38bdf8" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- Middle: Indices Array (Sparse) -->
+  <g transform="translate(305, 100)">
+    <rect width="180" height="240" rx="6" fill="#1e293b" stroke="#fbbf24" stroke-width="1.5"/>
+    <text x="90" y="24" fill="#fbbf24" font-size="13" font-weight="bold" font-family="sans-serif" text-anchor="middle">Indices Table (Sparse)</text>
+    <text x="90" y="40" fill="#94a3b8" font-size="10" font-family="sans-serif" text-anchor="middle">Array of int8_t (-1 = empty)</text>
+
+    <!-- Rows -->
+    <g transform="translate(15, 50)">
+      <rect x="0" y="0" width="150" height="20" fill="#0f172a" stroke="#334155"/>
+      <text x="35" y="14" fill="#94a3b8" font-size="10" font-family="monospace">[0] : -1</text>
+      
+      <rect x="0" y="22" width="150" height="20" fill="#0f172a" stroke="#334155"/>
+      <text x="35" y="36" fill="#6ee7b7" font-size="10" font-family="monospace">[1] :  1</text>
+      
+      <rect x="0" y="44" width="150" height="20" fill="#0f172a" stroke="#334155"/>
+      <text x="35" y="58" fill="#94a3b8" font-size="10" font-family="monospace">[2] : -1</text>
+
+      <rect x="0" y="66" width="150" height="20" fill="#082f49" stroke="#38bdf8" stroke-width="1.5"/>
+      <text x="35" y="80" fill="#38bdf8" font-size="10" font-family="monospace" font-weight="bold">[3] :  0 (Entry 0)</text>
+
+      <rect x="0" y="88" width="150" height="20" fill="#0f172a" stroke="#334155"/>
+      <text x="35" y="102" fill="#94a3b8" font-size="10" font-family="monospace">[4] : -1</text>
+
+      <rect x="0" y="110" width="150" height="20" fill="#0f172a" stroke="#334155"/>
+      <text x="35" y="124" fill="#fde047" font-size="10" font-family="monospace">[5] :  2</text>
+
+      <rect x="0" y="132" width="150" height="20" fill="#0f172a" stroke="#334155"/>
+      <text x="35" y="146" fill="#94a3b8" font-size="10" font-family="monospace">[6] : -1</text>
+
+      <rect x="0" y="154" width="150" height="20" fill="#0f172a" stroke="#334155"/>
+      <text x="35" y="168" fill="#94a3b8" font-size="10" font-family="monospace">[7] : -1</text>
+    </g>
+  </g>
+
+  <!-- Arrow from index 3 to Entry 0 -->
+  <path d="M 470 190 L 530 190" stroke="#38bdf8" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- Right: Entries Array (Dense) -->
+  <g transform="translate(540, 100)">
+    <rect width="370" height="240" rx="6" fill="#1e293b" stroke="#34d399" stroke-width="1.5"/>
+    <text x="185" y="24" fill="#34d399" font-size="13" font-weight="bold" font-family="sans-serif" text-anchor="middle">Entries Table (Dense / In Insertion Order)</text>
+    <text x="185" y="40" fill="#94a3b8" font-size="10" font-family="sans-serif" text-anchor="middle">PyDictKeyEntry (hash, *key, *value) = 24 bytes each</text>
+
+    <!-- Entry 0 -->
+    <g transform="translate(15, 52)">
+      <rect width="340" height="48" rx="4" fill="#082f49" stroke="#38bdf8" stroke-width="1.5"/>
+      <text x="15" y="20" fill="#38bdf8" font-size="11" font-weight="bold" font-family="monospace">Index 0: hash=0x389A...</text>
+      <text x="15" y="38" fill="#f8fafc" font-size="11" font-family="monospace">key: 'reg_ctrl' -&gt; value: 0x40001000</text>
+    </g>
+
+    <!-- Entry 1 -->
+    <g transform="translate(15, 110)">
+      <rect width="340" height="48" rx="4" fill="#064e3b" stroke="#34d399"/>
+      <text x="15" y="20" fill="#34d399" font-size="11" font-weight="bold" font-family="monospace">Index 1: hash=0x71F0...</text>
+      <text x="15" y="38" fill="#f8fafc" font-size="11" font-family="monospace">key: 'reg_status' -&gt; value: 0x40001004</text>
+    </g>
+
+    <!-- Entry 2 -->
+    <g transform="translate(15, 168)">
+      <rect width="340" height="48" rx="4" fill="#451a03" stroke="#f59e0b"/>
+      <text x="15" y="20" fill="#fbbf24" font-size="11" font-weight="bold" font-family="monospace">Index 2: hash=0xA912...</text>
+      <text x="15" y="38" fill="#f8fafc" font-size="11" font-family="monospace">key: 'reg_baud' -&gt; value: 0x40001008</text>
+    </g>
+  </g>
+
+  <!-- Bottom Explanatory -->
+  <g transform="translate(50, 360)">
+    <rect width="860" height="95" rx="8" fill="#0f172a" stroke="#334155"/>
+    <text x="25" y="26" fill="#38bdf8" font-size="13" font-weight="bold" font-family="sans-serif">Why Compact Dictionaries Revolutionized Python 3.6+:</text>
+    <text x="25" y="48" fill="#e2e8f0" font-size="11" font-family="sans-serif">• <tspan fill="#fbbf24" font-weight="bold">Guaranteed Insertion Order</tspan>: The dense array is appended sequentially, making Python dicts inherently ordered.</text>
+    <text x="25" y="68" fill="#e2e8f0" font-size="11" font-family="sans-serif">• <tspan fill="#34d399" font-weight="bold">Huge Memory Savings</tspan>: The sparse table stores small byte offsets (1 byte per bucket) rather than full 24-byte entry structs.</text>
+    <text x="25" y="88" fill="#e2e8f0" font-size="11" font-family="sans-serif">• <tspan fill="#f43f5e" font-weight="bold">Collision Resolution</tspan>: Uses open-addressing pseudo-random perturbation recurrence: <tspan font-family="monospace">i = (5*i + 1 + perturb) &amp; mask</tspan>.</text>
+  </g>
+</svg>

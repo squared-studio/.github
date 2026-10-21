@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 440" width="100%" height="100%">
+  <defs>
+    <style>
+      .bg { fill: #0b1120; }
+      .card { fill: #131d33; stroke: #1e293b; stroke-width: 1.5; rx: 10; }
+      .title { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 19px; fill: #f8fafc; }
+      .sec-title { font-family: 'Inter', system-ui, sans-serif; font-weight: 600; font-size: 14px; fill: #38bdf8; }
+      .label { font-family: 'Inter', system-ui, sans-serif; font-size: 12px; fill: #cbd5e1; }
+      .sublabel { font-family: 'Inter', system-ui, sans-serif; font-size: 11px; fill: #94a3b8; }
+      .code-txt { font-family: 'JetBrains Mono', Consolas, monospace; font-size: 12px; fill: #34d399; font-weight: 600; }
+    </style>
+  </defs>
+
+  <rect width="960" height="440" class="bg" rx="14"/>
+  <text x="480" y="36" text-anchor="middle" class="title">Read-Modify-Write Hardware Bitfield Masking Workflow</text>
+
+  <!-- Flow Steps -->
+  <g transform="translate(60, 60)">
+    <!-- Step 1: Read Register -->
+    <rect x="0" y="0" width="840" height="65" rx="6" fill="#1e293b" stroke="#38bdf8" stroke-width="1.8"/>
+    <text x="25" y="26" class="code-txt" fill="#38bdf8">Step 1: Read Existing Register State into Local Variable</text>
+    <text x="25" y="48" class="code-txt">uint32_t reg = UART1-&gt;CR1;  // Preserve surrounding configuration bits</text>
+
+    <!-- Step 2: Clear Field (Masking) -->
+    <rect x="0" y="80" width="840" height="75" rx="6" fill="#1e293b" stroke="#f43f5e" stroke-width="1.8"/>
+    <text x="25" y="106" class="code-txt" fill="#f43f5e">Step 2: Clear Target Bitfield to Zero (AND with inverted bitmask)</text>
+    <text x="25" y="126" class="code-txt">#define MODE_MASK  (0x7U &lt;&lt; 4)   // 3-bit field at bits [6:4]</text>
+    <text x="25" y="144" class="code-txt">reg &amp;= ~MODE_MASK;               // Clears bits 4, 5, 6</text>
+
+    <!-- Step 3: Insert New Value -->
+    <rect x="0" y="170" width="840" height="75" rx="6" fill="#1e293b" stroke="#fbbf24" stroke-width="1.8"/>
+    <text x="25" y="196" class="code-txt" fill="#fbbf24">Step 3: Shift &amp; Insert New Field Value (Bitwise OR)</text>
+    <text x="25" y="216" class="code-txt">uint32_t new_val = 0x5U;         // Target value: 101b</text>
+    <text x="25" y="234" class="code-txt">reg |= (new_val &amp; 0x7U) &lt;&lt; 4;   // Injected safely into field</text>
+
+    <!-- Step 4: Write-Back -->
+    <rect x="0" y="260" width="840" height="65" rx="6" fill="#1e293b" stroke="#34d399" stroke-width="1.8"/>
+    <text x="25" y="286" class="code-txt" fill="#34d399">Step 4: Atomic Write-Back to Hardware</text>
+    <text x="25" y="308" class="code-txt">UART1-&gt;CR1 = reg;                // Hardware latches new configuration!</text>
+  </g>
+</svg>

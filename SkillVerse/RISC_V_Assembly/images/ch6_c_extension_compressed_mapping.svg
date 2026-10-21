@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 480" width="100%" height="100%">
+  <rect width="960" height="480" fill="#0b1120" rx="8"/>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8"/>
+    </marker>
+  </defs>
+
+  <text x="480" y="38" fill="#f8fafc" font-size="20" font-weight="bold" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" text-anchor="middle">RVC (Compressed 16-bit) Instruction Encoding &amp; Code Density</text>
+  <text x="480" y="62" fill="#94a3b8" font-size="13" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" text-anchor="middle">Reducing binary code footprint by 25–30% with zero performance penalty via hardware decompression</text>
+
+  <!-- Left: 16-bit Compressed Opcode -->
+  <g transform="translate(60, 100)">
+    <rect width="360" height="230" rx="8" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+    <rect width="360" height="30" rx="8" fill="#0369a1"/>
+    <text x="180" y="20" fill="#fff" font-size="12" font-weight="bold" font-family="sans-serif" text-anchor="middle">16-Bit Compressed Instruction (c.li, c.add, c.lw)</text>
+
+    <!-- Field layout -->
+    <g transform="translate(20, 50)">
+      <rect width="180" height="32" rx="3" fill="#082f49" stroke="#38bdf8"/>
+      <text x="90" y="20" fill="#7dd3fc" font-size="10" font-family="monospace" text-anchor="middle">funct3 / imm [15:7]</text>
+
+      <rect x="185" y="0" width="95" height="32" rx="3" fill="#064e3b" stroke="#34d399"/>
+      <text x="232" y="20" fill="#a7f3d0" font-size="10" font-family="monospace" text-anchor="middle">rd' [6:2]</text>
+
+      <rect x="285" y="0" width="35" height="32" rx="3" fill="#9f1239" stroke="#f43f5e"/>
+      <text x="302" y="20" fill="#fff" font-size="10" font-family="monospace" text-anchor="middle">op</text>
+    </g>
+
+    <text x="180" y="115" fill="#f43f5e" font-size="10" font-weight="bold" font-family="sans-serif" text-anchor="middle">op != '11': Bits [1:0] determine compressed quadrants</text>
+
+    <rect x="20" y="135" width="320" height="75" rx="4" fill="#0f172a" stroke="#334155"/>
+    <text x="30" y="155" fill="#cbd5e1" font-size="10" font-family="monospace">Quadrant 0 (op = 00): c.addi4spn, c.lw, c.sw</text>
+    <text x="30" y="175" fill="#cbd5e1" font-size="10" font-family="monospace">Quadrant 1 (op = 01): c.addi, c.jal, c.li, c.j</text>
+    <text x="30" y="195" fill="#cbd5e1" font-size="10" font-family="monospace">Quadrant 2 (op = 10): c.slli, c.lwsp, c.mv, c.jr</text>
+  </g>
+
+  <!-- Arrow -->
+  <path d="M 425 210 L 495 210" stroke="#38bdf8" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="460" y="200" fill="#38bdf8" font-size="10" font-family="sans-serif" text-anchor="middle">Decode</text>
+
+  <!-- Right: 32-bit Hardware Expansion -->
+  <g transform="translate(510, 100)">
+    <rect width="390" height="230" rx="8" fill="#1e293b" stroke="#34d399" stroke-width="2"/>
+    <rect width="390" height="30" rx="8" fill="#047857"/>
+    <text x="195" y="20" fill="#fff" font-size="12" font-weight="bold" font-family="sans-serif" text-anchor="middle">Hardware Pre-Decoder Expansion (32-bit Canonical)</text>
+
+    <text x="20" y="55" fill="#34d399" font-size="11" font-family="monospace">c.addi a0, 5  (16-bit word: 0x0515)</text>
+    
+    <path d="M 40 68 L 40 85" stroke="#34d399" stroke-width="1.5" marker-end="url(#arrow)"/>
+    <text x="55" y="80" fill="#cbd5e1" font-size="10" font-family="sans-serif">Expands in 1 clock cycle to:</text>
+
+    <rect x="20" y="95" width="350" height="40" rx="4" fill="#064e3b" stroke="#34d399"/>
+    <text x="195" y="120" fill="#a7f3d0" font-size="12" font-weight="bold" font-family="monospace" text-anchor="middle">addi a0, a0, 5  (32-bit opcode)</text>
+
+    <rect x="20" y="150" width="350" height="60" rx="4" fill="#0f172a" stroke="#334155"/>
+    <text x="195" y="170" fill="#fbbf24" font-size="10" font-weight="bold" font-family="sans-serif" text-anchor="middle">Zero Execution Pipeline Modification</text>
+    <text x="195" y="188" fill="#cbd5e1" font-size="9" font-family="sans-serif" text-anchor="middle">The execute, ALU, and memory stages only see standard 32-bit instructions.</text>
+    <text x="195" y="200" fill="#cbd5e1" font-size="9" font-family="sans-serif" text-anchor="middle">Decompression logic requires fewer than 400 gate equivalents in silicon.</text>
+  </g>
+
+  <!-- Bottom Details -->
+  <g transform="translate(60, 350)">
+    <rect width="840" height="105" rx="8" fill="#0f172a" stroke="#334155"/>
+    <text x="25" y="26" fill="#fbbf24" font-size="13" font-weight="bold" font-family="sans-serif">Massive Cache &amp; Power Benefits for Embedded Silicon:</text>
+    <text x="25" y="48" fill="#cbd5e1" font-size="11" font-family="sans-serif">• RVC fits <tspan font-weight="bold" fill="#34d399">30% more instructions</tspan> into the exact same L1 Instruction Cache, slashing cache misses.</text>
+    <text x="25" y="68" fill="#cbd5e1" font-size="11" font-family="sans-serif">• Because Flash ROM fetches require high power in microcontrollers, fetching 16 bits instead of 32 bits halves memory bus energy per instruction.</text>
+    <text x="25" y="88" fill="#94a3b8" font-size="10" font-family="sans-serif">Standard practice: Always enable <tspan font-family="monospace">-march=rv32imac</tspan> when compiling firmware for RISC-V targets.</text>
+  </g>
+</svg>

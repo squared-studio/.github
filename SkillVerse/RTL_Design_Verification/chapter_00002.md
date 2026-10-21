@@ -9,6 +9,7 @@ This chapter explores the essential language constructs and architectural patter
 ## Learning Goals
 
 After completing this chapter, you should be able to:
+
 - Apply Object-Oriented Programming principles (encapsulation, inheritance, polymorphism) to construct modular testbench components.
 - Explain the SystemVerilog stratified event execution regions and use clocking blocks (`#1step` input skew) to eliminate simulation race conditions.
 - Implement SystemVerilog interfaces, modports, and virtual interfaces to dynamically bind class-based verification environments to static hardware RTL.
@@ -20,7 +21,9 @@ After completing this chapter, you should be able to:
 ## SystemVerilog as a Verification Language: Core Constructs
 
 ### Classes, Objects, and Object-Oriented Programming (OOP)
+
 In classic Verilog, testbenches relied on static `module` blocks and global variables. SystemVerilog introduces dynamic OOP classes:
+
 - **Classes:** Blueprints declared with the `class ... endclass` keyword. A class encapsulates data attributes (properties) and operational functions/tasks (methods).
 - **Objects:** Dynamic instances created on the heap at runtime using the `new()` constructor. Unlike static hardware modules, objects are created and garbage-collected dynamically.
 
@@ -41,19 +44,21 @@ class bus_transaction;
 
     // Utility display method
     virtual function void print(string tag = "TRANS");
-        $display("[%s] Addr=0x%08h Data=0x%08h Op=%s", 
+        $display("[%s] Addr=0x%08h Data=0x%08h Op=%s",
                  tag, this.addr, this.data, (write_read ? "WRITE" : "READ"));
     endfunction
 endclass
 ```
 
 ### The Four Pillars of OOP in Verification
+
 1. **Encapsulation:** Grouping data and methods into single units with access control (`local`, `protected`). Prevents external components from directly modifying internal state variables without validation.
 2. **Abstraction:** Presenting high-level transaction interfaces (e.g., `send_packet()`) while hiding low-level cycle-by-cycle pin assertions.
 3. **Inheritance:** Creating specialized derived classes (`class eth_vlan_packet extends eth_packet;`) that inherit and extend base class functionality, minimizing code duplication.
 4. **Polymorphism:** Enabling base-class handles to refer to derived-class objects at runtime. Virtual methods (`virtual function`) ensure that the overriding derived implementation executes dynamically.
 
 ### Packages: Namespaces for Organization and Reuse
+
 Packages group related classes, typedefs, enumerations, parameters, and tasks into distinct namespaces, eliminating naming collisions:
 
 ```systemverilog
@@ -80,13 +85,13 @@ SystemVerilog eliminates race conditions through **Stratified Event Scheduling R
 
 ### Major Simulation Regions in an Event Time-Step
 
-| Event Region Set | Sub-Regions | Primary Responsibility |
-| :--- | :--- | :--- |
-| **Preponed** | Preponed | **Stable Sampling Window:** Values are sampled before any events occur in the time-step. Concurrent assertions (SVA) and clocking block inputs sample here. |
-| **Active Region Set** | Active, Inactive, NBA | **Design Execution:** Evaluates synthesizable RTL. Blocking assignments (`=`) run in Active; `#0` in Inactive; non-blocking register assignments (`<=`) in Non-Blocking Assignment (NBA) region. |
-| **Observed** | Observed | **Property Evaluation:** Concurrent assertions evaluate expressions against values sampled in the Preponed region. |
-| **Reactive Region Set** | Reactive, Re-Inactive, Re-NBA | **Testbench Execution:** Code inside `program` blocks and clocking block drive updates execute here, *after* design RTL has completely settled. |
-| **Postponed** | Postponed | **Final Readout:** System tasks like `$strobe` and waveform dumping routines capture final settled signal states. |
+| Event Region Set        | Sub-Regions                   | Primary Responsibility                                                                                                                                                                           |
+| :---------------------- | :---------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Preponed**            | Preponed                      | **Stable Sampling Window:** Values are sampled before any events occur in the time-step. Concurrent assertions (SVA) and clocking block inputs sample here.                                      |
+| **Active Region Set**   | Active, Inactive, NBA         | **Design Execution:** Evaluates synthesizable RTL. Blocking assignments (`=`) run in Active; `#0` in Inactive; non-blocking register assignments (`<=`) in Non-Blocking Assignment (NBA) region. |
+| **Observed**            | Observed                      | **Property Evaluation:** Concurrent assertions evaluate expressions against values sampled in the Preponed region.                                                                               |
+| **Reactive Region Set** | Reactive, Re-Inactive, Re-NBA | **Testbench Execution:** Code inside `program` blocks and clocking block drive updates execute here, _after_ design RTL has completely settled.                                                  |
+| **Postponed**           | Postponed                     | **Final Readout:** System tasks like `$strobe` and waveform dumping routines capture final settled signal states.                                                                                |
 
 ---
 
@@ -95,7 +100,8 @@ SystemVerilog eliminates race conditions through **Stratified Event Scheduling R
 A **Clocking Block** synchronizes testbench drives and samples to specific clock edges, completely abstracting setup and hold timings.
 
 ### Clocking Block Skew Semantics
-- **Input Skew (`default input #1step`):** Tells the simulator to sample input signals in the **Preponed** region—immediately *prior* to the active clock edge. This guarantees sampling the previous stable state of the register, exactly mimicking a physical flip-flop's setup window.
+
+- **Input Skew (`default input #1step`):** Tells the simulator to sample input signals in the **Preponed** region—immediately _prior_ to the active clock edge. This guarantees sampling the previous stable state of the register, exactly mimicking a physical flip-flop's setup window.
 - **Output Skew (`default output #1ns` or `output #0`):** Drives signals into the design with a defined delay, preventing hold-time violations.
 
 ```systemverilog
@@ -138,6 +144,7 @@ A class cannot directly contain a hardware `module` or `interface` instance. The
 ![Virtual Interface: Bridging Dynamic Classes to Static Hardware](images/ch2_virtual_interface_bridge.svg)
 
 ### Virtual Interface Mechanism
+
 - A **Virtual Interface** is a typed handle (pointer) to a physical interface instance:
   `virtual bus_if.DRV vif;`
 - During testbench initialization, the physical interface instantiated in the top-level module is passed to the class-based components via a configuration database or constructor argument.
@@ -187,6 +194,7 @@ Monolithic testbenches where test logic, protocol formatting, and pin wiggling a
 ![Layered Testbench Architecture in SystemVerilog](images/ch2_layered_testbench.svg)
 
 ### The Four Architectural Layers
+
 1. **Signal & Interface Layer (Physical Layer):**
    - Wires, bidirectional busses, clock generators, reset sequencers, and SystemVerilog interfaces.
    - Interacts directly with the physical input/output ports of the DUT.
@@ -216,7 +224,7 @@ class alu_transaction;
     bit [8:0]      result;
 
     function void display(string tag = "ALU_TRANS");
-        $display("[%s] A=%0d B=%0d Op=%0d Result=%0d", 
+        $display("[%s] A=%0d B=%0d Op=%0d Result=%0d",
                  tag, operand_a, operand_b, opcode, result);
     endfunction
 endclass
@@ -250,7 +258,7 @@ class alu_scoreboard;
 
         exp_tx = expect_q.pop_front();
         if (exp_tx.result === actual_tx.result) begin
-            $display("[SCOREBOARD_PASS] Match! Exp=0x%0h Act=0x%0h", 
+            $display("[SCOREBOARD_PASS] Match! Exp=0x%0h Act=0x%0h",
                      exp_tx.result, actual_tx.result);
             match_count++;
         end else begin
@@ -262,7 +270,7 @@ class alu_scoreboard;
 
     function void report();
         $display("-------------------------------------------");
-        $display("SCOREBOARD REPORT: %0d Matches, %0d Mismatches", 
+        $display("SCOREBOARD REPORT: %0d Matches, %0d Mismatches",
                  match_count, mismatch_count);
         $display("-------------------------------------------");
     endfunction
@@ -274,8 +282,8 @@ endclass
 ## Learning Resources
 
 - **Books:**
-  - *SystemVerilog for Verification: A Guide to Learning the Testbench Language Features* by Chris Spear & Greg Tumbush (Chapters 3-5: OOP, Interfaces, Clocking Blocks).
-  - *Writing Testbenches Using SystemVerilog* by Janick Bergeron.
+  - _SystemVerilog for Verification: A Guide to Learning the Testbench Language Features_ by Chris Spear & Greg Tumbush (Chapters 3-5: OOP, Interfaces, Clocking Blocks).
+  - _Writing Testbenches Using SystemVerilog_ by Janick Bergeron.
 - **Reference Standards:**
   - IEEE Std 1800-2023 SystemVerilog Language Reference Manual (Section 14: Clocking Blocks, Section 24: Program Blocks, Section 25: Interfaces).
 

@@ -1,6 +1,7 @@
 # Basic Transfers: Write and Read without Wait States
 
 In the baseline APB protocol (and in APB3/APB4 systems when `PREADY` is driven HIGH), every transaction completes in **strictly two clock cycles**:
+
 1. The **`SETUP` Phase** (Cycle 1): The bridge drives address, control, and (if writing) data.
 2. The **`ACCESS` Phase** (Cycle 2): The bridge asserts `PENABLE`, and the data is transferred.
 
@@ -16,14 +17,15 @@ A basic write transfer transfers write data (`PWDATA`) from the master (bridge) 
 
 ### Cycle-by-Cycle Breakdown: Write Transfer
 
-| Time Mark / Clock Edge | Bus Phase | Master Action | Slave Action | Signal Values |
-| :--- | :--- | :--- | :--- | :--- |
-| **Before T1** | `IDLE` | No active transfer. Bus in quiescent state. | Inactive. Outputs quiescent. | `PSEL = 0`, `PENABLE = 0` |
-| **At T1 (Rising Edge)** | `SETUP` Starts | Drives address onto `PADDR`. Sets `PWRITE = 1`. Asserts target `PSEL = 1`. Drives write data onto `PWDATA`. Keeps `PENABLE = 0`. | Observes `PSEL = 1` and `PENABLE = 0`. Decodes internal register address from `PADDR`. | `PSEL = 1`, `PENABLE = 0`, `PWRITE = 1`, `PADDR = A1`, `PWDATA = D1` |
-| **At T2 (Rising Edge)** | `ACCESS` Starts | Asserts `PENABLE = 1`. Maintains `PADDR`, `PWRITE`, `PSEL`, and `PWDATA` static. | Detects `PENABLE = 1`. Prepares to latch write data. Slave drives `PREADY = 1`. | `PSEL = 1`, `PENABLE = 1`, `PREADY = 1`, `PWDATA = D1` |
-| **At T3 (Rising Edge)** | Transfer Finishes | Samples `PREADY = 1`. Deasserts `PSEL = 0` and `PENABLE = 0` (returning to `IDLE`). | Latches `PWDATA` into targeted register on the rising edge of T3. Deasserts `PREADY`. | Transition to `IDLE` (`PSEL = 0`, `PENABLE = 0`) |
+| Time Mark / Clock Edge  | Bus Phase         | Master Action                                                                                                                    | Slave Action                                                                           | Signal Values                                                        |
+| :---------------------- | :---------------- | :------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------- | :------------------------------------------------------------------- |
+| **Before T1**           | `IDLE`            | No active transfer. Bus in quiescent state.                                                                                      | Inactive. Outputs quiescent.                                                           | `PSEL = 0`, `PENABLE = 0`                                            |
+| **At T1 (Rising Edge)** | `SETUP` Starts    | Drives address onto `PADDR`. Sets `PWRITE = 1`. Asserts target `PSEL = 1`. Drives write data onto `PWDATA`. Keeps `PENABLE = 0`. | Observes `PSEL = 1` and `PENABLE = 0`. Decodes internal register address from `PADDR`. | `PSEL = 1`, `PENABLE = 0`, `PWRITE = 1`, `PADDR = A1`, `PWDATA = D1` |
+| **At T2 (Rising Edge)** | `ACCESS` Starts   | Asserts `PENABLE = 1`. Maintains `PADDR`, `PWRITE`, `PSEL`, and `PWDATA` static.                                                 | Detects `PENABLE = 1`. Prepares to latch write data. Slave drives `PREADY = 1`.        | `PSEL = 1`, `PENABLE = 1`, `PREADY = 1`, `PWDATA = D1`               |
+| **At T3 (Rising Edge)** | Transfer Finishes | Samples `PREADY = 1`. Deasserts `PSEL = 0` and `PENABLE = 0` (returning to `IDLE`).                                              | Latches `PWDATA` into targeted register on the rising edge of T3. Deasserts `PREADY`.  | Transition to `IDLE` (`PSEL = 0`, `PENABLE = 0`)                     |
 
 ### Key Signal Invariants During Write:
+
 - **`PWDATA` Setup Time:** The master **must drive `PWDATA` concurrently with `PADDR` at the start of the `SETUP` phase (T1)**. It is invalid under the APB specification to delay driving `PWDATA` until the `ACCESS` phase (T2).
 - **Static Hold:** Between T1 and T3, `PADDR`, `PWRITE`, `PSEL`, and `PWDATA` must not glitch or change value.
 - **Data Capture:** The slave reliably latches `PWDATA` on the rising clock edge of T3 because `PSEL`, `PENABLE`, and `PREADY` are all verified HIGH.
@@ -38,14 +40,15 @@ A basic read transfer requests data from a peripheral register and returns it to
 
 ### Cycle-by-Cycle Breakdown: Read Transfer
 
-| Time Mark / Clock Edge | Bus Phase | Master Action | Slave Action | Signal Values |
-| :--- | :--- | :--- | :--- | :--- |
-| **Before T1** | `IDLE` | Bus dormant. `PSEL = 0`, `PENABLE = 0`. | Quiescent state. `PRDATA` don't-care. | `PSEL = 0`, `PENABLE = 0` |
-| **At T1 (Rising Edge)** | `SETUP` Starts | Drives address onto `PADDR`. Sets `PWRITE = 0`. Asserts target `PSEL = 1`. Keeps `PENABLE = 0`. | Observes `PSEL = 1` and `PENABLE = 0`. Decodes target register address. | `PSEL = 1`, `PENABLE = 0`, `PWRITE = 0`, `PADDR = A1` |
-| **At T2 (Rising Edge)** | `ACCESS` Starts | Asserts `PENABLE = 1`. Keeps `PADDR`, `PWRITE`, and `PSEL` static. | Reads internal register. Drives valid read data onto `PRDATA`. Drives `PREADY = 1`. | `PSEL = 1`, `PENABLE = 1`, `PREADY = 1`, `PRDATA = D1` |
-| **At T3 (Rising Edge)** | Transfer Finishes | Samples `PRDATA` on the rising edge of T3. Deasserts `PSEL = 0` and `PENABLE = 0`. | Completes read. Relinquishes `PRDATA` drive or returns to default value. | Transition to `IDLE` (`PSEL = 0`, `PENABLE = 0`) |
+| Time Mark / Clock Edge  | Bus Phase         | Master Action                                                                                   | Slave Action                                                                        | Signal Values                                          |
+| :---------------------- | :---------------- | :---------------------------------------------------------------------------------------------- | :---------------------------------------------------------------------------------- | :----------------------------------------------------- |
+| **Before T1**           | `IDLE`            | Bus dormant. `PSEL = 0`, `PENABLE = 0`.                                                         | Quiescent state. `PRDATA` don't-care.                                               | `PSEL = 0`, `PENABLE = 0`                              |
+| **At T1 (Rising Edge)** | `SETUP` Starts    | Drives address onto `PADDR`. Sets `PWRITE = 0`. Asserts target `PSEL = 1`. Keeps `PENABLE = 0`. | Observes `PSEL = 1` and `PENABLE = 0`. Decodes target register address.             | `PSEL = 1`, `PENABLE = 0`, `PWRITE = 0`, `PADDR = A1`  |
+| **At T2 (Rising Edge)** | `ACCESS` Starts   | Asserts `PENABLE = 1`. Keeps `PADDR`, `PWRITE`, and `PSEL` static.                              | Reads internal register. Drives valid read data onto `PRDATA`. Drives `PREADY = 1`. | `PSEL = 1`, `PENABLE = 1`, `PREADY = 1`, `PRDATA = D1` |
+| **At T3 (Rising Edge)** | Transfer Finishes | Samples `PRDATA` on the rising edge of T3. Deasserts `PSEL = 0` and `PENABLE = 0`.              | Completes read. Relinquishes `PRDATA` drive or returns to default value.            | Transition to `IDLE` (`PSEL = 0`, `PENABLE = 0`)       |
 
 ### Key Signal Invariants During Read:
+
 - **`PRDATA` Timing:** The slave does not need to provide valid data during `SETUP` (T1 to T2). It must drive valid, stable `PRDATA` during the `ACCESS` phase (prior to the rising edge of T3).
 - **Master Sampling:** The master latches `PRDATA` strictly on the rising edge of T3, where `PENABLE = 1` and `PREADY = 1`.
 - **Tri-State Avoidance:** When not selected, the slave must drive `PRDATA` to `0` or keep it driven; floating high-impedance (`Z`) lines are prohibited on-chip.
@@ -73,6 +76,7 @@ PRDATA     : ----------------------------------------<  Data 2   >---------
 ```
 
 ### Transition Analysis at Boundary T3:
+
 1. **At T3 (Rising Edge):**
    - Transfer 1 finishes its `ACCESS` phase (`PENABLE = 1`, `PREADY = 1`). Write data `Data 1` is latched by Slave 1.
    - Concurrently, the master immediately drives `Addr 2`, sets `PWRITE = 0` (for read), and toggles `PSEL` (if targeting a different slave).
@@ -88,14 +92,14 @@ PRDATA     : ----------------------------------------<  Data 2   >---------
 
 ## Master and Slave Timing Comparison Matrix
 
-| Parameter | Write Transfer (No Wait) | Read Transfer (No Wait) | Back-to-Back Write-to-Read |
-| :--- | :--- | :--- | :--- |
-| **Total Transfer Latency** | 2 clock cycles | 2 clock cycles | 4 clock cycles total (2 cycles each) |
-| **`PADDR` Valid Window** | T1 through T3 | T1 through T3 | T1..T3 (Transfer 1), T3..T5 (Transfer 2) |
-| **`PWDATA` Valid Window** | T1 through T3 | Not used (Don't care) | T1..T3 (Write only) |
-| **`PRDATA` Required Window** | Not used | Valid before rising edge of T3 | Valid before rising edge of T5 |
-| **`PENABLE` Active Cycles** | T2 to T3 (1 cycle) | T2 to T3 (1 cycle) | T2..T3 (Transfer 1), T4..T5 (Transfer 2) |
-| **Bus State at Completion** | Returns to `IDLE` or `SETUP` | Returns to `IDLE` or `SETUP` | Returns to `IDLE` |
+| Parameter                    | Write Transfer (No Wait)     | Read Transfer (No Wait)        | Back-to-Back Write-to-Read               |
+| :--------------------------- | :--------------------------- | :----------------------------- | :--------------------------------------- |
+| **Total Transfer Latency**   | 2 clock cycles               | 2 clock cycles                 | 4 clock cycles total (2 cycles each)     |
+| **`PADDR` Valid Window**     | T1 through T3                | T1 through T3                  | T1..T3 (Transfer 1), T3..T5 (Transfer 2) |
+| **`PWDATA` Valid Window**    | T1 through T3                | Not used (Don't care)          | T1..T3 (Write only)                      |
+| **`PRDATA` Required Window** | Not used                     | Valid before rising edge of T3 | Valid before rising edge of T5           |
+| **`PENABLE` Active Cycles**  | T2 to T3 (1 cycle)           | T2 to T3 (1 cycle)             | T2..T3 (Transfer 1), T4..T5 (Transfer 2) |
+| **Bus State at Completion**  | Returns to `IDLE` or `SETUP` | Returns to `IDLE` or `SETUP`   | Returns to `IDLE`                        |
 
 ---
 
@@ -116,4 +120,3 @@ PRDATA     : ----------------------------------------<  Data 2   >---------
 4. What happens to `PENABLE` on the boundary clock edge between two back-to-back transfers? Why can it not remain HIGH continuously across both transfers?
 
 ##### Copyright (c) 2026 squared-studio
-

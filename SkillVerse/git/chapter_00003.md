@@ -52,7 +52,6 @@ A **commit** in Git is a fundamental operation that records a _snapshot_ of your
 ### Best Practices for Commits:
 
 - **Atomic Commits**: Aim for one logical, self-contained change per commit. Each commit should represent a single, understandable unit of work. For example, "Implement user login functionality" is a good atomic commit, while "Fix login, update UI, and add new feature" is too broad and should be broken down into multiple commits.
-
   - **Good Example**: "Fix: Correct button color on profile page"
   - **Bad Example**: "Update stuff" or "Fix bugs and add features"
 
@@ -106,7 +105,6 @@ If you make a mistake or want to undo your last commit, Git provides tools to he
 ### Organizing Issues with Labels and Assignees:
 
 - **Labels**: Labels are tags you can apply to issues to categorize and prioritize them. They help in filtering and sorting issues, making it easier to manage and focus on specific types of tasks. Common labels include:
-
   - `bug`: For bug reports and issues.
   - `feature`: For new feature requests.
   - `enhancement`: For improvements to existing features.
@@ -222,7 +220,6 @@ A **Pull Request (PR)** is a feature in Git-based collaboration platforms like G
 
 - **Keep PRs Small and Focused**: Aim to keep pull requests small and focused on a single logical change or feature. Smaller PRs are easier to review, understand, and test, which leads to faster review cycles and fewer integration issues. Ideally, PRs should be under 300 lines of code changed.
 - **Use Descriptive Titles and Descriptions**: A good PR title and description are essential for reviewers to quickly grasp the purpose and context of your changes.
-
   - **Good Title**: "Fix: Image scaling bug on product detail page" (clear, concise, and action-oriented)
   - **Bad Title**: "Update code" (too vague and uninformative)
 

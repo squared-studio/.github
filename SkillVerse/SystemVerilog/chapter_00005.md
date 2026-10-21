@@ -79,20 +79,20 @@ $display("Sum of scores: %0d", scores.sum());    // Output: Sum of scores: 440
 
 ### Built-in Methods for Fixed-Size Arrays
 
-| Method              | Description                                         | Example                                                 |
-| ------------------- | --------------------------------------------------- | ------------------------------------------------------- |
-| **`.size()`**       | Returns the number of elements in the array         | `int array_size = scores.size();`                       |
-| **`.sort()`**       | Sorts array elements in ascending order (in-place)  | `scores.sort();`                                        |
-| **`.rsort()`**      | Sorts array elements in descending order (in-place) | `scores.rsort();`                                       |
-| **`.reverse()`**    | Reverses the order of elements (in-place)           | `scores.reverse();`                                     |
-| **`.sum()`**        | Calculates and returns the sum of all elements      | `int total_score = scores.sum();`                       |
-| **`.min()`**        | Returns the minimum element value                   | `int min_val = scores.min();`                           |
-| **`.max()`**        | Returns the maximum element value                   | `int max_val = scores.max();`                           |
-| **`.unique()`**     | Returns a queue containing one instance of each value; does not remove source elements | `int unique_scores[$] = scores.unique();`               |
-| **`.find()`**       | Returns a queue of indices where condition is true  | `int indices[$] = scores.find(x) with (x > 90);`        |
-| **`.find_index()`** | Returns a queue of indices where condition is true  | `int indices[$] = scores.find_index(x) with (x > 90);`  |
-| **`.find_first()`** | Returns the first element where condition is true   | `int first_score = scores.find_first(x) with (x > 90);` |
-| **`.find_last()`**  | Returns the last element where condition is true    | `int last_score = scores.find_last(x) with (x > 90);`   |
+| Method              | Description                                                                                      | Example                                                 |
+| ------------------- | ------------------------------------------------------------------------------------------------ | ------------------------------------------------------- |
+| **`.size()`**       | Returns the number of elements in the array                                                      | `int array_size = scores.size();`                       |
+| **`.sort()`**       | Sorts array elements in ascending order (in-place)                                               | `scores.sort();`                                        |
+| **`.rsort()`**      | Sorts array elements in descending order (in-place)                                              | `scores.rsort();`                                       |
+| **`.reverse()`**    | Reverses the order of elements (in-place)                                                        | `scores.reverse();`                                     |
+| **`.sum()`**        | Calculates and returns the sum of all elements                                                   | `int total_score = scores.sum();`                       |
+| **`.min()`**        | Returns the minimum element value                                                                | `int min_val = scores.min();`                           |
+| **`.max()`**        | Returns the maximum element value                                                                | `int max_val = scores.max();`                           |
+| **`.unique()`**     | Returns a queue containing one instance of each value; does not remove source elements           | `int unique_scores[$] = scores.unique();`               |
+| **`.find()`**       | Returns a queue of indices where condition is true                                               | `int indices[$] = scores.find(x) with (x > 90);`        |
+| **`.find_index()`** | Returns a queue of indices where condition is true                                               | `int indices[$] = scores.find_index(x) with (x > 90);`  |
+| **`.find_first()`** | Returns the first element where condition is true                                                | `int first_score = scores.find_first(x) with (x > 90);` |
+| **`.find_last()`**  | Returns the last element where condition is true                                                 | `int last_score = scores.find_last(x) with (x > 90);`   |
 | **`.reduce()`**     | General reduction notation is tool/methodology dependent; use named reductions for portable code | `int product = scores.product();`                       |
 
 ## Dynamic Arrays: Runtime Resizable Flexibility
@@ -230,13 +230,13 @@ For an unbounded queue, `push_front` and `push_back` change its size. `pop_front
 
 Use the simplest array that matches the requirement:
 
-| Requirement | Suitable choice |
-|-------------|-----------------|
-| One contiguous bit vector or hardware field | Packed array |
-| Known element count and stable indices | Fixed-size unpacked array |
-| Runtime-known count with integer indices | Dynamic array |
-| Sparse or key-based lookup | Associative array |
-| Ordered data with insertion/removal at either end | Queue |
+| Requirement                                       | Suitable choice           |
+| ------------------------------------------------- | ------------------------- |
+| One contiguous bit vector or hardware field       | Packed array              |
+| Known element count and stable indices            | Fixed-size unpacked array |
+| Runtime-known count with integer indices          | Dynamic array             |
+| Sparse or key-based lookup                        | Associative array         |
+| Ordered data with insertion/removal at either end | Queue                     |
 
 Array methods such as `.sort()`, `.reverse()`, and `.shuffle()` modify the receiver in place. Query methods such as `.find()`, `.find_index()`, and `.unique()` return a queue and leave the source unchanged. Reduction methods such as `.sum()`, `.product()`, `.and()`, `.or()`, and `.xor()` return a value; check the result type and width when overflow matters.
 

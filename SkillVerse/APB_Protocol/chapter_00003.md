@@ -15,17 +15,19 @@ The AMBA APB specification defines three mutually exclusive states: **`IDLE`**, 
 ### Detailed State Descriptions
 
 #### `IDLE` (Default Dormant State)
+
 - **Definition:** The bus is inactive; no transfer is in progress.
-- **Signal Conditions:** 
+- **Signal Conditions:**
   - `PSELx = 0` (for all slaves)
   - `PENABLE = 0`
 - **Behavior:** The bridge logic does not drive valid peripheral requests. The address and data buses are don't-care (often parked at previous values to prevent unnecessary wire charging and power dissipation).
 - **Exit Condition:** When the bridge receives a transfer request from the upstream system bus (e.g., AXI/AHB), it transitions to `SETUP` on the next rising clock edge.
 
 #### `SETUP` (Address & Control Strobe Phase)
+
 - **Definition:** The start of an active bus transfer.
 - **Duration:** Strictly **one clock cycle**.
-- **Signal Conditions:** 
+- **Signal Conditions:**
   - Target `PSELx` is asserted (`1`).
   - `PENABLE` is deasserted (`0`).
   - `PADDR`, `PWRITE`, `PPROT`, and `PSTRB` are driven to valid values.
@@ -34,13 +36,14 @@ The AMBA APB specification defines three mutually exclusive states: **`IDLE`**, 
 - **Exit Condition:** The FSM **unconditionally transitions** from `SETUP` to `ACCESS` on the next rising edge of `PCLK`. It can never remain in `SETUP` for more than one clock cycle.
 
 #### `ACCESS` (Enable & Handshake Phase)
+
 - **Definition:** The execution and data transfer phase.
 - **Duration:** **One or more clock cycles** (governed by `PREADY`).
-- **Signal Conditions:** 
+- **Signal Conditions:**
   - Target `PSELx` remains asserted (`1`).
   - `PENABLE` is asserted (`1`).
   - All address and control lines remain stable.
-- **Behavior:** 
+- **Behavior:**
   - If writing, the slave captures `PWDATA` into internal registers.
   - If reading, the slave drives read data onto `PRDATA`.
   - The slave samples its internal ready status and drives `PREADY`.
@@ -56,14 +59,14 @@ The AMBA APB specification defines three mutually exclusive states: **`IDLE`**, 
 
 The table below summarizes the exact formal transition conditions for the APB master state machine:
 
-| Current State | Condition / Inputs | Next State | Master Signal Output Assertions |
-| :--- | :--- | :--- | :--- |
-| **`IDLE`** | No transfer requested (`Transfer_Req = 0`) | `IDLE` | `PSELx = 0`, `PENABLE = 0` |
-| **`IDLE`** | New transfer requested (`Transfer_Req = 1`) | `SETUP` | Assert target `PSELx = 1`, drive `PADDR`, `PWRITE`, `PWDATA` (if write); `PENABLE = 0` |
-| **`SETUP`** | Unconditional (always after 1 cycle) | `ACCESS` | Keep `PSELx = 1`, keep address/data stable; assert `PENABLE = 1` |
-| **`ACCESS`** | Slave not ready (`PREADY = 0`) | `ACCESS` | Keep `PSELx = 1`, `PENABLE = 1`, address/data completely static |
-| **`ACCESS`** | Slave ready (`PREADY = 1`) AND pending transfer | `SETUP` | Deassert `PENABLE = 0`, assert target `PSELx = 1` (same or new slave), drive new `PADDR`/data |
-| **`ACCESS`** | Slave ready (`PREADY = 1`) AND no transfer | `IDLE` | Deassert `PSELx = 0`, deassert `PENABLE = 0` |
+| Current State | Condition / Inputs                              | Next State | Master Signal Output Assertions                                                               |
+| :------------ | :---------------------------------------------- | :--------- | :-------------------------------------------------------------------------------------------- |
+| **`IDLE`**    | No transfer requested (`Transfer_Req = 0`)      | `IDLE`     | `PSELx = 0`, `PENABLE = 0`                                                                    |
+| **`IDLE`**    | New transfer requested (`Transfer_Req = 1`)     | `SETUP`    | Assert target `PSELx = 1`, drive `PADDR`, `PWRITE`, `PWDATA` (if write); `PENABLE = 0`        |
+| **`SETUP`**   | Unconditional (always after 1 cycle)            | `ACCESS`   | Keep `PSELx = 1`, keep address/data stable; assert `PENABLE = 1`                              |
+| **`ACCESS`**  | Slave not ready (`PREADY = 0`)                  | `ACCESS`   | Keep `PSELx = 1`, `PENABLE = 1`, address/data completely static                               |
+| **`ACCESS`**  | Slave ready (`PREADY = 1`) AND pending transfer | `SETUP`    | Deassert `PENABLE = 0`, assert target `PSELx = 1` (same or new slave), drive new `PADDR`/data |
+| **`ACCESS`**  | Slave ready (`PREADY = 1`) AND no transfer      | `IDLE`     | Deassert `PSELx = 0`, deassert `PENABLE = 0`                                                  |
 
 ---
 
@@ -89,6 +92,7 @@ Handshake  : (None)        (None)           (Stalled)    (Completed!)
 ```
 
 #### Requester (Bridge) Responsibilities:
+
 1. **At T1 (Entry to `SETUP`):**
    - Decode target address from system bus.
    - Assert `PSELx` for the specific slave.
@@ -108,6 +112,7 @@ Handshake  : (None)        (None)           (Stalled)    (Completed!)
    - In the subsequent cycle, either drop `PENABLE` and `PSELx` to `0` (return to `IDLE`) or immediately enter `SETUP` for the next access.
 
 #### Completer (Slave) Responsibilities:
+
 1. **During `SETUP` (`PSELx = 1`, `PENABLE = 0`):**
    - Decode internal register offset from `PADDR`.
    - Begin internal address decoding or memory array precharge.
@@ -123,12 +128,15 @@ Handshake  : (None)        (None)           (Stalled)    (Completed!)
 ## Key Protocol Invariants and Edge Cases
 
 ### Can a Master Deassert `PSELx` or `PENABLE` Before `PREADY = 1`?
+
 **No.** AMBA APB strictly forbids aborting a transfer once initiated. A master cannot revoke a transfer midway. It must wait until the slave asserts `PREADY = 1`. If a slave hangs permanently with `PREADY = 0`, the entire APB bus is stalled (a hardware watchdog or bus timeout mechanism in the bridge is typically required in safety-critical SoCs to break deadlocks).
 
 ### Can `PENABLE` Be Asserted in `SETUP`?
+
 **No.** `PENABLE` must strictly be LOW in `SETUP` and HIGH in `ACCESS`. If `PENABLE` is asserted simultaneously with `PSELx`, slaves designed to latch address on the `SETUP` phase will fail.
 
 ### Can `PREADY` Be Permanently Tied High?
+
 **Yes.** For simple, zero-wait-state register blocks (such as a standard configuration register or GPIO bank), `PREADY` can be tied statically to logic `1`. In that case, every transfer lasts exactly two clock cycles (`SETUP` followed by a single-cycle `ACCESS`), perfectly matching legacy APB2 behavior.
 
 ---
@@ -150,4 +158,3 @@ Handshake  : (None)        (None)           (Stalled)    (Completed!)
 4. Under what exact conditions can the APB state machine transition directly from `ACCESS` to `SETUP` without passing through `IDLE`?
 
 ##### Copyright (c) 2026 squared-studio
-

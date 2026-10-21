@@ -1,0 +1,88 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 480" width="100%" height="100%">
+  <rect width="960" height="480" fill="#0b1120" rx="8"/>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8"/>
+    </marker>
+    <marker id="arrow-green" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#34d399"/>
+    </marker>
+  </defs>
+
+  <text x="480" y="38" fill="#f8fafc" font-size="20" font-weight="bold" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" text-anchor="middle">Generational Cyclic Garbage Collection Subsystem</text>
+  <text x="480" y="62" fill="#94a3b8" font-size="13" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" text-anchor="middle">Breaking isolated reference cycles through Generation 0, Generation 1, and Generation 2 promotion</text>
+
+  <!-- Left: Reference Cycle Hazard -->
+  <g transform="translate(50, 95)">
+    <rect width="360" height="235" rx="8" fill="#1e293b" stroke="#f43f5e" stroke-width="1.5"/>
+    <text x="180" y="25" fill="#f43f5e" font-size="13" font-weight="bold" font-family="sans-serif" text-anchor="middle">The Cyclic Reference Hazard</text>
+
+    <!-- Node A -->
+    <rect x="30" y="55" width="130" height="65" rx="6" fill="#4c0519" stroke="#f43f5e"/>
+    <text x="95" y="78" fill="#fecdd3" font-size="11" font-weight="bold" font-family="monospace" text-anchor="middle">Node A</text>
+    <text x="95" y="96" fill="#fda4af" font-size="10" font-family="monospace" text-anchor="middle">refcnt = 1</text>
+    <text x="95" y="110" fill="#fca5a5" font-size="9" font-family="sans-serif" text-anchor="middle">A.next = B</text>
+
+    <!-- Node B -->
+    <rect x="200" y="55" width="130" height="65" rx="6" fill="#4c0519" stroke="#f43f5e"/>
+    <text x="265" y="78" fill="#fecdd3" font-size="11" font-weight="bold" font-family="monospace" text-anchor="middle">Node B</text>
+    <text x="265" y="96" fill="#fda4af" font-size="10" font-family="monospace" text-anchor="middle">refcnt = 1</text>
+    <text x="265" y="110" fill="#fca5a5" font-size="9" font-family="sans-serif" text-anchor="middle">B.prev = A</text>
+
+    <!-- Arrows forming cycle -->
+    <path d="M 160 75 L 195 75" stroke="#f43f5e" stroke-width="2" marker-end="url(#arrow)"/>
+    <path d="M 200 95 L 165 95" stroke="#f43f5e" stroke-width="2" marker-end="url(#arrow)"/>
+
+    <rect x="25" y="145" width="310" height="70" rx="4" fill="#0f172a" stroke="#334155"/>
+    <text x="180" y="165" fill="#fda4af" font-size="10" font-weight="bold" font-family="sans-serif" text-anchor="middle">del A; del B (Out of scope!)</text>
+    <text x="180" y="183" fill="#cbd5e1" font-size="9" font-family="sans-serif" text-anchor="middle">Both refcounts remain 1 due to cross-reference.</text>
+    <text x="180" y="198" fill="#f43f5e" font-size="9" font-weight="bold" font-family="sans-serif" text-anchor="middle">Standard Reference Counting CANNOT free this!</text>
+  </g>
+
+  <!-- Right: Generational GC Pipeline -->
+  <g transform="translate(440, 95)">
+    <rect width="470" height="235" rx="8" fill="#1e293b" stroke="#34d399" stroke-width="1.5"/>
+    <text x="235" y="25" fill="#34d399" font-size="13" font-weight="bold" font-family="sans-serif" text-anchor="middle">Three Generational GC Thresholds (Weak Generational Hypothesis)</text>
+
+    <!-- Gen 0 -->
+    <g transform="translate(20, 45)">
+      <rect width="430" height="50" rx="4" fill="#0f172a" stroke="#38bdf8"/>
+      <text x="15" y="22" fill="#38bdf8" font-size="11" font-weight="bold" font-family="sans-serif">Generation 0: Newly Created Objects</text>
+      <text x="15" y="40" fill="#cbd5e1" font-size="10" font-family="sans-serif">Threshold: 700 allocations net. Scanned very frequently (every few ms).</text>
+      <text x="350" y="28" fill="#38bdf8" font-size="10" font-family="monospace">gen0: 700</text>
+    </g>
+
+    <!-- Arrow down to Gen 1 -->
+    <path d="M 235 100 L 235 118" stroke="#34d399" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+    <text x="290" y="112" fill="#34d399" font-size="9" font-family="sans-serif">survivors promoted</text>
+
+    <!-- Gen 1 -->
+    <g transform="translate(20, 122)">
+      <rect width="430" height="45" rx="4" fill="#0f172a" stroke="#fbbf24"/>
+      <text x="15" y="20" fill="#fbbf24" font-size="11" font-weight="bold" font-family="sans-serif">Generation 1: Intermediate Objects</text>
+      <text x="15" y="36" fill="#cbd5e1" font-size="10" font-family="sans-serif">Threshold: 10 Gen 0 collections trigger 1 Gen 1 collection.</text>
+      <text x="350" y="26" fill="#fbbf24" font-size="10" font-family="monospace">gen1: 10</text>
+    </g>
+
+    <!-- Arrow down to Gen 2 -->
+    <path d="M 235 170 L 235 188" stroke="#34d399" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+    <text x="290" y="182" fill="#34d399" font-size="9" font-family="sans-serif">survivors promoted</text>
+
+    <!-- Gen 2 -->
+    <g transform="translate(20, 192)">
+      <rect width="430" height="35" rx="4" fill="#0f172a" stroke="#34d399"/>
+      <text x="15" y="16" fill="#34d399" font-size="10" font-weight="bold" font-family="sans-serif">Generation 2: Long-Lived Objects (Globals, Modules, Constants)</text>
+      <text x="15" y="29" fill="#94a3b8" font-size="9" font-family="sans-serif">Full collection of entire heap. Expensive, executed rarely.</text>
+      <text x="350" y="22" fill="#34d399" font-size="10" font-family="monospace">gen2: 10</text>
+    </g>
+  </g>
+
+  <!-- Bottom Details -->
+  <g transform="translate(50, 345)">
+    <rect width="860" height="110" rx="8" fill="#0f172a" stroke="#334155"/>
+    <text x="25" y="26" fill="#38bdf8" font-size="13" font-weight="bold" font-family="sans-serif">How the Cycle Finder Works:</text>
+    <text x="25" y="48" fill="#cbd5e1" font-size="11" font-family="sans-serif">• Every container object has a <tspan font-family="monospace" fill="#38bdf8">PyGC_Head</tspan> header linking it into a generation doubly-linked list.</text>
+    <text x="25" y="68" fill="#cbd5e1" font-size="11" font-family="sans-serif">• The GC copies reference counts into a trial field (<tspan font-family="monospace">gc_refs</tspan>) and subtracts 1 for every internal reference across members.</text>
+    <text x="25" y="88" fill="#cbd5e1" font-size="11" font-family="sans-serif">• Any object whose <tspan font-family="monospace">gc_refs</tspan> drops to zero is strictly unreachable from outside and is deallocated.</text>
+  </g>
+</svg>

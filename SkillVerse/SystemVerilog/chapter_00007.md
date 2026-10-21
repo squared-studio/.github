@@ -2,7 +2,7 @@
 
 ## Introduction
 
-Operators are the verbs of SystemVerilog, enabling you to describe hardware behavior and verification logic concisely and effectively.  A deep understanding of SystemVerilog operators is not just about syntax; it's about grasping how these operators translate into actual hardware implementations. This guide provides a detailed exploration of essential operators, emphasizing their hardware implications and practical applications in both RTL design and verification.
+Operators are the verbs of SystemVerilog, enabling you to describe hardware behavior and verification logic concisely and effectively. A deep understanding of SystemVerilog operators is not just about syntax; it's about grasping how these operators translate into actual hardware implementations. This guide provides a detailed exploration of essential operators, emphasizing their hardware implications and practical applications in both RTL design and verification.
 
 ## Learning Goals
 
@@ -18,14 +18,14 @@ By the end of this chapter, you should be able to:
 
 Arithmetic operators are fundamental for performing mathematical computations within your SystemVerilog designs. They are the core of datapath implementations and numerical algorithms.
 
-| Operator | Description          | Hardware Equivalent             | Key Considerations                                     |
-| -------- | -------------------- | ------------------------------- | ------------------------------------------------------- |
-| `+`      | Addition             | Combinational Adder             | Supports both signed and unsigned arithmetic. Latency depends on bit-width. |
-| `-`      | Subtraction          | Combinational Subtractor        | Implemented using 2's complement for signed numbers.    |
-| `*`      | Multiplication       | Multiplier Block                | Resource-intensive in FPGA/ASIC synthesis. Consider latency and area trade-offs. |
-| `/`      | Division             | Divider or optimized constant operation | May synthesize, especially for constants or supported widths, but can be expensive or slow. Simulation behavior for division by zero must be handled explicitly. |
-| `%`      | Modulus (Remainder) | Remainder Logic                 | Useful for tasks like address wrapping, modulo counters. Can be complex for synthesis. |
-| `**`     | Exponentiation       | Tool-dependent arithmetic logic | A constant, simple exponent may synthesize in some flows; variable exponents are usually expensive and often unsuitable for RTL. Commonly used in verification and reference models. |
+| Operator | Description         | Hardware Equivalent                     | Key Considerations                                                                                                                                                                   |
+| -------- | ------------------- | --------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `+`      | Addition            | Combinational Adder                     | Supports both signed and unsigned arithmetic. Latency depends on bit-width.                                                                                                          |
+| `-`      | Subtraction         | Combinational Subtractor                | Implemented using 2's complement for signed numbers.                                                                                                                                 |
+| `*`      | Multiplication      | Multiplier Block                        | Resource-intensive in FPGA/ASIC synthesis. Consider latency and area trade-offs.                                                                                                     |
+| `/`      | Division            | Divider or optimized constant operation | May synthesize, especially for constants or supported widths, but can be expensive or slow. Simulation behavior for division by zero must be handled explicitly.                     |
+| `%`      | Modulus (Remainder) | Remainder Logic                         | Useful for tasks like address wrapping, modulo counters. Can be complex for synthesis.                                                                                               |
+| `**`     | Exponentiation      | Tool-dependent arithmetic logic         | A constant, simple exponent may synthesize in some flows; variable exponents are usually expensive and often unsuitable for RTL. Commonly used in verification and reference models. |
 
 ### Real-World Example: Address Calculation Unit
 
@@ -47,12 +47,12 @@ endmodule
 
 **Key Hardware and Synthesis Considerations for Arithmetic Operators:**
 
--   **Synthesis Complexity**:  Operators like `*`, `/`, `%`, and `**` can lead to complex and resource-intensive hardware, especially for larger bit-widths. Be mindful of synthesis implications and target technology constraints. Division and exponentiation are often avoided in performance-critical RTL.
--   **Delay and Latency**: A combinational operator contributes propagation delay; it does not automatically add a clock cycle. A sequential or pipelined implementation can add latency in cycles. Adders and subtractors are often shorter than multipliers and dividers, but the result depends on width, architecture, target technology, and synthesis options.
--   **Signed vs. Unsigned**: SystemVerilog arithmetic operators handle both signed and unsigned data types correctly. Be explicit about signedness using `signed` and `unsigned` keywords to avoid ambiguity.
--   **Overflow/Underflow**: Be aware of potential overflow and underflow in addition and subtraction.  Consider using larger data types or saturation arithmetic if necessary.
--   **Division by Zero**: Division by zero produces an invalid or tool-dependent result and may generate a warning or error. Guard the denominator and define the required behavior, especially in testbenches and reference models.
--   **Combinational vs. Sequential**: For purely combinational arithmetic logic, use `always_comb` blocks for clarity and synthesis optimization.
+- **Synthesis Complexity**: Operators like `*`, `/`, `%`, and `**` can lead to complex and resource-intensive hardware, especially for larger bit-widths. Be mindful of synthesis implications and target technology constraints. Division and exponentiation are often avoided in performance-critical RTL.
+- **Delay and Latency**: A combinational operator contributes propagation delay; it does not automatically add a clock cycle. A sequential or pipelined implementation can add latency in cycles. Adders and subtractors are often shorter than multipliers and dividers, but the result depends on width, architecture, target technology, and synthesis options.
+- **Signed vs. Unsigned**: SystemVerilog arithmetic operators handle both signed and unsigned data types correctly. Be explicit about signedness using `signed` and `unsigned` keywords to avoid ambiguity.
+- **Overflow/Underflow**: Be aware of potential overflow and underflow in addition and subtraction. Consider using larger data types or saturation arithmetic if necessary.
+- **Division by Zero**: Division by zero produces an invalid or tool-dependent result and may generate a warning or error. Guard the denominator and define the required behavior, especially in testbenches and reference models.
+- **Combinational vs. Sequential**: For purely combinational arithmetic logic, use `always_comb` blocks for clarity and synthesis optimization.
 
 ## Logical vs. Bitwise Operators: Boolean vs. Vector Operations
 
@@ -62,26 +62,26 @@ SystemVerilog distinguishes between logical operators (for Boolean conditions) a
 
 Logical operators treat a scalar as Boolean and a multi-bit operand as true when it contains a nonzero value. They return a one-bit 4-state result (`1`, `0`, or `X` when the operands do not determine the answer). They are primarily used in conditional statements (`if`, `else`, `case`) and assertions. `&&` and `||` can short-circuit evaluation; bitwise operators evaluate and combine corresponding bits.
 
-| Operator | Description     | Example                   | Result Type |
-| -------- | --------------- | ------------------------- | ----------- |
-| `&&`     | Logical AND     | `(enable && ready)`       | 1-bit 4-state result |
-| `\|\|`   | Logical OR      | `(error_flag \|\| timeout)` | 1-bit 4-state result |
-| `!`      | Logical NOT     | `!valid_data`            | 1-bit 4-state result |
+| Operator | Description | Example                     | Result Type          |
+| -------- | ----------- | --------------------------- | -------------------- |
+| `&&`     | Logical AND | `(enable && ready)`         | 1-bit 4-state result |
+| `\|\|`   | Logical OR  | `(error_flag \|\| timeout)` | 1-bit 4-state result |
+| `!`      | Logical NOT | `!valid_data`               | 1-bit 4-state result |
 
 ### Bitwise Operators: Operating on Vectors
 
 Bitwise operators perform bit-by-bit operations on vector operands. They are essential for manipulating data at the bit level, performing masking, shifting, and bit-level logic in hardware designs.
 
-| Operator  | Description              | Example (4-bit)       | Result (4-bit) |
-| --------- | ------------------------ | --------------------- | -------------- |
-| `&`       | Bitwise AND              | `4'b1101 & 4'b1011`   | `4'b1001`      |
-| `\|`      | Bitwise OR               | `4'b1101 \| 4'b1011`  | `4'b1111`      |
-| `^`       | Bitwise XOR              | `4'b1101 ^ 4'b1011`   | `4'b0110`      |
-| `~`       | Bitwise NOT (Inversion) | `~4'b1101`            | `4'b0010`      |
-| `<<`      | Logical Left Shift       | `4'b0011 << 2`        | `4'b1100`      |
-| `>>`      | Logical Right Shift      | `4'b1100 >> 1`        | `4'b0110`      |
-| `<<<`     | Arithmetic Left Shift    | `4'sb1000 <<< 1`     | `4'sb0000`     |
-| `>>>`     | Arithmetic Right Shift   | `4'sb1000 >>> 1`     | `4'sb1100`     |
+| Operator | Description             | Example (4-bit)      | Result (4-bit) |
+| -------- | ----------------------- | -------------------- | -------------- |
+| `&`      | Bitwise AND             | `4'b1101 & 4'b1011`  | `4'b1001`      |
+| `\|`     | Bitwise OR              | `4'b1101 \| 4'b1011` | `4'b1111`      |
+| `^`      | Bitwise XOR             | `4'b1101 ^ 4'b1011`  | `4'b0110`      |
+| `~`      | Bitwise NOT (Inversion) | `~4'b1101`           | `4'b0010`      |
+| `<<`     | Logical Left Shift      | `4'b0011 << 2`       | `4'b1100`      |
+| `>>`     | Logical Right Shift     | `4'b1100 >> 1`       | `4'b0110`      |
+| `<<<`    | Arithmetic Left Shift   | `4'sb1000 <<< 1`     | `4'sb0000`     |
+| `>>>`    | Arithmetic Right Shift  | `4'sb1000 >>> 1`     | `4'sb1100`     |
 
 **Illustrating Shift Operator Differences (Logical vs. Arithmetic):**
 
@@ -99,24 +99,24 @@ endmodule
 
 **Key Differences and Use Cases:**
 
--   **Logical Operators ( `&&`, `||`, `!` )**: Used for control flow, condition checking, and assertions. They produce a one-bit 4-state result and express Boolean intent.
--   **Bitwise Operators ( `&`, `|`, `^`, `~`, `<<`, `>>`, `<<<`, `>>>` )**: Used for data manipulation, bit-level processing, and implementing hardware logic. They operate on vectors and maintain the vector width in the result.
--   **Shift Operators**:
-    -   **Logical Shifts (`<<`, `>>`)**: Fill vacated bit positions with zeros. Used for unsigned data and general bit manipulation.
-    -   **Arithmetic Shifts (`<<<`, `>>>`)**:  Preserve the sign bit during right shifts (sign extension). Crucial for signed arithmetic operations to maintain the correct sign of negative numbers. Left arithmetic shift behaves the same as logical left shift.
+- **Logical Operators ( `&&`, `||`, `!` )**: Used for control flow, condition checking, and assertions. They produce a one-bit 4-state result and express Boolean intent.
+- **Bitwise Operators ( `&`, `|`, `^`, `~`, `<<`, `>>`, `<<<`, `>>>` )**: Used for data manipulation, bit-level processing, and implementing hardware logic. They operate on vectors and maintain the vector width in the result.
+- **Shift Operators**:
+  - **Logical Shifts (`<<`, `>>`)**: Fill vacated bit positions with zeros. Used for unsigned data and general bit manipulation.
+  - **Arithmetic Shifts (`<<<`, `>>>`)**: Preserve the sign bit during right shifts (sign extension). Crucial for signed arithmetic operations to maintain the correct sign of negative numbers. Left arithmetic shift behaves the same as logical left shift.
 
 ## Reduction Operators: Condensing Vectors to Scalars
 
 Reduction operators are unary operators that operate on all bits of a vector and reduce it to a single bit (scalar) result. They are useful for generating status flags, parity bits, and performing aggregate checks on vectors.
 
-| Operator | Description         | Example (4'b1101) | Result (1-bit) |
-| -------- | ------------------- | ------------------ | -------------- |
-| `&`      | Reduction AND       | `&4'b1101`         | `0`            |
-| `\|`     | Reduction OR        | `\|4'b1101`        | `1`            |
-| `^`      | Reduction XOR       | `^4'b1101`         | `1`            |
-| `~&`     | Reduction NAND      | `~&4'b1101`        | `1`            |
-| `~\|`    | Reduction NOR       | `~\|4'b1101`       | `0`            |
-| `~^`     | Reduction XNOR      | `~^4'b1101`        | `0`            |
+| Operator | Description    | Example (4'b1101) | Result (1-bit) |
+| -------- | -------------- | ----------------- | -------------- |
+| `&`      | Reduction AND  | `&4'b1101`        | `0`            |
+| `\|`     | Reduction OR   | `\|4'b1101`       | `1`            |
+| `^`      | Reduction XOR  | `^4'b1101`        | `1`            |
+| `~&`     | Reduction NAND | `~&4'b1101`       | `1`            |
+| `~\|`    | Reduction NOR  | `~\|4'b1101`      | `0`            |
+| `~^`     | Reduction XNOR | `~^4'b1101`       | `0`            |
 
 **Practical Application: Parity Bit Generation**
 
@@ -139,8 +139,8 @@ Comparison operators compare two operands and return a 1-bit Boolean value indic
 
 ### Standard Comparison Operators
 
-| Operator | Description           | X/Z Handling           |
-| -------- | --------------------- | ---------------------- |
+| Operator | Description           | X/Z Handling                                        |
+| -------- | --------------------- | --------------------------------------------------- |
 | `==`     | Equality              | If any operand is X or Z, result is **X** (unknown) |
 | `!=`     | Inequality            | If any operand is X or Z, result is **X** (unknown) |
 | `>`      | Greater Than          | If any operand is X or Z, result is **X** (unknown) |
@@ -152,10 +152,10 @@ Comparison operators compare two operands and return a 1-bit Boolean value indic
 
 Case equality operators (`===`, `!==`) perform bit-by-bit comparison, including X and Z states. They are crucial for verification when you need to explicitly check for unknown or high-impedance states.
 
-| Operator | Description         | X/Z Handling           |
-| -------- | ------------------- | ---------------------- |
-| `===`    | Case Equality       | X and Z **must match** for equality |
-| `!==`    | Case Inequality     | Returns true if operands are **not** case equal |
+| Operator | Description     | X/Z Handling                                    |
+| -------- | --------------- | ----------------------------------------------- |
+| `===`    | Case Equality   | X and Z **must match** for equality             |
+| `!==`    | Case Inequality | Returns true if operands are **not** case equal |
 
 **Illustrating the Difference: Handling X and Z States**
 
@@ -174,8 +174,8 @@ endmodule
 
 **Choosing the Right Comparison Operator:**
 
--   Use **standard operators (`==`, `!=`, `>`, `<`, `>=`, `<=`)** for typical data comparisons in RTL and when you want comparisons to resolve to unknown (`X`) if operands contain `X` or `Z`.
--   Use **case equality operators (`===`, `!==`)** primarily in verification testbenches when you need to explicitly check for X or Z states, or when you require an exact bit-by-bit match including X and Z.
+- Use **standard operators (`==`, `!=`, `>`, `<`, `>=`, `<=`)** for typical data comparisons in RTL and when you want comparisons to resolve to unknown (`X`) if operands contain `X` or `Z`.
+- Use **case equality operators (`===`, `!==`)** primarily in verification testbenches when you need to explicitly check for X or Z states, or when you require an exact bit-by-bit match including X and Z.
 
 ## Operator Precedence: Order of Evaluation
 
@@ -236,7 +236,8 @@ endmodule
     ```
 
     **Explanation**: In control logic, you typically want to use logical AND (`&&`), logical OR (`||`), and logical NOT (`!`) to combine Boolean conditions. Bitwise operators are for vector data manipulation. For clean 1-bit inputs, `&` and `&&` often synthesize to equivalent hardware; the logical form communicates intent and has different behavior for vectors, unknowns, and short-circuit evaluation.
-2.  **Misunderstanding Shift Operator Types**:  Forgetting the difference between logical and arithmetic right shifts can lead to incorrect results when working with signed numbers.
+
+2.  **Misunderstanding Shift Operator Types**: Forgetting the difference between logical and arithmetic right shifts can lead to incorrect results when working with signed numbers.
 
     ```systemverilog
     module shift_pitfall;
@@ -282,12 +283,11 @@ endmodule
 3.  **8-bit Barrel Shifter**: Design an 8-bit barrel shifter using SystemVerilog shift operators. The shifter should be able to perform left and right shifts by a variable amount (0 to 7 bits).
 4.  **X/Z State Detection**: Write a SystemVerilog module that takes an 8-bit input bus and outputs a flag if any bit on the bus is in the 'X' or 'Z' state. Use case equality operators for detection.
 5.  **Operator Precedence Challenges**: Evaluate the following SystemVerilog expressions both manually (following operator precedence rules) and by writing a small testbench to verify your answers:
-    -   `result1 = 10 - 2 * 3 + 1;`
-    -   `result2 = (10 - 2) * (3 + 1);`
-    -   `result3 = 8 >> 2 + 1;`
-    -   `result4 = 8 >> (2 + 1);`
+    - `result1 = 10 - 2 * 3 + 1;`
+    - `result2 = (10 - 2) * (3 + 1);`
+    - `result3 = 8 >> 2 + 1;`
+    - `result4 = 8 >> (2 + 1);`
 
-Mastering SystemVerilog operators is essential for any hardware designer or verification engineer. By understanding their functionality, hardware implications, and nuances like precedence and X/Z handling, you can write efficient, accurate, and synthesizable SystemVerilog code.  Practice with the exercises and always prioritize clarity and correctness by using parentheses and choosing the right operators for the task at hand.
+Mastering SystemVerilog operators is essential for any hardware designer or verification engineer. By understanding their functionality, hardware implications, and nuances like precedence and X/Z handling, you can write efficient, accurate, and synthesizable SystemVerilog code. Practice with the exercises and always prioritize clarity and correctness by using parentheses and choosing the right operators for the task at hand.
 
 ##### Copyright (c) 2026 squared-studio
-

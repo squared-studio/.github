@@ -29,6 +29,7 @@ Here are some common options you might use during implementation:
 - **-route_design**: Controls the routing of the design.
 
 Example:
+
 ```tcl
 place_design -directive Performance_Explore
 route_design -directive Performance_Explore
@@ -37,4 +38,3 @@ route_design -directive Performance_Explore
 By following these steps, you can implement your RTL design using Vivado and analyze the results to ensure your design meets the required specifications.
 
 ##### Copyright (c) 2026 squared-studio
-

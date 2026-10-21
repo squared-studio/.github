@@ -1,0 +1,109 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 480" width="100%" height="100%">
+  <rect width="960" height="480" fill="#0b1120" rx="8"/>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8"/>
+    </marker>
+  </defs>
+
+  <text x="480" y="38" fill="#f8fafc" font-size="20" font-weight="bold" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" text-anchor="middle">RISC-V Toolchain &amp; Bare-Metal Simulation Pipeline</text>
+  <text x="480" y="62" fill="#94a3b8" font-size="13" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" text-anchor="middle">From GNU Assembler (.s) through Linker Scripts (.ld) to Verilator, Spike, and QEMU</text>
+
+  <!-- Stage 1: Assembly Source -->
+  <g transform="translate(40, 110)">
+    <rect width="140" height="190" rx="6" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+    <rect width="140" height="30" rx="6" fill="#0369a1"/>
+    <text x="70" y="20" fill="#fff" font-size="12" font-weight="bold" font-family="sans-serif" text-anchor="middle">Assembly (.s)</text>
+    <text x="15" y="55" fill="#38bdf8" font-size="10" font-family="monospace">.globl _start</text>
+    <text x="15" y="73" fill="#94a3b8" font-size="10" font-family="monospace">_start:</text>
+    <text x="25" y="91" fill="#f8fafc" font-size="10" font-family="monospace">la sp, _stack</text>
+    <text x="25" y="109" fill="#f8fafc" font-size="10" font-family="monospace">li a0, 0x10</text>
+    <text x="25" y="127" fill="#f8fafc" font-size="10" font-family="monospace">call main</text>
+    <text x="25" y="145" fill="#f43f5e" font-size="10" font-family="monospace">wfi</text>
+    <rect x="15" y="160" width="110" height="20" rx="3" fill="#0f172a"/>
+    <text x="70" y="174" fill="#38bdf8" font-size="9" font-family="sans-serif" text-anchor="middle">Source Text</text>
+  </g>
+
+  <!-- Arrow -->
+  <path d="M 180 200 L 215 200" stroke="#38bdf8" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- Stage 2: Assembler -->
+  <g transform="translate(220, 110)">
+    <rect width="140" height="190" rx="6" fill="#1e293b" stroke="#818cf8" stroke-width="2"/>
+    <rect width="140" height="30" rx="6" fill="#4338ca"/>
+    <text x="70" y="20" fill="#fff" font-size="12" font-weight="bold" font-family="sans-serif" text-anchor="middle">Assembler (as)</text>
+    <text x="15" y="55" fill="#a5b4fc" font-size="9" font-family="monospace">riscv-none-elf-as</text>
+    <text x="15" y="75" fill="#cbd5e1" font-size="9" font-family="sans-serif">-march=rv32imac</text>
+    <text x="15" y="93" fill="#cbd5e1" font-size="9" font-family="sans-serif">-mabi=ilp32</text>
+    <text x="15" y="120" fill="#fbbf24" font-size="9" font-family="monospace">Emits: .o</text>
+    <text x="15" y="138" fill="#94a3b8" font-size="8" font-family="sans-serif">Relocatable ELF</text>
+    <rect x="15" y="160" width="110" height="20" rx="3" fill="#0f172a"/>
+    <text x="70" y="174" fill="#a5b4fc" font-size="9" font-family="sans-serif" text-anchor="middle">Object Code</text>
+  </g>
+
+  <!-- Arrow -->
+  <path d="M 360 200 L 395 200" stroke="#38bdf8" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- Stage 3: Linker & Script -->
+  <g transform="translate(400, 110)">
+    <rect width="150" height="190" rx="6" fill="#1e293b" stroke="#fbbf24" stroke-width="2"/>
+    <rect width="150" height="30" rx="6" fill="#b45309"/>
+    <text x="75" y="20" fill="#fff" font-size="12" font-weight="bold" font-family="sans-serif" text-anchor="middle">Linker (ld) + .ld</text>
+    <text x="15" y="55" fill="#fde047" font-size="9" font-family="monospace">MEMORY {</text>
+    <text x="25" y="70" fill="#fde047" font-size="8" font-family="monospace">FLASH: 0x80000000</text>
+    <text x="25" y="85" fill="#fde047" font-size="8" font-family="monospace">RAM:   0x80010000</text>
+    <text x="15" y="100" fill="#fde047" font-size="9" font-family="monospace">}</text>
+    <text x="15" y="120" fill="#cbd5e1" font-size="9" font-family="sans-serif">Maps text/data/bss</text>
+    <text x="15" y="138" fill="#34d399" font-size="9" font-family="monospace">Output: image.elf</text>
+    <rect x="15" y="160" width="120" height="20" rx="3" fill="#0f172a"/>
+    <text x="75" y="174" fill="#fde047" font-size="9" font-family="sans-serif" text-anchor="middle">Fully Linked ELF</text>
+  </g>
+
+  <!-- Arrow -->
+  <path d="M 550 200 L 585 200" stroke="#38bdf8" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- Stage 4: Binary Converter -->
+  <g transform="translate(590, 110)">
+    <rect width="140" height="190" rx="6" fill="#1e293b" stroke="#34d399" stroke-width="2"/>
+    <rect width="140" height="30" rx="6" fill="#047857"/>
+    <text x="70" y="20" fill="#fff" font-size="12" font-weight="bold" font-family="sans-serif" text-anchor="middle">Objcopy / Hex</text>
+    <text x="15" y="55" fill="#a7f3d0" font-size="9" font-family="monospace">riscv-objcopy</text>
+    <text x="15" y="75" fill="#94a3b8" font-size="9" font-family="monospace">-O binary .bin</text>
+    <text x="15" y="95" fill="#94a3b8" font-size="9" font-family="monospace">-O verilog .hex</text>
+    <text x="15" y="125" fill="#cbd5e1" font-size="9" font-family="sans-serif">Raw bytes ready</text>
+    <text x="15" y="140" fill="#cbd5e1" font-size="9" font-family="sans-serif">for ROM init</text>
+    <rect x="15" y="160" width="110" height="20" rx="3" fill="#0f172a"/>
+    <text x="70" y="174" fill="#a7f3d0" font-size="9" font-family="sans-serif" text-anchor="middle">Verilog $readmemh</text>
+  </g>
+
+  <!-- Arrow -->
+  <path d="M 730 200 L 765 200" stroke="#34d399" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- Stage 5: Execution Targets -->
+  <g transform="translate(770, 110)">
+    <rect width="150" height="190" rx="6" fill="#1e293b" stroke="#f43f5e" stroke-width="2"/>
+    <rect width="150" height="30" rx="6" fill="#9f1239"/>
+    <text x="75" y="20" fill="#fff" font-size="12" font-weight="bold" font-family="sans-serif" text-anchor="middle">Simulation / Silicon</text>
+
+    <rect x="15" y="48" width="120" height="26" rx="3" fill="#0f172a" stroke="#38bdf8"/>
+    <text x="75" y="65" fill="#38bdf8" font-size="9" font-family="monospace" text-anchor="middle">Spike / QEMU</text>
+
+    <rect x="15" y="82" width="120" height="26" rx="3" fill="#0f172a" stroke="#34d399"/>
+    <text x="75" y="99" fill="#34d399" font-size="9" font-family="monospace" text-anchor="middle">Verilator RTL Sim</text>
+
+    <rect x="15" y="116" width="120" height="26" rx="3" fill="#0f172a" stroke="#fbbf24"/>
+    <text x="75" y="133" fill="#fbbf24" font-size="9" font-family="monospace" text-anchor="middle">FPGA / ASIC Core</text>
+
+    <rect x="15" y="160" width="120" height="20" rx="3" fill="#0f172a"/>
+    <text x="75" y="174" fill="#fda4af" font-size="9" font-family="sans-serif" text-anchor="middle">Execution Target</text>
+  </g>
+
+  <!-- Bottom Explanatory Box -->
+  <g transform="translate(50, 345)">
+    <rect width="860" height="110" rx="8" fill="#0f172a" stroke="#334155"/>
+    <text x="25" y="26" fill="#38bdf8" font-size="13" font-weight="bold" font-family="sans-serif">Disassembly &amp; Inspection Tools:</text>
+    <text x="25" y="48" fill="#cbd5e1" font-size="11" font-family="sans-serif">• <tspan font-family="monospace" fill="#38bdf8">riscv64-unknown-elf-objdump -d firmware.elf</tspan>: Disassembles machine code back into mnemonic instructions.</text>
+    <text x="25" y="68" fill="#cbd5e1" font-size="11" font-family="sans-serif">• <tspan font-family="monospace" fill="#34d399">riscv64-unknown-elf-readelf -a firmware.elf</tspan>: Displays ELF headers, section allocations, symbol tables, and relocation entries.</text>
+    <text x="25" y="88" fill="#94a3b8" font-size="10" font-family="sans-serif">In hardware verification, testbenches load <tspan font-family="monospace">firmware.hex</tspan> into Verilog memory arrays via <tspan font-family="monospace">$readmemh("firmware.hex", dut.ram.mem);</tspan>.</text>
+  </g>
+</svg>

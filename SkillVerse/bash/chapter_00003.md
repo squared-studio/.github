@@ -6,7 +6,7 @@ Conditional statements are the brain of your scripts, enabling them to react int
 
 ### **`if`, `elif`, `else`: Branching Logic**
 
-The `if` statement is the cornerstone of conditional logic in Bash. It allows your script to execute different blocks of code based on whether a condition is true or false.  You can extend `if` with `elif` (else if) to check multiple conditions and `else` to provide a default action.
+The `if` statement is the cornerstone of conditional logic in Bash. It allows your script to execute different blocks of code based on whether a condition is true or false. You can extend `if` with `elif` (else if) to check multiple conditions and `else` to provide a default action.
 
 **Syntax Deep Dive**:
 
@@ -20,9 +20,9 @@ else # Optional 'else' - default action if no conditions were true
 fi #  'fi' marks the end of the 'if' block - essential!
 ```
 
-**Important: Spaces around brackets `[ condition ]`**:  In Bash, `[` is not just syntax; it's actually a command (an alias for `test`). Therefore, you *must* have spaces between the brackets and the condition.  For example, `[ -f "$file" ]` is correct, while `[-f "$file"]` will cause a syntax error.
+**Important: Spaces around brackets `[ condition ]`**: In Bash, `[` is not just syntax; it's actually a command (an alias for `test`). Therefore, you _must_ have spaces between the brackets and the condition. For example, `[ -f "$file" ]` is correct, while `[-f "$file"]` will cause a syntax error.
 
-**Real-World Example**:  Checking for a configuration file and handling different scenarios:
+**Real-World Example**: Checking for a configuration file and handling different scenarios:
 
 ```bash
 #!/bin/bash
@@ -57,30 +57,30 @@ exit 0 # Exit script with success code (zero)
 
 **Key Condition Operators for `[ ... ]` and `[[ ... ]]`**:
 
-*   **Numeric Comparisons**:
-    *   `-eq`:  Equal to (e.g., `[ "$count" -eq "10" ]`)
-    *   `-ne`:  Not equal to (e.g., `[ "$status" -ne "0" ]`)
-    *   `-gt`:  Greater than (e.g., `[ "$age" -gt "18" ]`)
-    *   `-lt`:  Less than (e.g., `[ "$score" -lt "60" ]`)
-    *   `-ge`:  Greater than or equal to (e.g., `[ "$version" -ge "2.0" ]`)
-    *   `-le`:  Less than or equal to (e.g., `[ "$limit" -le "100" ]`)
+- **Numeric Comparisons**:
+  - `-eq`: Equal to (e.g., `[ "$count" -eq "10" ]`)
+  - `-ne`: Not equal to (e.g., `[ "$status" -ne "0" ]`)
+  - `-gt`: Greater than (e.g., `[ "$age" -gt "18" ]`)
+  - `-lt`: Less than (e.g., `[ "$score" -lt "60" ]`)
+  - `-ge`: Greater than or equal to (e.g., `[ "$version" -ge "2.0" ]`)
+  - `-le`: Less than or equal to (e.g., `[ "$limit" -le "100" ]`)
 
-*   **File Test Operators**:
-    *   `-f`:  File exists and is a regular file (e.g., `[ -f "$file_path" ]`)
-    *   `-d`:  Directory exists (e.g., `[ -d "$dir_path" ]`)
-    *   `-e`:  File or directory exists (e.g., `[ -e "$path" ]`)
-    *   `-s`:  File exists and is not empty (e.g., `[ -s "$log_file" ]`)
-    *   `-r`:  File is readable (e.g., `[ -r "$file" ]`)
-    *   `-w`:  File is writable (e.g., `[ -w "$file" ]`)
-    *   `-x`:  File is executable (e.g., `[ -x "$script" ]`)
+- **File Test Operators**:
+  - `-f`: File exists and is a regular file (e.g., `[ -f "$file_path" ]`)
+  - `-d`: Directory exists (e.g., `[ -d "$dir_path" ]`)
+  - `-e`: File or directory exists (e.g., `[ -e "$path" ]`)
+  - `-s`: File exists and is not empty (e.g., `[ -s "$log_file" ]`)
+  - `-r`: File is readable (e.g., `[ -r "$file" ]`)
+  - `-w`: File is writable (e.g., `[ -w "$file" ]`)
+  - `-x`: File is executable (e.g., `[ -x "$script" ]`)
 
-*   **String Comparisons**:
-    *   `=` or `==`:  String equality (e.g., `[ "$string1" = "$string2" ]` or `[[ "$string1" == "$string2" ]]`)
-    *   `!=`:  String inequality (e.g., `[ "$string1" != "$string3" ]` or `[[ "$string1" != "$string3" ]]`)
-    *   `-z`:  String is empty (zero length) (e.g., `[ -z "$empty_var" ]`)
-    *   `-n`:  String is not empty (non-zero length) (e.g., `[ -n "$non_empty_var" ]`)
-    *   `<`:  Less than (lexicographical order) - **Use with `[[ ... ]]` for strings** (e.g., `[[ "$str1" < "$str2" ]]`)
-    *   `>`:  Greater than (lexicographical order) - **Use with `[[ ... ]]` for strings** (e.g., `[[ "$str1" > "$str2" ]]`)
+- **String Comparisons**:
+  - `=` or `==`: String equality (e.g., `[ "$string1" = "$string2" ]` or `[[ "$string1" == "$string2" ]]`)
+  - `!=`: String inequality (e.g., `[ "$string1" != "$string3" ]` or `[[ "$string1" != "$string3" ]]`)
+  - `-z`: String is empty (zero length) (e.g., `[ -z "$empty_var" ]`)
+  - `-n`: String is not empty (non-zero length) (e.g., `[ -n "$non_empty_var" ]`)
+  - `<`: Less than (lexicographical order) - **Use with `[[ ... ]]` for strings** (e.g., `[[ "$str1" < "$str2" ]]`)
+  - `>`: Greater than (lexicographical order) - **Use with `[[ ... ]]` for strings** (e.g., `[[ "$str1" > "$str2" ]]`)
 
 ## **Loops: Automating Repetitive Tasks with Ease**
 
@@ -92,7 +92,7 @@ The `for` loop is designed to iterate over a predefined list of items. This list
 
 **Use Cases**: Processing multiple files, iterating through a list of servers, performing actions for each item in a collection.
 
-**Enhanced Example**:  Renaming all `.txt` files in a directory to `.bak` and providing more informative output:
+**Enhanced Example**: Renaming all `.txt` files in a directory to `.bak` and providing more informative output:
 
 ```bash
 #!/bin/bash
@@ -150,7 +150,7 @@ exit 0 # Exit with success
 
 ### **`while` Loop: Repeating Actions Based on a Condition**
 
-The `while` loop continues to execute a block of code *as long as* a specified condition remains true. It's ideal for situations where you don't know in advance how many iterations are needed.
+The `while` loop continues to execute a block of code _as long as_ a specified condition remains true. It's ideal for situations where you don't know in advance how many iterations are needed.
 
 **Use Cases**: Reading data from a file line by line, continuously monitoring system resources, waiting for a specific event to occur.
 
@@ -178,13 +178,13 @@ while true; do # 'true' is always true, creating an infinite loop (until explici
 done # Loop continues indefinitely until the condition inside the 'if' is met and the script exits
 ```
 
-**Important: Loop Termination**:  When using `while true`, ensure there is a mechanism within the loop to eventually break out of it (e.g., using `break` statement based on a condition, or `exit` to terminate the script).  Otherwise, you'll create an **infinite loop** that runs forever, potentially consuming system resources. In the example above, the `exit 1` statement inside the `if` condition serves as the termination mechanism when memory usage gets too high.
+**Important: Loop Termination**: When using `while true`, ensure there is a mechanism within the loop to eventually break out of it (e.g., using `break` statement based on a condition, or `exit` to terminate the script). Otherwise, you'll create an **infinite loop** that runs forever, potentially consuming system resources. In the example above, the `exit 1` statement inside the `if` condition serves as the termination mechanism when memory usage gets too high.
 
-### **`until` Loop:  Repeating Actions Until a Condition Becomes True**
+### **`until` Loop: Repeating Actions Until a Condition Becomes True**
 
-The `until` loop is the inverse of the `while` loop. It executes a block of code *until* a specified condition becomes true.  It's useful for waiting for a service to start, retrying operations until they succeed, or polling for a specific state.
+The `until` loop is the inverse of the `while` loop. It executes a block of code _until_ a specified condition becomes true. It's useful for waiting for a service to start, retrying operations until they succeed, or polling for a specific state.
 
-**Real-World Example**:  Waiting for a web server to become responsive before proceeding:
+**Real-World Example**: Waiting for a web server to become responsive before proceeding:
 
 ```bash
 #!/bin/bash
@@ -210,20 +210,20 @@ exit 0 # Exit with success
 
 **Explanation of `curl -s http://localhost:8080/healthcheck > /dev/null 2>&1`**:
 
-*   `curl -s "$server_url"`:  Uses the `curl` command to make an HTTP request to the specified `$server_url`. The `-s` option makes `curl` silent, suppressing progress bars and error messages to standard error.
-*   `> /dev/null 2>&1`:  This part redirects the output of the `curl` command.
-    *   `> /dev/null`: Redirects the standard output (where `curl` normally prints the webpage content) to `/dev/null`. `/dev/null` is a special "black hole" file that discards anything written to it.
-    *   `2>&1`:  Redirects standard error (file descriptor 2) to the same location as standard output (file descriptor 1), which is `/dev/null`. This ensures that any error messages from `curl` are also discarded.
+- `curl -s "$server_url"`: Uses the `curl` command to make an HTTP request to the specified `$server_url`. The `-s` option makes `curl` silent, suppressing progress bars and error messages to standard error.
+- `> /dev/null 2>&1`: This part redirects the output of the `curl` command.
+  - `> /dev/null`: Redirects the standard output (where `curl` normally prints the webpage content) to `/dev/null`. `/dev/null` is a special "black hole" file that discards anything written to it.
+  - `2>&1`: Redirects standard error (file descriptor 2) to the same location as standard output (file descriptor 1), which is `/dev/null`. This ensures that any error messages from `curl` are also discarded.
 
-    The key here is that the `until` loop cares about the **exit code** of the `curl` command, not its output. If `curl` successfully connects to the server and gets a response (even an error response like 404, as long as the connection is established), it will typically exit with a zero exit code (success). If `curl` fails to connect (e.g., server is down, URL is wrong), it will exit with a non-zero exit code (failure). The `until` loop continues to iterate as long as `curl` fails (non-zero exit code), and stops when `curl` succeeds (zero exit code).
+  The key here is that the `until` loop cares about the **exit code** of the `curl` command, not its output. If `curl` successfully connects to the server and gets a response (even an error response like 404, as long as the connection is established), it will typically exit with a zero exit code (success). If `curl` fails to connect (e.g., server is down, URL is wrong), it will exit with a non-zero exit code (failure). The `until` loop continues to iterate as long as `curl` fails (non-zero exit code), and stops when `curl` succeeds (zero exit code).
 
 ## **`case` Statements: Handling Multiple Choices Efficiently**
 
 The `case` statement provides a structured way to handle multiple conditional branches based on matching a value against a series of patterns. It's particularly useful for creating menus, processing command-line arguments, or handling different input options.
 
-**Ideal For**:  Creating command-line interfaces, parsing user input, handling different file types, implementing menu-driven scripts.
+**Ideal For**: Creating command-line interfaces, parsing user input, handling different file types, implementing menu-driven scripts.
 
-**Advanced Example**:  Creating a CLI tool to manage a service (start, stop, restart, status):
+**Advanced Example**: Creating a CLI tool to manage a service (start, stop, restart, status):
 
 ```bash
 #!/bin/bash
@@ -270,20 +270,20 @@ exit 0 # Exit with success if a valid action was processed
 
 **Pattern Matching Features in `case`**:
 
-*   `|` (OR operator):  Allows matching multiple patterns for a single case (e.g., `start|s)` matches both "start" and "s").
-*   `*` (Wildcard):  Matches any string. Used for the default case (often named `*)` to handle unexpected input.
-*   `?` (Wildcard): Matches any single character.
-*   `[]` (Character ranges):  Matches any character within the specified range (e.g., `[0-9]` matches any digit, `[a-z]` matches any lowercase letter).
-*   `\` (Escape character):  Used to escape special characters if you want to match them literally (e.g., `\*` matches a literal asterisk).
+- `|` (OR operator): Allows matching multiple patterns for a single case (e.g., `start|s)` matches both "start" and "s").
+- `*` (Wildcard): Matches any string. Used for the default case (often named `*)` to handle unexpected input.
+- `?` (Wildcard): Matches any single character.
+- `[]` (Character ranges): Matches any character within the specified range (e.g., `[0-9]` matches any digit, `[a-z]` matches any lowercase letter).
+- `\` (Escape character): Used to escape special characters if you want to match them literally (e.g., `\*` matches a literal asterisk).
 
 ## **Exercise: Automate an Enhanced Number Generator and Analyzer**
 
 **Task**: Write a script named `number_analyzer.sh` that:
 
 1.  **Prints numbers from 1 to 20** using a `for` loop.
-2.  **Bonus 1:  Even/Odd Check**: Inside the loop, use a conditional statement (`if` or `case`) to check if each number is even or odd. Print each number along with its type (e.g., "Number 2 is Even", "Number 3 is Odd").  *Hint: Use the modulo operator `%` to check for even/odd.*
+2.  **Bonus 1: Even/Odd Check**: Inside the loop, use a conditional statement (`if` or `case`) to check if each number is even or odd. Print each number along with its type (e.g., "Number 2 is Even", "Number 3 is Odd"). _Hint: Use the modulo operator `%` to check for even/odd._
 3.  **Bonus 2: Summation and Average**: Calculate the sum of all numbers from 1 to 20 and compute the average. Print the total sum and the average after the loop completes.
-4.  **Expert Challenge:  Prime Number Check**: For each number, add a check to determine if it's a prime number. If it is, print "(Prime)" after the number and its even/odd type (e.g., "Number 7 is Odd (Prime)"). *Prime number check logic will require nested loops or a function.*
+4.  **Expert Challenge: Prime Number Check**: For each number, add a check to determine if it's a prime number. If it is, print "(Prime)" after the number and its even/odd type (e.g., "Number 7 is Odd (Prime)"). _Prime number check logic will require nested loops or a function._
 
 **Example Solution (including Even/Odd and Summation Bonuses)**:
 
@@ -375,16 +375,15 @@ exit 0
 
 ## **Pro Tips for Mastering Control Structures**
 
-1.  **Avoid Infinite Loops (Especially with `while true`)**:  Always ensure that `while true` loops have a clear exit condition within their body, typically using `break` or `exit` statements based on some condition.  Unintentional infinite loops can freeze your script and consume system resources.
-2.  **Quote Your Variables in Conditions**:  Just like with commands, always quote your variables when using them in conditional expressions (e.g., `[ "$var" -eq "10" ]`, `[[ "$string_var" == "value" ]]`). This prevents word splitting and pathname expansion issues, making your conditions reliable, especially when dealing with strings that might contain spaces or special characters.
-3.  **Use `(( ... ))` for Arithmetic Conditions**:  For numerical comparisons and arithmetic operations within conditions, use the `$(( ... ))` arithmetic expansion or `(( ... ))` for arithmetic evaluation within `if` or loop conditions.  `(( ... ))` is often preferred within conditionals for better readability and cleaner syntax (e.g., `if (( count > 10 )); then ...`).
-4.  **Understand Exit Codes**:  Bash conditions and control structures heavily rely on command exit codes.  A command that executes successfully typically returns an exit code of 0 (true in conditional contexts), while a command that fails returns a non-zero exit code (false in conditional contexts).  Utilize exit codes effectively for error handling and control flow.
+1.  **Avoid Infinite Loops (Especially with `while true`)**: Always ensure that `while true` loops have a clear exit condition within their body, typically using `break` or `exit` statements based on some condition. Unintentional infinite loops can freeze your script and consume system resources.
+2.  **Quote Your Variables in Conditions**: Just like with commands, always quote your variables when using them in conditional expressions (e.g., `[ "$var" -eq "10" ]`, `[[ "$string_var" == "value" ]]`). This prevents word splitting and pathname expansion issues, making your conditions reliable, especially when dealing with strings that might contain spaces or special characters.
+3.  **Use `(( ... ))` for Arithmetic Conditions**: For numerical comparisons and arithmetic operations within conditions, use the `$(( ... ))` arithmetic expansion or `(( ... ))` for arithmetic evaluation within `if` or loop conditions. `(( ... ))` is often preferred within conditionals for better readability and cleaner syntax (e.g., `if (( count > 10 )); then ...`).
+4.  **Understand Exit Codes**: Bash conditions and control structures heavily rely on command exit codes. A command that executes successfully typically returns an exit code of 0 (true in conditional contexts), while a command that fails returns a non-zero exit code (false in conditional contexts). Utilize exit codes effectively for error handling and control flow.
 
 **Common Gotchas to Watch Out For**:
 
-*   **Forgetting `;;` in `case` Statements**:  In `case` statements, remember to terminate each case block with `;;` (double semicolon).  Forgetting `;;` will cause "fall-through," where the script will continue executing the code blocks of subsequent cases, even if they don't match, leading to unexpected and incorrect behavior.
-*   **Missing Spaces in `[ $a -eq $b ]`**:  As mentioned earlier, remember that `[` is a command, and it requires spaces around its arguments and operators.  `[ $a -eq $b ]` is correct, but `[$a -eq $b]` or `[ $a-eq $b ]` will result in syntax errors because Bash will not recognize them as valid commands with properly separated arguments.
-*   **Confusing String and Numeric Operators**:  Be mindful of using the correct operators for string and numeric comparisons.  Using numeric operators (like `-eq`, `-gt`) for strings or string operators (like `==`, `<`) for numbers can lead to incorrect comparisons and logic errors.  Always use `-eq`, `-ne`, `-lt`, `-gt`, `-le`, `-ge` for numerical comparisons within `[ ... ]` and `[[ ... ]]`. Use `==`, `!=`, `<`, `>` for string comparisons within `[[ ... ]]`.
+- **Forgetting `;;` in `case` Statements**: In `case` statements, remember to terminate each case block with `;;` (double semicolon). Forgetting `;;` will cause "fall-through," where the script will continue executing the code blocks of subsequent cases, even if they don't match, leading to unexpected and incorrect behavior.
+- **Missing Spaces in `[ $a -eq $b ]`**: As mentioned earlier, remember that `[` is a command, and it requires spaces around its arguments and operators. `[ $a -eq $b ]` is correct, but `[$a -eq $b]` or `[ $a-eq $b ]` will result in syntax errors because Bash will not recognize them as valid commands with properly separated arguments.
+- **Confusing String and Numeric Operators**: Be mindful of using the correct operators for string and numeric comparisons. Using numeric operators (like `-eq`, `-gt`) for strings or string operators (like `==`, `<`) for numbers can lead to incorrect comparisons and logic errors. Always use `-eq`, `-ne`, `-lt`, `-gt`, `-le`, `-ge` for numerical comparisons within `[ ... ]` and `[[ ... ]]`. Use `==`, `!=`, `<`, `>` for string comparisons within `[[ ... ]]`.
 
 ##### Copyright (c) 2026 squared-studio
-

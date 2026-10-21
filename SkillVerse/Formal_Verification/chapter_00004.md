@@ -1,9 +1,11 @@
 # Get Hands-On with Formal Verification Tools
 
 ## Industry Tools
+
 Industry tools are commercial software used for formal verification. They offer advanced features and support for large designs.
 
 ### Key Tools:
+
 - **Cadence JasperGold**: A comprehensive formal verification platform.
   - **Features**: Property checking, equivalence checking, and coverage analysis.
   - **Example**: Using JasperGold to verify a complex SoC design by writing properties and checking them against the design.
@@ -15,9 +17,11 @@ Industry tools are commercial software used for formal verification. They offer 
   - **Example**: Using Questa Formal to verify the correctness of a state machine by writing assertions and running formal checks.
 
 ## Open-Source Options
+
 Open-source tools are freely available and can be used for learning and small projects.
 
 ### Key Tools:
+
 - **Yosys**: A framework for Verilog synthesis and formal verification.
   - **Features**: Supports various formal verification flows and integration with other tools.
   - **Example**: Using Yosys to synthesize a Verilog design and verify its properties using formal methods.
@@ -29,4 +33,3 @@ Open-source tools are freely available and can be used for learning and small pr
   - **Example**: Using CoSA to verify the correctness of a combinational logic circuit by writing properties and running checks.
 
 ##### Copyright (c) 2026 squared-studio
-

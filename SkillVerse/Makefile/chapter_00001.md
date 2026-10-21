@@ -1,12 +1,15 @@
 # Introduction to Makefile
 
 ## What is Makefile?
+
 A Makefile is a special file, containing shell commands, that you create and name `Makefile` or `makefile`. It is used by the `make` utility to automate the process of building and managing dependencies in software projects. Makefiles are particularly useful in large projects where managing the compilation process manually would be cumbersome and error-prone.
 
 ## History and Importance of Makefile
+
 Makefile was introduced in 1976 as part of the Unix operating system. It was created to address the need for a tool that could automatically determine which pieces of a program need to be recompiled and issue the commands to recompile them. Over the years, Makefile has become an essential tool in the software development process, especially in Unix-based environments.
 
 ## Basic Syntax and Structure
+
 A Makefile consists of a set of rules. Each rule defines how to build a target from its dependencies. The basic syntax of a rule is as follows:
 
 ```
@@ -19,6 +22,7 @@ target: dependencies
 - **command**: The shell command to build the target.
 
 ### Example
+
 Here is a simple example of a Makefile:
 
 ```makefile
@@ -39,6 +43,7 @@ clean:
 ```
 
 In this example:
+
 - The `all` target depends on `program`.
 - The `program` target depends on `main.o` and `utils.o`.
 - The `main.o` target depends on `main.c`.
@@ -46,6 +51,7 @@ In this example:
 - The `clean` target is a phony target used to remove the compiled files.
 
 ## Simple Makefile Example
+
 Let's break down the example step by step:
 
 1. **all: program**
@@ -64,16 +70,20 @@ Let's break down the example step by step:
    - The `clean` target does not depend on any files. The command `rm -f program main.o utils.o` will remove the compiled files.
 
 ## Simple Exercise
+
 Create a Makefile for a simple project with the following files:
+
 - `main.c`
 - `utils.c`
 
 The Makefile should:
+
 1. Compile `main.c` and `utils.c` into object files.
 2. Link the object files to create an executable named `program`.
 3. Include a `clean` target to remove the compiled files.
 
 ### Solution
+
 ```makefile
 CC = gcc
 CFLAGS = -Wall -g
@@ -94,4 +104,3 @@ clean:
 ```
 
 ##### Copyright (c) 2026 squared-studio
-

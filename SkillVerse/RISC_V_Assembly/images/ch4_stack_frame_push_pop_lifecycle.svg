@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 480" width="100%" height="100%">
+  <rect width="960" height="480" fill="#0b1120" rx="8"/>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8"/>
+    </marker>
+  </defs>
+
+  <text x="480" y="38" fill="#f8fafc" font-size="20" font-weight="bold" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" text-anchor="middle">RISC-V Stack Frame Anatomy &amp; 16-Byte Alignment Mandate</text>
+  <text x="480" y="62" fill="#94a3b8" font-size="13" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" text-anchor="middle">Standard procedure prologue and epilogue preserving Return Address (ra) and Callee-Saved Registers (s0-s11)</text>
+
+  <!-- Stack Memory Visualizer -->
+  <g transform="translate(60, 95)">
+    <rect width="400" height="240" rx="8" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+    <rect width="400" height="30" rx="8" fill="#0369a1"/>
+    <text x="200" y="20" fill="#fff" font-size="12" font-weight="bold" font-family="sans-serif" text-anchor="middle">Call Stack Memory Layout (Grows Downward)</text>
+
+    <!-- Caller Frame -->
+    <rect x="25" y="42" width="350" height="30" fill="#334155" stroke="#64748b" rx="2"/>
+    <text x="200" y="62" fill="#cbd5e1" font-size="10" font-family="monospace" text-anchor="middle">Caller's Stack Frame (High Address)</text>
+    <text x="385" y="62" fill="#94a3b8" font-size="10" font-family="monospace">sp + 32</text>
+
+    <!-- Saved ra -->
+    <rect x="25" y="78" width="350" height="30" fill="#082f49" stroke="#38bdf8" rx="2"/>
+    <text x="200" y="98" fill="#7dd3fc" font-size="10" font-family="monospace" text-anchor="middle">sw ra, 28(sp)   # Saved Return Address</text>
+    <text x="385" y="98" fill="#38bdf8" font-size="10" font-family="monospace">sp + 28</text>
+
+    <!-- Saved s0 / fp -->
+    <rect x="25" y="114" width="350" height="30" fill="#064e3b" stroke="#34d399" rx="2"/>
+    <text x="200" y="134" fill="#a7f3d0" font-size="10" font-family="monospace" text-anchor="middle">sw s0, 24(sp)   # Saved Frame Pointer</text>
+    <text x="385" y="134" fill="#34d399" font-size="10" font-family="monospace">sp + 24</text>
+
+    <!-- Saved s1 -->
+    <rect x="25" y="150" width="350" height="30" fill="#064e3b" stroke="#34d399" rx="2"/>
+    <text x="200" y="170" fill="#a7f3d0" font-size="10" font-family="monospace" text-anchor="middle">sw s1, 20(sp)   # Saved Register s1</text>
+    <text x="385" y="170" fill="#34d399" font-size="10" font-family="monospace">sp + 20</text>
+
+    <!-- Local buffer / padding -->
+    <rect x="25" y="186" width="350" height="40" fill="#451a03" stroke="#fbbf24" rx="2"/>
+    <text x="200" y="204" fill="#fde047" font-size="10" font-family="monospace" text-anchor="middle">Local Array / Variables &amp; Padding Bytes</text>
+    <text x="200" y="218" fill="#fef08a" font-size="9" font-family="sans-serif" text-anchor="middle">Padded to multiple of 16 bytes</text>
+    <text x="385" y="210" fill="#fbbf24" font-size="10" font-family="monospace">sp + 0</text>
+  </g>
+
+  <!-- Right: Assembly Code Template -->
+  <g transform="translate(500, 95)">
+    <rect width="400" height="240" rx="8" fill="#1e293b" stroke="#34d399" stroke-width="2"/>
+    <rect width="400" height="30" rx="8" fill="#047857"/>
+    <text x="200" y="20" fill="#fff" font-size="12" font-weight="bold" font-family="sans-serif" text-anchor="middle">Standard Procedure Assembly Template</text>
+
+    <g transform="translate(20, 42)">
+      <text x="0" y="16" fill="#34d399" font-size="11" font-weight="bold" font-family="sans-serif"># 1. PROLOGUE (Allocate Frame):</text>
+      <text x="15" y="34" fill="#f8fafc" font-size="10" font-family="monospace">addi sp, sp, -32       # 16-byte aligned!</text>
+      <text x="15" y="50" fill="#f8fafc" font-size="10" font-family="monospace">sw   ra, 28(sp)        # Save return addr</text>
+      <text x="15" y="66" fill="#f8fafc" font-size="10" font-family="monospace">sw   s0, 24(sp)        # Save frame pointer</text>
+      <text x="15" y="82" fill="#f8fafc" font-size="10" font-family="monospace">addi s0, sp, 32        # Establish new fp</text>
+
+      <text x="0" y="106" fill="#fbbf24" font-size="11" font-weight="bold" font-family="sans-serif"># 2. BODY (Compute &amp; Call Children):</text>
+      <text x="15" y="124" fill="#f8fafc" font-size="10" font-family="monospace">call child_function    # Overwrites ra!</text>
+
+      <text x="0" y="148" fill="#f43f5e" font-size="11" font-weight="bold" font-family="sans-serif"># 3. EPILOGUE (Restore &amp; Deallocate):</text>
+      <text x="15" y="166" fill="#f8fafc" font-size="10" font-family="monospace">lw   ra, 28(sp)        # Restore return addr</text>
+      <text x="15" y="182" fill="#f8fafc" font-size="10" font-family="monospace">lw   s0, 24(sp)        # Restore caller fp</text>
+      <text x="15" y="198" fill="#f8fafc" font-size="10" font-family="monospace">addi sp, sp, 32        # Reclaim stack</text>
+      <text x="15" y="214" fill="#38bdf8" font-size="10" font-family="monospace">ret                         # jalr x0, 0(ra)</text>
+    </g>
+  </g>
+
+  <!-- Bottom Explanatory Box -->
+  <g transform="translate(60, 350)">
+    <rect width="840" height="105" rx="8" fill="#0f172a" stroke="#334155"/>
+    <text x="25" y="26" fill="#fbbf24" font-size="13" font-weight="bold" font-family="sans-serif">The 16-Byte Stack Alignment Invariant (RISC-V ABI Mandate):</text>
+    <text x="25" y="48" fill="#cbd5e1" font-size="11" font-family="sans-serif">• The RISC-V Calling Convention mandates that the Stack Pointer (<tspan font-family="monospace" fill="#34d399">sp</tspan>) MUST be aligned to a <tspan font-weight="bold">16-byte boundary</tspan> on any procedure call.</text>
+    <text x="25" y="68" fill="#cbd5e1" font-size="11" font-family="sans-serif">• Even if a function only needs to push 4 bytes (e.g. just <tspan font-family="monospace">ra</tspan>), it MUST allocate at least 16 bytes (<tspan font-family="monospace">addi sp, sp, -16</tspan>).</text>
+    <text x="25" y="88" fill="#94a3b8" font-size="10" font-family="sans-serif">Failure to maintain 16-byte alignment violates standard C library interoperability and causes crashes in SIMD/floating-point operations.</text>
+  </g>
+</svg>

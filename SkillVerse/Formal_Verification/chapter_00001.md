@@ -1,9 +1,11 @@
 # Solidify Your Foundations
 
 ## Digital Logic and Boolean Algebra
+
 Digital logic forms the basis of digital circuits. It involves understanding how digital systems operate using binary values (0s and 1s). Boolean algebra is a mathematical approach to analyzing and simplifying digital circuits.
 
 ### Key Concepts:
+
 - **Logic Gates**: Basic building blocks of digital circuits. Examples include:
   - **AND Gate**: Outputs true only if all inputs are true.
   - **OR Gate**: Outputs true if at least one input is true.
@@ -18,9 +20,11 @@ Digital logic forms the basis of digital circuits. It involves understanding how
   - **Example**: A Karnaugh map for the expression A AND B can help identify common patterns and simplify the expression.
 
 ## Finite State Machines (FSMs)
+
 FSMs are models of computation used to design both computer programs and sequential logic circuits. They consist of a finite number of states and transitions between those states.
 
 ### Key Concepts:
+
 - **States**: Different conditions or modes of operation of the system.
   - **Example**: A traffic light system has states like "Red", "Green", and "Yellow".
 - **Transitions**: Rules that determine state changes based on inputs.
@@ -32,4 +36,3 @@ FSMs are models of computation used to design both computer programs and sequent
   - **Moore Machine**: Outputs depend only on the current state.
 
 ##### Copyright (c) 2026 squared-studio
-

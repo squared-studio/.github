@@ -1,0 +1,124 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 480" width="100%" height="100%">
+  <rect width="960" height="480" fill="#0b1120" rx="8"/>
+  <text x="480" y="38" fill="#f8fafc" font-size="20" font-weight="bold" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" text-anchor="middle">RISC-V 32-Register General Purpose File (GPR) &amp; Standard ABI</text>
+  <text x="480" y="62" fill="#94a3b8" font-size="13" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" text-anchor="middle">Register roles, hardware x0 ground, caller vs. callee preservation rules (ILP32 / LP64)</text>
+
+  <!-- Register Groups Columns -->
+  <!-- Col 1: Special & Arguments -->
+  <g transform="translate(50, 95)">
+    <rect width="270" height="240" rx="6" fill="#1e293b" stroke="#38bdf8" stroke-width="1.5"/>
+    <rect width="270" height="26" rx="6" fill="#0369a1"/>
+    <text x="135" y="18" fill="#fff" font-size="11" font-weight="bold" font-family="sans-serif" text-anchor="middle">Special &amp; Arguments (Caller-Saved)</text>
+
+    <!-- x0 -->
+    <g transform="translate(10, 35)">
+      <rect width="250" height="24" rx="3" fill="#082f49" stroke="#38bdf8"/>
+      <text x="10" y="16" fill="#38bdf8" font-size="10" font-family="monospace" font-weight="bold">x0   | zero</text>
+      <text x="120" y="16" fill="#cbd5e1" font-size="9" font-family="sans-serif">Hardwired 0 (Immutable)</text>
+    </g>
+
+    <!-- x1 -->
+    <g transform="translate(10, 63)">
+      <rect width="250" height="24" rx="3" fill="#0f172a" stroke="#334155"/>
+      <text x="10" y="16" fill="#38bdf8" font-size="10" font-family="monospace" font-weight="bold">x1   | ra</text>
+      <text x="120" y="16" fill="#fde047" font-size="9" font-family="sans-serif">Return Address (Caller)</text>
+    </g>
+
+    <!-- x2, x3, x4 -->
+    <g transform="translate(10, 91)">
+      <rect width="250" height="24" rx="3" fill="#0f172a" stroke="#334155"/>
+      <text x="10" y="16" fill="#34d399" font-size="10" font-family="monospace" font-weight="bold">x2   | sp</text>
+      <text x="120" y="16" fill="#a7f3d0" font-size="9" font-family="sans-serif">Stack Pointer (Callee)</text>
+    </g>
+    <g transform="translate(10, 119)">
+      <rect width="250" height="24" rx="3" fill="#0f172a" stroke="#334155"/>
+      <text x="10" y="16" fill="#94a3b8" font-size="10" font-family="monospace">x3   | gp</text>
+      <text x="120" y="16" fill="#94a3b8" font-size="9" font-family="sans-serif">Global Pointer</text>
+    </g>
+    <g transform="translate(10, 147)">
+      <rect width="250" height="24" rx="3" fill="#0f172a" stroke="#334155"/>
+      <text x="10" y="16" fill="#94a3b8" font-size="10" font-family="monospace">x4   | tp</text>
+      <text x="120" y="16" fill="#94a3b8" font-size="9" font-family="sans-serif">Thread Pointer</text>
+    </g>
+
+    <!-- x10-x17 -->
+    <g transform="translate(10, 175)">
+      <rect width="250" height="50" rx="3" fill="#082f49" stroke="#38bdf8"/>
+      <text x="10" y="18" fill="#38bdf8" font-size="10" font-family="monospace" font-weight="bold">x10..x11 | a0..a1</text>
+      <text x="120" y="18" fill="#bae6fd" font-size="9" font-family="sans-serif">Arguments &amp; Return Vals</text>
+      <text x="10" y="38" fill="#38bdf8" font-size="10" font-family="monospace" font-weight="bold">x12..x17 | a2..a7</text>
+      <text x="120" y="38" fill="#bae6fd" font-size="9" font-family="sans-serif">Arguments 2..7 (Caller)</text>
+    </g>
+  </g>
+
+  <!-- Col 2: Saved Registers -->
+  <g transform="translate(345, 95)">
+    <rect width="270" height="240" rx="6" fill="#1e293b" stroke="#34d399" stroke-width="1.5"/>
+    <rect width="270" height="26" rx="6" fill="#047857"/>
+    <text x="135" y="18" fill="#fff" font-size="11" font-weight="bold" font-family="sans-serif" text-anchor="middle">Saved Registers (Callee-Preserved)</text>
+
+    <!-- x8 / s0 -->
+    <g transform="translate(10, 35)">
+      <rect width="250" height="30" rx="3" fill="#064e3b" stroke="#34d399"/>
+      <text x="10" y="20" fill="#34d399" font-size="10" font-family="monospace" font-weight="bold">x8   | s0 / fp</text>
+      <text x="120" y="20" fill="#a7f3d0" font-size="9" font-family="sans-serif">Saved / Frame Pointer</text>
+    </g>
+
+    <!-- x9 / s1 -->
+    <g transform="translate(10, 72)">
+      <rect width="250" height="30" rx="3" fill="#0f172a" stroke="#059669"/>
+      <text x="10" y="20" fill="#34d399" font-size="10" font-family="monospace" font-weight="bold">x9   | s1</text>
+      <text x="120" y="20" fill="#a7f3d0" font-size="9" font-family="sans-serif">Saved Register 1</text>
+    </g>
+
+    <!-- x18-x27 / s2-s11 -->
+    <g transform="translate(10, 109)">
+      <rect width="250" height="115" rx="3" fill="#064e3b" stroke="#34d399"/>
+      <text x="10" y="20" fill="#34d399" font-size="10" font-family="monospace" font-weight="bold">x18..x27 | s2..s11</text>
+      <text x="10" y="40" fill="#a7f3d0" font-size="9" font-family="sans-serif">Callee-Saved Registers:</text>
+      <text x="20" y="60" fill="#cbd5e1" font-size="9" font-family="sans-serif">• If a subroutine modifies s0-s11,</text>
+      <text x="20" y="78" fill="#cbd5e1" font-size="9" font-family="sans-serif">  it MUST save them to stack in</text>
+      <text x="20" y="96" fill="#cbd5e1" font-size="9" font-family="sans-serif">  prologue and restore in epilogue.</text>
+    </g>
+  </g>
+
+  <!-- Col 3: Temporaries -->
+  <g transform="translate(640, 95)">
+    <rect width="270" height="240" rx="6" fill="#1e293b" stroke="#fbbf24" stroke-width="1.5"/>
+    <rect width="270" height="26" rx="6" fill="#b45309"/>
+    <text x="135" y="18" fill="#fff" font-size="11" font-weight="bold" font-family="sans-serif" text-anchor="middle">Temporaries (Caller-Saved)</text>
+
+    <!-- x5-x7 / t0-t2 -->
+    <g transform="translate(10, 35)">
+      <rect width="250" height="50" rx="3" fill="#451a03" stroke="#fbbf24"/>
+      <text x="10" y="20" fill="#fbbf24" font-size="10" font-family="monospace" font-weight="bold">x5..x7 | t0..t2</text>
+      <text x="110" y="20" fill="#fde047" font-size="9" font-family="sans-serif">Temporary Regs 0..2</text>
+      <text x="10" y="38" fill="#fef08a" font-size="8" font-family="sans-serif">Overwritten across procedure calls</text>
+    </g>
+
+    <!-- x28-x31 / t3-t6 -->
+    <g transform="translate(10, 95)">
+      <rect width="250" height="50" rx="3" fill="#451a03" stroke="#fbbf24"/>
+      <text x="10" y="20" fill="#fbbf24" font-size="10" font-family="monospace" font-weight="bold">x28..x31 | t3..t6</text>
+      <text x="110" y="20" fill="#fde047" font-size="9" font-family="sans-serif">Temporary Regs 3..6</text>
+      <text x="10" y="38" fill="#fef08a" font-size="8" font-family="sans-serif">Fast scratchpad registers</text>
+    </g>
+
+    <!-- PC note -->
+    <g transform="translate(10, 155)">
+      <rect width="250" height="70" rx="3" fill="#0f172a" stroke="#f43f5e"/>
+      <text x="10" y="20" fill="#f43f5e" font-size="10" font-family="monospace" font-weight="bold">pc (Program Counter)</text>
+      <text x="10" y="38" fill="#cbd5e1" font-size="9" font-family="sans-serif">Holds instruction address.</text>
+      <text x="10" y="55" fill="#fda4af" font-size="8" font-family="sans-serif">Not part of GPR file; modified via jumps.</text>
+    </g>
+  </g>
+
+  <!-- Bottom Explanatory Box -->
+  <g transform="translate(50, 350)">
+    <rect width="860" height="105" rx="8" fill="#0f172a" stroke="#334155"/>
+    <text x="25" y="26" fill="#38bdf8" font-size="13" font-weight="bold" font-family="sans-serif">Hardware Significance of x0 (Zero Register):</text>
+    <text x="25" y="48" fill="#cbd5e1" font-size="11" font-family="sans-serif">• <tspan font-weight="bold" fill="#38bdf8">x0 is hardwired to Ground (0)</tspan>: Reads always yield 0; writes are silently discarded by the register file write-enable logic.</text>
+    <text x="25" y="68" fill="#cbd5e1" font-size="11" font-family="sans-serif">• Eliminates need for separate instructions: <tspan font-family="monospace" fill="#34d399">nop == addi x0, x0, 0</tspan>; <tspan font-family="monospace" fill="#34d399">mv rd, rs == addi rd, rs, 0</tspan>; <tspan font-family="monospace" fill="#34d399">neg rd, rs == sub rd, x0, rs</tspan>.</text>
+    <text x="25" y="88" fill="#cbd5e1" font-size="11" font-family="sans-serif">• Dramatically simplifies decode and control logic in hardware silicon implementations.</text>
+  </g>
+</svg>

@@ -117,7 +117,6 @@ git add directory/        # Stage all changes within 'directory/'
 
 - **Atomic Commits**: Create commits that are atomic, meaning each commit should represent a single, logical change or idea. This makes it easier to understand the history and revert changes if needed. Avoid bundling unrelated changes into one commit.
 - **Conventional Commits Style**: Follow the [Conventional Commits](https://www.conventionalcommits.org/) specification for writing commit messages. This provides a standardized format that improves readability and automation. Common commit types include:
-
   - `feat`: For new features.
   - `fix`: For bug fixes.
   - `docs`: For documentation changes.

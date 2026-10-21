@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 480" width="100%" height="100%">
+  <rect width="960" height="480" fill="#0b1120" rx="8"/>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8"/>
+    </marker>
+    <marker id="arrow-green" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#34d399"/>
+    </marker>
+  </defs>
+
+  <text x="480" y="38" fill="#f8fafc" font-size="20" font-weight="bold" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" text-anchor="middle">Recursive Function Stack Frames: fibonacci(3) Example</text>
+  <text x="480" y="62" fill="#94a3b8" font-size="13" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" text-anchor="middle">Tracking stack pointer adjustments, saved return addresses, and intermediate accumulator states</text>
+
+  <!-- Left: Recursive Call Tree -->
+  <g transform="translate(60, 95)">
+    <rect width="380" height="240" rx="8" fill="#1e293b" stroke="#38bdf8" stroke-width="1.5"/>
+    <text x="190" y="25" fill="#38bdf8" font-size="13" font-weight="bold" font-family="sans-serif" text-anchor="middle">Execution Tree: fib(3)</text>
+
+    <!-- Node 1: fib(3) -->
+    <rect x="130" y="45" width="120" height="34" rx="4" fill="#0369a1" stroke="#38bdf8"/>
+    <text x="190" y="66" fill="#fff" font-size="11" font-family="monospace" text-anchor="middle">fib(3) [sp=0]</text>
+
+    <!-- Left Child: fib(2) -->
+    <rect x="40" y="115" width="120" height="34" rx="4" fill="#065f46" stroke="#34d399"/>
+    <text x="100" y="136" fill="#fff" font-size="11" font-family="monospace" text-anchor="middle">fib(2) [sp=-16]</text>
+
+    <!-- Right Child: fib(1) -->
+    <rect x="220" y="115" width="120" height="34" rx="4" fill="#854d0e" stroke="#fbbf24"/>
+    <text x="280" y="136" fill="#fff" font-size="11" font-family="monospace" text-anchor="middle">fib(1) = 1 (Leaf)</text>
+
+    <!-- Sub-children of fib(2) -->
+    <rect x="10" y="180" width="100" height="30" rx="3" fill="#854d0e" stroke="#fbbf24"/>
+    <text x="60" y="199" fill="#fff" font-size="10" font-family="monospace" text-anchor="middle">fib(1) = 1</text>
+
+    <rect x="125" y="180" width="100" height="30" rx="3" fill="#854d0e" stroke="#fbbf24"/>
+    <text x="175" y="199" fill="#fff" font-size="10" font-family="monospace" text-anchor="middle">fib(0) = 0</text>
+
+    <!-- Tree Lines -->
+    <path d="M 160 80 L 110 115" stroke="#38bdf8" stroke-width="1.5" marker-end="url(#arrow)"/>
+    <path d="M 220 80 L 270 115" stroke="#38bdf8" stroke-width="1.5" marker-end="url(#arrow)"/>
+    <path d="M 80 150 L 60 180" stroke="#34d399" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+    <path d="M 120 150 L 160 180" stroke="#34d399" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+  </g>
+
+  <!-- Right: Stack Frame Growth at Max Depth -->
+  <g transform="translate(480, 95)">
+    <rect width="420" height="240" rx="8" fill="#1e293b" stroke="#34d399" stroke-width="1.5"/>
+    <text x="210" y="25" fill="#34d399" font-size="13" font-weight="bold" font-family="sans-serif" text-anchor="middle">Stack Memory at Max Depth (Depth = 2)</text>
+
+    <g transform="translate(20, 42)">
+      <!-- Frame 0: main -->
+      <rect width="380" height="35" rx="3" fill="#334155" stroke="#64748b"/>
+      <text x="190" y="22" fill="#fff" font-size="10" font-family="monospace" text-anchor="middle">main's frame (sp = 0x80004000)</text>
+
+      <!-- Frame 1: fib(3) -->
+      <rect y="42" width="380" height="48" rx="3" fill="#082f49" stroke="#38bdf8"/>
+      <text x="190" y="62" fill="#7dd3fc" font-size="10" font-family="monospace" text-anchor="middle">fib(3) frame: saved ra to main, saved s0=3</text>
+      <text x="190" y="78" fill="#bae6fd" font-size="9" font-family="monospace" text-anchor="middle">sp = 0x80003FF0 (-16 bytes)</text>
+
+      <!-- Frame 2: fib(2) -->
+      <rect y="96" width="380" height="48" rx="3" fill="#064e3b" stroke="#34d399"/>
+      <text x="190" y="116" fill="#a7f3d0" font-size="10" font-family="monospace" text-anchor="middle">fib(2) frame: saved ra to fib(3), saved s0=2</text>
+      <text x="190" y="132" fill="#d1fae5" font-size="9" font-family="monospace" text-anchor="middle">sp = 0x80003FE0 (-32 bytes, PEAK DEPTH)</text>
+
+      <!-- Deallocation Arrow -->
+      <path d="M 35 155 L 35 175" stroke="#fbbf24" stroke-width="2" marker-end="url(#arrow)"/>
+      <text x="50" y="170" fill="#fbbf24" font-size="10" font-family="sans-serif">Returns pop frames upwards</text>
+    </g>
+  </g>
+
+  <!-- Bottom Details -->
+  <g transform="translate(60, 350)">
+    <rect width="840" height="105" rx="8" fill="#0f172a" stroke="#334155"/>
+    <text x="25" y="26" fill="#38bdf8" font-size="13" font-weight="bold" font-family="sans-serif">Why Callee-Saved Registers are Mandatory in Non-Leaf Functions:</text>
+    <text x="25" y="48" fill="#cbd5e1" font-size="11" font-family="sans-serif">• When <tspan font-family="monospace">fib(3)</tspan> computes <tspan font-family="monospace">fib(2) + fib(1)</tspan>, calling <tspan font-family="monospace">fib(2)</tspan> clobbers temporary registers (<tspan font-family="monospace">t0-t6</tspan>, <tspan font-family="monospace">a0-a7</tspan>).</text>
+    <text x="25" y="68" fill="#cbd5e1" font-size="11" font-family="sans-serif">• The input argument $n$ and the result of the first recursive call MUST be held in callee-saved registers (<tspan font-family="monospace" fill="#34d399">s0</tspan>, <tspan font-family="monospace" fill="#34d399">s1</tspan>) across child invocations.</text>
+    <text x="25" y="88" fill="#94a3b8" font-size="10" font-family="sans-serif">This guarantees intermediate state is safely preserved on the stack.</text>
+  </g>
+</svg>

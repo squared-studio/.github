@@ -25,4 +25,3 @@ In this chapter, we will cover the steps to debug your design using the Vivado G
 By following these steps, you can debug your design using Vivado and ensure it functions correctly on the FPGA.
 
 ##### Copyright (c) 2026 squared-studio
-

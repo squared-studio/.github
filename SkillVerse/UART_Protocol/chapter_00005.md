@@ -1,6 +1,7 @@
 # Transmitter and Receiver State Machines
 
 ### Learning Objectives
+
 - Master the internal architecture and state transitions of the **UART Transmitter (TX) Finite State Machine**.
 - Master the internal architecture and state transitions of the **UART Receiver (RX) Finite State Machine**.
 - Analyze the control interactions between the **Tick Counter** (modulo-16 baud timing) and the **Bit Counter** (payload indexing).
@@ -16,6 +17,7 @@ The UART Transmitter is responsible for taking a parallel byte from the CPU or T
 ![UART Transmitter State Machine](images/ch5_tx_state_machine.svg)
 
 ### State Definitions:
+
 1. **`TX_IDLE`:**
    - The transmitter holds the `TX` pin steadily at **Logic 1 (MARK)**.
    - The hardware monitors the `tx_start_req` signal (asserted when software writes to the Transmitter Holding Register or when the TX FIFO is non-empty).
@@ -72,6 +74,7 @@ CPU / DMA Bus Write
 ```
 
 ### The Double-Buffering Sequence:
+
 1. **Byte 1 Written:** Software writes Byte 1 to `THR`. Because `TSR` is currently empty, hardware immediately transfers Byte 1 in parallel from `THR` into `TSR` within a single clock cycle.
 2. **Transmission Begins:** `TSR` begins shifting Byte 1 onto the wire. The hardware sets the status flag `THRE = 1` (**Transmitter Holding Register Empty**), signaling to the CPU that `THR` is free.
 3. **Byte 2 Written:** Software immediately writes Byte 2 into `THR` while Byte 1 is still being shifted out of `TSR` on the physical pin!
@@ -87,6 +90,7 @@ The UART Receiver FSM operates in reverse: it monitors an asynchronous single-wi
 ![UART Receiver State Machine](images/ch5_rx_state_machine.svg)
 
 ### State Definitions:
+
 1. **`RX_IDLE`:**
    - The receiver monitors the synchronized `UART_RX` input.
    - The line is expected to sit at Logic 1.
@@ -147,6 +151,7 @@ Just like the transmitter, the receiver utilizes **Double-Buffering** to prevent
 ```
 
 ### Protection Against Data Loss:
+
 1. When Byte 1 finishes arriving, it is transferred in a single clock cycle from `RSR` into `RBR`. Hardware sets `DR = 1` (Data Ready) and interrupts the CPU.
 2. Software now has the **entire duration of the NEXT frame** ($T_{frame} \approx 87\ \mu\text{s}$ at 115,200 baud) to read `RBR` while Byte 2 is being shifted into `RSR` bit-by-bit.
 3. If software reads `RBR` before Byte 2 completes, `DR` is cleared, and zero data is lost.
@@ -158,18 +163,18 @@ Just like the transmitter, the receiver utilizes **Double-Buffering** to prevent
 
 The following table summarizes the control registers and timing triggers governing each FSM state:
 
-| Subsystem | State | Input Trigger to Enter | Primary Hardware Action | Exit Trigger |
-|---|---|---|---|---|
-| **TX** | `TX_IDLE` | Reset or Stop bit complete | Drive `TX = 1` | `tx_start_req == 1` |
-| **TX** | `TX_START` | Byte loaded into TSR | Drive `TX = 0` | `tick_cnt == 15` |
-| **TX** | `TX_DATA` | Start bit complete | Drive `TSR[0]`, shift right | `bit_cnt == N-1 && tick_cnt == 15` |
-| **TX** | `TX_PARITY`| Final data bit complete | Drive Parity bit | `tick_cnt == 15` |
-| **TX** | `TX_STOP` | Data/Parity complete | Drive `TX = 1` | `stop_ticks == Stop_Config` |
-| **RX** | `RX_IDLE` | Reset or Frame complete | Monitor line for falling edge | `rx_sync == 0` |
-| **RX** | `RX_CHECK_START` | Falling edge detected | Verify `rx == 0` at Ticks 7,8,9 | `tick_cnt == 15` (if valid) |
-| **RX** | `RX_SAMPLE_DATA` | Start bit verified | Majority vote, shift into RSR | `bit_cnt == N-1 && tick_cnt == 15` |
-| **RX** | `RX_CHECK_PARITY`| Final data bit sampled | Compare parity bit | `tick_cnt == 15` |
-| **RX** | `RX_CHECK_STOP` | Data/Parity complete | Verify `rx == 1` at Ticks 7,8,9 | `tick_cnt == 15` $\rightarrow$ Push RBR |
+| Subsystem | State             | Input Trigger to Enter     | Primary Hardware Action         | Exit Trigger                            |
+| --------- | ----------------- | -------------------------- | ------------------------------- | --------------------------------------- |
+| **TX**    | `TX_IDLE`         | Reset or Stop bit complete | Drive `TX = 1`                  | `tx_start_req == 1`                     |
+| **TX**    | `TX_START`        | Byte loaded into TSR       | Drive `TX = 0`                  | `tick_cnt == 15`                        |
+| **TX**    | `TX_DATA`         | Start bit complete         | Drive `TSR[0]`, shift right     | `bit_cnt == N-1 && tick_cnt == 15`      |
+| **TX**    | `TX_PARITY`       | Final data bit complete    | Drive Parity bit                | `tick_cnt == 15`                        |
+| **TX**    | `TX_STOP`         | Data/Parity complete       | Drive `TX = 1`                  | `stop_ticks == Stop_Config`             |
+| **RX**    | `RX_IDLE`         | Reset or Frame complete    | Monitor line for falling edge   | `rx_sync == 0`                          |
+| **RX**    | `RX_CHECK_START`  | Falling edge detected      | Verify `rx == 0` at Ticks 7,8,9 | `tick_cnt == 15` (if valid)             |
+| **RX**    | `RX_SAMPLE_DATA`  | Start bit verified         | Majority vote, shift into RSR   | `bit_cnt == N-1 && tick_cnt == 15`      |
+| **RX**    | `RX_CHECK_PARITY` | Final data bit sampled     | Compare parity bit              | `tick_cnt == 15`                        |
+| **RX**    | `RX_CHECK_STOP`   | Data/Parity complete       | Verify `rx == 1` at Ticks 7,8,9 | `tick_cnt == 15` $\rightarrow$ Push RBR |
 
 ---
 
@@ -186,14 +191,18 @@ The following table summarizes the control registers and timing triggers governi
 ## Review Questions
 
 ### Question 1
+
 What is the purpose of the Transmitter Holding Register Empty (`THRE`) status flag, and when exactly is it asserted?
+
 <details>
 <summary><b>View Answer</b></summary>
 The `THRE` flag indicates to software (or DMA) that the Transmitter Holding Register (`THR`) is empty and ready to accept a new byte. It is asserted the exact moment hardware transfers the byte currently in `THR` into the Transmitter Shift Register (`TSR`). Because `TSR` is now busy serializing the byte onto the pin, `THR` is free to receive the next byte immediately.
 </details>
 
 ### Question 2
+
 Explain the exact sequence of events that occurs when the RX FSM detects a falling edge on the `UART_RX` pin that turns out to be a 50-nanosecond noise glitch.
+
 <details>
 <summary><b>View Answer</b></summary>
 1. The falling edge causes the RX FSM to transition from `RX_IDLE` to `RX_CHECK_START`, resetting the modulo-16 tick counter to `0`.
@@ -204,7 +213,9 @@ Explain the exact sequence of events that occurs when the RX FSM detects a falli
 </details>
 
 ### Question 3
+
 How much time does software have to service a received byte before an Overrun Error occurs on a UART link operating at 115,200 baud with 8-N-1 framing?
+
 <details>
 <summary><b>View Answer</b></summary>
 Because the receiver is double-buffered (with `RSR` shifting incoming data while `RBR` holds the previously completed byte), software has the **entire duration of the subsequent 10-bit frame** to read `RBR`:
@@ -213,7 +224,9 @@ If the CPU takes longer than $86.81\ \mu\text{s}$ to read `RBR`, the subsequent 
 </details>
 
 ### Question 4
+
 Why does the transmitter shift register (TSR) shift data out LSB first rather than MSB first?
+
 <details>
 <summary><b>View Answer</b></summary>
 Shifting LSB first aligns with the standard UART frame definition. The hardware right-shifts the register (`TSR = TSR >> 1`) on every 16th baud tick, continuously driving bit `TSR[0]` onto the physical pin. This simple single-direction shift structure requires minimal silicon multiplexing logic.
@@ -222,4 +235,3 @@ Shifting LSB first aligns with the standard UART frame definition. The hardware 
 ---
 
 ##### Copyright (c) 2026 squared-studio
-

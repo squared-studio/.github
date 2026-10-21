@@ -5,6 +5,7 @@ Finite State Machines (FSMs) are the core mechanism for implementing sequential 
 ## Learning Goals
 
 After completing this chapter, you should be able to:
+
 - Formulate sequential specifications into formal State Diagrams and State Transition Tables.
 - Compare Moore and Mealy FSM architectures, understanding their differences in output timing, latency, and glitch sensitivity.
 - Master the **Two-Always-Block** and **Three-Always-Block** FSM coding styles in SystemVerilog using strongly typed `enum` state variables.
@@ -16,11 +17,13 @@ After completing this chapter, you should be able to:
 ## FSM Architectural Models: Moore vs. Mealy
 
 An FSM consists of three distinct functional units:
+
 1. **State Register:** Synchronous flip-flops storing the current state.
 2. **Next-State Logic:** Combinational logic computing the next state based on the current state and inputs.
 3. **Output Logic:** Combinational or registered logic generating the outputs.
 
 ### Moore Machine Architecture
+
 In a **Moore machine**, outputs depend **strictly on the current state** stored in the state register. Inputs affect the state register on the next clock edge, which then updates the outputs.
 
 ![Moore State Machine Architecture](images/ch6_moore_fsm.svg)
@@ -31,6 +34,7 @@ In a **Moore machine**, outputs depend **strictly on the current state** stored 
 ---
 
 ### Mealy Machine Architecture
+
 In a **Mealy machine**, outputs depend on **both the current state and the current inputs**.
 
 ![Mealy State Machine Architecture](images/ch6_mealy_fsm.svg)
@@ -43,6 +47,7 @@ In a **Mealy machine**, outputs depend on **both the current state and the curre
 ## SystemVerilog FSM Coding Styles
 
 Industry designs use two primary structured styles:
+
 - **Two-Always-Block Style (Recommended Standard):**
   1. `always_ff`: State register update.
   2. `always_comb`: Next-state logic AND output assignments.
@@ -52,11 +57,13 @@ Industry designs use two primary structured styles:
   3. `always_ff` or `always_comb`: Output generation logic.
 
 ### Complete Worked Example: 4-bit Sequence Detector ("1011" with Overlap)
+
 Let us design a Mealy FSM that scans a continuous serial data stream `din_i` on each clock edge and asserts `detected_o` whenever the sequence **1011** is recognized (with overlapping sequence support, e.g., `1011011` generates two detections).
 
 ![Sequence Detector State Transition Diagram](images/ch6_sequence_detector_fsm.svg)
 
 ### Synthesizable SystemVerilog Implementation
+
 ```systemverilog
 // seq_detector_1011.sv - Synthesizable Mealy Sequence Detector
 module seq_detector_1011 (
@@ -135,13 +142,13 @@ How states are represented as bit patterns in flip-flops has a direct impact on 
 
 ### Comparison Matrix
 
-| Property | Binary | Gray | One-Hot |
-| :--- | :--- | :--- | :--- |
-| **Number of Flip-Flops ($N$ states)** | $\lceil \log_2(N) \rceil$ | $\lceil \log_2(N) \rceil$ | $N$ |
-| **Bit transitions per state change** | $1$ to $\log_2(N)$ | **Exactly 1** (adjacent) | **Exactly 2** (one turns off, one turns on) |
-| **Next-State Decoder Complexity** | High | Moderate | **Lowest (Single gate per transition)** |
-| **Operating Frequency** | Moderate | Moderate | **Highest** |
-| **Recommended Platform** | ASICs (area constrained) | Low-power ASICs | **FPGAs (LUT-FF architectures)** |
+| Property                              | Binary                    | Gray                      | One-Hot                                     |
+| :------------------------------------ | :------------------------ | :------------------------ | :------------------------------------------ |
+| **Number of Flip-Flops ($N$ states)** | $\lceil \log_2(N) \rceil$ | $\lceil \log_2(N) \rceil$ | $N$                                         |
+| **Bit transitions per state change**  | $1$ to $\log_2(N)$        | **Exactly 1** (adjacent)  | **Exactly 2** (one turns off, one turns on) |
+| **Next-State Decoder Complexity**     | High                      | Moderate                  | **Lowest (Single gate per transition)**     |
+| **Operating Frequency**               | Moderate                  | Moderate                  | **Highest**                                 |
+| **Recommended Platform**              | ASICs (area constrained)  | Low-power ASICs           | **FPGAs (LUT-FF architectures)**            |
 
 ---
 
@@ -159,6 +166,7 @@ How states are represented as bit patterns in flip-flops has a direct impact on 
 ## Learning Resources
 
 ### Industry Guides & Textbooks
+
 - **"FSM-Based Digital Design Using Verilog HDL"** by Peter Minns & Ian Elliott.
 - **"Coding Styles for Finite State Machines in SystemVerilog"** by Clifford E. Cummings (SNUG) — Comprehensive comparison of 1-always, 2-always, and 3-always styles.
 - **AMD Xilinx UG901 (Vivado Synthesis):** FSM Extraction, State Encoding Attributes (`fsm_encoding = "one_hot"`).
@@ -168,20 +176,26 @@ How states are represented as bit patterns in flip-flops has a direct impact on 
 ## Exercises
 
 ### Exercise 6.1: Traffic Light Controller with Pedestrian Request
+
 Design an intersection controller with Main Street and Side Street lights:
+
 1. States: `MAIN_GREEN`, `MAIN_YELLOW`, `SIDE_GREEN`, `SIDE_YELLOW`.
 2. Inputs: `clk`, `rst_n`, `pedestrian_req_i` (active high), `timer_expired_i`.
 3. If `pedestrian_req_i` is pressed while Main Street is green, shorten the green light timer and advance to yellow.
 4. Implement the controller as a clean Moore FSM in SystemVerilog.
 
 ### Exercise 6.2: One-Hot Encoding Synthesis Experiment
+
 Take the Sequence Detector module:
+
 1. Manually encode the states as One-Hot (`4'b0001`, `4'b0010`, `4'b0100`, `4'b1000`).
 2. Synthesize using Vivado, Quartus, or Yosys with both binary and one-hot encoding options.
 3. Inspect the synthesis schematic and report the number of LUTs and flip-flops utilized.
 
 ### Exercise 6.3: Moore vs. Mealy Comparison
+
 Convert the 4-bit Sequence Detector from Mealy to a pure Moore FSM:
+
 - How many states are required for the Moore version?
 - How many clock cycles does it take from the arrival of the 4th bit until `detected_o` is observed at the output?
 

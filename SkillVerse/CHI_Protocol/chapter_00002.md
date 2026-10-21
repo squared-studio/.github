@@ -1,6 +1,7 @@
 # CHI Node Architecture & Network-on-Chip (NoC) Topologies
 
 ## Microarchitecture of Key CHI Nodes
+
 In an enterprise or high-end mobile SoC implementing AMBA 5 CHI, the overall architecture is composed of distributed, specialized nodes communicating across a packet-switched fabric. To understand how memory coherency and high bandwidth are achieved, we must examine the internal structure of each primary node type: **RN-F**, **HN-F**, and **SN-F**.
 
 ```
@@ -18,9 +19,11 @@ In an enterprise or high-end mobile SoC implementing AMBA 5 CHI, the overall arc
 ---
 
 ## Inside the Fully Coherent Request Node (`RN-F`)
+
 An **RN-F** typically encapsulates one or more high-performance CPU cores (e.g., an Arm Cortex-X or Neoverse core) together with their private L1 and L2 cache hierarchies.
 
 ### Architectural Sub-Blocks of an RN-F:
+
 1. **Core Load/Store Pipeline:**
    - Issues memory operations (loads, stores, atomics, and barriers) derived from instruction execution.
 2. **Private Cache Subsystem (L1/L2):**
@@ -38,6 +41,7 @@ An **RN-F** typically encapsulates one or more high-performance CPU cores (e.g.,
 ---
 
 ## Inside the Fully Coherent Home Node (`HN-F`)
+
 The **HN-F** is the nerve center of cache coherency in an AMBA CHI system. In large SoCs, physical memory is partitioned across multiple distributed HN-F "slices" (e.g., 8, 16, or 32 parallel HN-Fs) to distribute traffic evenly across the chip.
 
 ![HN-F Microarchitecture and Directory](images/ch2_hnf_architecture_directory.svg)
@@ -45,28 +49,37 @@ The **HN-F** is the nerve center of cache coherency in an AMBA CHI system. In la
 ### Key Functional Subsystems within an HN-F:
 
 ### Point of Serialization (PoS)
+
 The PoS is the single arbiter responsible for determining the global memory observation order for its allocated address range.
+
 - When multiple RN-Fs simultaneously issue requests targeting the same cache line (e.g., two cores attempting to write to the same lock variable), the PoS arbitrates between them.
 - Whichever transaction is accepted first by the PoS establishes the architectural order of execution. All subsequent accesses must wait until the winning transaction completes or releases the line.
 
 ### Snoop Filter / Directory (SF)
+
 The Snoop Filter maintains a directory of all cache lines currently cached across any RN-F in the SoC.
+
 - **Directory Tag Arrays:** Stores the address tags of cached lines along with a **Sharer Bitmask** (where each bit corresponds to an RN-F in the system).
 - **Directory States:** Tracks whether the line is held in an **Exclusive (Unique)** state by a single core or in a **Shared** state across multiple cores.
 - **Snoop Pruning:** When an RN-F requests data, the HN-F queries the SF. If the SF indicates that no other RN-F holds the line, the HN-F completely suppresses snoop generation, saving significant NoC bandwidth and core power.
 
 ### System Level Cache (SLC)
+
 Many modern interconnects (such as the Arm CoreLink CMN-600 / CMN-700) integrate a distributed, on-chip L3/L4 cache inside each HN-F slice.
+
 - Serves as a high-speed buffer for dirty and clean cache lines evicted by RN-Fs.
 - Services read requests in 10 to 15 nanoseconds, avoiding slow, energy-expensive off-chip memory trips.
 
 ### Coherency Tracker Entries
+
 The HN-F contains a pool of internal hardware tracking slots. Each allocated tracker entry manages the end-to-end lifecycle of a single coherent transaction: issuing snoops to peer RN-Fs, collecting snoop responses (`RSP`/`DAT`), querying the SLC/SN-F, delivering completion tokens, and waiting for `CompAck`.
 
 ---
 
 ## Inside the Subordinate Node (`SN-F`)
+
 The **SN-F** interfaces the coherent interconnect to physical memory subsystems:
+
 - **DRAM Controllers:** DDR4, DDR5, LPDDR5, or high-bandwidth 3D-stacked memory (HBM3).
 - **Memory Scheduling Queues:** Re-orders incoming read and write flits to maximize DRAM bank and row-buffer hit rates.
 - **Reliability Engines:** Implements Error-Correcting Code (ECC) generation, scrubbing, and multi-bit fault detection.
@@ -74,17 +87,19 @@ The **SN-F** interfaces the coherent interconnect to physical memory subsystems:
 ---
 
 ## Network-on-Chip (NoC) Topologies
+
 In AMBA CHI, physical links between nodes are not constrained to rigid crossbar switches. Modern CHI interconnects deploy three primary topologies:
 
-| Topology | Target System | Scalability | Latency Characteristics | Wire Congestion |
-| :--- | :--- | :---: | :--- | :--- |
-| **Crossbar Matrix** | Small mobile SoCs (2-4 CPU clusters) | Poor ($O(N^2)$) | Extremely low (single-cycle hop) | High at center |
-| **Bidirectional Ring** | Mid-tier computing (4-8 clusters, e.g. CCI-550) | Moderate | Scales linearly with ring circumference | Moderate |
-| **2D Mesh Grid** | Enterprise Cloud, Neoverse (16-128+ cores, e.g. CMN-700) | Exceptional ($O(N)$) | Uniform, predictable hop latency | Low, distributed evenly across silicon |
+| Topology               | Target System                                            |     Scalability      | Latency Characteristics                 | Wire Congestion                        |
+| :--------------------- | :------------------------------------------------------- | :------------------: | :-------------------------------------- | :------------------------------------- |
+| **Crossbar Matrix**    | Small mobile SoCs (2-4 CPU clusters)                     |   Poor ($O(N^2)$)    | Extremely low (single-cycle hop)        | High at center                         |
+| **Bidirectional Ring** | Mid-tier computing (4-8 clusters, e.g. CCI-550)          |       Moderate       | Scales linearly with ring circumference | Moderate                               |
+| **2D Mesh Grid**       | Enterprise Cloud, Neoverse (16-128+ cores, e.g. CMN-700) | Exceptional ($O(N)$) | Uniform, predictable hop latency        | Low, distributed evenly across silicon |
 
 ---
 
 ## The 2D Mesh Topology and Dimension-Order Routing
+
 For high-core-count enterprise silicon, the **2D Mesh Network-on-Chip** has emerged as the universal standard.
 
 In a 2D Mesh, the chip is laid out as a grid of coordinate points $(X, Y)$. Each grid intersection houses a **Crosspoint Router (XP)**. Each router connects to four orthogonal neighbors (North, South, East, West) and features local device ports connecting to an RN-F, HN-F, or SN-F.
@@ -92,9 +107,11 @@ In a 2D Mesh, the chip is laid out as a grid of coordinate points $(X, Y)$. Each
 ![2D Mesh Topology and Routing](images/ch2_mesh_topology_routing.svg)
 
 ### Dimension-Order Routing (DOR: X-First then Y)
+
 In any packet-switched network, arbitrary packet routing can lead to **routing deadlocks**—situations where packets in adjacent routers form a circular waiting loop, freezing the entire interconnect.
 
 To guarantee mathematical deadlock freedom without requiring complex virtual channel arbitration, CHI 2D Mesh networks enforce **Dimension-Order Routing (DOR)**:
+
 1. **Rule 1 (X-First Traversal):** A flit must traverse the horizontal (X) dimension completely until its current X-coordinate matches the destination Target NodeID ($X_{\text{curr}} == X_{\text{dest}}$).
 2. **Rule 2 (Y Traversal):** Only after reaching the destination X-coordinate may the flit turn into the vertical (Y) dimension to reach the target router ($Y_{\text{curr}} == Y_{\text{dest}}$).
 3. **Deadlock Freedom Theorem:** By prohibiting flits from turning from the Y dimension back into the X dimension (eliminating 4 out of the 8 possible turns in a 2D grid), circular channel dependency loops cannot form. The routing graph is strictly acyclic!
@@ -102,6 +119,7 @@ To guarantee mathematical deadlock freedom without requiring complex virtual cha
 ---
 
 ## Address Hashing and NodeID Slicing
+
 In a system with 16 distributed HN-F nodes, how does an RN-F know which specific HN-F to target when issuing a read to physical address `0x8000_1000`?
 
 Hardware performs **Address Striping (Hashing)**:
@@ -120,6 +138,7 @@ Hardware performs **Address Striping (Hashing)**:
 ```
 
 The lower address bits (above the 64-byte cache line offset) are passed through an internal hashing algorithm (often involving XOR combinations of high and low address bits). This maps contiguous memory lines across alternating HN-F slices in a round-robin or interleaved fashion:
+
 - Address `0x00` $\rightarrow$ `HN-F 0`
 - Address `0x40` $\rightarrow$ `HN-F 1`
 - Address `0x80` $\rightarrow$ `HN-F 2`
@@ -130,6 +149,7 @@ This striping ensures that memory access workloads are distributed uniformly acr
 ---
 
 ## Chapter Summary
+
 - An **RN-F** integrates CPU cores, local caches, outbound request generators, and inbound snoop pipelines.
 - An **HN-F** is the coherency hub containing the Point of Serialization (PoS), Snoop Filter / Directory, System Level Cache (SLC), and transaction tracker slots.
 - Enterprise SoCs deploy **2D Mesh NoCs** where nodes interface through Crosspoint (XP) routers.
@@ -167,4 +187,3 @@ This striping ensures that memory access workloads are distributed uniformly acr
 ---
 
 ##### Copyright (c) 2026 squared-studio
-

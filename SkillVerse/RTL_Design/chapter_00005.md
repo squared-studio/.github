@@ -5,6 +5,7 @@ Memory structures store data, buffer streaming packets, and retain state across 
 ## Learning Goals
 
 After completing this chapter, you should be able to:
+
 - Navigate the digital memory hierarchy (Registers $\to$ Cache SRAM $\to$ Embedded BRAM $\to$ External DDR DRAM $\to$ Non-Volatile Flash).
 - Understand memory port configurations: Single-Port, Simple Dual-Port, and True Dual-Port.
 - Differentiate between Read-First, Write-First, and No-Change behaviors during simultaneous read-write collisions.
@@ -21,12 +22,12 @@ Silicon design is constrained by the fundamental trade-off between **access spee
 
 ### SRAM vs. DRAM vs. ROM
 
-| Memory Type | Storage Mechanism | Speed | Volatility | Typical Use Case |
-| :--- | :--- | :--- | :--- | :--- |
-| **SRAM** (Static RAM) | Cross-coupled inverters (6T cell) | Ultra-fast (< 2 ns) | Volatile | CPU caches, scratchpads, on-chip FIFOs |
-| **DRAM** (Dynamic RAM) | Capacitor + Pass transistor (1T-1C) | Fast (15–50 ns) | Volatile (requires periodic refresh) | Main system memory (DDR4/5) |
-| **ROM** (Read-Only) | Hardwired mask or fused diodes | Fast | Non-Volatile | Boot ROM, lookup tables, constant arrays |
-| **Flash** (NAND/NOR) | Floating-gate / Charge trap FETs | Moderate to slow | Non-Volatile | Firmware storage, solid-state drives |
+| Memory Type            | Storage Mechanism                   | Speed               | Volatility                           | Typical Use Case                         |
+| :--------------------- | :---------------------------------- | :------------------ | :----------------------------------- | :--------------------------------------- |
+| **SRAM** (Static RAM)  | Cross-coupled inverters (6T cell)   | Ultra-fast (< 2 ns) | Volatile                             | CPU caches, scratchpads, on-chip FIFOs   |
+| **DRAM** (Dynamic RAM) | Capacitor + Pass transistor (1T-1C) | Fast (15–50 ns)     | Volatile (requires periodic refresh) | Main system memory (DDR4/5)              |
+| **ROM** (Read-Only)    | Hardwired mask or fused diodes      | Fast                | Non-Volatile                         | Boot ROM, lookup tables, constant arrays |
+| **Flash** (NAND/NOR)   | Floating-gate / Charge trap FETs    | Moderate to slow    | Non-Volatile                         | Firmware storage, solid-state drives     |
 
 ---
 
@@ -46,7 +47,9 @@ A memory array is organized as an array of $2^A$ words, where each word is $W$ b
 ![Memory Port Architectures](images/ch5_memory_ports.svg)
 
 ### Read-During-Write Collision Modes
+
 When a port writes to the exact same address that is currently being read on the same clock cycle, the output behavior depends on the memory configuration:
+
 1. **Write-First (Transparent Mode):** The output immediately reflects the **newly written data** in that cycle.
 2. **Read-First (Old-Data Mode):** The output delivers the **old data** stored in that location before the write takes effect. (Most energy-efficient on FPGAs).
 3. **No-Change Mode:** The output register holds its previous value without changing.
@@ -56,6 +59,7 @@ When a port writes to the exact same address that is currently being read on the
 ## Synthesizable Memory Design
 
 ### Parameterized Single-Port Synchronous RAM (BRAM Inferable)
+
 ```systemverilog
 // sram_single_port.sv - Synthesizable Single-Port RAM
 module sram_single_port #(
@@ -85,6 +89,7 @@ endmodule
 ```
 
 ### True Dual-Port RAM with Independent Clocks
+
 ```systemverilog
 // ram_true_dual_port.sv - Dual Clock, Independent Ports
 module ram_true_dual_port #(
@@ -133,22 +138,25 @@ A FIFO buffer queues data so that the first word written is the first word read.
 ![Synchronous FIFO Architecture](images/ch5_sync_fifo.svg)
 
 ### Pointer Wrap-Around & Status Logic
+
 How can you distinguish whether a FIFO is **completely full** or **completely empty** when both write and read pointers point to the same index (`wr_ptr == rd_ptr`)?
 
 **The Extra Bit Technique:**
 Make the pointer counters 1 bit wider than the address space:
+
 - For a FIFO of depth $2^N$, use $(N+1)$-bit pointers: `[N:0] wr_ptr, rd_ptr`.
 - The lower $N$ bits (`ptr[N-1:0]`) address the memory array.
 - The MSB (`ptr[N]`) tracks how many times the pointer has wrapped around the memory!
 
 1. **Empty Condition:**
    $$\text{empty} = (\text{wr\_ptr} == \text{rd\_ptr})$$
-   *(Same index and same wrap bit).*
+   _(Same index and same wrap bit)._
 2. **Full Condition:**
    $$\text{full} = (\text{wr\_ptr}[N] \ne \text{rd\_ptr}[N]) \;\land\; (\text{wr\_ptr}[N-1:0] == \text{rd\_ptr}[N-1:0])$$
-   *(Same index, but opposite wrap bit).*
+   _(Same index, but opposite wrap bit)._
 
 ### Complete Synthesizable Synchronous FIFO
+
 ```systemverilog
 // sync_fifo.sv - Synthesizable Parameterized Synchronous FIFO
 module sync_fifo #(
@@ -215,6 +223,7 @@ endmodule
 ## Learning Resources
 
 ### Reference Literature
+
 - **"SystemVerilog for Design"** by Stuart Sutherland, Peter Flake, Phil Moorby — Covers arrays and memory modeling techniques.
 - **AMD Xilinx UG901 (Vivado Synthesis):** Chapter on RAM and ROM HDL Coding Techniques.
 - **Intel Quartus Prime HDL Coding Styles User Guide:** Section on Recommended HDL Coding Styles for Inferring RAM.
@@ -224,17 +233,23 @@ endmodule
 ## Exercises
 
 ### Exercise 5.1: Byte-Enable RAM Implementation
+
 Extend the single-port RAM module `sram_single_port` to support 32-bit words with 4 independent byte-enable lines `be_i[3:0]`:
+
 1. Use an unpacked array `logic [3:0][7:0] mem [0:DEPTH-1];` or a `for` loop over the 4 bytes.
 2. Ensure that only the enabled bytes are updated on write cycles.
 
 ### Exercise 5.2: FIFO Almost-Full / Almost-Empty Flags
+
 Enhance `sync_fifo.sv` to provide programmable watermarks:
+
 - `almost_full_o`: Asserted when remaining free slots $\le 2$.
 - `almost_empty_o`: Asserted when available stored words $\le 2$.
 
 ### Exercise 5.3: Fall-Through (FWFT) FIFO vs. Standard FIFO
+
 In standard synchronous FIFOs, reading introduces 1 clock cycle of read latency before data is valid on `rd_data_o`.
+
 1. Explain how a **First-Word Fall-Through (FWFT)** FIFO makes the oldest data immediately visible on `rd_data_o` whenever `empty_o` is low.
 2. Implement an FWFT output register adapter that sits on the read port of `sync_fifo`.
 

@@ -1,6 +1,7 @@
 # Distributed Virtual Memory (DVM) and Message Signaling
 
 ## Virtual Memory in Heterogeneous Multi-Core SoCs
+
 In modern operating systems (Linux, Android, macOS, Windows), every application runs in its own private **Virtual Address Space**. To execute instructions and access data, virtual addresses must be translated into physical DRAM addresses by the processor's **Memory Management Unit (MMU)** using hierarchical **Page Tables**.
 
 Because walking multi-level page tables in memory takes dozens to hundreds of clock cycles, every processor core integrates high-speed hardware caches for page translations: **Translation Lookaside Buffers (TLBs)**.
@@ -25,7 +26,9 @@ Because walking multi-level page tables in memory takes dozens to hundreds of cl
 ```
 
 ### The Problem: Multi-Core TLB Inconsistency
+
 When an operating system modifies a page mapping—such as paging out an unreferenced memory page to disk, revoking write permissions on a shared memory segment, or remapping a virtual page—a critical consistency hazard occurs:
+
 - The OS updates the page table in main memory.
 - However, **other CPU cores in the system still hold the obsolete virtual-to-physical translation cached in their local TLBs!**
 - If another core accesses that virtual address using its stale TLB entry, it may write to a deallocated physical page, corrupting user data or creating severe security vulnerabilities.
@@ -33,6 +36,7 @@ When an operating system modifies a page mapping—such as paging out an unrefer
 ---
 
 ## The Overhead of Software TLB Shootdown
+
 Historically, operating systems resolved TLB inconsistency through a mechanism called **Software TLB Shootdown**:
 
 ```
@@ -51,11 +55,13 @@ In modern cloud servers and mobile devices with dozens of cores, software TLB sh
 ---
 
 ## The AMBA ACE DVM Solution
+
 The AMBA ACE specification solves this crisis by introducing **Distributed Virtual Memory (DVM)** signaling. DVM provides a **hardware-native broadcast transport** built directly on top of the existing ACE coherency channels, allowing a master to broadcast TLB invalidations to all cores across the SoC in a handful of clock cycles with zero software interrupt overhead.
 
 ![DVM Broadcast Flow](images/ch9_dvm_broadcast_flow.svg)
 
 ### DVM Operational Responsibilities:
+
 1. **DVM Master:** The core modifying the page table issues a hardware DVM transaction across its `AR` channel.
 2. **Coherent Interconnect:** Captures the DVM command, decodes its scope, and broadcasts it to the `AC` snoop channels of all participating cores.
 3. **Snooped Masters:** Receive the DVM command, invalidate the corresponding entry in their local TLB or branch predictor, and return a completion response on `CR`.
@@ -64,23 +70,25 @@ The AMBA ACE specification solves this crisis by introducing **Distributed Virtu
 ---
 
 ## DVM Transaction Types and Scopes
+
 DVM commands are conveyed over standard ACE address channels. ACE defines a comprehensive catalog of DVM transaction types:
 
-| DVM Command Type | Mnemonic | Hardware Action Performed on Snooped Cores |
-| :--- | :---: | :--- |
-| **TLB Invalidate** | `TLBI` | Invalidates cached virtual-to-physical page translations in peer TLBs. |
-| **Branch Predictor Invalidate**| `BPI` | Clears branch history and target buffers (BTB) on peer cores. |
-| **Instruction Cache Invalidate**| `ICI` | Invalidates peer instruction caches (used during JIT compilation / dynamic code loading). |
-| **Physical Instruction Invalidate**| `PII` | Invalidates instruction caches by physical address. |
-| **Virtual Processor ID Sync** | `VMID` | Scopes invalidation strictly to a specific virtual machine guest under a hypervisor. |
-| **Address Space ID Sync** | `ASID` | Scopes invalidation to a specific user-space process ID. |
-| **DVM Synchronization** | `DVMSync` | Waits for all previously broadcast DVM operations to reach full global completion. |
-| **DVM Complete** | `DVMComplete`| Acknowledgment packet signaling completion of a `DVMSync`. |
+| DVM Command Type                    |   Mnemonic    | Hardware Action Performed on Snooped Cores                                                |
+| :---------------------------------- | :-----------: | :---------------------------------------------------------------------------------------- |
+| **TLB Invalidate**                  |    `TLBI`     | Invalidates cached virtual-to-physical page translations in peer TLBs.                    |
+| **Branch Predictor Invalidate**     |     `BPI`     | Clears branch history and target buffers (BTB) on peer cores.                             |
+| **Instruction Cache Invalidate**    |     `ICI`     | Invalidates peer instruction caches (used during JIT compilation / dynamic code loading). |
+| **Physical Instruction Invalidate** |     `PII`     | Invalidates instruction caches by physical address.                                       |
+| **Virtual Processor ID Sync**       |    `VMID`     | Scopes invalidation strictly to a specific virtual machine guest under a hypervisor.      |
+| **Address Space ID Sync**           |    `ASID`     | Scopes invalidation to a specific user-space process ID.                                  |
+| **DVM Synchronization**             |   `DVMSync`   | Waits for all previously broadcast DVM operations to reach full global completion.        |
+| **DVM Complete**                    | `DVMComplete` | Acknowledgment packet signaling completion of a `DVMSync`.                                |
 
 ---
 
 ## Two-Beat DVM Message Format over the `AR` Channel
-Because DVM commands carry complex virtual memory metadata (such as 64-bit virtual addresses, ASIDs, VMIDs, page sizes, and invalidation scopes), a single 32-bit or 64-bit address beat is insufficient. 
+
+Because DVM commands carry complex virtual memory metadata (such as 64-bit virtual addresses, ASIDs, VMIDs, page sizes, and invalidation scopes), a single 32-bit or 64-bit address beat is insufficient.
 
 AMBA ACE encodes DVM messages as a **two-beat burst** (`ARLEN = 1`, meaning two transfers) over the Read Address channel (`AR`):
 
@@ -89,11 +97,13 @@ AMBA ACE encodes DVM messages as a **two-beat burst** (`ARLEN = 1`, meaning two 
 ### Bitfield Encoding Breakdown:
 
 ### Beat 0 (Command & Scope Payload):
+
 - **`ARADDR[14:12]` (Command Type):** Encodes the operation (`0b000` = TLB Invalidate, `0b001` = Branch Predictor Invalidate, `0b010` = Physical Instruction Invalidate, `0b100` = DVM Sync).
 - **`ARADDR[1:0]` (Message Part):** Must be `0b00` for the first beat.
 - **`ARADDR[31:16]` (ASID / VMID):** Identifies the target process (Address Space Identifier) and virtual machine (Virtual Machine Identifier) so other processes are not penalized by unnecessary invalidations.
 
 ### Beat 1 (Address & Range Payload):
+
 - **`ARADDR[1:0]` (Message Part):** Must be `0b01` for the second beat.
 - **`ARADDR[47:12]` (Virtual Address):** Specifies the targeted virtual page address (aligned to 4KB, 64KB, or 2MB/1GB page sizes).
 - **`ARADDR[11:8]` (Page Size / Range):** Indicates whether the invalidation applies to a single 4KB page, a range of pages, or an entire address space.
@@ -101,6 +111,7 @@ AMBA ACE encodes DVM messages as a **two-beat burst** (`ARLEN = 1`, meaning two 
 ---
 
 ## Complete DVM Synchronization Protocol Sequence
+
 To ensure that a page table update is safe, software must guarantee that every peer core has completed its TLB invalidation before the old physical page is reassigned. This is orchestrated through the **`DVMSync`** and **`DVMComplete`** protocol sequence:
 
 ```
@@ -117,6 +128,7 @@ To ensure that a page table update is safe, software must guarantee that every p
 ```
 
 ### Execution Steps:
+
 1. **Master 0 Issues DVM TLBI:** Master 0 drives the two-beat DVM payload onto `AR` with `ARSNOOP = DVM Operation`.
 2. **Interconnect Broadcasts Snoop:** The interconnect receives the DVM command and drives it onto the `AC` channel of Master 1 (and all other cached masters in the domain).
 3. **Master 1 Invalidation:** Master 1's TLB management logic clears the targeted translation entry from its TLB and returns `CRRESP = OKAY` on `CR`.
@@ -128,6 +140,7 @@ To ensure that a page table update is safe, software must guarantee that every p
 ---
 
 ## Chapter Summary
+
 - Virtual memory requires **TLB Invalidation** when page tables change; software-based IPI shootdowns cause severe performance bottlenecks.
 - AMBA ACE provides **Distributed Virtual Memory (DVM)**, a hardware-native broadcast mechanism over existing coherency channels.
 - DVM commands support invalidation of **TLBs**, **Branch Predictors**, and **Instruction Caches**, scoped by ASID and VMID.
@@ -165,4 +178,3 @@ To ensure that a page table update is safe, software must guarantee that every p
 ---
 
 ##### Copyright (c) 2026 squared-studio
-

@@ -2,19 +2,19 @@
 
 ## Introduction: Modules as the Building Blocks of SystemVerilog Designs
 
-Modules are the cornerstone of hardware description in SystemVerilog, serving as the fundamental units of design abstraction, hierarchy, and reusability. Think of modules as the LEGO bricks of digital design – self-contained, reusable components that you can connect and combine to build complex systems.  They are the essential containers that encapsulate hardware functionality and define the boundaries of your design.
+Modules are the cornerstone of hardware description in SystemVerilog, serving as the fundamental units of design abstraction, hierarchy, and reusability. Think of modules as the LEGO bricks of digital design – self-contained, reusable components that you can connect and combine to build complex systems. They are the essential containers that encapsulate hardware functionality and define the boundaries of your design.
 
 **Key Aspects Encapsulated by Modules:**
 
--   **Interface**: Modules define their interaction with the external environment through well-defined input and output ports. These ports specify the signals that a module receives and drives, forming the module's communication interface.
--   **Functionality**: The core of a module lies in its internal logic, which describes the module's behavior and operations. This logic is implemented using SystemVerilog constructs such as variables, nets (wires), and concurrent processes (using `always` and `initial` blocks). The internal logic defines how the module processes inputs and generates outputs.
--   **Structure**: Modules promote hierarchical design by allowing you to instantiate other modules within them. This hierarchical composition enables you to build complex systems by assembling and connecting simpler, pre-verified modules. Module instantiation creates a design hierarchy, making it easier to manage complexity and reuse design components.
+- **Interface**: Modules define their interaction with the external environment through well-defined input and output ports. These ports specify the signals that a module receives and drives, forming the module's communication interface.
+- **Functionality**: The core of a module lies in its internal logic, which describes the module's behavior and operations. This logic is implemented using SystemVerilog constructs such as variables, nets (wires), and concurrent processes (using `always` and `initial` blocks). The internal logic defines how the module processes inputs and generates outputs.
+- **Structure**: Modules promote hierarchical design by allowing you to instantiate other modules within them. This hierarchical composition enables you to build complex systems by assembling and connecting simpler, pre-verified modules. Module instantiation creates a design hierarchy, making it easier to manage complexity and reuse design components.
 
 **Primary Benefits of Using Modules:**
 
--   **Design Partitioning and Complexity Management**: Modules enable you to break down large, complex designs into smaller, more manageable, and logically distinct units. This divide-and-conquer approach simplifies design, implementation, and verification. By working with modules, designers can focus on specific functionalities in isolation and then integrate them to form the complete system.
--   **Design Reusability Across Projects**: Well-designed modules are highly reusable. Once a module is created and verified, it can be instantiated and reused in different parts of the same project or in entirely new projects. This reusability saves design time and effort, promotes design consistency, and leverages proven components. Module libraries and IP (Intellectual Property) cores are built upon this principle of reusability.
--   **Clear Interface Definitions for Team Collaboration**: Modules provide clear and standardized interfaces for communication between different parts of a design. The port list of a module explicitly defines its inputs and outputs, serving as a contract between the module's implementer and users. This well-defined interface facilitates team-based design, where different engineers can work on different modules concurrently, knowing how their modules will connect and interact. Clear module interfaces are essential for efficient collaboration and integration in large design teams.
+- **Design Partitioning and Complexity Management**: Modules enable you to break down large, complex designs into smaller, more manageable, and logically distinct units. This divide-and-conquer approach simplifies design, implementation, and verification. By working with modules, designers can focus on specific functionalities in isolation and then integrate them to form the complete system.
+- **Design Reusability Across Projects**: Well-designed modules are highly reusable. Once a module is created and verified, it can be instantiated and reused in different parts of the same project or in entirely new projects. This reusability saves design time and effort, promotes design consistency, and leverages proven components. Module libraries and IP (Intellectual Property) cores are built upon this principle of reusability.
+- **Clear Interface Definitions for Team Collaboration**: Modules provide clear and standardized interfaces for communication between different parts of a design. The port list of a module explicitly defines its inputs and outputs, serving as a contract between the module's implementer and users. This well-defined interface facilitates team-based design, where different engineers can work on different modules concurrently, knowing how their modules will connect and interact. Clear module interfaces are essential for efficient collaboration and integration in large design teams.
 
 In essence, SystemVerilog modules are the fundamental organizational unit in hardware design, enabling a structured, hierarchical, and reusable approach to building digital systems of any complexity.
 
@@ -101,12 +101,12 @@ Modules communicate with their environment through ports, which are declared in 
 
 ### Interface Elements: Ports and Parameters
 
-| Element         | Purpose                                      | Syntax Example                                  |
-| --------------- | -------------------------------------------- | ----------------------------------------------- |
-| **Parameters**  | Configuration constants, customizable at instantiation | `#(parameter DATA_WIDTH=32, parameter BUFFER_DEPTH=64)` |
-| **Input Ports**   | Receive signals from external modules          | `input logic clk, input logic [7:0] command_in` |
-| **Output Ports**  | Drive signals to external modules             | `output logic data_valid, output logic [15:0] data_out` |
-| **Inout Ports**   | Bidirectional signals, for shared communication lines | `inout wire memory_data_bus`                    |
+| Element          | Purpose                                                | Syntax Example                                          |
+| ---------------- | ------------------------------------------------------ | ------------------------------------------------------- |
+| **Parameters**   | Configuration constants, customizable at instantiation | `#(parameter DATA_WIDTH=32, parameter BUFFER_DEPTH=64)` |
+| **Input Ports**  | Receive signals from external modules                  | `input logic clk, input logic [7:0] command_in`         |
+| **Output Ports** | Drive signals to external modules                      | `output logic data_valid, output logic [15:0] data_out` |
+| **Inout Ports**  | Bidirectional signals, for shared communication lines  | `inout wire memory_data_bus`                            |
 
 ### Parameterized Module Example: Configurable Smart Buffer
 
@@ -180,10 +180,10 @@ endmodule // End of parameterized 'smart_buffer_module'
 
 This `smart_buffer_module` example demonstrates:
 
--   **Parameterization**: Using `parameter` keyword to define `DATA_WIDTH` and `BUFFER_DEPTH`, allowing customization of the buffer size.
--   **ANSI-style Port List**: Declaring ports directly within the module header for more compact syntax.
--   **Internal Logic**: Implementing a basic FIFO buffer functionality with write and read pointers, data storage, and status flags.
--   **Parameter Validation**: Including an `initial` block to check parameter values and issue errors if they are invalid, enhancing module robustness.
+- **Parameterization**: Using `parameter` keyword to define `DATA_WIDTH` and `BUFFER_DEPTH`, allowing customization of the buffer size.
+- **ANSI-style Port List**: Declaring ports directly within the module header for more compact syntax.
+- **Internal Logic**: Implementing a basic FIFO buffer functionality with write and read pointers, data storage, and status flags.
+- **Parameter Validation**: Including an `initial` block to check parameter values and issue errors if they are invalid, enhancing module robustness.
 
 ## Module Instantiation: Creating Instances and Connecting Modules
 
@@ -201,10 +201,9 @@ To use a module in a design, you need to instantiate it within another module. S
     ```
 
     **Disadvantages of Positional Connection**:
-
-    -   **Order-Dependent**: Relies on the order of ports in the module definition, which is error-prone if the definition changes or if the instantiation is done incorrectly.
-    -   **Poor Readability**: Less clear about which signal is connected to which port, especially for modules with many ports.
-    -   **Maintenance Issues**: If ports are added or reordered in the module definition, all positional instantiations need to be carefully updated.
+    - **Order-Dependent**: Relies on the order of ports in the module definition, which is error-prone if the definition changes or if the instantiation is done incorrectly.
+    - **Poor Readability**: Less clear about which signal is connected to which port, especially for modules with many ports.
+    - **Maintenance Issues**: If ports are added or reordered in the module definition, all positional instantiations need to be carefully updated.
 
 2.  **Named Connection** (Recommended - more robust, readable, and maintainable)
 
@@ -226,11 +225,10 @@ To use a module in a design, you need to instantiate it within another module. S
     ```
 
     **Advantages of Named Connection**:
-
-    -   **Order-Independent**: Port connections are specified by name, not position, making instantiation order irrelevant.
-    -   **Improved Readability**: Clearly shows which signal is connected to each module port, enhancing code understanding.
-    -   **Better Maintainability**: More resilient to changes in module port order or additions. You only need to update connections for ports you are actually using.
-    -   **Parameter Overrides**: Allows you to easily override module parameters during instantiation using the `#( .PARAMETER_NAME(value) )` syntax.
+    - **Order-Independent**: Port connections are specified by name, not position, making instantiation order irrelevant.
+    - **Improved Readability**: Clearly shows which signal is connected to each module port, enhancing code understanding.
+    - **Better Maintainability**: More resilient to changes in module port order or additions. You only need to update connections for ports you are actually using.
+    - **Parameter Overrides**: Allows you to easily override module parameters during instantiation using the `#( .PARAMETER_NAME(value) )` syntax.
 
 **Recommendation**: Always use named port connections for module instantiation in SystemVerilog. It leads to more robust, readable, and maintainable code, especially in complex designs. Positional connection should be avoided in favor of named connections except in very simple, trivial cases.
 
@@ -296,11 +294,11 @@ endmodule // End of 'sensor_subsystem_module'
 
 This hierarchical design example shows:
 
--   **Submodule Instantiation**: The `sensor_subsystem_module` instantiates `clock_divider_module` and `data_processor_module` as submodules.
--   **Named Connections**: Using named port connections for clarity and robustness when connecting submodules.
--   **Parameter Passing**: Overriding the `PRECISION` parameter of `data_processor_module` during instantiation to match the data width.
--   **Hierarchical Signal Connections**: Connecting signals between modules at different levels of hierarchy (e.g., `core_system_clk` to `clock_divider_module`, `processing_clock` from `clock_divider_module` to `data_processor_module`).
--   **Building a System from Components**: Demonstrating how to build a larger system (`sensor_subsystem_module`) by integrating smaller, specialized modules (`clock_divider_module`, `data_processor_module`).
+- **Submodule Instantiation**: The `sensor_subsystem_module` instantiates `clock_divider_module` and `data_processor_module` as submodules.
+- **Named Connections**: Using named port connections for clarity and robustness when connecting submodules.
+- **Parameter Passing**: Overriding the `PRECISION` parameter of `data_processor_module` during instantiation to match the data width.
+- **Hierarchical Signal Connections**: Connecting signals between modules at different levels of hierarchy (e.g., `core_system_clk` to `clock_divider_module`, `processing_clock` from `clock_divider_module` to `data_processor_module`).
+- **Building a System from Components**: Demonstrating how to build a larger system (`sensor_subsystem_module`) by integrating smaller, specialized modules (`clock_divider_module`, `data_processor_module`).
 
 ## Testbench Integration: Verifying Module Functionality
 
@@ -372,48 +370,45 @@ This is a basic example, and real-world testbenches can be significantly more co
 ## Best Practices for SystemVerilog Module Design
 
 1.  **Consistent and Meaningful Naming Conventions**:
-
-    -   **Module Names**: Use `lowercase_with_underscores` for module names (e.g., `uart_transmitter_module`, `memory_controller_module`). Adding a `_module` suffix can improve clarity, especially when interfaces with similar names exist (e.g., `uart_if` and `uart_module`).
-    -   **Parameters**: Use `UPPER_SNAKE_CASE` for parameter names (e.g., `DATA_WIDTH`, `BUFFER_DEPTH`, `FIFO_SIZE`).
-    -   **Clock Signals**: Name clock signals clearly, indicating frequency if applicable (e.g., `clk_100MHz`, `system_clk`, `core_clk`). Use `clk` as a general clock signal name when frequency is not critical in the name itself.
-    -   **Reset Signals**: Name reset signals to indicate their active level (e.g., `rst_n` for active-low reset, `reset_l`, `arst_n`; `rst` or `reset_h` for active-high reset, `arst`). Be consistent in active-low vs. active-high reset naming across the project.
-    -   **Instance Names**: Use descriptive instance names that indicate the module type and its function or position in the hierarchy (e.g., `data_cache_instance`, `clock_generator_instance`, `dsp_unit`, `rx_fifo_buffer`).
+    - **Module Names**: Use `lowercase_with_underscores` for module names (e.g., `uart_transmitter_module`, `memory_controller_module`). Adding a `_module` suffix can improve clarity, especially when interfaces with similar names exist (e.g., `uart_if` and `uart_module`).
+    - **Parameters**: Use `UPPER_SNAKE_CASE` for parameter names (e.g., `DATA_WIDTH`, `BUFFER_DEPTH`, `FIFO_SIZE`).
+    - **Clock Signals**: Name clock signals clearly, indicating frequency if applicable (e.g., `clk_100MHz`, `system_clk`, `core_clk`). Use `clk` as a general clock signal name when frequency is not critical in the name itself.
+    - **Reset Signals**: Name reset signals to indicate their active level (e.g., `rst_n` for active-low reset, `reset_l`, `arst_n`; `rst` or `reset_h` for active-high reset, `arst`). Be consistent in active-low vs. active-high reset naming across the project.
+    - **Instance Names**: Use descriptive instance names that indicate the module type and its function or position in the hierarchy (e.g., `data_cache_instance`, `clock_generator_instance`, `dsp_unit`, `rx_fifo_buffer`).
 
 2.  **Port Declaration Styles - Prefer ANSI Style for Compactness**:
+    - **ANSI Style (Port declaration in module header)**: Declare ports directly within the module header for a more compact and readable syntax, especially for modules with many ports. This style improves code locality and reduces verbosity.
 
-    -   **ANSI Style (Port declaration in module header)**: Declare ports directly within the module header for a more compact and readable syntax, especially for modules with many ports. This style improves code locality and reduces verbosity.
+      ```systemverilog
+      module uart_tx_module ( // ANSI style port declaration
+        input  logic clk_50MHz,
+        input  logic [7:0] tx_data,
+        output logic tx_active,
+        output logic uart_tx_serial_out
+      );
+        // Module body...
+      endmodule
+      ```
 
-        ```systemverilog
-        module uart_tx_module ( // ANSI style port declaration
-          input  logic clk_50MHz,
-          input  logic [7:0] tx_data,
-          output logic tx_active,
-          output logic uart_tx_serial_out
-        );
-          // Module body...
-        endmodule
-        ```
+    - **Non-ANSI Style (Separate port declaration)**: Declare ports inside the module body, separate from the module header. While valid, this style is often less preferred for new SystemVerilog code as it is more verbose and less compact than ANSI style.
 
-    -   **Non-ANSI Style (Separate port declaration)**: Declare ports inside the module body, separate from the module header. While valid, this style is often less preferred for new SystemVerilog code as it is more verbose and less compact than ANSI style.
+      ```systemverilog
+      module uart_tx_module_non_ansi; // Non-ANSI style - ports declared inside module
+        input  logic clk_50MHz;
+        input  logic [7:0] tx_data;
+        output logic tx_active;
+        output logic uart_tx_serial_out;
 
-        ```systemverilog
-        module uart_tx_module_non_ansi; // Non-ANSI style - ports declared inside module
-          input  logic clk_50MHz;
-          input  logic [7:0] tx_data;
-          output logic tx_active;
-          output logic uart_tx_serial_out;
-
-          // Module body...
-        endmodule
-        ```
+        // Module body...
+      endmodule
+      ```
 
     **Recommendation**: Adopt ANSI-style port declarations as the standard style for new SystemVerilog designs for improved code conciseness and readability.
 
 3.  **Parameter Validation and Error Handling**:
-
-    -   **Parameter Range Checks**: Include `initial` blocks to validate parameter values at the beginning of simulation. Check for out-of-range or invalid parameter settings that could lead to design errors or unexpected behavior.
-    -   **`$error` and `$fatal` System Tasks**: Use `$error` to report parameter validation failures and `$fatal` to terminate the simulation immediately when a critical parameter error is detected. This helps catch configuration errors early in the design cycle.
-    -   **Informative Error Messages**: Provide clear and informative error messages that specify the parameter name, the invalid value, and the acceptable range or conditions. This makes it easier for users to understand and correct parameter settings.
+    - **Parameter Range Checks**: Include `initial` blocks to validate parameter values at the beginning of simulation. Check for out-of-range or invalid parameter settings that could lead to design errors or unexpected behavior.
+    - **`$error` and `$fatal` System Tasks**: Use `$error` to report parameter validation failures and `$fatal` to terminate the simulation immediately when a critical parameter error is detected. This helps catch configuration errors early in the design cycle.
+    - **Informative Error Messages**: Provide clear and informative error messages that specify the parameter name, the invalid value, and the acceptable range or conditions. This makes it easier for users to understand and correct parameter settings.
 
     ```systemverilog
     module parameterized_module #(parameter integer BUFFER_SIZE = 1024) (/* ports */);
@@ -433,70 +428,65 @@ This is a basic example, and real-world testbenches can be significantly more co
 ## Exercises to Practice Module Design in SystemVerilog
 
 1.  **Basic Module Creation: Serial Encoder**:
-
-    -   **Objective**: Create a `serial_encoder_module` that converts parallel byte data to a serial bit stream.
-    -   **Ports**:
-        -   `input logic clk`: Clock signal.
-        -   `input logic data_valid`: Indicates when `byte_data` is valid.
-        -   `input logic [7:0] byte_data`: Parallel byte data input.
-        -   `output logic serial_out`: Serial data output.
-    -   **Functionality**: When `data_valid` is asserted, the module should transmit the `byte_data` serially bit by bit on `serial_out` synchronized to `clk`. Define a simple serial encoding scheme (e.g., start bit, 8 data bits, stop bit – NRZ, least significant bit first).
-    -   **Implementation**: Use shift registers and control logic within an `always_ff` block to implement the serial encoding process.
+    - **Objective**: Create a `serial_encoder_module` that converts parallel byte data to a serial bit stream.
+    - **Ports**:
+      - `input logic clk`: Clock signal.
+      - `input logic data_valid`: Indicates when `byte_data` is valid.
+      - `input logic [7:0] byte_data`: Parallel byte data input.
+      - `output logic serial_out`: Serial data output.
+    - **Functionality**: When `data_valid` is asserted, the module should transmit the `byte_data` serially bit by bit on `serial_out` synchronized to `clk`. Define a simple serial encoding scheme (e.g., start bit, 8 data bits, stop bit – NRZ, least significant bit first).
+    - **Implementation**: Use shift registers and control logic within an `always_ff` block to implement the serial encoding process.
 
 2.  **Parameterized Design: Configurable FIFO**:
-
-    -   **Objective**: Implement a `configurable_fifo_module` with parameterizable data width and depth.
-    -   **Parameters**:
-        -   `parameter integer DATA_WIDTH = 8`: Data width of the FIFO (default 8 bits).
-        -   `parameter integer DEPTH = 16`: Depth of the FIFO (number of entries, default 16).
-    -   **Ports**: Standard FIFO ports (at least):
-        -   `input logic clk`: Clock.
-        -   `input logic rst_n`: Reset (active low).
-        -   `input logic [DATA_WIDTH-1:0] write_data`: Data to be written into the FIFO.
-        -   `input logic write_enable`: Write enable signal.
-        -   `output logic [DATA_WIDTH-1:0] read_data`: Data read from the FIFO.
-        -   `input logic read_enable`: Read enable signal.
-        -   `output logic full`: FIFO full flag.
-        -   `output logic empty`: FIFO empty flag.
-    -   **Functionality**: Implement a synchronous FIFO buffer with the specified data width and depth using internal memory (an array of `logic` vectors). Include logic for write and read operations, full and empty flag generation, and reset.
-    -   **Parameter Validation**: Add parameter validation to ensure `DATA_WIDTH` and `DEPTH` are positive integers and `DEPTH` is at least 2 (as per best practices in the example).
+    - **Objective**: Implement a `configurable_fifo_module` with parameterizable data width and depth.
+    - **Parameters**:
+      - `parameter integer DATA_WIDTH = 8`: Data width of the FIFO (default 8 bits).
+      - `parameter integer DEPTH = 16`: Depth of the FIFO (number of entries, default 16).
+    - **Ports**: Standard FIFO ports (at least):
+      - `input logic clk`: Clock.
+      - `input logic rst_n`: Reset (active low).
+      - `input logic [DATA_WIDTH-1:0] write_data`: Data to be written into the FIFO.
+      - `input logic write_enable`: Write enable signal.
+      - `output logic [DATA_WIDTH-1:0] read_data`: Data read from the FIFO.
+      - `input logic read_enable`: Read enable signal.
+      - `output logic full`: FIFO full flag.
+      - `output logic empty`: FIFO empty flag.
+    - **Functionality**: Implement a synchronous FIFO buffer with the specified data width and depth using internal memory (an array of `logic` vectors). Include logic for write and read operations, full and empty flag generation, and reset.
+    - **Parameter Validation**: Add parameter validation to ensure `DATA_WIDTH` and `DEPTH` are positive integers and `DEPTH` is at least 2 (as per best practices in the example).
 
 3.  **Hierarchical Integration: Network Interface Module**:
-
-    -   **Objective**: Create a `network_interface_module` that integrates instances of `configurable_fifo_module` and `serial_encoder_module`.
-    -   **Submodules to Instantiate**:
-        -   Two instances of `configurable_fifo_module`:
-            -   `rx_fifo`: For buffering received data (input FIFO).
-            -   `tx_fifo`: For buffering data to be transmitted (output FIFO).
-            -   Configure them with appropriate `DATA_WIDTH` and `DEPTH` parameters (e.g., `DATA_WIDTH=8`, `DEPTH=32` for both).
-        -   One instance of `serial_encoder_module`:
-            -   `serial_tx_encoder`: To serialize data from the `tx_fifo`.
-    -   **Network Interface Ports**: Define ports for the `network_interface_module` to interact with a higher-level system and a physical serial interface. Include ports for data input/output to/from the system, serial output, clock, and reset.
-    -   **Interconnection**: Connect the submodules within `network_interface_module`:
-        -   Connect the output of `tx_fifo` to the `byte_data` input of `serial_tx_encoder`.
-        -   Implement control logic to move data between the system interface and the FIFOs and to control the `serial_tx_encoder`.
-    -   **Functionality**: The `network_interface_module` should act as an interface between a system (which exchanges data in bytes) and a serial communication channel. It should buffer data for transmission and reception and handle serial encoding for transmission.
+    - **Objective**: Create a `network_interface_module` that integrates instances of `configurable_fifo_module` and `serial_encoder_module`.
+    - **Submodules to Instantiate**:
+      - Two instances of `configurable_fifo_module`:
+        - `rx_fifo`: For buffering received data (input FIFO).
+        - `tx_fifo`: For buffering data to be transmitted (output FIFO).
+        - Configure them with appropriate `DATA_WIDTH` and `DEPTH` parameters (e.g., `DATA_WIDTH=8`, `DEPTH=32` for both).
+      - One instance of `serial_encoder_module`:
+        - `serial_tx_encoder`: To serialize data from the `tx_fifo`.
+    - **Network Interface Ports**: Define ports for the `network_interface_module` to interact with a higher-level system and a physical serial interface. Include ports for data input/output to/from the system, serial output, clock, and reset.
+    - **Interconnection**: Connect the submodules within `network_interface_module`:
+      - Connect the output of `tx_fifo` to the `byte_data` input of `serial_tx_encoder`.
+      - Implement control logic to move data between the system interface and the FIFOs and to control the `serial_tx_encoder`.
+    - **Functionality**: The `network_interface_module` should act as an interface between a system (which exchanges data in bytes) and a serial communication channel. It should buffer data for transmission and reception and handle serial encoding for transmission.
 
 4.  **Testbench Development: Self-Checking FIFO Testbench**:
-
-    -   **Objective**: Create a self-checking testbench for the `configurable_fifo_module` to verify its overflow protection and basic FIFO operations.
-    -   **Testbench Features**:
-        -   **Clock Generation**: Generate a 100MHz clock signal with a 10% duty cycle variance (simulate jitter or clock imperfections). You can achieve duty cycle variance by randomly adjusting the high and low periods of the clock within a certain percentage range in each clock cycle.
-        -   **Reset Sequence**: Implement a power-on reset sequence to initialize the FIFO and the test environment.
-        -   **Stimulus Generation**: Generate a sequence of write transactions to the FIFO, attempting to write more data than the FIFO's capacity to test overflow protection. Also, generate read transactions to verify data retrieval. Create different scenarios: write-only, read-only, interleaved write and read operations, full FIFO, empty FIFO conditions, etc.
-        -   **Response Checking**: Implement self-checking mechanisms in the testbench.
-            -   **Overflow Detection**: Verify that the `full` flag is asserted correctly when the FIFO is full and that write operations are ignored or handled gracefully in the overflow condition (no data corruption, appropriate error signaling if designed).
-            -   **Data Integrity**: For valid write and read sequences (within FIFO capacity), verify that the data read from the FIFO matches the data written in the correct order (FIFO order). Use a scoreboard or reference model in the testbench to track expected data and compare it with the data read from the FIFO.
-        -   **Assertions**: Incorporate assertion statements in the testbench to check for expected FIFO behavior and flag errors automatically during simulation. For example, assert that `full` is asserted when attempting to write to a full FIFO, or assert that data read from FIFO matches expected data.
-        -   **Test Scenarios**: Design test scenarios to cover various FIFO conditions and operations:
-            -   Write to FIFO until full, then attempt overflow.
-            -   Read from FIFO until empty.
-            -   Interleaved write and read operations.
-            -   Write and read with varying burst lengths.
-            -   Reset in different states (full, empty, partially filled).
-    -   **Self-Checking**: The testbench should automatically determine if the FIFO is working correctly and report pass/fail status at the end of the simulation without manual waveform inspection. Use `$display` statements to indicate test status (pass/fail) clearly.
+    - **Objective**: Create a self-checking testbench for the `configurable_fifo_module` to verify its overflow protection and basic FIFO operations.
+    - **Testbench Features**:
+      - **Clock Generation**: Generate a 100MHz clock signal with a 10% duty cycle variance (simulate jitter or clock imperfections). You can achieve duty cycle variance by randomly adjusting the high and low periods of the clock within a certain percentage range in each clock cycle.
+      - **Reset Sequence**: Implement a power-on reset sequence to initialize the FIFO and the test environment.
+      - **Stimulus Generation**: Generate a sequence of write transactions to the FIFO, attempting to write more data than the FIFO's capacity to test overflow protection. Also, generate read transactions to verify data retrieval. Create different scenarios: write-only, read-only, interleaved write and read operations, full FIFO, empty FIFO conditions, etc.
+      - **Response Checking**: Implement self-checking mechanisms in the testbench.
+        - **Overflow Detection**: Verify that the `full` flag is asserted correctly when the FIFO is full and that write operations are ignored or handled gracefully in the overflow condition (no data corruption, appropriate error signaling if designed).
+        - **Data Integrity**: For valid write and read sequences (within FIFO capacity), verify that the data read from the FIFO matches the data written in the correct order (FIFO order). Use a scoreboard or reference model in the testbench to track expected data and compare it with the data read from the FIFO.
+      - **Assertions**: Incorporate assertion statements in the testbench to check for expected FIFO behavior and flag errors automatically during simulation. For example, assert that `full` is asserted when attempting to write to a full FIFO, or assert that data read from FIFO matches expected data.
+      - **Test Scenarios**: Design test scenarios to cover various FIFO conditions and operations:
+        - Write to FIFO until full, then attempt overflow.
+        - Read from FIFO until empty.
+        - Interleaved write and read operations.
+        - Write and read with varying burst lengths.
+        - Reset in different states (full, empty, partially filled).
+    - **Self-Checking**: The testbench should automatically determine if the FIFO is working correctly and report pass/fail status at the end of the simulation without manual waveform inspection. Use `$display` statements to indicate test status (pass/fail) clearly.
 
 These exercises will provide hands-on practice in designing SystemVerilog modules, using parameters, creating hierarchical designs, and developing basic testbenches for verification. They cover essential concepts for building more complex hardware systems in SystemVerilog.
 
 ##### Copyright (c) 2026 squared-studio
-

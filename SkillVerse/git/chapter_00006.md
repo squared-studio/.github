@@ -54,7 +54,6 @@ flowchart LR
       - Use `kebab-case` for branch names (e.g., `feat/user-authentication`)
 
 3.  **Develop and Make Atomic Changes**
-
     - Focus on implementing a single feature or fix within each branch.
     - Make small, logical, and self-contained commits.
     - Test your changes thoroughly locally before committing. Consider unit tests and integration tests as appropriate.
@@ -79,14 +78,12 @@ flowchart LR
     ```
 
 6.  **Create a Pull Request (PR) or Merge Request (MR)**
-
     - Initiate a PR/MR from your feature branch to the `main` (or `develop`) branch via your Git platform (GitHub, GitLab, Bitbucket, etc.).
     - **Link Issues**: Reference related issue tracker IDs in the PR description (e.g., `Fixes #123`, `Resolves #456`).
     - **Request Reviews**: Assign relevant team members for code review.
     - **CI/CD Checks**: Ensure all automated checks (tests, linting) pass before merging.
 
 7.  **Merge and Cleanup**
-
     - **Squash Commits (Optional but Recommended)**: Squashing merges your feature branch commits into a single, clean commit on the `main` branch, simplifying history. This is often preferred for feature branches.
     - **Delete Remote Branch**: After successful merging, delete the feature branch on the remote repository to keep things tidy.
       ```bash
@@ -100,6 +97,7 @@ flowchart LR
     git checkout main
     git pull --rebase origin main
     ```
+
     - `--rebase` is preferred to keep a linear and cleaner history, avoiding unnecessary merge commits.
 
 ## Advanced Workflow (Open-Source Contribution)
@@ -125,7 +123,6 @@ flowchart TB
 ### Step-by-Step Guide
 
 1.  **Fork the Repository**
-
     - Navigate to the original repository on GitHub (or GitLab, etc.).
     - Click the **"Fork"** button, usually located at the top right. This creates a copy of the repository in your personal account.
 
@@ -182,7 +179,6 @@ flowchart TB
     ```
 
 7.  **Create an Upstream Pull Request**
-
     - Navigate to your forked repository on GitHub.
     - Use the "Compare & pull request" button (or similar) to create a new pull request.
     - **"Compare across forks"**: Ensure your pull request is directed from your fork and topic branch to the _original repository's_ `main` (or designated) branch.
@@ -195,6 +191,7 @@ flowchart TB
     git rebase upstream/main  # Rebase your local main branch onto upstream/main
     git push --force-with-lease origin main # Update your fork's main branch
     ```
+
     - `git fetch upstream`: Fetches branches and commits from the `upstream` repository.
     - `git rebase upstream/main`: Replays your local `main` branch commits on top of the fetched `upstream/main`, creating a linear history. **Rebasing is generally preferred over merging** in this workflow for a cleaner history and easier PR integration.
     - `git push --force-with-lease origin main`: Force-pushes your rebased `main` branch to your `origin` (fork). `--force-with-lease` is a safer alternative to `force` as it prevents overwriting remote changes if the remote branch has diverged unexpectedly.

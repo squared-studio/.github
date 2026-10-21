@@ -1,0 +1,88 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 480" width="100%" height="100%">
+  <rect width="960" height="480" fill="#0b1120" rx="8"/>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8"/>
+    </marker>
+  </defs>
+
+  <text x="480" y="38" fill="#f8fafc" font-size="20" font-weight="bold" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" text-anchor="middle">Decorator Execution Pipeline &amp; Metadata Preservation</text>
+  <text x="480" y="62" fill="#94a3b8" font-size="13" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" text-anchor="middle">Syntactic transformation @decorator equivalent to target = decorator(target)</text>
+
+  <!-- Step 1: Definition & Syntax -->
+  <g transform="translate(50, 95)">
+    <rect width="250" height="235" rx="8" fill="#1e293b" stroke="#38bdf8" stroke-width="1.5"/>
+    <rect width="250" height="30" rx="8" fill="#0369a1"/>
+    <text x="125" y="20" fill="#ffffff" font-size="12" font-weight="bold" font-family="sans-serif" text-anchor="middle">1. Definition Time (@ Syntax)</text>
+
+    <text x="15" y="55" fill="#fde047" font-size="11" font-family="monospace">@timing_decorator</text>
+    <text x="15" y="73" fill="#ffffff" font-size="11" font-family="monospace">def read_register(addr):</text>
+    <text x="30" y="91" fill="#94a3b8" font-size="11" font-family="monospace">return hardware.read(addr)</text>
+
+    <line x1="15" y1="110" x2="235" y2="110" stroke="#334155" stroke-width="1"/>
+
+    <text x="15" y="130" fill="#38bdf8" font-size="11" font-weight="bold" font-family="sans-serif">Exact Equivalent At Load:</text>
+    <text x="15" y="152" fill="#6ee7b7" font-size="10" font-family="monospace">def read_register(addr): ...</text>
+    <text x="15" y="172" fill="#f43f5e" font-size="10" font-family="monospace">read_register = </text>
+    <text x="30" y="188" fill="#f43f5e" font-size="10" font-family="monospace">timing_decorator(read_register)</text>
+    
+    <text x="125" y="218" fill="#94a3b8" font-size="10" font-family="sans-serif" text-anchor="middle">Replaces symbol in module globals</text>
+  </g>
+
+  <!-- Arrow -->
+  <path d="M 305 210 L 345 210" stroke="#38bdf8" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- Step 2: Decorator Implementation -->
+  <g transform="translate(350, 95)">
+    <rect width="260" height="235" rx="8" fill="#1e293b" stroke="#34d399" stroke-width="1.5"/>
+    <rect width="260" height="30" rx="8" fill="#047857"/>
+    <text x="130" y="20" fill="#ffffff" font-size="12" font-weight="bold" font-family="sans-serif" text-anchor="middle">2. Wrapper Closure Function</text>
+
+    <text x="15" y="52" fill="#94a3b8" font-size="10" font-family="monospace">def timing_decorator(fn):</text>
+    <text x="25" y="70" fill="#38bdf8" font-size="10" font-family="monospace">@functools.wraps(fn)</text>
+    <text x="25" y="88" fill="#ffffff" font-size="10" font-family="monospace">def wrapper(*args, **kwargs):</text>
+    
+    <rect x="25" y="98" width="220" height="75" rx="4" fill="#064e3b" stroke="#34d399"/>
+    <text x="35" y="115" fill="#a7f3d0" font-size="10" font-family="monospace">t0 = time.perf_counter()</text>
+    <text x="35" y="132" fill="#fde047" font-size="10" font-family="monospace">res = fn(*args, **kwargs)</text>
+    <text x="35" y="150" fill="#a7f3d0" font-size="10" font-family="monospace">log_time(time.perf_counter()-t0)</text>
+    <text x="35" y="165" fill="#ffffff" font-size="10" font-family="monospace">return res</text>
+
+    <text x="25" y="190" fill="#94a3b8" font-size="10" font-family="monospace">return wrapper</text>
+    <text x="130" y="218" fill="#a7f3d0" font-size="10" font-family="sans-serif" text-anchor="middle">Returns wrapper closure</text>
+  </g>
+
+  <!-- Arrow -->
+  <path d="M 615 210 L 655 210" stroke="#38bdf8" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- Step 3: Invocation Time Flow -->
+  <g transform="translate(660, 95)">
+    <rect width="250" height="235" rx="8" fill="#1e293b" stroke="#fbbf24" stroke-width="1.5"/>
+    <rect width="250" height="30" rx="8" fill="#b45309"/>
+    <text x="125" y="20" fill="#ffffff" font-size="12" font-weight="bold" font-family="sans-serif" text-anchor="middle">3. Runtime Invocation</text>
+
+    <rect x="20" y="48" width="210" height="32" rx="4" fill="#0f172a" stroke="#334155"/>
+    <text x="125" y="68" fill="#ffffff" font-size="11" font-family="monospace" text-anchor="middle">Caller: read_register(0x10)</text>
+
+    <text x="125" y="96" fill="#94a3b8" font-size="10" font-family="sans-serif" text-anchor="middle">Interception: Runs Pre-hook</text>
+
+    <rect x="20" y="105" width="210" height="32" rx="4" fill="#082f49" stroke="#38bdf8"/>
+    <text x="125" y="125" fill="#38bdf8" font-size="11" font-family="monospace" text-anchor="middle">fn(0x10) -&gt; Hardware Read</text>
+
+    <text x="125" y="152" fill="#94a3b8" font-size="10" font-family="sans-serif" text-anchor="middle">Post-hook: Computes Latency</text>
+
+    <rect x="20" y="162" width="210" height="32" rx="4" fill="#064e3b" stroke="#34d399"/>
+    <text x="125" y="182" fill="#34d399" font-size="11" font-family="monospace" text-anchor="middle">Return data to Caller</text>
+
+    <text x="125" y="218" fill="#fbbf24" font-size="10" font-family="sans-serif" text-anchor="middle">Completely transparent to caller</text>
+  </g>
+
+  <!-- Bottom: wraps note -->
+  <g transform="translate(50, 350)">
+    <rect width="860" height="105" rx="8" fill="#0f172a" stroke="#334155"/>
+    <text x="25" y="26" fill="#38bdf8" font-size="13" font-weight="bold" font-family="sans-serif">The Role of @functools.wraps:</text>
+    <text x="25" y="48" fill="#e2e8f0" font-size="11" font-family="sans-serif">• Without <tspan font-family="monospace" fill="#38bdf8">@functools.wraps</tspan>, decorated functions lose their identity: <tspan font-family="monospace">read_register.__name__</tspan> becomes <tspan font-family="monospace">"wrapper"</tspan>, and docstrings disappear.</text>
+    <text x="25" y="68" fill="#e2e8f0" font-size="11" font-family="sans-serif">• <tspan font-family="monospace" fill="#34d399">@wraps</tspan> copies <tspan font-family="monospace">__module__</tspan>, <tspan font-family="monospace">__name__</tspan>, <tspan font-family="monospace">__qualname__</tspan>, <tspan font-family="monospace">__doc__</tspan>, and <tspan font-family="monospace">__annotations__</tspan> to preserve reflection and introspection.</text>
+    <text x="25" y="88" fill="#e2e8f0" font-size="11" font-family="sans-serif">• Used heavily in hardware frameworks (e.g. cocotb's <tspan font-family="monospace" fill="#fbbf24">@cocotb.test()</tspan> and pytest test fixtures).</text>
+  </g>
+</svg>

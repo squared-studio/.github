@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 480" width="100%" height="100%">
+  <rect width="960" height="480" fill="#0b1120" rx="8"/>
+  <defs>
+    <marker id="arrow-blue" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8"/>
+    </marker>
+    <marker id="arrow-red" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#f43f5e"/>
+    </marker>
+    <marker id="arrow-green" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#34d399"/>
+    </marker>
+  </defs>
+
+  <text x="480" y="38" fill="#f8fafc" font-size="20" font-weight="bold" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" text-anchor="middle">Variables as Named Pointers: Mutability, Rebinding &amp; Interning</text>
+  <text x="480" y="62" fill="#94a3b8" font-size="13" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" text-anchor="middle">Python variables are reference bindings to heap objects, not typed memory slots</text>
+
+  <!-- Left: Immutable Rebinding -->
+  <g transform="translate(50, 95)">
+    <rect width="400" height="235" rx="8" fill="#1e293b" stroke="#38bdf8" stroke-width="1.5"/>
+    <text x="200" y="26" fill="#38bdf8" font-size="14" font-weight="bold" font-family="sans-serif" text-anchor="middle">Immutable Types (int, float, str, tuple)</text>
+
+    <!-- Variables -->
+    <rect x="25" y="55" width="80" height="35" rx="4" fill="#0f172a" stroke="#38bdf8"/>
+    <text x="65" y="77" fill="#ffffff" font-size="13" font-family="monospace" text-anchor="middle">a = 5</text>
+
+    <rect x="25" y="115" width="80" height="35" rx="4" fill="#0f172a" stroke="#38bdf8"/>
+    <text x="65" y="137" fill="#ffffff" font-size="13" font-family="monospace" text-anchor="middle">b = a</text>
+
+    <rect x="25" y="175" width="80" height="35" rx="4" fill="#0f172a" stroke="#f43f5e"/>
+    <text x="65" y="197" fill="#fda4af" font-size="12" font-family="monospace" text-anchor="middle">a = a + 1</text>
+
+    <!-- Objects in Heap -->
+    <rect x="230" y="65" width="140" height="45" rx="6" fill="#082f49" stroke="#38bdf8"/>
+    <text x="300" y="85" fill="#38bdf8" font-size="11" font-family="sans-serif" text-anchor="middle">PyLongObject (5)</text>
+    <text x="300" y="100" fill="#94a3b8" font-size="9" font-family="monospace" text-anchor="middle">id: 0x1000 | refcnt: 2->1</text>
+
+    <rect x="230" y="165" width="140" height="45" rx="6" fill="#4c0519" stroke="#f43f5e"/>
+    <text x="300" y="185" fill="#fda4af" font-size="11" font-family="sans-serif" text-anchor="middle">NEW PyLong (6)</text>
+    <text x="300" y="200" fill="#fca5a5" font-size="9" font-family="monospace" text-anchor="middle">id: 0x1040 | refcnt: 1</text>
+
+    <!-- Connectors -->
+    <path d="M 105 132 L 225 90" stroke="#38bdf8" stroke-width="1.5" marker-end="url(#arrow-blue)"/>
+    <path d="M 105 72 L 225 85" stroke="#38bdf8" stroke-width="1.5" stroke-dasharray="3,3"/>
+    <path d="M 105 192 L 225 188" stroke="#f43f5e" stroke-width="1.5" marker-end="url(#arrow-red)"/>
+
+    <text x="200" y="224" fill="#94a3b8" font-size="10" font-family="sans-serif" text-anchor="middle">Rebinding allocates new object; original object unaffected</text>
+  </g>
+
+  <!-- Right: Mutable In-Place Mutation -->
+  <g transform="translate(510, 95)">
+    <rect width="400" height="235" rx="8" fill="#1e293b" stroke="#34d399" stroke-width="1.5"/>
+    <text x="200" y="26" fill="#34d399" font-size="14" font-weight="bold" font-family="sans-serif" text-anchor="middle">Mutable Types (list, dict, set)</text>
+
+    <!-- Variables -->
+    <rect x="25" y="60" width="100" height="35" rx="4" fill="#0f172a" stroke="#34d399"/>
+    <text x="75" y="82" fill="#ffffff" font-size="12" font-family="monospace" text-anchor="middle">x = [1, 2]</text>
+
+    <rect x="25" y="125" width="100" height="35" rx="4" fill="#0f172a" stroke="#34d399"/>
+    <text x="75" y="147" fill="#ffffff" font-size="12" font-family="monospace" text-anchor="middle">y = x</text>
+
+    <rect x="25" y="180" width="100" height="35" rx="4" fill="#0f172a" stroke="#fbbf24"/>
+    <text x="75" y="202" fill="#fde047" font-size="11" font-family="monospace" text-anchor="middle">x.append(3)</text>
+
+    <!-- Shared Heap Object -->
+    <rect x="230" y="90" width="150" height="85" rx="6" fill="#064e3b" stroke="#34d399"/>
+    <text x="305" y="112" fill="#34d399" font-size="12" font-weight="bold" font-family="sans-serif" text-anchor="middle">PyListObject</text>
+    <text x="305" y="132" fill="#a7f3d0" font-size="11" font-family="monospace" text-anchor="middle">[1, 2, 3]</text>
+    <text x="305" y="152" fill="#6ee7b7" font-size="9" font-family="sans-serif" text-anchor="middle">Mutated In-Place</text>
+    <text x="305" y="166" fill="#94a3b8" font-size="9" font-family="monospace" text-anchor="middle">id unchanged (0x2080)</text>
+
+    <!-- Connectors -->
+    <path d="M 125 77 L 225 115" stroke="#34d399" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+    <path d="M 125 142 L 225 135" stroke="#34d399" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+
+    <text x="200" y="224" fill="#fbbf24" font-size="10" font-family="sans-serif" text-anchor="middle">Both x and y see [1, 2, 3]! Aliasing hazard in APIs.</text>
+  </g>
+
+  <!-- Bottom: Small Integer Caching & String Interning -->
+  <g transform="translate(50, 350)">
+    <rect width="860" height="105" rx="8" fill="#0f172a" stroke="#334155"/>
+    <text x="25" y="26" fill="#fbbf24" font-size="13" font-weight="bold" font-family="sans-serif">Small Integer Interning &amp; String Interning Caching Optimization:</text>
+    <text x="25" y="48" fill="#e2e8f0" font-size="11" font-family="sans-serif">• <tspan fill="#38bdf8" font-weight="bold">Small Integer Cache</tspan>: Integers from <tspan font-family="monospace" fill="#38bdf8">-5 to 256</tspan> are preallocated by CPython at startup. <tspan font-family="monospace">a = 256; b = 256; a is b</tspan> is <tspan fill="#34d399">True</tspan> (identical pointer).</text>
+    <text x="25" y="68" fill="#e2e8f0" font-size="11" font-family="sans-serif">• <tspan fill="#fbbf24" font-weight="bold">Identity vs. Equality</tspan>: <tspan font-family="monospace">is</tspan> compares memory addresses (<tspan font-family="monospace">id(a) == id(b)</tspan>); <tspan font-family="monospace">==</tspan> calls <tspan font-family="monospace">__eq__()</tspan> to compare values.</text>
+    <text x="25" y="88" fill="#e2e8f0" font-size="11" font-family="sans-serif">• <tspan fill="#f43f5e" font-weight="bold">String Interning</tspan>: Identifier-like strings are interned in a global dictionary for instantaneous $O(1)$ pointer comparison in method dispatch.</text>
+  </g>
+</svg>

@@ -1,0 +1,88 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 480" width="100%" height="100%">
+  <rect width="960" height="480" fill="#0b1120" rx="8"/>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8"/>
+    </marker>
+    <marker id="arrow-green" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#34d399"/>
+    </marker>
+  </defs>
+
+  <text x="480" y="38" fill="#f8fafc" font-size="20" font-weight="bold" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" text-anchor="middle">AsyncIO Event Loop Architecture &amp; Non-Blocking I/O</text>
+  <text x="480" y="62" fill="#94a3b8" font-size="13" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" text-anchor="middle">Cooperative multitasking multiplexing 100,000+ coroutines on a single thread via OS Epoll / Kqueue</text>
+
+  <!-- Left: Ready Queue -->
+  <g transform="translate(60, 100)">
+    <rect width="210" height="230" rx="8" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+    <rect width="210" height="32" rx="8" fill="#0369a1"/>
+    <text x="105" y="21" fill="#ffffff" font-size="12" font-weight="bold" font-family="sans-serif" text-anchor="middle">Ready Tasks Queue (_ready)</text>
+
+    <!-- Coroutines in queue -->
+    <rect x="15" y="48" width="180" height="35" rx="4" fill="#082f49" stroke="#38bdf8"/>
+    <text x="105" y="68" fill="#7dd3fc" font-size="10" font-family="monospace" text-anchor="middle">Task 1: handle_uart_rx()</text>
+
+    <rect x="15" y="93" width="180" height="35" rx="4" fill="#082f49" stroke="#38bdf8"/>
+    <text x="105" y="113" fill="#7dd3fc" font-size="10" font-family="monospace" text-anchor="middle">Task 2: parse_telemetry()</text>
+
+    <rect x="15" y="138" width="180" height="35" rx="4" fill="#082f49" stroke="#38bdf8"/>
+    <text x="105" y="158" fill="#7dd3fc" font-size="10" font-family="monospace" text-anchor="middle">Task 3: flush_log_buffer()</text>
+
+    <text x="105" y="205" fill="#94a3b8" font-size="10" font-family="sans-serif" text-anchor="middle">FIFO Scheduled Coroutines</text>
+  </g>
+
+  <!-- Arrow -->
+  <path d="M 270 215 L 320 215" stroke="#38bdf8" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- Center: The Event Loop -->
+  <g transform="translate(330, 95)">
+    <rect width="280" height="240" rx="12" fill="#022c22" stroke="#34d399" stroke-width="2"/>
+    <text x="140" y="28" fill="#34d399" font-size="14" font-weight="bold" font-family="sans-serif" text-anchor="middle">asyncio Event Loop</text>
+    <text x="140" y="46" fill="#a7f3d0" font-size="10" font-family="monospace" text-anchor="middle">while True: step()</text>
+
+    <!-- Active Execution Box -->
+    <rect x="25" y="60" width="230" height="70" rx="6" fill="#064e3b" stroke="#34d399"/>
+    <text x="140" y="80" fill="#ffffff" font-size="11" font-weight="bold" font-family="sans-serif" text-anchor="middle">Active Coroutine Execution</text>
+    <text x="140" y="98" fill="#6ee7b7" font-size="10" font-family="monospace" text-anchor="middle">task.step() -&gt; resumes frame</text>
+    <text x="140" y="116" fill="#fbbf24" font-size="9" font-family="sans-serif" text-anchor="middle">Runs until 'await' statement</text>
+
+    <!-- Await Yield -->
+    <rect x="25" y="145" width="230" height="70" rx="6" fill="#0f172a" stroke="#38bdf8"/>
+    <text x="140" y="165" fill="#38bdf8" font-size="11" font-weight="bold" font-family="sans-serif" text-anchor="middle">await socket.read(4096)</text>
+    <text x="140" y="184" fill="#cbd5e1" font-size="9" font-family="sans-serif" text-anchor="middle">Suspends task, yields control back</text>
+    <text x="140" y="200" fill="#94a3b8" font-size="9" font-family="sans-serif" text-anchor="middle">Registers file descriptor with OS</text>
+  </g>
+
+  <!-- Arrow -->
+  <path d="M 610 215 L 660 215" stroke="#34d399" stroke-width="2" marker-end="url(#arrow-green)"/>
+
+  <!-- Right: OS Kernel Polling -->
+  <g transform="translate(670, 100)">
+    <rect width="230" height="230" rx="8" fill="#1e293b" stroke="#fbbf24" stroke-width="2"/>
+    <rect width="230" height="32" rx="8" fill="#b45309"/>
+    <text x="115" y="21" fill="#ffffff" font-size="12" font-weight="bold" font-family="sans-serif" text-anchor="middle">OS I/O Multiplexing</text>
+
+    <rect x="15" y="48" width="200" height="40" rx="4" fill="#0f172a" stroke="#fbbf24"/>
+    <text x="115" y="68" fill="#fde047" font-size="11" font-family="monospace" text-anchor="middle">select.epoll() [Linux]</text>
+    <text x="115" y="82" fill="#94a3b8" font-size="9" font-family="sans-serif" text-anchor="middle">or kqueue() [BSD/macOS]</text>
+
+    <text x="115" y="112" fill="#cbd5e1" font-size="10" font-family="sans-serif" text-anchor="middle">Monitored Sockets &amp; Pipes</text>
+
+    <rect x="25" y="125" width="180" height="24" rx="3" fill="#334155"/>
+    <text x="115" y="141" fill="#fff" font-size="9" font-family="monospace" text-anchor="middle">FD 4: Read Ready (UART)</text>
+
+    <rect x="25" y="155" width="180" height="24" rx="3" fill="#334155"/>
+    <text x="115" y="171" fill="#94a3b8" font-size="9" font-family="monospace" text-anchor="middle">FD 7: Waiting for packet...</text>
+
+    <text x="115" y="210" fill="#34d399" font-size="9" font-family="sans-serif" text-anchor="middle">Zero CPU polling overhead</text>
+  </g>
+
+  <!-- Bottom Details -->
+  <g transform="translate(60, 350)">
+    <rect width="840" height="105" rx="8" fill="#0f172a" stroke="#334155"/>
+    <text x="25" y="26" fill="#38bdf8" font-size="13" font-weight="bold" font-family="sans-serif">The Golden Rule of AsyncIO:</text>
+    <text x="25" y="48" fill="#f43f5e" font-size="11" font-family="sans-serif" font-weight="bold">Never execute blocking operations (e.g. time.sleep(), math loops, synchronous file I/O) inside a coroutine!</text>
+    <text x="25" y="68" fill="#cbd5e1" font-size="11" font-family="sans-serif">Because the event loop runs on a <tspan font-weight="bold">single thread</tspan>, blocking that thread freezes ALL scheduled coroutines and stops the world. Offload blocking calls using <tspan font-family="monospace" fill="#34d399">asyncio.to_thread()</tspan>.</text>
+    <text x="25" y="88" fill="#94a3b8" font-size="10" font-family="sans-serif">Ideal for hardware testbench co-simulation (cocotb) where thousands of clock edge events synchronize non-blockingly.</text>
+  </g>
+</svg>

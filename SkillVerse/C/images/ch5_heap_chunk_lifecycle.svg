@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 440" width="100%" height="100%">
+  <defs>
+    <style>
+      .bg { fill: #0b1120; }
+      .card { fill: #131d33; stroke: #1e293b; stroke-width: 1.5; rx: 10; }
+      .title { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 19px; fill: #f8fafc; }
+      .sec-title { font-family: 'Inter', system-ui, sans-serif; font-weight: 600; font-size: 14px; fill: #38bdf8; }
+      .label { font-family: 'Inter', system-ui, sans-serif; font-size: 12px; fill: #cbd5e1; }
+      .sublabel { font-family: 'Inter', system-ui, sans-serif; font-size: 11px; fill: #94a3b8; }
+      .code-txt { font-family: 'JetBrains Mono', Consolas, monospace; font-size: 12px; fill: #34d399; font-weight: 600; }
+      .hdr-chunk { fill: #f43f5e; stroke: #f43f5e; stroke-width: 1.5; }
+      .payload-chunk { fill: #38bdf8; fill-opacity: 0.2; stroke: #38bdf8; stroke-width: 1.5; }
+    </style>
+  </defs>
+
+  <rect width="960" height="440" class="bg" rx="14"/>
+  <text x="480" y="36" text-anchor="middle" class="title">Heap Chunk Memory Anatomy &amp; Lifecycle (malloc, realloc, free)</text>
+
+  <!-- Left: Chunk Anatomy -->
+  <g transform="translate(45, 55)">
+    <rect width="420" height="360" class="card"/>
+    <text x="20" y="28" class="sec-title">Anatomy of an Allocated malloc() Heap Chunk</text>
+
+    <!-- Chunk Graphic -->
+    <g transform="translate(40, 50)">
+      <!-- Chunk Header (Metadata) -->
+      <rect x="0" y="0" width="340" height="45" rx="3" fill="#f43f5e" fill-opacity="0.3" stroke="#f43f5e" stroke-width="1.8"/>
+      <text x="170" y="28" text-anchor="middle" class="code-txt" fill="#f43f5e">Chunk Header (Size + Flags: A, M, P)</text>
+
+      <!-- Pointer returned to user -->
+      <line x1="0" y1="45" x2="-25" y2="45" stroke="#34d399" stroke-width="2"/>
+      <text x="-32" y="49" text-anchor="end" class="code-txt" fill="#34d399">ptr returned</text>
+
+      <!-- Usable Payload -->
+      <rect x="0" y="45" width="340" height="110" rx="3" class="payload-chunk"/>
+      <text x="170" y="95" text-anchor="middle" class="code-txt" fill="#38bdf8">Usable User Payload (size bytes)</text>
+      <text x="170" y="115" text-anchor="middle" class="sublabel">Written via ptr[0] ... ptr[size-1]</text>
+
+      <!-- Alignment Padding -->
+      <rect x="0" y="155" width="340" height="30" rx="3" fill="#334155" stroke="#475569" stroke-width="1.5"/>
+      <text x="170" y="175" text-anchor="middle" class="sublabel">Alignment Padding (16-byte boundary)</text>
+    </g>
+
+    <rect x="20" y="260" width="380" height="80" rx="6" fill="#0b1120" stroke="#1e293b"/>
+    <text x="30" y="282" class="code-txt" fill="#f43f5e">Heap Corruption Risk (Buffer Overflow):</text>
+    <text x="30" y="302" class="sublabel">Writing past payload clobbers the NEXT chunk's header,</text>
+    <text x="30" y="320" class="sublabel">causing SIGSEGV crash during subsequent free() call!</text>
+  </g>
+
+  <!-- Right: Allocation Functions Matrix -->
+  <g transform="translate(495, 55)">
+    <rect width="420" height="360" class="card"/>
+    <text x="20" y="28" class="sec-title">Core Heap Management Functions</text>
+
+    <!-- Function 1: malloc -->
+    <rect x="15" y="42" width="390" height="65" rx="6" fill="#0b1120" stroke="#1e293b"/>
+    <text x="25" y="64" class="code-txt" fill="#38bdf8">void* malloc(size_t size);</text>
+    <text x="25" y="84" class="sublabel">• Allocates uninitialized memory (contains random garbage!).</text>
+    <text x="25" y="98" class="sublabel">• Returns NULL if system runs out of heap memory.</text>
+
+    <!-- Function 2: calloc -->
+    <rect x="15" y="115" width="390" height="65" rx="6" fill="#0b1120" stroke="#1e293b"/>
+    <text x="25" y="137" class="code-txt" fill="#34d399">void* calloc(size_t num, size_t size);</text>
+    <text x="25" y="157" class="sublabel">• Allocates memory and clears ALL bytes to zero (0).</text>
+    <text x="25" y="171" class="sublabel">• Safer than malloc, with minimal OS page-zero overhead.</text>
+
+    <!-- Function 3: realloc -->
+    <rect x="15" y="188" width="390" height="70" rx="6" fill="#0b1120" stroke="#1e293b"/>
+    <text x="25" y="210" class="code-txt" fill="#fbbf24">void* realloc(void *ptr, size_t new_size);</text>
+    <text x="25" y="230" class="sublabel">• Resizes existing chunk in place or relocates to new block.</text>
+    <text x="25" y="246" class="sublabel">• Copies existing contents; frees old block automatically.</text>
+
+    <!-- Function 4: free -->
+    <rect x="15" y="266" width="390" height="65" rx="6" fill="#0b1120" stroke="#1e293b"/>
+    <text x="25" y="288" class="code-txt" fill="#f43f5e">void free(void *ptr);</text>
+    <text x="25" y="308" class="sublabel">• Returns chunk to allocator's free list.</text>
+    <text x="25" y="322" class="sublabel" style="fill:#34d399;">Always set ptr = NULL after free() to prevent dangling ptrs!</text>
+  </g>
+</svg>
