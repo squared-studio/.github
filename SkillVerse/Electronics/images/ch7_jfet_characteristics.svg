@@ -1,0 +1,99 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 440" width="100%" height="100%">
+  <defs>
+    <style>
+      .bg { fill: #0b1120; }
+      .card { fill: #131d33; stroke: #1e293b; stroke-width: 1.5; rx: 10; }
+      .title { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 19px; fill: #f8fafc; }
+      .sec-title { font-family: 'Inter', system-ui, sans-serif; font-weight: 600; font-size: 14px; fill: #38bdf8; }
+      .label { font-family: 'Inter', system-ui, sans-serif; font-size: 12px; fill: #cbd5e1; }
+      .sublabel { font-family: 'Inter', system-ui, sans-serif; font-size: 11px; fill: #94a3b8; }
+      .code-txt { font-family: 'JetBrains Mono', Consolas, monospace; font-size: 12px; fill: #34d399; font-weight: 600; }
+      .axis { stroke: #64748b; stroke-width: 1.8; }
+      .grid { stroke: #1e293b; stroke-width: 1; stroke-dasharray: 3,3; }
+      .jfet-curve { stroke: #38bdf8; stroke-width: 2.5; fill: none; stroke-linecap: round; }
+      .pinch-locus { stroke: #fbbf24; stroke-width: 2; fill: none; stroke-dasharray: 4,4; }
+    </style>
+  </defs>
+
+  <rect width="960" height="440" class="bg" rx="14"/>
+  <text x="480" y="36" text-anchor="middle" class="title">JFET Characteristic Curves: Transfer (I_D vs V_GS) &amp; Drain (I_D vs V_DS)</text>
+
+  <!-- Left: Transfer Characteristic Curve -->
+  <g transform="translate(25, 55)">
+    <rect width="380" height="360" class="card"/>
+    <text x="25" y="30" class="sec-title">Shockley Transfer Curve (I_D vs V_GS)</text>
+
+    <g transform="translate(240, 260)">
+      <!-- Axes -->
+      <line x1="-190" y1="0" x2="90" y2="0" class="axis"/>
+      <line x1="0" y1="0" x2="0" y2="-210" class="axis"/>
+      <text x="95" y="5" class="label">V_GS (V)</text>
+      <text x="0" y="-218" class="label">I_D (mA)</text>
+
+      <!-- Grid lines -->
+      <line x1="-160" y1="0" x2="-160" y2="-200" class="grid"/>
+      <text x="-160" y="16" text-anchor="middle" class="code-txt" fill="#f43f5e">V_P (-4V)</text>
+
+      <line x1="0" y1="-180" x2="-160" y2="-180" class="grid"/>
+      <text x="15" y="-176" class="code-txt" fill="#34d399">I_DSS (10mA)</text>
+
+      <!-- Parabolic Shockley Curve: I_D = I_DSS * (1 - V_GS/V_P)^2 -->
+      <!-- At -4V: 0; At -3V: 0.0625; At -2V: 0.25; At -1V: 0.5625; At 0V: 1.0 (-180px) -->
+      <path d="M -160,0 Q -80,10 0,-180" stroke="#34d399" stroke-width="3" fill="none"/>
+      <circle cx="-160" cy="0" r="4" fill="#f43f5e"/>
+      <circle cx="0" cy="-180" r="4" fill="#34d399"/>
+
+      <text x="-120" y="-95" class="code-txt" fill="#34d399">Parabolic (Square-Law)</text>
+    </g>
+
+    <rect x="20" y="295" width="340" height="50" rx="6" fill="#0b1120" stroke="#1e293b"/>
+    <text x="30" y="315" class="code-txt">I_D = I_DSS · [1 - (V_GS / V_P)]²</text>
+    <text x="30" y="332" class="sublabel">Slope ΔI_D / ΔV_GS represents transconductance g_m.</text>
+  </g>
+
+  <!-- Right: Drain Characteristic Family of Curves -->
+  <g transform="translate(425, 55)">
+    <rect width="510" height="360" class="card"/>
+    <text x="25" y="30" class="sec-title">Drain Family of Curves (I_D vs V_DS)</text>
+
+    <g transform="translate(50, 260)">
+      <!-- Axes -->
+      <line x1="0" y1="0" x2="420" y2="0" class="axis"/>
+      <line x1="0" y1="0" x2="0" y2="-210" class="axis"/>
+      <text x="425" y="5" class="label">Drain-Source Voltage V_DS (V)</text>
+      <text x="0" y="-218" class="label">Drain Current I_D (mA)</text>
+
+      <!-- Pinch-off locus parabola V_DS = V_GS - V_P -->
+      <path d="M 0,0 Q 80,-40 160,-180" class="pinch-locus"/>
+      <text x="95" y="-120" class="code-txt" fill="#fbbf24" style="font-size:10px;">Pinch-off Locus</text>
+
+      <!-- Curve V_GS = 0V -->
+      <path d="M 0,0 C 70,-150 120,-176 400,-180" class="jfet-curve"/>
+      <text x="405" y="-176" class="code-txt" style="font-size:11px;">V_GS = 0V</text>
+
+      <!-- Curve V_GS = -1V -->
+      <path d="M 0,0 C 50,-85 90,-100 400,-102" class="jfet-curve"/>
+      <text x="405" y="-98" class="code-txt" style="font-size:11px;">V_GS = -1V</text>
+
+      <!-- Curve V_GS = -2V -->
+      <path d="M 0,0 C 35,-38 65,-45 400,-46" class="jfet-curve"/>
+      <text x="405" y="-42" class="code-txt" style="font-size:11px;">V_GS = -2V</text>
+
+      <!-- Curve V_GS = -3V -->
+      <path d="M 0,0 C 20,-10 40,-12 400,-12" class="jfet-curve"/>
+      <text x="405" y="-8" class="code-txt" style="font-size:11px;">V_GS = -3V</text>
+
+      <!-- Cutoff V_GS = -4V -->
+      <line x1="0" y1="0" x2="400" y2="0" stroke="#f43f5e" stroke-width="2"/>
+      <text x="405" y="14" class="code-txt" fill="#f43f5e" style="font-size:11px;">V_GS = V_P (-4V)</text>
+
+      <!-- Region Labels -->
+      <text x="35" y="-190" class="label" font-weight="bold" fill="#38bdf8">Ohmic Region</text>
+      <text x="220" y="-190" class="label" font-weight="bold" fill="#34d399">Pinch-off / Saturation Region</text>
+    </g>
+
+    <rect x="20" y="295" width="470" height="50" rx="6" fill="#0b1120" stroke="#1e293b"/>
+    <text x="30" y="315" class="code-txt">• Ohmic: V_DS &lt; V_GS - V_P (Operates as Voltage-Controlled Resistor)</text>
+    <text x="30" y="332" class="sublabel">• Saturation: V_DS ≥ V_GS - V_P (Constant Current Source I_D)</text>
+  </g>
+</svg>

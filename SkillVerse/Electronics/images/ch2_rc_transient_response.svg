@@ -1,0 +1,134 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 440" width="100%" height="100%">
+  <defs>
+    <style>
+      .bg { fill: #0b1120; }
+      .card { fill: #131d33; stroke: #1e293b; stroke-width: 1.5; rx: 10; }
+      .title { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 19px; fill: #f8fafc; }
+      .sec-title { font-family: 'Inter', system-ui, sans-serif; font-weight: 600; font-size: 14px; fill: #38bdf8; }
+      .label { font-family: 'Inter', system-ui, sans-serif; font-size: 12px; fill: #cbd5e1; }
+      .sublabel { font-family: 'Inter', system-ui, sans-serif; font-size: 11px; fill: #94a3b8; }
+      .code-txt { font-family: 'JetBrains Mono', Consolas, monospace; font-size: 12px; fill: #34d399; font-weight: 600; }
+      .axis { stroke: #475569; stroke-width: 1.5; }
+      .grid { stroke: #1e293b; stroke-width: 1; stroke-dasharray: 3,3; }
+      .curve-charge { stroke: #38bdf8; stroke-width: 3; fill: none; stroke-linecap: round; }
+      .curve-discharge { stroke: #f43f5e; stroke-width: 3; fill: none; stroke-linecap: round; }
+      .curve-current { stroke: #fbbf24; stroke-width: 2.5; fill: none; stroke-dasharray: 5,4; }
+    </style>
+  </defs>
+
+  <rect width="960" height="440" class="bg" rx="14"/>
+  <text x="480" y="36" text-anchor="middle" class="title">RC Circuit Transient Dynamics: Time Constant (τ = R·C)</text>
+
+  <!-- Left: Circuit Schematic & Equations -->
+  <g transform="translate(25, 55)">
+    <rect width="280" height="360" class="card"/>
+    <text x="20" y="30" class="sec-title">RC Step Response Circuit</text>
+
+    <!-- Schematic -->
+    <g transform="translate(30, 50)">
+      <!-- Step source -->
+      <circle cx="25" cy="50" r="16" fill="#1e293b" stroke="#f43f5e" stroke-width="2"/>
+      <text x="25" y="55" text-anchor="middle" class="code-txt" fill="#f43f5e">V₀</text>
+      <line x1="25" y1="34" x2="25" y2="10" stroke="#64748b" stroke-width="2"/>
+      <line x1="25" y1="10" x2="60" y2="10" stroke="#64748b" stroke-width="2"/>
+      
+      <!-- Switch -->
+      <line x1="60" y1="10" x2="85" y2="0" stroke="#38bdf8" stroke-width="2.5"/>
+      <circle cx="60" cy="10" r="3" fill="#38bdf8"/>
+      <circle cx="90" cy="10" r="3" fill="#38bdf8"/>
+      <text x="75" y="-5" text-anchor="middle" class="sublabel" fill="#38bdf8">t = 0</text>
+      
+      <!-- Resistor -->
+      <line x1="90" y1="10" x2="115" y2="10" stroke="#64748b" stroke-width="2"/>
+      <rect x="115" y="2" width="40" height="16" rx="2" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+      <text x="135" y="14" text-anchor="middle" class="sublabel" fill="#fff">R</text>
+      <line x1="155" y1="10" x2="190" y2="10" stroke="#64748b" stroke-width="2"/>
+      
+      <!-- Capacitor -->
+      <line x1="190" y1="10" x2="190" y2="35" stroke="#64748b" stroke-width="2"/>
+      <line x1="178" y1="35" x2="202" y2="35" stroke="#34d399" stroke-width="3"/>
+      <line x1="178" y1="43" x2="202" y2="43" stroke="#34d399" stroke-width="3"/>
+      <text x="215" y="42" class="sublabel" fill="#34d399">C</text>
+      <line x1="190" y1="43" x2="190" y2="90" stroke="#64748b" stroke-width="2"/>
+      
+      <!-- Bottom Return -->
+      <line x1="190" y1="90" x2="25" y2="90" stroke="#64748b" stroke-width="2"/>
+      <line x1="25" y1="90" x2="25" y2="66" stroke="#64748b" stroke-width="2"/>
+    </g>
+
+    <!-- Formula Box -->
+    <rect x="15" y="180" width="250" height="160" rx="6" fill="#0b1120" stroke="#1e293b"/>
+    <text x="25" y="204" class="code-txt" fill="#38bdf8">Charging Voltage:</text>
+    <text x="25" y="224" class="code-txt" style="font-size:11px;">v_c(t) = V₀·(1 - e^(-t/τ))</text>
+    <text x="25" y="250" class="code-txt" fill="#f43f5e">Discharging Voltage:</text>
+    <text x="25" y="270" class="code-txt" style="font-size:11px;">v_c(t) = V₀·e^(-t/τ)</text>
+    <text x="25" y="296" class="code-txt" fill="#fbbf24">Time Constant τ = R · C</text>
+    <text x="25" y="318" class="sublabel">After 5τ: 99.3% charged (steady state)</text>
+  </g>
+
+  <!-- Right: Transient Curves Graph -->
+  <g transform="translate(325, 55)">
+    <rect width="610" height="360" class="card"/>
+    <text x="25" y="30" class="sec-title">Universal RC Charging &amp; Discharging Curves</text>
+
+    <!-- Graph Axes -->
+    <g transform="translate(60, 50)">
+      <!-- Background Grids -->
+      <!-- Horizontal voltage lines -->
+      <line x1="0" y1="0" x2="510" y2="0" class="grid"/>
+      <text x="-35" y="5" class="sublabel">100% V₀</text>
+
+      <line x1="0" y1="45" x2="510" y2="45" class="grid"/>
+      <text x="-35" y="50" class="sublabel">86.5%</text>
+
+      <line x1="0" y1="80" x2="510" y2="80" class="grid"/>
+      <text x="-35" y="85" class="sublabel">63.2%</text>
+
+      <line x1="0" y1="140" x2="510" y2="140" class="grid"/>
+      <text x="-35" y="145" class="sublabel">36.8%</text>
+
+      <line x1="0" y1="220" x2="510" y2="220" class="grid"/>
+      <text x="-25" y="225" class="sublabel">0 V</text>
+
+      <!-- Vertical tau lines -->
+      <line x1="100" y1="0" x2="100" y2="220" class="grid"/>
+      <text x="100" y="238" text-anchor="middle" class="sublabel">1τ</text>
+
+      <line x1="200" y1="0" x2="200" y2="220" class="grid"/>
+      <text x="200" y="238" text-anchor="middle" class="sublabel">2τ</text>
+
+      <line x1="300" y1="0" x2="300" y2="220" class="grid"/>
+      <text x="300" y="238" text-anchor="middle" class="sublabel">3τ</text>
+
+      <line x1="400" y1="0" x2="400" y2="220" class="grid"/>
+      <text x="400" y="238" text-anchor="middle" class="sublabel">4τ</text>
+
+      <line x1="500" y1="0" x2="500" y2="220" class="grid"/>
+      <text x="500" y="238" text-anchor="middle" class="sublabel">5τ</text>
+
+      <!-- Main Axes -->
+      <line x1="0" y1="220" x2="515" y2="220" class="axis"/>
+      <line x1="0" y1="220" x2="0" y2="-10" class="axis"/>
+      <text x="520" y="224" class="label">Time (t)</text>
+      <text x="0" y="-18" class="label">Voltage / Current</text>
+
+      <!-- Charging Curve: (0,220) -> (100,81) -> (200,30) -> (300,11) -> (400,4) -> (500,1) -->
+      <path d="M 0,220 C 50,110 75,85 100,81 C 140,45 170,32 200,30 C 250,14 275,12 300,11 C 360,4 420,2 500,1" class="curve-charge"/>
+      <circle cx="100" cy="81" r="4" fill="#38bdf8"/>
+      <text x="110" y="76" class="code-txt" fill="#38bdf8">63.2% at 1τ</text>
+
+      <!-- Discharging Curve: (0,0) -> (100,139) -> (200,190) -> (300,209) -> (500,219) -->
+      <path d="M 0,0 C 50,110 75,135 100,139 C 140,175 170,188 200,190 C 250,206 275,208 300,209 C 360,216 420,218 500,219" class="curve-discharge"/>
+      <circle cx="100" cy="139" r="4" fill="#f43f5e"/>
+      <text x="110" y="134" class="code-txt" fill="#f43f5e">36.8% at 1τ</text>
+
+      <!-- Legend -->
+      <g transform="translate(230, 255)">
+        <line x1="0" y1="10" x2="25" y2="10" class="curve-charge"/>
+        <text x="32" y="14" class="sublabel" fill="#38bdf8">Charging V_c(t)</text>
+        <line x1="140" y1="10" x2="165" y2="10" class="curve-discharge"/>
+        <text x="172" y="14" class="sublabel" fill="#f43f5e">Discharging V_c(t)</text>
+      </g>
+    </g>
+  </g>
+</svg>

@@ -1,0 +1,116 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 440" width="100%" height="100%">
+  <defs>
+    <style>
+      .bg { fill: #0b1120; }
+      .card { fill: #131d33; stroke: #1e293b; stroke-width: 1.5; rx: 10; }
+      .title { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 19px; fill: #f8fafc; }
+      .sec-title { font-family: 'Inter', system-ui, sans-serif; font-weight: 600; font-size: 14px; fill: #38bdf8; }
+      .label { font-family: 'Inter', system-ui, sans-serif; font-size: 12px; fill: #cbd5e1; }
+      .sublabel { font-family: 'Inter', system-ui, sans-serif; font-size: 11px; fill: #94a3b8; }
+      .code-txt { font-family: 'JetBrains Mono', Consolas, monospace; font-size: 12px; fill: #34d399; font-weight: 600; }
+      .wire { stroke: #64748b; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; fill: none; }
+      .wire-hi { stroke: #38bdf8; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; fill: none; }
+      .diode-sym { fill: #38bdf8; stroke: #38bdf8; stroke-width: 1.5; }
+    </style>
+  </defs>
+
+  <rect width="960" height="440" class="bg" rx="14"/>
+  <text x="480" y="36" text-anchor="middle" class="title">Essential Diode Applications: Bridge Rectifier &amp; Zener Regulation</text>
+
+  <!-- Panel 1: Full-Wave Bridge Rectifier -->
+  <g transform="translate(25, 55)">
+    <rect width="450" height="360" class="card"/>
+    <text x="25" y="30" class="sec-title">1. Full-Wave Bridge Rectifier (AC to DC)</text>
+
+    <!-- Diamond Bridge Schematic -->
+    <g transform="translate(140, 50)">
+      <!-- AC Input left -->
+      <path d="M -90,70 Q -80,50 -70,70 Q -60,90 -50,70" fill="none" stroke="#f43f5e" stroke-width="2"/>
+      <text x="-70" y="45" text-anchor="middle" class="sublabel" fill="#f43f5e">AC In</text>
+      <line x1="-50" y1="70" x2="-20" y2="70" class="wire"/>
+      <line x1="-20" y1="70" x2="35" y2="35" class="wire"/> <!-- to top-left -->
+
+      <!-- Bridge Diamond Nodes: Top=(70, 0), Right=(140, 70), Bottom=(70, 140), Left=(0, 70) -->
+      <!-- D1 (Top Left) -->
+      <polygon points="25,45 45,25 45,45" class="diode-sym"/>
+      <!-- D2 (Top Right) -->
+      <polygon points="95,25 115,45 95,45" class="diode-sym"/>
+      <!-- D3 (Bottom Left) -->
+      <polygon points="45,95 25,115 45,115" class="diode-sym"/>
+      <!-- D4 (Bottom Right) -->
+      <polygon points="115,95 95,115 95,95" class="diode-sym"/>
+
+      <!-- Diamond connecting wires -->
+      <line x1="0" y1="70" x2="70" y2="0" class="wire-hi"/>
+      <line x1="70" y1="0" x2="140" y2="70" class="wire-hi"/>
+      <line x1="140" y1="70" x2="70" y2="140" class="wire-hi"/>
+      <line x1="70" y1="140" x2="0" y2="70" class="wire-hi"/>
+
+      <!-- DC+ from top node (70,0) -->
+      <line x1="70" y1="0" x2="70" y2="-15" class="wire"/>
+      <line x1="70" y1="-15" x2="190" y2="-15" class="wire-hi"/>
+      <text x="195" y="-11" class="code-txt" fill="#34d399">DC +</text>
+
+      <!-- DC- from bottom node (70,140) -->
+      <line x1="70" y1="140" x2="70" y2="155" class="wire"/>
+      <line x1="70" y1="155" x2="190" y2="155" class="wire"/>
+      <text x="195" y="159" class="code-txt" fill="#64748b">DC -</text>
+
+      <!-- Filter Cap between DC+ and DC- -->
+      <line x1="170" y1="-15" x2="170" y2="60" class="wire"/>
+      <line x1="158" y1="60" x2="182" y2="60" stroke="#38bdf8" stroke-width="2.5"/>
+      <line x1="158" y1="67" x2="182" y2="67" stroke="#38bdf8" stroke-width="2.5"/>
+      <line x1="170" y1="67" x2="170" y2="155" class="wire"/>
+      <text x="190" y="66" class="sublabel" fill="#38bdf8">C_filter</text>
+    </g>
+
+    <!-- Formula Box -->
+    <rect x="20" y="275" width="410" height="70" rx="6" fill="#0b1120" stroke="#1e293b"/>
+    <text x="30" y="298" class="code-txt">V_peak(DC) = V_peak(AC) - 2·V_F ≈ V_peak - 1.4V</text>
+    <text x="30" y="322" class="sublabel">Full-wave delivers twice the ripple frequency (100Hz/120Hz),</text>
+    <text x="30" y="336" class="sublabel">drastically reducing required filter capacitor size.</text>
+  </g>
+
+  <!-- Panel 2: Zener Voltage Regulation -->
+  <g transform="translate(485, 55)">
+    <rect width="450" height="360" class="card"/>
+    <text x="25" y="30" class="sec-title">2. Zener Diode Voltage Regulator</text>
+
+    <!-- Zener Schematic -->
+    <g transform="translate(60, 50)">
+      <!-- Unregulated Vin -->
+      <circle cx="20" cy="40" r="3.5" fill="#f43f5e"/>
+      <text x="20" y="25" text-anchor="middle" class="code-txt" fill="#f43f5e">Vin (Unregulated)</text>
+      <line x1="24" y1="40" x2="60" y2="40" class="wire"/>
+
+      <!-- Series Resistor R_S -->
+      <rect x="60" y="31" width="55" height="18" rx="2" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+      <text x="87" y="44" text-anchor="middle" class="sublabel" fill="#fff">R_S</text>
+      <line x1="115" y1="40" x2="170" y2="40" class="wire-hi"/>
+
+      <!-- Node to Zener -->
+      <circle cx="170" cy="40" r="3.5" fill="#38bdf8"/>
+      <line x1="170" y1="40" x2="170" y2="65" class="wire"/>
+
+      <!-- Zener Symbol (Bent cathode bar) -->
+      <polygon points="160,90 180,90 170,72" fill="#fbbf24" stroke="#fbbf24"/>
+      <path d="M 158,68 L 160,72 L 180,72 L 182,76" stroke="#fbbf24" stroke-width="2.2" fill="none"/>
+      <text x="195" y="85" class="code-txt" fill="#fbbf24">Zener (V_Z)</text>
+
+      <line x1="170" y1="90" x2="170" y2="125" class="wire"/>
+      <line x1="155" y1="125" x2="185" y2="125" class="wire"/>
+
+      <!-- Regulated Output Vout -->
+      <line x1="170" y1="40" x2="250" y2="40" class="wire-hi"/>
+      <text x="255" y="44" class="code-txt" fill="#34d399">Vout = V_Z (Stable)</text>
+    </g>
+
+    <!-- Formula Box -->
+    <rect x="20" y="235" width="410" height="110" rx="6" fill="#0b1120" stroke="#1e293b"/>
+    <text x="30" y="258" class="code-txt">R_S = (Vin_min - V_Z) / (I_Z_min + I_Load_max)</text>
+    <text x="30" y="282" class="label">Operates in Constant Reverse Breakdown</text>
+    <text x="30" y="302" class="sublabel">Maintains precise clamping voltage V_Z across load</text>
+    <text x="30" y="318" class="sublabel">as long as Zener current remains between I_Z_min and P_Z_max.</text>
+    <text x="30" y="334" class="sublabel" style="fill:#fbbf24;">Standard ratings: 3.3V, 5.1V, 9.1V, 12V, 15V.</text>
+  </g>
+</svg>

@@ -1,0 +1,139 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 440" width="100%" height="100%">
+  <defs>
+    <style>
+      .bg { fill: #0b1120; }
+      .card { fill: #131d33; stroke: #1e293b; stroke-width: 1.5; rx: 10; }
+      .title { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 19px; fill: #f8fafc; }
+      .sec-title { font-family: 'Inter', system-ui, sans-serif; font-weight: 600; font-size: 14px; fill: #38bdf8; }
+      .label { font-family: 'Inter', system-ui, sans-serif; font-size: 12px; fill: #cbd5e1; }
+      .sublabel { font-family: 'Inter', system-ui, sans-serif; font-size: 11px; fill: #94a3b8; }
+      .code-txt { font-family: 'JetBrains Mono', Consolas, monospace; font-size: 12px; fill: #34d399; font-weight: 600; }
+      .wire { stroke: #64748b; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; fill: none; }
+      .wire-hi { stroke: #38bdf8; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; fill: none; }
+    </style>
+  </defs>
+
+  <rect width="960" height="440" class="bg" rx="14"/>
+  <text x="480" y="36" text-anchor="middle" class="title">Essential Inductor Applications: Flyback Clamping, Filters &amp; SMPS</text>
+
+  <!-- Panel 1: Flyback Diode Protection -->
+  <g transform="translate(25, 55)">
+    <rect width="285" height="360" class="card"/>
+    <text x="20" y="30" class="sec-title">1. Flyback / Kickback Clamping</text>
+
+    <!-- Schematic -->
+    <g transform="translate(60, 48)">
+      <!-- Vcc -->
+      <circle cx="50" cy="15" r="3.5" fill="#f43f5e"/>
+      <text x="50" y="8" text-anchor="middle" class="sublabel" fill="#f43f5e">+12V Relay Rail</text>
+      <line x1="50" y1="18" x2="50" y2="40" class="wire"/>
+      <line x1="30" y1="40" x2="70" y2="40" class="wire"/>
+
+      <!-- Inductive Coil (Relay) -->
+      <line x1="30" y1="40" x2="30" y2="55" class="wire"/>
+      <path d="M 30,55 A 5,5 0 0,1 30,65 A 5,5 0 0,1 30,75 A 5,5 0 0,1 30,85 A 5,5 0 0,1 30,95" stroke="#fbbf24" stroke-width="2.5" fill="none"/>
+      <line x1="30" y1="95" x2="30" y2="110" class="wire"/>
+      <text x="8" y="78" class="code-txt" fill="#fbbf24">Relay</text>
+
+      <!-- Freewheeling Diode in Parallel -->
+      <line x1="70" y1="40" x2="70" y2="60" class="wire"/>
+      <polygon points="60,80 80,80 70,62" fill="#38bdf8" stroke="#38bdf8"/>
+      <line x1="60" y1="62" x2="80" y2="62" stroke="#38bdf8" stroke-width="2"/>
+      <line x1="70" y1="80" x2="70" y2="110" class="wire"/>
+      <text x="85" y="74" class="sublabel" fill="#38bdf8">1N4007</text>
+
+      <line x1="30" y1="110" x2="70" y2="110" class="wire"/>
+      <line x1="50" y1="110" x2="50" y2="130" class="wire"/>
+
+      <!-- NPN Transistor Switch -->
+      <circle cx="50" cy="145" r="16" fill="#1e293b" stroke="#64748b"/>
+      <text x="50" y="149" text-anchor="middle" class="sublabel">BJT / FET</text>
+      <line x1="50" y1="161" x2="50" y2="180" class="wire"/>
+      <line x1="40" y1="180" x2="60" y2="180" class="wire"/>
+    </g>
+
+    <!-- Formula Box -->
+    <rect x="15" y="240" width="255" height="105" rx="6" fill="#0b1120" stroke="#1e293b"/>
+    <text x="25" y="262" class="code-txt" fill="#f43f5e">V_kick = -L · (di / dt) &gt; 100V</text>
+    <text x="25" y="284" class="label">Safely recirculates collapse energy</text>
+    <text x="25" y="304" class="sublabel">Without diode, high inductive spike</text>
+    <text x="25" y="322" class="sublabel">destroys transistor junction instantly.</text>
+  </g>
+
+  <!-- Panel 2: LC Low-Pass Filter -->
+  <g transform="translate(330, 55)">
+    <rect width="285" height="360" class="card"/>
+    <text x="20" y="30" class="sec-title">2. 2nd-Order LC Low-Pass Filter</text>
+
+    <!-- Schematic -->
+    <g transform="translate(30, 50)">
+      <!-- Input -->
+      <text x="15" y="44" class="code-txt" fill="#f43f5e">Vin</text>
+      <line x1="40" y1="40" x2="65" y2="40" class="wire"/>
+
+      <!-- Series Inductor (Choke) -->
+      <path d="M 65,40 A 7,7 0 0,1 79,40 A 7,7 0 0,1 93,40 A 7,7 0 0,1 107,40 A 7,7 0 0,1 121,40" stroke="#38bdf8" stroke-width="2.5" fill="none"/>
+      <text x="93" y="22" text-anchor="middle" class="code-txt">L</text>
+      <line x1="121" y1="40" x2="160" y2="40" class="wire-hi"/>
+
+      <!-- Shunt Cap -->
+      <circle cx="160" cy="40" r="3.5" fill="#38bdf8"/>
+      <line x1="160" y1="40" x2="160" y2="65" class="wire"/>
+      <line x1="148" y1="65" x2="172" y2="65" stroke="#34d399" stroke-width="2.5"/>
+      <line x1="148" y1="72" x2="172" y2="72" stroke="#34d399" stroke-width="2.5"/>
+      <line x1="160" y1="72" x2="160" y2="95" class="wire"/>
+      <line x1="150" y1="95" x2="170" y2="95" class="wire"/>
+      <text x="180" y="72" class="code-txt" fill="#34d399">C</text>
+
+      <!-- Output -->
+      <line x1="160" y1="40" x2="200" y2="40" class="wire-hi"/>
+      <text x="205" y="44" class="code-txt" fill="#34d399">Vout</text>
+    </g>
+
+    <!-- Formula Box -->
+    <rect x="15" y="240" width="255" height="105" rx="6" fill="#0b1120" stroke="#1e293b"/>
+    <text x="25" y="262" class="code-txt">f_c = 1 / (2π · √(L · C))</text>
+    <text x="25" y="284" class="label">-40 dB / Decade Attenuation</text>
+    <text x="25" y="304" class="sublabel">L blocks high-frequency currents,</text>
+    <text x="25" y="322" class="sublabel">C shorts remaining ripple to ground.</text>
+  </g>
+
+  <!-- Panel 3: SMPS Buck Converter -->
+  <g transform="translate(635, 55)">
+    <rect width="300" height="360" class="card"/>
+    <text x="20" y="30" class="sec-title">3. DC-DC Buck Converter</text>
+
+    <!-- Schematic: Buck stage -->
+    <g transform="translate(30, 50)">
+      <!-- Vin -->
+      <text x="0" y="44" class="code-txt" fill="#f43f5e">Vin</text>
+      <line x1="25" y1="40" x2="50" y2="40" class="wire"/>
+
+      <!-- High-side Switch FET -->
+      <rect x="50" y="30" width="35" height="20" rx="3" fill="#1e293b" stroke="#38bdf8"/>
+      <text x="67" y="44" text-anchor="middle" class="sublabel" fill="#fff">SW</text>
+      <line x1="85" y1="40" x2="120" y2="40" class="wire"/>
+
+      <!-- Catch Diode -->
+      <circle cx="120" cy="40" r="3" fill="#38bdf8"/>
+      <line x1="120" y1="40" x2="120" y2="60" class="wire"/>
+      <polygon points="112,78 128,78 120,62" fill="#f43f5e" stroke="#f43f5e"/>
+      <line x1="112" y1="62" x2="128" y2="62" stroke="#f43f5e" stroke-width="2"/>
+      <line x1="120" y1="78" x2="120" y2="95" class="wire"/>
+      <line x1="110" y1="95" x2="130" y2="95" class="wire"/>
+
+      <!-- Storage Inductor -->
+      <path d="M 120,40 A 6,6 0 0,1 132,40 A 6,6 0 0,1 144,40 A 6,6 0 0,1 156,40 A 6,6 0 0,1 168,40" stroke="#fbbf24" stroke-width="2.5" fill="none"/>
+      <text x="144" y="24" text-anchor="middle" class="code-txt" fill="#fbbf24">L</text>
+      <line x1="168" y1="40" x2="200" y2="40" class="wire-hi"/>
+      <text x="205" y="44" class="code-txt" fill="#34d399">Vout</text>
+    </g>
+
+    <!-- Formula Box -->
+    <rect x="15" y="240" width="270" height="105" rx="6" fill="#0b1120" stroke="#1e293b"/>
+    <text x="25" y="262" class="code-txt">Vout = D · Vin   (Duty Cycle D)</text>
+    <text x="25" y="284" class="label">Energy Transfer Stage</text>
+    <text x="25" y="304" class="sublabel">SW ON: L stores magnetic energy.</text>
+    <text x="25" y="322" class="sublabel">SW OFF: L releases energy to load &gt;90% eff.</text>
+  </g>
+</svg>

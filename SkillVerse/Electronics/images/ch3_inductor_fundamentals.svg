@@ -1,0 +1,145 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 440" width="100%" height="100%">
+  <defs>
+    <style>
+      .bg { fill: #0b1120; }
+      .card { fill: #131d33; stroke: #1e293b; stroke-width: 1.5; rx: 10; }
+      .title { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 19px; fill: #f8fafc; }
+      .sec-title { font-family: 'Inter', system-ui, sans-serif; font-weight: 600; font-size: 14px; fill: #38bdf8; }
+      .label { font-family: 'Inter', system-ui, sans-serif; font-size: 12px; fill: #cbd5e1; }
+      .sublabel { font-family: 'Inter', system-ui, sans-serif; font-size: 11px; fill: #94a3b8; }
+      .code-txt { font-family: 'JetBrains Mono', Consolas, monospace; font-size: 12px; fill: #34d399; font-weight: 600; }
+      .wire { stroke: #64748b; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; fill: none; }
+      .wire-hi { stroke: #38bdf8; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; fill: none; }
+      .core { fill: #334155; stroke: #475569; stroke-width: 1.5; }
+      .flux-line { stroke: #a855f7; stroke-width: 1.5; stroke-dasharray: 4,3; fill: none; }
+      .coil-loop { stroke: #fbbf24; stroke-width: 3.5; fill: none; stroke-linecap: round; }
+    </style>
+    <marker id="arr-flux" viewBox="0 0 8 8" refX="5" refY="4" markerWidth="5" markerHeight="5" orient="auto">
+      <path d="M 0 1 L 7 4 L 0 7 z" fill="#a855f7" />
+    </marker>
+  </defs>
+
+  <rect width="960" height="440" class="bg" rx="14"/>
+  <text x="480" y="36" text-anchor="middle" class="title">Inductor Fundamentals: Magnetic Flux, Schematics &amp; Laws</text>
+
+  <!-- Panel 1: Physical Solenoid -->
+  <g transform="translate(25, 55)">
+    <rect width="295" height="360" class="card"/>
+    <text x="20" y="30" class="sec-title">Physical Solenoid &amp; Magnetic Energy</text>
+
+    <!-- Solenoid drawing -->
+    <g transform="translate(30, 48)">
+      <!-- Core cylinder -->
+      <rect x="35" y="30" width="160" height="35" rx="5" class="core"/>
+      <text x="115" y="52" text-anchor="middle" class="sublabel" style="fill:#94a3b8;">Permeability Core (μ = μ₀·μᵣ)</text>
+
+      <!-- Magnetic Flux Lines -->
+      <path d="M 25,20 C 60,-15 170,-15 205,20" class="flux-line" marker-end="url(#arr-flux)"/>
+      <path d="M 25,75 C 60,110 170,110 205,75" class="flux-line" marker-end="url(#arr-flux)"/>
+      <text x="115" y="-5" text-anchor="middle" class="sublabel" style="fill:#a855f7;">Magnetic Flux Φ [Webers]</text>
+
+      <!-- Helical turns (N) -->
+      <path d="M 20,48 L 45,28 M 45,68 L 70,28 M 70,68 L 95,28 M 95,68 L 120,28 M 120,68 L 145,28 M 145,68 L 170,28 M 170,68 L 195,28 M 195,68 L 210,48" class="coil-loop"/>
+      <text x="115" y="95" text-anchor="middle" class="code-txt" fill="#fbbf24">N Turns of Wire</text>
+    </g>
+
+    <!-- Formula Box -->
+    <rect x="15" y="195" width="265" height="145" rx="6" fill="#0b1120" stroke="#1e293b"/>
+    <text x="25" y="218" class="code-txt">L = (μ₀ · μᵣ · N² · A) / ℓ</text>
+    <text x="25" y="242" class="code-txt" fill="#f43f5e">v_L(t) = L · (di / dt)   [Faraday]</text>
+    <text x="25" y="266" class="code-txt" fill="#fbbf24">E_stored = ½ · L · I²    [Joules]</text>
+    <text x="25" y="292" class="sublabel">Unit: Henry (H), typically mH, μH, nH</text>
+    <text x="25" y="310" class="sublabel">Opposes sudden changes in electric current.</text>
+  </g>
+
+  <!-- Panel 2: Schematic Symbols -->
+  <g transform="translate(335, 55)">
+    <rect width="280" height="360" class="card"/>
+    <text x="20" y="30" class="sec-title">Standard Schematic Symbols</text>
+
+    <!-- Air Core -->
+    <text x="20" y="60" class="label" font-weight="bold">Air Core (High Frequency / RF)</text>
+    <g transform="translate(35, 75)">
+      <line x1="0" y1="20" x2="25" y2="20" class="wire"/>
+      <path d="M 25,20 A 10,10 0 0,1 45,20 A 10,10 0 0,1 65,20 A 10,10 0 0,1 85,20 A 10,10 0 0,1 105,20" class="wire-hi"/>
+      <line x1="105" y1="20" x2="130" y2="20" class="wire"/>
+      <text x="145" y="24" class="code-txt">Air Core</text>
+    </g>
+
+    <!-- Iron / Ferrite Core -->
+    <text x="20" y="145" class="label" font-weight="bold">Iron / Ferrite Core (Power / Choke)</text>
+    <g transform="translate(35, 160)">
+      <!-- Dual parallel lines for core -->
+      <line x1="25" y1="2" x2="105" y2="2" stroke="#94a3b8" stroke-width="1.8"/>
+      <line x1="25" y1="6" x2="105" y2="6" stroke="#94a3b8" stroke-width="1.8"/>
+      <line x1="0" y1="20" x2="25" y2="20" class="wire"/>
+      <path d="M 25,20 A 10,10 0 0,1 45,20 A 10,10 0 0,1 65,20 A 10,10 0 0,1 85,20 A 10,10 0 0,1 105,20" class="wire-hi"/>
+      <line x1="105" y1="20" x2="130" y2="20" class="wire"/>
+      <text x="145" y="24" class="code-txt">Ferrite Core</text>
+    </g>
+
+    <!-- Coupled Inductor / Transformer -->
+    <text x="20" y="235" class="label" font-weight="bold">Coupled / Transformer (Mutual M)</text>
+    <g transform="translate(35, 250)">
+      <!-- Primary -->
+      <path d="M 10,10 A 8,8 0 0,1 26,10 A 8,8 0 0,1 42,10 A 8,8 0 0,1 58,10" class="wire-hi"/>
+      <circle cx="8" cy="3" r="2.5" fill="#38bdf8"/> <!-- Dot -->
+      <!-- Core -->
+      <line x1="10" y1="20" x2="58" y2="20" stroke="#94a3b8" stroke-width="1.5"/>
+      <line x1="10" y1="24" x2="58" y2="24" stroke="#94a3b8" stroke-width="1.5"/>
+      <!-- Secondary -->
+      <path d="M 10,34 A 8,8 0 0,1 26,34 A 8,8 0 0,1 42,34 A 8,8 0 0,1 58,34" stroke="#34d399" stroke-width="2.2" fill="none"/>
+      <circle cx="8" cy="41" r="2.5" fill="#34d399"/> <!-- Dot -->
+      <text x="75" y="26" class="code-txt">1 : N Turns</text>
+    </g>
+    <text x="20" y="325" class="sublabel">Dots specify mutual phase coupling polarity.</text>
+  </g>
+
+  <!-- Panel 3: Series vs Parallel Combinations -->
+  <g transform="translate(630, 55)">
+    <rect width="305" height="360" class="card"/>
+    <text x="20" y="30" class="sec-title">Series vs Parallel Inductance</text>
+
+    <!-- Series Block -->
+    <text x="20" y="58" class="label" font-weight="bold">Series: Inductances Add (+)</text>
+    <g transform="translate(25, 70)">
+      <circle cx="10" cy="18" r="3.5" fill="#38bdf8"/>
+      <line x1="14" y1="18" x2="30" y2="18" class="wire"/>
+      <!-- L1 -->
+      <path d="M 30,18 A 6,6 0 0,1 42,18 A 6,6 0 0,1 54,18 A 6,6 0 0,1 66,18" class="wire-hi"/>
+      <line x1="66" y1="18" x2="85" y2="18" class="wire"/>
+      <!-- L2 -->
+      <path d="M 85,18 A 6,6 0 0,1 97,18 A 6,6 0 0,1 109,18 A 6,6 0 0,1 121,18" class="wire-hi"/>
+      <line x1="121" y1="18" x2="140" y2="18" class="wire"/>
+      <circle cx="140" cy="18" r="3.5" fill="#38bdf8"/>
+      <text x="150" y="22" class="code-txt">L_total</text>
+    </g>
+    <rect x="20" y="115" width="265" height="50" rx="6" fill="#0b1120" stroke="#1e293b"/>
+    <text x="30" y="136" class="code-txt">L_total = L1 + L2 + ... + Ln</text>
+    <text x="30" y="152" class="sublabel">Assumes no mutual magnetic coupling.</text>
+
+    <!-- Parallel Block -->
+    <text x="20" y="195" class="label" font-weight="bold">Parallel: Reciprocal Rule</text>
+    <g transform="translate(25, 205)">
+      <circle cx="10" cy="35" r="3.5" fill="#38bdf8"/>
+      <line x1="14" y1="35" x2="40" y2="35" class="wire"/>
+      <line x1="40" y1="15" x2="40" y2="55" class="wire"/>
+
+      <line x1="40" y1="15" x2="60" y2="15" class="wire"/>
+      <path d="M 60,15 A 6,6 0 0,1 72,15 A 6,6 0 0,1 84,15 A 6,6 0 0,1 96,15" class="wire-hi"/>
+      <line x1="96" y1="15" x2="115" y2="15" class="wire"/>
+
+      <line x1="40" y1="55" x2="60" y2="55" class="wire"/>
+      <path d="M 60,55 A 6,6 0 0,1 72,55 A 6,6 0 0,1 84,55 A 6,6 0 0,1 96,55" class="wire-hi"/>
+      <line x1="96" y1="55" x2="115" y2="55" class="wire"/>
+
+      <line x1="115" y1="15" x2="115" y2="55" class="wire"/>
+      <line x1="115" y1="35" x2="140" y2="35" class="wire"/>
+      <circle cx="140" cy="35" r="3.5" fill="#38bdf8"/>
+    </g>
+    <rect x="20" y="285" width="265" height="60" rx="6" fill="#0b1120" stroke="#1e293b"/>
+    <text x="30" y="306" class="code-txt">1/L_total = 1/L1 + 1/L2 + ...</text>
+    <text x="30" y="324" class="code-txt" style="font-size:11px; fill:#38bdf8;">Two: L_total = (L1 · L2) / (L1 + L2)</text>
+    <text x="30" y="338" class="sublabel">Total current branches across inductors.</text>
+  </g>
+</svg>

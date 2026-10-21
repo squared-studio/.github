@@ -1,0 +1,96 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 440" width="100%" height="100%">
+  <defs>
+    <style>
+      .bg { fill: #0b1120; }
+      .card { fill: #131d33; stroke: #1e293b; stroke-width: 1.5; rx: 10; }
+      .title { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 19px; fill: #f8fafc; }
+      .sec-title { font-family: 'Inter', system-ui, sans-serif; font-weight: 600; font-size: 14px; fill: #38bdf8; }
+      .label { font-family: 'Inter', system-ui, sans-serif; font-size: 12px; fill: #cbd5e1; }
+      .sublabel { font-family: 'Inter', system-ui, sans-serif; font-size: 11px; fill: #94a3b8; }
+      .code-txt { font-family: 'JetBrains Mono', Consolas, monospace; font-size: 12px; fill: #34d399; font-weight: 600; }
+      .axis { stroke: #64748b; stroke-width: 1.8; }
+      .grid { stroke: #1e293b; stroke-width: 1; stroke-dasharray: 3,3; }
+      .si-curve { stroke: #38bdf8; stroke-width: 3; fill: none; stroke-linecap: round; }
+      .schottky-curve { stroke: #fbbf24; stroke-width: 2.5; fill: none; stroke-dasharray: 4,3; }
+      .ideal-curve { stroke: #a855f7; stroke-width: 2; fill: none; stroke-dasharray: 2,2; }
+    </style>
+  </defs>
+
+  <rect width="960" height="440" class="bg" rx="14"/>
+  <text x="480" y="36" text-anchor="middle" class="title">Diode Current-Voltage (I-V) Characteristic Curves &amp; Models</text>
+
+  <!-- Left: Shockley Equation & Models -->
+  <g transform="translate(25, 55)">
+    <rect width="280" height="360" class="card"/>
+    <text x="20" y="30" class="sec-title">Shockley Diode Equation</text>
+
+    <!-- Formula Box -->
+    <rect x="15" y="50" width="250" height="70" rx="6" fill="#0b1120" stroke="#1e293b"/>
+    <text x="25" y="75" class="code-txt" fill="#38bdf8">I_D = I_S · [ e^(V_D / (η·V_T)) - 1 ]</text>
+    <text x="25" y="100" class="sublabel">V_T = k·T / q ≈ 26 mV at 25°C</text>
+
+    <text x="20" y="145" class="label" font-weight="bold">Model Comparisons</text>
+    <rect x="15" y="155" width="250" height="185" rx="6" fill="#0b1120" stroke="#1e293b"/>
+    
+    <text x="25" y="180" class="code-txt" fill="#a855f7">1. Ideal Diode:</text>
+    <text x="25" y="198" class="sublabel">Zero forward drop (0V), 0 reverse leakage.</text>
+
+    <text x="25" y="225" class="code-txt" fill="#38bdf8">2. Constant Voltage (0.7V):</text>
+    <text x="25" y="243" class="sublabel">Fixed 0.7V drop when forward biased.</text>
+
+    <text x="25" y="270" class="code-txt" fill="#34d399">3. Piecewise Linear:</text>
+    <text x="25" y="288" class="sublabel">0.7V battery in series with internal r_d.</text>
+    <text x="25" y="308" class="sublabel" style="fill:#fbbf24;">r_d = 26mV / I_D  (Dynamic Resistance)</text>
+  </g>
+
+  <!-- Right: Characteristic Graph -->
+  <g transform="translate(325, 55)">
+    <rect width="610" height="360" class="card"/>
+    <text x="25" y="30" class="sec-title">Diode I-V Plane (Forward &amp; Reverse Quadrants)</text>
+
+    <g transform="translate(250, 190)">
+      <!-- Axes -->
+      <line x1="-220" y1="0" x2="320" y2="0" class="axis"/>
+      <line x1="0" y1="-140" x2="0" y2="120" class="axis"/>
+      <text x="325" y="5" class="label">Voltage V_D (V)</text>
+      <text x="-5" y="-148" text-anchor="middle" class="label">Current I_D (mA)</text>
+      <text x="-5" y="135" text-anchor="middle" class="sublabel">Reverse I_R (μA)</text>
+
+      <!-- Grid lines -->
+      <line x1="120" y1="-130" x2="120" y2="110" class="grid"/>
+      <line x1="60" y1="-130" x2="60" y2="110" class="grid"/>
+      <text x="60" y="18" text-anchor="middle" class="sublabel">0.3V</text>
+      <text x="120" y="18" text-anchor="middle" class="sublabel">0.7V</text>
+
+      <line x1="-150" y1="-130" x2="-150" y2="110" class="grid"/>
+      <text x="-150" y="18" text-anchor="middle" class="sublabel">-V_BR</text>
+
+      <!-- Silicon Diode Curve (Blue) -->
+      <!-- Reverse: (-150, 110) straight up to (-150, 8), flat to (0,0), then knee at (120, 0) up to (160, -130) -->
+      <path d="M -150,110 L -150,8 L 0,0 C 80,0 110,-10 120,-30 C 135,-60 150,-110 160,-130" class="si-curve"/>
+      <circle cx="120" cy="-30" r="4" fill="#38bdf8"/>
+      <text x="130" y="-35" class="code-txt" fill="#38bdf8">Silicon Knee (~0.7V)</text>
+
+      <!-- Schottky Diode Curve (Amber) - Turns on at 0.3V -->
+      <path d="M -70,90 L -70,14 L 0,0 C 40,0 55,-10 60,-30 C 75,-65 95,-115 105,-130" class="schottky-curve"/>
+      <circle cx="60" cy="-30" r="4" fill="#fbbf24"/>
+      <text x="68" y="-45" class="code-txt" fill="#fbbf24">Schottky (~0.3V)</text>
+
+      <!-- Breakdown / Zener annotation -->
+      <circle cx="-150" cy="8" r="4" fill="#f43f5e"/>
+      <text x="-160" y="55" text-anchor="end" class="code-txt" fill="#f43f5e">Zener / Avalanche Breakdown</text>
+
+      <!-- Quadrant labels -->
+      <text x="210" y="-80" class="sublabel" style="fill:#38bdf8; font-weight:bold;">FORWARD BIAS</text>
+      <text x="-180" y="-80" class="sublabel" style="fill:#94a3b8; font-weight:bold;">REVERSE BIAS</text>
+    </g>
+
+    <!-- Legend -->
+    <g transform="translate(340, 310)">
+      <line x1="0" y1="10" x2="25" y2="10" class="si-curve"/>
+      <text x="32" y="14" class="sublabel" fill="#38bdf8">Standard Silicon (1N4148 / 1N4007)</text>
+      <line x1="260" y1="10" x2="285" y2="10" class="schottky-curve"/>
+      <text x="292" y="14" class="sublabel" fill="#fbbf24">Schottky Barrier (BAT54 / 1N5819)</text>
+    </g>
+  </g>
+</svg>

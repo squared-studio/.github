@@ -1,0 +1,100 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 440" width="100%" height="100%">
+  <defs>
+    <style>
+      .bg { fill: #0b1120; }
+      .card { fill: #131d33; stroke: #1e293b; stroke-width: 1.5; rx: 10; }
+      .title { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 19px; fill: #f8fafc; }
+      .sec-title { font-family: 'Inter', system-ui, sans-serif; font-weight: 600; font-size: 14px; fill: #38bdf8; }
+      .label { font-family: 'Inter', system-ui, sans-serif; font-size: 12px; fill: #cbd5e1; }
+      .sublabel { font-family: 'Inter', system-ui, sans-serif; font-size: 11px; fill: #94a3b8; }
+      .code-txt { font-family: 'JetBrains Mono', Consolas, monospace; font-size: 12px; fill: #34d399; font-weight: 600; }
+      .axis { stroke: #64748b; stroke-width: 1.8; }
+      .grid { stroke: #1e293b; stroke-width: 1; stroke-dasharray: 3,3; }
+      .load-line { stroke: #f43f5e; stroke-width: 2.5; stroke-dasharray: 5,4; }
+      .ib-curve { stroke: #38bdf8; stroke-width: 2.5; fill: none; stroke-linecap: round; }
+    </style>
+  </defs>
+
+  <rect width="960" height="440" class="bg" rx="14"/>
+  <text x="480" y="36" text-anchor="middle" class="title">BJT Common-Emitter Output Characteristics, Operating Regions &amp; Q-Point</text>
+
+  <!-- Left: Operating Regions Definitions -->
+  <g transform="translate(25, 55)">
+    <rect width="280" height="360" class="card"/>
+    <text x="20" y="30" class="sec-title">Three Operating Regions</text>
+
+    <!-- Region Cards -->
+    <rect x="15" y="48" width="250" height="90" rx="6" fill="#0b1120" stroke="#1e293b"/>
+    <text x="25" y="70" class="code-txt" fill="#38bdf8">1. Active Region (Amplifier):</text>
+    <text x="25" y="90" class="sublabel">• EB forward biased, CB reverse biased</text>
+    <text x="25" y="106" class="sublabel">• Linear current amplification: I_C = β·I_B</text>
+    <text x="25" y="122" class="sublabel">• V_CE &gt; 0.2V (transistor operates as CCS)</text>
+
+    <rect x="15" y="148" width="250" height="90" rx="6" fill="#0b1120" stroke="#1e293b"/>
+    <text x="25" y="170" class="code-txt" fill="#34d399">2. Saturation Region (Switch ON):</text>
+    <text x="25" y="190" class="sublabel">• Both EB and CB junctions forward biased</text>
+    <text x="25" y="206" class="sublabel">• V_CE drops to V_CE(sat) ≈ 0.1V - 0.2V</text>
+    <text x="25" y="222" class="sublabel">• I_C limited solely by external collector load</text>
+
+    <rect x="15" y="248" width="250" height="85" rx="6" fill="#0b1120" stroke="#1e293b"/>
+    <text x="25" y="270" class="code-txt" fill="#f43f5e">3. Cutoff Region (Switch OFF):</text>
+    <text x="25" y="290" class="sublabel">• Both junctions reverse biased (I_B = 0)</text>
+    <text x="25" y="306" class="sublabel">• I_C ≈ 0, V_CE = V_CC rail voltage</text>
+    <text x="25" y="322" class="sublabel">• Transistor behaves as an open switch</text>
+  </g>
+
+  <!-- Right: Characteristic Curves Graph -->
+  <g transform="translate(325, 55)">
+    <rect width="610" height="360" class="card"/>
+    <text x="25" y="30" class="sec-title">Collector Output Characteristic (I_C vs V_CE)</text>
+
+    <g transform="translate(60, 270)">
+      <!-- Axes -->
+      <line x1="0" y1="0" x2="510" y2="0" class="axis"/>
+      <line x1="0" y1="0" x2="0" y2="-220" class="axis"/>
+      <text x="515" y="5" class="label">Collector-Emitter Voltage V_CE (V)</text>
+      <text x="0" y="-228" class="label">Collector Current I_C (mA)</text>
+
+      <!-- Saturation boundary vertical band -->
+      <rect x="0" y="-210" width="35" height="210" fill="#34d399" fill-opacity="0.1" stroke="#34d399" stroke-width="1" stroke-dasharray="2,2"/>
+      <text x="18" y="-195" text-anchor="middle" class="sublabel" style="fill:#34d399; font-size:10px;">Sat</text>
+
+      <!-- Curve IB = 50uA -->
+      <path d="M 0,0 C 15,-180 30,-190 500,-200" class="ib-curve"/>
+      <text x="505" y="-196" class="code-txt" style="font-size:11px;">I_B = 50 μA</text>
+
+      <!-- Curve IB = 40uA -->
+      <path d="M 0,0 C 15,-145 30,-152 500,-160" class="ib-curve"/>
+      <text x="505" y="-156" class="code-txt" style="font-size:11px;">I_B = 40 μA</text>
+
+      <!-- Curve IB = 30uA -->
+      <path d="M 0,0 C 15,-110 30,-115 500,-120" class="ib-curve"/>
+      <text x="505" y="-116" class="code-txt" style="font-size:11px;">I_B = 30 μA</text>
+
+      <!-- Curve IB = 20uA -->
+      <path d="M 0,0 C 15,-72 30,-76 500,-80" class="ib-curve"/>
+      <text x="505" y="-76" class="code-txt" style="font-size:11px;">I_B = 20 μA</text>
+
+      <!-- Curve IB = 10uA -->
+      <path d="M 0,0 C 15,-36 30,-38 500,-40" class="ib-curve"/>
+      <text x="505" y="-36" class="code-txt" style="font-size:11px;">I_B = 10 μA</text>
+
+      <!-- Cutoff curve (I_B = 0) -->
+      <line x1="0" y1="-2" x2="500" y2="-2" stroke="#64748b" stroke-width="2"/>
+      <text x="505" y="14" class="sublabel" fill="#f43f5e">I_B = 0 (Cutoff)</text>
+
+      <!-- DC Load Line: from (0, -180) [V_CC/R_C] to (420, 0) [V_CC] -->
+      <line x1="0" y1="-180" x2="420" y2="0" class="load-line"/>
+      <text x="425" y="16" class="code-txt" fill="#f43f5e">V_CC</text>
+      <text x="-48" y="-176" class="code-txt" fill="#f43f5e">V_CC/R_C</text>
+
+      <!-- Quiescent Operating Point (Q-Point) at intersection with I_B = 30uA (~ 180, -103) -->
+      <circle cx="180" cy="-103" r="6" fill="#fbbf24" stroke="#f59e0b" stroke-width="2"/>
+      <line x1="180" y1="0" x2="180" y2="-103" stroke="#fbbf24" stroke-width="1.2" stroke-dasharray="3,3"/>
+      <line x1="0" y1="-103" x2="180" y2="-103" stroke="#fbbf24" stroke-width="1.2" stroke-dasharray="3,3"/>
+      <text x="195" y="-110" class="label" font-weight="bold" fill="#fbbf24">Q-Point (V_CEQ, I_CQ)</text>
+      <text x="180" y="16" text-anchor="middle" class="sublabel" fill="#fbbf24">V_CEQ</text>
+      <text x="-35" y="-99" text-anchor="end" class="sublabel" fill="#fbbf24">I_CQ</text>
+    </g>
+  </g>
+</svg>

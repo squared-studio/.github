@@ -1,0 +1,146 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 480" width="100%" height="100%">
+  <defs>
+    <style>
+      .bg { fill: #0b1120; }
+      .card { fill: #131d33; stroke: #1e293b; stroke-width: 1.5; rx: 10; }
+      .title { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 19px; fill: #f8fafc; }
+      .sec-title { font-family: 'Inter', system-ui, sans-serif; font-weight: 600; font-size: 14px; fill: #38bdf8; }
+      .hdr { font-family: 'Inter', system-ui, sans-serif; font-size: 11px; font-weight: 600; fill: #94a3b8; text-transform: uppercase; }
+      .cell { font-family: 'JetBrains Mono', Consolas, monospace; font-size: 12px; fill: #e2e8f0; }
+      .res-body { fill: #e2d9c8; stroke: #8c7b64; stroke-width: 2; }
+      .res-lead { stroke: #94a3b8; stroke-width: 4; stroke-linecap: round; }
+      .ann-txt { font-family: 'Inter', system-ui, sans-serif; font-size: 11px; fill: #cbd5e1; }
+      .res-val { font-family: 'JetBrains Mono', Consolas, monospace; font-size: 15px; font-weight: bold; fill: #34d399; }
+    </style>
+    <marker id="dot" viewBox="0 0 8 8" refX="4" refY="4" markerWidth="6" markerHeight="6">
+      <circle cx="4" cy="4" r="3" fill="#38bdf8"/>
+    </marker>
+  </defs>
+
+  <rect width="960" height="480" class="bg" rx="14"/>
+  <text x="480" y="34" text-anchor="middle" class="title">Standard 4-Band &amp; 5-Band Resistor Color Code System</text>
+
+  <!-- Color Table Panel (Left) -->
+  <g transform="translate(25, 52)">
+    <rect width="440" height="405" class="card"/>
+    <text x="20" y="26" class="sec-title">Color Code Reference Table</text>
+
+    <!-- Table Header -->
+    <rect x="15" y="40" width="410" height="24" fill="#0b1120" rx="4"/>
+    <text x="25" y="56" class="hdr">Color</text>
+    <text x="145" y="56" class="hdr">Digit</text>
+    <text x="225" y="56" class="hdr">Multiplier</text>
+    <text x="345" y="56" class="hdr">Tolerance</text>
+
+    <!-- Rows -->
+    <!-- Black -->
+    <rect x="25" y="70" width="16" height="14" rx="2" fill="#000000" stroke="#64748b"/>
+    <text x="48" y="82" class="cell">Black</text><text x="155" y="82" class="cell">0</text><text x="235" y="82" class="cell">10⁰ (1Ω)</text><text x="355" y="82" class="cell">—</text>
+    <!-- Brown -->
+    <rect x="25" y="93" width="16" height="14" rx="2" fill="#8b4513"/>
+    <text x="48" y="105" class="cell">Brown</text><text x="155" y="105" class="cell">1</text><text x="235" y="105" class="cell">10¹ (10Ω)</text><text x="355" y="105" class="cell" fill="#38bdf8">±1% (F)</text>
+    <!-- Red -->
+    <rect x="25" y="116" width="16" height="14" rx="2" fill="#ef4444"/>
+    <text x="48" y="128" class="cell">Red</text><text x="155" y="128" class="cell">2</text><text x="235" y="128" class="cell">10² (100Ω)</text><text x="355" y="128" class="cell" fill="#38bdf8">±2% (G)</text>
+    <!-- Orange -->
+    <rect x="25" y="139" width="16" height="14" rx="2" fill="#f97316"/>
+    <text x="48" y="151" class="cell">Orange</text><text x="155" y="151" class="cell">3</text><text x="235" y="151" class="cell">10³ (1kΩ)</text><text x="355" y="151" class="cell">—</text>
+    <!-- Yellow -->
+    <rect x="25" y="162" width="16" height="14" rx="2" fill="#eab308"/>
+    <text x="48" y="174" class="cell">Yellow</text><text x="155" y="174" class="cell">4</text><text x="235" y="174" class="cell">10⁴ (10kΩ)</text><text x="355" y="174" class="cell">—</text>
+    <!-- Green -->
+    <rect x="25" y="185" width="16" height="14" rx="2" fill="#22c55e"/>
+    <text x="48" y="197" class="cell">Green</text><text x="155" y="197" class="cell">5</text><text x="235" y="197" class="cell">10⁵ (100kΩ)</text><text x="355" y="197" class="cell" fill="#38bdf8">±0.5% (D)</text>
+    <!-- Blue -->
+    <rect x="25" y="208" width="16" height="14" rx="2" fill="#3b82f6"/>
+    <text x="48" y="220" class="cell">Blue</text><text x="155" y="220" class="cell">6</text><text x="235" y="220" class="cell">10⁶ (1MΩ)</text><text x="355" y="220" class="cell" fill="#38bdf8">±0.25% (C)</text>
+    <!-- Violet -->
+    <rect x="25" y="231" width="16" height="14" rx="2" fill="#a855f7"/>
+    <text x="48" y="243" class="cell">Violet</text><text x="155" y="243" class="cell">7</text><text x="235" y="243" class="cell">10⁷ (10MΩ)</text><text x="355" y="243" class="cell" fill="#38bdf8">±0.1% (B)</text>
+    <!-- Gray -->
+    <rect x="25" y="254" width="16" height="14" rx="2" fill="#6b7280"/>
+    <text x="48" y="266" class="cell">Gray</text><text x="155" y="266" class="cell">8</text><text x="235" y="266" class="cell">10⁸</text><text x="355" y="266" class="cell" fill="#38bdf8">±0.05%</text>
+    <!-- White -->
+    <rect x="25" y="277" width="16" height="14" rx="2" fill="#f8fafc" stroke="#94a3b8"/>
+    <text x="48" y="289" class="cell">White</text><text x="155" y="289" class="cell">9</text><text x="235" y="289" class="cell">10⁹</text><text x="355" y="289" class="cell">—</text>
+    <!-- Gold -->
+    <rect x="25" y="300" width="16" height="14" rx="2" fill="#d4af37"/>
+    <text x="48" y="312" class="cell">Gold</text><text x="155" y="312" class="cell">—</text><text x="235" y="312" class="cell">10⁻¹ (0.1Ω)</text><text x="355" y="312" class="cell" fill="#fbbf24">±5% (J)</text>
+    <!-- Silver -->
+    <rect x="25" y="323" width="16" height="14" rx="2" fill="#c0c0c0"/>
+    <text x="48" y="335" class="cell">Silver</text><text x="155" y="335" class="cell">—</text><text x="235" y="335" class="cell">10⁻² (0.01Ω)</text><text x="355" y="335" class="cell" fill="#cbd5e1">±10% (K)</text>
+
+    <!-- Mnemonic footnote -->
+    <rect x="15" y="352" width="410" height="38" rx="6" fill="#0b1120" stroke="#1e293b"/>
+    <text x="25" y="369" class="sublabel" style="fill:#38bdf8; font-weight:600;">Standard Mnemonic:</text>
+    <text x="25" y="382" class="sublabel">BBROYGBVGW → "Better Be Ready Or Your Great Big Venture Goes Wrong"</text>
+  </g>
+
+  <!-- Examples Panel (Right) -->
+  <g transform="translate(485, 52)">
+    <rect width="450" height="405" class="card"/>
+    <text x="20" y="26" class="sec-title">Decoding Examples</text>
+
+    <!-- 4-Band Example -->
+    <g transform="translate(20, 42)">
+      <text x="0" y="16" font-family="sans-serif" font-size="13" font-weight="bold" fill="#38bdf8">1. Standard 4-Band Resistor (Example: 47 kΩ ±5%)</text>
+      
+      <!-- Leads & Resistor Body -->
+      <line x1="15" y1="55" x2="65" y2="55" class="res-lead"/>
+      <line x1="285" y1="55" x2="335" y2="55" class="res-lead"/>
+      <!-- Dogbone shape body -->
+      <path d="M 65,30 C 78,30 82,40 92,40 L 258,40 C 268,40 272,30 285,30 C 295,30 295,80 285,80 C 272,80 268,70 258,70 L 92,70 C 82,70 78,80 65,80 C 55,80 55,30 65,30 Z" class="res-body"/>
+
+      <!-- Bands -->
+      <rect x="95" y="40" width="12" height="30" fill="#eab308"/> <!-- Yellow = 4 -->
+      <rect x="135" y="40" width="12" height="30" fill="#a855f7"/> <!-- Violet = 7 -->
+      <rect x="175" y="40" width="12" height="30" fill="#f97316"/> <!-- Orange = x1k -->
+      <rect x="245" y="40" width="12" height="30" fill="#d4af37"/> <!-- Gold = 5% -->
+
+      <!-- Band Labels -->
+      <text x="101" y="94" text-anchor="middle" class="ann-txt" fill="#eab308">1st: 4</text>
+      <text x="141" y="94" text-anchor="middle" class="ann-txt" fill="#a855f7">2nd: 7</text>
+      <text x="181" y="94" text-anchor="middle" class="ann-txt" fill="#f97316">× 1,000</text>
+      <text x="251" y="94" text-anchor="middle" class="ann-txt" fill="#d4af37">±5%</text>
+
+      <!-- Calc Box -->
+      <rect x="0" y="105" width="410" height="42" rx="6" fill="#0b1120" stroke="#1e293b"/>
+      <text x="15" y="125" class="cell">Value = [ 4 ] [ 7 ] × 10³ Ω = </text>
+      <text x="210" y="125" class="res-val">47 kΩ  ±5%</text>
+      <text x="15" y="139" class="sublabel">Actual range: 44.65 kΩ to 49.35 kΩ</text>
+    </g>
+
+    <!-- 5-Band Example -->
+    <g transform="translate(20, 215)">
+      <text x="0" y="16" font-family="sans-serif" font-size="13" font-weight="bold" fill="#34d399">2. Precision 5-Band Resistor (Example: 10.0 kΩ ±1%)</text>
+      
+      <!-- Leads & Resistor Body (Blue for metal film) -->
+      <line x1="15" y1="55" x2="65" y2="55" class="res-lead"/>
+      <line x1="285" y1="55" x2="335" y2="55" class="res-lead"/>
+      <path d="M 65,30 C 78,30 82,40 92,40 L 258,40 C 268,40 272,30 285,30 C 295,30 295,80 285,80 C 272,80 268,70 258,70 L 92,70 C 82,70 78,80 65,80 C 55,80 55,30 65,30 Z" fill="#38bdf8" stroke="#0284c7" stroke-width="2"/>
+
+      <!-- Bands -->
+      <rect x="90" y="40" width="10" height="30" fill="#8b4513"/> <!-- Brown = 1 -->
+      <rect x="120" y="40" width="10" height="30" fill="#000000"/> <!-- Black = 0 -->
+      <rect x="150" y="40" width="10" height="30" fill="#000000"/> <!-- Black = 0 -->
+      <rect x="180" y="40" width="10" height="30" fill="#ef4444"/> <!-- Red = x100 -->
+      <rect x="250" y="40" width="10" height="30" fill="#8b4513"/> <!-- Brown = 1% -->
+
+      <!-- Band Labels -->
+      <text x="95" y="94" text-anchor="middle" class="ann-txt">1st: 1</text>
+      <text x="125" y="94" text-anchor="middle" class="ann-txt">2nd: 0</text>
+      <text x="155" y="94" text-anchor="middle" class="ann-txt">3rd: 0</text>
+      <text x="185" y="94" text-anchor="middle" class="ann-txt" fill="#ef4444">× 100</text>
+      <text x="255" y="94" text-anchor="middle" class="ann-txt" fill="#38bdf8">±1%</text>
+
+      <!-- Calc Box -->
+      <rect x="0" y="105" width="410" height="42" rx="6" fill="#0b1120" stroke="#1e293b"/>
+      <text x="15" y="125" class="cell">Value = [ 1 ] [ 0 ] [ 0 ] × 10² Ω = </text>
+      <text x="235" y="125" class="res-val">10.0 kΩ  ±1%</text>
+      <text x="15" y="139" class="sublabel">Actual range: 9.90 kΩ to 10.10 kΩ</text>
+    </g>
+
+    <!-- Reading Rule Note -->
+    <text x="20" y="390" class="sublabel" style="fill:#94a3b8;">Tip: The tolerance band (gold/silver/brown) is spaced further apart from the digit group.</text>
+  </g>
+</svg>

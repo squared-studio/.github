@@ -1,0 +1,118 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 440" width="100%" height="100%">
+  <defs>
+    <style>
+      .bg { fill: #0b1120; }
+      .card { fill: #131d33; stroke: #1e293b; stroke-width: 1.5; rx: 10; }
+      .title { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 19px; fill: #f8fafc; }
+      .sec-title { font-family: 'Inter', system-ui, sans-serif; font-weight: 600; font-size: 14px; fill: #38bdf8; }
+      .label { font-family: 'Inter', system-ui, sans-serif; font-size: 12px; fill: #cbd5e1; }
+      .sublabel { font-family: 'Inter', system-ui, sans-serif; font-size: 11px; fill: #94a3b8; }
+      .code-txt { font-family: 'JetBrains Mono', Consolas, monospace; font-size: 12px; fill: #34d399; font-weight: 600; }
+      .wire { stroke: #64748b; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; fill: none; }
+      .wire-hi { stroke: #38bdf8; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; fill: none; }
+      .res-box { fill: #1e293b; stroke: #38bdf8; stroke-width: 2; rx: 2; }
+      .cap-plate { stroke: #34d399; stroke-width: 2.5; }
+    </style>
+  </defs>
+
+  <rect width="960" height="440" class="bg" rx="14"/>
+  <text x="480" y="36" text-anchor="middle" class="title">Standard Pierce Crystal Oscillator Architecture &amp; Load Capacitance Calculation</text>
+
+  <!-- Panel 1: Pierce Oscillator Schematic -->
+  <g transform="translate(25, 55)">
+    <rect width="470" height="360" class="card"/>
+    <text x="25" y="30" class="sec-title">Standard Pierce Oscillator Topology</text>
+
+    <!-- Schematic -->
+    <g transform="translate(70, 50)">
+      <!-- Inverter Input node -->
+      <line x1="30" y1="70" x2="80" y2="70" class="wire-hi"/>
+      <circle cx="30" cy="70" r="3.5" fill="#38bdf8"/>
+      <text x="15" y="60" class="code-txt" fill="#38bdf8">OSC_IN</text>
+
+      <!-- Inverter Triangle -->
+      <polygon points="80,50 80,90 120,70" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+      <!-- Bubble -->
+      <circle cx="124" cy="70" r="4" fill="none" stroke="#38bdf8" stroke-width="2"/>
+      <text x="100" y="42" text-anchor="middle" class="sublabel">CMOS Inverter (180°)</text>
+
+      <!-- Feedback Resistor R_f across inverter -->
+      <line x1="50" y1="70" x2="50" y2="15" class="wire"/>
+      <line x1="50" y1="15" x2="80" y2="15" class="wire"/>
+      <rect x="80" y="6" width="45" height="18" class="res-box"/>
+      <text x="102" y="19" text-anchor="middle" class="sublabel" fill="#fff">R_f (1M-10M)</text>
+      <line x1="125" y1="15" x2="160" y2="15" class="wire"/>
+      <line x1="160" y1="15" x2="160" y2="70" class="wire"/>
+
+      <!-- Series Damping Resistor R_s -->
+      <line x1="128" y1="70" x2="150" y2="70" class="wire"/>
+      <rect x="150" y="61" width="30" height="18" class="res-box"/>
+      <text x="165" y="74" text-anchor="middle" class="sublabel" style="font-size:9px;">R_s</text>
+      <line x1="180" y1="70" x2="220" y2="70" class="wire-hi"/>
+      <circle cx="220" cy="70" r="3.5" fill="#38bdf8"/>
+      <text x="235" y="60" class="code-txt" fill="#38bdf8">OSC_OUT</text>
+
+      <!-- Quartz Crystal Parallel Bridge across OSC_IN and OSC_OUT -->
+      <line x1="30" y1="70" x2="30" y2="130" class="wire"/>
+      <line x1="30" y1="130" x2="90" y2="130" class="wire-hi"/>
+
+      <!-- Crystal Symbol -->
+      <line x1="90" y1="120" x2="90" y2="140" stroke="#cbd5e1" stroke-width="2.5"/> <!-- Plate -->
+      <rect x="94" y="118" width="12" height="24" rx="2" fill="#38bdf8" fill-opacity="0.3" stroke="#38bdf8" stroke-width="1.8"/> <!-- Quartz -->
+      <line x1="110" y1="120" x2="110" y2="140" stroke="#cbd5e1" stroke-width="2.5"/> <!-- Plate -->
+      <text x="100" y="156" text-anchor="middle" class="code-txt" fill="#38bdf8">XTAL (Y1)</text>
+
+      <line x1="110" y1="130" x2="220" y2="130" class="wire-hi"/>
+      <line x1="220" y1="70" x2="220" y2="130" class="wire"/>
+
+      <!-- Load Capacitors C_L1 and C_L2 to GND -->
+      <!-- CL1 -->
+      <line x1="30" y1="130" x2="30" y2="170" class="wire"/>
+      <line x1="20" y1="170" x2="40" y2="170" class="cap-plate"/>
+      <line x1="20" y1="176" x2="40" y2="176" class="cap-plate"/>
+      <line x1="30" y1="176" x2="30" y2="195" class="wire"/>
+      <line x1="20" y1="195" x2="40" y2="195" class="wire"/>
+      <text x="8" y="176" class="code-txt" fill="#34d399">C_L1</text>
+
+      <!-- CL2 -->
+      <line x1="220" y1="130" x2="220" y2="170" class="wire"/>
+      <line x1="210" y1="170" x2="230" y2="170" class="cap-plate"/>
+      <line x1="210" y1="176" x2="230" y2="176" class="cap-plate"/>
+      <line x1="220" y1="176" x2="220" y2="195" class="wire"/>
+      <line x1="210" y1="195" x2="230" y2="195" class="wire"/>
+      <text x="238" y="176" class="code-txt" fill="#34d399">C_L2</text>
+    </g>
+
+    <!-- Function Box -->
+    <rect x="20" y="260" width="430" height="85" rx="6" fill="#0b1120" stroke="#1e293b"/>
+    <text x="30" y="282" class="code-txt">Barkhausen Phase Shift Criterion: 360° Total Loop</text>
+    <text x="30" y="302" class="sublabel">• Inverter provides 180° active electronic phase shift.</text>
+    <text x="30" y="318" class="sublabel">• Pi-network (C_L1, XTAL, C_L2) provides remaining 180° passive phase shift.</text>
+    <text x="30" y="334" class="sublabel">• R_f biases inverter into high-gain linear amplifier region.</text>
+  </g>
+
+  <!-- Panel 2: Load Capacitance Formula -->
+  <g transform="translate(510, 55)">
+    <rect width="425" height="360" class="card"/>
+    <text x="25" y="30" class="sec-title">Load Capacitance Matching</text>
+
+    <!-- Formula Box -->
+    <rect x="20" y="50" width="385" height="100" rx="6" fill="#0b1120" stroke="#1e293b"/>
+    <text x="30" y="75" class="code-txt" fill="#38bdf8" style="font-size:14px;">C_L = [ (C_L1 · C_L2) / (C_L1 + C_L2) ] + C_stray</text>
+    <text x="30" y="105" class="sublabel">When C_L1 = C_L2 = C:</text>
+    <text x="30" y="128" class="code-txt" fill="#34d399" style="font-size:13px;">C_L1 = C_L2 = 2 · (C_L - C_stray)</text>
+
+    <!-- Practical Worked Example -->
+    <rect x="20" y="165" width="385" height="180" rx="6" fill="#0b1120" stroke="#1e293b"/>
+    <text x="30" y="190" class="label" font-weight="bold" fill="#fbbf24">Practical Design Example:</text>
+    <text x="30" y="212" class="sublabel">• Target Crystal Spec: C_L = 12 pF (from datasheet)</text>
+    <text x="30" y="230" class="sublabel">• PCB Trace + MCU Pin Stray Capacitance: C_stray ≈ 3 to 5 pF</text>
+    <text x="30" y="252" class="code-txt" fill="#38bdf8">C_L1,2 = 2 · (12 pF - 4 pF) = 16 pF  →  Pick standard 15 or 18 pF</text>
+
+    <line x1="30" y1="268" x2="385" y2="268" stroke="#1e293b"/>
+    <text x="30" y="288" class="sublabel" style="fill:#f43f5e; font-weight:bold;">Layout Precautions:</text>
+    <text x="30" y="306" class="sublabel">• Keep traces &lt; 10 mm length directly to MCU pins</text>
+    <text x="30" y="322" class="sublabel">• Solid ground plane underneath; no high-speed signals crossing</text>
+    <text x="30" y="338" class="sublabel">• Guard ring around crystal body to shield EMI noise</text>
+  </g>
+</svg>

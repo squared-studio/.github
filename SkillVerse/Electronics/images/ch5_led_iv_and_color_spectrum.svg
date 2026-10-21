@@ -1,0 +1,112 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 440" width="100%" height="100%">
+  <defs>
+    <style>
+      .bg { fill: #0b1120; }
+      .card { fill: #131d33; stroke: #1e293b; stroke-width: 1.5; rx: 10; }
+      .title { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 19px; fill: #f8fafc; }
+      .sec-title { font-family: 'Inter', system-ui, sans-serif; font-weight: 600; font-size: 14px; fill: #38bdf8; }
+      .label { font-family: 'Inter', system-ui, sans-serif; font-size: 12px; fill: #cbd5e1; }
+      .sublabel { font-family: 'Inter', system-ui, sans-serif; font-size: 11px; fill: #94a3b8; }
+      .code-txt { font-family: 'JetBrains Mono', Consolas, monospace; font-size: 12px; fill: #34d399; font-weight: 600; }
+      .axis { stroke: #64748b; stroke-width: 1.8; }
+      .grid { stroke: #1e293b; stroke-width: 1; stroke-dasharray: 3,3; }
+    </style>
+  </defs>
+
+  <rect width="960" height="440" class="bg" rx="14"/>
+  <text x="480" y="36" text-anchor="middle" class="title">Forward Voltage (V_F) by Color &amp; Optical Wavelength Spectrum</text>
+
+  <!-- Left: I-V Curves by Color -->
+  <g transform="translate(25, 55)">
+    <rect width="520" height="360" class="card"/>
+    <text x="25" y="30" class="sec-title">Forward I-V Characteristics Across LED Colors</text>
+
+    <!-- Axes -->
+    <g transform="translate(60, 260)">
+      <line x1="0" y1="0" x2="430" y2="0" class="axis"/>
+      <line x1="0" y1="0" x2="0" y2="-210" class="axis"/>
+      <text x="435" y="5" class="label">Forward Voltage V_F (V)</text>
+      <text x="0" y="-218" class="label">Forward Current I_F (mA)</text>
+
+      <!-- Grids & voltage markings (scale: 80px per 1.0V) -->
+      <!-- 1.0V -->
+      <line x1="80" y1="0" x2="80" y2="-200" class="grid"/>
+      <text x="80" y="18" text-anchor="middle" class="sublabel">1.0V</text>
+      <!-- 2.0V -->
+      <line x1="160" y1="0" x2="160" y2="-200" class="grid"/>
+      <text x="160" y="18" text-anchor="middle" class="sublabel">2.0V</text>
+      <!-- 3.0V -->
+      <line x1="240" y1="0" x2="240" y2="-200" class="grid"/>
+      <text x="240" y="18" text-anchor="middle" class="sublabel">3.0V</text>
+      <!-- 4.0V -->
+      <line x1="320" y1="0" x2="320" y2="-200" class="grid"/>
+      <text x="320" y="18" text-anchor="middle" class="sublabel">4.0V</text>
+
+      <!-- Current levels (scale: 8px per mA -> 20mA = -160px) -->
+      <line x1="0" y1="-160" x2="400" y2="-160" stroke="#fbbf24" stroke-width="1.2" stroke-dasharray="4,4"/>
+      <text x="-10" y="-156" text-anchor="end" class="code-txt" fill="#fbbf24">20 mA (Nominal)</text>
+
+      <!-- IR (940nm, VF ~ 1.3V -> x = 104) -->
+      <path d="M 0,0 L 80,0 C 95,0 102,-20 108,-180" stroke="#a855f7" stroke-width="2.5" fill="none"/>
+      <!-- Red (630nm, VF ~ 1.9V -> x = 152) -->
+      <path d="M 0,0 L 125,0 C 140,0 148,-20 156,-180" stroke="#ef4444" stroke-width="3" fill="none"/>
+      <!-- Yellow (590nm, VF ~ 2.1V -> x = 168) -->
+      <path d="M 0,0 L 145,0 C 158,0 166,-20 174,-180" stroke="#f59e0b" stroke-width="2.5" fill="none"/>
+      <!-- Green (525nm, VF ~ 2.8V -> x = 224) -->
+      <path d="M 0,0 L 195,0 C 210,0 220,-20 230,-180" stroke="#22c55e" stroke-width="2.5" fill="none"/>
+      <!-- Blue / White (460nm, VF ~ 3.2V -> x = 256) -->
+      <path d="M 0,0 L 230,0 C 245,0 254,-20 264,-180" stroke="#38bdf8" stroke-width="3" fill="none"/>
+      <!-- UV (385nm, VF ~ 3.7V -> x = 296) -->
+      <path d="M 0,0 L 270,0 C 285,0 293,-20 302,-180" stroke="#818cf8" stroke-width="2.5" fill="none"/>
+    </g>
+  </g>
+
+  <!-- Right: Color Table & Wavelength Spectrum -->
+  <g transform="translate(565, 55)">
+    <rect width="370" height="360" class="card"/>
+    <text x="25" y="30" class="sec-title">Wavelength &amp; Material Spectrum</text>
+
+    <!-- Spectrum Bar -->
+    <g transform="translate(25, 45)">
+      <defs>
+        <linearGradient id="opt-spectrum" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="#818cf8"/>
+          <stop offset="20%" stop-color="#38bdf8"/>
+          <stop offset="45%" stop-color="#22c55e"/>
+          <stop offset="65%" stop-color="#f59e0b"/>
+          <stop offset="85%" stop-color="#ef4444"/>
+          <stop offset="100%" stop-color="#a855f7"/>
+        </linearGradient>
+      </defs>
+      <rect x="0" y="0" width="320" height="16" rx="4" fill="url(#opt-spectrum)"/>
+      <text x="0" y="30" class="sublabel">UV (380nm)</text>
+      <text x="160" y="30" text-anchor="middle" class="sublabel">Visible (400 - 700 nm)</text>
+      <text x="320" y="30" text-anchor="end" class="sublabel">IR (940nm)</text>
+    </g>
+
+    <!-- Table of values -->
+    <rect x="20" y="90" width="330" height="245" rx="6" fill="#0b1120" stroke="#1e293b"/>
+    <g transform="translate(30, 110)">
+      <text x="0" y="0" class="code-txt" fill="#ef4444">Red (620-660 nm)</text>
+      <text x="200" y="0" class="code-txt">V_F: 1.8 - 2.1 V</text>
+
+      <text x="0" y="32" class="code-txt" fill="#f59e0b">Yellow (585-595 nm)</text>
+      <text x="200" y="32" class="code-txt">V_F: 2.0 - 2.2 V</text>
+
+      <text x="0" y="64" class="code-txt" fill="#22c55e">Green (520-565 nm)</text>
+      <text x="200" y="64" class="code-txt">V_F: 2.2 - 3.2 V</text>
+
+      <text x="0" y="96" class="code-txt" fill="#38bdf8">Blue (450-475 nm)</text>
+      <text x="200" y="96" class="code-txt">V_F: 3.0 - 3.4 V</text>
+
+      <text x="0" y="128" class="code-txt" fill="#f8fafc">White (Phosphor / Blue)</text>
+      <text x="200" y="128" class="code-txt">V_F: 3.0 - 3.6 V</text>
+
+      <text x="0" y="160" class="code-txt" fill="#a855f7">Infrared (850-940 nm)</text>
+      <text x="200" y="160" class="code-txt">V_F: 1.2 - 1.5 V</text>
+
+      <line x1="0" y1="178" x2="310" y2="178" stroke="#1e293b"/>
+      <text x="0" y="196" class="sublabel" style="fill:#fbbf24;">Rule: V_F scales inversely with wavelength!</text>
+    </g>
+  </g>
+</svg>

@@ -1,0 +1,131 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 440" width="100%" height="100%">
+  <defs>
+    <style>
+      .bg { fill: #0b1120; }
+      .card { fill: #131d33; stroke: #1e293b; stroke-width: 1.5; rx: 10; }
+      .title { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 19px; fill: #f8fafc; }
+      .sec-title { font-family: 'Inter', system-ui, sans-serif; font-weight: 600; font-size: 14px; fill: #38bdf8; }
+      .label { font-family: 'Inter', system-ui, sans-serif; font-size: 12px; fill: #cbd5e1; }
+      .sublabel { font-family: 'Inter', system-ui, sans-serif; font-size: 11px; fill: #94a3b8; }
+      .code-txt { font-family: 'JetBrains Mono', Consolas, monospace; font-size: 12px; fill: #34d399; font-weight: 600; }
+      .wire { stroke: #64748b; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; fill: none; }
+      .wire-hi { stroke: #38bdf8; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; fill: none; }
+      .cap-plate { stroke: #38bdf8; stroke-width: 2.5; }
+    </style>
+  </defs>
+
+  <rect width="960" height="440" class="bg" rx="14"/>
+  <text x="480" y="36" text-anchor="middle" class="title">Essential Capacitor Circuit Applications: Filtering &amp; Decoupling</text>
+
+  <!-- Panel 1: Power Supply Smoothing -->
+  <g transform="translate(25, 55)">
+    <rect width="285" height="360" class="card"/>
+    <text x="20" y="30" class="sec-title">1. Reservoir / Smoothing Filter</text>
+
+    <!-- Schematic & Waveforms -->
+    <g transform="translate(25, 50)">
+      <!-- AC Rectified in -->
+      <path d="M 10,40 Q 25,10 40,40 Q 55,10 70,40" fill="none" stroke="#f43f5e" stroke-width="2"/>
+      <text x="40" y="58" text-anchor="middle" class="sublabel" fill="#f43f5e">Pulsating DC</text>
+
+      <!-- Arrow -->
+      <path d="M 80,30 L 105,30" stroke="#64748b" stroke-width="2" marker-end="url(#arr-cap)"/>
+
+      <!-- Filter Cap circuit -->
+      <line x1="120" y1="30" x2="160" y2="30" class="wire-hi"/>
+      <line x1="160" y1="30" x2="160" y2="45" class="wire"/>
+      <line x1="150" y1="45" x2="170" y2="45" class="cap-plate"/>
+      <line x1="150" y1="52" x2="170" y2="52" class="cap-plate"/>
+      <line x1="160" y1="52" x2="160" y2="70" class="wire"/>
+      <line x1="150" y1="70" x2="170" y2="70" class="wire"/>
+      
+      <line x1="160" y1="30" x2="200" y2="30" class="wire-hi"/>
+      <!-- Smoothed output wave -->
+      <path d="M 130,105 L 145,95 L 170,105 L 185,95 L 210,105" fill="none" stroke="#34d399" stroke-width="2"/>
+      <text x="170" y="125" text-anchor="middle" class="sublabel" fill="#34d399">Smoothed DC with Ripple</text>
+    </g>
+
+    <!-- Equation Box -->
+    <rect x="15" y="210" width="255" height="130" rx="6" fill="#0b1120" stroke="#1e293b"/>
+    <text x="25" y="234" class="code-txt">V_ripple ≈ I_load / (f · C)</text>
+    <text x="25" y="258" class="label">Electrolytic Reservoir Cap</text>
+    <text x="25" y="278" class="sublabel">Charges on AC peaks, discharges</text>
+    <text x="25" y="294" class="sublabel">during valleys to sustain DC rail.</text>
+    <text x="25" y="322" class="code-txt" style="font-size:11px;">Large values: 100μF to 10,000μF</text>
+  </g>
+
+  <!-- Panel 2: IC Decoupling / Bypass -->
+  <g transform="translate(330, 55)">
+    <rect width="285" height="360" class="card"/>
+    <text x="20" y="30" class="sec-title">2. High-Frequency Decoupling</text>
+
+    <!-- Schematic: IC with bypass cap -->
+    <g transform="translate(25, 45)">
+      <!-- VDD rail -->
+      <line x1="10" y1="20" x2="220" y2="20" stroke="#f43f5e" stroke-width="2.5"/>
+      <text x="15" y="14" class="sublabel" fill="#f43f5e">+3.3V / +5V VDD Rail</text>
+
+      <!-- Decoupling Cap -->
+      <line x1="75" y1="20" x2="75" y2="40" class="wire"/>
+      <line x1="65" y1="40" x2="85" y2="40" class="cap-plate"/>
+      <line x1="65" y1="47" x2="85" y2="47" class="cap-plate"/>
+      <line x1="75" y1="47" x2="75" y2="70" class="wire"/>
+      <line x1="65" y1="70" x2="85" y2="70" class="wire"/>
+      <text x="92" y="47" class="code-txt" style="font-size:11px;">0.1 μF MLCC</text>
+
+      <!-- IC Chip Box -->
+      <rect x="135" y="30" width="85" height="75" rx="4" fill="#1e293b" stroke="#38bdf8" stroke-width="1.8"/>
+      <text x="177" y="62" text-anchor="middle" class="label" font-weight="bold">MCU / IC</text>
+      <text x="177" y="78" text-anchor="middle" class="sublabel">Fast Switching</text>
+      <!-- GND -->
+      <line x1="177" y1="105" x2="177" y2="125" class="wire"/>
+      <line x1="165" y1="125" x2="190" y2="125" class="wire"/>
+    </g>
+
+    <!-- Equation Box -->
+    <rect x="15" y="210" width="255" height="130" rx="6" fill="#0b1120" stroke="#1e293b"/>
+    <text x="25" y="234" class="code-txt">X_C = 1 / (2π · f · C)</text>
+    <text x="25" y="258" class="label">Bypasses HF Switching Noise</text>
+    <text x="25" y="278" class="sublabel">Acts as low-impedance path to GND</text>
+    <text x="25" y="294" class="sublabel">for fast transient currents (di/dt).</text>
+    <text x="25" y="322" class="sublabel" style="fill:#fbbf24;">Place &lt;2mm from IC power pins!</text>
+  </g>
+
+  <!-- Panel 3: AC Coupling / DC Blocking -->
+  <g transform="translate(635, 55)">
+    <rect width="300" height="360" class="card"/>
+    <text x="20" y="30" class="sec-title">3. AC Coupling / DC Blocking</text>
+
+    <!-- Schematic: AC coupling -->
+    <g transform="translate(25, 45)">
+      <!-- Stage 1 with DC bias -->
+      <rect x="15" y="25" width="60" height="40" rx="4" fill="#1e293b" stroke="#64748b"/>
+      <text x="45" y="48" text-anchor="middle" class="sublabel">Stage 1 (DC+AC)</text>
+
+      <!-- Series Coupling Cap -->
+      <line x1="75" y1="45" x2="105" y2="45" class="wire-hi"/>
+      <line x1="105" y1="35" x2="105" y2="55" class="cap-plate"/>
+      <line x1="112" y1="35" x2="112" y2="55" class="cap-plate"/>
+      <line x1="112" y1="45" x2="145" y2="45" class="wire-hi"/>
+      <text x="108" y="25" text-anchor="middle" class="code-txt">C_c</text>
+
+      <!-- Stage 2 -->
+      <rect x="145" y="25" width="60" height="40" rx="4" fill="#1e293b" stroke="#64748b"/>
+      <text x="175" y="48" text-anchor="middle" class="sublabel">Stage 2 (Pure AC)</text>
+
+      <!-- Pulldown resistor to set 0V DC reference -->
+      <line x1="130" y1="45" x2="130" y2="80" class="wire"/>
+      <rect x="122" y="80" width="16" height="30" rx="2" fill="#1e293b" stroke="#38bdf8"/>
+      <line x1="130" y1="110" x2="130" y2="125" class="wire"/>
+      <line x1="120" y1="125" x2="140" y2="125" class="wire"/>
+    </g>
+
+    <!-- Equation Box -->
+    <rect x="15" y="210" width="270" height="130" rx="6" fill="#0b1120" stroke="#1e293b"/>
+    <text x="25" y="234" class="code-txt">f_cutoff = 1 / (2π · R · C_c)</text>
+    <text x="25" y="258" class="label">Passes AC Signal, Blocks DC</text>
+    <text x="25" y="278" class="sublabel">Prevents DC bias of prior stage from</text>
+    <text x="25" y="294" class="sublabel">disrupting input bias of next stage.</text>
+    <text x="25" y="322" class="sublabel" style="fill:#38bdf8;">Standard in audio, RF, &amp; sensors.</text>
+  </g>
+</svg>

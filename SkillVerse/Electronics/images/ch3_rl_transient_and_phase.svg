@@ -1,0 +1,102 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 440" width="100%" height="100%">
+  <defs>
+    <style>
+      .bg { fill: #0b1120; }
+      .card { fill: #131d33; stroke: #1e293b; stroke-width: 1.5; rx: 10; }
+      .title { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 19px; fill: #f8fafc; }
+      .sec-title { font-family: 'Inter', system-ui, sans-serif; font-weight: 600; font-size: 14px; fill: #38bdf8; }
+      .label { font-family: 'Inter', system-ui, sans-serif; font-size: 12px; fill: #cbd5e1; }
+      .sublabel { font-family: 'Inter', system-ui, sans-serif; font-size: 11px; fill: #94a3b8; }
+      .code-txt { font-family: 'JetBrains Mono', Consolas, monospace; font-size: 12px; fill: #34d399; font-weight: 600; }
+      .axis { stroke: #475569; stroke-width: 1.5; }
+      .grid { stroke: #1e293b; stroke-width: 1; stroke-dasharray: 3,3; }
+      .wave-v { stroke: #38bdf8; stroke-width: 3; fill: none; }
+      .wave-i { stroke: #f43f5e; stroke-width: 3; fill: none; stroke-dasharray: 5,4; }
+    </style>
+  </defs>
+
+  <rect width="960" height="440" class="bg" rx="14"/>
+  <text x="480" y="36" text-anchor="middle" class="title">RL Circuit Dynamics: Transient Time Constant (τ = L/R) &amp; AC Phase</text>
+
+  <!-- Panel 1: RL Transient Growth -->
+  <g transform="translate(25, 55)">
+    <rect width="445" height="360" class="card"/>
+    <text x="25" y="30" class="sec-title">RL Step Response (Current Exponential Ramp)</text>
+
+    <!-- Graph Axes -->
+    <g transform="translate(55, 55)">
+      <!-- Grids -->
+      <line x1="0" y1="0" x2="350" y2="0" class="grid"/>
+      <text x="-35" y="4" class="sublabel">I_max</text>
+
+      <line x1="0" y1="75" x2="350" y2="75" class="grid"/>
+      <text x="-40" y="79" class="sublabel">63.2%</text>
+
+      <line x1="0" y1="200" x2="350" y2="200" class="grid"/>
+      <text x="-25" y="204" class="sublabel">0 A</text>
+
+      <line x1="70" y1="0" x2="70" y2="200" class="grid"/>
+      <text x="70" y="218" text-anchor="middle" class="sublabel">1τ</text>
+      <line x1="140" y1="0" x2="140" y2="200" class="grid"/>
+      <text x="140" y="218" text-anchor="middle" class="sublabel">2τ</text>
+      <line x1="210" y1="0" x2="210" y2="200" class="grid"/>
+      <text x="210" y="218" text-anchor="middle" class="sublabel">3τ</text>
+      <line x1="280" y1="0" x2="280" y2="200" class="grid"/>
+      <text x="280" y="218" text-anchor="middle" class="sublabel">4τ</text>
+      <line x1="350" y1="0" x2="350" y2="200" class="grid"/>
+      <text x="350" y="218" text-anchor="middle" class="sublabel">5τ</text>
+
+      <!-- Axes lines -->
+      <line x1="0" y1="200" x2="360" y2="200" class="axis"/>
+      <line x1="0" y1="200" x2="0" y2="-10" class="axis"/>
+
+      <!-- Current Rise Curve: (0,200) -> (70,74) -> (140,27) -> (210,10) -> (350,1) -->
+      <path d="M 0,200 C 35,100 52,78 70,74 C 98,40 120,29 140,27 C 175,12 195,11 210,10 C 250,3 290,2 350,1" stroke="#34d399" stroke-width="3" fill="none"/>
+      <circle cx="70" cy="74" r="4" fill="#34d399"/>
+      <text x="80" y="70" class="code-txt" fill="#34d399">i_L(t) = 63.2%</text>
+
+      <!-- Voltage kickback spike decay -->
+      <path d="M 0,0 C 35,100 52,122 70,126 C 98,160 120,171 140,173 C 175,188 195,189 210,190 C 250,197 290,198 350,199" stroke="#f43f5e" stroke-width="2.5" fill="none" stroke-dasharray="4,3"/>
+      <text x="220" y="165" class="sublabel" fill="#f43f5e">Back-EMF v_L(t)</text>
+    </g>
+
+    <!-- Formula Box -->
+    <rect x="20" y="290" width="405" height="52" rx="6" fill="#0b1120" stroke="#1e293b"/>
+    <text x="30" y="312" class="code-txt">i_L(t) = (V/R)·(1 - e^(-t/τ))    where τ = L / R</text>
+    <text x="30" y="330" class="sublabel">Current cannot jump discontinuously; induces counter-EMF.</text>
+  </g>
+
+  <!-- Panel 2: AC Sinusoidal Phase Relationship -->
+  <g transform="translate(490, 55)">
+    <rect width="445" height="360" class="card"/>
+    <text x="25" y="30" class="sec-title">AC Steady-State: Voltage Leads Current by 90°</text>
+
+    <!-- Sinusoidal Waves -->
+    <g transform="translate(45, 55)">
+      <!-- Axes -->
+      <line x1="0" y1="100" x2="360" y2="100" class="axis"/>
+      <line x1="0" y1="10" x2="0" y2="190" class="axis"/>
+      <text x="365" y="104" class="label">ωt</text>
+
+      <!-- Voltage waveform V(t) = Vm*cos(wt) -> starts at peak (0, 30) -->
+      <!-- Peak at 0, zero at 90, valley at 180, zero at 270, peak at 360 -->
+      <path d="M 0,30 Q 45,30 90,100 Q 135,170 180,170 Q 225,170 270,100 Q 315,30 360,30" class="wave-v"/>
+      <text x="35" y="24" class="code-txt" fill="#38bdf8">Voltage v(t)</text>
+
+      <!-- Current waveform I(t) = Im*sin(wt) -> starts at 0 (0, 100), peaks at 90deg -->
+      <path d="M 0,100 Q 45,30 90,30 Q 135,30 180,100 Q 225,170 270,170 Q 315,170 360,100" class="wave-i"/>
+      <text x="105" y="24" class="code-txt" fill="#f43f5e">Current i(t)</text>
+
+      <!-- Phase lead indicator -->
+      <line x1="0" y1="30" x2="90" y2="30" stroke="#fbbf24" stroke-width="1.5" stroke-dasharray="2,2"/>
+      <line x1="90" y1="30" x2="90" y2="100" stroke="#fbbf24" stroke-width="1.5" stroke-dasharray="2,2"/>
+      <text x="45" y="45" text-anchor="middle" class="sublabel" fill="#fbbf24">90° (π/2) Lead</text>
+    </g>
+
+    <!-- Formula Box -->
+    <rect x="20" y="270" width="405" height="72" rx="6" fill="#0b1120" stroke="#1e293b"/>
+    <text x="30" y="292" class="code-txt">Inductive Reactance: X_L = 2π · f · L = ω·L</text>
+    <text x="30" y="312" class="accent-txt" style="font-size:12px;">Mnemonic "ELI": Voltage (E) Leads Current (I) in Inductors (L)</text>
+    <text x="30" y="330" class="sublabel">Impedance increases directly proportional to frequency.</text>
+  </g>
+</svg>

@@ -1,0 +1,96 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 440" width="100%" height="100%">
+  <defs>
+    <style>
+      .bg { fill: #0b1120; }
+      .card { fill: #131d33; stroke: #1e293b; stroke-width: 1.5; rx: 10; }
+      .title { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 19px; fill: #f8fafc; }
+      .sec-title { font-family: 'Inter', system-ui, sans-serif; font-weight: 600; font-size: 14px; fill: #38bdf8; }
+      .label { font-family: 'Inter', system-ui, sans-serif; font-size: 12px; fill: #cbd5e1; }
+      .sublabel { font-family: 'Inter', system-ui, sans-serif; font-size: 11px; fill: #94a3b8; }
+      .code-txt { font-family: 'JetBrains Mono', Consolas, monospace; font-size: 12px; fill: #34d399; font-weight: 600; }
+      .axis { stroke: #64748b; stroke-width: 1.8; }
+      .grid { stroke: #1e293b; stroke-width: 1; stroke-dasharray: 3,3; }
+      .mos-curve { stroke: #38bdf8; stroke-width: 2.5; fill: none; stroke-linecap: round; }
+      .boundary-curve { stroke: #fbbf24; stroke-width: 2; fill: none; stroke-dasharray: 4,4; }
+    </style>
+  </defs>
+
+  <rect width="960" height="440" class="bg" rx="14"/>
+  <text x="480" y="36" text-anchor="middle" class="title">MOSFET Current-Voltage Plane: Transfer Curve &amp; Output Family</text>
+
+  <!-- Left: Transfer Characteristic (I_D vs V_GS) -->
+  <g transform="translate(25, 55)">
+    <rect width="380" height="360" class="card"/>
+    <text x="25" y="30" class="sec-title">Transfer Characteristic (I_D vs V_GS)</text>
+
+    <g transform="translate(60, 260)">
+      <!-- Axes -->
+      <line x1="0" y1="0" x2="280" y2="0" class="axis"/>
+      <line x1="0" y1="0" x2="0" y2="-210" class="axis"/>
+      <text x="285" y="5" class="label">V_GS (V)</text>
+      <text x="0" y="-218" class="label">I_D (A)</text>
+
+      <!-- Threshold V_th marker -->
+      <line x1="80" y1="0" x2="80" y2="-200" class="grid"/>
+      <circle cx="80" cy="0" r="4" fill="#f43f5e"/>
+      <text x="80" y="18" text-anchor="middle" class="code-txt" fill="#f43f5e">V_th (2.0V)</text>
+
+      <!-- Transfer Curve: flat until V_th, then quadratic rise -->
+      <path d="M 0,0 L 80,0 Q 140,-20 250,-190" stroke="#34d399" stroke-width="3" fill="none"/>
+      <text x="160" y="-120" class="code-txt" fill="#34d399">Quadratic (V_GS - V_th)²</text>
+
+      <!-- Subthreshold label -->
+      <text x="40" y="-12" text-anchor="middle" class="sublabel" fill="#f43f5e">Cutoff (I_D=0)</text>
+    </g>
+
+    <rect x="20" y="295" width="340" height="50" rx="6" fill="#0b1120" stroke="#1e293b"/>
+    <text x="30" y="315" class="code-txt">I_D = ½ · k_n · (V_GS - V_th)²</text>
+    <text x="30" y="332" class="sublabel">Slope defines transconductance g_m = dI_D / dV_GS</text>
+  </g>
+
+  <!-- Right: Drain Characteristic Family of Curves (I_D vs V_DS) -->
+  <g transform="translate(425, 55)">
+    <rect width="510" height="360" class="card"/>
+    <text x="25" y="30" class="sec-title">Output Family (I_D vs V_DS)</text>
+
+    <g transform="translate(50, 260)">
+      <!-- Axes -->
+      <line x1="0" y1="0" x2="420" y2="0" class="axis"/>
+      <line x1="0" y1="0" x2="0" y2="-210" class="axis"/>
+      <text x="425" y="5" class="label">Drain-Source Voltage V_DS (V)</text>
+      <text x="0" y="-218" class="label">Drain Current I_D (A)</text>
+
+      <!-- Saturation boundary parabola V_DS,sat = V_GS - V_th -->
+      <path d="M 0,0 Q 90,-40 180,-190" class="boundary-curve"/>
+      <text x="110" y="-140" class="code-txt" fill="#fbbf24" style="font-size:10px;">V_DS,sat Boundary</text>
+
+      <!-- Curve V_GS = 5V -->
+      <path d="M 0,0 C 80,-165 140,-185 400,-190" class="mos-curve"/>
+      <text x="405" y="-186" class="code-txt" style="font-size:11px;">V_GS = 5V</text>
+
+      <!-- Curve V_GS = 4V -->
+      <path d="M 0,0 C 65,-105 110,-120 400,-122" class="mos-curve"/>
+      <text x="405" y="-118" class="code-txt" style="font-size:11px;">V_GS = 4V</text>
+
+      <!-- Curve V_GS = 3V -->
+      <path d="M 0,0 C 50,-55 80,-62 400,-64" class="mos-curve"/>
+      <text x="405" y="-60" class="code-txt" style="font-size:11px;">V_GS = 3V</text>
+
+      <!-- Curve V_GS = 2.5V -->
+      <path d="M 0,0 C 35,-20 60,-22 400,-23" class="mos-curve"/>
+      <text x="405" y="-19" class="code-txt" style="font-size:11px;">V_GS = 2.5V</text>
+
+      <!-- V_GS <= V_th Cutoff line -->
+      <line x1="0" y1="0" x2="400" y2="0" stroke="#f43f5e" stroke-width="2"/>
+      <text x="405" y="14" class="code-txt" fill="#f43f5e" style="font-size:11px;">V_GS ≤ V_th (Cutoff)</text>
+
+      <!-- Region designations -->
+      <text x="45" y="-200" class="label" font-weight="bold" fill="#38bdf8">Triode (Linear)</text>
+      <text x="240" y="-200" class="label" font-weight="bold" fill="#34d399">Saturation (Constant Current)</text>
+    </g>
+
+    <rect x="20" y="295" width="470" height="50" rx="6" fill="#0b1120" stroke="#1e293b"/>
+    <text x="30" y="315" class="code-txt">• Triode: V_DS &lt; V_GS - V_th (Low resistance switch R_DS(on))</text>
+    <text x="30" y="332" class="sublabel">• Saturation: V_DS ≥ V_GS - V_th (Linear analog signal amplifier)</text>
+  </g>
+</svg>

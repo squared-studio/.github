@@ -1,0 +1,140 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 440" width="100%" height="100%">
+  <defs>
+    <style>
+      .bg { fill: #0b1120; }
+      .card { fill: #131d33; stroke: #1e293b; stroke-width: 1.5; rx: 10; }
+      .title { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 19px; fill: #f8fafc; }
+      .sec-title { font-family: 'Inter', system-ui, sans-serif; font-weight: 600; font-size: 14px; fill: #38bdf8; }
+      .label { font-family: 'Inter', system-ui, sans-serif; font-size: 12px; fill: #cbd5e1; }
+      .sublabel { font-family: 'Inter', system-ui, sans-serif; font-size: 11px; fill: #94a3b8; }
+      .code-txt { font-family: 'JetBrains Mono', Consolas, monospace; font-size: 12px; fill: #34d399; font-weight: 600; }
+      .wire { stroke: #64748b; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; fill: none; }
+      .wire-hi { stroke: #38bdf8; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; fill: none; }
+      .p-region { fill: #f43f5e; fill-opacity: 0.15; stroke: #f43f5e; stroke-width: 1.5; }
+      .n-region { fill: #38bdf8; fill-opacity: 0.15; stroke: #38bdf8; stroke-width: 1.5; }
+      .depletion { fill: #fbbf24; fill-opacity: 0.2; stroke: #fbbf24; stroke-width: 1.5; stroke-dasharray: 3,3; }
+    </style>
+  </defs>
+
+  <rect width="960" height="440" class="bg" rx="14"/>
+  <text x="480" y="36" text-anchor="middle" class="title">Semiconductor P-N Junction Physics &amp; Biasing States</text>
+
+  <!-- Panel 1: Equilibrium (Unbiased) -->
+  <g transform="translate(25, 55)">
+    <rect width="285" height="360" class="card"/>
+    <text x="20" y="30" class="sec-title">1. Equilibrium (Unbiased)</text>
+
+    <!-- Junction Block -->
+    <g transform="translate(25, 60)">
+      <!-- P Region -->
+      <rect x="0" y="0" width="85" height="100" class="p-region"/>
+      <text x="42" y="25" text-anchor="middle" class="code-txt" fill="#f43f5e">P-type</text>
+      <text x="42" y="55" text-anchor="middle" class="sublabel">Holes (h⁺)</text>
+
+      <!-- Depletion Zone -->
+      <rect x="85" y="0" width="65" height="100" class="depletion"/>
+      <text x="117" y="45" text-anchor="middle" class="code-txt" style="font-size:10px; fill:#fbbf24;">Depletion</text>
+      <text x="117" y="62" text-anchor="middle" class="sublabel" style="font-size:9px;">Zone</text>
+      <line x1="97" y1="80" x2="137" y2="80" stroke="#fbbf24" stroke-width="1.5"/>
+      <text x="117" y="93" text-anchor="middle" class="sublabel" style="font-size:10px; fill:#fbbf24;">V₀ ≈ 0.7V</text>
+
+      <!-- N Region -->
+      <rect x="150" y="0" width="85" height="100" class="n-region"/>
+      <text x="192" y="25" text-anchor="middle" class="code-txt" fill="#38bdf8">N-type</text>
+      <text x="192" y="55" text-anchor="middle" class="sublabel">Electrons (e⁻)</text>
+    </g>
+
+    <!-- Info Box -->
+    <rect x="15" y="195" width="255" height="145" rx="6" fill="#0b1120" stroke="#1e293b"/>
+    <text x="25" y="218" class="label" font-weight="bold">Built-in Barrier Potential (V₀)</text>
+    <text x="25" y="240" class="code-txt" fill="#fbbf24">Silicon: ~0.6V to 0.7V</text>
+    <text x="25" y="260" class="code-txt" fill="#38bdf8">Germanium: ~0.2V to 0.3V</text>
+    <text x="25" y="285" class="sublabel">Mobile carriers recombine at boundary,</text>
+    <text x="25" y="302" class="sublabel">leaving exposed fixed ionized dopants.</text>
+    <text x="25" y="322" class="sublabel">No net current flows (I = 0).</text>
+  </g>
+
+  <!-- Panel 2: Forward Bias -->
+  <g transform="translate(330, 55)">
+    <rect width="285" height="360" class="card"/>
+    <text x="20" y="30" class="sec-title">2. Forward Bias (Conduction)</text>
+
+    <!-- Junction Block (Narrow Depletion) -->
+    <g transform="translate(25, 60)">
+      <!-- P Region -->
+      <rect x="0" y="0" width="105" height="100" class="p-region"/>
+      <text x="52" y="25" text-anchor="middle" class="code-txt" fill="#f43f5e">P (Anode +)</text>
+      <!-- Narrow Depletion Zone -->
+      <rect x="105" y="0" width="25" height="100" class="depletion"/>
+      <!-- N Region -->
+      <rect x="130" y="0" width="105" height="100" class="n-region"/>
+      <text x="182" y="25" text-anchor="middle" class="code-txt" fill="#38bdf8">N (Cathode -)</text>
+
+      <!-- Current Flow Arrow -->
+      <path d="M 20,60 L 215,60" stroke="#34d399" stroke-width="3" stroke-linecap="round"/>
+      <polygon points="215,55 225,60 215,65" fill="#34d399"/>
+      <text x="117" y="52" text-anchor="middle" class="code-txt" fill="#34d399">High I_F &gt;&gt; 0</text>
+    </g>
+
+    <!-- External Battery -->
+    <g transform="translate(85, 175)">
+      <line x1="0" y1="0" x2="30" y2="0" class="wire"/>
+      <line x1="30" y1="-8" x2="30" y2="8" stroke="#f43f5e" stroke-width="2.5"/>
+      <line x1="40" y1="-14" x2="40" y2="14" stroke="#38bdf8" stroke-width="2.5"/>
+      <line x1="40" y1="0" x2="110" y2="0" class="wire"/>
+      <text x="22" y="-12" class="sublabel" fill="#f43f5e">+</text>
+      <text x="48" y="-12" class="sublabel" fill="#38bdf8">-</text>
+      <text x="35" y="26" text-anchor="middle" class="code-txt">V_ext &gt; 0.7V</text>
+    </g>
+
+    <!-- Info Box -->
+    <rect x="15" y="215" width="255" height="125" rx="6" fill="#0b1120" stroke="#1e293b"/>
+    <text x="25" y="238" class="label" font-weight="bold">Depletion Zone Compresses</text>
+    <text x="25" y="260" class="code-txt" fill="#34d399">Low Dynamic Resistance (r_d)</text>
+    <text x="25" y="282" class="sublabel">Electric field pushes carriers across barrier.</text>
+    <text x="25" y="298" class="sublabel">Exponential current conduction</text>
+    <text x="25" y="318" class="sublabel">with constant drop ~0.7V.</text>
+  </g>
+
+  <!-- Panel 3: Reverse Bias -->
+  <g transform="translate(635, 55)">
+    <rect width="300" height="360" class="card"/>
+    <text x="20" y="30" class="sec-title">3. Reverse Bias (Blocking)</text>
+
+    <!-- Junction Block (Wide Depletion) -->
+    <g transform="translate(25, 60)">
+      <!-- P Region -->
+      <rect x="0" y="0" width="65" height="100" class="p-region"/>
+      <text x="32" y="25" text-anchor="middle" class="code-txt" fill="#f43f5e">P (-)</text>
+      <!-- Wide Depletion Zone -->
+      <rect x="65" y="0" width="120" height="100" class="depletion"/>
+      <text x="125" y="45" text-anchor="middle" class="code-txt" style="font-size:11px; fill:#fbbf24;">Widened Barrier</text>
+      <text x="125" y="65" text-anchor="middle" class="sublabel">High E-Field</text>
+      <!-- N Region -->
+      <rect x="185" y="0" width="65" height="100" class="n-region"/>
+      <text x="217" y="25" text-anchor="middle" class="code-txt" fill="#38bdf8">N (+)</text>
+
+      <!-- Tiny leakage arrow -->
+      <text x="125" y="85" text-anchor="middle" class="sublabel" fill="#94a3b8">Leakage I_S ≈ nA / pA</text>
+    </g>
+
+    <!-- External Battery Reversed -->
+    <g transform="translate(95, 175)">
+      <line x1="0" y1="0" x2="30" y2="0" class="wire"/>
+      <line x1="30" y1="-14" x2="30" y2="14" stroke="#38bdf8" stroke-width="2.5"/>
+      <line x1="40" y1="-8" x2="40" y2="8" stroke="#f43f5e" stroke-width="2.5"/>
+      <line x1="40" y1="0" x2="110" y2="0" class="wire"/>
+      <text x="22" y="-12" class="sublabel" fill="#38bdf8">-</text>
+      <text x="48" y="-12" class="sublabel" fill="#f43f5e">+</text>
+      <text x="35" y="26" text-anchor="middle" class="code-txt">V_rev &lt; 0</text>
+    </g>
+
+    <!-- Info Box -->
+    <rect x="15" y="215" width="270" height="125" rx="6" fill="#0b1120" stroke="#1e293b"/>
+    <text x="25" y="238" class="label" font-weight="bold">Depletion Zone Expands</text>
+    <text x="25" y="260" class="code-txt" fill="#f43f5e">Blocks Current Flow (OFF)</text>
+    <text x="25" y="282" class="sublabel">Majority carriers pulled away from junction.</text>
+    <text x="25" y="298" class="sublabel">Conducts only negligible saturation current</text>
+    <text x="25" y="318" class="sublabel">until Reverse Breakdown voltage (V_BR).</text>
+  </g>
+</svg>

@@ -1,0 +1,160 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 440" width="100%" height="100%">
+  <defs>
+    <style>
+      .bg { fill: #0b1120; }
+      .card { fill: #131d33; stroke: #1e293b; stroke-width: 1.5; rx: 10; }
+      .title { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 19px; fill: #f8fafc; }
+      .sec-title { font-family: 'Inter', system-ui, sans-serif; font-weight: 600; font-size: 14px; fill: #38bdf8; }
+      .label { font-family: 'Inter', system-ui, sans-serif; font-size: 12px; fill: #cbd5e1; }
+      .sublabel { font-family: 'Inter', system-ui, sans-serif; font-size: 11px; fill: #94a3b8; }
+      .code-txt { font-family: 'JetBrains Mono', Consolas, monospace; font-size: 12px; fill: #34d399; font-weight: 600; }
+      .wire { stroke: #64748b; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; fill: none; }
+      .wire-hi { stroke: #38bdf8; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; fill: none; }
+      .res-box { fill: #1e293b; stroke: #38bdf8; stroke-width: 2; rx: 3; }
+      .diode-fill { fill: #f43f5e; stroke: #f43f5e; stroke-width: 1.5; }
+    </style>
+    <marker id="arr-out" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8" />
+    </marker>
+  </defs>
+
+  <rect width="960" height="440" class="bg" rx="14"/>
+  <text x="480" y="36" text-anchor="middle" class="title">Essential Resistor Circuit Topologies &amp; Practical Applications</text>
+
+  <!-- Application 1: Voltage Divider -->
+  <g transform="translate(25, 55)">
+    <rect width="285" height="360" class="card"/>
+    <text x="20" y="30" class="sec-title">1. Voltage Divider</text>
+
+    <!-- Schematic -->
+    <g transform="translate(100, 48)">
+      <!-- Vin rail -->
+      <circle cx="40" cy="15" r="4" fill="#f43f5e"/>
+      <text x="40" y="5" text-anchor="middle" class="label" font-weight="bold" fill="#f43f5e">Vin</text>
+      <line x1="40" y1="19" x2="40" y2="45" class="wire"/>
+
+      <!-- R1 -->
+      <rect x="22" y="45" width="36" height="45" class="res-box"/>
+      <text x="40" y="72" text-anchor="middle" class="label" fill="#fff" font-weight="bold">R1</text>
+      <line x1="40" y1="90" x2="40" y2="130" class="wire"/>
+
+      <!-- Node Vout -->
+      <circle cx="40" cy="110" r="4" fill="#38bdf8"/>
+      <line x1="44" y1="110" x2="90" y2="110" class="wire" marker-end="url(#arr-out)"/>
+      <text x="96" y="114" class="code-txt" fill="#38bdf8">Vout</text>
+
+      <!-- R2 -->
+      <rect x="22" y="130" width="36" height="45" class="res-box"/>
+      <text x="40" y="157" text-anchor="middle" class="label" fill="#fff" font-weight="bold">R2</text>
+      <line x1="40" y1="175" x2="40" y2="200" class="wire"/>
+
+      <!-- GND symbol -->
+      <line x1="25" y1="200" x2="55" y2="200" class="wire"/>
+      <line x1="30" y1="205" x2="50" y2="205" class="wire"/>
+      <line x1="35" y1="210" x2="45" y2="210" class="wire"/>
+    </g>
+
+    <!-- Formula Box -->
+    <rect x="15" y="275" width="255" height="75" rx="6" fill="#0b1120" stroke="#1e293b"/>
+    <text x="25" y="298" class="code-txt">Vout = Vin · [ R2 / (R1 + R2) ]</text>
+    <text x="25" y="322" class="sublabel">Use: ADC sensor scaling, reference</text>
+    <text x="25" y="338" class="sublabel">voltage generation, level shifting.</text>
+  </g>
+
+  <!-- Application 2: LED Current Limiter -->
+  <g transform="translate(330, 55)">
+    <rect width="285" height="360" class="card"/>
+    <text x="20" y="30" class="sec-title">2. LED Current Limiting</text>
+
+    <!-- Schematic -->
+    <g transform="translate(100, 48)">
+      <!-- Vcc rail -->
+      <circle cx="40" cy="15" r="4" fill="#f43f5e"/>
+      <text x="40" y="5" text-anchor="middle" class="label" font-weight="bold" fill="#f43f5e">Vcc (5V)</text>
+      <line x1="40" y1="19" x2="40" y2="45" class="wire"/>
+
+      <!-- Limiting Resistor R -->
+      <rect x="22" y="45" width="36" height="45" class="res-box"/>
+      <text x="40" y="72" text-anchor="middle" class="label" fill="#fff" font-weight="bold">R_lim</text>
+      <line x1="40" y1="90" x2="40" y2="120" class="wire"/>
+
+      <!-- LED Symbol -->
+      <polygon points="25,120 55,120 40,145" class="diode-fill"/>
+      <line x1="25" y1="145" x2="55" y2="145" stroke="#f43f5e" stroke-width="2.5"/>
+      <!-- Photons -->
+      <line x1="52" y1="126" x2="68" y2="116" stroke="#fbbf24" stroke-width="1.8" marker-end="url(#arr-out)"/>
+      <line x1="56" y1="134" x2="72" y2="124" stroke="#fbbf24" stroke-width="1.8" marker-end="url(#arr-out)"/>
+      <text x="68" y="145" class="sublabel" fill="#f43f5e">V_f ≈ 2.0V</text>
+
+      <line x1="40" y1="146" x2="40" y2="200" class="wire"/>
+      <!-- GND symbol -->
+      <line x1="25" y1="200" x2="55" y2="200" class="wire"/>
+      <line x1="30" y1="205" x2="50" y2="205" class="wire"/>
+      <line x1="35" y1="210" x2="45" y2="210" class="wire"/>
+    </g>
+
+    <!-- Formula Box -->
+    <rect x="15" y="275" width="255" height="75" rx="6" fill="#0b1120" stroke="#1e293b"/>
+    <text x="25" y="298" class="code-txt">R = (Vcc - V_f) / I_f</text>
+    <text x="25" y="322" class="sublabel">Example: (5V - 2.0V) / 20mA = 150 Ω</text>
+    <text x="25" y="338" class="sublabel">Protects LED from thermal runaway.</text>
+  </g>
+
+  <!-- Application 3: Pull-Up / Pull-Down Resistors -->
+  <g transform="translate(635, 55)">
+    <rect width="300" height="360" class="card"/>
+    <text x="20" y="30" class="sec-title">3. Digital Pull-Up / Pull-Down</text>
+
+    <!-- Pull-Up Sub-circuit -->
+    <g transform="translate(25, 45)">
+      <text x="0" y="14" class="label" font-weight="bold" fill="#38bdf8">Pull-Up (Default HIGH)</text>
+      <!-- Vcc -->
+      <circle cx="35" cy="30" r="3" fill="#f43f5e"/>
+      <text x="35" y="24" text-anchor="middle" class="sublabel" fill="#f43f5e">Vcc (3.3V)</text>
+      <line x1="35" y1="33" x2="35" y2="50" class="wire"/>
+      <!-- Resistor -->
+      <rect x="25" y="50" width="20" height="32" class="res-box"/>
+      <text x="35" y="70" text-anchor="middle" class="sublabel" fill="#fff">10k</text>
+      <line x1="35" y1="82" x2="35" y2="105" class="wire"/>
+      <!-- Input line -->
+      <circle cx="35" cy="98" r="3" fill="#34d399"/>
+      <line x1="38" y1="98" x2="80" y2="98" class="wire-hi"/>
+      <text x="85" y="102" class="code-txt" style="font-size:10px;">MCU PIN</text>
+      <!-- Switch to GND -->
+      <line x1="35" y1="105" x2="35" y2="115" class="wire"/>
+      <line x1="35" y1="115" x2="48" y2="128" stroke="#cbd5e1" stroke-width="2"/>
+      <circle cx="35" cy="115" r="2.5" fill="#cbd5e1"/>
+      <circle cx="35" cy="135" r="2.5" fill="#cbd5e1"/>
+      <line x1="35" y1="135" x2="35" y2="145" class="wire"/>
+      <line x1="25" y1="145" x2="45" y2="145" class="wire"/>
+    </g>
+
+    <!-- Pull-Down Sub-circuit -->
+    <g transform="translate(160, 45)">
+      <text x="0" y="14" class="label" font-weight="bold" fill="#fbbf24">Pull-Down (Default LOW)</text>
+      <!-- Switch to Vcc -->
+      <circle cx="35" cy="30" r="3" fill="#f43f5e"/>
+      <text x="35" y="24" text-anchor="middle" class="sublabel" fill="#f43f5e">Vcc</text>
+      <line x1="35" y1="33" x2="35" y2="45" class="wire"/>
+      <line x1="35" y1="45" x2="48" y2="58" stroke="#cbd5e1" stroke-width="2"/>
+      <circle cx="35" cy="45" r="2.5" fill="#cbd5e1"/>
+      <circle cx="35" cy="65" r="2.5" fill="#cbd5e1"/>
+      <line x1="35" y1="65" x2="35" y2="85" class="wire"/>
+      <!-- Input line -->
+      <circle cx="35" cy="78" r="3" fill="#34d399"/>
+      <line x1="38" y1="78" x2="80" y2="78" class="wire-hi"/>
+      <text x="85" y="82" class="code-txt" style="font-size:10px;">MCU PIN</text>
+      <!-- Resistor to GND -->
+      <rect x="25" y="85" width="20" height="32" class="res-box"/>
+      <text x="35" y="105" text-anchor="middle" class="sublabel" fill="#fff">10k</text>
+      <line x1="35" y1="117" x2="35" y2="135" class="wire"/>
+      <line x1="25" y1="135" x2="45" y2="135" class="wire"/>
+    </g>
+
+    <!-- Explanation Box -->
+    <rect x="15" y="275" width="270" height="75" rx="6" fill="#0b1120" stroke="#1e293b"/>
+    <text x="25" y="296" class="code-txt" style="font-size:11px;">Prevents High-Z Floating State</text>
+    <text x="25" y="318" class="sublabel">Open switch: Defined 1 (Pull-up) or 0.</text>
+    <text x="25" y="335" class="sublabel">Closed switch: Overrides to opposite rail.</text>
+  </g>
+</svg>

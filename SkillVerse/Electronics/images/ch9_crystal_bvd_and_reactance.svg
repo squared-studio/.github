@@ -1,0 +1,116 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 440" width="100%" height="100%">
+  <defs>
+    <style>
+      .bg { fill: #0b1120; }
+      .card { fill: #131d33; stroke: #1e293b; stroke-width: 1.5; rx: 10; }
+      .title { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 19px; fill: #f8fafc; }
+      .sec-title { font-family: 'Inter', system-ui, sans-serif; font-weight: 600; font-size: 14px; fill: #38bdf8; }
+      .label { font-family: 'Inter', system-ui, sans-serif; font-size: 12px; fill: #cbd5e1; }
+      .sublabel { font-family: 'Inter', system-ui, sans-serif; font-size: 11px; fill: #94a3b8; }
+      .code-txt { font-family: 'JetBrains Mono', Consolas, monospace; font-size: 12px; fill: #34d399; font-weight: 600; }
+      .axis { stroke: #64748b; stroke-width: 1.8; }
+      .grid { stroke: #1e293b; stroke-width: 1; stroke-dasharray: 3,3; }
+      .wire { stroke: #64748b; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; fill: none; }
+      .wire-hi { stroke: #38bdf8; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; fill: none; }
+      .res-box { fill: #1e293b; stroke: #38bdf8; stroke-width: 2; rx: 2; }
+    </style>
+  </defs>
+
+  <rect width="960" height="440" class="bg" rx="14"/>
+  <text x="480" y="36" text-anchor="middle" class="title">Butterworth-Van Dyke (BVD) Equivalent Circuit &amp; Crystal Reactance Curve</text>
+
+  <!-- Left: BVD Equivalent Schematic -->
+  <g transform="translate(25, 55)">
+    <rect width="430" height="360" class="card"/>
+    <text x="25" y="30" class="sec-title">Butterworth-Van Dyke (BVD) Model</text>
+
+    <!-- Schematic -->
+    <g transform="translate(45, 50)">
+      <!-- Left Terminal -->
+      <circle cx="15" cy="70" r="3.5" fill="#38bdf8"/>
+      <line x1="18" y1="70" x2="50" y2="70" class="wire"/>
+      <line x1="50" y1="30" x2="50" y2="110" class="wire"/>
+
+      <!-- TOP BRANCH: Motional Arm (R_m, L_m, C_m in series) -->
+      <line x1="50" y1="30" x2="70" y2="30" class="wire-hi"/>
+      <!-- Rm -->
+      <rect x="70" y="21" width="35" height="18" class="res-box"/>
+      <text x="87" y="34" text-anchor="middle" class="sublabel" fill="#fff">R_m</text>
+      <line x1="105" y1="30" x2="135" y2="30" class="wire-hi"/>
+      <!-- Lm -->
+      <path d="M 135,30 A 6,6 0 0,1 147,30 A 6,6 0 0,1 159,30 A 6,6 0 0,1 171,30 A 6,6 0 0,1 183,30" stroke="#38bdf8" stroke-width="2.2" fill="none"/>
+      <text x="159" y="14" text-anchor="middle" class="sublabel" fill="#38bdf8">L_m</text>
+      <line x1="183" y1="30" x2="215" y2="30" class="wire-hi"/>
+      <!-- Cm -->
+      <line x1="215" y1="20" x2="215" y2="40" stroke="#34d399" stroke-width="2.5"/>
+      <line x1="222" y1="20" x2="222" y2="40" stroke="#34d399" stroke-width="2.5"/>
+      <text x="218" y="14" text-anchor="middle" class="sublabel" fill="#34d399">C_m</text>
+      <line x1="222" y1="30" x2="270" y2="30" class="wire-hi"/>
+
+      <!-- BOTTOM BRANCH: Shunt Capacitance C0 -->
+      <line x1="50" y1="110" x2="140" y2="110" class="wire"/>
+      <line x1="140" y1="100" x2="140" y2="120" stroke="#94a3b8" stroke-width="2.5"/>
+      <line x1="148" y1="100" x2="148" y2="120" stroke="#94a3b8" stroke-width="2.5"/>
+      <text x="144" y="90" text-anchor="middle" class="sublabel">C_0</text>
+      <line x1="148" y1="110" x2="270" y2="110" class="wire"/>
+
+      <!-- Right Terminal -->
+      <line x1="270" y1="30" x2="270" y2="110" class="wire"/>
+      <line x1="270" y1="70" x2="300" y2="70" class="wire"/>
+      <circle cx="300" cy="70" r="3.5" fill="#38bdf8"/>
+    </g>
+
+    <!-- Component Physical Equivalents -->
+    <rect x="20" y="200" width="390" height="145" rx="6" fill="#0b1120" stroke="#1e293b"/>
+    <text x="30" y="222" class="code-txt" fill="#38bdf8">Motional Arm (Acoustic Mechanics):</text>
+    <text x="30" y="242" class="sublabel">• R_m (Friction): Mechanical damping losses / ESR (10 - 50 Ω)</text>
+    <text x="30" y="260" class="sublabel">• L_m (Mass): Inertial mass of quartz (huge: 10 mH to 100 H!)</text>
+    <text x="30" y="278" class="sublabel">• C_m (Compliance): Mechanical spring elasticity (femtofarads ~0.02 pF)</text>
+    <text x="30" y="300" class="code-txt" fill="#fbbf24">Shunt Arm (Electrodes &amp; Package):</text>
+    <text x="30" y="320" class="sublabel">• C_0: Parallel plate capacitance of electrode discs (2 to 7 pF)</text>
+    <text x="30" y="336" class="code-txt" style="font-size:11px; fill:#34d399;">Massive Quality Factor Q = ω·L_m / R_m ≈ 10,000 to 500,000!</text>
+  </g>
+
+  <!-- Right: Reactance vs Frequency Graph -->
+  <g transform="translate(475, 55)">
+    <rect width="460" height="360" class="card"/>
+    <text x="25" y="30" class="sec-title">Reactance vs Frequency: fs, fp &amp; Inductive Band</text>
+
+    <g transform="translate(50, 180)">
+      <!-- Axes -->
+      <line x1="0" y1="0" x2="380" y2="0" class="axis"/>
+      <line x1="0" y1="-120" x2="0" y2="120" class="axis"/>
+      <text x="385" y="5" class="label">Frequency f</text>
+      <text x="0" y="-128" class="label">+jX (Inductive)</text>
+      <text x="0" y="132" class="label">-jX (Capacitive)</text>
+
+      <!-- Series resonance line fs -->
+      <line x1="160" y1="-110" x2="160" y2="110" class="grid"/>
+      <circle cx="160" cy="0" r="5" fill="#34d399"/>
+      <text x="160" y="20" text-anchor="middle" class="code-txt" fill="#34d399">f_s</text>
+
+      <!-- Parallel anti-resonance line fp -->
+      <line x1="220" y1="-110" x2="220" y2="110" class="grid"/>
+      <text x="220" y="20" text-anchor="middle" class="code-txt" fill="#f43f5e">f_p</text>
+
+      <!-- Reactance curve -->
+      <!-- Below fs: capacitive (-jX) rising steeply to 0 at fs -->
+      <path d="M 40,80 C 100,60 140,25 160,0" stroke="#38bdf8" stroke-width="2.5" fill="none"/>
+      <!-- Between fs and fp: Inductive (+jX) going to +infinity at fp -->
+      <path d="M 160,0 C 180,-40 205,-80 215,-120" stroke="#38bdf8" stroke-width="2.5" fill="none"/>
+      <!-- Right of fp: from -infinity back to capacitive -->
+      <path d="M 225,120 C 235,50 280,20 360,10" stroke="#38bdf8" stroke-width="2.5" fill="none"/>
+
+      <!-- Shaded Inductive Region -->
+      <rect x="160" y="-110" width="60" height="110" fill="#34d399" fill-opacity="0.15" stroke="#34d399" stroke-width="1" stroke-dasharray="2,2"/>
+      <text x="190" y="-80" text-anchor="middle" class="sublabel" style="fill:#34d399; font-weight:bold;">Inductive Region</text>
+      <text x="190" y="-65" text-anchor="middle" class="sublabel" style="font-size:9px;">(Oscillator Operates Here)</text>
+    </g>
+
+    <!-- Formula Box -->
+    <rect x="20" y="275" width="420" height="70" rx="6" fill="#0b1120" stroke="#1e293b"/>
+    <text x="30" y="296" class="code-txt">f_s = 1 / (2π · √(L_m · C_m))</text>
+    <text x="30" y="318" class="code-txt">f_p = f_s · √(1 + C_m / C_0)     (Typically &lt; 0.2% above f_s)</text>
+    <text x="30" y="336" class="sublabel">Load capacitors C_L pull the operating frequency precisely between f_s and f_p.</text>
+  </g>
+</svg>

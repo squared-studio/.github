@@ -1,0 +1,152 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 440" width="100%" height="100%">
+  <defs>
+    <style>
+      .bg { fill: #0b1120; }
+      .card { fill: #131d33; stroke: #1e293b; stroke-width: 1.5; rx: 10; }
+      .title { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 19px; fill: #f8fafc; }
+      .sec-title { font-family: 'Inter', system-ui, sans-serif; font-weight: 600; font-size: 14px; fill: #38bdf8; }
+      .label { font-family: 'Inter', system-ui, sans-serif; font-size: 12px; fill: #cbd5e1; }
+      .sublabel { font-family: 'Inter', system-ui, sans-serif; font-size: 11px; fill: #94a3b8; }
+      .code-txt { font-family: 'JetBrains Mono', Consolas, monospace; font-size: 12px; fill: #34d399; font-weight: 600; }
+      .wire { stroke: #64748b; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; fill: none; }
+      .wire-hi { stroke: #38bdf8; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; fill: none; }
+      .n-semi { fill: #38bdf8; fill-opacity: 0.18; stroke: #38bdf8; stroke-width: 1.5; }
+      .p-semi { fill: #f43f5e; fill-opacity: 0.18; stroke: #f43f5e; stroke-width: 1.5; }
+    </style>
+    <marker id="arr-bjt-npn" viewBox="0 0 8 8" refX="5" refY="4" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 7 4 L 0 7 z" fill="#38bdf8" />
+    </marker>
+    <marker id="arr-bjt-pnp" viewBox="0 0 8 8" refX="5" refY="4" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 7 1 L 0 4 L 7 7 z" fill="#f43f5e" />
+    </marker>
+  </defs>
+
+  <rect width="960" height="440" class="bg" rx="14"/>
+  <text x="480" y="36" text-anchor="middle" class="title">Bipolar Junction Transistor (BJT): Physics, Structure &amp; Symbols</text>
+
+  <!-- Panel 1: Semiconductor Sandwich Physics -->
+  <g transform="translate(25, 55)">
+    <rect width="320" height="360" class="card"/>
+    <text x="20" y="30" class="sec-title">NPN Physical Semiconductor Stack</text>
+
+    <!-- NPN Block -->
+    <g transform="translate(35, 50)">
+      <!-- Collector (N) -->
+      <rect x="0" y="0" width="250" height="42" class="n-semi"/>
+      <text x="125" y="26" text-anchor="middle" class="code-txt" fill="#38bdf8">Collector (N) — Moderately Doped</text>
+
+      <!-- Base (P - Very Thin) -->
+      <rect x="0" y="42" width="250" height="24" class="p-semi"/>
+      <text x="125" y="58" text-anchor="middle" class="code-txt" fill="#f43f5e">Base (P) — Ultra-Thin &amp; Lightly Doped</text>
+
+      <!-- Emitter (N+) -->
+      <rect x="0" y="66" width="250" height="42" class="n-semi"/>
+      <text x="125" y="92" text-anchor="middle" class="code-txt" fill="#38bdf8">Emitter (N+) — Heavily Doped</text>
+
+      <!-- Terminal Wires -->
+      <!-- Collector terminal -->
+      <line x1="125" y1="0" x2="125" y2="-20" class="wire-hi"/>
+      <text x="140" y="-10" class="code-txt" fill="#38bdf8">C</text>
+      <!-- Base terminal -->
+      <line x1="0" y1="54" x2="-20" y2="54" class="wire"/>
+      <text x="-32" y="58" class="code-txt" fill="#f43f5e">B</text>
+      <!-- Emitter terminal -->
+      <line x1="125" y1="108" x2="125" y2="128" class="wire-hi"/>
+      <text x="140" y="125" class="code-txt" fill="#38bdf8">E</text>
+
+      <!-- Carrier Flow Arrow -->
+      <path d="M 125,95 L 125,15" stroke="#fbbf24" stroke-width="2" stroke-dasharray="3,3"/>
+      <text x="180" y="58" class="sublabel" fill="#fbbf24">Electrons (99%)</text>
+    </g>
+
+    <!-- Physics explanation -->
+    <rect x="15" y="210" width="290" height="130" rx="6" fill="#0b1120" stroke="#1e293b"/>
+    <text x="25" y="232" class="label" font-weight="bold">Charge Injection &amp; Collection</text>
+    <text x="25" y="254" class="sublabel">1. Forward-biased EB junction injects vast</text>
+    <text x="25" y="270" class="sublabel">   electrons from heavily doped emitter.</text>
+    <text x="25" y="290" class="sublabel">2. Base is thin (&lt;1μm); ~99% diffuse</text>
+    <text x="25" y="306" class="sublabel">   across to CB field without recombining.</text>
+    <text x="25" y="324" class="code-txt" style="font-size:11px;">Current Controlled: I_C = β · I_B</text>
+  </g>
+
+  <!-- Panel 2: Schematic Symbols & Pinouts -->
+  <g transform="translate(365, 55)">
+    <rect width="280" height="360" class="card"/>
+    <text x="20" y="30" class="sec-title">Schematic Symbols: NPN vs PNP</text>
+
+    <!-- NPN Symbol -->
+    <g transform="translate(40, 50)">
+      <circle cx="80" cy="50" r="32" fill="#1e293b" stroke="#38bdf8" stroke-width="1.8"/>
+      <!-- Base bar -->
+      <line x1="65" y1="30" x2="65" y2="70" stroke="#cbd5e1" stroke-width="3"/>
+      <!-- Base lead -->
+      <line x1="20" y1="50" x2="65" y2="50" class="wire"/>
+      <text x="10" y="54" class="code-txt">B</text>
+
+      <!-- Collector -->
+      <line x1="65" y1="38" x2="95" y2="20" stroke="#38bdf8" stroke-width="2.5"/>
+      <line x1="95" y1="20" x2="130" y2="20" class="wire"/>
+      <text x="135" y="24" class="code-txt" fill="#38bdf8">C</text>
+
+      <!-- Emitter with outward arrow -->
+      <line x1="65" y1="62" x2="95" y2="80" stroke="#38bdf8" stroke-width="2.5"/>
+      <polygon points="85,73 98,82 89,84" fill="#38bdf8"/>
+      <line x1="95" y1="80" x2="130" y2="80" class="wire"/>
+      <text x="135" y="84" class="code-txt" fill="#38bdf8">E</text>
+
+      <text x="80" y="105" text-anchor="middle" class="code-txt" fill="#38bdf8">NPN Transistor</text>
+      <text x="80" y="118" text-anchor="middle" class="sublabel">"Not Pointing iN"</text>
+    </g>
+
+    <!-- PNP Symbol -->
+    <g transform="translate(40, 190)">
+      <circle cx="80" cy="50" r="32" fill="#1e293b" stroke="#f43f5e" stroke-width="1.8"/>
+      <line x1="65" y1="30" x2="65" y2="70" stroke="#cbd5e1" stroke-width="3"/>
+      <line x1="20" y1="50" x2="65" y2="50" class="wire"/>
+      <text x="10" y="54" class="code-txt">B</text>
+
+      <!-- Collector -->
+      <line x1="65" y1="62" x2="95" y2="80" stroke="#f43f5e" stroke-width="2.5"/>
+      <line x1="95" y1="80" x2="130" y2="80" class="wire"/>
+      <text x="135" y="84" class="code-txt" fill="#f43f5e">C</text>
+
+      <!-- Emitter with inward arrow -->
+      <line x1="65" y1="38" x2="95" y2="20" stroke="#f43f5e" stroke-width="2.5"/>
+      <polygon points="76,32 72,43 83,37" fill="#f43f5e"/>
+      <line x1="95" y1="20" x2="130" y2="20" class="wire"/>
+      <text x="135" y="24" class="code-txt" fill="#f43f5e">E</text>
+
+      <text x="80" y="105" text-anchor="middle" class="code-txt" fill="#f43f5e">PNP Transistor</text>
+      <text x="80" y="118" text-anchor="middle" class="sublabel">"Pointing iN Proudly"</text>
+    </g>
+  </g>
+
+  <!-- Panel 3: Governing BJT Equations -->
+  <g transform="translate(665, 55)">
+    <rect width="270" height="360" class="card"/>
+    <text x="20" y="30" class="sec-title">Fundamental Relations</text>
+
+    <rect x="15" y="50" width="240" height="285" rx="6" fill="#0b1120" stroke="#1e293b"/>
+    <g transform="translate(25, 75)">
+      <text x="0" y="0" class="code-txt" fill="#38bdf8">Current Gain (β / h_FE):</text>
+      <text x="0" y="22" class="code-txt" style="font-size:14px; fill:#34d399;">I_C = β · I_B</text>
+      <text x="0" y="40" class="sublabel">Typically β ≈ 50 to 300+</text>
+
+      <line x1="0" y1="55" x2="220" y2="55" stroke="#1e293b"/>
+
+      <text x="0" y="75" class="code-txt" fill="#38bdf8">Kirchhoff's Node Law:</text>
+      <text x="0" y="97" class="code-txt" style="font-size:14px; fill:#34d399;">I_E = I_C + I_B</text>
+      <text x="0" y="117" class="code-txt">I_E = (β + 1) · I_B</text>
+
+      <line x1="0" y1="130" x2="220" y2="130" stroke="#1e293b"/>
+
+      <text x="0" y="150" class="code-txt" fill="#fbbf24">Alpha Gain (α):</text>
+      <text x="0" y="172" class="code-txt">α = I_C / I_E = β / (β + 1)</text>
+      <text x="0" y="190" class="sublabel">α is typically 0.980 to 0.998</text>
+
+      <line x1="0" y1="205" x2="220" y2="205" stroke="#1e293b"/>
+
+      <text x="0" y="225" class="code-txt" fill="#f43f5e">Forward Drop: V_BE ≈ 0.7V</text>
+    </g>
+  </g>
+</svg>
