@@ -1,0 +1,124 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 480" width="100%" height="100%">
+  <defs>
+    <style>
+      .bg { fill: #080c14; }
+      .card { fill: #0f172a; stroke: #1e293b; stroke-width: 1.5; rx: 10; }
+      .title { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 20px; fill: #f8fafc; }
+      .subtitle { font-family: 'Inter', system-ui, sans-serif; font-size: 13px; fill: #94a3b8; }
+      .layer-card { fill: #131d33; stroke-width: 2; rx: 8; }
+      .layer-title { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 16px; }
+      .layer-sub { font-family: 'Inter', system-ui, sans-serif; font-size: 11px; fill: #94a3b8; }
+      .box-item { fill: #1e293b; stroke: #334155; stroke-width: 1; rx: 6; }
+      .code-key { font-family: 'JetBrains Mono', Consolas, monospace; font-size: 12px; font-weight: 700; fill: #38bdf8; }
+      .desc-txt { font-family: 'Inter', system-ui, sans-serif; font-size: 12px; fill: #cbd5e1; }
+      .wire-conn { stroke: #38bdf8; stroke-width: 2; fill: none; stroke-linecap: round; }
+    </style>
+    <marker id="arr-tab" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8" />
+    </marker>
+  </defs>
+
+  <rect width="960" height="480" class="bg" rx="14"/>
+
+  <!-- Title -->
+  <text x="480" y="38" text-anchor="middle" class="title">The Vim Trinity: Buffers, Windows &amp; Tab Pages</text>
+  <text x="480" y="60" text-anchor="middle" class="subtitle">Understanding the decoupling of data in memory, viewports on screen, and workspace layouts</text>
+
+  <!-- Layer 1: BUFFERS (RAM Storage) -->
+  <g transform="translate(40, 85)">
+    <rect x="0" y="0" width="260" height="350" class="layer-card" style="stroke: #34d399; fill: #0b1f1a;"/>
+    <text x="130" y="28" text-anchor="middle" class="layer-title" style="fill: #34d399;">1. BUFFERS</text>
+    <text x="130" y="46" text-anchor="middle" class="layer-sub">In-Memory File Proxies</text>
+    <text x="130" y="62" text-anchor="middle" class="layer-sub" style="fill:#6ee7b7;">(Invisible unless displayed)</text>
+
+    <!-- Buffer items -->
+    <g transform="translate(15, 80)">
+      <rect x="0" y="0" width="230" height="45" class="box-item" style="stroke:#34d399;"/>
+      <text x="10" y="20" class="code-key" style="fill:#6ee7b7;">Buffer 1: main.c</text>
+      <text x="10" y="36" class="desc-txt" style="font-size:11px;">[Active in Window 1]</text>
+    </g>
+
+    <g transform="translate(15, 135)">
+      <rect x="0" y="0" width="230" height="45" class="box-item" style="stroke:#34d399;"/>
+      <text x="10" y="20" class="code-key" style="fill:#6ee7b7;">Buffer 2: uart.h</text>
+      <text x="10" y="36" class="desc-txt" style="font-size:11px;">[Active in Window 2]</text>
+    </g>
+
+    <g transform="translate(15, 190)">
+      <rect x="0" y="0" width="230" height="45" class="box-item"/>
+      <text x="10" y="20" class="code-key" style="fill:#94a3b8;">Buffer 3: Makefile</text>
+      <text x="10" y="36" class="desc-txt" style="font-size:11px;">[Hidden in RAM]</text>
+    </g>
+
+    <g transform="translate(15, 245)">
+      <rect x="0" y="0" width="230" height="45" class="box-item"/>
+      <text x="10" y="20" class="code-key" style="fill:#94a3b8;">Buffer 4: config.json</text>
+      <text x="10" y="36" class="desc-txt" style="font-size:11px;">[Hidden in RAM]</text>
+    </g>
+
+    <!-- Buffer commands -->
+    <text x="130" y="325" text-anchor="middle" class="desc-txt" style="font-size:11px; fill:#34d399;">Commands: :e, :ls, :b &lt;n&gt;, :bd</text>
+  </g>
+
+  <!-- Flow connector -->
+  <path d="M 300 240 L 340 240" class="wire-conn" marker-end="url(#arr-tab)"/>
+
+  <!-- Layer 2: WINDOWS (Viewports) -->
+  <g transform="translate(350, 85)">
+    <rect x="0" y="0" width="280" height="350" class="layer-card" style="stroke: #38bdf8; fill: #0b1a2e;"/>
+    <text x="140" y="28" text-anchor="middle" class="layer-title" style="fill: #38bdf8;">2. WINDOWS</text>
+    <text x="140" y="46" text-anchor="middle" class="layer-sub">Viewports on Buffers</text>
+    <text x="140" y="62" text-anchor="middle" class="layer-sub" style="fill:#7dd3fc;">(Splits on Current Screen)</text>
+
+    <!-- Visual split representation -->
+    <g transform="translate(20, 85)">
+      <rect x="0" y="0" width="115" height="150" class="box-item" style="stroke:#38bdf8; fill:#1e293b;"/>
+      <text x="57" y="30" text-anchor="middle" class="code-key" style="font-size:11px;">Window 1</text>
+      <text x="57" y="55" text-anchor="middle" class="desc-txt" style="font-size:10px;">Shows:</text>
+      <text x="57" y="75" text-anchor="middle" class="code-key" style="font-size:11px; fill:#34d399;">main.c</text>
+      <text x="57" y="125" text-anchor="middle" class="desc-txt" style="font-size:9px; fill:#94a3b8;">Lines 1-40</text>
+    </g>
+
+    <g transform="translate(145, 85)">
+      <rect x="0" y="0" width="115" height="150" class="box-item" style="stroke:#38bdf8; fill:#1e293b;"/>
+      <text x="57" y="30" text-anchor="middle" class="code-key" style="font-size:11px;">Window 2</text>
+      <text x="57" y="55" text-anchor="middle" class="desc-txt" style="font-size:10px;">Shows:</text>
+      <text x="57" y="75" text-anchor="middle" class="code-key" style="font-size:11px; fill:#34d399;">uart.h</text>
+      <text x="57" y="125" text-anchor="middle" class="desc-txt" style="font-size:9px; fill:#94a3b8;">Lines 1-40</text>
+    </g>
+
+    <text x="140" y="275" text-anchor="middle" class="code-key" style="font-size:11px;">:sp (Horizontal) / :vsp (Vertical)</text>
+    <text x="140" y="300" text-anchor="middle" class="code-key" style="font-size:11px;">Ctrl+w h/j/k/l / Ctrl+w =</text>
+    <text x="140" y="325" text-anchor="middle" class="desc-txt" style="font-size:11px; fill:#38bdf8;">Multiple windows can view ONE buffer!</text>
+  </g>
+
+  <!-- Flow connector -->
+  <path d="M 630 240 L 670 240" class="wire-conn" marker-end="url(#arr-tab)"/>
+
+  <!-- Layer 3: TAB PAGES (Layout Collections) -->
+  <g transform="translate(680, 85)">
+    <rect x="0" y="0" width="240" height="350" class="layer-card" style="stroke: #a855f7; fill: #1c1033;"/>
+    <text x="120" y="28" text-anchor="middle" class="layer-title" style="fill: #a855f7;">3. TAB PAGES</text>
+    <text x="120" y="46" text-anchor="middle" class="layer-sub">Workspace Layout Containers</text>
+    <text x="120" y="62" text-anchor="middle" class="layer-sub" style="fill:#d8b4fe;">(NOT File Tabs like VS Code)</text>
+
+    <!-- Tab 1 representation -->
+    <g transform="translate(15, 80)">
+      <rect x="0" y="0" width="210" height="85" class="box-item" style="stroke:#a855f7; fill:#2e1065;"/>
+      <text x="15" y="24" class="code-key" style="fill:#e9d5ff;">Tab 1: Code Editing</text>
+      <text x="15" y="44" class="desc-txt" style="font-size:11px;">Contains: 2 Split Windows</text>
+      <text x="15" y="62" class="desc-txt" style="font-size:11px; fill:#c084fc;">[main.c | uart.h]</text>
+    </g>
+
+    <!-- Tab 2 representation -->
+    <g transform="translate(15, 180)">
+      <rect x="0" y="0" width="210" height="85" class="box-item" style="fill:#1e1b4b;"/>
+      <text x="15" y="24" class="code-key" style="fill:#c084fc;">Tab 2: Documentation</text>
+      <text x="15" y="44" class="desc-txt" style="font-size:11px;">Contains: 1 Single Window</text>
+      <text x="15" y="62" class="desc-txt" style="font-size:11px; fill:#94a3b8;">[README.md]</text>
+    </g>
+
+    <text x="120" y="300" text-anchor="middle" class="code-key" style="font-size:11px; fill:#d8b4fe;">:tabnew [file]  |  :tabclose</text>
+    <text x="120" y="325" text-anchor="middle" class="code-key" style="font-size:11px; fill:#d8b4fe;">gt (Next Tab)  |  gT (Prev Tab)</text>
+  </g>
+</svg>

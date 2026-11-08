@@ -1,0 +1,132 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 490" width="100%" height="100%">
+  <defs>
+    <style>
+      .bg { fill: #080c14; }
+      .card { fill: #0f172a; stroke: #1e293b; stroke-width: 1.5; rx: 10; }
+      .title { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 20px; fill: #f8fafc; }
+      .subtitle { font-family: 'Inter', system-ui, sans-serif; font-size: 13px; fill: #94a3b8; }
+      .sec-title { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 15px; }
+      .sec-sub { font-family: 'Inter', system-ui, sans-serif; font-size: 11px; fill: #94a3b8; }
+      .code-key { font-family: 'JetBrains Mono', Consolas, monospace; font-size: 13px; font-weight: 700; }
+      .desc-txt { font-family: 'Inter', system-ui, sans-serif; font-size: 12px; fill: #cbd5e1; }
+      .stack-entry { fill: #1e293b; stroke: #334155; stroke-width: 1; rx: 4; }
+    </style>
+  </defs>
+
+  <rect width="960" height="490" class="bg" rx="14"/>
+
+  <!-- Title (y = 30 and y = 50) -->
+  <text x="480" y="32" text-anchor="middle" class="title">Vim Navigation Engine: Viewports, Jumps &amp; Mark Architecture</text>
+  <text x="480" y="52" text-anchor="middle" class="subtitle">Navigating large codebases without losing spatial context</text>
+
+  <!-- Left: Screen Viewport Positioning (x = 40, width = 280, height = 400) -->
+  <g transform="translate(40, 75)">
+    <rect x="0" y="0" width="280" height="395" class="card" style="stroke:#38bdf8;"/>
+    <text x="140" y="26" text-anchor="middle" class="sec-title" style="fill:#38bdf8;">Screen Viewport Positioning</text>
+    <text x="140" y="44" text-anchor="middle" class="sec-sub">Camera Redraws &amp; Screen Lines</text>
+
+    <!-- Top line -->
+    <g transform="translate(20, 58)">
+      <rect x="0" y="0" width="240" height="42" class="stack-entry"/>
+      <text x="12" y="26" class="code-key" style="fill:#34d399;">H (High) / zt</text>
+      <text x="140" y="26" class="desc-txt" style="font-size:11px;">Top of screen</text>
+    </g>
+
+    <!-- Middle line -->
+    <g transform="translate(20, 110)">
+      <rect x="0" y="0" width="240" height="45" class="stack-entry" style="stroke:#38bdf8; fill:#1e3a5f;"/>
+      <text x="12" y="22" class="code-key" style="fill:#38bdf8;">M (Middle) / zz</text>
+      <text x="12" y="38" class="desc-txt" style="font-size:11px; fill:#7dd3fc;">Center cursor line vertically</text>
+    </g>
+
+    <!-- Bottom line -->
+    <g transform="translate(20, 165)">
+      <rect x="0" y="0" width="240" height="42" class="stack-entry"/>
+      <text x="12" y="26" class="code-key" style="fill:#f59e0b;">L (Low) / zb</text>
+      <text x="140" y="26" class="desc-txt" style="font-size:11px;">Bottom of screen</text>
+    </g>
+
+    <!-- Scrolling commands -->
+    <g transform="translate(20, 220)">
+      <rect x="0" y="0" width="240" height="155" class="stack-entry" style="fill:#0f172a;"/>
+      <text x="12" y="24" class="sec-title" style="font-size:12px; fill:#94a3b8;">Fluid Viewport Scrolling</text>
+      <text x="12" y="50" class="code-key" style="fill:#cbd5e1;">Ctrl+d</text>
+      <text x="75" y="50" class="desc-txt" style="font-size:11px;">Scroll Down half page</text>
+      <text x="12" y="76" class="code-key" style="fill:#cbd5e1;">Ctrl+u</text>
+      <text x="75" y="76" class="desc-txt" style="font-size:11px;">Scroll Up half page</text>
+      <text x="12" y="102" class="code-key" style="fill:#cbd5e1;">Ctrl+f / Ctrl+b</text>
+      <text x="125" y="102" class="desc-txt" style="font-size:11px;">Full page forward/back</text>
+      <text x="12" y="128" class="code-key" style="fill:#cbd5e1;">Ctrl+e / Ctrl+y</text>
+      <text x="125" y="128" class="desc-txt" style="font-size:11px;">Scroll 1 line down/up</text>
+    </g>
+  </g>
+
+  <!-- Middle: The Jump List & Change List (x = 345, width = 300, height = 400) -->
+  <g transform="translate(345, 75)">
+    <rect x="0" y="0" width="300" height="395" class="card" style="stroke:#a855f7;"/>
+    <text x="150" y="26" text-anchor="middle" class="sec-title" style="fill:#a855f7;">The Jump List &amp; History</text>
+    <text x="150" y="44" text-anchor="middle" class="sec-sub">Web-browser style time travel</text>
+
+    <!-- Jump stack visualization -->
+    <g transform="translate(20, 58)">
+      <rect x="0" y="0" width="260" height="35" class="stack-entry"/>
+      <text x="12" y="22" class="desc-txt">Jump #3: <tspan class="code-key" style="fill:#c084fc;">/parse_header</tspan> (Line 142)</text>
+    </g>
+    <g transform="translate(20, 103)">
+      <rect x="0" y="0" width="260" height="35" class="stack-entry"/>
+      <text x="12" y="22" class="desc-txt">Jump #2: <tspan class="code-key" style="fill:#c084fc;">42G</tspan> (Line 42)</text>
+    </g>
+    <g transform="translate(20, 148)">
+      <rect x="0" y="0" width="260" height="35" class="stack-entry" style="stroke:#a855f7; fill:#2e1065;"/>
+      <text x="12" y="22" class="desc-txt">Jump #1: <tspan class="code-key" style="fill:#e9d5ff;">* (find word)</tspan> &lt;-- CURSOR</text>
+    </g>
+
+    <!-- Jump keys -->
+    <g transform="translate(20, 200)">
+      <rect x="0" y="0" width="260" height="70" class="stack-entry" style="fill:#1e1b4b; stroke:#6366f1;"/>
+      <text x="12" y="28" class="code-key" style="fill:#a5b4fc;">Ctrl+o : Jump Backward (Older)</text>
+      <text x="12" y="52" class="code-key" style="fill:#a5b4fc;">Ctrl+i : Jump Forward (Newer)</text>
+    </g>
+
+    <!-- Change list -->
+    <g transform="translate(20, 285)">
+      <rect x="0" y="0" width="260" height="90" class="stack-entry"/>
+      <text x="12" y="24" class="sec-title" style="font-size:12px; fill:#34d399;">Change List (Edit Locations)</text>
+      <text x="12" y="48" class="code-key" style="fill:#6ee7b7;">g; : Jump to previous edit</text>
+      <text x="12" y="70" class="code-key" style="fill:#6ee7b7;">g, : Jump to next edit</text>
+    </g>
+  </g>
+
+  <!-- Right: Marks System (x = 670, width = 250, height = 400) -->
+  <g transform="translate(670, 75)">
+    <rect x="0" y="0" width="250" height="395" class="card" style="stroke:#f59e0b;"/>
+    <text x="125" y="26" text-anchor="middle" class="sec-title" style="fill:#f59e0b;">Persistent Marks</text>
+    <text x="125" y="44" text-anchor="middle" class="sec-sub">Local vs. Global Cross-File Bookmarks</text>
+
+    <!-- Local Marks -->
+    <g transform="translate(15, 58)">
+      <rect x="0" y="0" width="220" height="80" class="stack-entry"/>
+      <text x="10" y="22" class="code-key" style="fill:#fbbf24;">m[a-z] : Local Marks</text>
+      <text x="10" y="42" class="desc-txt" style="font-size:11px;">Scored per buffer.</text>
+      <text x="10" y="62" class="desc-txt" style="font-size:11px;">Line: <tspan class="code-key">'a</tspan> | Exact col: <tspan class="code-key">`a</tspan></text>
+    </g>
+
+    <!-- Global Marks -->
+    <g transform="translate(15, 148)">
+      <rect x="0" y="0" width="220" height="80" class="stack-entry"/>
+      <text x="10" y="22" class="code-key" style="fill:#f59e0b;">m[A-Z] : Global Marks</text>
+      <text x="10" y="42" class="desc-txt" style="font-size:11px;">Preserved across files &amp; sessions.</text>
+      <text x="10" y="62" class="desc-txt" style="font-size:11px;">Jump opens target file: <tspan class="code-key">'M</tspan></text>
+    </g>
+
+    <!-- Special Marks -->
+    <g transform="translate(15, 238)">
+      <rect x="0" y="0" width="220" height="137" class="stack-entry" style="fill:#172554;"/>
+      <text x="10" y="22" class="sec-title" style="font-size:12px; fill:#93c5fd;">Automatic Special Marks</text>
+      <text x="10" y="46" class="desc-txt" style="font-size:11px;"><tspan class="code-key">''</tspan> : Position before last jump</text>
+      <text x="10" y="68" class="desc-txt" style="font-size:11px;"><tspan class="code-key">'.</tspan> : Position of last edit</text>
+      <text x="10" y="90" class="desc-txt" style="font-size:11px;"><tspan class="code-key">'^</tspan> : Position where Insert exited</text>
+      <text x="10" y="112" class="desc-txt" style="font-size:11px;"><tspan class="code-key">'[ / ']</tspan> : Start / End of last yank</text>
+    </g>
+  </g>
+</svg>

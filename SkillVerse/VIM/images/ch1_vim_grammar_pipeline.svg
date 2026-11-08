@@ -1,0 +1,100 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 420" width="100%" height="100%">
+  <defs>
+    <style>
+      .bg { fill: #080c14; }
+      .title { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 20px; fill: #f8fafc; }
+      .subtitle { font-family: 'Inter', system-ui, sans-serif; font-size: 13px; fill: #94a3b8; }
+      .comp-box { fill: #0f172a; stroke-width: 2; rx: 8; }
+      .comp-title { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 14px; }
+      .comp-sub { font-family: 'Inter', system-ui, sans-serif; font-size: 11px; fill: #94a3b8; }
+      .code-key { font-family: 'JetBrains Mono', Consolas, monospace; font-size: 13px; font-weight: 700; }
+      .plus-sym { font-family: 'Inter', system-ui, sans-serif; font-size: 22px; fill: #64748b; font-weight: 700; }
+      .ex-card { fill: #131d33; stroke: #1e293b; stroke-width: 1.5; rx: 8; }
+      .ex-cmd { font-family: 'JetBrains Mono', Consolas, monospace; font-size: 15px; font-weight: 700; fill: #38bdf8; }
+      .ex-desc { font-family: 'Inter', system-ui, sans-serif; font-size: 12px; fill: #cbd5e1; }
+    </style>
+  </defs>
+
+  <rect width="960" height="420" class="bg" rx="14"/>
+
+  <!-- Title (y = 30 and y = 52) -->
+  <text x="480" y="32" text-anchor="middle" class="title">The Grammar of Vim: Composable Sentence Architecture</text>
+  <text x="480" y="52" text-anchor="middle" class="subtitle">Vim translates editing intent into structured, repeatable language expressions</text>
+
+  <!-- Formula Pipeline Blocks (y = 75 to 195) -->
+  <g transform="translate(45, 75)">
+    <!-- 1. Count (Optional) -->
+    <g transform="translate(0, 0)">
+      <rect x="0" y="0" width="160" height="115" class="comp-box" style="stroke: #f59e0b; fill: #171b26;"/>
+      <text x="80" y="26" text-anchor="middle" class="comp-title" style="fill: #f59e0b;">[ COUNT ]</text>
+      <text x="80" y="46" text-anchor="middle" class="comp-sub">Optional multiplier</text>
+      <text x="80" y="74" text-anchor="middle" class="code-key" style="fill: #fcd34d;">2, 3, 5, 10 ...</text>
+      <text x="80" y="96" text-anchor="middle" class="comp-sub">(Defaults to 1)</text>
+    </g>
+
+    <text x="185" y="65" text-anchor="middle" class="plus-sym">+</text>
+
+    <!-- 2. Operator (Verb) -->
+    <g transform="translate(210, 0)">
+      <rect x="0" y="0" width="200" height="115" class="comp-box" style="stroke: #38bdf8; fill: #0f1c30;"/>
+      <text x="100" y="26" text-anchor="middle" class="comp-title" style="fill: #38bdf8;">[ OPERATOR ]</text>
+      <text x="100" y="46" text-anchor="middle" class="comp-sub">Action / Verb</text>
+      <text x="100" y="70" text-anchor="middle" class="code-key" style="fill: #7dd3fc;">d (Delete / Cut)</text>
+      <text x="100" y="88" text-anchor="middle" class="code-key" style="fill: #7dd3fc;">c (Change / Edit)</text>
+      <text x="100" y="104" text-anchor="middle" class="code-key" style="fill: #7dd3fc;">y (Yank / Copy)</text>
+    </g>
+
+    <text x="435" y="65" text-anchor="middle" class="plus-sym">+</text>
+
+    <!-- 3. Motion or Text Object (Noun) -->
+    <g transform="translate(460, 0)">
+      <rect x="0" y="0" width="220" height="115" class="comp-box" style="stroke: #34d399; fill: #0d2320;"/>
+      <text x="110" y="26" text-anchor="middle" class="comp-title" style="fill: #34d399;">[ MOTION / OBJECT ]</text>
+      <text x="110" y="46" text-anchor="middle" class="comp-sub">Target / Noun</text>
+      <text x="110" y="70" text-anchor="middle" class="code-key" style="fill: #6ee7b7;">w, e, $, 0 (Motions)</text>
+      <text x="110" y="88" text-anchor="middle" class="code-key" style="fill: #6ee7b7;">iw, aw (Word scope)</text>
+      <text x="110" y="104" text-anchor="middle" class="code-key" style="fill: #6ee7b7;">i", i(, i{, it (Delimiters)</text>
+    </g>
+
+    <text x="705" y="65" text-anchor="middle" class="plus-sym">=</text>
+
+    <!-- 4. Result Action -->
+    <g transform="translate(730, 0)">
+      <rect x="0" y="0" width="140" height="115" class="comp-box" style="stroke: #a855f7; fill: #1c152e;"/>
+      <text x="70" y="26" text-anchor="middle" class="comp-title" style="fill: #a855f7;">[ RESULT ]</text>
+      <text x="70" y="46" text-anchor="middle" class="comp-sub">Atomic Execution</text>
+      <text x="70" y="74" text-anchor="middle" class="comp-sub" style="fill:#e9d5ff;">Executed instantly</text>
+      <text x="70" y="96" text-anchor="middle" class="code-key" style="fill:#c084fc;">Single Undo (u)</text>
+    </g>
+  </g>
+
+  <!-- Concrete Examples Breakdown (y = 215 to 395) -->
+  <g transform="translate(45, 215)">
+    <rect x="0" y="0" width="870" height="180" class="ex-card"/>
+    <text x="25" y="28" class="comp-title" style="fill: #f8fafc; font-size:15px;">Real-World Composed Sentences in Action</text>
+
+    <!-- Ex 1 -->
+    <g transform="translate(25, 42)">
+      <text x="0" y="16" class="ex-cmd">d2w</text>
+      <text x="80" y="16" class="ex-desc"><tspan style="fill:#38bdf8; font-weight:600;">[d]elete</tspan> + <tspan style="fill:#f59e0b; font-weight:600;">[2]</tspan> + <tspan style="fill:#34d399; font-weight:600;">[w]ords</tspan> → Deletes the next 2 words starting from the cursor.</text>
+    </g>
+
+    <!-- Ex 2 -->
+    <g transform="translate(25, 74)">
+      <text x="0" y="16" class="ex-cmd">ci"</text>
+      <text x="80" y="16" class="ex-desc"><tspan style="fill:#38bdf8; font-weight:600;">[c]hange</tspan> + <tspan style="fill:#34d399; font-weight:600;">[i]nside</tspan> + <tspan style="fill:#34d399; font-weight:600;">["]quotes</tspan> → Clears string contents between quotes and enters Insert mode.</text>
+    </g>
+
+    <!-- Ex 3 -->
+    <g transform="translate(25, 106)">
+      <text x="0" y="16" class="ex-cmd">da(</text>
+      <text x="80" y="16" class="ex-desc"><tspan style="fill:#38bdf8; font-weight:600;">[d]elete</tspan> + <tspan style="fill:#34d399; font-weight:600;">[a]round</tspan> + <tspan style="fill:#34d399; font-weight:600;">[(]parentheses</tspan> → Deletes function arguments AND the surrounding parentheses.</text>
+    </g>
+
+    <!-- Ex 4 -->
+    <g transform="translate(25, 138)">
+      <text x="0" y="16" class="ex-cmd">gUaw</text>
+      <text x="80" y="16" class="ex-desc"><tspan style="fill:#38bdf8; font-weight:600;">[gU]ppercase</tspan> + <tspan style="fill:#34d399; font-weight:600;">[a]round</tspan> + <tspan style="fill:#34d399; font-weight:600;">[w]ord</tspan> → Converts entire word under cursor into UPPERCASE characters.</text>
+    </g>
+  </g>
+</svg>

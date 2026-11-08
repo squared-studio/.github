@@ -1,0 +1,141 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 540" width="100%" height="100%">
+  <defs>
+    <style>
+      .bg { fill: #080c14; }
+      .title { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 20px; fill: #f8fafc; }
+      .subtitle { font-family: 'Inter', system-ui, sans-serif; font-size: 13px; fill: #94a3b8; }
+      .node-hub { fill: #1e293b; stroke: #38bdf8; stroke-width: 2.5; rx: 12; }
+      .node-mode { fill: #0f172a; stroke: #34d399; stroke-width: 2; rx: 10; }
+      .node-ex { fill: #0f172a; stroke: #f59e0b; stroke-width: 2; rx: 10; }
+      .node-vis { fill: #0f172a; stroke: #a855f7; stroke-width: 2; rx: 10; }
+      .node-rep { fill: #0f172a; stroke: #ec4899; stroke-width: 2; rx: 10; }
+      .node-title { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 15px; fill: #f8fafc; }
+      .node-sub { font-family: 'Inter', system-ui, sans-serif; font-size: 11px; fill: #94a3b8; }
+      .key-pill { fill: #1e293b; stroke: #475569; stroke-width: 1; rx: 4; }
+      .key-txt { font-family: 'JetBrains Mono', Consolas, monospace; font-size: 11px; fill: #38bdf8; font-weight: 600; }
+      .key-txt-esc { font-family: 'JetBrains Mono', Consolas, monospace; font-size: 11px; fill: #f43f5e; font-weight: 600; }
+      .edge { stroke: #475569; stroke-width: 1.8; fill: none; stroke-linecap: round; }
+      .edge-esc { stroke: #f43f5e; stroke-width: 1.8; stroke-dasharray: 4,4; fill: none; stroke-linecap: round; }
+    </style>
+    <marker id="arr-green" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#34d399" />
+    </marker>
+    <marker id="arr-esc" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#f43f5e" />
+    </marker>
+    <marker id="arr-purple" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#a855f7" />
+    </marker>
+    <marker id="arr-amber" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#f59e0b" />
+    </marker>
+    <marker id="arr-pink" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#ec4899" />
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="960" height="540" class="bg" rx="14"/>
+
+  <!-- Title Block (No overlap, y=30 and y=50) -->
+  <text x="480" y="32" text-anchor="middle" class="title">Vim Modal State Machine Architecture</text>
+  <text x="480" y="52" text-anchor="middle" class="subtitle">The Central Hub &amp; Operating Modes Transition Map</text>
+
+  <!-- 1. TOP NODE: Insert Mode (y = 75 to 135) -->
+  <g transform="translate(365, 75)">
+    <rect x="0" y="0" width="230" height="60" class="node-mode"/>
+    <text x="115" y="26" text-anchor="middle" class="node-title" style="fill:#34d399;">INSERT MODE</text>
+    <text x="115" y="46" text-anchor="middle" class="node-sub">Direct character insertion into buffer</text>
+  </g>
+
+  <!-- Vertical Connections: Insert <-> Normal -->
+  <!-- Left path: Normal -> Insert (i, a, o) -->
+  <path d="M 440 215 L 440 143" class="edge" stroke="#34d399" marker-end="url(#arr-green)"/>
+  <rect x="365" y="165" width="65" height="22" class="key-pill"/>
+  <text x="397" y="180" text-anchor="middle" class="key-txt" style="fill:#34d399;">i, a, o, I, A</text>
+
+  <!-- Right path: Insert -> Normal (<Esc>) -->
+  <path d="M 520 135 L 520 207" class="edge-esc" marker-end="url(#arr-esc)"/>
+  <rect x="530" y="165" width="55" height="22" class="key-pill"/>
+  <text x="557" y="180" text-anchor="middle" class="key-txt-esc">&lt;Esc&gt;</text>
+
+  <!-- 2. CENTER HUB: Normal Mode (y = 215 to 345, x = 350 to 610) -->
+  <g transform="translate(350, 215)">
+    <rect x="0" y="0" width="260" height="130" class="node-hub"/>
+    <text x="130" y="30" text-anchor="middle" class="node-title" style="fill:#38bdf8; font-size:17px;">NORMAL MODE</text>
+    <text x="130" y="52" text-anchor="middle" class="node-sub">Root State / Command Dispatcher</text>
+    <text x="130" y="74" text-anchor="middle" class="node-sub">• Navigation (hjkl, w, b, e, $, 0, gg, G)</text>
+    <text x="130" y="94" text-anchor="middle" class="node-sub">• Operators (d, c, y, p, u, Ctrl+r, .)</text>
+    <text x="130" y="114" text-anchor="middle" class="node-sub" style="fill:#34d399; font-weight:600;">Default resting position for all editing</text>
+  </g>
+
+  <!-- 3. LEFT NODE: Visual Modes (x = 40 to 270, y = 220 to 340) -->
+  <g transform="translate(40, 220)">
+    <rect x="0" y="0" width="230" height="120" class="node-vis"/>
+    <text x="115" y="26" text-anchor="middle" class="node-title" style="fill:#a855f7;">VISUAL MODES</text>
+    <text x="115" y="48" text-anchor="middle" class="node-sub">• v : Character-wise selection</text>
+    <text x="115" y="68" text-anchor="middle" class="node-sub">• V : Line-wise selection</text>
+    <text x="115" y="88" text-anchor="middle" class="node-sub">• Ctrl+v : Block/Column selection</text>
+    <text x="115" y="106" text-anchor="middle" class="node-sub" style="fill:#cbd5e1;">Target with operators (y, d, c, &gt;)</text>
+  </g>
+
+  <!-- Horizontal Connections: Left <-> Center -->
+  <!-- Top line: Normal -> Visual (v, V, ^v) -->
+  <path d="M 350 250 L 278 250" class="edge" stroke="#a855f7" marker-end="url(#arr-purple)"/>
+  <rect x="282" y="238" width="56" height="22" class="key-pill"/>
+  <text x="310" y="253" text-anchor="middle" class="key-txt" style="fill:#a855f7;">v, V, ^v</text>
+
+  <!-- Bottom line: Visual -> Normal (<Esc>) -->
+  <path d="M 270 295 L 342 295" class="edge-esc" marker-end="url(#arr-esc)"/>
+  <rect x="284" y="283" width="52" height="22" class="key-pill"/>
+  <text x="310" y="298" text-anchor="middle" class="key-txt-esc">&lt;Esc&gt;</text>
+
+  <!-- 4. RIGHT NODE: Command-Line (Ex) Mode (x = 690 to 920, y = 220 to 340) -->
+  <g transform="translate(690, 220)">
+    <rect x="0" y="0" width="230" height="120" class="node-ex"/>
+    <text x="115" y="26" text-anchor="middle" class="node-title" style="fill:#f59e0b;">COMMAND-LINE (Ex)</text>
+    <text x="115" y="48" text-anchor="middle" class="node-sub">• :w, :q, :wq (File I/O)</text>
+    <text x="115" y="68" text-anchor="middle" class="node-sub">• :%s/old/new/g (Substitution)</text>
+    <text x="115" y="88" text-anchor="middle" class="node-sub">• :sp, :vsp (Window splits)</text>
+    <text x="115" y="106" text-anchor="middle" class="node-sub">• :!cmd (Shell execution)</text>
+  </g>
+
+  <!-- Horizontal Connections: Center <-> Right -->
+  <!-- Top line: Normal -> Ex (:, /, ?) -->
+  <path d="M 610 250 L 682 250" class="edge" stroke="#f59e0b" marker-end="url(#arr-amber)"/>
+  <rect x="622" y="238" width="54" height="22" class="key-pill"/>
+  <text x="649" y="253" text-anchor="middle" class="key-txt" style="fill:#f59e0b;">: , /, ?</text>
+
+  <!-- Bottom line: Ex -> Normal (<Esc> or <CR>) -->
+  <path d="M 690 295 L 618 295" class="edge-esc" marker-end="url(#arr-esc)"/>
+  <rect x="621" y="283" width="56" height="22" class="key-pill"/>
+  <text x="649" y="298" text-anchor="middle" class="key-txt-esc">&lt;Esc&gt;/CR</text>
+
+  <!-- 5. BOTTOM NODE: Replace Mode (y = 425 to 485, x = 365 to 595) -->
+  <g transform="translate(365, 425)">
+    <rect x="0" y="0" width="230" height="60" class="node-rep"/>
+    <text x="115" y="26" text-anchor="middle" class="node-title" style="fill:#ec4899;">REPLACE MODE</text>
+    <text x="115" y="46" text-anchor="middle" class="node-sub">Overwrites existing buffer characters</text>
+  </g>
+
+  <!-- Vertical Connections: Normal <-> Replace -->
+  <!-- Left path: Normal -> Replace (R) -->
+  <path d="M 440 345 L 440 417" class="edge" stroke="#ec4899" marker-end="url(#arr-pink)"/>
+  <rect x="395" y="372" width="35" height="22" class="key-pill"/>
+  <text x="412" y="387" text-anchor="middle" class="key-txt" style="fill:#ec4899;">R</text>
+
+  <!-- Right path: Replace -> Normal (<Esc>) -->
+  <path d="M 520 425 L 520 353" class="edge-esc" marker-end="url(#arr-esc)"/>
+  <rect x="530" y="372" width="55" height="22" class="key-pill"/>
+  <text x="557" y="387" text-anchor="middle" class="key-txt-esc">&lt;Esc&gt;</text>
+
+  <!-- Bottom Legend Bar (y = 510) -->
+  <g transform="translate(60, 510)">
+    <text x="0" y="10" class="node-sub" style="fill:#64748b; font-size:12px;">Legend:</text>
+    <line x1="55" y1="6" x2="85" y2="6" stroke="#38bdf8" stroke-width="2"/>
+    <text x="92" y="10" class="node-sub" style="fill:#cbd5e1;">Mode Enter Transition</text>
+    <line x1="240" y1="6" x2="270" y2="6" stroke="#f43f5e" stroke-width="2" stroke-dasharray="4,4"/>
+    <text x="277" y="10" class="node-sub" style="fill:#cbd5e1;">Return to Normal (&lt;Esc&gt;)</text>
+    <text x="560" y="10" class="node-sub" style="fill:#94a3b8;">Key Rule: If lost or in doubt, press &lt;Esc&gt; twice.</text>
+  </g>
+</svg>

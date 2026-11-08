@@ -1,0 +1,101 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 520" width="100%" height="100%">
+  <defs>
+    <style>
+      .bg { fill: #080c14; }
+      .card { fill: #0f172a; stroke: #1e293b; stroke-width: 1.5; rx: 10; }
+      .title { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 20px; fill: #f8fafc; }
+      .subtitle { font-family: 'Inter', system-ui, sans-serif; font-size: 13px; fill: #94a3b8; }
+      .reg-box { fill: #131d33; stroke-width: 1.5; rx: 8; }
+      .reg-name { font-family: 'JetBrains Mono', Consolas, monospace; font-size: 15px; font-weight: 700; }
+      .reg-desc { font-family: 'Inter', system-ui, sans-serif; font-size: 11px; fill: #94a3b8; }
+      .reg-detail { font-family: 'Inter', system-ui, sans-serif; font-size: 12px; fill: #cbd5e1; }
+      .code-pill { font-family: 'JetBrains Mono', Consolas, monospace; font-size: 11px; fill: #38bdf8; font-weight: 600; }
+    </style>
+  </defs>
+
+  <rect width="960" height="520" class="bg" rx="14"/>
+
+  <!-- Title (y = 30 and y = 50) -->
+  <text x="480" y="32" text-anchor="middle" class="title">Vim Registers Architecture: Storage &amp; Data Flow</text>
+  <text x="480" y="52" text-anchor="middle" class="subtitle">How Vim captures, routes, and preserves yanked, deleted, and system clipboard text</text>
+
+  <!-- Left Column: Operation Source (x = 40, width = 230, height = 430) -->
+  <g transform="translate(40, 75)">
+    <rect x="0" y="0" width="230" height="425" class="card" style="stroke: #3b82f6;"/>
+    <text x="115" y="28" text-anchor="middle" class="title" style="font-size:16px; fill:#38bdf8;">Editor Actions</text>
+    <text x="115" y="48" text-anchor="middle" class="subtitle">Where text originates</text>
+
+    <!-- Yank action -->
+    <g transform="translate(15, 65)">
+      <rect x="0" y="0" width="200" height="80" class="reg-box" style="stroke:#34d399;"/>
+      <text x="15" y="24" class="reg-name" style="fill:#34d399;">Yank (yy, yw, y$)</text>
+      <text x="15" y="44" class="reg-desc">Copies text without deleting</text>
+      <text x="15" y="64" class="code-pill">Targets "" and "0</text>
+    </g>
+
+    <!-- Delete action -->
+    <g transform="translate(15, 160)">
+      <rect x="0" y="0" width="200" height="80" class="reg-box" style="stroke:#f43f5e;"/>
+      <text x="15" y="24" class="reg-name" style="fill:#f43f5e;">Delete / Change</text>
+      <text x="15" y="44" class="reg-desc">dd, dw, c$, s, x</text>
+      <text x="15" y="64" class="code-pill">Targets "" and "1.."9 stack</text>
+    </g>
+
+    <!-- Explicit register action -->
+    <g transform="translate(15, 255)">
+      <rect x="0" y="0" width="200" height="80" class="reg-box" style="stroke:#a855f7;"/>
+      <text x="15" y="24" class="reg-name" style="fill:#a855f7;">Explicit Prefix ("a)</text>
+      <text x="15" y="44" class="reg-desc">"ayy, "ap, "+y, "+p</text>
+      <text x="15" y="64" class="code-pill">Routes to designated register</text>
+    </g>
+
+    <text x="115" y="375" text-anchor="middle" class="reg-desc" style="fill:#64748b;">View active registers with:</text>
+    <text x="115" y="398" text-anchor="middle" class="code-pill" style="font-size:13px; fill:#38bdf8;">:registers</text>
+  </g>
+
+  <!-- Right Column: The Register Banks (x = 300, width = 620) -->
+  <g transform="translate(300, 75)">
+    <!-- 1. Unnamed Register "" -->
+    <g transform="translate(0, 0)">
+      <rect x="0" y="0" width="620" height="75" class="reg-box" style="stroke:#38bdf8;"/>
+      <text x="20" y="28" class="reg-name" style="fill:#38bdf8;">"" — The Unnamed Register</text>
+      <text x="20" y="52" class="reg-detail">Default target for all yanks (<tspan class="code-pill">y</tspan>), deletes (<tspan class="code-pill">d</tspan>), and changes (<tspan class="code-pill">c</tspan>). Pasted by default with <tspan class="code-pill">p</tspan>.</text>
+    </g>
+
+    <!-- 2. Yank Register "0 -->
+    <g transform="translate(0, 88)">
+      <rect x="0" y="0" width="620" height="75" class="reg-box" style="stroke:#34d399;"/>
+      <text x="20" y="28" class="reg-name" style="fill:#34d399;">"0 — Dedicated Yank Register</text>
+      <text x="20" y="52" class="reg-detail">Guaranteed to hold the <tspan style="font-weight:600; color:#34d399;">most recently yanked text</tspan>. Never overwritten by subsequent delete (<tspan class="code-pill">d</tspan>) operations!</text>
+    </g>
+
+    <!-- 3. Deletion Stack "1 through "9 -->
+    <g transform="translate(0, 176)">
+      <rect x="0" y="0" width="620" height="75" class="reg-box" style="stroke:#f59e0b;"/>
+      <text x="20" y="28" class="reg-name" style="fill:#f59e0b;">"1 through "9 — Numbered Deletion History Stack</text>
+      <text x="20" y="52" class="reg-detail">Line deletions shift sequentially: <tspan class="code-pill">"1</tspan> is most recent, <tspan class="code-pill">"2</tspan> previous, up to <tspan class="code-pill">"9</tspan>. Recover lost cuts easily.</text>
+    </g>
+
+    <!-- 4. Named Registers "a to "z -->
+    <g transform="translate(0, 264)">
+      <rect x="0" y="0" width="620" height="75" class="reg-box" style="stroke:#a855f7;"/>
+      <text x="20" y="28" class="reg-name" style="fill:#a855f7;">"a through "z (and "A through "Z) — Named &amp; Macro Storage</text>
+      <text x="20" y="52" class="reg-detail">26 persistent slots for manual text saving and macro recording (<tspan class="code-pill">qa</tspan>). Uppercase (<tspan class="code-pill">"A</tspan>) appends without overwriting.</text>
+    </g>
+
+    <!-- 5 & 6. Clipboard & Black Hole (Side by Side) -->
+    <g transform="translate(0, 352)">
+      <!-- System Clipboard -->
+      <rect x="0" y="0" width="300" height="73" class="reg-box" style="stroke:#ec4899;"/>
+      <text x="15" y="25" class="reg-name" style="fill:#ec4899;">"+ and "* — System Clipboard</text>
+      <text x="15" y="45" class="reg-detail">Interacts with OS desktop clipboard.</text>
+      <text x="15" y="62" class="code-pill" style="fill:#f472b6;">"+y to copy, "+p to paste</text>
+
+      <!-- Black Hole -->
+      <rect x="320" y="0" width="300" height="73" class="reg-box" style="stroke:#64748b;"/>
+      <text x="335" y="25" class="reg-name" style="fill:#94a3b8;">"_ — Black Hole Register</text>
+      <text x="335" y="45" class="reg-detail">Discards deleted text into oblivion.</text>
+      <text x="335" y="62" class="code-pill" style="fill:#94a3b8;">"_dd cuts without polluting registers</text>
+    </g>
+  </g>
+</svg>
