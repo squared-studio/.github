@@ -1,0 +1,164 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 520" width="100%" height="100%">
+  <defs>
+    <style>
+      .bg { fill: #080c14; }
+      .title { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 20px; fill: #f8fafc; }
+      .subtitle { font-family: 'Inter', system-ui, sans-serif; font-size: 13px; fill: #94a3b8; }
+      .col-box { fill: #0f172a; stroke-width: 1.5; rx: 8; }
+      .col-title { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 14px; }
+      .col-sub { font-family: 'Inter', system-ui, sans-serif; font-size: 11px; fill: #94a3b8; }
+      .txt-body { font-family: 'Inter', system-ui, sans-serif; font-size: 11px; fill: #cbd5e1; }
+      .node { stroke-width: 1.5; rx: 4; }
+      .edge { stroke-width: 1.5; fill: none; }
+      .tag-pill { fill: #1e293b; stroke: #334155; stroke-width: 1; rx: 4; }
+      .tag-txt { font-family: 'JetBrains Mono', Consolas, monospace; font-size: 10px; font-weight: 700; }
+    </style>
+    <marker id="arr-blue" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8" />
+    </marker>
+    <marker id="arr-green" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#34d399" />
+    </marker>
+    <marker id="arr-amber" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#f59e0b" />
+    </marker>
+  </defs>
+
+  <rect width="960" height="520" class="bg" rx="14"/>
+
+  <!-- Title & Subtitle -->
+  <text x="480" y="32" text-anchor="middle" class="title">Git Branching Strategies: Architectural Comparison</text>
+  <text x="480" y="52" text-anchor="middle" class="subtitle">Evaluating Gitflow, GitHub Flow, and Trunk-Based Development for team velocity and release cadence</text>
+
+  <!-- 3 Columns (y=75, h=420) -->
+
+  <!-- Col 1: GitHub Flow (x=40, w=275) -->
+  <g transform="translate(40, 75)">
+    <rect x="0" y="0" width="275" height="425" class="col-box" style="stroke: #38bdf8; fill: #0d1e33;"/>
+    <text x="137" y="26" text-anchor="middle" class="col-title" style="fill: #38bdf8;">1. GitHub Flow</text>
+    <text x="137" y="44" text-anchor="middle" class="col-sub">Simple &amp; Continuous Deployment</text>
+
+    <!-- Mini Visual Diagram -->
+    <g transform="translate(15, 60)">
+      <rect x="0" y="0" width="245" height="120" rx="6" fill="#081424" stroke="#1e293b" stroke-width="1"/>
+      <!-- main line -->
+      <line x1="20" y1="85" x2="225" y2="85" stroke="#38bdf8" stroke-width="2"/>
+      <text x="25" y="105" class="tag-txt" style="fill:#38bdf8;">main (deployable)</text>
+
+      <!-- feature branch -->
+      <path d="M 50 85 C 70 35, 100 35, 120 35 L 160 35 C 180 35, 195 85, 210 85" class="edge" stroke="#34d399" stroke-width="2" marker-end="url(#arr-green)"/>
+      <text x="140" y="25" text-anchor="middle" class="tag-txt" style="fill:#34d399;">feat/oauth</text>
+
+      <!-- commit circles -->
+      <circle cx="50" cy="85" r="4" fill="#38bdf8"/>
+      <circle cx="100" cy="35" r="4" fill="#34d399"/>
+      <circle cx="140" cy="35" r="4" fill="#34d399"/>
+      <circle cx="210" cy="85" r="5" fill="#38bdf8"/>
+    </g>
+
+    <!-- Characteristics -->
+    <g transform="translate(15, 195)">
+      <text x="0" y="16" class="col-title" style="font-size:12px; fill:#38bdf8;">Structure &amp; Rules:</text>
+      <text x="0" y="36" class="txt-body">• Single long-lived branch: main</text>
+      <text x="0" y="56" class="txt-body">• Feature branches created off main</text>
+      <text x="0" y="76" class="txt-body">• Pull Request opened early for review</text>
+      <text x="0" y="96" class="txt-body">• CI tests must pass automatically</text>
+      <text x="0" y="116" class="txt-body">• Merged &amp; deployed immediately</text>
+
+      <g transform="translate(0, 140)">
+        <rect x="0" y="0" width="245" height="70" class="tag-pill" style="fill:#0c2540; stroke:#38bdf8;"/>
+        <text x="12" y="20" class="tag-txt" style="fill:#38bdf8;">Best Suited For:</text>
+        <text x="12" y="38" class="txt-body">Web apps, SaaS services,</text>
+        <text x="12" y="54" class="txt-body">agile teams with continuous delivery.</text>
+      </g>
+    </g>
+  </g>
+
+  <!-- Col 2: Gitflow (x=342, w=275) -->
+  <g transform="translate(342, 75)">
+    <rect x="0" y="0" width="275" height="425" class="col-box" style="stroke: #f59e0b; fill: #1c1810;"/>
+    <text x="137" y="26" text-anchor="middle" class="col-title" style="fill: #f59e0b;">2. Gitflow</text>
+    <text x="137" y="44" text-anchor="middle" class="col-sub">Scheduled Releases &amp; Strict Governance</text>
+
+    <!-- Mini Visual Diagram -->
+    <g transform="translate(15, 60)">
+      <rect x="0" y="0" width="245" height="120" rx="6" fill="#13100b" stroke="#1e293b" stroke-width="1"/>
+      <!-- main line -->
+      <line x1="20" y1="25" x2="225" y2="25" stroke="#f59e0b" stroke-width="2"/>
+      <text x="25" y="18" class="tag-txt" style="fill:#f59e0b;">main (v1.0)</text>
+
+      <!-- develop line -->
+      <line x1="20" y1="65" x2="225" y2="65" stroke="#38bdf8" stroke-width="2"/>
+      <text x="25" y="58" class="tag-txt" style="fill:#38bdf8;">develop</text>
+
+      <!-- feature branch -->
+      <path d="M 50 65 C 65 100, 85 100, 105 100 L 135 100 C 150 100, 165 65, 175 65" class="edge" stroke="#a855f7" stroke-width="1.8" marker-end="url(#arr-blue)"/>
+      <text x="120" y="112" text-anchor="middle" class="tag-txt" style="fill:#a855f7;">feature/*</text>
+
+      <!-- release merge to main -->
+      <path d="M 185 65 C 195 40, 205 25, 215 25" class="edge" stroke="#34d399" stroke-width="1.8"/>
+    </g>
+
+    <!-- Characteristics -->
+    <g transform="translate(15, 195)">
+      <text x="0" y="16" class="col-title" style="font-size:12px; fill:#f59e0b;">Structure &amp; Rules:</text>
+      <text x="0" y="36" class="txt-body">• 2 persistent branches: main + develop</text>
+      <text x="0" y="56" class="txt-body">• Supporting branches: feature/, release/,</text>
+      <text x="10" y="74" class="txt-body">and emergency hotfix/</text>
+      <text x="0" y="96" class="txt-body">• Tags track versioned releases (v2.1.0)</text>
+      <text x="0" y="116" class="txt-body">• High overhead; complex merge graph</text>
+
+      <g transform="translate(0, 140)">
+        <rect x="0" y="0" width="245" height="70" class="tag-pill" style="fill:#261d0a; stroke:#f59e0b;"/>
+        <text x="12" y="20" class="tag-txt" style="fill:#fcd34d;">Best Suited For:</text>
+        <text x="12" y="38" class="txt-body">Shrink-wrapped software, embedded</text>
+        <text x="12" y="54" class="txt-body">systems, enterprise quarterly releases.</text>
+      </g>
+    </g>
+  </g>
+
+  <!-- Col 3: Trunk-Based Development (x=645, w=275) -->
+  <g transform="translate(645, 75)">
+    <rect x="0" y="0" width="275" height="425" class="col-box" style="stroke: #34d399; fill: #0a2119;"/>
+    <text x="137" y="26" text-anchor="middle" class="col-title" style="fill: #34d399;">3. Trunk-Based</text>
+    <text x="137" y="44" text-anchor="middle" class="col-sub">High Velocity &amp; Short-Lived Branches</text>
+
+    <!-- Mini Visual Diagram -->
+    <g transform="translate(15, 60)">
+      <rect x="0" y="0" width="245" height="120" rx="6" fill="#061711" stroke="#1e293b" stroke-width="1"/>
+      <!-- trunk line -->
+      <line x1="20" y1="60" x2="225" y2="60" stroke="#34d399" stroke-width="3"/>
+      <text x="25" y="45" class="tag-txt" style="fill:#34d399;">trunk (main)</text>
+
+      <!-- micro-branch 1 -->
+      <path d="M 50 60 C 60 25, 75 25, 85 60" class="edge" stroke="#38bdf8" stroke-width="1.8"/>
+      <!-- micro-branch 2 -->
+      <path d="M 110 60 C 120 95, 135 95, 145 60" class="edge" stroke="#38bdf8" stroke-width="1.8"/>
+      <!-- micro-branch 3 -->
+      <path d="M 165 60 C 175 25, 190 25, 200 60" class="edge" stroke="#38bdf8" stroke-width="1.8"/>
+
+      <circle cx="50" cy="60" r="3.5" fill="#34d399"/>
+      <circle cx="85" cy="60" r="3.5" fill="#34d399"/>
+      <circle cx="145" cy="60" r="3.5" fill="#34d399"/>
+      <circle cx="200" cy="60" r="3.5" fill="#34d399"/>
+      <text x="130" y="112" text-anchor="middle" class="tag-txt" style="fill:#38bdf8;">Micro-branches &lt; 24h lifespan</text>
+    </g>
+
+    <!-- Characteristics -->
+    <g transform="translate(15, 195)">
+      <text x="0" y="16" class="col-title" style="font-size:12px; fill:#34d399;">Structure &amp; Rules:</text>
+      <text x="0" y="36" class="txt-body">• Everyone commits directly to trunk</text>
+      <text x="0" y="56" class="txt-body">• Branches live hours, not days (&lt;24h)</text>
+      <text x="0" y="76" class="txt-body">• Feature Flags protect unfinished code</text>
+      <text x="0" y="96" class="txt-body">• Comprehensive automated test suite</text>
+      <text x="0" y="116" class="txt-body">• Virtually eliminates merge conflicts</text>
+
+      <g transform="translate(0, 140)">
+        <rect x="0" y="0" width="245" height="70" class="tag-pill" style="fill:#062d22; stroke:#34d399;"/>
+        <text x="12" y="20" class="tag-txt" style="fill:#6ee7b7;">Best Suited For:</text>
+        <text x="12" y="38" class="txt-body">Elite engineering teams, high-traffic</text>
+        <text x="12" y="54" class="txt-body">tech firms (Google, Meta, Netflix).</text>
+      </g>
+    </g>
+  </g>
+</svg>

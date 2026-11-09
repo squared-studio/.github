@@ -1,0 +1,130 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 510" width="100%" height="100%">
+  <defs>
+    <style>
+      .bg { fill: #080c14; }
+      .title { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 20px; fill: #f8fafc; }
+      .subtitle { font-family: 'Inter', system-ui, sans-serif; font-size: 13px; fill: #94a3b8; }
+      .panel { fill: #0f172a; stroke: #1e293b; stroke-width: 1.5; rx: 8; }
+      .code-win { fill: #0a0f1d; stroke: #f43f5e; stroke-width: 1.8; rx: 8; }
+      .win-hdr { fill: #1c111e; }
+      .txt-hdr { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 13px; }
+      .txt-sub { font-family: 'Inter', system-ui, sans-serif; font-size: 11px; fill: #94a3b8; }
+      .code-line { font-family: 'JetBrains Mono', Consolas, monospace; font-size: 11px; font-weight: 600; }
+      .res-step { fill: #131d33; stroke: #334155; stroke-width: 1.2; rx: 6; }
+      .edge { stroke: #38bdf8; stroke-width: 1.8; fill: none; }
+    </style>
+    <marker id="arr-blue" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8" />
+    </marker>
+  </defs>
+
+  <rect width="960" height="510" class="bg" rx="14"/>
+
+  <!-- Title & Subtitle -->
+  <text x="480" y="32" text-anchor="middle" class="title">Anatomy of a Merge Conflict &amp; Resolution Lifecycle</text>
+  <text x="480" y="52" text-anchor="middle" class="subtitle">Dissecting Git's conflict markers, diff3 base inspection, and the 4-step resolution workflow</text>
+
+  <!-- Left: File Editor View with Conflict Markers (x=40, y=75, w=440, h=340) -->
+  <g transform="translate(40, 75)">
+    <rect x="0" y="0" width="440" height="340" class="code-win"/>
+    <!-- Terminal Title Bar -->
+    <rect x="0" y="0" width="440" height="30" class="win-hdr" rx="8"/>
+    <circle cx="16" cy="15" r="5" fill="#f43f5e"/>
+    <circle cx="32" cy="15" r="5" fill="#f59e0b"/>
+    <circle cx="48" cy="15" r="5" fill="#34d399"/>
+    <text x="70" y="19" class="code-line" style="fill:#94a3b8; font-size:10px;">auth_service.py - Conflict Delimiters</text>
+
+    <!-- Marker 1: <<<<<<< HEAD -->
+    <g transform="translate(20, 50)">
+      <rect x="0" y="0" width="400" height="24" rx="4" fill="#240c14" stroke="#f43f5e" stroke-width="1"/>
+      <text x="12" y="16" class="code-line" style="fill:#f87171;">&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD (Current Target Branch: main)</text>
+    </g>
+
+    <text x="25" y="94" class="code-line" style="fill:#f8fafc;">def authenticate(user, password):</text>
+    <text x="25" y="112" class="code-line" style="fill:#7dd3fc;">    return oauth2_provider.verify(user)</text>
+
+    <!-- Marker 2: ||||||| base (diff3) -->
+    <g transform="translate(20, 126)">
+      <rect x="0" y="0" width="400" height="24" rx="4" fill="#261c0c" stroke="#f59e0b" stroke-width="1"/>
+      <text x="12" y="16" class="code-line" style="fill:#fbbf24;">||||||| base (Common Ancestor - merge-base)</text>
+    </g>
+
+    <text x="25" y="170" class="code-line" style="fill:#94a3b8;">def authenticate(user, password):</text>
+    <text x="25" y="188" class="code-line" style="fill:#94a3b8;">    return legacy_hash_verify(user, password)</text>
+
+    <!-- Marker 3: ======= -->
+    <g transform="translate(20, 202)">
+      <rect x="0" y="0" width="400" height="24" rx="4" fill="#132035" stroke="#38bdf8" stroke-width="1"/>
+      <text x="12" y="16" class="code-line" style="fill:#38bdf8;">======= (Conflict Boundary Divider)</text>
+    </g>
+
+    <text x="25" y="246" class="code-line" style="fill:#f8fafc;">def authenticate(user, password):</text>
+    <text x="25" y="264" class="code-line" style="fill:#a7f3d0;">    return jwt_bearer_token.verify(user)</text>
+
+    <!-- Marker 4: >>>>>>> incoming -->
+    <g transform="translate(20, 280)">
+      <rect x="0" y="0" width="400" height="24" rx="4" fill="#0c2419" stroke="#34d399" stroke-width="1"/>
+      <text x="12" y="16" class="code-line" style="fill:#34d399;">&gt;&gt;&gt;&gt;&gt;&gt;&gt; feature-jwt-auth (Incoming Branch)</text>
+    </g>
+
+    <text x="20" y="325" class="txt-sub" style="font-size:10px; fill:#94a3b8;">Enable 3-way view: git config --global merge.conflictStyle zdiff3</text>
+  </g>
+
+  <!-- Right: 4-Step Resolution Pipeline (x=505, y=75, w=415, h=340) -->
+  <g transform="translate(505, 75)">
+    <rect x="0" y="0" width="415" height="340" class="panel" style="stroke: #38bdf8; fill: #0b1526;"/>
+    <text x="20" y="26" class="txt-hdr" style="fill: #38bdf8;">The 4-Step Resolution Pipeline</text>
+
+    <!-- Step 1 -->
+    <g transform="translate(20, 42)">
+      <rect x="0" y="0" width="375" height="58" class="res-step"/>
+      <text x="12" y="20" class="code-line" style="fill: #f59e0b;">Step 1: Locate Conflicts</text>
+      <text x="12" y="36" class="code-line" style="fill: #38bdf8; font-size:10px;">git status</text>
+      <text x="95" y="36" class="txt-sub">&#8594; Shows "both modified: &lt;file&gt;"</text>
+    </g>
+
+    <!-- Step 2 -->
+    <g transform="translate(20, 108)">
+      <rect x="0" y="0" width="375" height="64" class="res-step"/>
+      <text x="12" y="18" class="code-line" style="fill: #38bdf8;">Step 2: Reconcile &amp; Clean Markers</text>
+      <text x="12" y="34" class="txt-sub">Combine desired logic from both branches.</text>
+      <text x="12" y="50" class="txt-sub" style="fill:#f87171;">Crucial: Must delete all &lt;&lt;&lt;&lt;&lt;&lt;, =======, &gt;&gt;&gt;&gt;&gt;&gt; lines!</text>
+    </g>
+
+    <!-- Step 3 -->
+    <g transform="translate(20, 180)">
+      <rect x="0" y="0" width="375" height="58" class="res-step"/>
+      <text x="12" y="20" class="code-line" style="fill: #34d399;">Step 3: Stage Resolved File</text>
+      <text x="12" y="36" class="code-line" style="fill: #34d399; font-size:10px;">git add &lt;file&gt;</text>
+      <text x="110" y="36" class="txt-sub">&#8594; Informs Git conflict is solved</text>
+    </g>
+
+    <!-- Step 4 -->
+    <g transform="translate(20, 246)">
+      <rect x="0" y="0" width="375" height="58" class="res-step"/>
+      <text x="12" y="20" class="code-line" style="fill: #a855f7;">Step 4: Seal the Merge Commit</text>
+      <text x="12" y="36" class="code-line" style="fill: #d8b4fe; font-size:10px;">git commit</text>
+      <text x="95" y="36" class="txt-sub">&#8594; Creates formal 2-parent merge commit</text>
+    </g>
+
+    <!-- Emergency Escape -->
+    <g transform="translate(20, 310)">
+      <text x="0" y="16" class="code-line" style="fill: #f43f5e; font-size:10px;">Panic Button: git merge --abort</text>
+      <text x="210" y="16" class="txt-sub" style="font-size:10px;">(Wipes conflict and resets to pre-merge)</text>
+    </g>
+  </g>
+
+  <!-- Bottom Pro Tools Panel (y=425, h=70) -->
+  <g transform="translate(40, 425)">
+    <rect x="0" y="0" width="880" height="70" class="panel" style="stroke:#334155; fill:#0b1120;"/>
+    <text x="20" y="24" class="txt-hdr" style="fill:#38bdf8; font-size:12px;">Automated Resolution &amp; Strategies:</text>
+
+    <g transform="translate(20, 36)">
+      <text x="0" y="16" class="code-line" style="fill:#fbbf24; font-size:10px;">git checkout --ours / --theirs &lt;file&gt;</text>
+      <text x="280" y="16" class="txt-sub">: Blindly choose current branch (--ours) or incoming branch (--theirs) for a file.</text>
+
+      <text x="0" y="30" class="code-line" style="fill:#34d399; font-size:10px;">git config --global rerere.enabled true</text>
+      <text x="280" y="30" class="txt-sub">: Reuse Recorded Resolution automatically remembers how you resolved identical conflicts previously.</text>
+    </g>
+  </g>
+</svg>

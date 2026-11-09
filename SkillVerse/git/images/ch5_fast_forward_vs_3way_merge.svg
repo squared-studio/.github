@@ -1,0 +1,149 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 500" width="100%" height="100%">
+  <defs>
+    <style>
+      .bg { fill: #080c14; }
+      .title { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 20px; fill: #f8fafc; }
+      .subtitle { font-family: 'Inter', system-ui, sans-serif; font-size: 13px; fill: #94a3b8; }
+      .case-panel { fill: #0f172a; stroke-width: 1.5; rx: 10; }
+      .txt-hdr { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 14px; }
+      .txt-sub { font-family: 'Inter', system-ui, sans-serif; font-size: 11px; fill: #94a3b8; }
+      .txt-desc { font-family: 'Inter', system-ui, sans-serif; font-size: 11px; fill: #cbd5e1; }
+      .node-c { fill: #131d33; stroke: #38bdf8; stroke-width: 1.8; rx: 6; }
+      .node-merge { fill: #1f112e; stroke: #a855f7; stroke-width: 2.2; rx: 6; }
+      .node-base { fill: #1c1912; stroke: #f59e0b; stroke-width: 1.8; rx: 6; }
+      .txt-cnode { font-family: 'JetBrains Mono', Consolas, monospace; font-size: 11px; font-weight: 700; fill: #f8fafc; }
+      .edge { stroke: #64748b; stroke-width: 1.8; fill: none; }
+      .edge-merge { stroke: #a855f7; stroke-width: 2; stroke-dasharray: 4,4; fill: none; }
+      .badge-branch { rx: 3; }
+      .txt-badge { font-family: 'JetBrains Mono', Consolas, monospace; font-size: 10px; font-weight: 700; fill: #ffffff; }
+    </style>
+    <marker id="arr-gray" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#64748b" />
+    </marker>
+    <marker id="arr-purple" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#a855f7" />
+    </marker>
+  </defs>
+
+  <rect width="960" height="500" class="bg" rx="14"/>
+
+  <!-- Title & Subtitle -->
+  <text x="480" y="32" text-anchor="middle" class="title">Merge Mechanisms: Fast-Forward vs. Three-Way Merge</text>
+  <text x="480" y="52" text-anchor="middle" class="subtitle">Comparing linear pointer advancement against 3-way common ancestor graph synthesis</text>
+
+  <!-- Left Panel: Fast-Forward Merge (x=40, y=75, w=425, h=395) -->
+  <g transform="translate(40, 75)">
+    <rect x="0" y="0" width="425" height="395" class="case-panel" style="stroke: #34d399;"/>
+    <text x="20" y="28" class="txt-hdr" style="fill: #34d399;">Type 1: Fast-Forward Merge (--ff)</text>
+    <text x="20" y="46" class="txt-sub">Target branch has zero divergent commits since feature branch created</text>
+
+    <!-- Branch State Diagram -->
+    <!-- C1 -->
+    <g transform="translate(30, 100)">
+      <rect x="0" y="0" width="55" height="36" class="node-c"/>
+      <text x="27" y="22" text-anchor="middle" class="txt-cnode">C1</text>
+    </g>
+
+    <path d="M 115 118 L 88 118" class="edge" marker-end="url(#arr-gray)"/>
+
+    <!-- C2 (Base where main was) -->
+    <g transform="translate(115, 100)">
+      <rect x="0" y="0" width="55" height="36" class="node-c"/>
+      <text x="27" y="22" text-anchor="middle" class="txt-cnode">C2</text>
+    </g>
+
+    <path d="M 200 118 L 173 118" class="edge" marker-end="url(#arr-gray)"/>
+
+    <!-- C3 -->
+    <g transform="translate(200, 100)">
+      <rect x="0" y="0" width="55" height="36" class="node-c"/>
+      <text x="27" y="22" text-anchor="middle" class="txt-cnode">C3</text>
+    </g>
+
+    <path d="M 285 118 L 258 118" class="edge" marker-end="url(#arr-gray)"/>
+
+    <!-- C4 (Feature Tip) -->
+    <g transform="translate(285, 100)">
+      <rect x="0" y="0" width="55" height="36" class="node-c" style="stroke:#34d399; fill:#0c2820;"/>
+      <text x="27" y="22" text-anchor="middle" class="txt-cnode" style="fill:#6ee7b7;">C4</text>
+    </g>
+
+    <!-- Pointers at C4 -->
+    <g transform="translate(265, 55)">
+      <rect x="0" y="0" width="95" height="22" fill="#065f46" class="badge-branch"/>
+      <text x="47" y="15" text-anchor="middle" class="txt-badge">main &amp; feature</text>
+    </g>
+    <path d="M 312 78 L 312 96" class="edge" stroke="#34d399" marker-end="url(#arr-gray)"/>
+
+    <!-- Old main pointer indicator at C2 -->
+    <text x="142" y="155" text-anchor="middle" class="txt-sub" style="font-size:10px; fill:#94a3b8;">Old main tip</text>
+
+    <!-- Characteristics Box -->
+    <g transform="translate(20, 180)">
+      <rect x="0" y="0" width="385" height="195" rx="6" fill="#131d33" stroke="#1e293b" stroke-width="1"/>
+      <text x="15" y="24" class="txt-hdr" style="font-size:12px; fill:#34d399;">Key Characteristics:</text>
+      <text x="15" y="46" class="txt-desc">• Pointer simply shifts from C2 directly to C4.</text>
+      <text x="15" y="68" class="txt-desc">• No merge commit created; history remains strictly linear.</text>
+      <text x="15" y="90" class="txt-desc">• Cannot cause merge conflicts.</text>
+      <text x="15" y="120" class="txt-hdr" style="font-size:12px; fill:#f59e0b;">Enforcing Merge Commit (--no-ff):</text>
+      <text x="15" y="142" class="txt-desc">git merge --no-ff feature</text>
+      <text x="15" y="162" class="txt-sub">Forces creation of a merge commit to document feature boundary.</text>
+    </g>
+  </g>
+
+  <!-- Right Panel: Three-Way Merge (x=495, y=75, w=425, h=395) -->
+  <g transform="translate(495, 75)">
+    <rect x="0" y="0" width="425" height="395" class="case-panel" style="stroke: #a855f7;"/>
+    <text x="20" y="28" class="txt-hdr" style="fill: #a855f7;">Type 2: Three-Way Merge (True Merge)</text>
+    <text x="20" y="46" class="txt-sub">Both main and feature have progressed independently</text>
+
+    <!-- Common Ancestor C2 (Base) -->
+    <g transform="translate(25, 125)">
+      <rect x="0" y="0" width="55" height="36" class="node-base"/>
+      <text x="27" y="22" text-anchor="middle" class="txt-cnode" style="fill:#fcd34d;">C2</text>
+      <text x="27" y="48" text-anchor="middle" class="txt-sub" style="font-size:9px;">(Base)</text>
+    </g>
+
+    <!-- Branch Main Upper Track: C2 -> C5 -->
+    <path d="M 125 100 L 80 135" class="edge" marker-end="url(#arr-gray)"/>
+    <g transform="translate(125, 82)">
+      <rect x="0" y="0" width="55" height="36" class="node-c"/>
+      <text x="27" y="22" text-anchor="middle" class="txt-cnode">C5</text>
+      <text x="27" y="-6" text-anchor="middle" class="txt-sub" style="font-size:9px;">(main)</text>
+    </g>
+
+    <!-- Branch Feature Lower Track: C2 -> C3 -> C4 -->
+    <path d="M 125 170 L 80 150" class="edge" marker-end="url(#arr-gray)"/>
+    <g transform="translate(125, 155)">
+      <rect x="0" y="0" width="55" height="36" class="node-c"/>
+      <text x="27" y="22" text-anchor="middle" class="txt-cnode">C3</text>
+    </g>
+
+    <path d="M 210 173 L 183 173" class="edge" marker-end="url(#arr-gray)"/>
+    <g transform="translate(210, 155)">
+      <rect x="0" y="0" width="55" height="36" class="node-c"/>
+      <text x="27" y="22" text-anchor="middle" class="txt-cnode">C4</text>
+      <text x="27" y="48" text-anchor="middle" class="txt-sub" style="font-size:9px;">(feature)</text>
+    </g>
+
+    <!-- Merge Commit M -->
+    <path d="M 315 130 L 182 100" class="edge-merge" marker-end="url(#arr-purple)"/>
+    <path d="M 315 145 L 268 170" class="edge-merge" marker-end="url(#arr-purple)"/>
+
+    <g transform="translate(315, 122)">
+      <rect x="0" y="0" width="65" height="42" class="node-merge"/>
+      <text x="32" y="25" text-anchor="middle" class="txt-cnode" style="fill:#d8b4fe;">M (Merge)</text>
+    </g>
+
+    <!-- Characteristics Box -->
+    <g transform="translate(20, 205)">
+      <rect x="0" y="0" width="385" height="170" rx="6" fill="#131d33" stroke="#1e293b" stroke-width="1"/>
+      <text x="15" y="24" class="txt-hdr" style="font-size:12px; fill:#a855f7;">How 3-Way Merge Operates:</text>
+      <text x="15" y="44" class="txt-desc">1. Finds Common Ancestor (C2 = git merge-base).</text>
+      <text x="15" y="64" class="txt-desc">2. Compares C2 &#8594; C5 (main delta) with C2 &#8594; C4 (feature delta).</text>
+      <text x="15" y="84" class="txt-desc">3. Creates Merge Commit M with TWO parents: C5 and C4.</text>
+      <text x="15" y="104" class="txt-desc" style="fill:#f87171;">4. If both modified identical lines &#8594; MERGE CONFLICT!</text>
+      <text x="15" y="128" class="txt-sub" style="fill:#94a3b8;">Maintained using ORT (Ostensibly Recursive's Twin) strategy.</text>
+    </g>
+  </g>
+</svg>

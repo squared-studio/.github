@@ -1,0 +1,165 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 500" width="100%" height="100%">
+  <defs>
+    <style>
+      .bg { fill: #080c14; }
+      .title { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 20px; fill: #f8fafc; }
+      .subtitle { font-family: 'Inter', system-ui, sans-serif; font-size: 13px; fill: #94a3b8; }
+      .state-panel { fill: #0f172a; stroke: #1e293b; stroke-width: 1.5; rx: 10; }
+      .txt-hdr { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 14px; }
+      .txt-sub { font-family: 'Inter', system-ui, sans-serif; font-size: 11px; fill: #94a3b8; }
+      .node-commit { fill: #131d33; stroke: #38bdf8; stroke-width: 2; rx: 6; }
+      .node-commit-detached { fill: #24141e; stroke: #f43f5e; stroke-width: 2; rx: 6; }
+      .txt-cnode { font-family: 'JetBrains Mono', Consolas, monospace; font-size: 11px; font-weight: 700; fill: #f8fafc; }
+      .badge-head { fill: #f43f5e; rx: 4; }
+      .badge-branch { fill: #0284c7; rx: 4; }
+      .badge-feature { fill: #7c3aed; rx: 4; }
+      .txt-badge { font-family: 'JetBrains Mono', Consolas, monospace; font-size: 11px; font-weight: 700; fill: #ffffff; }
+      .edge-parent { stroke: #475569; stroke-width: 1.8; fill: none; }
+      .edge-ptr { stroke: #38bdf8; stroke-width: 1.8; fill: none; }
+      .edge-detached { stroke: #f43f5e; stroke-width: 2; stroke-dasharray: 4,4; fill: none; }
+    </style>
+    <marker id="arr-gray" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#475569" />
+    </marker>
+    <marker id="arr-red" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#f43f5e" />
+    </marker>
+    <marker id="arr-blue" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8" />
+    </marker>
+  </defs>
+
+  <rect width="960" height="500" class="bg" rx="14"/>
+
+  <!-- Title & Subtitle -->
+  <text x="480" y="32" text-anchor="middle" class="title">Git References: HEAD, Branch Pointers &amp; Detached States</text>
+  <text x="480" y="52" text-anchor="middle" class="subtitle">Branches are merely 41-byte text files holding commit hashes; HEAD tracks your active checkout</text>
+
+  <!-- Panel 1: Normal Branch Pointer (x=40, y=75, w=425, h=220) -->
+  <g transform="translate(40, 75)">
+    <rect x="0" y="0" width="425" height="215" class="state-panel"/>
+    <text x="20" y="26" class="txt-hdr" style="fill: #38bdf8;">Scenario A: Attached HEAD (Normal Workflow)</text>
+    <text x="20" y="44" class="txt-sub">HEAD points symbolically to a branch ref: ref: refs/heads/main</text>
+
+    <!-- HEAD badge -->
+    <g transform="translate(250, 60)">
+      <rect x="0" y="0" width="60" height="24" class="badge-head"/>
+      <text x="30" y="16" text-anchor="middle" class="txt-badge">HEAD</text>
+    </g>
+
+    <!-- Arrow HEAD -> main -->
+    <path d="M 280 84 L 280 102" class="edge-ptr" stroke="#f43f5e" marker-end="url(#arr-red)"/>
+
+    <!-- main Branch badge -->
+    <g transform="translate(245, 105)">
+      <rect x="0" y="0" width="70" height="24" class="badge-branch"/>
+      <text x="35" y="16" text-anchor="middle" class="txt-badge">main</text>
+    </g>
+
+    <!-- Arrow main -> Commit C3 -->
+    <path d="M 280 129 L 280 148" class="edge-ptr" marker-end="url(#arr-blue)"/>
+
+    <!-- Commit Chain: C1 &lt;- C2 &lt;- C3 -->
+    <!-- C1 -->
+    <g transform="translate(30, 150)">
+      <rect x="0" y="0" width="70" height="42" class="node-commit"/>
+      <text x="35" y="26" text-anchor="middle" class="txt-cnode">C1</text>
+    </g>
+
+    <!-- C1 &lt;- C2 arrow -->
+    <path d="M 140 171 L 108 171" class="edge-parent" marker-end="url(#arr-gray)"/>
+
+    <!-- C2 -->
+    <g transform="translate(140, 150)">
+      <rect x="0" y="0" width="70" height="42" class="node-commit"/>
+      <text x="35" y="26" text-anchor="middle" class="txt-cnode">C2</text>
+    </g>
+
+    <!-- C2 &lt;- C3 arrow -->
+    <path d="M 245 171 L 218 171" class="edge-parent" marker-end="url(#arr-gray)"/>
+
+    <!-- C3 -->
+    <g transform="translate(245, 150)">
+      <rect x="0" y="0" width="70" height="42" class="node-commit" style="stroke:#34d399; fill:#0c2820;"/>
+      <text x="35" y="26" text-anchor="middle" class="txt-cnode" style="fill:#6ee7b7;">C3</text>
+    </g>
+
+    <!-- Explanation footer -->
+    <text x="20" y="202" class="txt-sub" style="fill:#cbd5e1;">&#8226; Next commit advances 'main' automatically; HEAD stays attached.</text>
+  </g>
+
+  <!-- Panel 2: Detached HEAD State (x=495, y=75, w=425, h=220) -->
+  <g transform="translate(495, 75)">
+    <rect x="0" y="0" width="425" height="215" class="state-panel" style="stroke: #f43f5e;"/>
+    <text x="20" y="26" class="txt-hdr" style="fill: #f43f5e;">Scenario B: Detached HEAD State</text>
+    <text x="20" y="44" class="txt-sub">git checkout &lt;commit-hash&gt; points HEAD directly to an object</text>
+
+    <!-- HEAD badge pointing directly to C2 -->
+    <g transform="translate(145, 60)">
+      <rect x="0" y="0" width="60" height="24" class="badge-head"/>
+      <text x="30" y="16" text-anchor="middle" class="txt-badge">HEAD</text>
+    </g>
+
+    <!-- Arrow HEAD -> C2 direct -->
+    <path d="M 175 84 L 175 142" class="edge-detached" marker-end="url(#arr-red)"/>
+
+    <!-- main Branch badge pointing to C3 -->
+    <g transform="translate(245, 105)">
+      <rect x="0" y="0" width="70" height="24" class="badge-branch"/>
+      <text x="35" y="16" text-anchor="middle" class="txt-badge">main</text>
+    </g>
+    <path d="M 280 129 L 280 148" class="edge-ptr" marker-end="url(#arr-blue)"/>
+
+    <!-- Commit Chain: C1 &lt;- C2 &lt;- C3 -->
+    <!-- C1 -->
+    <g transform="translate(30, 150)">
+      <rect x="0" y="0" width="70" height="42" class="node-commit"/>
+      <text x="35" y="26" text-anchor="middle" class="txt-cnode">C1</text>
+    </g>
+
+    <path d="M 140 171 L 108 171" class="edge-parent" marker-end="url(#arr-gray)"/>
+
+    <!-- C2 (HEAD directly on C2) -->
+    <g transform="translate(140, 150)">
+      <rect x="0" y="0" width="70" height="42" class="node-commit-detached"/>
+      <text x="35" y="26" text-anchor="middle" class="txt-cnode" style="fill:#f43f5e;">C2</text>
+    </g>
+
+    <path d="M 245 171 L 218 171" class="edge-parent" marker-end="url(#arr-gray)"/>
+
+    <!-- C3 -->
+    <g transform="translate(245, 150)">
+      <rect x="0" y="0" width="70" height="42" class="node-commit"/>
+      <text x="35" y="26" text-anchor="middle" class="txt-cnode">C3</text>
+    </g>
+
+    <!-- Danger callout -->
+    <text x="20" y="202" class="txt-sub" style="fill:#f87171;">&#8226; Caution: Commits made here risk garbage collection without a branch!</text>
+  </g>
+
+  <!-- Bottom Comparison Panel: Modern Branch Switching (y=305, h=175) -->
+  <g transform="translate(40, 305)">
+    <rect x="0" y="0" width="880" height="175" class="state-panel" style="stroke: #334155; fill: #0b1120;"/>
+    <text x="20" y="24" class="txt-hdr" style="fill: #38bdf8;">Modern Reference Management: git switch vs. git checkout</text>
+
+    <!-- Left side: Legacy Ambiguity -->
+    <g transform="translate(20, 38)">
+      <rect x="0" y="0" width="400" height="115" rx="6" fill="#131d33" stroke="#334155" stroke-width="1"/>
+      <text x="15" y="22" class="txt-hdr" style="fill: #f59e0b; font-size:12px;">Legacy Ambiguity: git checkout</text>
+      <text x="15" y="42" class="txt-sub">Overloaded command performing two distinct jobs:</text>
+      <text x="15" y="62" class="txt-badge" style="fill: #fcd34d; font-size:10px;">1. Switch branch: git checkout &lt;branch&gt;</text>
+      <text x="15" y="80" class="txt-badge" style="fill: #fcd34d; font-size:10px;">2. Discard file edits: git checkout -- &lt;file&gt;</text>
+      <text x="15" y="100" class="txt-sub">Confusing syntax could unintentionally wipe uncommitted code.</text>
+    </g>
+
+    <!-- Right side: Modern Separation -->
+    <g transform="translate(460, 38)">
+      <rect x="0" y="0" width="400" height="115" rx="6" fill="#0d2320" stroke="#059669" stroke-width="1"/>
+      <text x="15" y="22" class="txt-hdr" style="fill: #34d399; font-size:12px;">Modern Separation (Git 2.23+): Safe &amp; Explicit</text>
+      <text x="15" y="42" class="txt-sub">Split into dedicated, single-purpose commands:</text>
+      <text x="15" y="62" class="txt-badge" style="fill: #6ee7b7; font-size:10px;">• Branch switching: git switch &lt;branch&gt; (-c to create)</text>
+      <text x="15" y="80" class="txt-badge" style="fill: #6ee7b7; font-size:10px;">• Restoring files: git restore &lt;file&gt; (--staged)</text>
+      <text x="15" y="100" class="txt-sub">Zero risk of accidentally clobbering working files when switching.</text>
+    </g>
+  </g>
+</svg>

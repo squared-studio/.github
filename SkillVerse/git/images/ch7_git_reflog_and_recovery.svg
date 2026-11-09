@@ -1,0 +1,115 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 500" width="100%" height="100%">
+  <defs>
+    <style>
+      .bg { fill: #080c14; }
+      .title { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 20px; fill: #f8fafc; }
+      .subtitle { font-family: 'Inter', system-ui, sans-serif; font-size: 13px; fill: #94a3b8; }
+      .panel { fill: #0f172a; stroke-width: 1.5; rx: 8; }
+      .txt-hdr { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 14px; }
+      .txt-sub { font-family: 'Inter', system-ui, sans-serif; font-size: 11px; fill: #94a3b8; }
+      .txt-body { font-family: 'Inter', system-ui, sans-serif; font-size: 11px; fill: #cbd5e1; }
+      .ref-row { fill: #131d33; stroke: #1e293b; stroke-width: 1; rx: 4; }
+      .ref-target { fill: #064e3b; stroke: #34d399; stroke-width: 1.5; rx: 4; }
+      .code-head { font-family: 'JetBrains Mono', Consolas, monospace; font-size: 11px; font-weight: 700; fill: #38bdf8; }
+      .code-sha { font-family: 'JetBrains Mono', Consolas, monospace; font-size: 11px; font-weight: 700; fill: #fcd34d; }
+      .code-action { font-family: 'Inter', system-ui, sans-serif; font-size: 11px; fill: #f8fafc; }
+      .edge { stroke: #34d399; stroke-width: 2; fill: none; }
+    </style>
+    <marker id="arr-green" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#34d399" />
+    </marker>
+  </defs>
+
+  <rect width="960" height="500" class="bg" rx="14"/>
+
+  <!-- Title & Subtitle -->
+  <text x="480" y="32" text-anchor="middle" class="title">The Git Reflog: Safety Net &amp; Disaster Recovery Engine</text>
+  <text x="480" y="52" text-anchor="middle" class="subtitle">How Git's chronological journal of HEAD movements allows resurrecting "lost" commits and branches</text>
+
+  <!-- Left: The Reflog Journal View (x=40, y=75, w=480, h=330) -->
+  <g transform="translate(40, 75)">
+    <rect x="0" y="0" width="480" height="330" class="panel" style="stroke:#38bdf8; fill:#0b1526;"/>
+    <text x="20" y="28" class="txt-hdr" style="fill:#38bdf8;">git reflog (Local Chronological Log)</text>
+    <text x="20" y="46" class="txt-sub">Tracks every movement of HEAD; entries expire after 30-90 days</text>
+
+    <!-- Entry 0: The Accidental Reset -->
+    <g transform="translate(15, 60)">
+      <rect x="0" y="0" width="450" height="42" class="ref-row" style="stroke:#f43f5e; fill:#240c14;"/>
+      <text x="12" y="25" class="code-head">HEAD@{0}</text>
+      <text x="80" y="25" class="code-sha">a102bf</text>
+      <text x="140" y="25" class="code-action" style="fill:#fca5a5;">reset: moving to HEAD~2 (ACCIDENT!)</text>
+    </g>
+
+    <!-- Entry 1: Target to Recover! -->
+    <g transform="translate(15, 112)">
+      <rect x="0" y="0" width="450" height="42" class="ref-target"/>
+      <text x="12" y="25" class="code-head" style="fill:#a7f3d0;">HEAD@{1}</text>
+      <text x="80" y="25" class="code-sha" style="fill:#a7f3d0;">7b94cf</text>
+      <text x="140" y="25" class="code-action" style="fill:#ecfdf5; font-weight:600;">commit: feat(auth): complete OAuth2 login</text>
+    </g>
+
+    <!-- Entry 2: Previous Commit -->
+    <g transform="translate(15, 164)">
+      <rect x="0" y="0" width="450" height="42" class="ref-row"/>
+      <text x="12" y="25" class="code-head">HEAD@{2}</text>
+      <text x="80" y="25" class="code-sha">c49e21</text>
+      <text x="140" y="25" class="code-action">commit: add user token serializer</text>
+    </g>
+
+    <!-- Entry 3: Branch Switch -->
+    <g transform="translate(15, 216)">
+      <rect x="0" y="0" width="450" height="42" class="ref-row"/>
+      <text x="12" y="25" class="code-head">HEAD@{3}</text>
+      <text x="80" y="25" class="code-sha">8d2f10</text>
+      <text x="140" y="25" class="code-action">checkout: moving from main to feature/auth</text>
+    </g>
+
+    <!-- Entry 4: Pull -->
+    <g transform="translate(15, 268)">
+      <rect x="0" y="0" width="450" height="42" class="ref-row"/>
+      <text x="12" y="25" class="code-head">HEAD@{4}</text>
+      <text x="80" y="25" class="code-sha">8d2f10</text>
+      <text x="140" y="25" class="code-action">pull: Fast-forward from origin/main</text>
+    </g>
+  </g>
+
+  <!-- Arrow Left -> Right Recovery (Connecting Entry 1 to Right Panel) -->
+  <path d="M 520 208 L 560 208" class="edge" marker-end="url(#arr-green)"/>
+
+  <!-- Right: 3-Step Resurrection Workflow (x=550, y=75, w=370, h=330) -->
+  <g transform="translate(550, 75)">
+    <rect x="0" y="0" width="370" height="330" class="panel" style="stroke:#34d399; fill:#0c1e19;"/>
+    <text x="20" y="28" class="txt-hdr" style="fill:#34d399;">Disaster Recovery Workflow</text>
+    <text x="20" y="46" class="txt-sub">Resurrecting dangling commits without data loss</text>
+
+    <!-- Step 1 -->
+    <g transform="translate(15, 60)">
+      <rect x="0" y="0" width="340" height="60" class="ref-row"/>
+      <text x="12" y="22" class="code-head" style="fill:#fcd34d;">Step 1: Locate Reflog Index</text>
+      <text x="12" y="42" class="txt-sub">Run `git reflog` to identify lost commit SHA.</text>
+    </g>
+
+    <!-- Step 2 -->
+    <g transform="translate(15, 130)">
+      <rect x="0" y="0" width="340" height="85" class="ref-row" style="stroke:#34d399; fill:#06392c;"/>
+      <text x="12" y="22" class="code-head" style="fill:#a7f3d0;">Step 2: Attach New Branch</text>
+      <text x="12" y="44" class="code-head" style="font-size:10px; fill:#ffffff;">git branch recovered-work HEAD@{1}</text>
+      <text x="12" y="66" class="txt-sub" style="fill:#a7f3d0;">Points a brand-new branch pointer directly to the orphaned commit.</text>
+    </g>
+
+    <!-- Step 3 -->
+    <g transform="translate(15, 225)">
+      <rect x="0" y="0" width="340" height="65" class="ref-row"/>
+      <text x="12" y="22" class="code-head" style="fill:#38bdf8;">Step 3: Switch &amp; Continue</text>
+      <text x="12" y="44" class="code-head" style="font-size:10px; fill:#7dd3fc;">git switch recovered-work</text>
+      <text x="12" y="58" class="txt-sub">All "lost" code and commit history is back!</text>
+    </g>
+  </g>
+
+  <!-- Bottom Pro Insight Banner (y=420, h=65) -->
+  <g transform="translate(40, 420)">
+    <rect x="0" y="0" width="880" height="65" class="panel" style="stroke:#334155; fill:#0b1120;"/>
+    <text x="20" y="24" class="txt-hdr" style="fill:#38bdf8; font-size:12px;">Core Git Invariant: Almost Nothing Committed is Truly Lost</text>
+    <text x="20" y="46" class="txt-body">Once an object is committed in Git, it remains in `.git/objects` and is tracked in the reflog. Even after accidental hard resets or deleted branches, commits survive until Git's garbage collection (`git gc`) prunes unreachable dangling objects (default 30 days).</text>
+  </g>
+</svg>

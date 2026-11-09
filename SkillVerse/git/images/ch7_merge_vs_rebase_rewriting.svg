@@ -1,0 +1,152 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 520" width="100%" height="100%">
+  <defs>
+    <style>
+      .bg { fill: #080c14; }
+      .title { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 20px; fill: #f8fafc; }
+      .subtitle { font-family: 'Inter', system-ui, sans-serif; font-size: 13px; fill: #94a3b8; }
+      .comp-panel { fill: #0f172a; stroke-width: 1.5; rx: 10; }
+      .txt-hdr { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 14px; }
+      .txt-sub { font-family: 'Inter', system-ui, sans-serif; font-size: 11px; fill: #94a3b8; }
+      .txt-body { font-family: 'Inter', system-ui, sans-serif; font-size: 11px; fill: #cbd5e1; }
+      .node-c { fill: #131d33; stroke: #38bdf8; stroke-width: 1.8; rx: 5; }
+      .node-rebased { fill: #1c2612; stroke: #84cc16; stroke-width: 1.8; rx: 5; }
+      .node-abandoned { fill: #1c1418; stroke: #f43f5e; stroke-width: 1.5; stroke-dasharray: 3,3; rx: 5; }
+      .node-m { fill: #1e102f; stroke: #a855f7; stroke-width: 2; rx: 5; }
+      .txt-node { font-family: 'JetBrains Mono', Consolas, monospace; font-size: 11px; font-weight: 700; fill: #f8fafc; }
+      .edge { stroke: #64748b; stroke-width: 1.8; fill: none; }
+      .edge-rebase { stroke: #84cc16; stroke-width: 2; fill: none; }
+      .edge-merge { stroke: #a855f7; stroke-width: 1.8; stroke-dasharray: 4,4; fill: none; }
+    </style>
+    <marker id="arr-gray" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#64748b" />
+    </marker>
+    <marker id="arr-lime" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#84cc16" />
+    </marker>
+    <marker id="arr-purple" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#a855f7" />
+    </marker>
+  </defs>
+
+  <rect width="960" height="520" class="bg" rx="14"/>
+
+  <!-- Title & Subtitle -->
+  <text x="480" y="32" text-anchor="middle" class="title">History Integration: git merge vs. git rebase</text>
+  <text x="480" y="52" text-anchor="middle" class="subtitle">Preserving true chronological multi-parent history vs. synthesizing a clean linear timeline</text>
+
+  <!-- Left: Git Merge (x=40, y=75, w=425, h=330) -->
+  <g transform="translate(40, 75)">
+    <rect x="0" y="0" width="425" height="330" class="comp-panel" style="stroke: #a855f7; fill: #0f1526;"/>
+    <text x="20" y="28" class="txt-hdr" style="fill: #a855f7;">Method 1: git merge main</text>
+    <text x="20" y="46" class="txt-sub">Non-destructive: Preserves original commits &amp; context</text>
+
+    <!-- Base C2 -->
+    <g transform="translate(25, 95)">
+      <rect x="0" y="0" width="50" height="32" class="node-c"/>
+      <text x="25" y="20" text-anchor="middle" class="txt-node">C2</text>
+      <text x="25" y="-6" text-anchor="middle" class="txt-sub" style="font-size:9px;">(Base)</text>
+    </g>
+
+    <!-- Main branch C3 -->
+    <path d="M 120 75 L 75 105" class="edge" marker-end="url(#arr-gray)"/>
+    <g transform="translate(120, 60)">
+      <rect x="0" y="0" width="50" height="32" class="node-c"/>
+      <text x="25" y="20" text-anchor="middle" class="txt-node">C3</text>
+      <text x="25" y="-6" text-anchor="middle" class="txt-sub" style="font-size:9px; fill:#38bdf8;">(main)</text>
+    </g>
+
+    <!-- Feature branch C4 -> C5 -->
+    <path d="M 120 145 L 75 120" class="edge" marker-end="url(#arr-gray)"/>
+    <g transform="translate(120, 130)">
+      <rect x="0" y="0" width="50" height="32" class="node-c"/>
+      <text x="25" y="20" text-anchor="middle" class="txt-node">C4</text>
+    </g>
+
+    <path d="M 210 146 L 170 146" class="edge" marker-end="url(#arr-gray)"/>
+    <g transform="translate(210, 130)">
+      <rect x="0" y="0" width="50" height="32" class="node-c"/>
+      <text x="25" y="20" text-anchor="middle" class="txt-node">C5</text>
+      <text x="25" y="48" text-anchor="middle" class="txt-sub" style="font-size:9px; fill:#d8b4fe;">(feature)</text>
+    </g>
+
+    <!-- Merge Commit M -->
+    <path d="M 310 100 L 170 75" class="edge-merge" marker-end="url(#arr-purple)"/>
+    <path d="M 310 115 L 260 145" class="edge-merge" marker-end="url(#arr-purple)"/>
+    <g transform="translate(310, 92)">
+      <rect x="0" y="0" width="60" height="38" class="node-m"/>
+      <text x="30" y="24" text-anchor="middle" class="txt-node" style="fill:#d8b4fe;">M</text>
+    </g>
+
+    <!-- Tradeoffs -->
+    <g transform="translate(20, 195)">
+      <text x="0" y="16" class="txt-hdr" style="font-size:12px; fill:#34d399;">&#10003; Advantages:</text>
+      <text x="0" y="34" class="txt-body">• Never mutates historical commits or cryptographic hashes.</text>
+      <text x="0" y="52" class="txt-body">• Accurately depicts when and how branches joined.</text>
+      <text x="0" y="76" class="txt-hdr" style="font-size:12px; fill:#f59e0b;">&#10007; Disadvantages:</text>
+      <text x="0" y="94" class="txt-body">• Creates noisy merge commits; complex non-linear Git log.</text>
+    </g>
+  </g>
+
+  <!-- Right: Git Rebase (x=495, y=75, w=425, h=330) -->
+  <g transform="translate(495, 75)">
+    <rect x="0" y="0" width="425" height="330" class="comp-panel" style="stroke: #84cc16; fill: #0e171b;"/>
+    <text x="20" y="28" class="txt-hdr" style="fill: #84cc16;">Method 2: git rebase main</text>
+    <text x="20" y="46" class="txt-sub">History Rewriting: Replays commits atop latest main</text>
+
+    <!-- Linear Chain: C2 -> C3 -> C4' -> C5' -->
+    <!-- Base C2 -->
+    <g transform="translate(25, 70)">
+      <rect x="0" y="0" width="45" height="32" class="node-c"/>
+      <text x="22" y="20" text-anchor="middle" class="txt-node">C2</text>
+    </g>
+
+    <path d="M 105 86 L 70 86" class="edge" marker-end="url(#arr-gray)"/>
+    <g transform="translate(105, 70)">
+      <rect x="0" y="0" width="45" height="32" class="node-c"/>
+      <text x="22" y="20" text-anchor="middle" class="txt-node">C3</text>
+      <text x="22" y="-6" text-anchor="middle" class="txt-sub" style="font-size:9px; fill:#38bdf8;">(main)</text>
+    </g>
+
+    <path d="M 185 86 L 150 86" class="edge-rebase" marker-end="url(#arr-lime)"/>
+    <g transform="translate(185, 70)">
+      <rect x="0" y="0" width="50" height="32" class="node-rebased"/>
+      <text x="25" y="20" text-anchor="middle" class="txt-node" style="fill:#bef264;">C4'</text>
+    </g>
+
+    <path d="M 270 86 L 235 86" class="edge-rebase" marker-end="url(#arr-lime)"/>
+    <g transform="translate(270, 70)">
+      <rect x="0" y="0" width="50" height="32" class="node-rebased"/>
+      <text x="25" y="20" text-anchor="middle" class="txt-node" style="fill:#bef264;">C5'</text>
+      <text x="25" y="-6" text-anchor="middle" class="txt-sub" style="font-size:9px; fill:#bef264;">(feature)</text>
+    </g>
+
+    <!-- Abandoned Old Commits below C2 -->
+    <g transform="translate(185, 130)">
+      <rect x="0" y="0" width="50" height="28" class="node-abandoned"/>
+      <text x="25" y="18" text-anchor="middle" class="txt-node" style="fill:#f87171; font-size:10px;">C4</text>
+      <text x="25" y="42" text-anchor="middle" class="txt-sub" style="font-size:8px; fill:#f87171;">(Abandoned)</text>
+    </g>
+    <g transform="translate(270, 130)">
+      <rect x="0" y="0" width="50" height="28" class="node-abandoned"/>
+      <text x="25" y="18" text-anchor="middle" class="txt-node" style="fill:#f87171; font-size:10px;">C5</text>
+      <text x="25" y="42" text-anchor="middle" class="txt-sub" style="font-size:8px; fill:#f87171;">(Abandoned)</text>
+    </g>
+
+    <!-- Tradeoffs -->
+    <g transform="translate(20, 195)">
+      <text x="0" y="16" class="txt-hdr" style="font-size:12px; fill:#34d399;">&#10003; Advantages:</text>
+      <text x="0" y="34" class="txt-body">• Pristine, perfectly linear project history.</text>
+      <text x="0" y="52" class="txt-body">• Trivial bisecting and cherry-picking.</text>
+      <text x="0" y="76" class="txt-hdr" style="font-size:12px; fill:#f43f5e;">&#10007; Critical Warning:</text>
+      <text x="0" y="94" class="txt-body">• Mutates commit SHAs! Never rebase public shared branches.</text>
+    </g>
+  </g>
+
+  <!-- Golden Rule Banner (y=420, h=75) -->
+  <g transform="translate(40, 420)">
+    <rect x="0" y="0" width="880" height="75" class="comp-panel" style="stroke: #f43f5e; fill: #1c0e14;"/>
+    <text x="20" y="24" class="txt-hdr" style="fill: #f43f5e; font-size:13px;">The Golden Rule of Rebasing:</text>
+    <text x="20" y="44" class="txt-body" style="font-weight:600; fill:#fecdd3;">Never rebase a branch that you have pushed to a public or shared remote repository!</text>
+    <text x="20" y="60" class="txt-sub">Rebasing rewrites commit hashes. If teammates have branched off your original commits, force-pushing rewritten commits creates severe branch chaos.</text>
+  </g>
+</svg>

@@ -1,251 +1,229 @@
-# Core Git Concepts Explained
+# Core Git Concepts and Internals Explained
 
-Understanding the fundamental concepts of Git is essential for effective version control and collaboration. This section breaks down key Git ideas, including branches, commits, issues, push, pull, and pull requests, to help you grasp how they work together in your development workflow.
+## Learning Goals
 
-## Branch
+After completing this chapter, you should be able to:
 
-A **branch** in Git is like creating a parallel, independent line of development. It's a powerful feature that allows you to diverge from the main project line to work on new features, bug fixes, or experiments **without directly affecting the stable, primary codebase**. Think of branches as "safe, isolated workspaces" where you can make changes freely.
+- Deconstruct Git's content-addressable storage model and explain how cryptographic SHA hashes guarantee repository immutability.
+- Dissect the four fundamental Git object primitives: Blobs, Trees, Commits, and Annotated Tags.
+- Use low-level plumbing commands (`git hash-object`, `git cat-file`, `git ls-tree`) to inspect internal Git objects on disk.
+- Define what a branch is under the hood and trace how branch pointer files update during commits.
+- Demystify the `HEAD` reference, distinguish between attached and detached `HEAD` states, and safely recover from detached states.
+- Compare modern reference switching (`git switch` / `git restore`) against legacy overloaded commands (`git checkout`).
+- Connect collaborative project management concepts (Issues, Milestones, Pull Requests) with Git commits and branch workflows.
 
-### Key Features of Branches:
+---
 
-- **Isolation**: Branches provide isolation, allowing multiple developers or features to be worked on simultaneously without interfering with each other or the `main` branch (which usually represents the production-ready code). Working in branches keeps your `main` branch clean and stable.
-- **Feature Development & Bug Fixes**: Branches are perfect for developing new features or fixing bugs. You can dedicate a branch to a specific task, make your changes, and test them thoroughly before merging into the main branch.
-- **Experimentation**: Branches encourage experimentation. You can try out new ideas or approaches in a branch, and if they don't work out, you can simply discard the branch without impacting your main project.
-- **Merge-Ready**: Once the work in a branch is complete and tested, it can be reviewed and then merged back into the `main` branch or another branch using pull requests. This integration process is controlled and allows for code review and quality assurance.
+## The Git Object Model & Content-Addressable Storage
 
-### Common Branch Types and Naming Conventions:
+At its heart, Git is not simply a version control tool; it is a **content-addressable filesystem** with a Version Control System user interface layered on top. 
 
-Following a consistent naming convention for branches helps teams stay organized and understand the purpose of each branch at a glance. Here are some common branch types and examples:
+In a content-addressable storage system, data is retrieved not by an arbitrary filename or location path, but by computing the cryptographic hash of the content itself. Traditionally, Git computes a 40-character hexadecimal SHA-1 hash (160 bits) of an object's header and payload (modern Git also supports SHA-256).
 
-- `main` or `master`: This is typically the primary branch, reflecting the production-ready state of the codebase.
-- `develop`: An integration branch where features are merged before being released.
-- `feature/your-feature-name`: Used for developing new features. Examples:
-  - `feature/user-authentication`
-  - `feature/shopping-cart`
-  - `feature/dark-mode-ui`
-- `bugfix/issue-description` or `fix/issue-number`: Used for fixing bugs. Examples:
-  - `bugfix/login-crash`
-  - `fix/issue-404-error`
-  - `fix/typo-in-documentation`
-- `hotfix/critical-issue`: Used for immediate fixes to production issues.
-- `experiment/idea-name`: Used for exploratory or experimental work. Examples:
-  - `experiment/new-algorithm-performance`
-  - `experiment/ai-recommendation-engine`
-  - `experiment/database-migration-test`
+Git stores all historical data in `.git/objects/` using four fundamental object types:
 
-**Analogy**: Think of branches as train tracks diverging from the main line. Each track (branch) can lead to a different destination (feature or fix), and eventually, these tracks can merge back into the main line (main branch) after the work is completed and approved.
+![Git Object Model DAG](images/ch3_git_object_model_dag.svg)
 
-**Creating and Switching to a New Branch**:
+### The Four Object Primitives
 
-To create a new branch and immediately switch to it, you can use the `git checkout -b` command:
+#### 1. The Blob Object (`type blob`)
+A **blob** (binary large object) stores pure file data. A blob holds the contents of a file compressed via zlib, but contains **no metadata**: no filename, no directory path, and no permissions (`chmod`). If two files in different directories contain identical content, Git stores only one blob in `.git/objects/`, saving substantial disk space.
 
-```bash
-git checkout -b feature/dark-mode
-```
+#### 2. The Tree Object (`type tree`)
+A **tree** represents a filesystem directory. A tree solves the problem of storing filenames and directory hierarchies. Each tree entry contains:
+- File mode (`100644` for normal file, `100755` for executable, `040000` for subdirectory)
+- Object type (`blob` or `tree`)
+- SHA-1 / SHA-256 hash of the target object
+- Filename or folder name
 
-This command does two things at once: it creates a new branch named `feature/dark-mode` and then immediately switches your working directory to this new branch, so you can start working on it.
+Trees can point to blobs (files) and to nested trees (subdirectories), recursively mirroring the entire directory tree of your project.
 
-## Commit
+#### 3. The Commit Object (`type commit`)
+A **commit** represents a permanent snapshot of the project at a specific instant in time. A commit object contains:
+- A pointer to the top-level **root tree** (`tree <sha>`)
+- Pointers to **parent commits** (`parent <sha>`) (initial commits have zero parents; standard commits have one; merge commits have two or more)
+- **Author**: The developer who originally wrote the code and timestamp
+- **Committer**: The developer or system that applied the commit and timestamp
+- Commit message describing the architectural intent of the change
 
-A **commit** in Git is a fundamental operation that records a _snapshot_ of your entire project at a specific point in time. It's like taking a "save point" in a video game. Each commit captures the state of all tracked files in your project, allowing you to revert to any previous version whenever needed. Commits are the building blocks of your project's history.
+#### 4. The Tag Object (`type tag`)
+An **annotated tag** provides a permanent, human-readable marker (e.g., `v1.0.0`) pointing to a specific commit object. Unlike lightweight tags (which are plain references), an annotated tag is an independent object in `.git/objects/` containing the tagger's name, email, date, an optional GPG cryptographic signature, and a release note.
 
-### Best Practices for Commits:
+### Exploring Git Internals with Plumbing Commands
 
-- **Atomic Commits**: Aim for one logical, self-contained change per commit. Each commit should represent a single, understandable unit of work. For example, "Implement user login functionality" is a good atomic commit, while "Fix login, update UI, and add new feature" is too broad and should be broken down into multiple commits.
-  - **Good Example**: "Fix: Correct button color on profile page"
-  - **Bad Example**: "Update stuff" or "Fix bugs and add features"
+Git commands are divided into **Porcelain** (user-friendly high-level commands like `git status`, `git commit`) and **Plumbing** (low-level commands designed for scripts and internal mechanics).
 
-- **Meaningful and Descriptive Commit Messages**: Write clear, concise, and informative commit messages. A good commit message explains _why_ the change was made, not just _what_ was changed. Use the imperative mood in the subject line (e.g., "Add feature," not "Added feature"). A commit message typically consists of a subject line (brief summary) and an optional body (more detailed explanation).
-
-  ```bash
-  git commit -m "feat: add user authentication
-
-  Implements OAuth2 login for enhanced security.
-  - Added Google OAuth2 authentication flow.
-  - Implemented error handling for authentication failures.
-  - Updated documentation to reflect new login method."
-  ```
-
-  - **Subject Line**: Keep it short (under 50 characters) and to the point. Start with a type keyword (e.g., `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`).
-  - **Body (Optional)**: Provide more context, explain the problem solved, and detail the changes made. Separate the body from the subject with a blank line.
-
-- **SHA-1 Hash**: Each commit is assigned a unique SHA-1 hash (a long string of hexadecimal characters, e.g., `a1b2c3d4e5f6...`). This hash acts as a unique identifier for the commit and ensures the integrity of your project history. You can use this hash to refer to specific commits, revert to them, or compare changes.
-
-### Undoing Mistakes with `git reset`:
-
-If you make a mistake or want to undo your last commit, Git provides tools to help. The `git reset` command is powerful for this, but it should be used with caution, especially when working collaboratively.
-
-- **`git reset --soft HEAD~1`**: This command undoes the last commit but keeps your changes in the staging area (or working directory if they were already staged). It's useful when you want to amend your last commit or if you committed too early and want to make further changes before recommitting.
-
-  ```bash
-  git reset --soft HEAD~1
-  ```
-
-  - `HEAD~1` refers to the commit before the current `HEAD` (which is the last commit).
-  - `--soft` means Git will only reset the commit pointer, leaving the staging area and working directory untouched.
-
-**Caution**: Be careful when using `git reset`, especially with options like `--hard`, as they can lead to data loss if not used correctly. Always understand what each reset option does before executing it.
-
-## Issue
-
-**Issues** are a crucial feature in collaborative development platforms like GitHub, GitLab, and Jira. They serve as a centralized tracking system for tasks, bugs, feature requests, improvements, or any kind of work that needs to be done in a project. Issues are essentially your project's organized to-do list and communication hub.
-
-### Why Use Issues?
-
-- **Centralized Task Tracking**: Issues replace scattered notes, emails, and sticky notes with a single, organized system. Everything that needs to be addressed in the project is logged and tracked in issues, ensuring nothing is forgotten or lost.
-- **Workflow and Project Management**: Issues help manage the project workflow. They can be assigned to team members, prioritized, categorized, and tracked through different stages of completion (e.g., "To Do," "In Progress," "Done").
-- **Collaboration and Communication**: Issues facilitate communication around specific tasks or problems. Team members can discuss requirements, propose solutions, ask questions, and provide updates directly within the issue, keeping all related discussions in one place.
-- **Transparency and Accountability**: Issues make the project's progress and outstanding tasks transparent to all team members. Assignees are clear about their responsibilities, and deadlines or milestones can be associated with issues to ensure accountability.
-- **Integration with Code Changes**: Issues can be directly linked to commits and pull requests using keywords in commit messages or PR descriptions. This integration automatically updates the issue status when related code is merged, streamlining the workflow and providing traceability.
-
-  ```
-  Fixes #45  # Automatically closes issue #45 when this commit/PR is merged
-  ```
-
-### Organizing Issues with Labels and Assignees:
-
-- **Labels**: Labels are tags you can apply to issues to categorize and prioritize them. They help in filtering and sorting issues, making it easier to manage and focus on specific types of tasks. Common labels include:
-  - `bug`: For bug reports and issues.
-  - `feature`: For new feature requests.
-  - `enhancement`: For improvements to existing features.
-  - `documentation`: For tasks related to documentation.
-  - `urgent` or `priority`: For high-priority issues.
-  - `good first issue`: For issues suitable for new contributors.
-
-- **Assignees**: Assignees are team members responsible for working on a particular issue. Assigning issues ensures that tasks are clearly delegated and that someone is accountable for driving them to completion.
-
-**Pro Tip**: **Use Issue Templates to Standardize Reporting**
-
-To ensure consistency and gather all necessary information when issues are created, use issue templates. Templates provide a predefined format for bug reports, feature requests, or other types of issues. They can include sections for steps to reproduce a bug, expected behavior, acceptance criteria for a feature, etc., making it easier for issue creators to provide complete information and for issue assignees to understand the task.
-
-## Push
-
-`git push` is the command you use to upload your local commits to a remote repository, such as one hosted on GitHub, GitLab, or Bitbucket. It's how you share your local work with your team and back up your changes to a remote server.
-
-### Key Notes About `git push`:
-
-- **Sharing Local Commits**: `git push` takes the commits from your current local branch and sends them to the corresponding branch in the remote repository. This makes your changes available to your collaborators and integrates them into the shared project history.
-- **Setting Upstream with `-u`**: When you push a branch to a remote repository for the first time, you should use the `-u` flag (short for `--set-upstream`). This sets up a tracking connection between your local branch and the remote branch. Once the upstream is set, you can use `git push` without any arguments in the future, and Git will know where to push your changes.
-
-  ```bash
-  git push -u origin feature/dark-mode
-  ```
-
-  - `origin` is typically the alias for your main remote repository.
-  - `feature/dark-mode` is the branch you are pushing.
-  - `-u origin feature/dark-mode` establishes the link so that future `git push` commands from `feature/dark-mode` will automatically push to `origin feature/dark-mode`.
-
-- **Force Push (`git push --force`)**: **Use with extreme caution!** The `git push --force` command overwrites the remote branch with your local branch, potentially rewriting the project history on the remote repository. This can cause significant problems, especially in collaborative environments, as it can lead to lost commits for other team members. Force pushing should generally be avoided unless you have a very specific reason and understand the implications, such as recovering from a mistake where you've rewritten your local branch history intentionally and need to update the remote branch to match. **Alternatives to force-pushing should always be explored first.**
-
-**Example Workflow for Pushing Changes**:
-
-Here’s a typical workflow illustrating how `git push` fits into the process of making and sharing changes:
+We can inspect Git's internal object store directly using the plumbing command `git cat-file`:
 
 ```bash
-git checkout -b feature/new-feature  # Create and switch to a new branch for your feature
-# ... work on your feature, make code changes ...
-git add .                         # Stage your changes
-git commit -m "feat: implement new feature" # Commit your changes locally
-git push -u origin feature/new-feature     # Push your branch and commits to the remote repository
+# Check the type of any object hash
+git cat-file -t e4a71b
+
+# Output:
+# commit
+
+# Inspect the raw contents of an object
+git cat-file -p e4a71b
 ```
 
-After pushing, your branch and commits are now available on the remote repository, ready for review via a pull request and eventual merging.
+Sample output of a commit object:
+```plaintext
+tree c39a04a80695bbf8984920f26938dc830f81d11a
+parent a82c091f0490f23554032d849cf2418b7681335b
+author Alice <alice@dev.org> 1700000000 +0000
+committer Alice <alice@dev.org> 1700000000 +0000
 
-## Pull
+feat(auth): add JWT bearer token authentication service
+```
 
-`git pull` is used to synchronize your local repository with changes from a remote repository. It essentially downloads changes from the remote and immediately integrates them into your current local branch. Under the hood, `git pull` is a combination of two commands: `git fetch` followed by `git merge`.
+Inspecting the referenced root tree:
+```bash
+git cat-file -p c39a04
+```
+
+Sample output of a tree object:
+```plaintext
+100644 blob 4d812f80876402479e0a0d480dcfbdf9426f0923    README.md
+040000 tree fa192b0059c381c828d1973ff5ba4b02d8471b05    src
+100644 blob 18b6ee388a10787e2264c9d784d14210e75e9f82    .gitignore
+```
+
+### The Merkle Tree Guarantee: Cryptographic Immutability
+
+Because every commit references its root tree and its parent commit's hash, and every tree references the hashes of its blobs, Git forms a cryptographic **Merkle Tree**. 
+
+If an attacker or disk corruption alters a single byte in any file:
+1. The file's blob SHA changes.
+2. The tree pointing to that blob must change its entry hash, altering the tree's SHA.
+3. The commit pointing to that tree must change its tree hash, altering the commit's SHA.
+4. All child commits in history are invalidated.
+
+This mathematical property makes Git history tamper-evident.
+
+---
+
+## Pointers, Branches, and References
+
+Many developers imagine branches as heavy copies of their code. In Git, a branch is astonishingly lightweight: it is simply a 41-byte text file on disk!
+
+If you open `.git/refs/heads/main`, it contains nothing more than the 40-character hexadecimal hash of the latest commit on that branch, followed by a newline:
+```plaintext
+e4a71b89643d99e52c7104b901b2297bb3201402
+```
+
+Creating a branch takes less than a millisecond: Git creates a new 41-byte file containing the current commit hash.
+
+![Git HEAD and Branch Pointers](images/ch3_head_and_branch_pointers.svg)
+
+### The `HEAD` Pointer
+
+`HEAD` is a symbolic reference that points to the currently active branch in your workspace. Inspecting `.git/HEAD` reveals:
+```plaintext
+ref: refs/heads/main
+```
+
+When you commit, Git:
+1. Creates the new commit object pointing to the current commit as its parent.
+2. Updates `refs/heads/main` to point to the new commit's hash.
+3. `HEAD` remains pointed to `main`, automatically staying at the leading edge.
+
+### The Detached HEAD State
+
+When you check out a specific commit hash, a remote tracking branch, or a tag rather than a local branch, `HEAD` points directly to a commit object rather than a branch reference:
 
 ```bash
-git pull
+git checkout a82c09
 ```
 
-is shorthand for:
+Output:
+```plaintext
+Note: switching to 'a82c09'.
+
+You are in 'detached HEAD' state. You can look around, make experimental
+changes and commit them, and you can discard any commits you make in this
+state without impacting any branches by switching back to a branch.
+```
+
+> [!CAUTION]
+> If you make commits while in a detached HEAD state and then switch back to `main` without creating a branch, your new commits become **orphaned**. They have no branch pointer referencing them and will eventually be permanently deleted by Git's automatic garbage collection (`git gc`).
+> 
+> **How to safely save work from detached HEAD:**
+> ```bash
+> git switch -c my-rescued-feature
+> ```
+
+### Modern Reference Switching: `git switch` & `git restore`
+
+In older Git versions, `git checkout` was heavily overloaded: it was used both to switch branches and to discard uncommitted file edits. In Git 2.23+, these responsibilities were cleanly separated into two single-purpose commands:
 
 ```bash
-git fetch <remote_name>
-git merge <remote_name>/<current_branch_name>
+# --- Branch Navigation (git switch) ---
+# Switch to an existing branch:
+git switch feature/login
+
+# Create and switch to a new branch:
+git switch -c feature/payments
+
+# Return to previous branch:
+git switch -
+
+# --- File Restoration (git restore) ---
+# Discard unstaged working tree changes in a file:
+git restore src/main.c
+
+# Unstage a file from the Index back to working directory:
+git restore --staged config/settings.json
 ```
 
-For example, if you are on the `main` branch and you run `git pull origin`, it's equivalent to:
+---
+
+## Issues, Milestones, and Pull Request (PR) Lifecycle
+
+While Git tracks code history on your machine, modern collaborative software engineering relies on web hosting platforms (GitHub, GitLab, Bitbucket) to coordinate human intent.
+
+### 1. Issues & Task Tracking
+An **Issue** is an actionable unit of work tracking bugs, features, or architectural proposals. Issues contain discussion threads, reproduction steps, assignees, and labels (`bug`, `enhancement`, `priority:high`).
+
+### 2. Linking Commits to Issues
+Git hosting platforms parse commit messages for automated issue closure keywords. Including these in your commit message or PR description automatically links the commit and closes the issue upon merging:
 
 ```bash
-git fetch origin
-git merge origin/main
+git commit -m "fix(parser): prevent buffer overflow on malformed packet
+
+Closes #142
+Resolves #189"
 ```
 
-### Pro Tips for Using `git pull`:
+Supported keywords: `close`, `closes`, `closed`, `fix`, `fixes`, `fixed`, `resolve`, `resolves`, `resolved`.
 
-- **Always Pull Before Starting Work**: It's a good practice to start your day or before beginning a new task by running `git pull`. This ensures that your local repository is up-to-date with the latest changes from the remote repository, preventing potential conflicts and ensuring you are working on the most current version of the project.
-- **Prefer `git fetch` + `git merge` for More Control**: While `git pull` is convenient, using `git fetch` and `git merge` separately gives you more control and visibility over the update process.
+### 3. Milestones
+A **Milestone** groups related issues and pull requests towards a concrete release deadline (e.g., `v2.4.0 Release`). Milestones provide real-time progress bars showing completed vs. open issues.
 
-  ```bash
-  git fetch origin         # Download changes from the remote repository but don't merge yet
-  git merge origin/main    # Manually merge the fetched changes into your current branch
-  ```
+### 4. Pull Requests (PR) / Merge Requests (MR)
+A **Pull Request** is a formal proposal to merge a feature branch into a target branch (e.g., merging `feat/auth` into `main`). PRs serve as the centerpiece of modern code quality:
+- **Code Review**: Peers inspect line-by-line diffs, leave inline comments, and suggest modifications.
+- **Automated CI/CD**: Continuous Integration runners build the branch, run test suites, check code coverage, and enforce linters before code can merge.
+- **Branch Protection**: Requires a minimum number of approving reviews and passing CI checks before the green merge button becomes unlocked.
 
-  - `git fetch origin` downloads all the new commits, branches, and updates from the remote repository (`origin`) but does not automatically merge them into your local branches. This allows you to review the changes before integrating them.
-  - `git merge origin/main` then merges the fetched changes from the `origin/main` branch into your currently active branch.
+---
 
-  Using `git fetch` and `git merge` separately is particularly useful when you want to review the incoming changes, perhaps inspect them, or decide whether and how to merge them.
+## Best Practices for Branches and Commits
 
-### Conflict Alert: Resolving Merge Conflicts
+- **Keep Commits Atomic**: A commit should represent one logical change. Never bundle unrelated bug fixes and feature enhancements into the same commit. Atomic commits make code reviews effortless and allow clean rollbacks if a bug emerges.
+- **Follow Branch Naming Standards**: Use descriptive prefixes to immediately communicate branch purpose:
+  - `feat/user-auth`
+  - `fix/memory-leak-in-parser`
+  - `refactor/simplify-database-queries`
+  - `docs/update-api-reference`
+- **Avoid Long-Lived Branches**: The longer a feature branch diverges from `main`, the harder the eventual merge will be. Keep branches short-lived (1–3 days) and merge frequently.
 
-A **merge conflict** occurs when Git cannot automatically merge changes from the remote repository with your local changes. This usually happens when the same lines of code have been changed in both the remote and local repositories.
+---
 
-When a conflict occurs during a `git pull` or `git merge`, Git will:
+## Practical Exercises
 
-1.  **Halt the merge process**.
-2.  **Mark the conflicting files**. You'll need to open these files and manually resolve the conflicts. Git inserts special conflict markers (`<<<<<<<`, `=======`, `>>>>>>>`) in the file to show you the conflicting sections.
-3.  **Edit the files to resolve conflicts**. Decide which changes to keep (or combine them), remove the conflict markers, and save the file.
-4.  **Stage the resolved files**: Use `git add <resolved_file>` to stage the files you've edited to resolve conflicts.
-5.  **Complete the merge**: Use `git commit` to finalize the merge commit.
-
-Resolving merge conflicts is a common part of collaborative Git workflows. Understanding how to identify and resolve them is a key skill for any Git user.
-
-## Pull Request (PR)
-
-A **Pull Request (PR)** is a feature in Git-based collaboration platforms like GitHub, GitLab, and Bitbucket. It's a formal way to propose merging changes from one branch (typically a feature branch) into another branch (usually `main` or `develop`). Pull requests are central to code review and collaborative development workflows.
-
-### The Pull Request Lifecycle:
-
-1.  **Create (Initiate a Pull Request)**: After you have finished working on a feature or bug fix in a branch and pushed it to the remote repository, you create a pull request. This is usually done through the web interface of your Git platform (e.g., GitHub). You specify the branch with your changes (the "head" branch) and the branch you want to merge into (the "base" branch, often `main`).
-
-2.  **Review (Code Review and Discussion)**: The pull request triggers a code review process. Team members review the changes you've proposed, examine the code, and provide feedback. This feedback is given as comments directly on the pull request, allowing for discussions, questions, and suggestions for improvements. Code review is crucial for maintaining code quality, sharing knowledge, and catching potential issues early.
-
-3.  **Test (Automated Checks and CI/CD)**: Often, pull requests are integrated with Continuous Integration/Continuous Deployment (CI/CD) systems. These systems automatically run tests, linters, and other checks on the code in the PR to ensure it meets quality standards and doesn't introduce regressions. The results of these checks are usually displayed in the PR, providing immediate feedback on the code's integrity.
-
-4.  **Merge (Integration of Changes)**: Once the code review is positive, all discussions are resolved, and automated checks pass, the pull request is approved for merging. Merging integrates the changes from the feature branch into the target branch (e.g., `main`). After merging, the feature or fix becomes part of the main codebase. Often, after a PR is merged, the feature branch is deleted as it's no longer needed.
-
-### Golden Rules for Pull Requests:
-
-- **Keep PRs Small and Focused**: Aim to keep pull requests small and focused on a single logical change or feature. Smaller PRs are easier to review, understand, and test, which leads to faster review cycles and fewer integration issues. Ideally, PRs should be under 300 lines of code changed.
-- **Use Descriptive Titles and Descriptions**: A good PR title and description are essential for reviewers to quickly grasp the purpose and context of your changes.
-  - **Good Title**: "Fix: Image scaling bug on product detail page" (clear, concise, and action-oriented)
-  - **Bad Title**: "Update code" (too vague and uninformative)
-
-  In the PR description, provide more details about what you changed, why, and any context that might be helpful for reviewers.
-
-**GitHub Magic: Linking Pull Requests to Issues**
-
-You can link a pull request to a related issue by using keywords like `Fixes`, `Closes`, or `Resolves` followed by the issue number in your commit message or PR description. For example:
-
-```
-Closes #12  # This line in the PR description or a commit message will automatically close issue #12 when the PR is merged.
-```
-
-This automatically closes issue #12 when the pull request is merged, streamlining issue tracking and workflow management.
-
-### Concept Cheat Sheet
-
-| Command                         | Action                                                 |
-| :------------------------------ | :----------------------------------------------------- |
-| `git branch`                    | List, create, or delete branches                       |
-| `git checkout -b <branch_name>` | Create and switch to a new branch                      |
-| `git commit -m "<message>"`     | Save changes with a descriptive message                |
-| `git push`                      | Upload local commits to a remote repository            |
-| `git pull`                      | Download and merge remote changes into your local repo |
-| `git fetch`                     | Download changes from remote but don't merge           |
-| `git merge`                     | Integrate changes from one branch into another         |
-| `gh pr create`                  | Create a pull request (using GitHub CLI)               |
+1. Create a new repository and commit two files. Use `git log --oneline` to find your commit hash, then run `git cat-file -p <hash>` to inspect the root tree pointer and parent pointer.
+2. Run `git cat-file -p` on the root tree hash to view how Git associates file modes and blob hashes with filenames.
+3. Inspect `.git/HEAD` and `.git/refs/heads/main` using `cat` in your terminal to verify that branches are plain text files storing commit hashes.
+4. Intentionally enter a detached HEAD state by running `git checkout HEAD~1`. Verify the state with `git status`. Practice creating a new branch from that detached commit using `git switch -c recovery-branch`.
 
 ##### Copyright (c) 2026 squared-studio

@@ -1,235 +1,249 @@
-# Level Up Your Git Skills: Best Practices for Collaborative Coding
+# Level Up Your Git Skills: Advanced Engineering, Best Practices, and Recovery
 
-Git is the engine of teamwork in coding. When you wield it well, projects stay organized, teams stay in sync, and stress levels stay low. Let's go beyond the basics and explore Git best practices that can truly transform your workflow.
+## Learning Goals
 
-## Craft Commit Messages That Shine
+After completing this chapter, you should be able to:
 
-Think of commit messages as your project's diary. They're for your future self, your teammates, and anyone exploring your codebase. Make them count!
+- Rewrite and curate local branch history using interactive rebase (`git rebase -i`) with actions including `squash`, `fixup`, `reword`, and `drop`.
+- Articulate and enforce the Golden Rule of Rebasing to prevent destructive remote history disruptions.
+- Cherry-pick specific commits across release branches while recording audit provenance (`git cherry-pick -x`).
+- Automate regression debugging across large commit histories using `git bisect run`.
+- Inspect the local reference journal (`git reflog`) and resurrect accidentally deleted commits, lost branches, and hard-reset states.
+- Manage large binaries efficiently using Git Large File Storage (Git LFS) and automate pre-commit validation using Git hooks.
+- Apply the Conventional Commits specification to standardize commit logs for automated semantic versioning and changelog generation.
 
-### Start with a Verb in the Imperative Mood
+---
 
-Use action verbs to kick off your subject line. It's clear, concise, and a Git standard.
+## Rewriting History: Interactive Rebasing
+
+During local development, commits are naturally messy: you make typos, test ideas, save incremental progress, and debug unexpected test failures. Before submitting your branch for peer code review, Git allows you to curate your commits into a clean, professional narrative using **Interactive Rebasing**.
+
+![Git Merge vs Rebase Rewriting](images/ch7_merge_vs_rebase_rewriting.svg)
+
+### Starting an Interactive Rebase
+
+To edit the last 4 commits on your current branch:
+```bash
+git rebase -i HEAD~4
+```
+
+Git opens your configured text editor displaying an instruction sheet listing your commits from oldest to newest:
 
 ```plaintext
-add: User authentication module
-fix: Startup crash
-improve: Loading performance
+pick a82c091 feat(parser): scaffold packet decoder structure
+pick 4d19bf2 fix typo in packet length check
+pick 5c01da4 add CRC-32 checksum calculation
+pick 9b88fe1 fix typo again and remove debug printf
+
+# Rebase commands:
+# p, pick <commit> = use commit
+# r, reword <commit> = use commit, but edit the commit message
+# e, edit <commit> = use commit, but stop for amending
+# s, squash <commit> = use commit, but meld into previous commit
+# f, fixup <commit> = like "squash", but discard this commit's log message
+# d, drop <commit> = remove commit
 ```
 
-- **Why?** It's a universal convention that makes commit logs consistent and focused on actions. Think of each commit as a command to the codebase.
+### Curating the Commits
 
-### Be Brief, Then Expand (If Needed)
-
-Aim for a subject line of 50 characters or less—like a tweet for your code change. Need more room? Use the body to elaborate.
-
+Edit the command verbs in the file:
 ```plaintext
-feat: Enhance search functionality
-
-This commit introduces fuzzy search and auto-complete suggestions to significantly improve the product search experience for users.
+pick a82c091 feat(parser): scaffold packet decoder structure
+fixup 4d19bf2 fix typo in packet length check
+pick 5c01da4 add CRC-32 checksum calculation
+fixup 9b88fe1 fix typo again and remove debug printf
 ```
 
-- **Think Headline vs. Article:** The subject is your headline—catchy and to the point. The body is the article—details and context.
+Save and exit the editor. Git automatically:
+1. Replays `a82c091` and absorbs the typo fix `4d19bf2` directly into it without altering the original message.
+2. Replays `5c01da4` and absorbs `9b88fe1` into it.
+3. Produces a tidy, two-commit history that looks like you wrote the code flawlessly on your first attempt!
 
-### Explain _Why_ You Changed It, Not Just _What_
+### The Golden Rule of Rebasing
 
-Code changes are obvious in the commit itself. Your message should explain the _reasoning_ behind them.
+> [!CAUTION]
+> **The Golden Rule:** Never rebase a branch that has been pushed to a public or shared remote repository!
+> 
+> Rebasing creates **brand-new commit objects with new cryptographic SHA hashes**, abandoning the original commits. If teammates have pulled your branch or built work on top of your original commits, force-pushing rewritten commits creates severe branch confusion and can cause their local branches to duplicate historical commits.
+> 
+> Only rebase commits that exist solely on your private local branch!
 
-- **Instead of:** `Fix user session timeout`
-- **Go for:** `fix(session): Correct token refresh logic to prevent premature session expiry after 5 minutes`
+---
 
-- **Context is King:** Explaining the _why_ saves time and brainpower for anyone reading your commit history later. It clarifies the intent and importance of your changes.
+## Selective Commit Transplantation: `git cherry-pick`
 
-## Branch Like a Git Guru
-
-Branches are your secret weapon for organized work and a stable `main` branch.
-
-### Feature Branches: Your Coding Sandboxes
-
-For every new feature or fix, create a branch.
+**Cherry-picking** allows you to select a specific commit from one branch and apply its exact patch onto your currently checked out branch without merging the entire branch.
 
 ```bash
-git checkout -b feature/payment-integration
+# Switch to production maintenance branch
+git switch maintenance/v1.2
+
+# Cherry-pick a specific security patch from main
+git cherry-pick -x 7a49bf2
 ```
 
-- **Keep `main` Pristine:** Feature branches isolate your work, keeping the `main` branch clean and deployable. Focus your development efforts without disrupting the core codebase.\*
+- **`-x` flag**: Appends a line to the commit message reading `(cherry picked from commit 7a49bf2...)`. This is an essential practice in enterprise engineering to provide an audit trail linking back to the original patch.
+- **`-n` (`--no-commit`) flag**: Applies the changes to your working tree and staging area without automatically committing, allowing you to bundle changes or inspect code.
 
-### Keep Branches Short and Sweet
+---
 
-Treat branches like fresh produce—merge them before they go stale!
+## Automated Binary Search Debugging: `git bisect`
 
-- **Yes:** Merge your branch as soon as your feature or fix is complete and tested.
-- **No:** Let branches drift for weeks or months.
+When a bug is discovered in a codebase with hundreds of recent commits, manually testing each revision is slow and exhausting. **`git bisect`** executes a binary search through your commit history to find the exact commit that introduced the regression in $O(\log n)$ steps.
 
-- **Merge Often, Conflict Less:** Regularly merging back reduces the headache of complex merge conflicts and makes integration smoother.\*
+### Interactive Bisecting
 
-### Name Branches So They Tell a Story
+```bash
+# 1. Start the bisect wizard
+git bisect start
 
-Branch names should be instantly understandable.
+# 2. Inform Git that the current version has the bug
+git bisect bad
 
+# 3. Inform Git of a known working commit in the past
+git bisect good v1.0.0
+```
+
+Git automatically checks out the middle commit:
 ```plaintext
-feature/redesign-user-profile
-fix/typo-in-checkout-page
-hotfix/urgent-security-vulnerability
+Bisecting: 64 revisions left to test after this (roughly 6 steps)
+[3f8a10b] refactor: optimize network socket buffer allocation
 ```
 
-- **Clarity is Key:** Meaningful names make team collaboration easier and help everyone track ongoing work at a glance.\*
+Compile and test your project:
+- If the bug is present: run `git bisect bad`
+- If the bug is absent: run `git bisect good`
 
-## Stay Synced Upstream: Remote Harmony
-
-Frequent syncing is like checking your mirrors while driving—essential to avoid collisions.
-
-### Pull Early, Pull Often: Your Daily Git Vitamin
-
-Regularly grab and integrate changes from the remote repository.
-
-```bash
-git pull origin main
-```
-
-- **Stay in Sync, Avoid Surprises:** Pulling frequently minimizes nasty merge conflicts and ensures you're always building on the latest team progress.\*
-
-### Rebase for a Clean, Linear History
-
-Use rebasing to keep your project history streamlined and easy to follow.
-
-```bash
-git pull --rebase origin main
-```
-
-- **A Straight Line is Easier to Read:** Rebasing neatly applies your changes on top of the `main` branch, avoiding messy merge commits and creating a clean, linear commit history.\*
-
-**Merge vs. Rebase: Visualize the Difference**
-
-```
-Merge: (Creates a merge commit, preserving history but can look branched)
-
-     /-----Feature-Branch-Commits---(A)-(B)
-----Main-Branch-Commits-----(C)-----(D)-----(E)---Merge Commit(M)
-
-
-Rebase: (Rewrites history for a linear, cleaner look)
-
----Main-Branch-Commits-----(C)-----(D)-----(E)-----(A')-----(B')--- Feature Branch Rebased
-```
-
-- **Rebase with Care:** Rebasing _rewrites history_, so use it thoughtfully, especially on shared branches. It's generally best for feature branches before merging into `main`.\*
-
-## Review Code Before It Lands: Quality First
-
-Code reviews are your safety net—catching bugs and boosting code quality before they reach production.
-
-### Embrace Pull Requests: More Than Just Merging
-
-Use PRs as hubs for discussion and improvement, not just gateways to merge.
-
-- **Discuss Alternatives:** "Has anyone considered using the new API for this?"
-- **Suggest Enhancements:** "What if we added error handling for these edge cases?"
-
-### Give Feedback That Builds Up, Not Tears Down
-
-Focus on constructive, growth-oriented feedback.
-
-- **Instead of:** "This code is inefficient."
-- **Try:** "This section could be optimized for performance by using caching. Have you considered that?"
-
-- **Feedback is a Gift:** Be as open to receiving feedback as you are to giving it. It's how we all get better.\*
-
-## Keep Your Repo Tidy: A Place for Everything
-
-A clean repository is a happy repository—easier to navigate, maintain, and contribute to.
-
-### Prune Old Branches: Keep It Fresh
-
-Once a branch is merged, say goodbye!
-
-```bash
-git branch -d feature/legacy-feature # Delete local branch
-git push origin --delete feature/legacy-feature # Delete remote branch
-```
-
-- **Declutter and Simplify:** Deleting merged branches reduces visual noise and keeps everyone focused on active development.\*
-
-### `.gitignore`: Your Repo's Bouncer
-
-Prevent unnecessary files from sneaking into version control.
-
+Git halves the search space at each step until it pinpoints the culprit commit:
 ```plaintext
-# .gitignore (Example additions)
-/node_modules/
-/build/
-.env
-*.log
-temp/
+7b94cf281a is the first bad commit
+commit 7b94cf281a
+Author: Developer <dev@org.com>
+Date:   Mon Nov 02 14:22:10 2026
+
+    refactor(parser): change buffer indexing logic
 ```
 
-- **Keep It Lean and Secure:** `.gitignore` keeps your repository lightweight, focused on source code, and prevents sensitive files from being accidentally committed.\*
+Once finished, return to your original branch:
+```bash
+git bisect reset
+```
 
-### Commit Little and Often: Baby Steps to Success
+### Fully Automated Bisecting (`git bisect run`)
 
-Make frequent, focused commits with clear purposes.
+If you have an automated test script that returns exit code `0` for success and non-zero for failure:
 
-- **Yes:** Break down large tasks into smaller, logical commits.
-- **No:** Massive commits with unrelated changes all lumped together.
+```bash
+git bisect start HEAD v1.0.0
+git bisect run ./run_unit_tests.sh
+```
 
-- **Trackability and Rollback:** Smaller, thoughtful commits make it far easier to track changes, understand the evolution of the codebase, and roll back specific features if needed.\*
+Git runs the script on each binary partition automatically, finding the faulty commit without any human intervention!
 
-## Go the Extra Mile: Git Pro Tips
+---
 
-Ready to supercharge your Git workflow?
+## Disaster Recovery and The Git Reflog Safety Net
 
-### Automate with Git Hooks: Your Code Guardians
+One of the greatest features of Git is that **almost nothing committed is ever truly lost**. 
 
-Use Git hooks to automatically enforce code standards and catch issues early.
+When you run `git reset --hard HEAD~3` or accidentally delete a feature branch with `git branch -D my-feature`, the commits are disconnected from branch pointers, but their objects remain untouched in `.git/objects/`.
 
-- **`pre-commit` hooks:** Run linters, formatters, or unit tests _before_ allowing a commit.
-- **`commit-msg` hooks:** Validate commit message format to ensure consistency.
+Git maintains the **`reflog`** (*Reference Log*): an append-only, chronological journal of every movement of `HEAD` and local branch pointers on your machine.
 
-- **Consistency and Early Issue Detection:** Automation through hooks ensures code quality and catches common mistakes before they even get committed.\*
+![Git Reflog Safety Net](images/ch7_git_reflog_and_recovery.svg)
 
-### Document Your Workflow: The `CONTRIBUTING.md` Guide
+### Recovering "Lost" Commits
 
-Create a `CONTRIBUTING.md` file in your repository root to document your team's Git practices.
+```bash
+# Display the chronological history of HEAD movements
+git reflog
+```
 
-- **What to Include:** Branching strategy, naming conventions, commit message guidelines, pull request process, code review expectations, and any other workflow specifics.
+Sample output:
+```plaintext
+a102bf3 (HEAD -> main) HEAD@{0}: reset: moving to HEAD~2
+7b94cf2 HEAD@{1}: commit: feat(auth): complete OAuth2 login
+c49e210 HEAD@{2}: commit: add user token serializer
+8d2f105 HEAD@{3}: checkout: moving from feature/auth to main
+```
 
-- **Team Alignment and Onboarding:** Clear documentation ensures everyone is on the same page and makes it easy for new team members or contributors to get up to speed quickly.\*
+Notice that `7b94cf2` is the commit that was discarded by the accidental reset!
 
-### Never Stop Learning: Git is a Journey
+To restore this commit and all its history:
+```bash
+# Option A: Create a new branch pointing directly to the orphaned commit
+git branch recovered-auth-work 7b94cf2
 
-Git is constantly evolving. Stay curious and keep exploring!
+# Option B: Re-reset HEAD back to its position before the accident
+git reset --hard HEAD@{1}
+```
 
-- **Explore New Features:** Keep an eye on Git release notes for new commands and functionalities.
-- **Master Advanced Commands:** Dive into powerful tools like `git bisect` (debugging), `git stash` (managing work in progress), and `git reflog` (recovering lost commits).
+> [!NOTE]
+> Reflog entries are local to your workstation (they are never pushed to GitHub) and expire by default after 30 days for unreachable commits and 90 days for reachable ones, at which point `git gc` prunes them.
 
-- **Boost Your Efficiency and Problem-Solving:** Deeper Git knowledge translates to greater coding efficiency and the ability to tackle complex version control scenarios with confidence.\*
+---
 
-## Bonus Git Power-Ups
+## Repository Hygiene, Git LFS, and Automation Hooks
 
-- **Tag Your Releases:** Use tags to mark significant release versions (e.g., `v1.0.0`, `v1.1-beta`).
+### 1. Large File Storage (Git LFS)
+Git is designed for text files. Storing large binary assets (trained neural network weights, high-resolution textures, FPGA bitstreams, video files) directly in Git causes repository bloat because every revision stores a full duplicate.
 
+**Git LFS** replaces large files in your repository with small text pointer files, storing the actual multi-gigabyte binaries on a dedicated object server:
+
+```bash
+# Install Git LFS extension
+git lfs install
+
+# Track large files (e.g., all *.bin firmware bitstreams)
+git lfs track "*.bin"
+
+# Commit the generated tracking configuration
+git add .gitattributes
+git commit -m "chore: track firmware binaries via Git LFS"
+```
+
+### 2. Standardized Commit Messages: Conventional Commits
+High-performing software teams adopt the **Conventional Commits** specification to format commit logs:
+
+$$\text{<type>}(\text{<optional scope>}): \text{<description>}$$
+
+Common Types:
+- **`feat`**: Introduces a new feature to the codebase.
+- **`fix`**: Patches a bug in production or test code.
+- **`docs`**: Documentation-only alterations.
+- **`refactor`**: Code changes that neither fix a bug nor add a feature.
+- **`perf`**: Performance optimization improvements.
+- **`test`**: Adding missing unit/integration tests or correcting existing tests.
+- **`chore`**: Build system, dependencies, or auxiliary tool configuration.
+
+### 3. Client-Side Git Hooks
+Git hooks are executable scripts placed inside `.git/hooks/` that run automatically at key lifecycle events:
+- **`pre-commit`**: Runs linters, formatters (`clang-format`, `black`), and unit tests before allowing a commit.
+- **`commit-msg`**: Validates that the commit message adheres to Conventional Commits standards.
+- **`pre-push`**: Verifies that regression suites pass before code is transmitted to remote servers.
+
+---
+
+## Pro Engineering Best Practices Checklist
+
+- **Never Force Push to Main**: Enforce branch protection on remote hosting servers to disable `--force` pushes to `main`.
+- **Use `git status -s` Frequently**: Keep your working tree clean and be constantly aware of untracked and modified files.
+- **Write Imperative Commit Messages**: Write `"fix: correct race condition"` rather than `"fixed:"` or `"fixing:"`.
+- **Clean Untracked Files Safely**:
   ```bash
-  git tag -a v1.0.0 -m "Version 1.0.0 - Initial stable release"
-  git push origin v1.0.0 # Push tags to remote
+  # Preview untracked files and directories to be deleted:
+  git clean -nd
+  # Perform deletion once verified:
+  git clean -fd
   ```
 
-- **Git Aliases: Shortcuts for Speed**
+---
 
-  ```bash
-  git config --global alias.co checkout
-  git config --global alias.br branch
-  git config --global alias.ci commit
-  git config --global alias.st status
-  git config --global alias.hist "log --oneline --decorate --graph --all" # Example of a more complex alias
-  ```
+## Practical Exercises
 
-  - **Faster Workflow:** Custom aliases turn long commands into quick shortcuts, saving you keystrokes and time.\*
-
-- **Visualize Your History: Git GUIs**
-
-  Consider using visual Git clients like GitKraken, SourceTree, or the built-in `gitk` to navigate complex branch structures and commit histories more intuitively.
-
-By making these best practices a habit, you're not just _using_ Git—you're _mastering_ it. The result? A smoother, more efficient workflow that lets you and your team focus on building amazing things.
-
-**Remember**: Git is your coding ally. Treat it well, keep learning, and it will be your steadfast partner in every project journey.
+1. In a sandbox repository, make three small commits. Run `git rebase -i HEAD~3` and use `squash` or `fixup` to combine the last two commits into one.
+2. Invert a previous commit using `git revert <hash>` and inspect `git log` to see the newly generated inverse commit.
+3. Intentionally execute `git reset --hard HEAD~1` to wipe your latest commit. Use `git reflog` to identify the orphaned commit hash and restore it by attaching a new branch: `git branch restored-work <hash>`.
+4. Install and configure a basic `pre-commit` hook that checks for trailing whitespace before allowing commits.
 
 ##### Copyright (c) 2026 squared-studio

@@ -1,430 +1,285 @@
-# Essential Git Commands: A Quick Guide
+# Essential Git Commands: The Everyday Porcelain Toolkit
 
-This section provides a concise overview of essential Git commands you'll use daily. Each command is explained with key points, practical examples, and tips to enhance your Git workflow.
+## Learning Goals
 
-## `git init`
+After completing this chapter, you should be able to:
 
-**Action**: **Initialize a new Git repository**. This command turns your project folder into a Git repository, allowing you to start tracking changes.
+- Master the primary everyday Git porcelain commands and trace how each command transfers data across local and remote storage boundaries.
+- Inspect workspace status using standard and concise formats (`git status -s`).
+- Customize `git log` to generate readable ASCII branch graph visualizations.
+- Perform granular interactive staging using `git add -p` to craft clean, atomic commits.
+- Compare and contrast the three modes of `git reset` (`--soft`, `--mixed`, `--hard`) and identify when to use `git revert` instead.
+- Shelve and restore uncommitted changes using the Git stash stack (`git stash push`, `pop`, `apply`, `branch`).
+- Safely synchronize with remote repositories using `git fetch`, `git pull`, and `git push --force-with-lease`.
 
-### Key Points:
+---
 
-- **One-Time Setup**: Use `git init` only once per project, typically at the very beginning.
-- **Creates `.git` Directory**: This command creates a hidden `.git` directory in your project's root. This directory is the heart of Git, storing all version control information, configurations, and history.
-- **Start Fresh**: Run `git init` in the root directory of your project _before_ you add any files or start committing.
+## The Porcelain Command Navigation Matrix
 
-### Example:
+Git provides dozens of commands, but roughly 15 commands compose 95% of a professional engineer's daily workflow. Understanding the direction in which each command moves data prevents confusion.
 
-```bash
-cd my-project
-git init  # Initializes Git in 'my-project' directory
-# Output: Initialized empty Git repository in /path/to/my-project/.git/
-```
+![Git Command Data Flow Matrix](images/ch4_git_command_data_flow.svg)
 
-## `git clone`
+### Data Movement Summary
 
-**Action**: **Copy an existing Git repository** from a remote source (like GitHub, GitLab, etc.) to your local machine.
+| Command | Source Area | Destination Area | Primary Function |
+| :--- | :--- | :--- | :--- |
+| `git add <file>` | Working Directory | Staging Area (Index) | Stages modified or untracked file contents. |
+| `git restore --staged <file>` | Staging Area | Working Directory | Unstages file changes while preserving local edits. |
+| `git restore <file>` | Staging Area / HEAD | Working Directory | Discards unstaged modifications in the working tree. |
+| `git commit -m "..."` | Staging Area | Local Repository | Creates a permanent snapshot and advances the branch pointer. |
+| `git reset --soft HEAD~1` | Local Repository | Staging Area | Undoes the commit; preserves changes staged in the Index. |
+| `git reset --mixed HEAD~1` | Local Repository | Working Directory | Undoes commit and unstages changes; preserves working files. |
+| `git reset --hard HEAD~1` | Local Repository | Discarded | Destructive! Resets working tree and Index to match commit. |
+| `git fetch origin` | Remote Repository | Local Tracking Refs | Downloads remote objects and updates `refs/remotes/origin/*`. |
+| `git pull origin <branch>` | Remote Repository | Working Tree & HEAD | Fetches remote objects and integrates them via merge or rebase. |
+| `git push origin <branch>` | Local Repository | Remote Repository | Transmits local commits to update the remote branch. |
 
-### Usage:
+---
 
-```bash
-git clone https://github.com/user/repo.git
-# Output: Cloning into 'repo'...
-#         remote: Enumerating objects: ...
-#         ...
-#         Receiving objects: 100% (...), done.
-#         Resolving deltas: 100% (...), done.
-```
+## Status, History, and Inspection Commands
 
-**Pro Tips**:
-
-- **Secure Access with SSH**: For more secure and password-free interactions with remote repositories, use the SSH URL:
-
-  ```bash
-  git clone git@github.com:user/repo.git
-  ```
-
-  _(Requires SSH keys to be set up with your Git hosting service)_
-
-- **Clone into a Specific Folder**: To clone the repository into a folder with a different name than the repository name, specify the folder name at the end of the command:
-
-  ```bash
-  git clone https://github.com/user/repo.git my-custom-folder-name
-  # Clones 'repo' into a folder named 'my-custom-folder-name'
-  ```
-
-## `git status`
-
-**Action**: **Check the current status of your working directory and staging area**. This command shows you the state of your repository, highlighting changes that are staged, unstaged, and untracked files.
-
-### Sample Output:
-
-```
-On branch main
-Your branch is up to date with 'origin/main'.
-
-Changes not staged for commit:
-  (use "git add <file>..." to update what will be committed)
-        modified:   index.html
-
-Untracked files:
-  (use "git add <file>..." to include in what will be committed)
-        new-file.txt
-
-no changes added to commit (use "git add" and/or "git commit -a")
-```
-
-- **`On branch main`**: Indicates you are currently on the 'main' branch.
-- **`Changes not staged for commit`**: Lists files that have been modified but not yet staged with `git add`.
-- **`Untracked files`**: Lists files in your working directory that Git is not currently tracking.
-
-**Concise Output with `-s` (short format)**: For a cleaner, more compact output, use the `-s` flag:
+### 1. Checking Workspace Status (`git status`)
 
 ```bash
+# Detailed status
+git status
+
+# Concise short status (ideal for scripting and terminal prompts)
 git status -s
-# Output example:
-#  M index.html
-# ?? new-file.txt
 ```
 
-- `M`: Modified (staged or unstaged)
-- `??`: Untracked file
-- `A`: Added (staged)
-- `D`: Deleted (staged or unstaged)
-
-## `git add`
-
-**Action**: **Stage changes** to prepare them for the next commit. Staging is the step between making changes in your working directory and actually committing those changes to the repository history.
-
-### Common Use Cases:
-
-```bash
-git add .                 # Stage all changes in the current directory and subdirectories
-git add file1.js          # Stage changes in a specific file (file1.js)
-git add *.css             # Stage changes in all files with the .css extension
-git add directory/        # Stage all changes within 'directory/'
+In short format (`-s`), the first column indicates the Staging Area state; the second column indicates the Working Directory state:
+```plaintext
+ M README.md     # Modified and STAGED in Index
+M  src/main.c    # Modified in Working Tree, NOT staged
+MM styles.css    # Modified, staged, then modified AGAIN in Working Tree
+A  config.json   # Newly Added and staged
+?? notes.txt     # Untracked file
 ```
 
-**Watch Out! Key Differences in `git add` behavior**:
+### 2. Inspecting Project History (`git log`)
 
-- **`git add .` (Stage all)**: This command stages _all_ changes in your current directory and all subdirectories. This includes new files, modified files, and deleted files. It's convenient but use with caution to avoid accidentally staging files you didn't intend to commit (e.g., temporary files or build artifacts).
-- **`git add -u` (Stage modified and deleted, but NOT new)**: This command stages only modifications and deletions of files that Git is already tracking. It will _not_ stage new, untracked files. This is useful when you only want to update existing files and not add new ones in a commit. To add new files, you still need to use `git add <new_file>` or `git add .`.
-
-## `git commit`
-
-**Action**: **Save staged changes** to your local repository with a descriptive message. This creates a new commit, which is a snapshot of your project at that specific point in time.
-
-### Best Practices for Effective Commits:
-
-- **Atomic Commits**: Create commits that are atomic, meaning each commit should represent a single, logical change or idea. This makes it easier to understand the history and revert changes if needed. Avoid bundling unrelated changes into one commit.
-- **Conventional Commits Style**: Follow the [Conventional Commits](https://www.conventionalcommits.org/) specification for writing commit messages. This provides a standardized format that improves readability and automation. Common commit types include:
-  - `feat`: For new features.
-  - `fix`: For bug fixes.
-  - `docs`: For documentation changes.
-  - `style`: For code style changes (formatting, etc.).
-  - `refactor`: For code refactoring (no feature or bug fix).
-  - `test`: For changes related to tests.
-  - `chore`: For build process or tooling changes.
-
-  **Examples of Conventional Commit Messages**:
-
-  ```bash
-  git commit -m "feat: add dark mode toggle"
-  git commit -m "fix: resolve login button crash on mobile"
-  git commit -m "docs: update README with installation instructions"
-  ```
-
-## `git push`
-
-**Action**: **Upload local commits** from your current branch to a remote repository. This shares your work with collaborators and backs up your changes remotely.
-
-### First Time Push? Set Upstream Branch:
-
-When you push a local branch to a remote repository for the first time, establish a tracking connection by using the `-u` flag. This links your local branch to a corresponding remote branch, simplifying future pushes and pulls.
+A default `git log` can be verbose and hard to follow across multiple branches. Production teams configure clean graph aliases:
 
 ```bash
-git push -u origin main
-# Sets up tracking for local 'main' branch to 'origin/main'
+# Pretty one-line history with branch pointers and ASCII merge graph
+git log --oneline --graph --decorate --all -n 15
 ```
 
-- After the upstream is set, you can simply use `git push` for subsequent pushes from the same branch.
-
-### Handling Rejected Push (Remote Changes Present):
-
-If your `git push` is rejected because the remote repository has changes you don't have locally, you need to synchronize your local repository first. Use `git pull --rebase` to fetch and integrate remote changes before pushing again:
-
+Useful filtering flags:
 ```bash
-git pull --rebase origin main  # Fetch remote changes and reapply local commits on top
-git push                      # Now push your changes
+# View commits that touched a specific file
+git log -p src/packet_parser.c
+
+# View commits authored by a specific developer
+git log --author="Alice" --oneline
+
+# View commits made within the last week
+git log --since="1 week ago" --oneline
+
+# Search commit messages for specific keywords
+git log --grep="memory leak" --oneline
 ```
 
-- `git pull --rebase` is generally preferred over `git pull` (which is equivalent to `git fetch` + `git merge`) as it keeps the commit history cleaner and linear.
-
-## `git fetch`
-
-**Action**: **Download remote changes** from a remote repository to your local repository, _without_ automatically merging them into your working branch. This allows you to review remote changes before integrating them.
+### 3. Comparing Changes with `git diff`
 
 ```bash
-git fetch origin  # Fetches updates from the 'origin' remote
-# Output:
-# remote: Enumerating objects: ..., done.
-# remote: Counting objects: ..., done.
-# ...
-# From https://github.com/user/repo
-#  * branch            main       -> FETCH_HEAD
+# Unstaged working directory changes vs. Staging Area
+git diff
+
+# Staged changes vs. HEAD commit (What will be committed next)
+git diff --staged
+
+# Differences between two distinct branches
+git diff main..feature/auth
+
+# Summarize files changed without displaying full patches
+git diff --stat HEAD~3 HEAD
 ```
 
-- `git fetch origin` downloads the latest commits, branches, and tags from the `origin` remote. These changes are stored in your local repository as remote-tracking branches (e.g., `origin/main`) but do not modify your local working branches.
+---
 
-### Review Fetched Changes:
+## Staging and Committing Workflows
 
-After fetching, you can inspect the changes using `git log` to see what's new in the remote branch without altering your local branch:
+### Interactive Staging (`git add -p`)
+
+Often, you make multiple edits in a single file that belong to different logical features or bug fixes. Staging the whole file with `git add <file>` creates bloated, non-atomic commits.
+
+Use patch mode (`-p`) to review and stage changes hunk by hunk:
 
 ```bash
-git log origin/main --oneline  # View a concise commit history of 'origin/main'
+git add -p src/controller.c
 ```
 
-### `git fetch` vs `git pull`: Understanding the Difference
+Git presents each modified hunk with interactive prompt options:
+- `y`: Stage this hunk.
+- `n`: Do not stage this hunk.
+- `q`: Quit; do not stage this hunk or any remaining hunks.
+- `s`: Split the current hunk into smaller sub-hunks.
+- `e`: Manually edit the hunk in your text editor.
 
-- **`git fetch`**: Downloads remote changes but keeps them separate. You need to explicitly merge them. This is a safer workflow as you can review changes before integrating.
-- **`git pull`**: A convenience command that combines `git fetch` and `git merge`. It automatically fetches remote changes and then immediately merges them into your current branch. While quicker, it can lead to unexpected merge conflicts if you haven't reviewed the remote changes first.
-
-**Recommendation**: For a more controlled workflow, especially in collaborative projects, prefer using `git fetch` to review remote changes, and then use `git merge` to integrate them when you are ready.
-
-## `git pull`
-
-**Action**: **Synchronize your local branch** with the remote branch. This command fetches changes from the remote repository and automatically merges them into your current local branch.
+### Crafting Commits
 
 ```bash
-git pull origin main
-# Fetches changes from 'origin/main' and merges into your current branch
-# Output (if successful merge):
-# From https://github.com/user/repo
-#  * branch            main       -> FETCH_HEAD
-# Updating ...
-# ...
-#  ... files changed, ... insertions(+), ... deletions(-)
+# Commit staged changes with an inline message
+git commit -m "feat(uart): support baud rate configuration up to 921600"
+
+# Open editor to write a multi-line commit message while viewing the staged diff
+git commit -v
+
+# Amend the most recent commit (add newly staged files or fix the message)
+git commit --amend --no-edit
 ```
 
-**Conflict Alert: Resolving Merge Conflicts Manually**
+> [!WARNING]
+> Only use `git commit --amend` on commits that exist strictly on your local machine. Amending rewrites the commit hash. If the commit has already been pushed to a shared remote repository, amending it requires a force push and will disrupt your teammates' local branches.
 
-If the remote repository has changes that conflict with your local changes (e.g., both you and someone else modified the same lines of code), `git pull` will result in a merge conflict. Git will pause the merge process and ask you to resolve these conflicts manually.
+---
 
-- **Identify Conflicting Files**: Git will indicate files with conflicts in the `git status` output.
-- **Resolve Conflicts**: Open the conflicting files in a text editor. Look for conflict markers (`<<<<<<<`, `=======`, `>>>>>>>`) inserted by Git. Edit the file to resolve the conflicts, choosing which changes to keep or combining them. Remove the conflict markers after resolution.
-- **Stage Resolved Files**: After resolving conflicts in a file, stage it using `git add <resolved_file>`.
-- **Complete the Merge**: Once all conflicts are resolved and staged, finalize the merge with `git commit`. Git will usually pre-populate a commit message for a merge commit.
+## Undoing Changes and Rollback Strategies
 
-## `git checkout`
+Choosing the correct undo command depends entirely on whether changes are unstaged, staged, or already committed:
 
-**Action**: **Switch branches** or **restore files** to a previous state. `git checkout` is a versatile command used for branch management and undoing changes.
-
-### Switching and Creating Branches:
-
-- **Switch to an Existing Branch**: To switch from your current branch to another existing branch (e.g., `main`):
-
-  ```bash
-  git checkout main  # Switch to the 'main' branch
-  # Output: Switched to branch 'main'
-  #        Your branch is up to date with 'origin/main'.
-  ```
-
-- **Create and Switch to a New Branch**: To create a new branch and immediately switch to it, use the `-b` flag followed by the new branch name:
-
-  ```bash
-  git checkout -b new-feature  # Create a branch named 'new-feature' and switch to it
-  # Output: Switched to a new branch 'new-feature'
-  ```
-
-### Undoing Changes to a File:
-
-To discard local changes in a specific file and revert it to the version from the last commit (in `HEAD`):
-
+### 1. Discarding Unstaged Local Modifications
 ```bash
-git checkout HEAD -- style.css  # Revert 'style.css' to the version in the last commit
-# Output: Updated 1 path from the index
+# Revert a specific file back to the staged or HEAD state
+git restore path/to/file.c
+
+# Discard all unstaged changes across the entire working tree
+git restore .
 ```
 
-- This is useful for discarding unwanted local modifications in a file and resetting it to its committed state. Be careful, as this action is irreversible and will discard your local changes.
+### 2. Unstaging Files from the Index
+```bash
+# Remove a file from the staging area without losing your edits
+git restore --staged path/to/file.c
+```
 
-## `git log`
-
-**Action**: **View commit history**. `git log` displays a history of commits in your repository, allowing you to review past changes, commit messages, authors, and dates.
-
-### Handy Flags for `git log`:
-
-- **`--oneline`**: Displays commit history in a compact, single-line format, showing only the commit SHA and the first line of the commit message.
-
-  ```bash
-  git log --oneline
-  # Output example:
-  # a1b2c3d (HEAD -> main, origin/main) feat: add dark mode toggle
-  # e5f6g7h fix: resolve login button crash
-  # ...
-  ```
-
-- **`-p` or `--patch`**: Shows the detailed changes (patches) introduced in each commit, displaying the line-by-line additions and deletions.
-
-  ```bash
-  git log -p -2 # Show patches for the last 2 commits
-  ```
-
-- **`--graph --decorate --oneline`**: Visualizes the branch and merge history in a graphical format, along with branch and tag decorations, in a compact one-line format.
-
-  ```bash
-  git log --graph --decorate --oneline --all
-  # Output (example):
-  # * a1b2c3d (HEAD -> main, origin/main) feat: add dark mode toggle
-  # |
-  # * e5f6g7h fix: resolve login button crash
-  # | * i8j9k0l (feature/new-ui) feat: implement new UI components
-  # |/
-  # * ...
-  ```
-
-- **`-<n>`**: Limit the number of commits displayed to the last `<n>` commits. For example, `-2` shows the last two commits.
-
-  ```bash
-  git log -2
-  ```
-
-## `git diff`
-
-**Action**: **Show differences between commits, branches, working directory, and staging area**. `git diff` is used to inspect changes at various stages of your Git workflow.
-
-### Common `git diff` Use Cases:
-
-- **`git diff` (Working Directory Changes)**: Shows the differences between your working directory and the staging area. This displays unstaged changes – modifications you've made but haven't yet added with `git add`.
-
-  ```bash
-  git diff # Shows unstaged changes
-  ```
-
-- **`git diff --staged` (Staged Changes)**: Shows the differences between the staging area and the last commit (`HEAD`). This displays changes that are staged and ready to be committed.
-
-  ```bash
-  git diff --staged # Shows staged changes
-  ```
-
-- **`git diff <commit> <commit>` (Compare Commits)**: Compares two commits and shows the changes introduced between them. You can use commit SHAs, branch names, or tags to specify commits. `HEAD~3` refers to the commit that was made 3 commits before the current `HEAD`.
-
-  ```bash
-  git diff HEAD~3 HEAD  # Compare changes between the commit 3 commits ago and the latest commit
-  ```
-
-## `git reset`
-
-**Action**: **Undo commits or unstage files**. `git reset` is a powerful command to undo changes in your repository, but it should be used with caution, especially the `--hard` option, as it can lead to data loss.
-
-### Soft Reset (`--soft`) - Undo Commit, Keep Changes:
+### 3. Undoing Local Commits with `git reset`
 
 ```bash
+# Soft Reset: Moves branch pointer back 1 commit; keeps changes staged
+# (Perfect for splitting a commit or rewriting the commit message)
 git reset --soft HEAD~1
-# Undoes the last commit, but keeps the changes in the staging area
+
+# Mixed Reset (Default): Moves branch back 1 commit; unstages changes
+# (Changes remain safe in your working directory)
+git reset --mixed HEAD~1
+
+# Hard Reset: Completely erases the last commit, index, and working tree!
+# (Dangerous: uncommitted work cannot be recovered)
+git reset --hard HEAD~1
 ```
 
-- `--soft HEAD~1` moves the branch pointer back by one commit (effectively undoing the last commit), but it leaves the changes from that commit staged. This is useful if you want to modify the last commit message or make further changes before recommitting.
+### 4. Safe Public History Rollbacks with `git revert`
 
-### Hard Reset (`--hard`) - DANGER! - Discard Commits and Changes:
+When a faulty commit has already been pushed to a shared production branch (`main`), **never use `git reset`**. Instead, use `git revert`:
 
 ```bash
-git reset --hard HEAD~3
-# WARNING: Discards the last 3 commits AND all changes in the working directory!
+git revert a82c09
 ```
 
-- `--hard HEAD~3` is a **destructive command**. It moves the branch pointer back by three commits, and critically, it **permanently deletes** all changes in the working directory and staging area _from those commits onwards_. Use `--hard` reset only when you are absolutely sure you want to discard commits and all associated changes. **This action is generally irreversible and should be used with extreme caution.**
+`git revert` does not delete history. It analyzes the target commit and automatically synthesizes a brand-new commit that applies the exact inverse changes (deleting added lines and restoring deleted lines). This safely fixes the problem while preserving a complete, transparent audit trail.
 
-## `git stash`
+---
 
-**Action**: **Temporarily shelve changes** that you don't want to commit immediately. `git stash` is useful when you need to switch branches to work on something else, but you're not ready to commit your current changes. It saves your uncommitted changes and reverts your working directory to a clean state.
+## The Stashing Mechanism
+
+During software development, urgent tasks frequently interrupt active work. For example, while halfway through an uncommitted feature, you must suddenly switch branches to fix a critical production bug.
+
+`git stash` allows you to shelve dirty working modifications onto a local Last-In, First-Out (LIFO) stack and restore your workspace to a pristine `HEAD` state.
+
+![Git Stash Stack Lifecycle](images/ch4_git_stash_stack_lifecycle.svg)
+
+### Essential Stash Commands
 
 ```bash
-git stash  # Saves your uncommitted changes to a new stash
-# Output: Saved working directory and index state WIP on main: ...
-#         HEAD is now at ... <commit message>
+# 1. Stash changes with a clear descriptive label
+git stash push -m "WIP: halfway through SPI DMA descriptor logic"
+
+# Include untracked new files in the stash
+git stash push -u -m "WIP: including new testbench headers"
+
+# 2. View all stashed entries
+git stash list
+# Output:
+# stash@{0}: On main: WIP: halfway through SPI DMA descriptor logic
+# stash@{1}: On feature/uart: experimental baud clock fix
+
+# 3. Inspect the contents of a stash before applying
+git stash show -p stash@{0}
+
+# 4. Reapply the latest stash and REMOVE it from the stash stack
+git stash pop
+
+# Or reapply the stash while KEEPING it safely in the stash list
+git stash apply stash@{0}
+
+# 5. Extract a stash directly into a brand-new branch (avoids conflicts)
+git stash branch feature/resumed-spi-work stash@{0}
+
+# 6. Delete a specific stash or clear all stashes
+git stash drop stash@{0}
+git stash clear
 ```
 
-### Common `git stash` Workflow:
+---
 
-1.  **Stash Changes**: When you need to switch context but aren't ready to commit:
+## Remote Collaboration Commands
 
-    ```bash
-    git stash
-    ```
+### `git fetch` vs. `git pull`
 
-2.  **List Stashes**: To see a list of your saved stashes:
+A frequent point of confusion is the difference between fetching and pulling:
 
-    ```bash
-    git stash list
-    # Output example:
-    # stash@{0}: WIP on main: ... Commit message of when stash was created
-    # stash@{1}: WIP on feature-branch: ... Another stash
-    ```
+- **`git fetch origin`**: Connects to the remote repository, downloads all new objects, and updates your remote tracking branches (`origin/main`, `origin/feature`). It **does not alter your working directory or local branches**. It is completely non-destructive and safe to run at any time.
+- **`git pull origin main`**: A composite command that runs `git fetch` followed immediately by `git merge origin/main` (or `git rebase` if configured). It directly alters your active working directory.
 
-3.  **Apply and Delete the Most Recent Stash**: To bring back your stashed changes and remove the stash from the stash list, use `git stash pop`:
+### Safe Pushing with `--force-with-lease`
 
-    ```bash
-    git stash pop
-    # Output: On branch main
-    #         Changes to be committed:
-    #         ... staged changes from stash ...
-    #         Changes not staged for commit:
-    #         ... unstaged changes from stash ...
-    #         Dropped refs/stash@{0} ... (message about dropped stash)
-    ```
-
-    - `git stash pop` applies the changes from the most recent stash and then removes that stash from the stash list.
-
-### Scenario Example: Handling Urgent Fixes
-
-Imagine you are working on a feature on your `main` branch, and suddenly an urgent bug fix is needed on a `hotfix-branch`. Here’s how `git stash` can help:
+When working on a personal feature branch where you rebased or amended a commit, you must push rewritten history to your remote fork:
 
 ```bash
-# You are working on 'main' branch with uncommitted changes
-# ... working on main branch ...
+# DANGEROUS: Blindly overwrites remote branch regardless of teammates' work
+git push --force origin feature/my-branch
 
-git stash                  # Stash your current changes on 'main'
-# Output: Saved working directory and index state ...
-
-git checkout hotfix-branch  # Switch to 'hotfix-branch'
-# Output: Switched to branch 'hotfix-branch'
-
-# Fix the urgent bug on 'hotfix-branch'
-# ... fix bug ...
-git add .
-git commit -m "fix: urgent bug fix for ..."
-git push origin hotfix-branch
-
-git checkout main         # Switch back to 'main' branch
-# Output: Switched to branch 'main'
-
-git stash pop             # Reapply your stashed changes back onto 'main'
-# Output: On branch main
-#         ... your stashed changes are now back in your working directory ...
+# SAFE: Only forces push if no one else has pushed new commits since your last fetch
+git push --force-with-lease origin feature/my-branch
 ```
 
-This workflow allows you to quickly switch to a hotfix branch, resolve an urgent issue, and then return to your original task on the `main` branch without losing your work in progress.
+> [!IMPORTANT]
+> `--force-with-lease` acts as a safety check. If a teammate pushed a commit to the remote branch that you have not yet fetched, `--force-with-lease` will reject your push, preventing accidental destruction of their work.
 
-### **Essential Git Commands: Quick Reference**
+---
 
-| Command                     | Action                                                                     |
-| :-------------------------- | :------------------------------------------------------------------------- |
-| `git init`                  | Initialize a new Git repository in the current directory                   |
-| `git clone <URL>`           | Copy a remote repository to your local machine                             |
-| `git status`                | Show the status of your working directory and staging area                 |
-| `git add <file(s)>`         | Stage changes for the next commit                                          |
-| `git commit -m "<message>"` | Save staged changes to your local repository with a message                |
-| `git push`                  | Upload local commits to a remote repository                                |
-| `git pull`                  | Download and merge remote changes into your current local branch           |
-| `git fetch`                 | Download remote changes without merging                                    |
-| `git checkout <branch>`     | Switch to a different branch                                               |
-| `git checkout -b <branch>`  | Create a new branch and switch to it                                       |
-| `git log --oneline`         | View commit history in a compact format                                    |
-| `git diff`                  | Show changes between working directory and staging area (unstaged changes) |
-| `git diff --staged`         | Show changes between staging area and the last commit (staged changes)     |
-| `git reset --soft HEAD~1`   | Undo the last commit but keep changes staged                               |
-| `git reset --hard HEAD~<n>` | **Danger**: Discard last `<n>` commits and all changes!                    |
-| `git stash`                 | Temporarily save uncommitted changes                                       |
-| `git stash list`            | List all saved stashes                                                     |
-| `git stash pop`             | Apply and remove the most recent stash                                     |
+## Command Reference Cheat Sheet
+
+| Task | Command |
+| :--- | :--- |
+| **Inspect Staged / Unstaged Status** | `git status -s` |
+| **Visual ASCII Commit Graph** | `git log --oneline --graph --decorate --all` |
+| **Stage Changes Interactively** | `git add -p` |
+| **Amend Last Local Commit** | `git commit --amend --no-edit` |
+| **Discard Unstaged File Edits** | `git restore <file>` |
+| **Unstage a Staged File** | `git restore --staged <file>` |
+| **Undo Commit (Keep Staged)** | `git reset --soft HEAD~1` |
+| **Invert Public Commit** | `git revert <commit-hash>` |
+| **Shelve Dirty Work with Label** | `git stash push -u -m "note"` |
+| **Restore Shelved Work** | `git stash pop` |
+| **Download Remote Updates Only** | `git fetch origin` |
+| **Safely Force Push Personal Branch** | `git push --force-with-lease origin <branch>` |
+
+---
+
+## Practical Exercises
+
+1. Create a repository and configure a custom alias for graphical logging:
+   ```bash
+   git config --global alias.graph "log --oneline --graph --decorate --all"
+   ```
+   Test `git graph` across multiple commits.
+2. Edit two different sections of a file. Use `git add -p` to stage only the first section into the Index. Run `git diff` and `git diff --staged` to verify that only that section was staged.
+3. Make a commit, then run `git reset --soft HEAD~1`. Run `git status` to verify that your changes remain staged. Re-commit using `git commit -m "..."`.
+4. Introduce uncommitted edits in your working directory. Run `git stash push -m "test stash"`, confirm with `git status` that your tree is clean, and then restore your edits using `git stash pop`.
 
 ##### Copyright (c) 2026 squared-studio

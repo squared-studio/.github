@@ -1,60 +1,61 @@
 # git
 ## 1. [Introduction to Git](git/chapter_00001.md)
-  - Understanding Git
-  - Why Git is the Industry Standard
+  - Learning Goals
+  - Demystifying Version Control
+  - Git Architecture
   - Installing Git on Your System
-  - Next Steps After Installation
+  - First-Time Configuration & Identity Setup
+  - Common Pitfalls and Best Practices
+  - Practical Exercises
 ## 2. [Getting Started with Git](git/chapter_00002.md)
-  - Creating a New Git Repository via Command Line Interface (CLI)
-  - Creating a New Repository via GitHub Website
-  - Cloning a Git Repository
-  - Creating a New Git Repository via Command Line Interface (CLI)
-  - Creating a New Repository via GitHub Website
-  - Cloning a Git Repository
-## 3. [Core Git Concepts Explained](git/chapter_00003.md)
-  - Branch
-  - Commit
-  - Issue
-  - Push
-  - Pull
-  - Pull Request (PR)
+  - Learning Goals
+  - Initializing a Local Repository
+  - Linking Local Repositories to Remote Hosts
+  - Cloning Existing Repositories
+  - Provisioning via GitHub Web & CLI
+  - Best Practices for Repository Initialization
+  - Practical Exercises
+## 3. [Core Git Concepts and Internals Explained](git/chapter_00003.md)
+  - Learning Goals
+  - The Git Object Model & Content-Addressable Storage
+  - Pointers, Branches, and References
+  - Issues, Milestones, and Pull Request (PR) Lifecycle
+  - Best Practices for Branches and Commits
+  - Practical Exercises
 ## 4. [Essential Git Commands](git/chapter_00004.md)
-  - git init
-  - git clone
-  - git status
-  - git add
-  - git commit
-  - git push
-  - git fetch
-  - git pull
-  - git checkout
-  - git log
-  - git diff
-  - git reset
-  - git stash
+  - Learning Goals
+  - The Porcelain Command Navigation Matrix
+  - Status, History, and Inspection Commands
+  - Staging and Committing Workflows
+  - Undoing Changes and Rollback Strategies
+  - The Stashing Mechanism
+  - Remote Collaboration Commands
+  - Command Reference Cheat Sheet
+  - Practical Exercises
 ## 5. [Mastering Git Merge Conflicts](git/chapter_00005.md)
-  - Understanding the Root Causes of Merge Conflicts
-  - Identifying Merge Conflicts
-  - Step-by-Step Guide to Resolving Merge Conflicts
-  - Pro Conflict Resolution Toolkit
-  - Real-World Scenario
-  - Merge Conflict Resolution Cheat Sheet
-  - Wisdom Nuggets for Conflict Wrangling
-## 6. [Git Workflow Guide](git/chapter_00006.md)
-  - Basic Git Workflow (Team Collaboration)
-  - Advanced Workflow (Open-Source Contribution)
-  - Workflow Comparison
-  - Best Practices for Both Workflows
-  - Common Pitfalls & Solutions
-  - Workflow Cheat Sheet
+  - Learning Goals
+  - Why Merge Conflicts Occur
+  - Merge Algorithms
+  - Anatomy of Conflict Markers and Diff3
+  - Step-by-Step Conflict Resolution Workflow
+  - The Pro Conflict Resolution Toolkit
+  - Practical Exercises
+## 6. [Git Workflows and Collaboration Models](git/chapter_00006.md)
+  - Learning Goals
+  - Architectural Comparison of Branching Models
+  - The Open-Source Fork and Pull Request Model
+  - Code Review, CI/CD, and Merge Strategies
+  - Workflow Pitfalls and Anti-Patterns
+  - Practical Exercises
 ## 7. [Level Up Your Git Skills](git/chapter_00007.md)
-  - Craft Commit Messages That Shine
-  - Branch Like a Git Guru
-  - Stay Synced Upstream
-  - Review Code Before It Lands
-  - Keep Your Repo Tidy
-  - Go the Extra Mile
-  - Bonus Git Power-Ups
+  - Learning Goals
+  - Rewriting History
+  - Selective Commit Transplantation
+  - Automated Binary Search Debugging
+  - Disaster Recovery and The Git Reflog Safety Net
+  - Repository Hygiene, Git LFS, and Automation Hooks
+  - Pro Engineering Best Practices Checklist
+  - Practical Exercises
 
 ##### Copyright (c) 2026 squared-studio
 

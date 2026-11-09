@@ -1,0 +1,148 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 490" width="100%" height="100%">
+  <defs>
+    <style>
+      .bg { fill: #080c14; }
+      .title { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 20px; fill: #f8fafc; }
+      .subtitle { font-family: 'Inter', system-ui, sans-serif; font-size: 13px; fill: #94a3b8; }
+      .panel { fill: #0f172a; stroke-width: 1.5; rx: 8; }
+      .txt-hdr { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 14px; }
+      .txt-sub { font-family: 'Inter', system-ui, sans-serif; font-size: 11px; fill: #94a3b8; }
+      .txt-body { font-family: 'Inter', system-ui, sans-serif; font-size: 11px; fill: #cbd5e1; }
+      .cmd-code { font-family: 'JetBrains Mono', Consolas, monospace; font-size: 11px; font-weight: 700; }
+      .stack-entry { fill: #131d33; stroke: #334155; stroke-width: 1.2; rx: 6; }
+      .edge { stroke: #38bdf8; stroke-width: 2; fill: none; }
+      .edge-pop { stroke: #34d399; stroke-width: 2; stroke-dasharray: 4,4; fill: none; }
+    </style>
+    <marker id="arr-blue" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8" />
+    </marker>
+    <marker id="arr-green" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#34d399" />
+    </marker>
+  </defs>
+
+  <rect width="960" height="490" class="bg" rx="14"/>
+
+  <!-- Title & Subtitle -->
+  <text x="480" y="32" text-anchor="middle" class="title">Git Stash Architecture: The LIFO Working State Shelf</text>
+  <text x="480" y="52" text-anchor="middle" class="subtitle">Temporarily shelve dirty uncommitted modifications without polluting commit history</text>
+
+  <!-- Left: Dirty Working State (x=40, y=75, w=260, h=300) -->
+  <g transform="translate(40, 75)">
+    <rect x="0" y="0" width="260" height="300" class="panel" style="stroke:#f59e0b; fill:#141724;"/>
+    <text x="130" y="26" text-anchor="middle" class="txt-hdr" style="fill:#f59e0b;">1. Active Dirty State</text>
+    <text x="130" y="44" text-anchor="middle" class="txt-sub">Uncommitted WIP in progress</text>
+
+    <!-- Staged Card -->
+    <g transform="translate(15, 60)">
+      <rect x="0" y="0" width="230" height="60" rx="4" fill="#0f1c30" stroke="#38bdf8" stroke-width="1"/>
+      <text x="12" y="22" class="cmd-code" style="fill:#38bdf8;">Staged Changes (Index)</text>
+      <text x="12" y="42" class="txt-sub">Ready to be committed</text>
+    </g>
+
+    <!-- Unstaged Card -->
+    <g transform="translate(15, 130)">
+      <rect x="0" y="0" width="230" height="60" rx="4" fill="#1e1810" stroke="#f59e0b" stroke-width="1"/>
+      <text x="12" y="22" class="cmd-code" style="fill:#fcd34d;">Unstaged Modifications</text>
+      <text x="12" y="42" class="txt-sub">Half-finished feature code</text>
+    </g>
+
+    <!-- Clean Tree State After Stash -->
+    <g transform="translate(15, 205)">
+      <rect x="0" y="0" width="230" height="75" rx="4" fill="#091c18" stroke="#34d399" stroke-width="1"/>
+      <text x="12" y="22" class="cmd-code" style="fill:#34d399;">After Stash: Clean Tree</text>
+      <text x="12" y="42" class="txt-sub">Matches clean HEAD commit.</text>
+      <text x="12" y="60" class="txt-body" style="font-size:10px; fill:#a7f3d0;">Ready to switch branches / hotfix</text>
+    </g>
+  </g>
+
+  <!-- Push Action Arrow (Left -> Center) -->
+  <path d="M 300 135 L 350 135" class="edge" marker-end="url(#arr-blue)"/>
+  <g transform="translate(290, 100)">
+    <rect x="0" y="0" width="80" height="24" rx="4" fill="#0c2540" stroke="#38bdf8" stroke-width="1"/>
+    <text x="40" y="16" text-anchor="middle" class="cmd-code" style="fill:#38bdf8; font-size:10px;">stash push</text>
+  </g>
+
+  <!-- Center: The Stash Stack (x=360, y=75, w=270, h=300) -->
+  <g transform="translate(360, 75)">
+    <rect x="0" y="0" width="270" height="300" class="panel" style="stroke:#38bdf8; fill:#0b192e;"/>
+    <text x="135" y="26" text-anchor="middle" class="txt-hdr" style="fill:#38bdf8;">2. The Stash Stack (LIFO)</text>
+    <text x="135" y="44" text-anchor="middle" class="txt-sub">Stored in refs/stash DAG objects</text>
+
+    <!-- Stash Entry 0 (Top of Stack) -->
+    <g transform="translate(15, 60)">
+      <rect x="0" y="0" width="240" height="65" class="stack-entry" style="stroke:#38bdf8; fill:#132845;"/>
+      <text x="12" y="22" class="cmd-code" style="fill:#7dd3fc;">stash@{0} (Latest)</text>
+      <text x="12" y="40" class="txt-body" style="font-size:10px;">WIP on feat-auth: half login UI</text>
+      <text x="12" y="55" class="txt-sub" style="font-size:9px;">Created 10 mins ago</text>
+    </g>
+
+    <!-- Stash Entry 1 -->
+    <g transform="translate(15, 135)">
+      <rect x="0" y="0" width="240" height="65" class="stack-entry"/>
+      <text x="12" y="22" class="cmd-code" style="fill:#cbd5e1;">stash@{1}</text>
+      <text x="12" y="40" class="txt-body" style="font-size:10px;">On main: experiment with async</text>
+      <text x="12" y="55" class="txt-sub" style="font-size:9px;">Created 2 hours ago</text>
+    </g>
+
+    <!-- Stash Entry 2 -->
+    <g transform="translate(15, 210)">
+      <rect x="0" y="0" width="240" height="65" class="stack-entry"/>
+      <text x="12" y="22" class="cmd-code" style="fill:#94a3b8;">stash@{2}</text>
+      <text x="12" y="40" class="txt-body" style="font-size:10px;">On bugfix-404: rough patch</text>
+      <text x="12" y="55" class="txt-sub" style="font-size:9px;">Created yesterday</text>
+    </g>
+  </g>
+
+  <!-- Restore Action Arrow (Center -> Right) -->
+  <path d="M 630 135 L 680 135" class="edge-pop" marker-end="url(#arr-green)"/>
+  <g transform="translate(625, 100)">
+    <rect x="0" y="0" width="70" height="24" rx="4" fill="#09291f" stroke="#34d399" stroke-width="1"/>
+    <text x="35" y="16" text-anchor="middle" class="cmd-code" style="fill:#34d399; font-size:10px;">stash pop</text>
+  </g>
+
+  <!-- Right: Restoration & Lifecycle Operations (x=690, y=75, w=230, h=300) -->
+  <g transform="translate(690, 75)">
+    <rect x="0" y="0" width="230" height="300" class="panel" style="stroke:#34d399; fill:#0c1e19;"/>
+    <text x="115" y="26" text-anchor="middle" class="txt-hdr" style="fill:#34d399;">3. Restore &amp; Drop</text>
+    <text x="115" y="44" text-anchor="middle" class="txt-sub">Reapplying shelved changes</text>
+
+    <!-- Pop vs Apply -->
+    <g transform="translate(15, 60)">
+      <text x="0" y="16" class="cmd-code" style="fill:#6ee7b7;">git stash pop</text>
+      <text x="0" y="32" class="txt-sub">Restores changes &amp; deletes</text>
+      <text x="0" y="46" class="txt-sub">stash@{0} from stack.</text>
+    </g>
+
+    <g transform="translate(15, 125)">
+      <text x="0" y="16" class="cmd-code" style="fill:#38bdf8;">git stash apply</text>
+      <text x="0" y="32" class="txt-sub">Restores changes but keeps</text>
+      <text x="0" y="46" class="txt-sub">stash entry in the list.</text>
+    </g>
+
+    <g transform="translate(15, 190)">
+      <text x="0" y="16" class="cmd-code" style="fill:#a855f7;">git stash branch &lt;name&gt;</text>
+      <text x="0" y="32" class="txt-sub">Creates brand-new branch</text>
+      <text x="0" y="46" class="txt-sub">and pops stash onto it.</text>
+    </g>
+
+    <g transform="translate(15, 250)">
+      <text x="0" y="16" class="cmd-code" style="fill:#f43f5e;">git stash drop / clear</text>
+      <text x="0" y="32" class="txt-sub">Deletes specific entry or all</text>
+    </g>
+  </g>
+
+  <!-- Bottom Command Matrix (y=390, h=85) -->
+  <g transform="translate(40, 390)">
+    <rect x="0" y="0" width="880" height="85" class="panel" style="stroke:#334155; fill:#0b1120;"/>
+    <text x="20" y="24" class="txt-hdr" style="fill:#f8fafc; font-size:12px;">Stash Inspection &amp; Include Untracked Power Options:</text>
+
+    <g transform="translate(20, 36)">
+      <text x="0" y="16" class="cmd-code" style="fill:#fbbf24;">git stash push -u -m "My notes"</text>
+      <text x="250" y="16" class="txt-body">: The -u (--include-untracked) flag stashes newly created files as well as tracked ones.</text>
+
+      <text x="0" y="38" class="cmd-code" style="fill:#38bdf8;">git stash show -p stash@{0}</text>
+      <text x="250" y="38" class="txt-body">: View the full patch diff inside a stash entry before deciding whether to restore or drop.</text>
+    </g>
+  </g>
+</svg>

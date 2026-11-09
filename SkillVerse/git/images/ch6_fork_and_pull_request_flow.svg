@@ -1,0 +1,104 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 510" width="100%" height="100%">
+  <defs>
+    <style>
+      .bg { fill: #080c14; }
+      .title { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 20px; fill: #f8fafc; }
+      .subtitle { font-family: 'Inter', system-ui, sans-serif; font-size: 13px; fill: #94a3b8; }
+      .repo-card { fill: #0f172a; stroke-width: 2; rx: 10; }
+      .txt-title { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 14px; }
+      .txt-sub { font-family: 'Inter', system-ui, sans-serif; font-size: 11px; fill: #94a3b8; }
+      .cmd-txt { font-family: 'JetBrains Mono', Consolas, monospace; font-size: 11px; font-weight: 700; }
+      .step-pill { fill: #1e293b; stroke: #334155; stroke-width: 1; rx: 5; }
+      .edge { stroke-width: 2; fill: none; }
+    </style>
+    <marker id="arr-blue" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8" />
+    </marker>
+    <marker id="arr-green" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#34d399" />
+    </marker>
+    <marker id="arr-amber" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#f59e0b" />
+    </marker>
+    <marker id="arr-purple" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#a855f7" />
+    </marker>
+  </defs>
+
+  <rect width="960" height="510" class="bg" rx="14"/>
+
+  <!-- Title & Subtitle -->
+  <text x="480" y="32" text-anchor="middle" class="title">Open-Source Collaboration: Fork &amp; Pull Request Architecture</text>
+  <text x="480" y="52" text-anchor="middle" class="subtitle">Complete synchronization triangle between Upstream Canonical, Personal Fork, and Local Workstation</text>
+
+  <!-- 1. Top Left: Upstream Canonical Repository (x=60, y=85, w=380, h=110) -->
+  <g transform="translate(60, 85)">
+    <rect x="0" y="0" width="380" height="110" class="repo-card" style="stroke: #f59e0b; fill: #161824;"/>
+    <text x="20" y="28" class="txt-title" style="fill: #f59e0b;">1. Upstream (Official Main Repo)</text>
+    <text x="20" y="48" class="cmd-txt" style="fill: #fbbf24;">https://github.com/organization/project.git</text>
+    <text x="20" y="70" class="txt-sub">• Production source of truth (main)</text>
+    <text x="20" y="90" class="txt-sub">• Controlled write access / Protected branches</text>
+  </g>
+
+  <!-- Fork Arrow: Upstream -> Origin Fork (Rightward) -->
+  <path d="M 440 140 L 515 140" class="edge" stroke="#f59e0b" stroke-dasharray="4,4" marker-end="url(#arr-amber)"/>
+  <g transform="translate(450, 110)">
+    <rect x="0" y="0" width="60" height="22" class="step-pill" style="stroke:#f59e0b; fill:#241808;"/>
+    <text x="30" y="15" text-anchor="middle" class="cmd-txt" style="fill:#fcd34d; font-size:10px;">Fork</text>
+  </g>
+
+  <!-- 2. Top Right: Developer Personal Fork on GitHub (x=520, y=85, w=380, h=110) -->
+  <g transform="translate(520, 85)">
+    <rect x="0" y="0" width="380" height="110" class="repo-card" style="stroke: #38bdf8; fill: #0d1e33;"/>
+    <text x="20" y="28" class="txt-title" style="fill: #38bdf8;">2. Origin (Your Cloud Fork)</text>
+    <text x="20" y="48" class="cmd-txt" style="fill: #7dd3fc;">https://github.com/your-username/project.git</text>
+    <text x="20" y="70" class="txt-sub">• Full write access granted to you</text>
+    <text x="20" y="90" class="txt-sub">• Hosts your pushed feature branches</text>
+  </g>
+
+  <!-- Clone Arrow: Origin -> Local Workstation (Downwards) -->
+  <path d="M 710 195 L 710 255" class="edge" stroke="#38bdf8" marker-end="url(#arr-blue)"/>
+  <g transform="translate(640, 215)">
+    <rect x="0" y="0" width="140" height="24" class="step-pill" style="stroke:#38bdf8; fill:#0c2540;"/>
+    <text x="70" y="16" text-anchor="middle" class="cmd-txt" style="fill:#38bdf8; font-size:10px;">git clone &lt;origin&gt;</text>
+  </g>
+
+  <!-- 3. Bottom: Developer Local Workstation (x=60, y=265, w=840, h=135) -->
+  <g transform="translate(60, 265)">
+    <rect x="0" y="0" width="840" height="135" class="repo-card" style="stroke: #34d399; fill: #0b1f1a;"/>
+    <text x="20" y="26" class="txt-title" style="fill: #34d399;">3. Local Workstation (Your Laptop / Dev Machine)</text>
+    
+    <!-- Left Column inside Local -->
+    <g transform="translate(20, 42)">
+      <text x="0" y="16" class="cmd-txt" style="fill:#fbbf24;">git remote add upstream &lt;upstream-url&gt;</text>
+      <text x="0" y="34" class="txt-sub">Sets secondary remote pointer to track official codebase updates</text>
+
+      <text x="0" y="58" class="cmd-txt" style="fill:#6ee7b7;">git switch -c feat/my-improvement</text>
+      <text x="0" y="76" class="txt-sub">Isolates your changes onto a dedicated topic branch</text>
+    </g>
+
+    <!-- Right Column inside Local -->
+    <g transform="translate(460, 42)">
+      <text x="0" y="16" class="cmd-txt" style="fill:#38bdf8;">git fetch upstream &amp;&amp; git rebase upstream/main</text>
+      <text x="0" y="34" class="txt-sub">Replays local commits on top of latest upstream code before PR</text>
+
+      <text x="0" y="58" class="cmd-txt" style="fill:#d8b4fe;">git push -u origin feat/my-improvement</text>
+      <text x="0" y="76" class="txt-sub">Uploads feature commits directly to your fork</text>
+    </g>
+  </g>
+
+  <!-- PR Arrow: Local/Fork -> Upstream PR (Diagonal Loop) -->
+  <path d="M 600 265 C 600 220, 350 240, 260 200" class="edge" stroke="#a855f7" stroke-dasharray="5,4" marker-end="url(#arr-purple)"/>
+  <g transform="translate(340, 215)">
+    <rect x="0" y="0" width="170" height="24" class="step-pill" style="stroke:#a855f7; fill:#1e0f30;"/>
+    <text x="85" y="16" text-anchor="middle" class="cmd-txt" style="fill:#d8b4fe; font-size:10px;">Open Pull Request (PR)</text>
+  </g>
+
+  <!-- Bottom Best Practice Banner (y=415, h=75) -->
+  <g transform="translate(60, 415)">
+    <rect x="0" y="0" width="840" height="75" class="step-pill" style="stroke: #334155; fill: #0b1120;"/>
+    <text x="20" y="24" class="txt-title" style="fill: #38bdf8; font-size:12px;">Golden Workflow: Keeping Your Fork Evergreen Without Merge Commits</text>
+    <text x="20" y="44" class="cmd-txt" style="fill: #fbbf24; font-size:10px;">git fetch upstream &amp;&amp; git checkout main &amp;&amp; git merge --ff-only upstream/main</text>
+    <text x="20" y="62" class="txt-sub">Always keep your local `main` synchronized with `upstream/main`; never write code directly on `main`!</text>
+  </g>
+</svg>

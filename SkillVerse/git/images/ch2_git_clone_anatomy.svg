@@ -1,0 +1,119 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 500" width="100%" height="100%">
+  <defs>
+    <style>
+      .bg { fill: #080c14; }
+      .title { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 20px; fill: #f8fafc; }
+      .subtitle { font-family: 'Inter', system-ui, sans-serif; font-size: 13px; fill: #94a3b8; }
+      .card { fill: #0f172a; stroke-width: 1.5; rx: 8; }
+      .txt-hdr { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 14px; }
+      .txt-sub { font-family: 'Inter', system-ui, sans-serif; font-size: 11px; fill: #94a3b8; }
+      .txt-body { font-family: 'Inter', system-ui, sans-serif; font-size: 11px; fill: #cbd5e1; }
+      .cmd-pill { fill: #1e293b; stroke: #475569; stroke-width: 1; rx: 4; }
+      .cmd-txt { font-family: 'JetBrains Mono', Consolas, monospace; font-size: 11px; font-weight: 600; }
+      .edge { stroke: #38bdf8; stroke-width: 1.8; fill: none; }
+      .edge-pack { stroke: #34d399; stroke-width: 2.2; fill: none; stroke-dasharray: 6,4; }
+    </style>
+    <marker id="arr-blue" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8" />
+    </marker>
+    <marker id="arr-green" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#34d399" />
+    </marker>
+  </defs>
+
+  <rect width="960" height="500" class="bg" rx="14"/>
+
+  <!-- Title & Subtitle -->
+  <text x="480" y="32" text-anchor="middle" class="title">Anatomy of `git clone`: Protocol Handshake to Working Tree</text>
+  <text x="480" y="52" text-anchor="middle" class="subtitle">How Git transfers objects, maps remote tracking branches, and inflates the active working tree</text>
+
+  <!-- Top Remote Node (x=40, y=75, w=880, h=80) -->
+  <g transform="translate(40, 75)">
+    <rect x="0" y="0" width="880" height="80" class="card" style="stroke: #f59e0b; fill: #161b26;"/>
+    <text x="25" y="28" class="txt-hdr" style="fill: #f59e0b;">Remote Host (GitHub / GitLab / Bitbucket)</text>
+    <text x="25" y="48" class="txt-sub">Upstream repository object store containing complete commit history, tree graph, and tags</text>
+
+    <!-- Badges inside Remote -->
+    <g transform="translate(540, 20)">
+      <rect x="0" y="0" width="150" height="40" class="cmd-pill" style="stroke: #f59e0b; fill: #24190c;"/>
+      <text x="75" y="24" text-anchor="middle" class="cmd-txt" style="fill: #fbbf24;">HEAD -> refs/heads/main</text>
+    </g>
+    <g transform="translate(705, 20)">
+      <rect x="0" y="0" width="155" height="40" class="cmd-pill" style="stroke: #f59e0b; fill: #24190c;"/>
+      <text x="77" y="24" text-anchor="middle" class="cmd-txt" style="fill: #fbbf24;">Packfiles (.pack, .idx)</text>
+    </g>
+  </g>
+
+  <!-- Network Wire / Data Flow (y=155 to 205) -->
+  <path d="M 240 155 L 240 205" class="edge-pack" marker-end="url(#arr-green)"/>
+  <rect x="150" y="168" width="180" height="24" class="cmd-pill" style="stroke: #34d399; fill: #064e3b;"/>
+  <text x="240" y="184" text-anchor="middle" class="cmd-txt" style="fill: #a7f3d0; font-size:10px;">Network: Packfile Transfer</text>
+
+  <path d="M 720 155 L 720 205" class="edge" marker-end="url(#arr-blue)"/>
+  <rect x="635" y="168" width="170" height="24" class="cmd-pill" style="stroke: #38bdf8; fill: #0c4a6e;"/>
+  <text x="720" y="184" text-anchor="middle" class="cmd-txt" style="fill: #bae6fd; font-size:10px;">Ref Advertisement Protocol</text>
+
+  <!-- Lower Local Section: 3 Columns (y=210, h=180) -->
+  <!-- Col 1: Object DB -->
+  <g transform="translate(40, 210)">
+    <rect x="0" y="0" width="275" height="175" class="card" style="stroke: #34d399; fill: #0f172a;"/>
+    <text x="137" y="25" text-anchor="middle" class="txt-hdr" style="fill: #34d399;">1. Object DB Hydration</text>
+    <text x="137" y="42" text-anchor="middle" class="txt-sub">Local storage: .git/objects/</text>
+
+    <text x="15" y="72" class="txt-body">• Receives and indexes packfile</text>
+    <text x="15" y="94" class="txt-body">• Unpacks all commits, trees &amp; blobs</text>
+    <text x="15" y="116" class="txt-body">• Verifies SHA cryptographic integrity</text>
+    <text x="15" y="138" class="txt-body">• Every historical revision is saved</text>
+    <text x="15" y="158" class="txt-sub" style="fill: #6ee7b7;">Full offline independence established</text>
+  </g>
+
+  <!-- Col 2: Ref Mapping -->
+  <g transform="translate(342, 210)">
+    <rect x="0" y="0" width="275" height="175" class="card" style="stroke: #38bdf8; fill: #0f172a;"/>
+    <text x="137" y="25" text-anchor="middle" class="txt-hdr" style="fill: #38bdf8;">2. Remote Reference Mapping</text>
+    <text x="137" y="42" text-anchor="middle" class="txt-sub">Tracking refs &amp; local branch creation</text>
+
+    <text x="15" y="70" class="txt-body">• Writes origin configuration:</text>
+    <text x="25" y="88" class="cmd-txt" style="fill: #7dd3fc; font-size:10px;">refs/remotes/origin/*</text>
+    <text x="15" y="110" class="txt-body">• Creates local default branch:</text>
+    <text x="25" y="128" class="cmd-txt" style="fill: #7dd3fc; font-size:10px;">refs/heads/main -> origin/main</text>
+    <text x="15" y="150" class="txt-body">• Sets symbolic HEAD to local branch</text>
+  </g>
+
+  <!-- Col 3: Checkout -->
+  <g transform="translate(645, 210)">
+    <rect x="0" y="0" width="275" height="175" class="card" style="stroke: #a855f7; fill: #0f172a;"/>
+    <text x="137" y="25" text-anchor="middle" class="txt-hdr" style="fill: #a855f7;">3. Working Tree Checkout</text>
+    <text x="137" y="42" text-anchor="middle" class="txt-sub">Inflates filesystem on disk</text>
+
+    <text x="15" y="72" class="txt-body">• Traverses root tree of HEAD commit</text>
+    <text x="15" y="94" class="txt-body">• Creates directories and files on disk</text>
+    <text x="15" y="116" class="txt-body">• Reconstructs file modes &amp; symlinks</text>
+    <text x="15" y="138" class="txt-body">• Populates staging area (.git/index)</text>
+    <text x="15" y="158" class="txt-sub" style="fill: #d8b4fe;">Clean working tree ready for edits</text>
+  </g>
+
+  <!-- Bottom Panel: Advanced Clone Variants (y=400, h=85) -->
+  <g transform="translate(40, 400)">
+    <rect x="0" y="0" width="880" height="80" class="card" style="stroke: #334155; fill: #0b1120;"/>
+    <text x="20" y="22" class="txt-hdr" style="fill: #f8fafc; font-size:12px;">High-Efficiency Clone Variants:</text>
+
+    <!-- Shallow Clone -->
+    <g transform="translate(20, 32)">
+      <text x="0" y="16" class="cmd-txt" style="fill: #fbbf24;">git clone --depth 1 &lt;url&gt;</text>
+      <text x="0" y="32" class="txt-sub">Truncates history to 1 commit; saves bandwidth in CI/CD pipelines.</text>
+    </g>
+
+    <!-- Single Branch -->
+    <g transform="translate(330, 32)">
+      <text x="0" y="16" class="cmd-txt" style="fill: #38bdf8;">git clone -b &lt;branch&gt; --single-branch</text>
+      <text x="0" y="32" class="txt-sub">Downloads only the specified branch; ideal for large monorepos.</text>
+    </g>
+
+    <!-- Bare Clone -->
+    <g transform="translate(640, 32)">
+      <text x="0" y="16" class="cmd-txt" style="fill: #34d399;">git clone --bare &lt;url&gt;</text>
+      <text x="0" y="32" class="txt-sub">Creates server-side repository without a working tree for mirrors/backups.</text>
+    </g>
+  </g>
+</svg>
