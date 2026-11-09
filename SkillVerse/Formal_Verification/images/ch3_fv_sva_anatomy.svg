@@ -1,0 +1,94 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 520" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGrad3" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#080c14" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <filter id="shadow3" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+  </defs>
+
+  <rect width="900" height="520" fill="url(#bgGrad3)"/>
+
+  <!-- Title -->
+  <text x="450" y="38" font-family="'Segoe UI', Roboto, sans-serif" font-size="22" font-weight="700" fill="#38bdf8" text-anchor="middle">SystemVerilog Assertions (SVA) Architecture</text>
+  <text x="450" y="62" font-family="'Segoe UI', Roboto, sans-serif" font-size="13" fill="#94a3b8" text-anchor="middle">Layered Specification: Booleans → Sequences → Properties → Verification Directives</text>
+
+  <!-- Top Layered Stack -->
+  <g transform="translate(40, 85)">
+    <!-- Layer 4: Directives -->
+    <rect x="0" y="0" width="820" height="42" rx="6" fill="#701a75" stroke="#d946ef" stroke-width="1.5" filter="url(#shadow3)"/>
+    <text x="20" y="26" font-family="'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="700" fill="#fdf4ff">Layer 4: Directives</text>
+    <text x="160" y="26" font-family="'Courier New', monospace" font-size="12" font-weight="700" fill="#fbcfe8">assert property</text>
+    <text x="300" y="26" font-family="'Courier New', monospace" font-size="12" font-weight="700" fill="#a7f3d0">assume property</text>
+    <text x="445" y="26" font-family="'Courier New', monospace" font-size="12" font-weight="700" fill="#fed7aa">cover property</text>
+    <text x="585" y="26" font-family="'Courier New', monospace" font-size="12" font-weight="700" fill="#bae6fd">restrict property</text>
+
+    <!-- Layer 3: Properties -->
+    <rect x="0" y="48" width="820" height="42" rx="6" fill="#1e1b4b" stroke="#6366f1" stroke-width="1.5"/>
+    <text x="20" y="74" font-family="'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="700" fill="#e0e7ff">Layer 3: Properties</text>
+    <text x="160" y="74" font-family="'Courier New', monospace" font-size="12" fill="#c7d2fe">property p_handshake; @(posedge clk) disable iff (!rst_n) req |=&gt; ##[1:3] gnt; endproperty</text>
+
+    <!-- Layer 2: Sequences -->
+    <rect x="0" y="96" width="820" height="42" rx="6" fill="#0f2b38" stroke="#0ea5e9" stroke-width="1.5"/>
+    <text x="20" y="122" font-family="'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="700" fill="#e0f2fe">Layer 2: Sequences</text>
+    <text x="160" y="122" font-family="'Courier New', monospace" font-size="12" fill="#7dd3fc">sequence s_burst; req ##1 ack[*2] ##1 done; endsequence</text>
+
+    <!-- Layer 1: Booleans -->
+    <rect x="0" y="144" width="820" height="42" rx="6" fill="#064e3b" stroke="#10b981" stroke-width="1.5"/>
+    <text x="20" y="170" font-family="'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="700" fill="#d1fae5">Layer 1: Booleans</text>
+    <text x="160" y="170" font-family="'Courier New', monospace" font-size="12" fill="#6ee7b7">valid &amp;&amp; ready, (state == IDLE), (counter &lt; 4'd8), $rose(interrupt)</text>
+  </g>
+
+  <!-- Bottom: Implication Comparison Timing Diagram -->
+  <g transform="translate(40, 290)">
+    <rect width="820" height="205" rx="10" fill="#0c1222" stroke="#1e293b" filter="url(#shadow3)"/>
+    <text x="25" y="28" font-family="'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="700" fill="#38bdf8">Temporal Implication: Overlapping (|->) vs. Non-Overlapping (|=>)</text>
+
+    <!-- Clock Cycle Markers -->
+    <g transform="translate(180, 42)">
+      <text x="60" y="0" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="600" fill="#94a3b8" text-anchor="middle">Cycle T₀</text>
+      <text x="200" y="0" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="600" fill="#94a3b8" text-anchor="middle">Cycle T₁</text>
+      <text x="340" y="0" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="600" fill="#94a3b8" text-anchor="middle">Cycle T₂</text>
+      <text x="480" y="0" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="600" fill="#94a3b8" text-anchor="middle">Cycle T₃</text>
+
+      <line x1="60" y1="10" x2="60" y2="145" stroke="#334155" stroke-dasharray="3 3"/>
+      <line x1="200" y1="10" x2="200" y2="145" stroke="#334155" stroke-dasharray="3 3"/>
+      <line x1="340" y1="10" x2="340" y2="145" stroke="#334155" stroke-dasharray="3 3"/>
+      <line x1="480" y1="10" x2="480" y2="145" stroke="#334155" stroke-dasharray="3 3"/>
+    </g>
+
+    <!-- Overlapping Implication -->
+    <g transform="translate(25, 60)">
+      <rect x="0" y="0" width="130" height="60" rx="6" fill="#131d33" stroke="#f59e0b" stroke-width="1"/>
+      <text x="65" y="24" font-family="'Courier New', monospace" font-size="13" font-weight="700" fill="#fcd34d" text-anchor="middle">a |-&gt; b</text>
+      <text x="65" y="44" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" fill="#cbd5e1" text-anchor="middle">Overlapping</text>
+
+      <!-- Waveform representation -->
+      <path d="M 180 35 L 210 35 L 215 15 L 265 15 L 270 35 L 350 35" fill="none" stroke="#38bdf8" stroke-width="2"/>
+      <text x="160" y="28" font-family="'Courier New', monospace" font-size="11" fill="#38bdf8">a</text>
+
+      <path d="M 180 50 L 210 50 L 215 35 L 265 35 L 270 50 L 350 50" fill="none" stroke="#34d399" stroke-width="2"/>
+      <text x="160" y="46" font-family="'Courier New', monospace" font-size="11" fill="#34d399">b</text>
+
+      <text x="370" y="32" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" fill="#cbd5e1">Antecedent 'a' at T₀ requires 'b' at SAME cycle T₀</text>
+    </g>
+
+    <!-- Non-Overlapping Implication -->
+    <g transform="translate(25, 130)">
+      <rect x="0" y="0" width="130" height="60" rx="6" fill="#131d33" stroke="#a855f7" stroke-width="1"/>
+      <text x="65" y="24" font-family="'Courier New', monospace" font-size="13" font-weight="700" fill="#d8b4fe" text-anchor="middle">a |=&gt; b</text>
+      <text x="65" y="44" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" fill="#cbd5e1" text-anchor="middle">Non-Overlapping</text>
+
+      <!-- Waveform representation -->
+      <path d="M 180 35 L 210 35 L 215 15 L 265 15 L 270 35 L 450 35" fill="none" stroke="#38bdf8" stroke-width="2"/>
+      <text x="160" y="28" font-family="'Courier New', monospace" font-size="11" fill="#38bdf8">a</text>
+
+      <path d="M 180 50 L 350 50 L 355 35 L 405 35 L 410 50 L 450 50" fill="none" stroke="#d8b4fe" stroke-width="2"/>
+      <text x="160" y="46" font-family="'Courier New', monospace" font-size="11" fill="#d8b4fe">b</text>
+
+      <text x="430" y="32" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" fill="#cbd5e1">Antecedent 'a' at T₀ requires 'b' at NEXT cycle T₁ (a |-&gt; ##1 b)</text>
+    </g>
+  </g>
+</svg>

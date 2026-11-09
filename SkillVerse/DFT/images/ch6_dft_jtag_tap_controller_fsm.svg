@@ -1,0 +1,134 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 540" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGradDft6" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#080c14" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <filter id="shadowDft6" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+  </defs>
+
+  <rect width="920" height="540" fill="url(#bgGradDft6)"/>
+
+  <!-- Title -->
+  <text x="460" y="36" font-family="'Segoe UI', Roboto, sans-serif" font-size="22" font-weight="700" fill="#38bdf8" text-anchor="middle">IEEE 1149.1 (JTAG) 16-State TAP Controller Architecture</text>
+  <text x="460" y="58" font-family="'Segoe UI', Roboto, sans-serif" font-size="13" fill="#94a3b8" text-anchor="middle">Deterministic State Navigation Driven Exclusively by TMS Transitions on posedge TCK</text>
+
+  <!-- Left: Top-Level TAP Interface & Architecture -->
+  <g transform="translate(30, 80)">
+    <rect width="250" height="430" rx="10" fill="#0f172a" stroke="#0ea5e9" stroke-width="1.5" filter="url(#shadowDft6)"/>
+    <rect width="250" height="36" rx="10" fill="#0369a1"/>
+    <text x="125" y="23" font-family="'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="700" fill="#f0f9ff" text-anchor="middle">JTAG Test Access Port (TAP)</text>
+
+    <!-- Pin List -->
+    <g transform="translate(15, 50)">
+      <rect width="220" height="150" rx="6" fill="#131d33" stroke="#1e293b"/>
+      <text x="12" y="24" font-family="'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="700" fill="#38bdf8">Mandatory TAP Signals:</text>
+
+      <text x="15" y="48" font-family="'Courier New', monospace" font-size="11" fill="#cbd5e1">• <tspan fill="#38bdf8" font-weight="700">TCK:</tspan> Test Clock (Dedicated)</text>
+      <text x="15" y="70" font-family="'Courier New', monospace" font-size="11" fill="#cbd5e1">• <tspan fill="#facc15" font-weight="700">TMS:</tspan> Test Mode Select</text>
+      <text x="15" y="92" font-family="'Courier New', monospace" font-size="11" fill="#cbd5e1">• <tspan fill="#a78bfa" font-weight="700">TDI:</tspan> Test Data In (Serial)</text>
+      <text x="15" y="114" font-family="'Courier New', monospace" font-size="11" fill="#cbd5e1">• <tspan fill="#34d399" font-weight="700">TDO:</tspan> Test Data Out (Tri-state)</text>
+      <text x="15" y="136" font-family="'Courier New', monospace" font-size="11" fill="#94a3b8">• TRST*: Async Reset (Opt)</text>
+    </g>
+
+    <!-- Registers Box -->
+    <g transform="translate(15, 215)">
+      <rect width="220" height="110" rx="6" fill="#131d33" stroke="#1e293b"/>
+      <text x="12" y="22" font-family="'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="700" fill="#facc15">Internal Tap Registers:</text>
+      <text x="15" y="44" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" fill="#cbd5e1">1. <tspan fill="#c084fc" font-weight="700">Instruction Register (IR):</tspan></text>
+      <text x="25" y="60" font-family="'Segoe UI', Roboto, sans-serif" font-size="10" fill="#94a3b8">BYPASS, EXTEST, SAMPLE, IDCODE</text>
+      <text x="15" y="82" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" fill="#cbd5e1">2. <tspan fill="#38bdf8" font-weight="700">Data Registers (DR):</tspan></text>
+      <text x="25" y="98" font-family="'Segoe UI', Roboto, sans-serif" font-size="10" fill="#94a3b8">Boundary Scan Register (BSR), Device ID</text>
+    </g>
+
+    <g transform="translate(15, 340)">
+      <rect width="220" height="75" rx="6" fill="#0c1222" stroke="#1e293b"/>
+      <text x="12" y="20" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="700" fill="#34d399">Reset Invariant:</text>
+      <text x="12" y="40" font-family="'Segoe UI', Roboto, sans-serif" font-size="10" fill="#cbd5e1">Holding TMS = 1 for 5 TCKs</text>
+      <text x="12" y="55" font-family="'Segoe UI', Roboto, sans-serif" font-size="10" fill="#cbd5e1">guarantees return to</text>
+      <text x="12" y="70" font-family="'Courier New', monospace" font-size="10" font-weight="700" fill="#f87171">Test-Logic-Reset</text>
+    </g>
+  </g>
+
+  <!-- Right: 16-State FSM Diagram -->
+  <g transform="translate(305, 80)">
+    <rect width="585" height="430" rx="10" fill="#0f172a" stroke="#10b981" stroke-width="1.5" filter="url(#shadowDft6)"/>
+    <rect width="585" height="36" rx="10" fill="#065f46"/>
+    <text x="292" y="23" font-family="'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="700" fill="#ecfdf5" text-anchor="middle">The 16-State TAP Controller Finite State Machine</text>
+
+    <!-- Top Root States: Reset and Run-Test/Idle -->
+    <g transform="translate(195, 48)">
+      <rect x="0" y="0" width="180" height="30" rx="15" fill="#7f1d1d" stroke="#ef4444" stroke-width="1.5"/>
+      <text x="90" y="19" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="700" fill="#fee2e2" text-anchor="middle">Test-Logic-Reset (1)</text>
+
+      <line x1="90" y1="30" x2="90" y2="52" stroke="#38bdf8" stroke-width="1.5"/>
+      <text x="80" y="44" font-family="'Courier New', monospace" font-size="10" fill="#38bdf8">0</text>
+
+      <rect x="0" y="52" width="180" height="30" rx="15" fill="#1e293b" stroke="#38bdf8" stroke-width="1.5"/>
+      <text x="90" y="71" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="700" fill="#f0f9ff" text-anchor="middle">Run-Test / Idle (0)</text>
+    </g>
+
+    <!-- Branches split to DR and IR -->
+    <!-- DR Branch (Left) -->
+    <g transform="translate(30, 150)">
+      <rect width="240" height="260" rx="8" fill="#131d33" stroke="#0284c7" stroke-width="1"/>
+      <text x="120" y="22" font-family="'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="700" fill="#38bdf8" text-anchor="middle">Data Register (DR) Branch</text>
+
+      <!-- DR State Pills -->
+      <g transform="translate(45, 32)">
+        <rect x="0" y="0" width="150" height="24" rx="12" fill="#1e293b" stroke="#0ea5e9"/>
+        <text x="75" y="16" font-family="'Segoe UI', Roboto, sans-serif" font-size="10" font-weight="600" fill="#e0f2fe" text-anchor="middle">Select-DR-Scan (1)</text>
+
+        <rect x="0" y="32" width="150" height="24" rx="12" fill="#1e293b" stroke="#0ea5e9"/>
+        <text x="75" y="48" font-family="'Segoe UI', Roboto, sans-serif" font-size="10" font-weight="600" fill="#e0f2fe" text-anchor="middle">Capture-DR (0)</text>
+
+        <rect x="0" y="64" width="150" height="26" rx="13" fill="#0369a1" stroke="#38bdf8" stroke-width="1.5"/>
+        <text x="75" y="81" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="700" fill="#fff" text-anchor="middle">Shift-DR (0 / loop)</text>
+
+        <rect x="0" y="98" width="150" height="24" rx="12" fill="#1e293b" stroke="#0ea5e9"/>
+        <text x="75" y="114" font-family="'Segoe UI', Roboto, sans-serif" font-size="10" font-weight="600" fill="#e0f2fe" text-anchor="middle">Exit1-DR (1)</text>
+
+        <rect x="0" y="130" width="150" height="24" rx="12" fill="#1e293b" stroke="#0ea5e9"/>
+        <text x="75" y="146" font-family="'Segoe UI', Roboto, sans-serif" font-size="10" font-weight="600" fill="#e0f2fe" text-anchor="middle">Pause-DR (0)</text>
+
+        <rect x="0" y="162" width="150" height="24" rx="12" fill="#1e293b" stroke="#0ea5e9"/>
+        <text x="75" y="178" font-family="'Segoe UI', Roboto, sans-serif" font-size="10" font-weight="600" fill="#e0f2fe" text-anchor="middle">Exit2-DR (1)</text>
+
+        <rect x="0" y="194" width="150" height="24" rx="12" fill="#1e293b" stroke="#0ea5e9"/>
+        <text x="75" y="210" font-family="'Segoe UI', Roboto, sans-serif" font-size="10" font-weight="700" fill="#34d399" text-anchor="middle">Update-DR (1)</text>
+      </g>
+    </g>
+
+    <!-- IR Branch (Right) -->
+    <g transform="translate(315, 150)">
+      <rect width="240" height="260" rx="8" fill="#131d33" stroke="#8b5cf6" stroke-width="1"/>
+      <text x="120" y="22" font-family="'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="700" fill="#c084fc" text-anchor="middle">Instruction Register (IR) Branch</text>
+
+      <!-- IR State Pills -->
+      <g transform="translate(45, 32)">
+        <rect x="0" y="0" width="150" height="24" rx="12" fill="#1e293b" stroke="#a855f7"/>
+        <text x="75" y="16" font-family="'Segoe UI', Roboto, sans-serif" font-size="10" font-weight="600" fill="#ede9fe" text-anchor="middle">Select-IR-Scan (1)</text>
+
+        <rect x="0" y="32" width="150" height="24" rx="12" fill="#1e293b" stroke="#a855f7"/>
+        <text x="75" y="48" font-family="'Segoe UI', Roboto, sans-serif" font-size="10" font-weight="600" fill="#ede9fe" text-anchor="middle">Capture-IR (0)</text>
+
+        <rect x="0" y="64" width="150" height="26" rx="13" fill="#6d28d9" stroke="#c084fc" stroke-width="1.5"/>
+        <text x="75" y="81" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="700" fill="#fff" text-anchor="middle">Shift-IR (0 / loop)</text>
+
+        <rect x="0" y="98" width="150" height="24" rx="12" fill="#1e293b" stroke="#a855f7"/>
+        <text x="75" y="114" font-family="'Segoe UI', Roboto, sans-serif" font-size="10" font-weight="600" fill="#ede9fe" text-anchor="middle">Exit1-IR (1)</text>
+
+        <rect x="0" y="130" width="150" height="24" rx="12" fill="#1e293b" stroke="#a855f7"/>
+        <text x="75" y="146" font-family="'Segoe UI', Roboto, sans-serif" font-size="10" font-weight="600" fill="#ede9fe" text-anchor="middle">Pause-IR (0)</text>
+
+        <rect x="0" y="162" width="150" height="24" rx="12" fill="#1e293b" stroke="#a855f7"/>
+        <text x="75" y="178" font-family="'Segoe UI', Roboto, sans-serif" font-size="10" font-weight="600" fill="#ede9fe" text-anchor="middle">Exit2-IR (1)</text>
+
+        <rect x="0" y="194" width="150" height="24" rx="12" fill="#1e293b" stroke="#a855f7"/>
+        <text x="75" y="210" font-family="'Segoe UI', Roboto, sans-serif" font-size="10" font-weight="700" fill="#34d399" text-anchor="middle">Update-IR (1)</text>
+      </g>
+    </g>
+  </g>
+</svg>

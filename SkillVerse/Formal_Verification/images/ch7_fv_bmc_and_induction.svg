@@ -1,0 +1,98 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 520" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGrad7" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#080c14" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <filter id="shadow7" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+  </defs>
+
+  <rect width="900" height="520" fill="url(#bgGrad7)"/>
+
+  <!-- Title -->
+  <text x="450" y="38" font-family="'Segoe UI', Roboto, sans-serif" font-size="22" font-weight="700" fill="#38bdf8" text-anchor="middle">Bounded Model Checking (BMC) vs. k-Induction</text>
+  <text x="450" y="62" font-family="'Segoe UI', Roboto, sans-serif" font-size="13" fill="#94a3b8" text-anchor="middle">From Bounded Bug Hunting to Infinite-Horizon Unbounded Mathematical Proofs</text>
+
+  <!-- Top: BMC Engine -->
+  <g transform="translate(40, 85)">
+    <rect width="820" height="185" rx="10" fill="#0f172a" stroke="#0ea5e9" stroke-width="1.5" filter="url(#shadow7)"/>
+    <rect width="820" height="34" rx="10" fill="#0369a1"/>
+    <text x="25" y="23" font-family="'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="700" fill="#f0f9ff">1. Bounded Model Checking (BMC) — Depth k = 3</text>
+    <text x="795" y="23" font-family="'Segoe UI', Roboto, sans-serif" font-size="12" fill="#bae6fd" text-anchor="end">Finite Search for Counterexamples</text>
+
+    <!-- Unrolling chain -->
+    <g transform="translate(30, 50)">
+      <!-- Initial State -->
+      <circle cx="50" cy="45" r="24" fill="#0284c7" stroke="#38bdf8" stroke-width="2"/>
+      <text x="50" y="49" font-family="'Courier New', monospace" font-size="13" font-weight="700" fill="#fff" text-anchor="middle">s₀</text>
+      <text x="50" y="85" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="600" fill="#38bdf8" text-anchor="middle">I(s₀) Reset</text>
+
+      <line x1="78" y1="45" x2="152" y2="45" stroke="#38bdf8" stroke-width="2"/>
+      <polygon points="148,41 156,45 148,49" fill="#38bdf8"/>
+      <text x="115" y="38" font-family="'Courier New', monospace" font-size="10" fill="#94a3b8" text-anchor="middle">T(s₀,s₁)</text>
+
+      <!-- Cycle 1 -->
+      <circle cx="180" cy="45" r="22" fill="#1e293b" stroke="#38bdf8" stroke-width="1.5"/>
+      <text x="180" y="49" font-family="'Courier New', monospace" font-size="12" font-weight="700" fill="#fff" text-anchor="middle">s₁</text>
+      <text x="180" y="85" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" fill="#94a3b8" text-anchor="middle">Check P(s₁)</text>
+
+      <line x1="206" y1="45" x2="280" y2="45" stroke="#38bdf8" stroke-width="2"/>
+      <polygon points="276,41 284,45 276,49" fill="#38bdf8"/>
+      <text x="243" y="38" font-family="'Courier New', monospace" font-size="10" fill="#94a3b8" text-anchor="middle">T(s₁,s₂)</text>
+
+      <!-- Cycle 2 -->
+      <circle cx="310" cy="45" r="22" fill="#1e293b" stroke="#38bdf8" stroke-width="1.5"/>
+      <text x="310" y="49" font-family="'Courier New', monospace" font-size="12" font-weight="700" fill="#fff" text-anchor="middle">s₂</text>
+      <text x="310" y="85" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" fill="#94a3b8" text-anchor="middle">Check P(s₂)</text>
+
+      <line x1="336" y1="45" x2="410" y2="45" stroke="#38bdf8" stroke-width="2"/>
+      <polygon points="406,41 414,45 406,49" fill="#38bdf8"/>
+      <text x="373" y="38" font-family="'Courier New', monospace" font-size="10" fill="#94a3b8" text-anchor="middle">T(s₂,s₃)</text>
+
+      <!-- Cycle 3 (Bound k) -->
+      <circle cx="440" cy="45" r="22" fill="#1e293b" stroke="#38bdf8" stroke-width="1.5"/>
+      <text x="440" y="49" font-family="'Courier New', monospace" font-size="12" font-weight="700" fill="#fff" text-anchor="middle">s₃</text>
+      <text x="440" y="85" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" fill="#94a3b8" text-anchor="middle">Check P(s₃)</text>
+
+      <!-- BMC verdict note -->
+      <g transform="translate(500, 15)">
+        <rect width="260" height="75" rx="6" fill="#131d33" stroke="#334155"/>
+        <text x="12" y="24" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="700" fill="#facc15">SAT Check Formula:</text>
+        <text x="12" y="42" font-family="'Courier New', monospace" font-size="10" fill="#cbd5e1">I(s₀) ∧ T(s₀..s₃) ∧ ¬P(s₃)</text>
+        <text x="12" y="62" font-family="'Segoe UI', Roboto, sans-serif" font-size="10" fill="#94a3b8">• If SAT → Counterexample found!</text>
+      </g>
+    </g>
+    <text x="30" y="165" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" font-style="italic" fill="#cbd5e1">Limitation: Only guarantees safety up to depth k. A bug at cycle k+1 is NOT detected.</text>
+  </g>
+
+  <!-- Bottom: k-Induction Engine -->
+  <g transform="translate(40, 285)">
+    <rect width="820" height="215" rx="10" fill="#0f172a" stroke="#10b981" stroke-width="1.5" filter="url(#shadow7)"/>
+    <rect width="820" height="34" rx="10" fill="#065f46"/>
+    <text x="25" y="23" font-family="'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="700" fill="#ecfdf5">2. Mathematical k-Induction (Unbounded Proof for All Future Cycles)</text>
+    <text x="795" y="23" font-family="'Segoe UI', Roboto, sans-serif" font-size="12" fill="#a7f3d0" text-anchor="end">Infinite Horizon Guarantee</text>
+
+    <!-- Two-step induction display -->
+    <g transform="translate(25, 48)">
+      <!-- Base Case -->
+      <rect width="365" height="115" rx="6" fill="#131d33" stroke="#047857"/>
+      <text x="15" y="24" font-family="'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="700" fill="#34d399">Step A: Base Case (BMC to depth k)</text>
+      <text x="15" y="48" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" fill="#cbd5e1">• Prove P holds from reset s₀ through s_k.</text>
+      <text x="15" y="70" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" fill="#cbd5e1">• Confirms no bug exists in initial cycles.</text>
+      <text x="15" y="94" font-family="'Courier New', monospace" font-size="11" fill="#a7f3d0">PASS: Base case holds for k steps.</text>
+
+      <!-- Induction Step -->
+      <g transform="translate(390, 0)">
+        <rect width="380" height="115" rx="6" fill="#131d33" stroke="#047857"/>
+        <text x="15" y="24" font-family="'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="700" fill="#34d399">Step B: Induction Step (Arbitrary State)</text>
+        <text x="15" y="48" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" fill="#cbd5e1">• Start from ANY reachable state s_n.</text>
+        <text x="15" y="70" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" fill="#cbd5e1">• Assume P holds for k consecutive steps:</text>
+        <text x="15" y="94" font-family="'Courier New', monospace" font-size="11" fill="#a7f3d0">P(s_n) ∧ ... ∧ P(s_n+k-1) ⟹ P(s_n+k)</text>
+      </g>
+    </g>
+
+    <text x="25" y="195" font-family="'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="700" fill="#34d399">When both Step A &amp; Step B pass: Property P is mathematically PROVEN for ALL infinite cycles!</text>
+  </g>
+</svg>

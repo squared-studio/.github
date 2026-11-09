@@ -1,0 +1,109 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 520" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGrad6" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#080c14" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <filter id="shadow6" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+  </defs>
+
+  <rect width="900" height="520" fill="url(#bgGrad6)"/>
+
+  <!-- Title -->
+  <text x="450" y="38" font-family="'Segoe UI', Roboto, sans-serif" font-size="22" font-weight="700" fill="#38bdf8" text-anchor="middle">Protocol Formal Verification: Ready/Valid Handshake Contract</text>
+  <text x="450" y="62" font-family="'Segoe UI', Roboto, sans-serif" font-size="13" fill="#94a3b8" text-anchor="middle">Master Assumptions vs. Slave Assertions &amp; Liveness/Deadlock Contract Rules</text>
+
+  <!-- Contract Boundary Box -->
+  <g transform="translate(40, 85)">
+    <!-- Master Block -->
+    <rect x="0" y="0" width="220" height="175" rx="10" fill="#0f172a" stroke="#0284c7" stroke-width="1.5" filter="url(#shadow6)"/>
+    <rect x="0" y="0" width="220" height="34" rx="10" fill="#0369a1"/>
+    <text x="110" y="22" font-family="'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="700" fill="#f0f9ff" text-anchor="middle">Master / Transmitter</text>
+
+    <text x="20" y="60" font-family="'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="600" fill="#38bdf8">Drives:</text>
+    <text x="35" y="80" font-family="'Courier New', monospace" font-size="12" fill="#e2e8f0">• VALID (Request)</text>
+    <text x="35" y="100" font-family="'Courier New', monospace" font-size="12" fill="#e2e8f0">• DATA / ADDR</text>
+
+    <text x="20" y="130" font-family="'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="600" fill="#f59e0b">When Verifying Slave:</text>
+    <text x="35" y="150" font-family="'Courier New', monospace" font-size="11" fill="#fcd34d">assume property (...)</text>
+
+    <!-- Slave Block -->
+    <rect x="600" y="0" width="220" height="175" rx="10" fill="#0f172a" stroke="#8b5cf6" stroke-width="1.5" filter="url(#shadow6)"/>
+    <rect x="600" y="0" width="220" height="34" rx="10" fill="#6d28d9"/>
+    <text x="710" y="22" font-family="'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="700" fill="#f5f3ff" text-anchor="middle">Slave / Receiver</text>
+
+    <text x="620" y="60" font-family="'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="600" fill="#c084fc">Drives:</text>
+    <text x="635" y="80" font-family="'Courier New', monospace" font-size="12" fill="#e2e8f0">• READY (Accept)</text>
+    <text x="635" y="100" font-family="'Courier New', monospace" font-size="12" fill="#e2e8f0">• RESP (Status)</text>
+
+    <text x="620" y="130" font-family="'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="600" fill="#34d399">When Verifying Slave:</text>
+    <text x="635" y="150" font-family="'Courier New', monospace" font-size="11" fill="#6ee7b7">assert property (...)</text>
+
+    <!-- Interface Signals / Contract Rules in Middle -->
+    <g transform="translate(240, 0)">
+      <rect width="340" height="175" rx="8" fill="#131d33" stroke="#334155"/>
+      <text x="170" y="24" font-family="'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="700" fill="#38bdf8" text-anchor="middle">Formal Handshake Axioms</text>
+
+      <line x1="20" y1="50" x2="320" y2="50" stroke="#0284c7" stroke-width="2"/>
+      <polygon points="315,46 325,50 315,54" fill="#0284c7"/>
+      <text x="170" y="44" font-family="'Courier New', monospace" font-size="11" fill="#38bdf8" text-anchor="middle">VALID, DATA →</text>
+
+      <line x1="320" y1="85" x2="20" y2="85" stroke="#8b5cf6" stroke-width="2"/>
+      <polygon points="25,81 15,85 25,89" fill="#8b5cf6"/>
+      <text x="170" y="79" font-family="'Courier New', monospace" font-size="11" fill="#c084fc" text-anchor="middle">← READY</text>
+
+      <text x="25" y="115" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" fill="#cbd5e1">1. Transfer when: VALID &amp;&amp; READY == 1</text>
+      <text x="25" y="135" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" fill="#cbd5e1">2. Stability: DATA stable while waiting</text>
+      <text x="25" y="155" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" fill="#cbd5e1">3. Liveness: Slave cannot hold READY low forever</text>
+    </g>
+  </g>
+
+  <!-- Waveform Diagram of Data Stability Contract -->
+  <g transform="translate(40, 280)">
+    <rect width="820" height="215" rx="10" fill="#0c1222" stroke="#1e293b" filter="url(#shadow6)"/>
+    <text x="25" y="28" font-family="'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="700" fill="#38bdf8">AXI/OCP Protocol Rule: Payload Stability &amp; Handshake</text>
+
+    <!-- Clock grid -->
+    <g transform="translate(180, 42)">
+      <text x="60" y="0" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" fill="#94a3b8" text-anchor="middle">T₀</text>
+      <text x="180" y="0" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" fill="#94a3b8" text-anchor="middle">T₁</text>
+      <text x="300" y="0" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" fill="#94a3b8" text-anchor="middle">T₂ (Handshake)</text>
+      <text x="420" y="0" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" fill="#94a3b8" text-anchor="middle">T₃</text>
+
+      <line x1="60" y1="10" x2="60" y2="155" stroke="#334155" stroke-dasharray="2 2"/>
+      <line x1="180" y1="10" x2="180" y2="155" stroke="#334155" stroke-dasharray="2 2"/>
+      <line x1="300" y1="10" x2="300" y2="155" stroke="#34d399" stroke-width="1.5" stroke-dasharray="3 2"/>
+      <line x1="420" y1="10" x2="420" y2="155" stroke="#334155" stroke-dasharray="2 2"/>
+    </g>
+
+    <!-- Signal: CLK -->
+    <g transform="translate(25, 60)">
+      <text x="20" y="16" font-family="'Courier New', monospace" font-size="12" font-weight="700" fill="#94a3b8">clk</text>
+      <path d="M 120 20 L 150 20 L 150 5 L 210 5 L 210 20 L 270 20 L 270 5 L 330 5 L 330 20 L 390 20 L 390 5 L 450 5 L 450 20 L 510 20 L 510 5 L 570 5 L 570 20 L 630 20" fill="none" stroke="#64748b" stroke-width="1.5"/>
+    </g>
+
+    <!-- Signal: VALID -->
+    <g transform="translate(25, 95)">
+      <text x="20" y="16" font-family="'Courier New', monospace" font-size="12" font-weight="700" fill="#38bdf8">VALID</text>
+      <path d="M 120 20 L 210 20 L 210 5 L 450 5 L 450 20 L 630 20" fill="none" stroke="#38bdf8" stroke-width="2"/>
+    </g>
+
+    <!-- Signal: READY -->
+    <g transform="translate(25, 130)">
+      <text x="20" y="16" font-family="'Courier New', monospace" font-size="12" font-weight="700" fill="#c084fc">READY</text>
+      <path d="M 120 20 L 330 20 L 330 5 L 450 5 L 450 20 L 630 20" fill="none" stroke="#c084fc" stroke-width="2"/>
+    </g>
+
+    <!-- Signal: DATA -->
+    <g transform="translate(25, 165)">
+      <text x="20" y="16" font-family="'Courier New', monospace" font-size="12" font-weight="700" fill="#34d399">DATA</text>
+      <path d="M 120 20 L 210 20 L 215 5 L 445 5 L 450 20 L 630 20" fill="none" stroke="#34d399" stroke-width="2"/>
+      <path d="M 215 20 L 445 20" fill="none" stroke="#34d399" stroke-width="2"/>
+      <text x="330" y="14" font-family="'Courier New', monospace" font-size="10" font-weight="700" fill="#6ee7b7" text-anchor="middle">PAYLOAD 0xABCD (STABLE)</text>
+    </g>
+
+    <text x="500" y="180" font-family="'Courier New', monospace" font-size="11" fill="#fcd34d">VALID &amp;&amp; !READY |=&gt; VALID &amp;&amp; $stable(DATA)</text>
+  </g>
+</svg>

@@ -1,0 +1,102 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 480" width="100%" height="100%">
+  <defs>
+    <style>
+      .bg { fill: #080c14; }
+      .card { fill: #0f172a; stroke: #1e293b; stroke-width: 1.5; rx: 10; }
+      .title { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 20px; fill: #f8fafc; }
+      .subtitle { font-family: 'Inter', system-ui, sans-serif; font-size: 13px; fill: #94a3b8; }
+      .dir-box { fill: #131d33; stroke-width: 2; rx: 8; }
+      .dir-title { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 14px; }
+      .code-key { font-family: 'JetBrains Mono', Consolas, monospace; font-size: 12px; font-weight: 700; }
+      .desc-txt { font-family: 'Inter', system-ui, sans-serif; font-size: 11px; fill: #94a3b8; }
+      .wire-flow { stroke: #38bdf8; stroke-width: 2; fill: none; stroke-linecap: round; }
+    </style>
+    <marker id="arr-flow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8" />
+    </marker>
+  </defs>
+
+  <rect width="960" height="480" class="bg" rx="14"/>
+
+  <!-- Title (y = 30 and y = 50) -->
+  <text x="480" y="32" text-anchor="middle" class="title">Production Multi-Directory C/C++ Makefile Architecture</text>
+  <text x="480" y="52" text-anchor="middle" class="subtitle">Clean separation of source trees, build artifacts, automatic dependencies, and output binaries</text>
+
+  <!-- Left: Source Tree (x = 40, width = 250, height = 240) -->
+  <g transform="translate(40, 75)">
+    <rect x="0" y="0" width="250" height="240" class="dir-box" style="stroke: #38bdf8; fill: #0c1f36;"/>
+    <text x="125" y="26" text-anchor="middle" class="dir-title" style="fill:#38bdf8;">SOURCE DIRECTORIES</text>
+    <text x="125" y="44" text-anchor="middle" class="desc-txt">Committed to Git Repository</text>
+
+    <g transform="translate(15, 60)">
+      <rect x="0" y="0" width="220" height="70" rx="6" fill="#0f172a" stroke="#334155"/>
+      <text x="12" y="22" class="code-key" style="fill:#7dd3fc;">src/</text>
+      <text x="12" y="42" class="code-key" style="font-size:11px; fill:#cbd5e1;">main.c, utils.c, net.c</text>
+      <text x="12" y="58" class="desc-txt">Implementation files</text>
+    </g>
+
+    <g transform="translate(15, 145)">
+      <rect x="0" y="0" width="220" height="70" rx="6" fill="#0f172a" stroke="#334155"/>
+      <text x="12" y="22" class="code-key" style="fill:#d8b4fe;">include/</text>
+      <text x="12" y="42" class="code-key" style="font-size:11px; fill:#cbd5e1;">config.h, utils.h</text>
+      <text x="12" y="58" class="desc-txt">Public header interfaces</text>
+    </g>
+  </g>
+
+  <!-- Wire 1 -> 2 -->
+  <path d="M 290 195 L 340 195" class="wire-flow" marker-end="url(#arr-flow)"/>
+
+  <!-- Middle: Build Artifacts (x = 350, width = 260, height = 240) -->
+  <g transform="translate(350, 75)">
+    <rect x="0" y="0" width="260" height="240" class="dir-box" style="stroke: #f59e0b; fill: #1c150b;"/>
+    <text x="130" y="26" text-anchor="middle" class="dir-title" style="fill:#f59e0b;">BUILD INTERMEDIATES</text>
+    <text x="130" y="44" text-anchor="middle" class="desc-txt">Ephemeral (Wiped by make clean)</text>
+
+    <g transform="translate(15, 60)">
+      <rect x="0" y="0" width="230" height="70" rx="6" fill="#0f172a" stroke="#334155"/>
+      <text x="12" y="22" class="code-key" style="fill:#fcd34d;">build/obj/*.o</text>
+      <text x="12" y="42" class="desc-txt">Relocatable compiled ELF</text>
+      <text x="12" y="58" class="desc-txt">object machine code</text>
+    </g>
+
+    <g transform="translate(15, 145)">
+      <rect x="0" y="0" width="230" height="70" rx="6" fill="#0f172a" stroke="#334155"/>
+      <text x="12" y="22" class="code-key" style="fill:#fcd34d;">build/obj/*.d</text>
+      <text x="12" y="42" class="desc-txt">Compiler-emitted header</text>
+      <text x="12" y="58" class="desc-txt">dependencies (-MMD -MP)</text>
+    </g>
+  </g>
+
+  <!-- Wire 2 -> 3 -->
+  <path d="M 610 195 L 660 195" class="wire-flow" marker-end="url(#arr-flow)"/>
+
+  <!-- Right: Binary Distribution (x = 670, width = 250, height = 240) -->
+  <g transform="translate(670, 75)">
+    <rect x="0" y="0" width="250" height="240" class="dir-box" style="stroke: #34d399; fill: #0c241c;"/>
+    <text x="125" y="26" text-anchor="middle" class="dir-title" style="fill:#34d399;">OUTPUT BINARY</text>
+    <text x="125" y="44" text-anchor="middle" class="desc-txt">Final Linked Deployment Image</text>
+
+    <g transform="translate(15, 60)">
+      <rect x="0" y="0" width="220" height="155" rx="6" fill="#0f172a" stroke="#34d399"/>
+      <text x="12" y="24" class="code-key" style="fill:#6ee7b7; font-size:13px;">bin/app</text>
+      <text x="12" y="48" class="desc-txt" style="color:#f8fafc;">Linked Executable Target</text>
+      <text x="12" y="74" class="code-key" style="font-size:11px; fill:#38bdf8;">• Release Build:</text>
+      <text x="12" y="90" class="desc-txt" style="font-size:10px;">  -O3, -flto, -DNDEBUG</text>
+      <text x="12" y="114" class="code-key" style="font-size:11px; fill:#f59e0b;">• Debug Build:</text>
+      <text x="12" y="130" class="desc-txt" style="font-size:10px;">  -g, -O0, -fsanitize=address</text>
+    </g>
+  </g>
+
+  <!-- Bottom: Clean Orchestration Rules (y = 330 to 455) -->
+  <g transform="translate(40, 330)">
+    <rect x="0" y="0" width="880" height="135" class="card" style="stroke:#a855f7;"/>
+    <text x="25" y="26" class="title" style="font-size:14px; fill:#c084fc;">Production Makefile Lifecycle Targets</text>
+
+    <g transform="translate(25, 42)">
+      <text x="0" y="18" class="desc-txt"><tspan class="code-key" style="fill:#38bdf8;">make all</tspan> : Default goal; builds binary into `bin/app` using auto-dependency tracking.</text>
+      <text x="0" y="38" class="desc-txt"><tspan class="code-key" style="fill:#34d399;">make debug</tspan> : Compiles with AddressSanitizer and full DWARF debug symbols.</text>
+      <text x="0" y="58" class="desc-txt"><tspan class="code-key" style="fill:#f59e0b;">make clean</tspan> : Safely removes `build/` directory without touching source code or tools.</text>
+      <text x="0" y="78" class="desc-txt"><tspan class="code-key" style="fill:#ec4899;">make test</tspan> : Executes test suite runner against compiled test harnesses.</text>
+    </g>
+  </g>
+</svg>

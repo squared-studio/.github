@@ -1,0 +1,104 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 520" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGradDft8" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#080c14" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <filter id="shadowDft8" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+  </defs>
+
+  <rect width="920" height="520" fill="url(#bgGradDft8)"/>
+
+  <!-- Title -->
+  <text x="460" y="38" font-family="'Segoe UI', Roboto, sans-serif" font-size="22" font-weight="700" fill="#38bdf8" text-anchor="middle">Hierarchical SoC DFT &amp; Low-Power Sign-Off Architecture</text>
+  <text x="460" y="62" font-family="'Segoe UI', Roboto, sans-serif" font-size="13" fill="#94a3b8" text-anchor="middle">IEEE 1500 Core Wrappers, IEEE 1687 IJTAG Networks, Low-Power Shift Throttling, and Scan Reordering</text>
+
+  <!-- Top Level SoC Floorplan Grid -->
+  <g transform="translate(35, 85)">
+    <rect width="850" height="245" rx="10" fill="#0f172a" stroke="#6366f1" stroke-width="1.5" filter="url(#shadowDft8)"/>
+    <rect width="850" height="34" rx="10" fill="#312e81"/>
+    <text x="425" y="22" font-family="'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="700" fill="#e0e7ff" text-anchor="middle">Hierarchical SoC Chip-Level Test Infrastructure</text>
+
+    <!-- Top TAP & IJTAG Controller Bar -->
+    <g transform="translate(25, 45)">
+      <rect width="800" height="34" rx="6" fill="#131d33" stroke="#8b5cf6"/>
+      <text x="20" y="22" font-family="'Courier New', monospace" font-size="12" font-weight="700" fill="#c084fc">Top JTAG TAP / IEEE 1687 IJTAG Controller</text>
+      <text x="450" y="22" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" fill="#cbd5e1">Dynamic Instrument SIB Network (Segment Insertion Bits)</text>
+    </g>
+
+    <!-- Subsystem IP Tiles -->
+    <!-- Tile 1: CPU Cluster -->
+    <g transform="translate(25, 90)">
+      <rect width="250" height="130" rx="8" fill="#131d33" stroke="#0ea5e9" stroke-width="1.5"/>
+      <rect width="250" height="26" rx="8" fill="#0284c7"/>
+      <text x="125" y="17" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="700" fill="#f0f9ff" text-anchor="middle">CPU Quad-Core Subsystem</text>
+
+      <text x="15" y="48" font-family="'Courier New', monospace" font-size="10" fill="#7dd3fc">• IEEE 1500 Core Wrapper</text>
+      <text x="15" y="66" font-family="'Segoe UI', Roboto, sans-serif" font-size="10" fill="#cbd5e1">• L1/L2 Cache MBIST + BIRA</text>
+      <text x="15" y="84" font-family="'Segoe UI', Roboto, sans-serif" font-size="10" fill="#cbd5e1">• 128 Internal Scan Chains</text>
+      <text x="15" y="102" font-family="'Segoe UI', Roboto, sans-serif" font-size="10" fill="#facc15">• On-Chip Clock Controller (OCC)</text>
+      <text x="15" y="120" font-family="'Segoe UI', Roboto, sans-serif" font-size="9" fill="#34d399">Isolated Core Wrap Test Mode</text>
+    </g>
+
+    <!-- Tile 2: AI / NPU Core -->
+    <g transform="translate(300, 90)">
+      <rect width="250" height="130" rx="8" fill="#131d33" stroke="#10b981" stroke-width="1.5"/>
+      <rect width="250" height="26" rx="8" fill="#047857"/>
+      <text x="125" y="17" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="700" fill="#ecfdf5" text-anchor="middle">Neural Processing Unit (NPU)</text>
+
+      <text x="15" y="48" font-family="'Courier New', monospace" font-size="10" fill="#6ee7b7">• IEEE 1500 Wrapper WBR</text>
+      <text x="15" y="66" font-family="'Segoe UI', Roboto, sans-serif" font-size="10" fill="#cbd5e1">• Systolic Array Matrix BIST</text>
+      <text x="15" y="84" font-family="'Segoe UI', Roboto, sans-serif" font-size="10" fill="#cbd5e1">• EDT Decompressor &amp; Compactor</text>
+      <text x="15" y="102" font-family="'Segoe UI', Roboto, sans-serif" font-size="10" fill="#facc15">• Scan Clock Gating Logic</text>
+      <text x="15" y="120" font-family="'Segoe UI', Roboto, sans-serif" font-size="9" fill="#34d399">Dedicated Power Island Test</text>
+    </g>
+
+    <!-- Tile 3: GPU & Memory Subsystem -->
+    <g transform="translate(575, 90)">
+      <rect width="250" height="130" rx="8" fill="#131d33" stroke="#f59e0b" stroke-width="1.5"/>
+      <rect width="250" height="26" rx="8" fill="#78350f"/>
+      <text x="125" y="17" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="700" fill="#fef3c7" text-anchor="middle">GPU &amp; High-Bandwidth Mem</text>
+
+      <text x="15" y="48" font-family="'Courier New', monospace" font-size="10" fill="#fde68a">• Multi-Tile LBIST Engines</text>
+      <text x="15" y="66" font-family="'Segoe UI', Roboto, sans-serif" font-size="10" fill="#cbd5e1">• HBM3 / DDR5 PHY Loopback</text>
+      <text x="15" y="84" font-family="'Segoe UI', Roboto, sans-serif" font-size="10" fill="#cbd5e1">• High-Speed SerDes BIST</text>
+      <text x="15" y="102" font-family="'Segoe UI', Roboto, sans-serif" font-size="10" fill="#facc15">• Thermal Diode Telemetry</text>
+      <text x="15" y="120" font-family="'Segoe UI', Roboto, sans-serif" font-size="9" fill="#34d399">Wafer Sort eFuse Programmer</text>
+    </g>
+  </g>
+
+  <!-- Bottom: Physical & Power Constraints for Test -->
+  <g transform="translate(35, 345)">
+    <rect width="850" height="150" rx="10" fill="#0c1222" stroke="#1e293b" filter="url(#shadowDft8)"/>
+    <text x="25" y="24" font-family="'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="700" fill="#38bdf8">DFT Physical Design, Timing &amp; Low-Power Sign-Off Pillars:</text>
+
+    <!-- Column 1 -->
+    <g transform="translate(25, 42)">
+      <rect width="250" height="90" rx="6" fill="#131d33" stroke="#334155"/>
+      <text x="15" y="22" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="700" fill="#f87171">1. Test Power &amp; IR Drop</text>
+      <text x="15" y="42" font-family="'Segoe UI', Roboto, sans-serif" font-size="10" fill="#cbd5e1">• Test toggle rate (50%) &gt;&gt; functional (15%).</text>
+      <text x="15" y="58" font-family="'Segoe UI', Roboto, sans-serif" font-size="10" fill="#cbd5e1">• Throttled shift prevents false delay drops.</text>
+      <text x="15" y="74" font-family="'Segoe UI', Roboto, sans-serif" font-size="10" fill="#f87171">Prevents silicon thermal destruction!</text>
+    </g>
+
+    <!-- Column 2 -->
+    <g transform="translate(300, 42)">
+      <rect width="250" height="90" rx="6" fill="#131d33" stroke="#334155"/>
+      <text x="15" y="22" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="700" fill="#facc15">2. Physical Scan Reordering</text>
+      <text x="15" y="42" font-family="'Segoe UI', Roboto, sans-serif" font-size="10" fill="#cbd5e1">• Scan stitching post-placement.</text>
+      <text x="15" y="58" font-family="'Segoe UI', Roboto, sans-serif" font-size="10" fill="#cbd5e1">• Eliminates cross-chip wire congestion.</text>
+      <text x="15" y="74" font-family="'Segoe UI', Roboto, sans-serif" font-size="10" fill="#fde68a">Solves hold violations on shift paths.</text>
+    </g>
+
+    <!-- Column 3 -->
+    <g transform="translate(575, 42)">
+      <rect width="250" height="90" rx="6" fill="#131d33" stroke="#334155"/>
+      <text x="15" y="22" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="700" fill="#34d399">3. Silicon Defect Diagnosis</text>
+      <text x="15" y="42" font-family="'Segoe UI', Roboto, sans-serif" font-size="10" fill="#cbd5e1">• Scan diagnosis pinpoints failing gate/via.</text>
+      <text x="15" y="58" font-family="'Segoe UI', Roboto, sans-serif" font-size="10" fill="#cbd5e1">• Generates wafer yield learning maps.</text>
+      <text x="15" y="74" font-family="'Segoe UI', Roboto, sans-serif" font-size="10" fill="#34d399">Drives fast fab yield ramp to 95%+.</text>
+    </g>
+  </g>
+</svg>

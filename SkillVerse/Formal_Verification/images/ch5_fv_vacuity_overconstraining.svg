@@ -1,0 +1,101 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 500" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGrad5" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#080c14" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <filter id="shadow5" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+  </defs>
+
+  <rect width="900" height="500" fill="url(#bgGrad5)"/>
+
+  <!-- Title -->
+  <text x="450" y="38" font-family="'Segoe UI', Roboto, sans-serif" font-size="22" font-weight="700" fill="#38bdf8" text-anchor="middle">Formal Verification Pitfalls: Over-Constraining &amp; Vacuity</text>
+  <text x="450" y="62" font-family="'Segoe UI', Roboto, sans-serif" font-size="13" fill="#94a3b8" text-anchor="middle">Understanding the Dangers of Misplaced Assumptions &amp; Vacuous Proofs</text>
+
+  <!-- Left: State Space Venn Diagram -->
+  <g transform="translate(30, 85)">
+    <rect width="405" height="385" rx="12" fill="#0f172a" stroke="#f59e0b" stroke-width="1.5" filter="url(#shadow5)"/>
+    <rect width="405" height="42" rx="12" fill="#78350f"/>
+    <text x="202" y="27" font-family="'Segoe UI', Roboto, sans-serif" font-size="15" font-weight="700" fill="#fef3c7" text-anchor="middle">Constraining State Space Dilemma</text>
+
+    <!-- Venn Container -->
+    <g transform="translate(25, 60)">
+      <rect width="355" height="200" rx="8" fill="#131d33" stroke="#1e293b"/>
+      
+      <!-- Universe -->
+      <text x="15" y="22" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="600" fill="#94a3b8">Total Digital State Space (2^N)</text>
+
+      <!-- Legal Reachable States -->
+      <ellipse cx="160" cy="115" rx="130" ry="75" fill="#0284c7" fill-opacity="0.2" stroke="#38bdf8" stroke-width="2"/>
+      <text x="80" y="70" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="700" fill="#38bdf8">True Legal States</text>
+
+      <!-- Bug State -->
+      <circle cx="230" cy="110" r="16" fill="#ef4444" fill-opacity="0.3" stroke="#ef4444" stroke-width="2"/>
+      <text x="230" y="114" font-family="'Segoe UI', Roboto, sans-serif" font-size="10" font-weight="700" fill="#f87171" text-anchor="middle">BUG</text>
+
+      <!-- Over-constrained circle (Too small, misses the bug) -->
+      <ellipse cx="115" cy="120" rx="65" ry="45" fill="#f59e0b" fill-opacity="0.25" stroke="#f59e0b" stroke-width="2" stroke-dasharray="4 2"/>
+      <text x="115" y="125" font-family="'Segoe UI', Roboto, sans-serif" font-size="10" font-weight="700" fill="#fde68a" text-anchor="middle">Over-Constrained</text>
+      <text x="115" y="140" font-family="'Segoe UI', Roboto, sans-serif" font-size="9" fill="#fcd34d" text-anchor="middle">(Bug is Excluded!)</text>
+    </g>
+
+    <!-- Explanatory Box -->
+    <g transform="translate(25, 275)">
+      <rect width="355" height="85" rx="6" fill="#0c1222" stroke="#1e293b"/>
+      <text x="12" y="22" font-family="'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="600" fill="#f87171">• Over-constraining (assume):</text>
+      <text x="18" y="42" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" fill="#cbd5e1">Cuts away valid operating scenarios, masking real bugs!</text>
+      <text x="12" y="62" font-family="'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="600" fill="#38bdf8">• Under-constraining:</text>
+      <text x="18" y="78" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" fill="#cbd5e1">Permits illegal inputs, producing spurious counterexamples.</text>
+    </g>
+  </g>
+
+  <!-- Right: Vacuity Breakdown -->
+  <g transform="translate(465, 85)">
+    <rect width="405" height="385" rx="12" fill="#0f172a" stroke="#ef4444" stroke-width="1.5" filter="url(#shadow5)"/>
+    <rect width="405" height="42" rx="12" fill="#991b1b"/>
+    <text x="202" y="27" font-family="'Segoe UI', Roboto, sans-serif" font-size="15" font-weight="700" fill="#fee2e2" text-anchor="middle">Vacuous Proof: False Confidence</text>
+
+    <!-- Logic Table Box -->
+    <g transform="translate(25, 60)">
+      <rect width="355" height="155" rx="8" fill="#131d33" stroke="#1e293b"/>
+      <text x="15" y="24" font-family="'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="700" fill="#fca5a5">Implication Truth Table: A → C</text>
+
+      <rect x="15" y="38" width="325" height="24" fill="#1e293b"/>
+      <text x="30" y="54" font-family="'Courier New', monospace" font-size="11" font-weight="700" fill="#94a3b8">Antecedent A</text>
+      <text x="140" y="54" font-family="'Courier New', monospace" font-size="11" font-weight="700" fill="#94a3b8">Consequent C</text>
+      <text x="240" y="54" font-family="'Courier New', monospace" font-size="11" font-weight="700" fill="#94a3b8">A → C Result</text>
+
+      <!-- Row 1: Vacuous -->
+      <rect x="15" y="64" width="325" height="32" fill="#7f1d1d" fill-opacity="0.3"/>
+      <text x="45" y="84" font-family="'Courier New', monospace" font-size="12" font-weight="700" fill="#f87171">FALSE (0)</text>
+      <text x="155" y="84" font-family="'Courier New', monospace" font-size="12" fill="#94a3b8">ANY</text>
+      <text x="245" y="84" font-family="'Courier New', monospace" font-size="12" font-weight="700" fill="#34d399">TRUE (Vacuous!)</text>
+
+      <!-- Row 2 -->
+      <text x="45" y="114" font-family="'Courier New', monospace" font-size="12" fill="#e2e8f0">TRUE (1)</text>
+      <text x="155" y="114" font-family="'Courier New', monospace" font-size="12" fill="#e2e8f0">TRUE (1)</text>
+      <text x="245" y="114" font-family="'Courier New', monospace" font-size="12" font-weight="700" fill="#34d399">TRUE (Non-vacuous)</text>
+
+      <!-- Row 3 -->
+      <text x="45" y="138" font-family="'Courier New', monospace" font-size="12" fill="#e2e8f0">TRUE (1)</text>
+      <text x="155" y="138" font-family="'Courier New', monospace" font-size="12" fill="#e2e8f0">FALSE (0)</text>
+      <text x="245" y="138" font-family="'Courier New', monospace" font-size="12" font-weight="700" fill="#f87171">FALSE (Violation)</text>
+    </g>
+
+    <!-- Vacuity Antidote: Cover -->
+    <g transform="translate(25, 230)">
+      <rect width="355" height="130" rx="8" fill="#131d33" stroke="#059669" stroke-width="1.5"/>
+      <text x="15" y="24" font-family="'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="700" fill="#34d399">The Antidote: Functional Covers</text>
+      <text x="15" y="46" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" fill="#cbd5e1">Never rely on an assertion without a companion cover:</text>
+      
+      <rect x="15" y="58" width="325" height="52" rx="4" fill="#092f25"/>
+      <text x="25" y="78" font-family="'Courier New', monospace" font-size="11" fill="#6ee7b7">c_req: cover property (@(posedge clk) req);</text>
+      <text x="25" y="98" font-family="'Courier New', monospace" font-size="11" fill="#6ee7b7">a_ack: assert property (req |=&gt; ##[1:4] ack);</text>
+
+      <text x="15" y="122" font-family="'Segoe UI', Roboto, sans-serif" font-size="10" font-style="italic" fill="#a7f3d0">If c_req is unreachable, a_ack is vacuous!</text>
+    </g>
+  </g>
+</svg>

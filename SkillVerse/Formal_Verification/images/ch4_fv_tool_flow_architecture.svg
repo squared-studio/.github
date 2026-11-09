@@ -1,0 +1,145 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 500" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGrad4" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#080c14" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <filter id="shadow4" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+  </defs>
+
+  <rect width="920" height="500" fill="url(#bgGrad4)"/>
+
+  <!-- Title -->
+  <text x="460" y="38" font-family="'Segoe UI', Roboto, sans-serif" font-size="22" font-weight="700" fill="#38bdf8" text-anchor="middle">Formal Verification Tool Flow &amp; Solver Architecture</text>
+  <text x="460" y="62" font-family="'Segoe UI', Roboto, sans-serif" font-size="13" fill="#94a3b8" text-anchor="middle">RTL + SVA Ingestion → Bit-Blasting → Transition Relations → SAT/SMT Solving Engines</text>
+
+  <!-- Flow Columns -->
+  <!-- 1. Inputs -->
+  <g transform="translate(30, 95)">
+    <rect width="180" height="365" rx="10" fill="#0f172a" stroke="#3b82f6" stroke-width="1.5" filter="url(#shadow4)"/>
+    <rect width="180" height="36" rx="10" fill="#1d4ed8"/>
+    <text x="90" y="23" font-family="'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="700" fill="#eff6ff" text-anchor="middle">1. Design &amp; Rules</text>
+
+    <g transform="translate(15, 55)">
+      <rect width="150" height="70" rx="6" fill="#131d33" stroke="#1e293b"/>
+      <text x="12" y="24" font-family="'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="600" fill="#60a5fa">DUT RTL Source</text>
+      <text x="12" y="44" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" fill="#94a3b8">• Verilog / SV</text>
+      <text x="12" y="60" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" fill="#94a3b8">• VHDL Modules</text>
+    </g>
+
+    <g transform="translate(15, 140)">
+      <rect width="150" height="85" rx="6" fill="#131d33" stroke="#1e293b"/>
+      <text x="12" y="24" font-family="'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="600" fill="#a78bfa">Formal Property Bind</text>
+      <text x="12" y="44" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" fill="#94a3b8">• SVA Assertions</text>
+      <text x="12" y="60" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" fill="#94a3b8">• Environment Assumptions</text>
+      <text x="12" y="76" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" fill="#94a3b8">• Functional Covers</text>
+    </g>
+
+    <g transform="translate(15, 240)">
+      <rect width="150" height="65" rx="6" fill="#131d33" stroke="#1e293b"/>
+      <text x="12" y="24" font-family="'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="600" fill="#facc15">Tool Configuration</text>
+      <text x="12" y="44" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" fill="#94a3b8">• SymbiYosys (.sby)</text>
+      <text x="12" y="58" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" fill="#94a3b8">• JasperGold TCL</text>
+    </g>
+  </g>
+
+  <!-- Arrow 1 -> 2 -->
+  <text x="225" y="280" font-family="'Segoe UI', sans-serif" font-size="20" fill="#38bdf8">→</text>
+
+  <!-- 2. Synthesis & Transformation -->
+  <g transform="translate(250, 95)">
+    <rect width="190" height="365" rx="10" fill="#0f172a" stroke="#0ea5e9" stroke-width="1.5" filter="url(#shadow4)"/>
+    <rect width="190" height="36" rx="10" fill="#0284c7"/>
+    <text x="95" y="23" font-family="'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="700" fill="#f0f9ff" text-anchor="middle">2. Formal Synthesis</text>
+
+    <g transform="translate(15, 55)">
+      <rect width="160" height="75" rx="6" fill="#131d33" stroke="#1e293b"/>
+      <text x="12" y="24" font-family="'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="600" fill="#38bdf8">Elaboration &amp; Hierarchy</text>
+      <text x="12" y="44" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" fill="#94a3b8">• Flatten hierarchy</text>
+      <text x="12" y="62" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" fill="#94a3b8">• Bind formal ports</text>
+    </g>
+
+    <g transform="translate(15, 145)">
+      <rect width="160" height="95" rx="6" fill="#131d33" stroke="#1e293b"/>
+      <text x="12" y="24" font-family="'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="600" fill="#38bdf8">Bit-Blasting &amp; AIG</text>
+      <text x="12" y="44" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" fill="#94a3b8">• And-Inverter Graphs</text>
+      <text x="12" y="62" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" fill="#94a3b8">• Latch extraction</text>
+      <text x="12" y="80" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" fill="#94a3b8">• CNF generation</text>
+    </g>
+
+    <g transform="translate(15, 255)">
+      <rect width="160" height="85" rx="6" fill="#131d33" stroke="#1e293b"/>
+      <text x="12" y="24" font-family="'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="600" fill="#38bdf8">Transition Relation</text>
+      <text x="12" y="48" font-family="'Courier New', monospace" font-size="10" fill="#7dd3fc">I(s₀) ∧ T(s₀, s₁) ∧ ...</text>
+      <text x="12" y="70" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" fill="#94a3b8">• Unrolling over cycles</text>
+    </g>
+  </g>
+
+  <!-- Arrow 2 -> 3 -->
+  <text x="455" y="280" font-family="'Segoe UI', sans-serif" font-size="20" fill="#38bdf8">→</text>
+
+  <!-- 3. Formal Solvers -->
+  <g transform="translate(480, 95)">
+    <rect width="190" height="365" rx="10" fill="#0f172a" stroke="#8b5cf6" stroke-width="1.5" filter="url(#shadow4)"/>
+    <rect width="190" height="36" rx="10" fill="#6d28d9"/>
+    <text x="95" y="23" font-family="'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="700" fill="#ede9fe" text-anchor="middle">3. Proving Engines</text>
+
+    <g transform="translate(15, 55)">
+      <rect width="160" height="75" rx="6" fill="#131d33" stroke="#1e293b"/>
+      <text x="12" y="24" font-family="'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="600" fill="#c084fc">BMC (Bounded Check)</text>
+      <text x="12" y="44" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" fill="#94a3b8">• Search up to depth k</text>
+      <text x="12" y="62" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" fill="#94a3b8">• Bug hunting engine</text>
+    </g>
+
+    <g transform="translate(15, 145)">
+      <rect width="160" height="75" rx="6" fill="#131d33" stroke="#1e293b"/>
+      <text x="12" y="24" font-family="'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="600" fill="#c084fc">k-Induction / PDR</text>
+      <text x="12" y="44" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" fill="#94a3b8">• Base case + Induction</text>
+      <text x="12" y="62" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" fill="#94a3b8">• Mathematical full proof</text>
+    </g>
+
+    <g transform="translate(15, 235)">
+      <rect width="160" height="105" rx="6" fill="#131d33" stroke="#1e293b"/>
+      <text x="12" y="24" font-family="'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="600" fill="#c084fc">Back-end Solvers</text>
+      <text x="12" y="44" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" fill="#94a3b8">• Z3 (Microsoft SMT)</text>
+      <text x="12" y="62" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" fill="#94a3b8">• Boolector / Bitwuzla</text>
+      <text x="12" y="80" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" fill="#94a3b8">• CryptoMiniSat / CaDiCaL</text>
+    </g>
+  </g>
+
+  <!-- Arrow 3 -> 4 -->
+  <text x="685" y="280" font-family="'Segoe UI', sans-serif" font-size="20" fill="#38bdf8">→</text>
+
+  <!-- 4. Verification Verdict -->
+  <g transform="translate(710, 95)">
+    <rect width="180" height="365" rx="10" fill="#0f172a" stroke="#10b981" stroke-width="1.5" filter="url(#shadow4)"/>
+    <rect width="180" height="36" rx="10" fill="#047857"/>
+    <text x="90" y="23" font-family="'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="700" fill="#ecfdf5" text-anchor="middle">4. Formal Verdict</text>
+
+    <!-- PROVEN -->
+    <g transform="translate(15, 55)">
+      <rect width="150" height="75" rx="6" fill="#064e3b" stroke="#10b981" stroke-width="1.5"/>
+      <text x="75" y="30" font-family="'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="700" fill="#34d399" text-anchor="middle">PROVEN</text>
+      <text x="75" y="52" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" fill="#a7f3d0" text-anchor="middle">Unconditional Proof</text>
+      <text x="75" y="66" font-family="'Segoe UI', Roboto, sans-serif" font-size="10" fill="#6ee7b7" text-anchor="middle">No bug exists forever</text>
+    </g>
+
+    <!-- FALSIFIED -->
+    <g transform="translate(15, 145)">
+      <rect width="150" height="85" rx="6" fill="#7f1d1d" stroke="#ef4444" stroke-width="1.5"/>
+      <text x="75" y="28" font-family="'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="700" fill="#f87171" text-anchor="middle">FALSIFIED</text>
+      <text x="75" y="48" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" fill="#fca5a5" text-anchor="middle">Counterexample Trace</text>
+      <text x="75" y="68" font-family="'Courier New', monospace" font-size="10" fill="#fee2e2" text-anchor="middle">dump.vcd / fsdb</text>
+    </g>
+
+    <!-- COVER HIT -->
+    <g transform="translate(15, 245)">
+      <rect width="150" height="75" rx="6" fill="#78350f" stroke="#f59e0b" stroke-width="1.5"/>
+      <text x="75" y="30" font-family="'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="700" fill="#fcd34d" text-anchor="middle">COVER REACHED</text>
+      <text x="75" y="52" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" fill="#fde68a" text-anchor="middle">Witness trace</text>
+      <text x="75" y="66" font-family="'Segoe UI', Roboto, sans-serif" font-size="10" fill="#fef3c7" text-anchor="middle">Checks reachability</text>
+    </g>
+  </g>
+</svg>

@@ -1,0 +1,130 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 520" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGradDft2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#080c14" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <filter id="shadowDft2" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+  </defs>
+
+  <rect width="920" height="520" fill="url(#bgGradDft2)"/>
+
+  <!-- Title -->
+  <text x="460" y="38" font-family="'Segoe UI', Roboto, sans-serif" font-size="22" font-weight="700" fill="#38bdf8" text-anchor="middle">Scan Chain Architecture &amp; Multiplexed-D Flip-Flop</text>
+  <text x="460" y="62" font-family="'Segoe UI', Roboto, sans-serif" font-size="13" fill="#94a3b8" text-anchor="middle">Transforming Sequential Sequential Circuits into Virtual Combinational Logic for 100% Controllability &amp; Observability</text>
+
+  <!-- Left: Scan Cell Anatomy -->
+  <g transform="translate(30, 85)">
+    <rect width="320" height="400" rx="10" fill="#0f172a" stroke="#0ea5e9" stroke-width="1.5" filter="url(#shadowDft2)"/>
+    <rect width="320" height="38" rx="10" fill="#0369a1"/>
+    <text x="160" y="24" font-family="'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="700" fill="#f0f9ff" text-anchor="middle">Multiplexed-D Scan Cell (Mux-D)</text>
+
+    <!-- Internal MUX + FF Graphic -->
+    <g transform="translate(20, 55)">
+      <!-- 2:1 MUX -->
+      <polygon points="30,40 70,55 70,125 30,140" fill="#131d33" stroke="#38bdf8" stroke-width="1.5"/>
+      <text x="50" y="94" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="700" fill="#38bdf8" text-anchor="middle">MUX</text>
+
+      <!-- D and SI inputs -->
+      <line x1="5" y1="65" x2="30" y2="65" stroke="#38bdf8" stroke-width="2"/>
+      <text x="0" y="69" font-family="'Courier New', monospace" font-size="11" fill="#cbd5e1" text-anchor="end">D (0)</text>
+
+      <line x1="5" y1="115" x2="30" y2="115" stroke="#a78bfa" stroke-width="2"/>
+      <text x="0" y="119" font-family="'Courier New', monospace" font-size="11" fill="#a78bfa" text-anchor="end">SI (1)</text>
+
+      <!-- SE select line -->
+      <line x1="50" y1="20" x2="50" y2="48" stroke="#f59e0b" stroke-width="2"/>
+      <polygon points="47,45 50,51 53,45" fill="#f59e0b"/>
+      <text x="50" y="14" font-family="'Courier New', monospace" font-size="11" font-weight="700" fill="#fcd34d" text-anchor="middle">SE (Scan Enable)</text>
+
+      <!-- Mux output to D-FF -->
+      <line x1="70" y1="90" x2="110" y2="90" stroke="#38bdf8" stroke-width="2"/>
+
+      <!-- D Flip Flop -->
+      <rect x="110" y="45" width="90" height="90" rx="6" fill="#1e1b4b" stroke="#818cf8" stroke-width="1.5"/>
+      <text x="120" y="95" font-family="'Courier New', monospace" font-size="12" font-weight="700" fill="#e0e7ff">D</text>
+      <text x="188" y="95" font-family="'Courier New', monospace" font-size="12" font-weight="700" fill="#34d399">Q</text>
+
+      <!-- Clock triangle -->
+      <polygon points="110,115 125,123 110,130" fill="none" stroke="#94a3b8" stroke-width="1.5"/>
+      <line x1="90" y1="123" x2="110" y2="123" stroke="#94a3b8" stroke-width="2"/>
+      <text x="85" y="127" font-family="'Courier New', monospace" font-size="10" fill="#94a3b8" text-anchor="end">CLK</text>
+
+      <!-- Q / SO output -->
+      <line x1="200" y1="90" x2="250" y2="90" stroke="#34d399" stroke-width="2"/>
+      <text x="255" y="94" font-family="'Courier New', monospace" font-size="11" font-weight="700" fill="#34d399">Q / SO</text>
+    </g>
+
+    <!-- Operational Table -->
+    <g transform="translate(20, 230)">
+      <rect width="280" height="145" rx="6" fill="#131d33" stroke="#1e293b"/>
+      <text x="15" y="24" font-family="'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="700" fill="#38bdf8">Operating Modes:</text>
+
+      <text x="15" y="50" font-family="'Courier New', monospace" font-size="11" font-weight="700" fill="#fcd34d">SE = 0 (Capture / Functional):</text>
+      <text x="20" y="70" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" fill="#cbd5e1">• MUX selects normal system D</text>
+      <text x="20" y="88" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" fill="#cbd5e1">• Captures combinational logic output</text>
+
+      <text x="15" y="112" font-family="'Courier New', monospace" font-size="11" font-weight="700" fill="#a78bfa">SE = 1 (Shift / Test):</text>
+      <text x="20" y="130" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" fill="#cbd5e1">• MUX selects serial Scan In (SI)</text>
+      <text x="20" y="146" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" fill="#cbd5e1">• Shifts vectors through entire chip</text>
+    </g>
+  </g>
+
+  <!-- Right: Serial Scan Chain System Integration -->
+  <g transform="translate(375, 85)">
+    <rect width="515" height="400" rx="10" fill="#0f172a" stroke="#10b981" stroke-width="1.5" filter="url(#shadowDft2)"/>
+    <rect width="515" height="38" rx="10" fill="#065f46"/>
+    <text x="257" y="24" font-family="'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="700" fill="#ecfdf5" text-anchor="middle">Full-Scan Chain Architecture</text>
+
+    <!-- Scan Path Row -->
+    <g transform="translate(25, 55)">
+      <!-- Primary Scan In -->
+      <rect x="0" y="30" width="65" height="32" rx="4" fill="#6d28d9"/>
+      <text x="32" y="50" font-family="'Courier New', monospace" font-size="11" font-weight="700" fill="#f5f3ff" text-anchor="middle">SCAN_IN</text>
+      <line x1="65" y1="46" x2="100" y2="46" stroke="#a78bfa" stroke-width="2"/>
+
+      <!-- Scan Cell 1 -->
+      <rect x="100" y="20" width="80" height="52" rx="6" fill="#131d33" stroke="#38bdf8" stroke-width="1.5"/>
+      <text x="140" y="45" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="700" fill="#38bdf8" text-anchor="middle">Scan FF 1</text>
+      <text x="140" y="60" font-family="'Courier New', monospace" font-size="9" fill="#94a3b8" text-anchor="middle">SI → SO</text>
+
+      <line x1="180" y1="46" x2="225" y2="46" stroke="#a78bfa" stroke-width="2"/>
+
+      <!-- Scan Cell 2 -->
+      <rect x="225" y="20" width="80" height="52" rx="6" fill="#131d33" stroke="#38bdf8" stroke-width="1.5"/>
+      <text x="265" y="45" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="700" fill="#38bdf8" text-anchor="middle">Scan FF 2</text>
+      <text x="265" y="60" font-family="'Courier New', monospace" font-size="9" fill="#94a3b8" text-anchor="middle">SI → SO</text>
+
+      <line x1="305" y1="46" x2="350" y2="46" stroke="#a78bfa" stroke-width="2"/>
+
+      <!-- Scan Cell N -->
+      <rect x="350" y="20" width="80" height="52" rx="6" fill="#131d33" stroke="#38bdf8" stroke-width="1.5"/>
+      <text x="390" y="45" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="700" fill="#38bdf8" text-anchor="middle">Scan FF N</text>
+      <text x="390" y="60" font-family="'Courier New', monospace" font-size="9" fill="#94a3b8" text-anchor="middle">SI → SO</text>
+
+      <!-- Primary Scan Out -->
+      <line x1="430" y1="46" x2="455" y2="46" stroke="#34d399" stroke-width="2"/>
+      <rect x="455" y="30" width="55" height="32" rx="4" fill="#065f46"/>
+      <text x="482" y="50" font-family="'Courier New', monospace" font-size="10" font-weight="700" fill="#d1fae5" text-anchor="middle">SCAN_OUT</text>
+    </g>
+
+    <!-- Combinational Logic Block -->
+    <g transform="translate(45, 150)">
+      <rect width="425" height="100" rx="8" fill="#1e293b" stroke="#64748b" stroke-dasharray="3 3"/>
+      <text x="212" y="40" font-family="'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="700" fill="#f8fafc" text-anchor="middle">User Combinational Logic Cloud (C1, C2, C3)</text>
+      <text x="212" y="62" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" fill="#cbd5e1" text-anchor="middle">Feedback loops broken by scan insertion!</text>
+      <text x="212" y="80" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" fill="#38bdf8" text-anchor="middle">Primary Inputs (PI) → Logic → Primary Outputs (PO)</text>
+    </g>
+
+    <!-- Two-phase timeline explanation -->
+    <g transform="translate(25, 275)">
+      <rect width="465" height="105" rx="6" fill="#131d33" stroke="#1e293b"/>
+      <text x="15" y="24" font-family="'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="700" fill="#34d399">The Universal Test Cycle:</text>
+      <text x="20" y="46" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" fill="#cbd5e1">1. <tspan fill="#a78bfa" font-weight="700">SHIFT (SE=1):</tspan> Clock in N test vector bits to initialize all flip-flops.</text>
+      <text x="20" y="68" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" fill="#cbd5e1">2. <tspan fill="#fcd34d" font-weight="700">CAPTURE (SE=0):</tspan> Pulse 1 clock. Logic evaluates and latches results.</text>
+      <text x="20" y="90" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" fill="#cbd5e1">3. <tspan fill="#34d399" font-weight="700">UNLOAD &amp; RELOAD:</tspan> Shift out captured responses while shifting next test.</text>
+    </g>
+  </g>
+</svg>

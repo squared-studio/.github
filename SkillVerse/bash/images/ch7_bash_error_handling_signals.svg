@@ -1,0 +1,107 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 480" width="100%" height="100%">
+  <defs>
+    <style>
+      .bg { fill: #080c14; }
+      .card { fill: #0f172a; stroke: #1e293b; stroke-width: 1.5; rx: 10; }
+      .title { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 20px; fill: #f8fafc; }
+      .subtitle { font-family: 'Inter', system-ui, sans-serif; font-size: 13px; fill: #94a3b8; }
+      .sig-box { fill: #131d33; stroke-width: 2; rx: 8; }
+      .sig-title { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 15px; }
+      .sig-sub { font-family: 'Inter', system-ui, sans-serif; font-size: 11px; fill: #94a3b8; }
+      .code-key { font-family: 'JetBrains Mono', Consolas, monospace; font-size: 12px; font-weight: 700; }
+      .desc-txt { font-family: 'Inter', system-ui, sans-serif; font-size: 12px; fill: #cbd5e1; }
+      .wire-sig { stroke: #f43f5e; stroke-width: 2; stroke-dasharray: 4,4; fill: none; stroke-linecap: round; }
+    </style>
+    <marker id="arr-sig" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#f43f5e" />
+    </marker>
+  </defs>
+
+  <rect width="960" height="480" class="bg" rx="14"/>
+
+  <!-- Title (y = 30 and y = 50) -->
+  <text x="480" y="32" text-anchor="middle" class="title">Bash Signal Interception &amp; Trap Lifecycle Architecture</text>
+  <text x="480" y="52" text-anchor="middle" class="subtitle">Guaranteed resource cleanup, graceful shutdowns, and error traps</text>
+
+  <!-- Left: Signal Dispatcher (x = 40, width = 270, height = 370) -->
+  <g transform="translate(40, 75)">
+    <rect x="0" y="0" width="270" height="380" class="sig-box" style="stroke:#f43f5e; fill:#240c14;"/>
+    <text x="135" y="28" text-anchor="middle" class="sig-title" style="fill:#f43f5e;">1. INCOMING SIGNALS</text>
+    <text x="135" y="48" text-anchor="middle" class="sig-sub">Asynchronous Kernel Events</text>
+
+    <!-- POSIX Signals -->
+    <g transform="translate(15, 65)">
+      <rect x="0" y="0" width="240" height="135" rx="6" fill="#0f172a" stroke="#334155"/>
+      <text x="12" y="22" class="code-key" style="fill:#fb7185;">OS HARDWARE SIGNALS</text>
+      <text x="12" y="44" class="desc-txt" style="font-size:11px;"><tspan class="code-key" style="fill:#f43f5e;">SIGINT (2)</tspan> : User &lt;Ctrl+C&gt;</text>
+      <text x="12" y="66" class="desc-txt" style="font-size:11px;"><tspan class="code-key" style="fill:#f43f5e;">SIGTERM (15)</tspan> : Termination request</text>
+      <text x="12" y="88" class="desc-txt" style="font-size:11px;"><tspan class="code-key" style="fill:#f43f5e;">SIGHUP (1)</tspan> : Terminal hung up/closed</text>
+      <text x="12" y="110" class="desc-txt" style="font-size:11px;"><tspan class="code-key" style="fill:#94a3b8;">SIGKILL (9)</tspan> : Force kill (Untrappable!)</text>
+    </g>
+
+    <!-- Bash Pseudo Signals -->
+    <g transform="translate(15, 215)">
+      <rect x="0" y="0" width="240" height="145" rx="6" fill="#0f172a" stroke="#334155"/>
+      <text x="12" y="22" class="code-key" style="fill:#f59e0b;">BASH INTERNAL EVENTS</text>
+      <text x="12" y="44" class="desc-txt" style="font-size:11px;"><tspan class="code-key" style="fill:#fbbf24;">EXIT (0)</tspan> : Normal script termination</text>
+      <text x="12" y="66" class="desc-txt" style="font-size:11px;"><tspan class="code-key" style="fill:#fbbf24;">ERR</tspan> : Command returns non-zero code</text>
+      <text x="12" y="88" class="desc-txt" style="font-size:11px;"><tspan class="code-key" style="fill:#fbbf24;">RETURN</tspan> : Executed when func returns</text>
+      <text x="12" y="110" class="desc-txt" style="font-size:11px;"><tspan class="code-key" style="fill:#fbbf24;">DEBUG</tspan> : Executes before every command</text>
+      <text x="12" y="130" class="desc-txt" style="font-size:10px; fill:#94a3b8;">(Foundation for custom debuggers)</text>
+    </g>
+  </g>
+
+  <!-- Wire 1 -> 2 -->
+  <path d="M 310 220 L 358 220" class="wire-sig" marker-end="url(#arr-sig)"/>
+
+  <!-- Middle: The Trap Handler (x = 360, width = 300, height = 370) -->
+  <g transform="translate(360, 75)">
+    <rect x="0" y="0" width="300" height="380" class="sig-box" style="stroke:#38bdf8; fill:#0c1f36;"/>
+    <text x="150" y="28" text-anchor="middle" class="sig-title" style="fill:#38bdf8;">2. TRAP INTERCEPTOR</text>
+    <text x="150" y="48" text-anchor="middle" class="sig-sub">Synchronous Interrupt Handling</text>
+
+    <!-- Trap Registration -->
+    <g transform="translate(15, 65)">
+      <rect x="0" y="0" width="270" height="110" rx="6" fill="#0f172a" stroke="#38bdf8"/>
+      <text x="12" y="22" class="code-key" style="fill:#7dd3fc;">REGISTRATION HOOK</text>
+      <text x="12" y="42" class="code-key" style="fill:#34d399; font-size:11px;">trap 'cleanup' EXIT INT TERM</text>
+      <text x="12" y="64" class="desc-txt" style="font-size:11px;">Registers `cleanup` function as the</text>
+      <text x="12" y="82" class="desc-txt" style="font-size:11px;">handler for normal exit, &lt;Ctrl+C&gt;,</text>
+      <text x="12" y="100" class="desc-txt" style="font-size:11px;">and termination signals.</text>
+    </g>
+
+    <!-- Execution Guarantee -->
+    <g transform="translate(15, 190)">
+      <rect x="0" y="0" width="270" height="170" rx="6" fill="#0f172a" stroke="#334155"/>
+      <text x="12" y="22" class="code-key" style="fill:#a7f3d0;">EXECUTION GUARANTEES</text>
+      <text x="12" y="44" class="desc-txt" style="font-size:11px;">• Always runs, even on syntax errors</text>
+      <text x="12" y="64" class="desc-txt" style="font-size:11px;">• Runs when script exits prematurely</text>
+      <text x="12" y="84" class="desc-txt" style="font-size:11px;">• Captures exact line number: <tspan class="code-key" style="fill:#38bdf8;">$LINENO</tspan></text>
+      <text x="12" y="104" class="desc-txt" style="font-size:11px;">• Accesses failing command: <tspan class="code-key" style="fill:#38bdf8;">$BASH_COMMAND</tspan></text>
+      <text x="12" y="124" class="desc-txt" style="font-size:11px;">• Call stack introspection: <tspan class="code-key" style="fill:#38bdf8;">${FUNCNAME[*]}</tspan></text>
+      <text x="12" y="148" class="code-key" style="font-size:11px; fill:#34d399;">trap - EXIT (Unregisters handler)</text>
+    </g>
+  </g>
+
+  <!-- Right: Cleanup Routine (x = 690, width = 230, height = 370) -->
+  <g transform="translate(690, 75)">
+    <rect x="0" y="0" width="230" height="380" class="sig-box" style="stroke:#34d399; fill:#0c241c;"/>
+    <text x="115" y="28" text-anchor="middle" class="sig-title" style="fill:#34d399;">3. CLEANUP &amp; EXIT</text>
+    <text x="115" y="48" text-anchor="middle" class="sig-sub">Resource Release Actions</text>
+
+    <g transform="translate(12, 65)">
+      <rect x="0" y="0" width="206" height="295" rx="6" fill="#0f172a" stroke="#34d399"/>
+      <text x="12" y="24" class="code-key" style="fill:#34d399;">cleanup() {</text>
+      <text x="20" y="48" class="code-key" style="fill:#cbd5e1; font-size:11px;"># Remove temp files</text>
+      <text x="20" y="68" class="code-key" style="fill:#6ee7b7; font-size:11px;">rm -rf "$TMP_DIR"</text>
+      <text x="20" y="96" class="code-key" style="fill:#cbd5e1; font-size:11px;"># Kill child jobs</text>
+      <text x="20" y="116" class="code-key" style="fill:#6ee7b7; font-size:11px;">kill $(jobs -p)</text>
+      <text x="20" y="144" class="code-key" style="fill:#cbd5e1; font-size:11px;"># Release lock file</text>
+      <text x="20" y="164" class="code-key" style="fill:#6ee7b7; font-size:11px;">flock -u 200</text>
+      <text x="20" y="192" class="code-key" style="fill:#cbd5e1; font-size:11px;"># Restore cursor</text>
+      <text x="20" y="212" class="code-key" style="fill:#6ee7b7; font-size:11px;">tput cnorm</text>
+      <text x="12" y="245" class="code-key" style="fill:#34d399;">}</text>
+      <text x="12" y="275" class="desc-txt" style="font-size:10px; fill:#a7f3d0;">No zombie processes or orphan temp dirs left on disk!</text>
+    </g>
+  </g>
+</svg>

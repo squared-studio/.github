@@ -1,0 +1,97 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 480" width="100%" height="100%">
+  <defs>
+    <style>
+      .bg { fill: #080c14; }
+      .card { fill: #0f172a; stroke: #1e293b; stroke-width: 1.5; rx: 10; }
+      .title { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 20px; fill: #f8fafc; }
+      .subtitle { font-family: 'Inter', system-ui, sans-serif; font-size: 13px; fill: #94a3b8; }
+      .pipe-box { fill: #131d33; stroke-width: 2; rx: 8; }
+      .pipe-title { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 15px; }
+      .pipe-sub { font-family: 'Inter', system-ui, sans-serif; font-size: 11px; fill: #94a3b8; }
+      .code-key { font-family: 'JetBrains Mono', Consolas, monospace; font-size: 12px; font-weight: 700; }
+      .desc-txt { font-family: 'Inter', system-ui, sans-serif; font-size: 12px; fill: #cbd5e1; }
+      .wire-step { stroke: #38bdf8; stroke-width: 2.2; fill: none; stroke-linecap: round; }
+    </style>
+    <marker id="arr-step" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8" />
+    </marker>
+  </defs>
+
+  <rect width="960" height="480" class="bg" rx="14"/>
+
+  <!-- Title (y = 30 and y = 50) -->
+  <text x="480" y="32" text-anchor="middle" class="title">Automatic Header Dependency Generation Pipeline (-MMD -MP)</text>
+  <text x="480" y="52" text-anchor="middle" class="subtitle">Eliminating stale builds by extracting C/C++ preprocessor #include trees into Makefile rules</text>
+
+  <!-- 3 Stages (y = 75 to 295) -->
+
+  <!-- Stage 1: Compilation with -MMD -MP (x = 40, width = 270) -->
+  <g transform="translate(40, 75)">
+    <rect x="0" y="0" width="270" height="215" class="pipe-box" style="stroke:#38bdf8; fill:#0c1f36;"/>
+    <text x="135" y="26" text-anchor="middle" class="pipe-title" style="fill:#38bdf8;">1. COMPILER PASS</text>
+    <text x="135" y="44" text-anchor="middle" class="pipe-sub">gcc -MMD -MP -c main.c</text>
+
+    <g transform="translate(15, 60)">
+      <text x="0" y="16" class="code-key" style="fill:#7dd3fc;">Flags Breakdown:</text>
+      <text x="0" y="38" class="desc-txt">• <tspan class="code-key" style="fill:#38bdf8;">-MMD</tspan>: Preprocesses file &amp;</text>
+      <text x="0" y="54" class="desc-txt">  emits dependency file: <tspan class="code-key" style="fill:#fcd34d;">main.d</tspan></text>
+      <text x="0" y="74" class="desc-txt">• <tspan class="code-key" style="fill:#38bdf8;">-MP</tspan>: Generates dummy phony</text>
+      <text x="0" y="90" class="desc-txt">  targets for each header file</text>
+      <text x="0" y="106" class="desc-txt">  (prevents build crash if a</text>
+      <text x="0" y="122" class="desc-txt">  header is renamed/deleted!).</text>
+    </g>
+  </g>
+
+  <!-- Wire 1 -> 2 -->
+  <path d="M 310 182 L 348 182" class="wire-step" marker-end="url(#arr-step)"/>
+
+  <!-- Stage 2: The Generated .d File (x = 350, width = 260) -->
+  <g transform="translate(350, 75)">
+    <rect x="0" y="0" width="260" height="215" class="pipe-box" style="stroke:#f59e0b; fill:#1c150b;"/>
+    <text x="130" y="26" text-anchor="middle" class="pipe-title" style="fill:#f59e0b;">2. GENERATED main.d</text>
+    <text x="130" y="44" text-anchor="middle" class="pipe-sub">Auto-Extracted Make Rule</text>
+
+    <g transform="translate(15, 60)">
+      <rect x="0" y="0" width="230" height="135" rx="6" fill="#0f172a" stroke="#334155"/>
+      <text x="12" y="22" class="code-key" style="fill:#fcd34d;">main.o: main.c \</text>
+      <text x="24" y="40" class="code-key" style="fill:#fcd34d;">  include/config.h \</text>
+      <text x="24" y="58" class="code-key" style="fill:#fcd34d;">  include/logger.h</text>
+      <text x="12" y="80" class="code-key" style="fill:#94a3b8;">include/config.h:</text>
+      <text x="12" y="100" class="code-key" style="fill:#94a3b8;">include/logger.h:</text>
+      <text x="12" y="122" class="desc-txt" style="font-size:10px; fill:#34d399;">(Phony dummy rules via -MP)</text>
+    </g>
+  </g>
+
+  <!-- Wire 2 -> 3 -->
+  <path d="M 610 182 L 648 182" class="wire-step" marker-end="url(#arr-step)"/>
+
+  <!-- Stage 3: Dynamic Ingestion into Makefile (x = 650, width = 270) -->
+  <g transform="translate(650, 75)">
+    <rect x="0" y="0" width="270" height="215" class="pipe-box" style="stroke:#34d399; fill:#0c241c;"/>
+    <text x="135" y="26" text-anchor="middle" class="pipe-title" style="fill:#34d399;">3. MAKEFILE INCLUSION</text>
+    <text x="135" y="44" text-anchor="middle" class="pipe-sub">-include $(DEPS)</text>
+
+    <g transform="translate(15, 60)">
+      <text x="0" y="16" class="code-key" style="fill:#6ee7b7;">In Makefile:</text>
+      <text x="0" y="38" class="code-key" style="fill:#a7f3d0; font-size:11px;">DEPS := $(OBJS:.o=.d)</text>
+      <text x="0" y="56" class="code-key" style="fill:#34d399; font-size:11px;">-include $(DEPS)</text>
+      <text x="0" y="80" class="desc-txt">• Dash prefix (<tspan class="code-key" style="fill:#34d399;">-</tspan>) tells Make</text>
+      <text x="0" y="96" class="desc-txt">  to ignore missing files on</text>
+      <text x="0" y="112" class="desc-txt">  clean first build.</text>
+      <text x="0" y="132" class="desc-txt" style="fill:#34d399; font-weight:600;">100% accurate dependencies!</text>
+    </g>
+  </g>
+
+  <!-- Bottom: The Consequence of Not Using -MMD -MP (y = 310 to 455) -->
+  <g transform="translate(40, 310)">
+    <rect x="0" y="0" width="880" height="145" class="card" style="stroke:#f43f5e;"/>
+    <text x="25" y="26" class="title" style="font-size:14px; fill:#f43f5e;">The Fatal Flaw of Manual Header Tracking</text>
+
+    <g transform="translate(25, 42)">
+      <text x="0" y="18" class="desc-txt">In naive Makefiles with `%.o: %.c`, if a developer edits a header (`config.h`), Make sees that `main.c` hasn't changed.</text>
+      <text x="0" y="38" class="desc-txt">The binary is NOT recompiled! It runs with stale structs, mismatched memory offsets, and causes silent memory corruption at runtime.</text>
+      <text x="0" y="58" class="desc-txt">With <tspan class="code-key" style="fill:#38bdf8;">-MMD -MP</tspan> and <tspan class="code-key" style="fill:#34d399;">-include $(DEPS)</tspan>, Make automatically learns every single header `#include` path dynamically.</text>
+      <text x="0" y="78" class="desc-txt">Never manually list header dependencies again!</text>
+    </g>
+  </g>
+</svg>

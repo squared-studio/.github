@@ -122,7 +122,11 @@ In this improved example, the `add` function now includes:
 
 ## Returning Values from Functions: Exit Status and Output Capture
 
-Bash functions can "return" values in two primary ways, each serving different purposes:
+Bash functions execute within the same process context as the parent script unless explicitly executed in a pipeline or subshell. Understanding how memory scopes, positional arguments, and return values operate is vital to building maintainable scripts:
+
+![Bash Function Execution Stack and Variable Scoping](images/ch4_bash_function_call_stack.svg)
+
+Bash functions can communicate results back to the caller in two distinct ways:
 
 **1. Exit Status (Numeric Status Codes)**
 

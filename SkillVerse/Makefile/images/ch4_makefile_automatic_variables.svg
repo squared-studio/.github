@@ -1,0 +1,104 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 480" width="100%" height="100%">
+  <defs>
+    <style>
+      .bg { fill: #080c14; }
+      .card { fill: #0f172a; stroke: #1e293b; stroke-width: 1.5; rx: 10; }
+      .title { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 20px; fill: #f8fafc; }
+      .subtitle { font-family: 'Inter', system-ui, sans-serif; font-size: 13px; fill: #94a3b8; }
+      .var-box { fill: #131d33; stroke-width: 2; rx: 8; }
+      .var-sym { font-family: 'JetBrains Mono', Consolas, monospace; font-size: 18px; font-weight: 700; }
+      .var-name { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 13px; }
+      .var-desc { font-family: 'Inter', system-ui, sans-serif; font-size: 11px; fill: #94a3b8; }
+      .rule-banner { fill: #1e293b; stroke: #38bdf8; stroke-width: 2; rx: 8; }
+      .rule-code { font-family: 'JetBrains Mono', Consolas, monospace; font-size: 15px; font-weight: 700; }
+      .code-key { font-family: 'JetBrains Mono', Consolas, monospace; font-size: 12px; font-weight: 700; }
+      .desc-txt { font-family: 'Inter', system-ui, sans-serif; font-size: 12px; fill: #cbd5e1; }
+    </style>
+  </defs>
+
+  <rect width="960" height="480" class="bg" rx="14"/>
+
+  <!-- Title (y = 30 and y = 50) -->
+  <text x="480" y="32" text-anchor="middle" class="title">Automatic Variables &amp; Pattern Rule Anatomy</text>
+  <text x="480" y="52" text-anchor="middle" class="subtitle">Dynamic context variables evaluated during rule execution</text>
+
+  <!-- Canonical Pattern Rule Banner (y = 75 to 145) -->
+  <g transform="translate(40, 75)">
+    <rect x="0" y="0" width="880" height="70" class="rule-banner"/>
+    <text x="25" y="26" class="var-name" style="fill:#94a3b8; font-size:11px;">SAMPLE PATTERN RULE &amp; RECIPE:</text>
+    <text x="25" y="50" class="rule-code" style="fill:#f8fafc;">
+      <tspan style="fill:#38bdf8;">build/%.o</tspan>: <tspan style="fill:#34d399;">src/%.c</tspan> <tspan style="fill:#a855f7;">include/config.h</tspan>
+      <tspan style="fill:#64748b; font-weight:400;">  →</tspan>
+      <tspan style="fill:#f59e0b;">$(CC) $(CFLAGS) -c</tspan> <tspan style="fill:#34d399;">$&lt;</tspan> <tspan style="fill:#f59e0b;">-o</tspan> <tspan style="fill:#38bdf8;">$@</tspan>
+    </text>
+  </g>
+
+  <!-- 4 Main Automatic Variables Cards (y = 165 to 355) -->
+
+  <!-- Card 1: $@ -->
+  <g transform="translate(40, 165)">
+    <rect x="0" y="0" width="205" height="185" class="var-box" style="stroke:#38bdf8; fill:#0c1f36;"/>
+    <text x="102" y="32" text-anchor="middle" class="var-sym" style="fill:#38bdf8;">$@</text>
+    <text x="102" y="54" text-anchor="middle" class="var-name" style="fill:#f8fafc;">TARGET NAME</text>
+    <g transform="translate(15, 68)">
+      <text x="0" y="16" class="desc-txt">• File name of the target</text>
+      <text x="0" y="34" class="desc-txt">  currently being built.</text>
+      <text x="0" y="56" class="code-key" style="fill:#7dd3fc;">Example:</text>
+      <text x="0" y="74" class="code-key" style="fill:#38bdf8; font-size:11px;">build/main.o</text>
+      <text x="0" y="94" class="var-desc">• Always points to output</text>
+    </g>
+  </g>
+
+  <!-- Card 2: $< -->
+  <g transform="translate(265, 165)">
+    <rect x="0" y="0" width="205" height="185" class="var-box" style="stroke:#34d399; fill:#0c241c;"/>
+    <text x="102" y="32" text-anchor="middle" class="var-sym" style="fill:#34d399;">$&lt;</text>
+    <text x="102" y="54" text-anchor="middle" class="var-name" style="fill:#f8fafc;">FIRST PREREQUISITE</text>
+    <g transform="translate(15, 68)">
+      <text x="0" y="16" class="desc-txt">• The VERY FIRST</text>
+      <text x="0" y="34" class="desc-txt">  dependency listed.</text>
+      <text x="0" y="56" class="code-key" style="fill:#6ee7b7;">Example:</text>
+      <text x="0" y="74" class="code-key" style="fill:#34d399; font-size:11px;">src/main.c</text>
+      <text x="0" y="94" class="var-desc">• Source file for compiler</text>
+    </g>
+  </g>
+
+  <!-- Card 3: $^ -->
+  <g transform="translate(490, 165)">
+    <rect x="0" y="0" width="205" height="185" class="var-box" style="stroke:#a855f7; fill:#1c1033;"/>
+    <text x="102" y="32" text-anchor="middle" class="var-sym" style="fill:#a855f7;">$^</text>
+    <text x="102" y="54" text-anchor="middle" class="var-name" style="fill:#f8fafc;">ALL PREREQUISITES</text>
+    <g transform="translate(15, 68)">
+      <text x="0" y="16" class="desc-txt">• Space-separated list</text>
+      <text x="0" y="34" class="desc-txt">  of all dependencies.</text>
+      <text x="0" y="56" class="code-key" style="fill:#d8b4fe;">Example (Link stage):</text>
+      <text x="0" y="74" class="code-key" style="fill:#a855f7; font-size:11px;">main.o utils.o</text>
+      <text x="0" y="94" class="var-desc">• Duplicates deduplicated</text>
+    </g>
+  </g>
+
+  <!-- Card 4: $* -->
+  <g transform="translate(715, 165)">
+    <rect x="0" y="0" width="205" height="185" class="var-box" style="stroke:#f59e0b; fill:#1c150b;"/>
+    <text x="102" y="32" text-anchor="middle" class="var-sym" style="fill:#f59e0b;">$*</text>
+    <text x="102" y="54" text-anchor="middle" class="var-name" style="fill:#f8fafc;">PATTERN STEM (%)</text>
+    <g transform="translate(15, 68)">
+      <text x="0" y="16" class="desc-txt">• The string matched</text>
+      <text x="0" y="34" class="desc-txt">  by the % wildcard.</text>
+      <text x="0" y="56" class="code-key" style="fill:#fcd34d;">Example:</text>
+      <text x="0" y="74" class="code-key" style="fill:#f59e0b; font-size:11px;">main</text>
+      <text x="0" y="94" class="var-desc">• Useful for naming variants</text>
+    </g>
+  </g>
+
+  <!-- Bottom: Directory Modifiers $(@D) and $(@F) (y = 365 to 455) -->
+  <g transform="translate(40, 365)">
+    <rect x="0" y="0" width="880" height="95" class="card" style="stroke:#34d399;"/>
+    <text x="25" y="24" class="var-name" style="fill:#6ee7b7; font-size:13px;">Directory and File Variant Modifiers: $(@D) and $(@F)</text>
+
+    <g transform="translate(25, 38)">
+      <text x="0" y="18" class="desc-txt"><tspan class="code-key" style="fill:#38bdf8;">$(@D)</tspan> : The directory part of the target path (e.g. `mkdir -p $(@D)` ensures destination folder exists before compiling!).</text>
+      <text x="0" y="38" class="desc-txt"><tspan class="code-key" style="fill:#f59e0b;">$(@F)</tspan> : The file-within-directory part of the target path.</text>
+    </g>
+  </g>
+</svg>

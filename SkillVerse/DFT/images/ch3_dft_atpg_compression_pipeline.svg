@@ -1,0 +1,153 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 520" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGradDft3" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#080c14" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <filter id="shadowDft3" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+  </defs>
+
+  <rect width="920" height="520" fill="url(#bgGradDft3)"/>
+
+  <!-- Title -->
+  <text x="460" y="38" font-family="'Segoe UI', Roboto, sans-serif" font-size="22" font-weight="700" fill="#38bdf8" text-anchor="middle">Embedded Deterministic Test (EDT) Compression Pipeline</text>
+  <text x="460" y="62" font-family="'Segoe UI', Roboto, sans-serif" font-size="13" fill="#94a3b8" text-anchor="middle">Reducing ATE Tester Time &amp; Vector Data Volume by 100x–500x via Decompressor and Compactor Hardware</text>
+
+  <!-- Compression Block Flow -->
+  <g transform="translate(35, 85)">
+    <!-- 1. ATE Tester Channels (Narrow: e.g. 8 pins) -->
+    <g transform="translate(0, 0)">
+      <rect width="130" height="230" rx="8" fill="#1e1b4b" stroke="#6366f1" stroke-width="1.5" filter="url(#shadowDft3)"/>
+      <rect width="130" height="32" rx="8" fill="#312e81"/>
+      <text x="65" y="21" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="700" fill="#e0e7ff" text-anchor="middle">ATE Tester (Pins)</text>
+
+      <text x="15" y="60" font-family="'Courier New', monospace" font-size="11" fill="#cbd5e1">ATE_IN[0]</text>
+      <text x="15" y="85" font-family="'Courier New', monospace" font-size="11" fill="#cbd5e1">ATE_IN[1]</text>
+      <text x="65" y="115" font-family="'Segoe UI', Roboto, sans-serif" font-size="13" fill="#94a3b8" text-anchor="middle">⋮</text>
+      <text x="15" y="145" font-family="'Courier New', monospace" font-size="11" fill="#cbd5e1">ATE_IN[7]</text>
+
+      <text x="65" y="185" font-family="'Segoe UI', Roboto, sans-serif" font-size="10" font-weight="700" fill="#a5b4fc" text-anchor="middle">8 Narrow Pins</text>
+      <text x="65" y="202" font-family="'Segoe UI', Roboto, sans-serif" font-size="9" fill="#94a3b8" text-anchor="middle">Low tester cost</text>
+    </g>
+
+    <!-- Arrow ATE -> Decompressor -->
+    <line x1="130" y1="115" x2="165" y2="115" stroke="#38bdf8" stroke-width="2"/>
+    <polygon points="160,111 168,115 160,119" fill="#38bdf8"/>
+
+    <!-- 2. On-Chip Decompressor -->
+    <g transform="translate(170, 0)">
+      <rect width="165" height="230" rx="8" fill="#0f172a" stroke="#0ea5e9" stroke-width="1.5" filter="url(#shadowDft3)"/>
+      <rect width="165" height="32" rx="8" fill="#0369a1"/>
+      <text x="82" y="21" font-family="'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="700" fill="#f0f9ff" text-anchor="middle">On-Chip Decompressor</text>
+
+      <g transform="translate(15, 45)">
+        <rect width="135" height="70" rx="4" fill="#131d33" stroke="#0284c7"/>
+        <text x="67" y="24" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="700" fill="#38bdf8" text-anchor="middle">Linear XOR Tree /</text>
+        <text x="67" y="42" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="700" fill="#38bdf8" text-anchor="middle">Ring Generator</text>
+        <text x="67" y="60" font-family="'Segoe UI', Roboto, sans-serif" font-size="10" fill="#cbd5e1" text-anchor="middle">Free Variables</text>
+      </g>
+
+      <text x="82" y="150" font-family="'Segoe UI', Roboto, sans-serif" font-size="10" fill="#e2e8f0" text-anchor="middle">Expands 8 inputs into</text>
+      <text x="82" y="170" font-family="'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="700" fill="#34d399" text-anchor="middle">200–500 Internal Chains</text>
+      <text x="82" y="195" font-family="'Segoe UI', Roboto, sans-serif" font-size="9" fill="#94a3b8" text-anchor="middle">Exploits 98% "Don't Care" (X) bits</text>
+    </g>
+
+    <!-- Arrow Decompressor -> Chains -->
+    <line x1="335" y1="115" x2="365" y2="115" stroke="#38bdf8" stroke-width="2"/>
+    <polygon points="360,111 368,115 360,119" fill="#38bdf8"/>
+
+    <!-- 3. Massive Internal Short Scan Chains -->
+    <g transform="translate(370, 0)">
+      <rect width="180" height="230" rx="8" fill="#131d33" stroke="#10b981" stroke-width="1.5" filter="url(#shadowDft3)"/>
+      <rect width="180" height="32" rx="8" fill="#047857"/>
+      <text x="90" y="21" font-family="'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="700" fill="#ecfdf5" text-anchor="middle">Internal Short Chains</text>
+
+      <line x1="20" y1="55" x2="160" y2="55" stroke="#34d399" stroke-width="2" stroke-dasharray="2 2"/>
+      <text x="90" y="50" font-family="'Courier New', monospace" font-size="10" fill="#6ee7b7" text-anchor="middle">Chain 1 (Depth 100)</text>
+
+      <line x1="20" y1="85" x2="160" y2="85" stroke="#34d399" stroke-width="2" stroke-dasharray="2 2"/>
+      <text x="90" y="80" font-family="'Courier New', monospace" font-size="10" fill="#6ee7b7" text-anchor="middle">Chain 2 (Depth 100)</text>
+
+      <text x="90" y="115" font-family="'Segoe UI', Roboto, sans-serif" font-size="13" fill="#94a3b8" text-anchor="middle">⋮</text>
+
+      <line x1="20" y1="145" x2="160" y2="145" stroke="#34d399" stroke-width="2" stroke-dasharray="2 2"/>
+      <text x="90" y="140" font-family="'Courier New', monospace" font-size="10" fill="#6ee7b7" text-anchor="middle">Chain 256 (Depth 100)</text>
+
+      <text x="90" y="180" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="700" fill="#facc15" text-anchor="middle">Ultra-Fast Shift Cycle</text>
+      <text x="90" y="200" font-family="'Segoe UI', Roboto, sans-serif" font-size="9" fill="#cbd5e1" text-anchor="middle">Scan depth reduced from 25,000 to 100</text>
+    </g>
+
+    <!-- Arrow Chains -> Compactor -->
+    <line x1="550" y1="115" x2="580" y2="115" stroke="#38bdf8" stroke-width="2"/>
+    <polygon points="575,111 583,115 575,119" fill="#38bdf8"/>
+
+    <!-- 4. On-Chip Compactor & X-Masking -->
+    <g transform="translate(585, 0)">
+      <rect width="145" height="230" rx="8" fill="#0f172a" stroke="#f59e0b" stroke-width="1.5" filter="url(#shadowDft3)"/>
+      <rect width="145" height="32" rx="8" fill="#78350f"/>
+      <text x="72" y="21" font-family="'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="700" fill="#fef3c7" text-anchor="middle">Spatial Compactor</text>
+
+      <g transform="translate(15, 45)">
+        <rect width="115" height="50" rx="4" fill="#131d33" stroke="#f59e0b"/>
+        <text x="57" y="22" font-family="'Segoe UI', Roboto, sans-serif" font-size="10" font-weight="700" fill="#fde68a" text-anchor="middle">X-Masking</text>
+        <text x="57" y="38" font-family="'Segoe UI', Roboto, sans-serif" font-size="9" fill="#cbd5e1" text-anchor="middle">Blocks unknown 'X'</text>
+      </g>
+
+      <g transform="translate(15, 105)">
+        <rect width="115" height="50" rx="4" fill="#131d33" stroke="#f59e0b"/>
+        <text x="57" y="22" font-family="'Segoe UI', Roboto, sans-serif" font-size="10" font-weight="700" fill="#fde68a" text-anchor="middle">XOR Compactor</text>
+        <text x="57" y="38" font-family="'Segoe UI', Roboto, sans-serif" font-size="9" fill="#cbd5e1" text-anchor="middle">256 → 8 channels</text>
+      </g>
+
+      <text x="72" y="185" font-family="'Segoe UI', Roboto, sans-serif" font-size="10" fill="#fde68a" text-anchor="middle">Zero-aliasing</text>
+      <text x="72" y="200" font-family="'Segoe UI', Roboto, sans-serif" font-size="9" fill="#94a3b8" text-anchor="middle">Deterministic signature</text>
+    </g>
+
+    <!-- Arrow Compactor -> ATE Out -->
+    <line x1="730" y1="115" x2="760" y2="115" stroke="#38bdf8" stroke-width="2"/>
+    <polygon points="755,111 763,115 755,119" fill="#38bdf8"/>
+
+    <!-- 5. ATE Comparator Output -->
+    <g transform="translate(765, 0)">
+      <rect width="85" height="230" rx="8" fill="#1e1b4b" stroke="#6366f1" stroke-width="1.5" filter="url(#shadowDft3)"/>
+      <rect width="85" height="32" rx="8" fill="#312e81"/>
+      <text x="42" y="21" font-family="'Segoe UI', Roboto, sans-serif" font-size="10" font-weight="700" fill="#e0e7ff" text-anchor="middle">ATE (Out)</text>
+
+      <text x="10" y="60" font-family="'Courier New', monospace" font-size="10" fill="#cbd5e1">OUT[0]</text>
+      <text x="42" y="95" font-family="'Segoe UI', Roboto, sans-serif" font-size="13" fill="#94a3b8" text-anchor="middle">⋮</text>
+      <text x="10" y="145" font-family="'Courier New', monospace" font-size="10" fill="#cbd5e1">OUT[7]</text>
+
+      <text x="42" y="185" font-family="'Segoe UI', Roboto, sans-serif" font-size="10" font-weight="700" fill="#34d399" text-anchor="middle">PASS /</text>
+      <text x="42" y="202" font-family="'Segoe UI', Roboto, sans-serif" font-size="10" font-weight="700" fill="#f87171" text-anchor="middle">FAIL</text>
+    </g>
+  </g>
+
+  <!-- Bottom Waveform: Launch-on-Capture (LOC) At-Speed Testing -->
+  <g transform="translate(35, 335)">
+    <rect width="850" height="160" rx="10" fill="#0c1222" stroke="#1e293b" filter="url(#shadowDft3)"/>
+    <text x="25" y="26" font-family="'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="700" fill="#38bdf8">At-Speed Transition Delay Testing: Launch-on-Capture (LOC / Broadside)</text>
+
+    <!-- Signal: SCAN_ENABLE -->
+    <g transform="translate(25, 45)">
+      <text x="0" y="16" font-family="'Courier New', monospace" font-size="12" font-weight="700" fill="#f59e0b">SE</text>
+      <path d="M 60 5 L 260 5 L 270 20 L 520 20 L 530 5 L 650 5" fill="none" stroke="#f59e0b" stroke-width="2"/>
+      <text x="150" y="2" font-family="'Segoe UI', Roboto, sans-serif" font-size="10" fill="#fde68a" text-anchor="middle">Slow Shift (10–50 MHz)</text>
+      <text x="390" y="32" font-family="'Segoe UI', Roboto, sans-serif" font-size="10" font-weight="700" fill="#fcd34d" text-anchor="middle">SE = 0 (Broadside Capture Window)</text>
+    </g>
+
+    <!-- Signal: CLOCK (PLL At-Speed Burst) -->
+    <g transform="translate(25, 95)">
+      <text x="0" y="16" font-family="'Courier New', monospace" font-size="12" font-weight="700" fill="#38bdf8">CLK</text>
+      <!-- Slow shift clocks -->
+      <path d="M 60 20 L 90 20 L 90 5 L 120 5 L 120 20 L 150 20 L 150 5 L 180 5 L 180 20 L 210 20 L 210 5 L 240 5 L 240 20 L 320 20" fill="none" stroke="#64748b" stroke-width="1.5"/>
+      <!-- Two at-speed capture pulses: Launch Pulse and Capture Pulse -->
+      <path d="M 320 20 L 340 20 L 340 5 L 365 5 L 365 20 L 390 20 L 390 5 L 415 5 L 415 20 L 530 20" fill="none" stroke="#38bdf8" stroke-width="2.5"/>
+      <text x="352" y="2" font-family="'Segoe UI', Roboto, sans-serif" font-size="10" font-weight="700" fill="#38bdf8" text-anchor="middle">Launch</text>
+      <text x="402" y="2" font-family="'Segoe UI', Roboto, sans-serif" font-size="10" font-weight="700" fill="#34d399" text-anchor="middle">Capture</text>
+
+      <text x="480" y="14" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" fill="#cbd5e1">Rated Frequency (1–3 GHz Period)</text>
+    </g>
+  </g>
+</svg>

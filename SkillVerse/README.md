@@ -5,6 +5,7 @@
   - ### [bash](bash.md)
   - ### [C](C.md)
   - ### [CHI Protocol](CHI_Protocol.md)
+  - ### [DFT](DFT.md)
   - ### [Electronics](Electronics.md)
   - ### [Formal Verification](Formal_Verification.md)
   - ### [git](git.md)

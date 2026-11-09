@@ -249,12 +249,14 @@ ls "$file_name" # Correctly handles filenames with spaces
 
 ## Include `set -euxo pipefail`
 
-Start your scripts with `set -euxo pipefail`. This command enhances script robustness and helps in debugging:
+Start your production scripts with `set -euo pipefail` (or add `-x` during interactive debugging). This simple preamble transforms Bash from a loose, silent-failure scripting tool into a disciplined, deterministic systems environment:
 
-- `set -e` or `set -o errexit`: Exit immediately if a command exits with a non-zero status (indicating failure).
-- `set -u` or `set -o nounset`: Treat unset variables as an error and exit. This helps catch typos and uninitialized variables.
-- `set -x` or `set -o xtrace`: Print each command before executing it. Useful for debugging.
-- `set -o pipefail`: Make the script exit if any command in a pipeline fails, not just the last one.
+![The Production Bash Guardrails: set -euo pipefail](images/ch9_bash_defensive_scripting.svg)
+
+- `set -e` or `set -o errexit`: Exit immediately if a command exits with a non-zero status (indicating failure). Prevents cascading errors.
+- `set -u` or `set -o nounset`: Treat unset variables as an error and exit immediately. Prevents typos and disastrous unset variable expansions (e.g. `rm -rf "$TARGET_DIR/*"` when `$TARGET_DIR` is empty!).
+- `set -x` or `set -o xtrace`: Print each command and expanded arguments to stderr before executing it. Essential for debugging CI/CD pipelines.
+- `set -o pipefail`: Return the exit status of the **first** failing command in a pipeline, rather than defaulting to the exit code of only the final command.
 
 **Example:**
 

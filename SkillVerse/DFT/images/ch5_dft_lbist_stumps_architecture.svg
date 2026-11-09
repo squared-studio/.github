@@ -1,0 +1,132 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 520" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGradDft5" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#080c14" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <filter id="shadowDft5" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+  </defs>
+
+  <rect width="920" height="520" fill="url(#bgGradDft5)"/>
+
+  <!-- Title -->
+  <text x="460" y="38" font-family="'Segoe UI', Roboto, sans-serif" font-size="22" font-weight="700" fill="#38bdf8" text-anchor="middle">Logic BIST (LBIST) &amp; The Classic STUMPS Architecture</text>
+  <text x="460" y="62" font-family="'Segoe UI', Roboto, sans-serif" font-size="13" fill="#94a3b8" text-anchor="middle">Autonomous On-Chip Self-Test for Mission-Critical &amp; ISO 26262 Automotive In-System Reliability</text>
+
+  <!-- STUMPS Pipeline Diagram -->
+  <g transform="translate(35, 90)">
+    <!-- 1. PRPG (LFSR + Phase Shifter) -->
+    <g transform="translate(0, 0)">
+      <rect width="180" height="235" rx="8" fill="#0f172a" stroke="#8b5cf6" stroke-width="1.5" filter="url(#shadowDft5)"/>
+      <rect width="180" height="34" rx="8" fill="#6d28d9"/>
+      <text x="90" y="22" font-family="'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="700" fill="#ede9fe" text-anchor="middle">PRPG (LFSR Engine)</text>
+
+      <g transform="translate(15, 45)">
+        <rect width="150" height="65" rx="4" fill="#131d33" stroke="#8b5cf6"/>
+        <text x="75" y="24" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="700" fill="#c084fc" text-anchor="middle">Polynomial LFSR</text>
+        <text x="75" y="44" font-family="'Courier New', monospace" font-size="10" fill="#cbd5e1" text-anchor="middle">x³² + x²² + x² + 1</text>
+      </g>
+
+      <g transform="translate(15, 120)">
+        <rect width="150" height="65" rx="4" fill="#131d33" stroke="#8b5cf6"/>
+        <text x="75" y="24" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="700" fill="#c084fc" text-anchor="middle">Phase Shifter</text>
+        <text x="75" y="44" font-family="'Segoe UI', Roboto, sans-serif" font-size="9" fill="#cbd5e1" text-anchor="middle">XOR network eliminates</text>
+        <text x="75" y="56" font-family="'Segoe UI', Roboto, sans-serif" font-size="9" fill="#cbd5e1" text-anchor="middle">inter-channel correlation</text>
+      </g>
+
+      <text x="90" y="210" font-family="'Segoe UI', Roboto, sans-serif" font-size="10" fill="#a78bfa" text-anchor="middle">Outputs Pseudo-Random Bits</text>
+    </g>
+
+    <!-- Arrow PRPG -> Core -->
+    <line x1="180" y1="117" x2="225" y2="117" stroke="#38bdf8" stroke-width="2"/>
+    <polygon points="220,113 228,117 220,121" fill="#38bdf8"/>
+
+    <!-- 2. Core Under Test with TPI -->
+    <g transform="translate(230, 0)">
+      <rect width="370" height="235" rx="8" fill="#0f172a" stroke="#0ea5e9" stroke-width="1.5" filter="url(#shadowDft5)"/>
+      <rect width="370" height="34" rx="8" fill="#0369a1"/>
+      <text x="185" y="22" font-family="'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="700" fill="#f0f9ff" text-anchor="middle">Parallel Internal Scan Chains + TPI</text>
+
+      <!-- Internal chains visual -->
+      <g transform="translate(25, 45)">
+        <line x1="0" y1="20" x2="320" y2="20" stroke="#38bdf8" stroke-width="2"/>
+        <text x="160" y="14" font-family="'Courier New', monospace" font-size="10" fill="#7dd3fc" text-anchor="middle">Scan Chain 1 (SI → SO)</text>
+
+        <line x1="0" y1="48" x2="320" y2="48" stroke="#38bdf8" stroke-width="2"/>
+        <text x="160" y="42" font-family="'Courier New', monospace" font-size="10" fill="#7dd3fc" text-anchor="middle">Scan Chain 2 (SI → SO)</text>
+
+        <text x="160" y="70" font-family="'Segoe UI', Roboto, sans-serif" font-size="12" fill="#94a3b8" text-anchor="middle">⋮ (100+ Parallel Chains)</text>
+
+        <line x1="0" y1="92" x2="320" y2="92" stroke="#38bdf8" stroke-width="2"/>
+        <text x="160" y="86" font-family="'Courier New', monospace" font-size="10" fill="#7dd3fc" text-anchor="middle">Scan Chain N (SI → SO)</text>
+      </g>
+
+      <!-- Test Point Insertion (TPI) Callout -->
+      <g transform="translate(25, 155)">
+        <rect width="320" height="65" rx="4" fill="#131d33" stroke="#f59e0b"/>
+        <text x="15" y="22" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="700" fill="#fcd34d">Test Point Insertion (TPI):</text>
+        <text x="15" y="40" font-family="'Segoe UI', Roboto, sans-serif" font-size="10" fill="#cbd5e1">• Control Points (CP): Force stuck 0/1 on hard-to-control nets</text>
+        <text x="15" y="55" font-family="'Segoe UI', Roboto, sans-serif" font-size="10" fill="#cbd5e1">• Observe Points (OP): Capture hard-to-observe logic into scan</text>
+      </g>
+    </g>
+
+    <!-- Arrow Core -> MISR -->
+    <line x1="600" y1="117" x2="645" y2="117" stroke="#38bdf8" stroke-width="2"/>
+    <polygon points="640,113 648,117 640,121" fill="#38bdf8"/>
+
+    <!-- 3. MISR (Multiple Input Signature Register) -->
+    <g transform="translate(650, 0)">
+      <rect width="200" height="235" rx="8" fill="#0f172a" stroke="#10b981" stroke-width="1.5" filter="url(#shadowDft5)"/>
+      <rect width="200" height="34" rx="8" fill="#065f46"/>
+      <text x="100" y="22" font-family="'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="700" fill="#ecfdf5" text-anchor="middle">MISR Signature Engine</text>
+
+      <g transform="translate(15, 45)">
+        <rect width="170" height="75" rx="4" fill="#131d33" stroke="#10b981"/>
+        <text x="85" y="24" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="700" fill="#34d399" text-anchor="middle">MISR Accumulator</text>
+        <text x="85" y="42" font-family="'Segoe UI', Roboto, sans-serif" font-size="9" fill="#cbd5e1" text-anchor="middle">Compresses millions of response</text>
+        <text x="85" y="56" font-family="'Segoe UI', Roboto, sans-serif" font-size="9" fill="#cbd5e1" text-anchor="middle">bits into one 32/64-bit signature</text>
+      </g>
+
+      <!-- Signature Output Box -->
+      <g transform="translate(15, 130)">
+        <rect width="170" height="55" rx="4" fill="#064e3b" stroke="#34d399"/>
+        <text x="85" y="24" font-family="'Courier New', monospace" font-size="11" font-weight="700" fill="#a7f3d0" text-anchor="middle">0x8A4F_7C21</text>
+        <text x="85" y="44" font-family="'Segoe UI', Roboto, sans-serif" font-size="10" fill="#6ee7b7" text-anchor="middle">Final CRC Signature</text>
+      </g>
+
+      <text x="100" y="210" font-family="'Segoe UI', Roboto, sans-serif" font-size="10" fill="#34d399" text-anchor="middle">Aliasing Risk &lt; 2⁻⁶⁴ (~0%)</text>
+    </g>
+  </g>
+
+  <!-- Bottom: ISO 26262 In-System Test (IST) Features -->
+  <g transform="translate(35, 340)">
+    <rect width="850" height="155" rx="10" fill="#0c1222" stroke="#1e293b" filter="url(#shadowDft5)"/>
+    <text x="25" y="26" font-family="'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="700" fill="#38bdf8">Automotive &amp; High-Reliability Functional Safety (ISO 26262 ASIL-D):</text>
+
+    <g transform="translate(25, 45)">
+      <rect width="250" height="90" rx="6" fill="#131d33" stroke="#334155"/>
+      <text x="15" y="22" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="700" fill="#facc15">1. Power-On Self-Test (POST)</text>
+      <text x="15" y="42" font-family="'Segoe UI', Roboto, sans-serif" font-size="10" fill="#cbd5e1">• Runs during vehicle boot in &lt; 50ms.</text>
+      <text x="15" y="60" font-family="'Segoe UI', Roboto, sans-serif" font-size="10" fill="#cbd5e1">• Verifies braking &amp; steering MCUs.</text>
+      <text x="15" y="78" font-family="'Segoe UI', Roboto, sans-serif" font-size="10" fill="#34d399">Zero external ATE tester needed!</text>
+    </g>
+
+    <g transform="translate(300, 45)">
+      <rect width="250" height="90" rx="6" fill="#131d33" stroke="#334155"/>
+      <text x="15" y="22" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="700" fill="#a78bfa">2. Periodic In-System Test (IST)</text>
+      <text x="15" y="42" font-family="'Segoe UI', Roboto, sans-serif" font-size="10" fill="#cbd5e1">• Interleaved during system idle ticks.</text>
+      <text x="15" y="60" font-family="'Segoe UI', Roboto, sans-serif" font-size="10" fill="#cbd5e1">• Detects operational latent faults.</text>
+      <text x="15" y="78" font-family="'Segoe UI', Roboto, sans-serif" font-size="10" fill="#c084fc">Guarantees ASIL-D fault metrics.</text>
+    </g>
+
+    <g transform="translate(575, 45)">
+      <rect width="250" height="90" rx="6" fill="#131d33" stroke="#334155"/>
+      <text x="15" y="22" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="700" fill="#34d399">3. Key-Off Diagnostic Test</text>
+      <text x="15" y="42" font-family="'Segoe UI', Roboto, sans-serif" font-size="10" fill="#cbd5e1">• Executes extended LBIST cycles.</text>
+      <text x="15" y="60" font-family="'Segoe UI', Roboto, sans-serif" font-size="10" fill="#cbd5e1">• Stores failing signatures in Flash.</text>
+      <text x="15" y="78" font-family="'Segoe UI', Roboto, sans-serif" font-size="10" fill="#38bdf8">Telemetry logged to fleet cloud.</text>
+    </g>
+  </g>
+</svg>

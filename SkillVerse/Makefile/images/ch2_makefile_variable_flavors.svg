@@ -1,0 +1,107 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 480" width="100%" height="100%">
+  <defs>
+    <style>
+      .bg { fill: #080c14; }
+      .card { fill: #0f172a; stroke: #1e293b; stroke-width: 1.5; rx: 10; }
+      .title { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 20px; fill: #f8fafc; }
+      .subtitle { font-family: 'Inter', system-ui, sans-serif; font-size: 13px; fill: #94a3b8; }
+      .flavor-box { fill: #131d33; stroke-width: 2; rx: 8; }
+      .flavor-title { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 15px; }
+      .flavor-sub { font-family: 'Inter', system-ui, sans-serif; font-size: 11px; fill: #94a3b8; }
+      .code-key { font-family: 'JetBrains Mono', Consolas, monospace; font-size: 12px; font-weight: 700; }
+      .desc-txt { font-family: 'Inter', system-ui, sans-serif; font-size: 12px; fill: #cbd5e1; }
+    </style>
+  </defs>
+
+  <rect width="960" height="480" class="bg" rx="14"/>
+
+  <!-- Title (y = 30 and y = 50) -->
+  <text x="480" y="32" text-anchor="middle" class="title">The 4 Variable Assignment Flavors in GNU Make</text>
+  <text x="480" y="52" text-anchor="middle" class="subtitle">Understanding expansion timing: Lazy recursive expansion vs. Immediate simple expansion</text>
+
+  <!-- 4 Columns (y = 75 to 330) -->
+
+  <!-- Flavor 1: = (Recursive / Lazy) -->
+  <g transform="translate(40, 75)">
+    <rect x="0" y="0" width="205" height="255" class="flavor-box" style="stroke: #f59e0b; fill: #17150a;"/>
+    <text x="102" y="28" text-anchor="middle" class="flavor-title" style="fill: #f59e0b;">RECURSIVE: =</text>
+    <text x="102" y="48" text-anchor="middle" class="flavor-sub">Lazy Evaluation</text>
+
+    <g transform="translate(12, 65)">
+      <text x="0" y="16" class="code-key" style="fill:#fcd34d;">CFLAGS = $(OPT)</text>
+      <text x="0" y="38" class="desc-txt">• Evaluated at point of USE</text>
+      <text x="0" y="56" class="desc-txt">  (inside rule recipe).</text>
+      <text x="0" y="76" class="desc-txt">• Can reference variables</text>
+      <text x="0" y="92" class="desc-txt">  defined LATER in file.</text>
+      <text x="0" y="112" class="desc-txt" style="fill:#fca5a5;">• Danger: Can cause</text>
+      <text x="0" y="128" class="desc-txt" style="fill:#fca5a5;">  infinite recursion!</text>
+      <text x="0" y="148" class="code-key" style="font-size:10px; fill:#fca5a5;">X = $(X) (Fatal error)</text>
+    </g>
+  </g>
+
+  <!-- Flavor 2: := (Simple / Immediate) -->
+  <g transform="translate(265, 75)">
+    <rect x="0" y="0" width="205" height="255" class="flavor-box" style="stroke: #34d399; fill: #0b1f1a;"/>
+    <text x="102" y="28" text-anchor="middle" class="flavor-title" style="fill: #34d399;">SIMPLE: :=</text>
+    <text x="102" y="48" text-anchor="middle" class="flavor-sub">Immediate Evaluation</text>
+
+    <g transform="translate(12, 65)">
+      <text x="0" y="16" class="code-key" style="fill:#6ee7b7;">CFLAGS := -O2</text>
+      <text x="0" y="38" class="desc-txt" style="fill:#34d399;">• Evaluated ONCE at</text>
+      <text x="0" y="54" class="desc-txt" style="fill:#34d399;">  definition line.</text>
+      <text x="0" y="74" class="desc-txt">• High performance!</text>
+      <text x="0" y="92" class="desc-txt">• Acts like standard</text>
+      <text x="0" y="108" class="desc-txt">  C/Python variables.</text>
+      <text x="0" y="128" class="desc-txt">• Safe for self-appending:</text>
+      <text x="0" y="148" class="code-key" style="font-size:10px; fill:#6ee7b7;">X := $(X) -Wall</text>
+    </g>
+  </g>
+
+  <!-- Flavor 3: ?= (Conditional) -->
+  <g transform="translate(490, 75)">
+    <rect x="0" y="0" width="205" height="255" class="flavor-box" style="stroke: #38bdf8; fill: #0b1a2e;"/>
+    <text x="102" y="28" text-anchor="middle" class="flavor-title" style="fill: #38bdf8;">CONDITIONAL: ?=</text>
+    <text x="102" y="48" text-anchor="middle" class="flavor-sub">Default If Undefined</text>
+
+    <g transform="translate(12, 65)">
+      <text x="0" y="16" class="code-key" style="fill:#7dd3fc;">CC ?= gcc</text>
+      <text x="0" y="38" class="desc-txt">• Sets value ONLY if</text>
+      <text x="0" y="54" class="desc-txt">  currently unset.</text>
+      <text x="0" y="74" class="desc-txt">• Allows environment</text>
+      <text x="0" y="90" class="desc-txt">  overrides:</text>
+      <text x="0" y="106" class="code-key" style="font-size:10px; fill:#38bdf8;">CC=clang make</text>
+      <text x="0" y="126" class="desc-txt">• Essential for standard</text>
+      <text x="0" y="144" class="desc-txt">  tools and SDK paths.</text>
+    </g>
+  </g>
+
+  <!-- Flavor 4: != (Shell Execution) -->
+  <g transform="translate(715, 75)">
+    <rect x="0" y="0" width="205" height="255" class="flavor-box" style="stroke: #a855f7; fill: #1c1033;"/>
+    <text x="102" y="28" text-anchor="middle" class="flavor-title" style="fill: #a855f7;">SHELL: !=</text>
+    <text x="102" y="48" text-anchor="middle" class="flavor-sub">Execute Subprocess</text>
+
+    <g transform="translate(12, 65)">
+      <text x="0" y="16" class="code-key" style="fill:#d8b4fe;">GIT_REV != git rev-parse</text>
+      <text x="0" y="38" class="desc-txt">• Runs shell command</text>
+      <text x="0" y="54" class="desc-txt">  and captures stdout.</text>
+      <text x="0" y="74" class="desc-txt">• Equivalent to:</text>
+      <text x="0" y="90" class="code-key" style="font-size:10px; fill:#c084fc;">$(shell command)</text>
+      <text x="0" y="110" class="desc-txt">• Trailing newlines</text>
+      <text x="0" y="126" class="desc-txt">  stripped to spaces.</text>
+      <text x="0" y="146" class="desc-txt">• Dynamic discovery.</text>
+    </g>
+  </g>
+
+  <!-- Bottom: The Golden Rule of Variables (y = 350 to 455) -->
+  <g transform="translate(40, 350)">
+    <rect x="0" y="0" width="880" height="110" class="card" style="stroke:#34d399;"/>
+    <text x="25" y="26" class="title" style="font-size:14px; fill:#6ee7b7;">The Golden Rule for Modern Makefiles</text>
+
+    <g transform="translate(25, 42)">
+      <text x="0" y="18" class="desc-txt">Prefer <tspan class="code-key" style="fill:#34d399;">:=</tspan> (simple expansion) for almost all variable definitions in modern Makefiles.</text>
+      <text x="0" y="38" class="desc-txt">Lazy evaluation (<tspan class="code-key" style="fill:#f59e0b;">=</tspan>) re-evaluates functions like <tspan class="code-key">$(shell ...)</tspan> every single time the variable is referenced in recipes, causing severe build slowdowns!</text>
+      <text x="0" y="58" class="desc-txt">Use <tspan class="code-key" style="fill:#38bdf8;">?=</tspan> for toolchain variables (`CC`, `CXX`, `PREFIX`) so users can override them from command-line arguments or environment variables.</text>
+    </g>
+  </g>
+</svg>

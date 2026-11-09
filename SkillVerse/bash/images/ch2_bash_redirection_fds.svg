@@ -1,0 +1,121 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 480" width="100%" height="100%">
+  <defs>
+    <style>
+      .bg { fill: #080c14; }
+      .card { fill: #0f172a; stroke: #1e293b; stroke-width: 1.5; rx: 10; }
+      .title { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 20px; fill: #f8fafc; }
+      .subtitle { font-family: 'Inter', system-ui, sans-serif; font-size: 13px; fill: #94a3b8; }
+      .process-box { fill: #1e293b; stroke: #38bdf8; stroke-width: 2.5; rx: 12; }
+      .stream-box { fill: #131d33; stroke-width: 1.8; rx: 8; }
+      .fd-badge { font-family: 'JetBrains Mono', Consolas, monospace; font-size: 13px; font-weight: 700; }
+      .fd-desc { font-family: 'Inter', system-ui, sans-serif; font-size: 11px; fill: #94a3b8; }
+      .code-key { font-family: 'JetBrains Mono', Consolas, monospace; font-size: 12px; font-weight: 700; }
+      .wire-in { stroke: #34d399; stroke-width: 2.2; fill: none; stroke-linecap: round; }
+      .wire-out { stroke: #38bdf8; stroke-width: 2.2; fill: none; stroke-linecap: round; }
+      .wire-err { stroke: #f43f5e; stroke-width: 2.2; fill: none; stroke-linecap: round; }
+      .table-card { fill: #131d33; stroke: #1e293b; stroke-width: 1.5; rx: 8; }
+    </style>
+    <marker id="arr-green" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#34d399" />
+    </marker>
+    <marker id="arr-blue" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8" />
+    </marker>
+    <marker id="arr-red" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#f43f5e" />
+    </marker>
+  </defs>
+
+  <rect width="960" height="480" class="bg" rx="14"/>
+
+  <!-- Title (y = 30 and y = 50) -->
+  <text x="480" y="32" text-anchor="middle" class="title">Standard I/O Streams &amp; File Descriptor Redirection Architecture</text>
+  <text x="480" y="52" text-anchor="middle" class="subtitle">How processes handle stdin, stdout, and stderr streams in Unix environments</text>
+
+  <!-- Left: Input Source (x = 40, width = 200, height = 110) -->
+  <g transform="translate(40, 100)">
+    <rect x="0" y="0" width="200" height="100" class="stream-box" style="stroke:#34d399; fill:#0c241c;"/>
+    <text x="15" y="26" class="fd-badge" style="fill:#34d399;">INPUT SOURCE</text>
+    <text x="15" y="46" class="fd-desc">Default: Keyboard / Terminal</text>
+    <text x="15" y="66" class="code-key" style="fill:#6ee7b7;">&lt; file.txt (Redirect)</text>
+    <text x="15" y="84" class="code-key" style="fill:#6ee7b7;">&lt;&lt;&lt; "$var" (Here-string)</text>
+  </g>
+
+  <!-- Wire: Input -> Process (FD 0) -->
+  <path d="M 240 150 L 328 150" class="wire-in" marker-end="url(#arr-green)"/>
+  <rect x="250" y="137" width="65" height="22" rx="4" fill="#1e293b" stroke="#334155"/>
+  <text x="282" y="152" text-anchor="middle" class="code-key" style="fill:#34d399; font-size:11px;">FD 0 (in)</text>
+
+  <!-- CENTER: The Running Process (x = 340, width = 280, height = 180) -->
+  <g transform="translate(340, 80)">
+    <rect x="0" y="0" width="280" height="190" class="process-box"/>
+    <text x="140" y="32" text-anchor="middle" class="title" style="font-size:16px; fill:#38bdf8;">ACTIVE PROCESS</text>
+    <text x="140" y="52" text-anchor="middle" class="fd-desc">Executable Binary or Shell Function</text>
+
+    <!-- File Descriptors Table inside Process -->
+    <g transform="translate(20, 68)">
+      <rect x="0" y="0" width="240" height="105" rx="6" fill="#0f172a" stroke="#334155"/>
+      <text x="12" y="25" class="code-key" style="fill:#34d399;">FD 0 : stdin</text>
+      <text x="120" y="25" class="fd-desc">Standard Input</text>
+
+      <line x1="10" y1="38" x2="230" y2="38" stroke="#1e293b"/>
+
+      <text x="12" y="58" class="code-key" style="fill:#38bdf8;">FD 1 : stdout</text>
+      <text x="120" y="58" class="fd-desc">Standard Output</text>
+
+      <line x1="10" y1="72" x2="230" y2="72" stroke="#1e293b"/>
+
+      <text x="12" y="92" class="code-key" style="fill:#f43f5e;">FD 2 : stderr</text>
+      <text x="120" y="92" class="fd-desc">Standard Error</text>
+    </g>
+  </g>
+
+  <!-- Wire: Process (FD 1) -> Output Dest -->
+  <path d="M 620 140 L 708 140" class="wire-out" marker-end="url(#arr-blue)"/>
+  <rect x="632" y="127" width="65" height="22" rx="4" fill="#1e293b" stroke="#334155"/>
+  <text x="664" y="142" text-anchor="middle" class="code-key" style="fill:#38bdf8; font-size:11px;">FD 1 (out)</text>
+
+  <!-- Right Top: Standard Output Destination (x = 720, width = 200, height = 90) -->
+  <g transform="translate(720, 95)">
+    <rect x="0" y="0" width="200" height="85" class="stream-box" style="stroke:#38bdf8; fill:#0c1f36;"/>
+    <text x="15" y="24" class="fd-badge" style="fill:#38bdf8;">STDOUT (FD 1)</text>
+    <text x="15" y="44" class="fd-desc">Default: Terminal Display</text>
+    <text x="15" y="62" class="code-key" style="fill:#7dd3fc;">&gt; out.log  (Overwrite)</text>
+    <text x="15" y="76" class="code-key" style="fill:#7dd3fc;">&gt;&gt; out.log (Append)</text>
+  </g>
+
+  <!-- Wire: Process (FD 2) -> Error Dest -->
+  <path d="M 620 220 L 708 220" class="wire-err" marker-end="url(#arr-red)"/>
+  <rect x="632" y="207" width="65" height="22" rx="4" fill="#1e293b" stroke="#334155"/>
+  <text x="664" y="222" text-anchor="middle" class="code-key" style="fill:#f43f5e; font-size:11px;">FD 2 (err)</text>
+
+  <!-- Right Bottom: Standard Error Destination (x = 720, width = 200, height = 90) -->
+  <g transform="translate(720, 195)">
+    <rect x="0" y="0" width="200" height="85" class="stream-box" style="stroke:#f43f5e; fill:#260c16;"/>
+    <text x="15" y="24" class="fd-badge" style="fill:#f43f5e;">STDERR (FD 2)</text>
+    <text x="15" y="44" class="fd-desc">Diagnostic &amp; Error Messages</text>
+    <text x="15" y="62" class="code-key" style="fill:#fca5a5;">2&gt; error.log</text>
+    <text x="15" y="76" class="code-key" style="fill:#fca5a5;">2&gt; /dev/null (Discard)</text>
+  </g>
+
+  <!-- Bottom: Common Redirection Idioms Reference Card (y = 295 to 455) -->
+  <g transform="translate(40, 295)">
+    <rect x="0" y="0" width="880" height="165" class="table-card"/>
+    <text x="25" y="28" class="title" style="font-size:15px; fill:#f8fafc;">Essential Redirection Patterns Cheat Sheet</text>
+
+    <!-- Column 1 -->
+    <g transform="translate(25, 42)">
+      <text x="0" y="20" class="code-key" style="fill:#38bdf8; font-size:13px;">command &gt; file.txt</text>
+      <text x="220" y="20" class="fd-desc" style="font-size:12px;">Redirects stdout only (overwrites target file).</text>
+
+      <text x="0" y="48" class="code-key" style="fill:#38bdf8; font-size:13px;">command &gt;&gt; file.txt</text>
+      <text x="220" y="48" class="fd-desc" style="font-size:12px;">Appends stdout to end of target file.</text>
+
+      <text x="0" y="76" class="code-key" style="fill:#f43f5e; font-size:13px;">command 2&gt; error.log</text>
+      <text x="220" y="76" class="fd-desc" style="font-size:12px;">Redirects stderr only; stdout remains on terminal screen.</text>
+
+      <text x="0" y="104" class="code-key" style="fill:#a855f7; font-size:13px;">command &gt; file 2&gt;&amp;1</text>
+      <text x="220" y="104" class="fd-desc" style="font-size:12px;">Merges stderr (2) into stdout (1) stream (or modern shorthand: <tspan class="code-key" style="fill:#c084fc;">&amp;&gt; file</tspan>).</text>
+    </g>
+  </g>
+</svg>

@@ -46,6 +46,8 @@ Exit statuses are fundamental for conditional execution and error checking in sc
 
 The `trap` command in Bash is a powerful mechanism for intercepting **signals** and **errors** that can occur during script execution. It allows you to specify commands to be executed when particular events happen, enabling you to handle interruptions, errors, and script termination gracefully.
 
+![Bash Signal Interception and Trap Lifecycle Architecture](images/ch7_bash_error_handling_signals.svg)
+
 **Syntax:**
 
 ```bash

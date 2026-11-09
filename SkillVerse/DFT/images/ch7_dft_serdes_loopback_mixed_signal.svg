@@ -1,0 +1,130 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 520" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGradDft7" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#080c14" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <filter id="shadowDft7" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+  </defs>
+
+  <rect width="920" height="520" fill="url(#bgGradDft7)"/>
+
+  <!-- Title -->
+  <text x="460" y="38" font-family="'Segoe UI', Roboto, sans-serif" font-size="22" font-weight="700" fill="#38bdf8" text-anchor="middle">High-Speed SerDes BIST &amp; Loopback Architecture</text>
+  <text x="460" y="62" font-family="'Segoe UI', Roboto, sans-serif" font-size="13" fill="#94a3b8" text-anchor="middle">Self-Contained 112G PAM4 / NRZ At-Speed Testing, On-Chip Eye Scanners, and Loopback Modes</text>
+
+  <!-- SerDes Transceiver Block Diagram -->
+  <g transform="translate(35, 85)">
+    <rect width="850" height="235" rx="10" fill="#0f172a" stroke="#0ea5e9" stroke-width="1.5" filter="url(#shadowDft7)"/>
+    <rect width="850" height="34" rx="10" fill="#0369a1"/>
+    <text x="425" y="22" font-family="'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="700" fill="#f0f9ff" text-anchor="middle">High-Speed SerDes Physical Media Attachment (PMA) Test Pipeline</text>
+
+    <!-- TX Datapath (Top Row) -->
+    <g transform="translate(25, 55)">
+      <!-- PRBS Generator -->
+      <rect x="0" y="0" width="130" height="60" rx="6" fill="#131d33" stroke="#8b5cf6" stroke-width="1.5"/>
+      <text x="65" y="24" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="700" fill="#c084fc" text-anchor="middle">PRBS Generator</text>
+      <text x="65" y="44" font-family="'Courier New', monospace" font-size="10" fill="#cbd5e1" text-anchor="middle">PRBS7 / 15 / 31</text>
+
+      <line x1="130" y1="30" x2="165" y2="30" stroke="#38bdf8" stroke-width="2"/>
+      <polygon points="160,26 168,30 160,34" fill="#38bdf8"/>
+
+      <!-- Serializer -->
+      <rect x="170" y="0" width="120" height="60" rx="6" fill="#131d33" stroke="#0284c7"/>
+      <text x="230" y="24" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="700" fill="#38bdf8" text-anchor="middle">Serializer (P2S)</text>
+      <text x="230" y="44" font-family="'Segoe UI', Roboto, sans-serif" font-size="9" fill="#cbd5e1" text-anchor="middle">32-bit @ 3.5 GHz</text>
+
+      <line x1="290" y1="30" x2="325" y2="30" stroke="#38bdf8" stroke-width="2"/>
+      <polygon points="320,26 328,30 320,34" fill="#38bdf8"/>
+
+      <!-- TX Driver & Equalizer -->
+      <rect x="330" y="0" width="140" height="60" rx="6" fill="#131d33" stroke="#f59e0b"/>
+      <text x="400" y="24" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="700" fill="#fcd34d" text-anchor="middle">TX FFE / Driver</text>
+      <text x="400" y="44" font-family="'Segoe UI', Roboto, sans-serif" font-size="9" fill="#cbd5e1" text-anchor="middle">Pre/Post Emphasis</text>
+
+      <!-- Pad TX -->
+      <line x1="470" y1="30" x2="520" y2="30" stroke="#ef4444" stroke-width="2.5"/>
+      <circle cx="530" cy="30" r="10" fill="#ef4444"/>
+      <text x="555" y="34" font-family="'Courier New', monospace" font-size="11" font-weight="700" fill="#f87171">TX_PAD (112G)</text>
+    </g>
+
+    <!-- RX Datapath (Bottom Row) -->
+    <g transform="translate(25, 145)">
+      <!-- Pad RX -->
+      <circle cx="530" cy="30" r="10" fill="#10b981"/>
+      <line x1="520" y1="30" x2="470" y2="30" stroke="#10b981" stroke-width="2.5"/>
+      <text x="555" y="34" font-family="'Courier New', monospace" font-size="11" font-weight="700" fill="#34d399">RX_PAD (112G)</text>
+
+      <!-- RX AFE CTLE/DFE -->
+      <rect x="330" y="0" width="140" height="60" rx="6" fill="#131d33" stroke="#10b981"/>
+      <text x="400" y="24" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="700" fill="#34d399" text-anchor="middle">CTLE + DFE + CDR</text>
+      <text x="400" y="44" font-family="'Segoe UI', Roboto, sans-serif" font-size="9" fill="#cbd5e1" text-anchor="middle">Adaptive Equalization</text>
+
+      <line x1="330" y1="30" x2="295" y2="30" stroke="#38bdf8" stroke-width="2"/>
+      <polygon points="300,26 292,30 300,34" fill="#38bdf8"/>
+
+      <!-- Deserializer -->
+      <rect x="170" y="0" width="120" height="60" rx="6" fill="#131d33" stroke="#0284c7"/>
+      <text x="230" y="24" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="700" fill="#38bdf8" text-anchor="middle">Deserializer (S2P)</text>
+      <text x="230" y="44" font-family="'Segoe UI', Roboto, sans-serif" font-size="9" fill="#cbd5e1" text-anchor="middle">112G → 32-bit Bus</text>
+
+      <line x1="170" y1="30" x2="135" y2="30" stroke="#38bdf8" stroke-width="2"/>
+      <polygon points="140,26 132,30 140,34" fill="#38bdf8"/>
+
+      <!-- PRBS Checker -->
+      <rect x="0" y="0" width="130" height="60" rx="6" fill="#131d33" stroke="#8b5cf6" stroke-width="1.5"/>
+      <text x="65" y="24" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="700" fill="#c084fc" text-anchor="middle">PRBS Checker</text>
+      <text x="65" y="44" font-family="'Courier New', monospace" font-size="10" fill="#34d399" text-anchor="middle">BER &lt; 10⁻¹² (PASS)</text>
+    </g>
+
+    <!-- Loopback Pathways -->
+    <path d="M 450 85 L 450 145" fill="none" stroke="#f59e0b" stroke-width="2" stroke-dasharray="3 2"/>
+    <text x="445" y="118" font-family="'Segoe UI', Roboto, sans-serif" font-size="9" font-weight="700" fill="#fcd34d" text-anchor="end">PMA Loopback</text>
+
+    <!-- Eye Monitor Box (Far Right) -->
+    <g transform="translate(680, 55)">
+      <rect width="145" height="150" rx="6" fill="#131d33" stroke="#38bdf8"/>
+      <text x="72" y="22" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="700" fill="#38bdf8" text-anchor="middle">On-Chip Eye Scanner</text>
+
+      <!-- Eye Diagram Visual -->
+      <path d="M 20 75 Q 72 30, 125 75 Q 72 120, 20 75" fill="none" stroke="#38bdf8" stroke-width="2"/>
+      <path d="M 20 75 Q 72 110, 125 75 Q 72 40, 20 75" fill="none" stroke="#f59e0b" stroke-width="1.5"/>
+
+      <text x="72" y="110" font-family="'Segoe UI', Roboto, sans-serif" font-size="9" fill="#34d399" text-anchor="middle">Height: 180 mV</text>
+      <text x="72" y="125" font-family="'Segoe UI', Roboto, sans-serif" font-size="9" fill="#34d399" text-anchor="middle">Width: 0.65 UI</text>
+      <text x="72" y="142" font-family="'Segoe UI', Roboto, sans-serif" font-size="8" fill="#94a3b8" text-anchor="middle">Autonomous Shmoo Plot</text>
+    </g>
+  </g>
+
+  <!-- Bottom: Mixed-Signal ADC/DAC BIST -->
+  <g transform="translate(35, 335)">
+    <rect width="850" height="160" rx="10" fill="#0c1222" stroke="#1e293b" filter="url(#shadowDft7)"/>
+    <text x="25" y="26" font-family="'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="700" fill="#38bdf8">Mixed-Signal BIST for ADCs and DACs (DNL/INL Histogram &amp; Spectral SNR):</text>
+
+    <g transform="translate(25, 45)">
+      <rect width="250" height="95" rx="6" fill="#131d33" stroke="#334155"/>
+      <text x="15" y="22" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="700" fill="#facc15">1. Linear Ramp Generator</text>
+      <text x="15" y="42" font-family="'Segoe UI', Roboto, sans-serif" font-size="10" fill="#cbd5e1">• High-linearity analog integrator ramp.</text>
+      <text x="15" y="60" font-family="'Segoe UI', Roboto, sans-serif" font-size="10" fill="#cbd5e1">• Exercises all 2^N ADC code levels.</text>
+      <text x="15" y="78" font-family="'Segoe UI', Roboto, sans-serif" font-size="10" fill="#34d399">Extracts DNL &amp; INL static curves.</text>
+    </g>
+
+    <g transform="translate(300, 45)">
+      <rect width="250" height="95" rx="6" fill="#131d33" stroke="#334155"/>
+      <text x="15" y="22" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="700" fill="#a78bfa">2. Histogram Code Accumulator</text>
+      <text x="15" y="42" font-family="'Segoe UI', Roboto, sans-serif" font-size="10" fill="#cbd5e1">• On-chip SRAM tallies hits per bin.</text>
+      <text x="15" y="60" font-family="'Segoe UI', Roboto, sans-serif" font-size="10" fill="#cbd5e1">• Flags missing codes instantly.</text>
+      <text x="15" y="78" font-family="'Segoe UI', Roboto, sans-serif" font-size="10" fill="#c084fc">Fast production screening.</text>
+    </g>
+
+    <g transform="translate(575, 45)">
+      <rect width="250" height="95" rx="6" fill="#131d33" stroke="#334155"/>
+      <text x="15" y="22" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="700" fill="#34d399">3. Coherent Loopback (DAC → ADC)</text>
+      <text x="15" y="42" font-family="'Segoe UI', Roboto, sans-serif" font-size="10" fill="#cbd5e1">• Precision on-chip DAC excites ADC.</text>
+      <text x="15" y="60" font-family="'Segoe UI', Roboto, sans-serif" font-size="10" fill="#cbd5e1">• On-chip FFT extracts SNR &amp; SFDR.</text>
+      <text x="15" y="78" font-family="'Segoe UI', Roboto, sans-serif" font-size="10" fill="#38bdf8">Eliminates high-cost analog testers.</text>
+    </g>
+  </g>
+</svg>

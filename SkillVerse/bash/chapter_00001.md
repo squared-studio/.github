@@ -18,6 +18,30 @@ By the end of this exciting journey, you will be empowered to:
 
 **Fun Fact:** Did you know that over 80% of the world's cloud infrastructure is powered by Linux? And on Linux, Bash reigns supreme as the default shell, making it an essential skill for anyone working with cloud technologies.
 
+## Bash Architecture: From Keystroke to Kernel Syscall
+
+To write robust automation, you must understand how Bash fits into the operating system architecture. When you enter a command in your terminal, it transitions across three primary layers:
+
+![Bash Execution Architecture and Process Hierarchy](images/ch1_bash_architecture_subshell.svg)
+
+1. **User / TTY Layer**:
+   - The **Terminal Emulator** (such as GNOME Terminal, Alacritty, or Windows Terminal) captures your keystrokes and transmits them to a **Pseudo-Terminal (PTY)** driver (`/dev/pts/*`).
+   - The line discipline driver buffers the input until you hit `<Enter>`, transmitting a stream of characters to the shell.
+
+2. **Bash Shell Process (PID: `$$`)**:
+   - **Parsing & Expansion Pipeline**: Before executing any command line, Bash performs expansions in a strict order:
+     1. **Brace Expansion**: e.g., `touch file{1..3}.txt` expands to `file1.txt file2.txt file3.txt`.
+     2. **Parameter / Variable Expansion**: e.g., `$USER` or `${COUNT:-0}`.
+     3. **Command Substitution**: e.g., `$(date +%F)`.
+     4. **Arithmetic Expansion**: e.g., `$((x + 1))`.
+     5. **Word Splitting**: Parsing unquoted arguments using `$IFS` (Internal Field Separator).
+     6. **Pathname Expansion (Globbing)**: Resolving wildcards like `*.log`.
+   - **Built-in Commands vs. Binaries**: Commands like `cd`, `echo`, `read`, `export`, and `alias` execute directly within the shell process without spawning a new OS process.
+
+3. **Subshells vs. Forked Processes**:
+   - Grouping commands in parentheses `( cd /tmp && ls )` or running pipeline segments (`cmd1 | cmd2`) creates a **subshell**—a child fork with its own isolated memory space (`$BASHPID`). Any variable changes made inside a subshell do **not** persist back in the parent script!
+   - External programs located in `$PATH` (like `git`, `curl`, `find`) invoke the Linux kernel's `fork()` and `execve()` system calls to launch an independent binary image, returning a numeric exit code (`$?`) upon termination.
+
 ## Setting Up Your Bash Environment
 
 Let's get your system ready for Bash scripting. The setup varies slightly depending on your operating system, but we'll guide you through each one.

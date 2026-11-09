@@ -1,0 +1,130 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 500" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#080c14" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <filter id="shadow2" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+  </defs>
+
+  <rect width="900" height="500" fill="url(#bgGrad2)"/>
+
+  <!-- Title -->
+  <text x="450" y="38" font-family="'Segoe UI', Roboto, sans-serif" font-size="22" font-weight="700" fill="#38bdf8" text-anchor="middle">Temporal Logic Framework: LTL vs. CTL</text>
+  <text x="450" y="62" font-family="'Segoe UI', Roboto, sans-serif" font-size="13" fill="#94a3b8" text-anchor="middle">Linear Temporal Logic (Path-based) vs. Computation Tree Logic (Branching-time)</text>
+
+  <!-- Left: LTL Panel -->
+  <g transform="translate(30, 85)">
+    <rect width="405" height="385" rx="12" fill="#0f172a" stroke="#0ea5e9" stroke-width="1.5" filter="url(#shadow2)"/>
+    <rect width="405" height="42" rx="12" fill="#0369a1"/>
+    <text x="202" y="27" font-family="'Segoe UI', Roboto, sans-serif" font-size="15" font-weight="700" fill="#e0f2fe" text-anchor="middle">LTL (Linear Temporal Logic)</text>
+
+    <!-- Linear Timeline -->
+    <g transform="translate(25, 60)">
+      <rect width="355" height="115" rx="8" fill="#131d33" stroke="#1e293b"/>
+      <text x="15" y="25" font-family="'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="600" fill="#38bdf8">Linear Trace: s₀ → s₁ → s₂ → s₃ → s₄ → ...</text>
+
+      <!-- State Nodes -->
+      <line x1="30" y1="70" x2="310" y2="70" stroke="#475569" stroke-width="2"/>
+      
+      <circle cx="50" cy="70" r="14" fill="#0284c7"/>
+      <text x="50" y="75" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="700" fill="#ffffff" text-anchor="middle">s₀</text>
+
+      <circle cx="115" cy="70" r="14" fill="#0284c7"/>
+      <text x="115" y="75" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="700" fill="#ffffff" text-anchor="middle">s₁</text>
+
+      <circle cx="180" cy="70" r="14" fill="#0284c7"/>
+      <text x="180" y="75" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="700" fill="#ffffff" text-anchor="middle">s₂</text>
+
+      <circle cx="245" cy="70" r="14" fill="#0284c7"/>
+      <text x="245" y="75" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="700" fill="#ffffff" text-anchor="middle">s₃</text>
+
+      <circle cx="310" cy="70" r="14" fill="#0284c7"/>
+      <text x="310" y="75" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="700" fill="#ffffff" text-anchor="middle">s₄</text>
+
+      <text x="180" y="105" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" fill="#94a3b8" text-anchor="middle">Implicit Universal Path: Evaluated along all individual runs</text>
+    </g>
+
+    <!-- LTL Operators Grid -->
+    <g transform="translate(25, 190)">
+      <rect width="355" height="175" rx="8" fill="#131d33" stroke="#1e293b"/>
+      <text x="15" y="24" font-family="'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="700" fill="#38bdf8">Key LTL Operators (SVA Foundation)</text>
+      
+      <text x="15" y="52" font-family="'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="600" fill="#facc15">G p (Globally / Always):</text>
+      <text x="165" y="52" font-family="'Segoe UI', Roboto, sans-serif" font-size="12" fill="#cbd5e1">p holds at every state forever</text>
+
+      <text x="15" y="80" font-family="'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="600" fill="#facc15">F p (Future / Eventually):</text>
+      <text x="165" y="80" font-family="'Segoe UI', Roboto, sans-serif" font-size="12" fill="#cbd5e1">p holds at some future state</text>
+
+      <text x="15" y="108" font-family="'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="600" fill="#facc15">X p (Next):</text>
+      <text x="165" y="108" font-family="'Segoe UI', Roboto, sans-serif" font-size="12" fill="#cbd5e1">p holds in the immediately next cycle</text>
+
+      <text x="15" y="136" font-family="'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="600" fill="#facc15">p U q (Until):</text>
+      <text x="165" y="136" font-family="'Segoe UI', Roboto, sans-serif" font-size="12" fill="#cbd5e1">p holds continuously until q is true</text>
+
+      <text x="15" y="160" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" font-style="italic" fill="#38bdf8">Used by: SystemVerilog Assertions (SVA) and PSL</text>
+    </g>
+  </g>
+
+  <!-- Right: CTL Panel -->
+  <g transform="translate(465, 85)">
+    <rect width="405" height="385" rx="12" fill="#0f172a" stroke="#8b5cf6" stroke-width="1.5" filter="url(#shadow2)"/>
+    <rect width="405" height="42" rx="12" fill="#6d28d9"/>
+    <text x="202" y="27" font-family="'Segoe UI', Roboto, sans-serif" font-size="15" font-weight="700" fill="#ede9fe" text-anchor="middle">CTL (Computation Tree Logic)</text>
+
+    <!-- Branching Tree -->
+    <g transform="translate(25, 60)">
+      <rect width="355" height="115" rx="8" fill="#131d33" stroke="#1e293b"/>
+      <text x="15" y="22" font-family="'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="600" fill="#c084fc">Branching Execution Tree</text>
+
+      <!-- Root -->
+      <circle cx="50" cy="65" r="12" fill="#7c3aed"/>
+      <text x="50" y="69" font-family="'Segoe UI', Roboto, sans-serif" font-size="10" font-weight="700" fill="#fff" text-anchor="middle">s₀</text>
+
+      <!-- Branches -->
+      <line x1="62" y1="60" x2="135" y2="42" stroke="#6d28d9" stroke-width="1.5"/>
+      <line x1="62" y1="70" x2="135" y2="88" stroke="#6d28d9" stroke-width="1.5"/>
+
+      <!-- Level 1 -->
+      <circle cx="145" cy="40" r="10" fill="#9333ea"/>
+      <text x="145" y="44" font-family="'Segoe UI', Roboto, sans-serif" font-size="9" font-weight="700" fill="#fff" text-anchor="middle">s₁</text>
+
+      <circle cx="145" cy="90" r="10" fill="#9333ea"/>
+      <text x="145" y="94" font-family="'Segoe UI', Roboto, sans-serif" font-size="9" font-weight="700" fill="#fff" text-anchor="middle">s₂</text>
+
+      <!-- Level 2 -->
+      <line x1="155" y1="36" x2="225" y2="28" stroke="#a855f7" stroke-width="1.5"/>
+      <line x1="155" y1="44" x2="225" y2="52" stroke="#a855f7" stroke-width="1.5"/>
+      <line x1="155" y1="90" x2="225" y2="90" stroke="#a855f7" stroke-width="1.5"/>
+
+      <circle cx="235" cy="26" r="9" fill="#c084fc"/>
+      <circle cx="235" cy="54" r="9" fill="#c084fc"/>
+      <circle cx="235" cy="90" r="9" fill="#c084fc"/>
+
+      <text x="300" y="60" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" fill="#cbd5e1">Branching paths</text>
+      <text x="300" y="75" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" fill="#cbd5e1">from each state</text>
+    </g>
+
+    <!-- CTL Quantifiers Grid -->
+    <g transform="translate(25, 190)">
+      <rect width="355" height="175" rx="8" fill="#131d33" stroke="#1e293b"/>
+      <text x="15" y="24" font-family="'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="700" fill="#c084fc">Path Quantifiers + Temporal Pairs</text>
+      
+      <text x="15" y="52" font-family="'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="600" fill="#34d399">AG p (All paths, Globally):</text>
+      <text x="175" y="52" font-family="'Segoe UI', Roboto, sans-serif" font-size="12" fill="#cbd5e1">Invariance (Safety: never bug)</text>
+
+      <text x="15" y="80" font-family="'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="600" fill="#34d399">EF p (Exists path, Future):</text>
+      <text x="175" y="80" font-family="'Segoe UI', Roboto, sans-serif" font-size="12" fill="#cbd5e1">Reachability: state p is reachable</text>
+
+      <text x="15" y="108" font-family="'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="600" fill="#34d399">AF p (All paths, Future):</text>
+      <text x="175" y="108" font-family="'Segoe UI', Roboto, sans-serif" font-size="12" fill="#cbd5e1">Liveness: p will inevitably occur</text>
+
+      <text x="15" y="136" font-family="'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="600" fill="#34d399">EG p (Exists path, Globally):</text>
+      <text x="175" y="136" font-family="'Segoe UI', Roboto, sans-serif" font-size="12" fill="#cbd5e1">Non-termination / deadlock trace</text>
+
+      <text x="15" y="160" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" font-style="italic" fill="#c084fc">Used by: Classical Model Checkers (SMV, NuSMV)</text>
+    </g>
+  </g>
+</svg>

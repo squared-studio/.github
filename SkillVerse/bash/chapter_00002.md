@@ -216,6 +216,60 @@ if [ -d "scripts" ] && [ "$(ls -A scripts)" ]; then # Logical AND (&&), director
 fi
 ```
 
+## **Standard I/O Streams & Redirection Architecture**
+
+Every Unix command operates with three default I/O data channels known as **File Descriptors (FDs)**:
+
+![Standard I/O Streams and File Descriptor Redirection Architecture](images/ch2_bash_redirection_fds.svg)
+
+### The Three Standard Streams
+
+| File Descriptor | Stream Name | POSIX Abbreviation | Default Device | Redirection Syntax |
+| :---: | :--- | :--- | :--- | :--- |
+| **`0`** | Standard Input | `stdin` | Keyboard / Terminal | `< input.txt` |
+| **`1`** | Standard Output | `stdout` | Terminal Screen | `> out.txt` or `>> out.txt` |
+| **`2`** | Standard Error | `stderr` | Terminal Screen | `2> error.log` |
+
+### Redirection Mechanics in Practice
+
+1. **Overwriting vs. Appending Output**:
+   ```bash
+   echo "Initial line" > output.txt   # Overwrites output.txt (or creates if missing)
+   echo "Appended line" >> output.txt # Appends to the bottom of output.txt
+   ```
+
+2. **Isolating Errors (stderr)**:
+   Diagnostics and errors must be printed to file descriptor 2 (`stderr`) so they don't corrupt programmatic stdout data:
+   ```bash
+   echo "CRITICAL: Database connection failed!" >&2
+   ```
+
+3. **Merging stdout and stderr**:
+   When capturing compiler or build output, you often want both standard output and error messages in the same log file:
+   ```bash
+   # Classic POSIX syntax: redirect stdout to build.log, then point stderr (2) to stdout (1)
+   make all > build.log 2>&1
+
+   # Modern Bash shorthand:
+   make all &> build.log
+   ```
+
+4. **Silencing Commands (`/dev/null`)**:
+   `/dev/null` is the Linux "black hole" bit bucket. Writing to it discards data immediately:
+   ```bash
+   # Suppress error messages if a file doesn't exist
+   rm temp_cache.json 2> /dev/null
+
+   # Suppress BOTH normal output and errors completely
+   systemctl restart nginx &> /dev/null
+   ```
+
+5. **Piping Commands (`|`)**:
+   A pipe connects the `stdout` (FD 1) of the command on the left directly into the `stdin` (FD 0) of the command on the right, forming an in-memory streaming conveyor belt:
+   ```bash
+   ps aux | grep "python" | awk '{print $2}'
+   ```
+
 ## **Exercise: Build a Dynamic Greeting System - Enhanced!**
 
 **Task**: Create a script named `greet.sh` that:

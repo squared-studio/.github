@@ -1,0 +1,93 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 480" width="100%" height="100%">
+  <defs>
+    <style>
+      .bg { fill: #080c14; }
+      .card { fill: #0f172a; stroke: #1e293b; stroke-width: 1.5; rx: 10; }
+      .title { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 20px; fill: #f8fafc; }
+      .subtitle { font-family: 'Inter', system-ui, sans-serif; font-size: 13px; fill: #94a3b8; }
+      .type-box { fill: #131d33; stroke-width: 2; rx: 8; }
+      .type-title { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 15px; }
+      .type-sub { font-family: 'Inter', system-ui, sans-serif; font-size: 11px; fill: #94a3b8; }
+      .code-key { font-family: 'JetBrains Mono', Consolas, monospace; font-size: 12px; font-weight: 700; }
+      .desc-txt { font-family: 'Inter', system-ui, sans-serif; font-size: 12px; fill: #cbd5e1; }
+    </style>
+  </defs>
+
+  <rect width="960" height="480" class="bg" rx="14"/>
+
+  <!-- Title (y = 30 and y = 50) -->
+  <text x="480" y="32" text-anchor="middle" class="title">GNU Make Prerequisite &amp; Target Classification Architecture</text>
+  <text x="480" y="52" text-anchor="middle" class="subtitle">Dissecting Normal vs. Order-Only Prerequisites and Phony vs. Real Targets</text>
+
+  <!-- 3 Main Columns (y = 75 to 330) -->
+
+  <!-- Column 1: Normal Prerequisites -->
+  <g transform="translate(40, 75)">
+    <rect x="0" y="0" width="270" height="255" class="type-box" style="stroke: #38bdf8; fill: #0c1f36;"/>
+    <text x="135" y="28" text-anchor="middle" class="type-title" style="fill: #38bdf8;">1. NORMAL PREREQUISITES</text>
+    <text x="135" y="48" text-anchor="middle" class="type-sub">Dual Guarantee: Order &amp; Timestamp</text>
+
+    <g transform="translate(15, 65)">
+      <text x="0" y="16" class="code-key" style="fill:#7dd3fc;">prog: main.o utils.o</text>
+      <text x="0" y="38" class="desc-txt">• <tspan style="font-weight:600; color:#38bdf8;">Order:</tspan> Guarantees `main.o`</text>
+      <text x="0" y="54" class="desc-txt">  is built BEFORE `prog`.</text>
+      <text x="0" y="74" class="desc-txt">• <tspan style="font-weight:600; color:#38bdf8;">Timestamp:</tspan> If `main.o` is</text>
+      <text x="0" y="90" class="desc-txt">  newer than `prog`, `prog` is</text>
+      <text x="0" y="106" class="desc-txt">  rebuilt immediately.</text>
+      <text x="0" y="128" class="desc-txt">• Evaluated recursively down</text>
+      <text x="0" y="144" class="desc-txt">  the dependency tree.</text>
+    </g>
+
+    <text x="135" y="235" text-anchor="middle" class="type-sub" style="fill:#38bdf8; font-weight:600;">Standard for all code files</text>
+  </g>
+
+  <!-- Column 2: Order-Only Prerequisites -->
+  <g transform="translate(345, 75)">
+    <rect x="0" y="0" width="270" height="255" class="type-box" style="stroke: #f59e0b; fill: #1c150b;"/>
+    <text x="135" y="28" text-anchor="middle" class="type-title" style="fill: #f59e0b;">2. ORDER-ONLY (|)</text>
+    <text x="135" y="48" text-anchor="middle" class="type-sub">Single Guarantee: Order ONLY</text>
+
+    <g transform="translate(15, 65)">
+      <text x="0" y="16" class="code-key" style="fill:#fcd34d;">main.o: main.c | $(OBJDIR)</text>
+      <text x="0" y="38" class="desc-txt">• Separated by pipe <tspan class="code-key" style="fill:#f59e0b;">|</tspan> symbol.</text>
+      <text x="0" y="56" class="desc-txt">• <tspan style="font-weight:600; color:#f59e0b;">Order:</tspan> Guarantees `$(OBJDIR)`</text>
+      <text x="0" y="72" class="desc-txt">  exists before building `main.o`.</text>
+      <text x="0" y="92" class="desc-txt" style="fill:#34d399;">• Timestamp is IGNORED!</text>
+      <text x="0" y="108" class="desc-txt">  Touching `$(OBJDIR)` does NOT</text>
+      <text x="0" y="124" class="desc-txt">  force unnecessary rebuilds.</text>
+    </g>
+
+    <text x="135" y="235" text-anchor="middle" class="type-sub" style="fill:#f59e0b; font-weight:600;">Indispensable for output directories</text>
+  </g>
+
+  <!-- Column 3: Phony Targets -->
+  <g transform="translate(650, 75)">
+    <rect x="0" y="0" width="270" height="255" class="type-box" style="stroke: #a855f7; fill: #1c1033;"/>
+    <text x="135" y="28" text-anchor="middle" class="type-title" style="fill: #a855f7;">3. PHONY TARGETS</text>
+    <text x="135" y="48" text-anchor="middle" class="type-sub">Action Commands Without Files</text>
+
+    <g transform="translate(15, 65)">
+      <text x="0" y="16" class="code-key" style="fill:#d8b4fe;">.PHONY: all clean test</text>
+      <text x="0" y="38" class="desc-txt">• Informs Make that the target</text>
+      <text x="0" y="54" class="desc-txt">  does NOT produce a real file.</text>
+      <text x="0" y="74" class="desc-txt" style="fill:#34d399;">• Immunity to filesystem name</text>
+      <text x="0" y="90" class="desc-txt">  collisions (e.g. if a file</text>
+      <text x="0" y="106" class="desc-txt">  named `clean` exists on disk!).</text>
+      <text x="0" y="126" class="desc-txt">• Recipe is ALWAYS executed.</text>
+    </g>
+
+    <text x="135" y="235" text-anchor="middle" class="type-sub" style="fill:#a855f7; font-weight:600;">Always declare .PHONY for action rules</text>
+  </g>
+
+  <!-- Bottom: Special Target Directives (y = 350 to 455) -->
+  <g transform="translate(40, 350)">
+    <rect x="0" y="0" width="880" height="110" class="card" style="stroke:#34d399;"/>
+    <text x="25" y="26" class="title" style="font-size:14px; fill:#6ee7b7;">Production Special Targets Cheat Sheet</text>
+
+    <g transform="translate(25, 42)">
+      <text x="0" y="18" class="desc-txt"><tspan class="code-key" style="fill:#34d399;">.DELETE_ON_ERROR:</tspan> Automatically deletes target if recipe exits with non-zero error, preventing corrupt object files.</text>
+      <text x="0" y="38" class="desc-txt"><tspan class="code-key" style="fill:#38bdf8;">.DEFAULT_GOAL := all</tspan> Explicitly specifies the default target executed when running `make` with no arguments.</text>
+      <text x="0" y="58" class="desc-txt"><tspan class="code-key" style="fill:#f59e0b;">.ONESHELL:</tspan> Executes all recipe lines in a single subshell invocation, allowing multiline loops and `cd` state to persist.</text>
+    </g>
+  </g>
+</svg>

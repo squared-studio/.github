@@ -1,0 +1,113 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 480" width="100%" height="100%">
+  <defs>
+    <style>
+      .bg { fill: #080c14; }
+      .card { fill: #0f172a; stroke: #1e293b; stroke-width: 1.5; rx: 10; }
+      .title { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 20px; fill: #f8fafc; }
+      .subtitle { font-family: 'Inter', system-ui, sans-serif; font-size: 13px; fill: #94a3b8; }
+      .file-box { fill: #131d33; stroke-width: 2; rx: 8; }
+      .box-title { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 15px; }
+      .box-sub { font-family: 'Inter', system-ui, sans-serif; font-size: 11px; fill: #94a3b8; }
+      .code-key { font-family: 'JetBrains Mono', Consolas, monospace; font-size: 12px; font-weight: 700; }
+      .desc-txt { font-family: 'Inter', system-ui, sans-serif; font-size: 12px; fill: #cbd5e1; }
+      .wire-vfs { stroke: #38bdf8; stroke-width: 2; fill: none; stroke-linecap: round; }
+    </style>
+    <marker id="arr-vfs" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8" />
+    </marker>
+  </defs>
+
+  <rect width="960" height="480" class="bg" rx="14"/>
+
+  <!-- Title (y = 30 and y = 50) -->
+  <text x="480" y="32" text-anchor="middle" class="title">Linux Virtual File System (VFS), Inodes &amp; Safe Stream Processing</text>
+  <text x="480" y="52" text-anchor="middle" class="subtitle">Understanding how filenames reference Inodes, physical data blocks, and streaming pipelines</text>
+
+  <!-- Left: Directory Entry & Links (x = 40, width = 270, height = 240) -->
+  <g transform="translate(40, 75)">
+    <rect x="0" y="0" width="270" height="240" class="file-box" style="stroke:#38bdf8; fill:#0c1f36;"/>
+    <text x="135" y="26" text-anchor="middle" class="box-title" style="fill:#38bdf8;">1. FILENAMES &amp; LINKS</text>
+    <text x="135" y="44" text-anchor="middle" class="box-sub">Directory Catalog Pointer</text>
+
+    <!-- Hard Link -->
+    <g transform="translate(15, 60)">
+      <rect x="0" y="0" width="240" height="75" rx="6" fill="#0f172a" stroke="#334155"/>
+      <text x="12" y="22" class="code-key" style="fill:#7dd3fc;">Hard Link: ln file.txt link1</text>
+      <text x="12" y="40" class="desc-txt" style="font-size:11px;">Points to SAME Inode number.</text>
+      <text x="12" y="56" class="desc-txt" style="font-size:11px; fill:#34d399;">Deleting original keeps data intact!</text>
+    </g>
+
+    <!-- Symbolic Link -->
+    <g transform="translate(15, 145)">
+      <rect x="0" y="0" width="240" height="75" rx="6" fill="#0f172a" stroke="#334155"/>
+      <text x="12" y="22" class="code-key" style="fill:#c084fc;">Soft Link: ln -s target link2</text>
+      <text x="12" y="40" class="desc-txt" style="font-size:11px;">Small pointer storing file path.</text>
+      <text x="12" y="56" class="desc-txt" style="font-size:11px; fill:#fca5a5;">Breaks if original file is moved!</text>
+    </g>
+  </g>
+
+  <!-- Wire 1 -> 2 -->
+  <path d="M 310 195 L 348 195" class="wire-vfs" marker-end="url(#arr-vfs)"/>
+
+  <!-- Middle: Inode Metadata Table (x = 350, width = 260, height = 240) -->
+  <g transform="translate(350, 75)">
+    <rect x="0" y="0" width="260" height="240" class="file-box" style="stroke:#34d399; fill:#0c241c;"/>
+    <text x="130" y="26" text-anchor="middle" class="box-title" style="fill:#34d399;">2. INODE METADATA</text>
+    <text x="130" y="44" text-anchor="middle" class="box-sub">Kernel File Descriptor Index</text>
+
+    <g transform="translate(15, 60)">
+      <rect x="0" y="0" width="230" height="160" rx="6" fill="#0f172a" stroke="#334155"/>
+      <text x="12" y="22" class="code-key" style="fill:#6ee7b7;">Inode #582194</text>
+      <text x="12" y="42" class="desc-txt" style="font-size:11px;">• Mode: -rwxr-xr-x (chmod 755)</text>
+      <text x="12" y="60" class="desc-txt" style="font-size:11px;">• Owner: uid 1000 / gid 1000</text>
+      <text x="12" y="78" class="desc-txt" style="font-size:11px;">• Size: 4096 bytes</text>
+      <text x="12" y="96" class="desc-txt" style="font-size:11px;">• Timestamps: atime, mtime, ctime</text>
+      <text x="12" y="114" class="desc-txt" style="font-size:11px;">• Link Count: 2 references</text>
+      <text x="12" y="134" class="code-key" style="fill:#fcd34d; font-size:11px;">Block Pointers: [B12, B13, B14]</text>
+    </g>
+  </g>
+
+  <!-- Wire 2 -> 3 -->
+  <path d="M 610 195 L 648 195" class="wire-vfs" marker-end="url(#arr-vfs)"/>
+
+  <!-- Right: Storage Blocks (x = 650, width = 270, height = 240) -->
+  <g transform="translate(650, 75)">
+    <rect x="0" y="0" width="270" height="240" class="file-box" style="stroke:#f59e0b; fill:#1c150b;"/>
+    <text x="135" y="26" text-anchor="middle" class="box-title" style="fill:#f59e0b;">3. STORAGE DATA BLOCKS</text>
+    <text x="135" y="44" text-anchor="middle" class="box-sub">Raw Byte Storage on Disk</text>
+
+    <g transform="translate(15, 60)">
+      <rect x="0" y="0" width="240" height="45" rx="6" fill="#1e293b" stroke="#f59e0b"/>
+      <text x="12" y="26" class="code-key" style="fill:#fcd34d;">Block 12: 4KB Sector</text>
+    </g>
+
+    <g transform="translate(15, 115)">
+      <rect x="0" y="0" width="240" height="45" rx="6" fill="#1e293b" stroke="#f59e0b"/>
+      <text x="12" y="26" class="code-key" style="fill:#fcd34d;">Block 13: 4KB Sector</text>
+    </g>
+
+    <text x="135" y="195" text-anchor="middle" class="desc-txt" style="font-size:11px; fill:#94a3b8;">Data freed ONLY when Link Count = 0</text>
+    <text x="135" y="215" text-anchor="middle" class="desc-txt" style="font-size:11px; fill:#94a3b8;">and no open file descriptors remain!</text>
+  </g>
+
+  <!-- Bottom: The Safe Line-by-Line Reading Pattern (y = 330 to 455) -->
+  <g transform="translate(40, 330)">
+    <rect x="0" y="0" width="880" height="135" class="card" style="stroke:#a855f7;"/>
+    <text x="25" y="26" class="title" style="font-size:15px; fill:#c084fc;">The Canonical Safe Line-by-Line File Processing Pattern</text>
+
+    <!-- Code vs Subshell Trap -->
+    <g transform="translate(25, 42)">
+      <!-- Safe code -->
+      <text x="0" y="18" class="code-key" style="fill:#34d399; font-size:13px;">while IFS= read -r line; do</text>
+      <text x="20" y="38" class="code-key" style="fill:#cbd5e1; font-size:12px;">  printf "Line: %s\n" "$line"</text>
+      <text x="0" y="58" class="code-key" style="fill:#34d399; font-size:13px;">done &lt; "input.txt"</text>
+
+      <!-- Explanation -->
+      <g transform="translate(320, 0)">
+        <text x="0" y="16" class="desc-txt" style="fill:#f8fafc;"><tspan class="code-key" style="fill:#38bdf8;">IFS=</tspan> Prevents trimming leading and trailing whitespace.</text>
+        <text x="0" y="36" class="desc-txt" style="fill:#f8fafc;"><tspan class="code-key" style="fill:#38bdf8;">read -r</tspan> Prevents backslash escapes from being mangled.</text>
+        <text x="0" y="56" class="desc-txt" style="fill:#f8fafc;"><tspan class="code-key" style="fill:#38bdf8;">done &lt; file</tspan> Avoids the subshell trap of <tspan class="code-key" style="fill:#f43f5e;">cat file | while read</tspan> (which loses variables!).</text>
+      </g>
+    </g>
+  </g>
+</svg>

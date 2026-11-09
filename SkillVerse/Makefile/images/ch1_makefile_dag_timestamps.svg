@@ -1,0 +1,95 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 480" width="100%" height="100%">
+  <defs>
+    <style>
+      .bg { fill: #080c14; }
+      .card { fill: #0f172a; stroke: #1e293b; stroke-width: 1.5; rx: 10; }
+      .title { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 20px; fill: #f8fafc; }
+      .subtitle { font-family: 'Inter', system-ui, sans-serif; font-size: 13px; fill: #94a3b8; }
+      .node-box { fill: #131d33; stroke-width: 2; rx: 8; }
+      .node-title { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 14px; }
+      .code-key { font-family: 'JetBrains Mono', Consolas, monospace; font-size: 12px; font-weight: 700; }
+      .desc-txt { font-family: 'Inter', system-ui, sans-serif; font-size: 11px; fill: #94a3b8; }
+      .time-pill { font-family: 'JetBrains Mono', Consolas, monospace; font-size: 11px; font-weight: 600; }
+      .wire-dag { stroke: #38bdf8; stroke-width: 2; fill: none; stroke-linecap: round; }
+      .wire-skip { stroke: #64748b; stroke-width: 1.8; stroke-dasharray: 4,4; fill: none; stroke-linecap: round; }
+    </style>
+    <marker id="arr-blue" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8" />
+    </marker>
+    <marker id="arr-gray" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#64748b" />
+    </marker>
+  </defs>
+
+  <rect width="960" height="480" class="bg" rx="14"/>
+
+  <!-- Title (y = 30 and y = 50) -->
+  <text x="480" y="32" text-anchor="middle" class="title">Make Directed Acyclic Graph (DAG) &amp; Timestamp Evaluation</text>
+  <text x="480" y="52" text-anchor="middle" class="subtitle">How GNU Make determines incremental compilation based on file modification times (mtime)</text>
+
+  <!-- Level 1: Final Target Executable (x = 370, y = 80, width = 220, height = 75) -->
+  <g transform="translate(370, 80)">
+    <rect x="0" y="0" width="220" height="75" class="node-box" style="stroke: #f59e0b; fill: #1c150b;"/>
+    <text x="110" y="24" text-anchor="middle" class="node-title" style="fill:#f59e0b;">TARGET: program</text>
+    <text x="110" y="44" text-anchor="middle" class="time-pill" style="fill:#fcd34d;">mtime: 10:00:00 AM</text>
+    <text x="110" y="62" text-anchor="middle" class="desc-txt">Links object files into binary</text>
+  </g>
+
+  <!-- Wires: program depends on main.o and utils.o -->
+  <path d="M 440 155 L 290 200" class="wire-dag" marker-end="url(#arr-blue)"/>
+  <path d="M 520 155 L 670 200" class="wire-dag" marker-end="url(#arr-blue)"/>
+
+  <!-- Level 2: Intermediate Object Files (y = 205, height = 80) -->
+  <!-- Left: main.o (Out of date! Needs rebuild) -->
+  <g transform="translate(160, 205)">
+    <rect x="0" y="0" width="240" height="80" class="node-box" style="stroke: #f43f5e; fill: #240c14;"/>
+    <text x="120" y="24" text-anchor="middle" class="node-title" style="fill:#f43f5e;">TARGET: main.o</text>
+    <text x="120" y="44" text-anchor="middle" class="time-pill" style="fill:#fca5a5;">mtime: 10:00:00 AM</text>
+    <text x="120" y="64" text-anchor="middle" class="code-key" style="fill:#fb7185; font-size:11px;">REBUILD TRIGGERED (Outdated!)</text>
+  </g>
+
+  <!-- Right: utils.o (Up to date! Skipped) -->
+  <g transform="translate(560, 205)">
+    <rect x="0" y="0" width="240" height="80" class="node-box" style="stroke: #34d399; fill: #0c241c;"/>
+    <text x="120" y="24" text-anchor="middle" class="node-title" style="fill:#34d399;">TARGET: utils.o</text>
+    <text x="120" y="44" text-anchor="middle" class="time-pill" style="fill:#6ee7b7;">mtime: 10:00:00 AM</text>
+    <text x="120" y="64" text-anchor="middle" class="code-key" style="fill:#34d399; font-size:11px;">UP TO DATE (Skipped)</text>
+  </g>
+
+  <!-- Wires to source prerequisites -->
+  <path d="M 240 285 L 150 330" class="wire-dag" marker-end="url(#arr-blue)"/>
+  <path d="M 320 285 L 440 330" class="wire-dag" marker-end="url(#arr-blue)"/>
+  <path d="M 640 285 L 520 330" class="wire-skip" marker-end="url(#arr-gray)"/>
+  <path d="M 720 285 L 810 330" class="wire-skip" marker-end="url(#arr-gray)"/>
+
+  <!-- Level 3: Source & Header Files (y = 335, height = 75) -->
+  <!-- 1. main.c (Modified recently!) -->
+  <g transform="translate(40, 335)">
+    <rect x="0" y="0" width="200" height="75" class="node-box" style="stroke: #38bdf8; fill: #0c1f36;"/>
+    <text x="100" y="24" text-anchor="middle" class="node-title" style="fill:#38bdf8;">main.c</text>
+    <text x="100" y="44" text-anchor="middle" class="time-pill" style="fill:#7dd3fc; font-weight:700;">mtime: 10:05:00 AM</text>
+    <text x="100" y="62" text-anchor="middle" class="desc-txt" style="fill:#38bdf8;">*Newer than main.o!*</text>
+  </g>
+
+  <!-- 2. config.h (Shared header) -->
+  <g transform="translate(380, 335)">
+    <rect x="0" y="0" width="200" height="75" class="node-box" style="stroke: #a855f7; fill: #1c1033;"/>
+    <text x="100" y="24" text-anchor="middle" class="node-title" style="fill:#a855f7;">config.h</text>
+    <text x="100" y="44" text-anchor="middle" class="time-pill" style="fill:#d8b4fe;">mtime: 09:30:00 AM</text>
+    <text x="100" y="62" text-anchor="middle" class="desc-txt">Shared prerequisite</text>
+  </g>
+
+  <!-- 3. utils.c (Unchanged) -->
+  <g transform="translate(720, 335)">
+    <rect x="0" y="0" width="200" height="75" class="node-box" style="stroke: #64748b; fill: #0f172a;"/>
+    <text x="100" y="24" text-anchor="middle" class="node-title" style="fill:#94a3b8;">utils.c</text>
+    <text x="100" y="44" text-anchor="middle" class="time-pill" style="fill:#94a3b8;">mtime: 09:45:00 AM</text>
+    <text x="100" y="62" text-anchor="middle" class="desc-txt">Older than utils.o</text>
+  </g>
+
+  <!-- Bottom Legend Bar (y = 435) -->
+  <g transform="translate(40, 435)">
+    <rect x="0" y="0" width="880" height="35" rx="6" fill="#131d33" stroke="#1e293b"/>
+    <text x="20" y="22" class="desc-txt" style="font-size:12px; fill:#cbd5e1;">Rule: If any prerequisite is <tspan style="color:#f43f5e; font-weight:700;">NEWER</tspan> than the target, Make re-executes the recipe for that target and its dependents.</text>
+  </g>
+</svg>

@@ -22,6 +22,27 @@ fi #  'fi' marks the end of the 'if' block - essential!
 
 **Important: Spaces around brackets `[ condition ]`**: In Bash, `[` is not just syntax; it's actually a command (an alias for `test`). Therefore, you _must_ have spaces between the brackets and the condition. For example, `[ -f "$file" ]` is correct, while `[-f "$file"]` will cause a syntax error.
 
+### Choosing the Right Testing Construct: `[ ... ]` vs `[[ ... ]]` vs `(( ... ))`
+
+Bash provides three different constructs for evaluating conditions and control flow:
+
+![Bash Condition Testing Matrix: [ ... ] vs [[ ... ]] vs (( ... ))](images/ch3_bash_control_flow_matrix.svg)
+
+1. **POSIX Test `[ ... ]`**:
+   - The legacy standard compatible across all Unix shells (`/bin/sh`, Dash, Ash, Ksh).
+   - Variables **must always be quoted** (`[ "$var" = "hello" ]`). If an unquoted variable is empty, it causes a syntax crash: `[: =: unary operator expected`.
+
+2. **Bash Extended Test `[[ ... ]]` (Strongly Recommended)**:
+   - A shell keyword that parses conditions without word splitting or unintended filename globbing.
+   - Supports regular expression pattern matching via `=~` (e.g., `[[ $email =~ ^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$ ]]`).
+   - Supports wildcard globbing (e.g., `[[ $filename == *.tar.gz ]]`).
+   - Allows logical `&&` and `||` inside the brackets directly: `[[ -f $file && -r $file ]]`.
+
+3. **Arithmetic Evaluation `(( ... ))`**:
+   - Dedicated construct for mathematical calculations and comparisons using natural C-style syntax.
+   - Variables inside do not require the `$` prefix: `if (( count >= 10 && retry < 3 )); then`.
+   - Supports pre/post increment and decrement operators: `(( count++ ))`.
+
 **Real-World Example**: Checking for a configuration file and handling different scenarios:
 
 ```bash

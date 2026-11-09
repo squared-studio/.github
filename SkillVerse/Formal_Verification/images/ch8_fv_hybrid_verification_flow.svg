@@ -1,0 +1,88 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 520" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGrad8" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#080c14" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <filter id="shadow8" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+  </defs>
+
+  <rect width="900" height="520" fill="url(#bgGrad8)"/>
+
+  <!-- Title -->
+  <text x="450" y="38" font-family="'Segoe UI', Roboto, sans-serif" font-size="22" font-weight="700" fill="#38bdf8" text-anchor="middle">Hybrid Verification Architecture &amp; Formal Coverage</text>
+  <text x="450" y="62" font-family="'Segoe UI', Roboto, sans-serif" font-size="13" fill="#94a3b8" text-anchor="middle">Integrating Formal Property Proving with UVM Simulation for Complete SoC Sign-Off</text>
+
+  <!-- Left: The SoC Verification Pyramid -->
+  <g transform="translate(40, 85)">
+    <rect width="400" height="400" rx="12" fill="#0f172a" stroke="#6366f1" stroke-width="1.5" filter="url(#shadow8)"/>
+    <rect width="400" height="40" rx="12" fill="#312e81"/>
+    <text x="200" y="26" font-family="'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="700" fill="#e0e7ff" text-anchor="middle">SoC Verification Pyramid</text>
+
+    <!-- Top Tier: Pure Formal -->
+    <g transform="translate(30, 58)">
+      <polygon points="170,0 20,90 320,90" fill="#065f46" stroke="#10b981" stroke-width="1.5"/>
+      <text x="170" y="48" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="700" fill="#a7f3d0" text-anchor="middle">Pure Formal (FV)</text>
+      <text x="170" y="66" font-family="'Segoe UI', Roboto, sans-serif" font-size="9" fill="#d1fae5" text-anchor="middle">Arbiters • Protocols • Deadlock</text>
+      <text x="170" y="80" font-family="'Segoe UI', Roboto, sans-serif" font-size="9" fill="#d1fae5" text-anchor="middle">100% Exhaustive Mathematical Proof</text>
+    </g>
+
+    <!-- Mid Tier: Hybrid / Subsystem -->
+    <g transform="translate(30, 153)">
+      <polygon points="20,0 320,0 350,90 -10,90" fill="#1e1b4b" stroke="#8b5cf6" stroke-width="1.5"/>
+      <text x="170" y="38" font-family="'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="700" fill="#c084fc" text-anchor="middle">Hybrid &amp; Formal-Assisted</text>
+      <text x="170" y="58" font-family="'Segoe UI', Roboto, sans-serif" font-size="10" fill="#e9d5ff" text-anchor="middle">Formal Bug Hunting → Directed Test Export</text>
+      <text x="170" y="74" font-family="'Segoe UI', Roboto, sans-serif" font-size="10" fill="#e9d5ff" text-anchor="middle">Complex Subsystem Interactions</text>
+    </g>
+
+    <!-- Base Tier: Simulation UVM -->
+    <g transform="translate(30, 248)">
+      <polygon points="-10,0 350,0 380,105 -40,105" fill="#0c4a6e" stroke="#0ea5e9" stroke-width="1.5"/>
+      <text x="170" y="42" font-family="'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="700" fill="#7dd3fc" text-anchor="middle">Dynamic Simulation (UVM)</text>
+      <text x="170" y="64" font-family="'Segoe UI', Roboto, sans-serif" font-size="10" fill="#bae6fd" text-anchor="middle">Full-Chip Integration • DSP Pipelines</text>
+      <text x="170" y="80" font-family="'Segoe UI', Roboto, sans-serif" font-size="10" fill="#bae6fd" text-anchor="middle">Firmware Boot • Constrained-Random Regression</text>
+    </g>
+  </g>
+
+  <!-- Right: Formal Coverage & Sign-Off Criteria -->
+  <g transform="translate(465, 85)">
+    <rect width="400" height="400" rx="12" fill="#0f172a" stroke="#10b981" stroke-width="1.5" filter="url(#shadow8)"/>
+    <rect width="400" height="40" rx="12" fill="#065f46"/>
+    <text x="200" y="26" font-family="'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="700" fill="#ecfdf5" text-anchor="middle">Formal Coverage &amp; Sign-Off Pillars</text>
+
+    <!-- Pillar 1: Proof Core -->
+    <g transform="translate(25, 55)">
+      <rect width="350" height="65" rx="6" fill="#131d33" stroke="#1e293b"/>
+      <text x="15" y="22" font-family="'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="700" fill="#38bdf8">1. Proof Core Coverage</text>
+      <text x="15" y="40" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" fill="#cbd5e1">Checks which RTL logic in the Cone of Influence (COI)</text>
+      <text x="15" y="55" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" fill="#cbd5e1">was actively required by the solver to prove the property.</text>
+    </g>
+
+    <!-- Pillar 2: Mutation Coverage -->
+    <g transform="translate(25, 130)">
+      <rect width="350" height="65" rx="6" fill="#131d33" stroke="#1e293b"/>
+      <text x="15" y="22" font-family="'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="700" fill="#a78bfa">2. Mutation Coverage (Fault Injection)</text>
+      <text x="15" y="40" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" fill="#cbd5e1">Automatically injects synthetic bugs into RTL.</text>
+      <text x="15" y="55" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" fill="#cbd5e1">If no assertion fails, you have an assertion gap!</text>
+    </g>
+
+    <!-- Pillar 3: Cover & Reachability -->
+    <g transform="translate(25, 205)">
+      <rect width="350" height="65" rx="6" fill="#131d33" stroke="#1e293b"/>
+      <text x="15" y="22" font-family="'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="700" fill="#facc15">3. Cover &amp; Vacuity Verification</text>
+      <text x="15" y="40" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" fill="#cbd5e1">Verifies every assumption antecedent and state can</text>
+      <text x="15" y="55" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" fill="#cbd5e1">genuinely be reached, preventing vacuous proofs.</text>
+    </g>
+
+    <!-- Pillar 4: Sign-Off Checklist -->
+    <g transform="translate(25, 280)">
+      <rect width="350" height="95" rx="6" fill="#0c1222" stroke="#047857"/>
+      <text x="15" y="22" font-family="'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="700" fill="#34d399">FV Tape-out Sign-off Gate:</text>
+      <text x="20" y="42" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" fill="#e2e8f0">✓ 100% Assertions mathematically PROVEN (no timeout)</text>
+      <text x="20" y="60" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" fill="#e2e8f0">✓ 100% Covers REACHABLE (zero vacuity)</text>
+      <text x="20" y="78" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" fill="#e2e8f0">✓ Assumptions audited against SoC top-level drivers</text>
+    </g>
+  </g>
+</svg>

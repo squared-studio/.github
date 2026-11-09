@@ -1,0 +1,132 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 480" width="100%" height="100%">
+  <defs>
+    <style>
+      .bg { fill: #080c14; }
+      .card { fill: #0f172a; stroke: #1e293b; stroke-width: 1.5; rx: 10; }
+      .title { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 20px; fill: #f8fafc; }
+      .subtitle { font-family: 'Inter', system-ui, sans-serif; font-size: 13px; fill: #94a3b8; }
+      .layer-box { fill: #131d33; stroke-width: 2; rx: 8; }
+      .layer-title { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 15px; }
+      .layer-sub { font-family: 'Inter', system-ui, sans-serif; font-size: 11px; fill: #94a3b8; }
+      .node-card { fill: #1e293b; stroke: #334155; stroke-width: 1; rx: 6; }
+      .code-key { font-family: 'JetBrains Mono', Consolas, monospace; font-size: 12px; font-weight: 700; }
+      .desc-txt { font-family: 'Inter', system-ui, sans-serif; font-size: 12px; fill: #cbd5e1; }
+      .wire-arr { stroke: #38bdf8; stroke-width: 2; fill: none; stroke-linecap: round; }
+      .wire-fork { stroke: #a855f7; stroke-width: 2; stroke-dasharray: 4,4; fill: none; stroke-linecap: round; }
+    </style>
+    <marker id="arr-blue" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8" />
+    </marker>
+    <marker id="arr-purple" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#a855f7" />
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="960" height="480" class="bg" rx="14"/>
+
+  <!-- Title (y = 30 and y = 52) -->
+  <text x="480" y="32" text-anchor="middle" class="title">Bash Execution Architecture &amp; Process Hierarchy</text>
+  <text x="480" y="52" text-anchor="middle" class="subtitle">How commands flow from terminal input through the shell engine, subshells, and kernel syscalls</text>
+
+  <!-- Level 1: Terminal & User Interface (x = 40, width = 250, height = 370) -->
+  <g transform="translate(40, 75)">
+    <rect x="0" y="0" width="250" height="380" class="layer-box" style="stroke: #38bdf8; fill: #0b1a2e;"/>
+    <text x="125" y="28" text-anchor="middle" class="layer-title" style="fill: #38bdf8;">1. USER / TTY LAYER</text>
+    <text x="125" y="48" text-anchor="middle" class="layer-sub">Input Capture &amp; Presentation</text>
+
+    <!-- Terminal Emulator -->
+    <g transform="translate(15, 70)">
+      <rect x="0" y="0" width="220" height="80" class="node-card" style="stroke:#38bdf8;"/>
+      <text x="12" y="24" class="code-key" style="fill:#7dd3fc;">Terminal Emulator</text>
+      <text x="12" y="44" class="desc-txt" style="font-size:11px;">Alacritty, GNOME Terminal,</text>
+      <text x="12" y="60" class="desc-txt" style="font-size:11px;">VS Code Terminal, Windows Terminal</text>
+    </g>
+
+    <!-- PTY / Line Discipline -->
+    <g transform="translate(15, 175)">
+      <rect x="0" y="0" width="220" height="85" class="node-card"/>
+      <text x="12" y="24" class="code-key" style="fill:#93c5fd;">Pseudo-Terminal (PTY)</text>
+      <text x="12" y="44" class="desc-txt" style="font-size:11px;">Buffers keystrokes, handles</text>
+      <text x="12" y="60" class="desc-txt" style="font-size:11px;">echoing, backspace, and signals</text>
+      <text x="12" y="74" class="code-key" style="font-size:10px; fill:#34d399;">/dev/pts/0 (stdin, stdout)</text>
+    </g>
+
+    <text x="125" y="310" text-anchor="middle" class="layer-sub" style="fill:#64748b;">Streams input line-by-line</text>
+    <text x="125" y="330" text-anchor="middle" class="layer-sub" style="fill:#64748b;">Triggered by &lt;Enter&gt; (\n)</text>
+  </g>
+
+  <!-- Connector Wire 1 -> 2 -->
+  <path d="M 290 230 L 338 230" class="wire-arr" marker-end="url(#arr-blue)"/>
+
+  <!-- Level 2: Bash Shell Process (x = 345, width = 270, height = 370) -->
+  <g transform="translate(345, 75)">
+    <rect x="0" y="0" width="270" height="380" class="layer-box" style="stroke: #34d399; fill: #0b1f1a;"/>
+    <text x="135" y="28" text-anchor="middle" class="layer-title" style="fill: #34d399;">2. BASH SHELL (PID: $$)</text>
+    <text x="135" y="48" text-anchor="middle" class="layer-sub">Parser, Expander &amp; Evaluator</text>
+
+    <!-- Built-ins -->
+    <g transform="translate(15, 70)">
+      <rect x="0" y="0" width="240" height="80" class="node-card" style="stroke:#34d399;"/>
+      <text x="12" y="24" class="code-key" style="fill:#6ee7b7;">Shell Built-ins (In-Process)</text>
+      <text x="12" y="44" class="desc-txt" style="font-size:11px;">cd, echo, read, export, alias</text>
+      <text x="12" y="62" class="desc-txt" style="font-size:11px; fill:#34d399;">• Zero process creation overhead</text>
+    </g>
+
+    <!-- Expansions & Parsing -->
+    <g transform="translate(15, 165)">
+      <rect x="0" y="0" width="240" height="95" class="node-card"/>
+      <text x="12" y="22" class="code-key" style="fill:#a7f3d0;">Evaluation Phases</text>
+      <text x="12" y="40" class="desc-txt" style="font-size:11px;">1. Tokenization &amp; Alias expansion</text>
+      <text x="12" y="56" class="desc-txt" style="font-size:11px;">2. Brace expansion: {1..5}</text>
+      <text x="12" y="72" class="desc-txt" style="font-size:11px;">3. Variable &amp; Command substitution</text>
+      <text x="12" y="88" class="desc-txt" style="font-size:11px;">4. Word splitting &amp; Globbing (*)</text>
+    </g>
+
+    <!-- Subshell Fork (Parent vs Child) -->
+    <g transform="translate(15, 275)">
+      <rect x="0" y="0" width="240" height="85" class="node-card" style="stroke:#a855f7; fill:#1c1033;"/>
+      <text x="12" y="22" class="code-key" style="fill:#c084fc;">Subshell: ( cmd ) or | pipe</text>
+      <text x="12" y="40" class="desc-txt" style="font-size:11px;">Forks duplicate process ($BASHPID);</text>
+      <text x="12" y="56" class="desc-txt" style="font-size:11px;">variable mutations do NOT</text>
+      <text x="12" y="72" class="desc-txt" style="font-size:11px; fill:#fca5a5;">reflect back in parent shell!</text>
+    </g>
+  </g>
+
+  <!-- Connector Wire 2 -> 3 -->
+  <path d="M 615 230 L 663 230" class="wire-arr" marker-end="url(#arr-blue)"/>
+
+  <!-- Level 3: External Commands & Kernel (x = 670, width = 250, height = 370) -->
+  <g transform="translate(670, 75)">
+    <rect x="0" y="0" width="250" height="380" class="layer-box" style="stroke: #f59e0b; fill: #1c150b;"/>
+    <text x="125" y="28" text-anchor="middle" class="layer-title" style="fill: #f59e0b;">3. KERNEL &amp; BINARIES</text>
+    <text x="125" y="48" text-anchor="middle" class="layer-sub">Forks, Execs &amp; Syscalls</text>
+
+    <!-- External Binaries -->
+    <g transform="translate(15, 70)">
+      <rect x="0" y="0" width="220" height="90" class="node-card" style="stroke:#f59e0b;"/>
+      <text x="12" y="24" class="code-key" style="fill:#fbbf24;">External Binaries ($PATH)</text>
+      <text x="12" y="44" class="desc-txt" style="font-size:11px;">/usr/bin/git, /usr/bin/find</text>
+      <text x="12" y="62" class="desc-txt" style="font-size:11px;">Requires <tspan class="code-key" style="fill:#fcd34d;">fork()</tspan> + <tspan class="code-key" style="fill:#fcd34d;">execve()</tspan></text>
+      <text x="12" y="78" class="desc-txt" style="font-size:11px; fill:#fcd34d;">Managed via exit status ($?)</text>
+    </g>
+
+    <!-- Linux Kernel -->
+    <g transform="translate(15, 175)">
+      <rect x="0" y="0" width="220" height="100" class="node-card"/>
+      <text x="12" y="24" class="code-key" style="fill:#fde68a;">Operating System Kernel</text>
+      <text x="12" y="44" class="desc-txt" style="font-size:11px;">System Call Dispatcher:</text>
+      <text x="12" y="60" class="desc-txt" style="font-size:11px;">• open(), read(), write()</text>
+      <text x="12" y="76" class="desc-txt" style="font-size:11px;">• fork(), waitpid(), pipe()</text>
+      <text x="12" y="92" class="desc-txt" style="font-size:11px;">• kill(), sigaction() (Signals)</text>
+    </g>
+
+    <!-- Exit Status Handshake -->
+    <g transform="translate(15, 290)">
+      <rect x="0" y="0" width="220" height="70" class="node-card" style="fill:#172554;"/>
+      <text x="12" y="22" class="code-key" style="fill:#93c5fd;">Exit Code Return: $?</text>
+      <text x="12" y="40" class="desc-txt" style="font-size:11px;">0 = Success</text>
+      <text x="12" y="58" class="desc-txt" style="font-size:11px;">1-255 = Error Code / Signal</text>
+    </g>
+  </g>
+</svg>
