@@ -2,32 +2,28 @@
 
 ## Introduction: Streamlining Code with Textual Macros
 
-Macros in SystemVerilog are preprocessor directives that enable textual substitution within your code before compilation. They serve as a powerful tool for enhancing code reusability, readability, and flexibility, allowing users to:
+Macros in SystemVerilog are preprocessor directives that perform textual substitution before the SystemVerilog compiler parses a single keyword. Used properly, macros make verification testbenches, assertion factories, and cross-tool builds far cleaner and more maintainable:
 
-- **Code Abstraction**: Define symbolic names (macros) for frequently used code snippets, expressions, or constants. This abstraction improves code readability and reduces redundancy, making designs easier to understand and maintain.
-- **Parameterization**: Create parameterized code templates using macros that can be customized during preprocessing. This enables conditional compilation and code adaptation based on different configurations or environments.
-- **Conditional Compilation**: Control which parts of the code are compiled based on macro definitions. This is essential for managing different build configurations, enabling or disabling features, and targeting specific hardware platforms.
-- **Version Control and Documentation**: Embed version information, copyright notices, or documentation snippets directly into the code using predefined macros. This aids in version tracking and ensures consistent documentation across the design.
-
-By effectively utilizing macros, verification engineers and designers can create more modular, adaptable, and maintainable SystemVerilog code, leading to improved design quality and development efficiency.
+- **Code Abstraction**: Assign symbolic names to frequently used boilerplate snippets, assertion checks, or logging helpers.
+- **Conditional Compilation (`ifdef` / `ifndef`)**: Enable debug hooks, synthesis pragmas, or tool-specific workarounds cleanly at build time.
+- **Caller-Site Diagnostics**: Capture the exact invoking source file and line number using `` `__FILE__ `` and `` `__LINE__ ``—something regular functions cannot do cleanly without manual parameters.
+- **Identifier & String Construction**: Synthesize repetitive register names or debug strings using token pasting (`` `` ``) and stringification (`` `" ``).
 
 ### Learning Goals
 
 By the end of this chapter, you should be able to:
 
-- Define, invoke, and undefine object-like and parameterized macros.
-- Explain preprocessing order, compilation-unit visibility, and conditional compilation.
-- Use predefined source-location macros correctly in diagnostics.
-- Avoid precedence, dangling-`else`, and multi-statement hazards in macro expansions.
-- Recognize when parameters, constants, functions, or packages are safer than textual macros.
+- Define, invoke, and undefine object-like and parameterized macros (including default arguments).
+- Explain preprocessing order, compilation-unit boundaries, header include guards, and conditional compilation.
+- Apply IEEE 1800 token operators (stringification `` `" `` and token pasting `` `` ``) and predefined location macros (`` `__FILE__ ``, `` `__LINE__ ``).
+- Prevent precedence, trailing-semicolon, dangling-`else`, and double-evaluation hazards.
+- Know when `parameter`, `localparam`, `package`, `function automatic`, or `generate` blocks are safer than textual macros.
 
 ## Defining and Using Macros
 
-SystemVerilog macros are defined using the `` `define `` directive and undefined using the `` `undef `` directive. They are invoked by preceding the macro name with a backtick `` ` `` (grave accent).
+SystemVerilog macros are defined with `` `define ``, removed with `` `undef `` (or `` `undefineall ``), and expanded by prefixing the identifier with a backtick `` ` ``.
 
 ### `` `define ``: Defining Macros
-
-The `` `define `` directive is used to create a macro, associating a name with a specific text or code snippet.
 
 **Syntax:**
 
@@ -35,9 +31,9 @@ The `` `define `` directive is used to create a macro, associating a name with a
 `define MACRO_NAME macro_text
 ```
 
-- **`\`define**: The directive keyword that initiates macro definition.
-- **`MACRO_NAME`**: The identifier chosen as the name of the macro. Macro names typically follow uppercase convention for better readability and to distinguish them from SystemVerilog identifiers.
-- **`macro_text`**: The preprocessing tokens that will be substituted wherever `MACRO_NAME` is used in the code. The replacement must form valid SystemVerilog in its context; a macro has no type checking or scope of its own, even when it expands to an expression, statement, or declaration.
+- **`` `define ``**: Compiler directive initiating a macro definition.
+- **`MACRO_NAME`**: Uppercase convention distinguishes preprocessor tokens from SystemVerilog variables and parameters.
+- **`macro_text`**: Raw replacement text pasted verbatim at each `` `MACRO_NAME `` invocation. Macros have **no type checking, no data width, and no lexical scope** of their own.
 
 **Example: Defining a Macro for Data Width**
 
@@ -45,417 +41,406 @@ The `` `define `` directive is used to create a macro, associating a name with a
 `define DATA_WIDTH 32
 
 module macro_example;
-  logic [`DATA_WIDTH-1:0] data_bus; // Using the DATA_WIDTH macro
+  logic [`DATA_WIDTH-1:0] data_bus;
 
   initial begin
-    $display("Data bus width: %0d", `DATA_WIDTH); // Macro substitution in display
+    $display("Data bus width: %0d", `DATA_WIDTH);
   end
 endmodule
 ```
-
-In this example, `` `define DATA_WIDTH 32 `` defines a macro named `DATA_WIDTH` that substitutes to the text `32`. Wherever `` `DATA_WIDTH `` is encountered in the code, it will be replaced by `32` during preprocessing.
 
 ### `` `undef ``: Undefining Macros
 
-The `` `undef `` directive is used to remove a macro definition, effectively making the macro name undefined from that point onwards in the code.
-
-**Syntax:**
+Use `` `undef MACRO_NAME `` to undefine a macro from that line onward within the compilation unit. Because preprocessing happens *before* simulation starts, even an `` `undef `` placed inside an `initial` block takes effect on all later source lines regardless of execution order.
 
 ```systemverilog
-`undef MACRO_NAME
-```
-
-- **`\`undef**: The directive keyword for undefining a macro.
-- **`MACRO_NAME`**: The name of the macro to be undefined.
-
-**Example: Undefining the DATA_WIDTH Macro**
-
-```systemverilog
-`define DATA_WIDTH 32
+`define TEMP_WIDTH 32
 
 module undef_example;
-  logic [`DATA_WIDTH-1:0] data_bus_1;
+  logic [`TEMP_WIDTH-1:0] data_bus_1;
 
   initial begin
-    $display("Data bus 1 width: %0d", `DATA_WIDTH);
-
-    `undef DATA_WIDTH // Undefine the DATA_WIDTH macro
-
-    // logic [`DATA_WIDTH-1:0] data_bus_2; // This would now cause an error as DATA_WIDTH is undefined
-
-    $display("DATA_WIDTH macro is now undefined.");
+    $display("Data bus 1 width: %0d", `TEMP_WIDTH);
+    `undef TEMP_WIDTH
+    // Subsequent uses of `TEMP_WIDTH would now fail preprocessing!
   end
 endmodule
 ```
 
-After `` `undef DATA_WIDTH ``, any subsequent use of `` `DATA_WIDTH `` will result in a preprocessing error because the macro is no longer defined. Preprocessing directives are handled before simulation begins, so placing `` `undef `` inside an `initial` block still affects the remaining source text rather than waiting until runtime.
-
 ## Types and Applications of Macros
 
-SystemVerilog macros can be broadly categorized based on their usage and complexity:
+![Macro Forms and IEEE 1800 Token Operators](images/ch22_sv_macro_types_and_token_operators.svg)
 
-### Simple Text Substitution Macros
+### Simple Text Substitution & Multi-Line Macros
 
-These are the most basic type of macros, primarily used for replacing a macro name with a fixed text or value. They enhance readability and maintainability by providing symbolic names for constants or frequently used expressions.
-
-**Example: Defining Macros for Clock Period and Reset Value**
+Use a backslash (`\`) directly before a newline (with **no trailing spaces or inline comments** after `\`) to span a macro definition across multiple lines:
 
 ```systemverilog
 `define CLK_PERIOD 10ns
-`define RST_VAL 1'b0
+`define RST_VAL    1'b0
 
 module simple_macros;
   timeunit 1ns; timeprecision 1ps;
-  logic clk;
-  logic rst;
+  logic clk = 1'b0;
+  logic rst = `RST_VAL;
+
+  always #(`CLK_PERIOD / 2) clk = ~clk;
 
   initial begin
-    clk = 0;
-    rst = `RST_VAL; // Using RST_VAL macro
-
-    forever #(`CLK_PERIOD/2) clk = ~clk; // Using CLK_PERIOD macro
-  end
-
-  initial begin
-    #5ns rst = ~`RST_VAL;
+    #5ns  rst = ~`RST_VAL;
     #20ns rst = `RST_VAL;
     #10ns $finish;
   end
 endmodule
 ```
 
-### Parameterized Macros
+### Parameterized Macros, Default Arguments & Token Operators
 
-SystemVerilog macros can also accept arguments, making them behave like simple functions during preprocessing. This allows for creating more flexible and reusable code templates.
-
-**Syntax:**
+Parameterized macros accept comma-separated arguments and (since SystemVerilog-2009 / IEEE 1800) optional **default argument values**:
 
 ```systemverilog
-`define MACRO_NAME(parameter1, parameter2, ...) macro_text_using_parameters
-```
-
-- **`MACRO_NAME(parameter1, parameter2, ...)`**: Macro definition with a parameter list enclosed in parentheses.
-- **`macro_text_using_parameters`**: The macro text that can now include the parameters defined in the parameter list.
-
-**Example: Defining a Parameterized Macro for Assertions**
-
-```systemverilog
-`define ASSERT_TRUE(condition, message) \
+`define ASSERT_TRUE(condition, message = "Check failed") \
   do begin \
     if (!(condition)) begin \
-      $error("Assertion Failed: %s at line %0d in file %s", message, `__LINE__, `__FILE__); \
+      $error("Assertion Failed: %s at %s:%0d", message, `__FILE__, `__LINE__); \
       $fatal(1); \
     end \
   end while (0)
-
-module parameterized_macro_example;
-  logic a, b;
-
-  initial begin
-    a = 1; b = 0;
-
-    `ASSERT_TRUE(a == 1, "Variable 'a' should be 1"); // Using parameterized macro
-    `ASSERT_TRUE(b == 1, "Variable 'b' should be 1"); // This assertion will fail
-  end
-endmodule
 ```
 
-In this example, `ASSERT_TRUE` is a parameterized macro that takes a condition and a message as arguments. When invoked, it checks the condition and reports an error if it's false, along with the provided message, line number, and filename using predefined macros `` `__LINE__ `` and `` `__FILE__ ``.
+IEEE 1800 also defines three special expansion operators inside macro bodies:
+
+| Operator | Name | Purpose & Example |
+| :--- | :--- | :--- |
+| `` `" `` | **Stringification** | Converts macro argument text into a string literal: `` `define DBG(ex) $display("%s=%0d", `"ex`", (ex)) `` |
+| `` `\`" `` | **Escaped Quote in String** | Emits an escaped `\"` inside a `" ... `" stringified literal |
+| `` `` `` | **Token Concatenation (Paste)** | Joins adjacent tokens into one identifier: `` `define REG_Q(n) reg_``n``_q `` -> `reg_ctrl_q` |
 
 ### Conditional Compilation Macros
 
-Macros are extensively used for conditional compilation, allowing you to include or exclude sections of code based on macro definitions. This is achieved using the `` `ifdef ``, `` `else ``, `` `elsif ``, and `` `endif `` directives.
-
-**Syntax:**
+Directives `` `ifdef ``, `` `ifndef ``, `` `elsif ``, `` `else ``, and `` `endif `` select source text prior to syntax parsing:
 
 ```systemverilog
-`ifdef MACRO_NAME
-  // Code to be compiled if MACRO_NAME is defined
-`else
-  // Code to be compiled if MACRO_NAME is not defined
-`endif
-```
-
-- **`\`ifdef MACRO_NAME`**: Checks if `MACRO_NAME` is currently defined.
-- **`\`else`**: Optional clause; code within `` `else `` is compiled if the condition in `` `ifdef `` is false.
-- **`\`elsif MACRO_NAME`**: Optional clause that checks another macro when the preceding conditional branch was false.
-- **`\`endif`**: Marks the end of the conditional compilation block.
-
-**Example: Conditional Compilation for Debug Mode**
-
-```systemverilog
-`define DEBUG_MODE // Define DEBUG_MODE macro to enable debug code
+`define DEBUG_MODE
 
 module conditional_compilation;
-  logic [7:0] data;
+  logic [7:0] data = 8'h55;
 
   initial begin
-    data = 8'h55;
-
     `ifdef DEBUG_MODE
-      $display("DEBUG: Data value before processing: %h", data); // Debug output
+      $display("DEBUG: Before shift = 0x%02h", data);
+    `elsif TRACE_LITE
+      $display("LITE: Processing");
+    `else
+      // Silent in production runs
     `endif
 
-    data = data << 1; // Data processing
+    data = data << 1;
 
     `ifdef DEBUG_MODE
-      $display("DEBUG: Data value after processing: %h", data); // Debug output
+      $display("DEBUG: After shift  = 0x%02h", data);
     `endif
-
-    $display("Final data value: %h", data);
   end
 endmodule
 ```
-
-In this example, the debug display statements are only compiled and executed if the `DEBUG_MODE` macro is defined. To disable debug output, simply comment out or remove the `` `define DEBUG_MODE `` line.
 
 ## Scope of Macro Definitions
 
-Macro definitions are processed in order and are visible from the definition onward within the current compilation unit. A compilation unit may contain one source file or several files, depending on the simulator's compilation options.
+![SystemVerilog Preprocessor Expansion Pipeline and Compilation-Unit Scope](images/ch22_sv_preprocessor_expansion_pipeline.svg)
 
-- **Compilation-Unit Scope**: A macro can be visible in later source text in the same compilation unit. For predictable reuse across files or compilation commands, define it in a guarded common header and include it explicitly, or pass it through the simulator's documented macro-definition option.
-- **Definition Order**: The order of macro definitions matters. If you redefine a macro with the same name later in the same file, the new definition will override the previous one from that point forward.
-- **No Module or Package Scope**: Macros are not scoped to modules, packages, or any other SystemVerilog constructs. They are preprocessor directives operating before those language scopes are compiled.
+Macro directives follow compilation-unit text order—not RTL hierarchy:
 
-**Example: Macro Scope Demonstration**
+- **Compilation-Unit Scope**: A macro remains visible from its `` `define `` until `` `undef `` (or end of compilation unit). Multi-file compilation units (`-mfcu` style) share macros across files passed together, whereas single-file compilation units (`-sfcu`) isolate macros per file.
+- **No Module or Package Containment**: Declaring `` `define `` inside a `package` or `module` does **not** restrict it to that block; `import pkg::*;` never imports macros either.
+- **Reliable Sharing via Include Guards**: Put shared macros in a `.svh` header wrapped with `` `ifndef GUARD_SVH / `define GUARD_SVH / ... / `endif `` and pull them in with `` `include `` wherever needed, or define build flags on the simulator command line (`+define+NAME=VAL` or `-DNAME=VAL`).
 
 ```systemverilog
-// file1.sv
-`define MSG_FILE1 "Message from file1.sv"
-
-module module1;
-  initial begin
-    $display("Module 1: %s", `MSG_FILE1); // Macro MSG_FILE1 is defined here
-  end
-endmodule
-
-
-// file2.sv
-// `define MSG_FILE2 "Message from file2.sv" // Uncommenting this line will define MSG_FILE2 in file2.sv
-
-module module2;
-  initial begin
-    // $display("Module 2: `%MSG_FILE1`"); // This would cause an error in file2.sv if MSG_FILE1 is not defined in file2.sv or included file.
-    `ifdef MSG_FILE2
-      $display("Module 2: %s", `MSG_FILE2); // Macro MSG_FILE2 is conditionally used
-    `else
-      $display("Module 2: MSG_FILE2 is not defined in this file.");
-    `endif
-  end
-endmodule
+// common_defs.svh (Header-guarded for safe multi-file inclusion)
+`ifndef COMMON_DEFS_SVH
+`define COMMON_DEFS_SVH
+  `define MSG_BANNER "Hello from guarded header"
+`endif
 ```
-
-In this example, `MSG_FILE1` is defined before `module1` in `file1.sv`. Whether it is visible while compiling `file2.sv` depends on whether both files are in the same compilation unit; separate compilation units do not share preprocessor state. `MSG_FILE2` is conditionally used and will only display a message if it is defined before that conditional block.
 
 ## Predefined Macros
 
-SystemVerilog provides several predefined macros that are automatically available in all SystemVerilog code. These macros provide useful information about the compilation environment and code context.
+IEEE 1800-2017 Section 22.13 defines standard source-location macros (`` `__FILE__ `` and `` `__LINE__ ``), while many EDA tools additionally borrow C-style build macros such as `__DATE__`, `__TIME__`, or vendor version identifiers:
 
-| Predefined Macro                                            | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           | Example Value                                                                                                                                                                                                                               |
-| :---------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `` `__LINE__ ``                                             | Expands to the current line number in the source code file as an integer. Useful for error reporting and debugging messages to indicate the location of an event.                                                                                                                                                                                                                                                                                                                                                                                                                                     | `42`                                                                                                                                                                                                                                        |
-| `` `__FILE__ ``                                             | Expands to the current file name as a string. Useful for logging and error messages to identify the source file.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      | `"my_module.sv"`                                                                                                                                                                                                                            |
-| `` `__TIME__ ``                                             | Expands to the compilation time as a string in `hh:mm:ss` format. It is source metadata, not the current simulation time.                                                                                                                                                                                                                                                                                                                                                                                                                                                                             | `"09:30:15"`                                                                                                                                                                                                                                |
-| `` `__DATE__ ``                                             | Expands to the current date of compilation as a string in `Mmm dd yyyy` format (e.g., "Mar 06 2025"). Useful for version control and build identification.                                                                                                                                                                                                                                                                                                                                                                                                                                            | `"Mar 06 2025"`                                                                                                                                                                                                                             |
-| `` `__SYSTEMVERILOG__ ``                                    | A version number indicating SystemVerilog support by the simulator. Can be used for conditional compilation to handle different SystemVerilog language feature support levels.                                                                                                                                                                                                                                                                                                                                                                                                                        | `201800` (Example - YearMonth \* 100)                                                                                                                                                                                                       |
-
-**Example: Using Predefined Macros for Version and Timestamp Information**
+| Predefined Macro | Standard Status | Expansion Description | Example |
+| :--- | :--- | :--- | :--- |
+| `` `__LINE__ `` | **IEEE 1800 Standard** | Current 1-based line number (`int`) | `42` |
+| `` `__FILE__ `` | **IEEE 1800 Standard** | Current source filename string literal | `"my_module.sv"` |
+| `` `__TIME__ `` | Tool / C-preprocessor extension | Compile wall-clock time (`hh:mm:ss`), **not** simulation `$time` | `"09:30:15"` |
+| `` `__DATE__ `` | Tool / C-preprocessor extension | Compile calendar date (`Mmm dd yyyy`) | `"Nov 13 2026"` |
+| `` `__SYSTEMVERILOG__ `` | Simulator-specific | Tool SV version integer where supported; guard with `` `ifdef `` | `201800` |
 
 ```systemverilog
 module predefined_macros_example;
   initial begin
     $display("--- Compilation Information ---");
-    $display("File name: %s", `__FILE__); // Display current file name
-    $display("Line number: %0d", `__LINE__); // Display current line number
-    $display("Compilation time: %s", `__TIME__); // Display compilation time
-    $display("Compilation date: %s", `__DATE__); // Display compilation date
-    $display("SystemVerilog version: %0d", `__SYSTEMVERILOG__); // Display SystemVerilog version
-  end
-endmodule
-```
-
-These predefined macros are invaluable for adding contextual information to simulation outputs, assertions, and log messages, making debugging and tracking easier.
-
-`__TIME__` and `__DATE__` describe when the source was compiled, not the current simulation time; use `$time` for simulation timestamps. `__SYSTEMVERILOG__` is not a portable IEEE-defined predefined macro, so treat it as simulator-specific and guard its use with the relevant tool documentation or a user-defined build macro.
-
-## Best Practices for Macros
-
-- **Use Uppercase for Macro Names**: Adopt the convention of using uppercase names for macros (e.g., `DATA_WIDTH`, `DEBUG_MODE`). This improves code readability and clearly distinguishes macros from regular SystemVerilog identifiers.
-- **Keep Macros Concise**: Macros are best suited for short, frequently used code snippets or constants. Avoid defining overly complex or lengthy macros, as they can reduce code readability and increase preprocessing time. For complex logic, use functions or tasks instead.
-- **Document Macros Clearly**: Document each macro's purpose, parameters (if any), and usage. This is crucial for maintainability and allows other users to understand and effectively utilize the defined macros.
-- **Use Parameterized Macros Judiciously**: While parameterized macros offer flexibility, overuse can make code harder to understand and debug. Use them when the parameterization genuinely simplifies the code or provides significant reusability.
-- **Avoid Macro Redefinition**: Be cautious about redefining macros, as it can lead to confusion and unexpected behavior. If redefinition is necessary, use `` `undef `` to explicitly undefine the macro before redefining it.
-- **Use Conditional Compilation for Configuration**: Leverage conditional compilation macros (`` `ifdef ``, `` `else ``, `` `endif ``) for managing different build configurations, enabling/disabling features, and targeting specific platforms.
-- **Utilize Predefined Macros**: Take advantage of predefined macros like `` `__LINE__ ``, `` `__FILE__ ``, `` `__TIME__ ``, `` `__DATE__ ``, and `` `__SYSTEMVERILOG__ `` for adding valuable context to your code, especially in assertions, error messages, and version control.
-- **Consider Alternatives for Complex Logic**: For complex code logic or operations, prefer using SystemVerilog functions, tasks, or classes over macros. Macros are primarily for textual substitution and simpler code abstractions.
-
-## Comprehensive Directive Reference Table
-
-| Directive                                                 | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                             | Syntax                                                                                                                                                                                                                          | Notes                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
-| :-------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `` `define MACRO_NAME macro_text ``                       | Defines a macro named `MACRO_NAME` that will be replaced by `macro_text` during preprocessing.                                                                                                                                                                                                                                                                                                                                                                          | `` `define MACRO_NAME macro_text ``                                                                                                                                                                                             | Macro names are conventionally uppercase. `macro_text` can be any valid SystemVerilog code. Macros are file-scoped.                                                                                                                                                                                                                                                                                                                                                                              |
-| `` `define MACRO_NAME(param1, param2, ...) macro_text ``  | Defines a parameterized macro `MACRO_NAME` that accepts parameters.                                                                                                                                                                                                                                                                                                                                                                                                     | `` `define MACRO_NAME(param1, param2) macro_text ``                                                                                                                                                                             | Parameters are comma-separated and enclosed in parentheses. Parameters can be used within `macro_text`.                                                                                                                                                                                                                                                                                                                                                                                          |
-| `` `undef MACRO_NAME ``                                   | Undefines the macro `MACRO_NAME`, making it no longer recognized by the preprocessor from that point onwards.                                                                                                                                                                                                                                                                                                                                                           | `` `undef MACRO_NAME ``                                                                                                                                                                                                         | Use to limit the scope of a macro or to resolve macro redefinition warnings.                                                                                                                                                                                                                                                                                                                                                                                                                     |
-| `` `ifdef MACRO_NAME ... `else ... `endif ``              | Conditionally compiles code based on whether `MACRO_NAME` is defined.                                                                                                                                                                                                                                                                                                                                                                                                   | `` `ifdef MACRO_NAME ... `else ... `endif ``                                                                                                                                                                                    | Use for conditional compilation, e.g., for debug code, platform-specific code, or feature toggling. `` `else `` and `` `elsif `` are optional.                                                                                                                                                                                                                                                                                                                                                   |
-
-## Robust Macro Usage and Error Prevention
-
-While macros are powerful, improper use can lead to subtle errors. Robust macro usage involves careful definition and application to avoid common pitfalls.
-
-### Avoiding Macro Redefinition
-
-Redefining a macro without undefining it first can lead to warnings or errors, and potentially unexpected behavior if the macro is used in different parts of the code with different intended meanings.
-
-**Best Practice:** If you need to redefine a macro, always use `` `undef `` to explicitly undefine it before providing a new definition.
-
-**Example: Safe Macro Redefinition**
-
-```systemverilog
-`define VERSION_MAJOR 1
-`define VERSION_MINOR 0
-
-module macro_redefinition_example;
-  initial begin
-    $display("Initial Version: %0d.%0d", `VERSION_MAJOR, `VERSION_MINOR);
-
-    `undef VERSION_MINOR // Undefine VERSION_MINOR before redefinition
-    `define VERSION_MINOR 1 // Redefine VERSION_MINOR
-
-    $display("Updated Version: %0d.%0d", `VERSION_MAJOR, `VERSION_MINOR);
-  end
-endmodule
-```
-
-### Handling Undefined Macros
-
-Using a macro that has not been defined will result in a preprocessing error. Ensure that all macros are defined before they are used, or use conditional compilation to handle cases where a macro might not be defined.
-
-**Best Practice:** Use `` `ifdef `` or `` `ifndef `` to conditionally check if a macro is defined before using it, especially when dealing with optional macros or macros defined in external include files.
-
-**Example: Conditional Usage of a Macro**
-
-```systemverilog
-module undefined_macro_check;
-  initial begin
-    `ifdef FEATURE_ENABLED // Check if FEATURE_ENABLED is defined
-      $display("Feature is enabled: %s", `FEATURE_NAME); // Use FEATURE_NAME only if FEATURE_ENABLED is defined
-    `else
-      $display("Feature is disabled.");
+    $display("File name: %s", `__FILE__);
+    $display("Line number: %0d", `__LINE__);
+    `ifdef __DATE__
+      $display("Compiled on %s at %s", `__DATE__, `__TIME__);
+    `endif
+    `ifdef __SYSTEMVERILOG__
+      $display("Tool SV macro version: %0d", `__SYSTEMVERILOG__);
     `endif
   end
 endmodule
 ```
 
-In this example, the code conditionally checks if `FEATURE_ENABLED` is defined. If it is, it proceeds to use `FEATURE_NAME`; otherwise, it executes the `` `else `` block, preventing an error if `FEATURE_NAME` is not defined when `FEATURE_ENABLED` is not set.
+## Best Practices for Macros
 
-### Preventing Unintended Substitutions
+![Decision Guide: Textual Macros vs. Native SystemVerilog Constructs](images/ch22_sv_macros_vs_sv_constructs_decision.svg)
 
-Macros perform simple textual substitution, which can sometimes lead to unintended results if not used carefully, especially with complex expressions or operator precedence.
+- **Use Native SV Constructs Whenever Possible**: Use `parameter` / `localparam` for bus widths, `package` for shared types/constants, `function automatic` for reusable calculations, and `generate if` for structural options.
+- **Uppercase Naming with Project Prefix**: Prefix global macros (e.g., `AXI_DATA_W`, `TB_ASSERT`) to avoid colliding with third-party IPs inside single compilation units.
+- **Guard Headers with `` `ifndef ``**: Always wrap `.svh` files in include guards so multiple `` `include `` paths never trigger redefinition warnings.
+- **Capture Location Context**: Reserve assertion/logging macros for places that genuinely need `` `__FILE__ ``, `` `__LINE__ ``, or `` `"expr`" ``.
 
-**Best Practices:**
+## Comprehensive Directive Reference Table
 
-- **Enclose Macro Text in Parentheses**: When defining macros that represent expressions, especially arithmetic or logical expressions, enclose the macro text in parentheses to ensure correct operator precedence after substitution.
-- **Be Mindful of Semicolons**: Avoid including trailing semicolons at the end of macro definitions unless the semicolon is intended to be part of the substituted text. Unintended semicolons can lead to syntax errors.
+| Directive | Description | Syntax Example | Notes |
+| :--- | :--- | :--- | :--- |
+| `` `define `` | Defines object-like or parameterized macro text | `` `define ADD(a, b=1) ((a)+(b)) `` | Supports default args and `\` multi-line |
+| `` `undef `` | Removes a single macro definition | `` `undef DEBUG_MODE `` | Prevents macro pollution after local use |
+| `` `undefineall `` | Clears all active user macro definitions | `` `undefineall `` | IEEE 1800 directive for clean unit boundaries |
+| `` `ifdef `` / `` `ifndef `` | Conditional compilation based on whether macro is defined | `` `ifndef MY_HDR_SVH `` | Standard mechanism for header guards |
+| `` `elsif `` / `` `else `` / `` `endif `` | Multi-way conditional compilation branches | `` `elsif FPGA_BUILD `` | Inactive branches still must tokenize cleanly |
+| `` `include `` | Pastes contents of specified header file inline | `` `include "tb_macros.svh" `` | Searches tool `-incdir` paths (`+incdir+...`) |
+| `` `resetall `` | Resets compiler directives (e.g., `` `timescale ``) to defaults | `` `resetall `` | Does **not** undefine `` `define `` macros |
 
-**Example: Preventing Operator Precedence Issues**
+## Robust Macro Usage and Error Prevention
+
+![Common Macro Pitfalls and Defensive SystemVerilog Idioms](images/ch22_sv_macro_pitfalls_and_defensive_idioms.svg)
+
+### Parenthesize Both Individual Arguments AND the Whole Expression
+
+Simply writing `` `define CALC_MUL(a, b) (a * b) `` still breaks when passed compound expressions such as `` `CALC_MUL(1 + 2, 3 + 4) ``, which expands to `(1 + 2 * 3 + 4) = 11` instead of `21`! Always wrap **every parameter and the outer expression**:
 
 ```systemverilog
-`define CALC_SUM(a, b) a + b // Macro without parentheses
+`define CALC_MUL_BAD(a, b)  a * b
+`define CALC_MUL_GOOD(a, b) ((a) * (b))
 
-module precedence_issue_example;
+module precedence_demo;
   initial begin
-    $display("Incorrect Sum: %0d", 2 * `CALC_SUM(3, 4)); // Becomes 2 * 3 + 4 = 10 (incorrect)
-  end
-endmodule
-
-`define CALC_SUM_PARENTHESES(a, b) (a + b) // Macro with parentheses
-
-module precedence_fixed_example;
-  initial begin
-    $display("Correct Sum: %0d", 2 * `CALC_SUM_PARENTHESES(3, 4)); // Becomes 2 * (3 + 4) = 14 (correct)
+    $display("Bad  macro: 2 * (1+2)*(3+4) -> %0d", 2 * `CALC_MUL_BAD(1 + 2, 3 + 4));  // 2*1 + 2*3 + 4 = 12
+    $display("Good macro: 2 * (1+2)*(3+4) -> %0d", 2 * `CALC_MUL_GOOD(1 + 2, 3 + 4)); // 2 * (3 * 7)   = 42
   end
 endmodule
 ```
 
-In the `precedence_issue_example`, without parentheses, the macro substitution leads to incorrect operator precedence. In `precedence_fixed_example`, enclosing the macro text in parentheses ensures the intended order of operations.
+### Use `do begin ... end while (0)` Without Trailing Semicolon for Multi-Statement Macros
+
+A multi-statement macro containing `begin ... end` *plus* a trailing `;` breaks `if (cond) `MY_MACRO; else ...;` with a syntax error because the extra `;` terminates the `if` early. Wrapping multiple statements inside `do begin ... end while (0)` **with no trailing semicolon** makes the macro behave identically to a single statement everywhere.
+
+### Watch Out for Double Evaluation & Safe Redefinition
+
+- Never pass side-effect expressions like `i++` or `fifo.pop()` into macros (`MAX(a, b)`) that mention an argument more than once—write a `function automatic` instead.
+- If a macro must be overridden cleanly in a file, explicitly call `` `undef `` before redefining it to avoid compiler redefinition warnings.
 
 ## Best Practices Checklist for SystemVerilog Macros
 
-- **Use Uppercase for Macro Names**: Yes/No
-- **Keep Macros Concise**: Yes/No
-- **Document Macros Clearly**: Yes/No
-- **Use Parameterized Macros Judiciously**: Yes/No
-- **Avoid Macro Redefinition**: Yes/No
-- **Use Conditional Compilation for Configuration**: Yes/No
-- **Utilize Predefined Macros**: Yes/No
-- **Consider Alternatives for Complex Logic**: Yes/No
-- **Enclose Macro Expressions in Parentheses**: Yes/No
-- **Avoid Trailing Semicolons in Macro Definitions**: Yes/No
-- **Conditionally Check for Macro Definition Before Use**: Yes/No
+- **Uppercase & Prefixed Names**: Distinguish macros cleanly and prevent global namespace collisions across IPs.
+- **Wrap Headers in Include Guards**: Protect every `.svh` with `` `ifndef NAME_SVH / `define NAME_SVH / ... / `endif ``.
+- **Parenthesize Args & Body**: Always write `((a) op (b))` in expression macros.
+- **Use `do begin ... end while (0)` for Multi-Statement Macros**: Omit the trailing semicolon in the definition.
+- **Escape `\` Cleanly**: Never place trailing spaces or comments after `\` line continuations.
+- **Prefer `parameter`, `package`, and `function automatic`**: Reserve macros strictly for preprocessing, compile-time guards, token pasting, or call-site `__FILE__`/`__LINE__`.
 
 ## Practical Exercises to Solidify Macro Skills
 
-1.  **Data Width Parameterization with Macros**:
-    - Create a module that implements a simple FIFO.
-    - Parameterize the FIFO depth and data width using macros (`FIFO_DEPTH`, `DATA_WIDTH`).
-    - Use these macros within the FIFO module to define array sizes and signal widths.
-    - Instantiate the FIFO module in a testbench and display the FIFO depth and data width using the macros.
-    - Compile and simulate the design, experimenting with different macro definitions for `FIFO_DEPTH` and `DATA_WIDTH`.
+1. **Data Width Parameterization with Macros**: Define `FIFO_DEPTH` and `DATA_WIDTH` fallback macros with `` `ifndef `` defaults and build a parameterized FIFO verified in a testbench.
+2. **Conditional Feature Compilation**: Implement `FEATURE_LOGGING` and `FEATURE_ERROR_INJECTION` using `` `ifdef `` so build switches selectively compile debug instrumentation and fault injection.
+3. **Parameterized Assertion Macros**: Write `ASSERT_RANGE(val, min_v, max_v, msg)` using `do ... while (0)`, `"val"` stringification, `` `__FILE__ ``, and `` `__LINE__ ``.
+4. **Version Control Macro**: Combine `VERSION_MAJOR`, `VERSION_MINOR`, and `VERSION_PATCH` (plus guarded `__DATE__`) into a clean build banner.
+5. **Include File for Common Macros**: Structure a guarded `tb_common_macros.svh` header defining `CLK_PERIOD`, `RST_VAL`, `TIMEOUT_CYCLES`, and `TB_LOG` for multi-module reuse.
 
-2.  **Conditional Feature Compilation**:
-    - Design a module with optional features (e.g., error injection, logging).
-    - Use conditional compilation macros (`FEATURE_ERROR_INJECTION`, `FEATURE_LOGGING`) to enable or disable these features.
-    - Implement code blocks for error injection and logging that are conditionally compiled based on the macro definitions.
-    - Create a testbench to exercise the module with and without these features enabled by defining or undefining the corresponding macros.
+---
 
-3.  **Parameterized Assertion Macros**:
-    - Define a parameterized assertion macro `ASSERT_RANGE(value, min, max, message)` that checks if a given `value` is within the specified `min` and `max` range.
-    - Use predefined macros `` `__LINE__ `` and `` `__FILE__ `` in the assertion macro to provide location information in error messages.
-    - In a testbench, use `ASSERT_RANGE` to check various signal values and ranges.
-    - Simulate the testbench and observe the assertion messages when range violations occur.
+### Reference Solutions
 
-4.  **Version Control Macro**:
-    - Define macros for `VERSION_MAJOR`, `VERSION_MINOR`, and `VERSION_PATCH` to represent the design version.
-    - Incorporate these version macros into a module that represents the overall design.
-    - Use `` `__DATE__ `` macro to automatically include the compilation date as part of the version information.
-    - Display the complete version information (including version numbers and compilation date) at the start of simulation.
-    - Update the version macros and recompile to observe the version information changes in the simulation output.
-
-5.  **Include File for Common Macros**:
-    - Create a separate include file (e.g., `macros.svh`) and define common macros like `CLK_PERIOD`, `RST_VAL`, `TIMEOUT`, and `DEBUG_MODE` in this file.
-    - In multiple SystemVerilog modules and testbenches, include the `macros.svh` file using the `` `include `` directive.
-    - Use the macros defined in `macros.svh` across different files.
-    - Modify the macro definitions in `macros.svh` and recompile to observe the changes reflected in all files that include this header.
+#### Exercise 1 Solution: Macro-Configured FIFO Module
 
 ```systemverilog
-// Sample Solution for Exercise 2: Conditional Feature Compilation (Logging)
-`define FEATURE_LOGGING // Define FEATURE_LOGGING to enable logging
+`ifndef FIFO_DEPTH
+  `define FIFO_DEPTH 8
+`endif
+`ifndef DATA_WIDTH
+  `define DATA_WIDTH 16
+`endif
+
+module macro_fifo (
+  input  logic                   clk,
+  input  logic                   rst_n,
+  input  logic                   wr_en,
+  input  logic                   rd_en,
+  input  logic [`DATA_WIDTH-1:0] wdata,
+  output logic [`DATA_WIDTH-1:0] rdata,
+  output logic                   full,
+  output logic                   empty
+);
+  localparam int PTR_W = $clog2(`FIFO_DEPTH);
+  logic [`DATA_WIDTH-1:0] mem [0:`FIFO_DEPTH-1];
+  logic [PTR_W:0] count;
+  logic [PTR_W-1:0] wptr, rptr;
+
+  assign full  = (count == `FIFO_DEPTH);
+  assign empty = (count == 0);
+  assign rdata = mem[rptr];
+
+  always_ff @(posedge clk or negedge rst_n) begin
+    if (!rst_n) begin
+      wptr <= '0; rptr <= '0; count <= '0;
+    end else begin
+      case ({wr_en && !full, rd_en && !empty})
+        2'b10: begin mem[wptr] <= wdata; wptr <= wptr + 1'b1; count <= count + 1'b1; end
+        2'b01: begin                     rptr <= rptr + 1'b1; count <= count - 1'b1; end
+        2'b11: begin mem[wptr] <= wdata; wptr <= wptr + 1'b1; rptr  <= rptr + 1'b1; end
+        default: ;
+      endcase
+    end
+  end
+endmodule
+
+module tb_macro_fifo;
+  logic clk = 1'b0, rst_n = 1'b0, wr_en = 1'b0, rd_en = 1'b0, full, empty;
+  logic [`DATA_WIDTH-1:0] wdata = '0, rdata;
+  always #5ns clk = ~clk;
+
+  macro_fifo u_dut (.*);
+
+  initial begin
+    $display("FIFO Configured via Macros: DEPTH=%0d, DATA_WIDTH=%0d", `FIFO_DEPTH, `DATA_WIDTH);
+    #12ns rst_n = 1'b1;
+    @(posedge clk); wr_en = 1'b1; wdata = `DATA_WIDTH'('hA5A5);
+    @(posedge clk); wr_en = 1'b0; rd_en = 1'b1;
+    @(posedge clk);
+    $display("Popped rdata = 0x%0h (empty=%0b)", rdata, empty);
+    $finish;
+  end
+endmodule
+```
+
+#### Exercise 2 Solution: Conditional Feature Compilation (`FEATURE_LOGGING` & `FEATURE_ERROR_INJECTION`)
+
+```systemverilog
+`define FEATURE_LOGGING
+// Uncomment or pass +define+FEATURE_ERROR_INJECTION at compile time to enable fault injection:
+// `define FEATURE_ERROR_INJECTION
 
 module feature_conditional_compilation;
   timeunit 1ns;
   timeprecision 1ps;
-  logic clk;
-  logic [7:0] data_in = '0;
-  logic [7:0] data_out = '0;
 
-  always @(posedge clk) begin
-    data_out <= data_in;
+  logic       clk = 1'b0;
+  logic [7:0] data_in = 8'h00;
+  logic [7:0] data_out = 8'h00;
+
+  always #5ns clk = ~clk;
+
+  always_ff @(posedge clk) begin
+    `ifdef FEATURE_ERROR_INJECTION
+      data_out <= data_in ^ 8'h01; // Flip LSB when error injection compiled in
+    `else
+      data_out <= data_in;
+    `endif
 
     `ifdef FEATURE_LOGGING
-      $strobe("LOG: At time %0t, data_in = %h, data_out = %h", $time, data_in, data_out); // Conditional logging after NBA updates
+      $strobe("[%0t] LOG: data_in=0x%02h -> data_out=0x%02h", $time, data_in, data_out);
     `endif
-  end
-
-  initial begin
-    clk = 0;
-    forever #5ns clk = ~clk;
   end
 
   initial begin
     #10ns data_in = 8'hAA;
     #20ns data_in = 8'h55;
-    #30ns data_in = 8'hFF;
-    #50ns $finish;
+    #20ns $finish;
+  end
+endmodule
+```
+
+#### Exercise 3 Solution: Parameterized `ASSERT_RANGE` Macro
+
+```systemverilog
+`define ASSERT_RANGE(val, min_v, max_v, msg) \
+  do begin \
+    if (((val) < (min_v)) || ((val) > (max_v))) begin \
+      $error("[%s:%0d] ASSERT_RANGE(%s) failed (%0d outside [%0d:%0d]): %s", \
+             `__FILE__, `__LINE__, `"val`", (val), (min_v), (max_v), (msg)); \
+    end \
+  end while (0)
+
+module tb_assert_range_macro;
+  int pkt_len;
+
+  initial begin
+    pkt_len = 64;
+    if (1'b1)
+      `ASSERT_RANGE(pkt_len, 64, 1518, "Nominal Ethernet frame");
+    else
+      $display("Dead branch checks dangling-else safety");
+
+    pkt_len = 32;
+    `ASSERT_RANGE(pkt_len, 64, 1518, "Runt packet should flag error!");
+    $finish;
+  end
+endmodule
+```
+
+#### Exercise 4 Solution: Version Control Banner Macro
+
+```systemverilog
+`define VERSION_MAJOR 2
+`define VERSION_MINOR 4
+`define VERSION_PATCH 1
+
+module design_version_banner;
+  initial begin
+    `ifdef __DATE__
+      $display("IP Build v%0d.%0d.%0d (Compiled: %s %s)",
+               `VERSION_MAJOR, `VERSION_MINOR, `VERSION_PATCH, `__DATE__, `__TIME__);
+    `else
+      $display("IP Build v%0d.%0d.%0d (Source: %s)",
+               `VERSION_MAJOR, `VERSION_MINOR, `VERSION_PATCH, `__FILE__);
+    `endif
+    $finish;
+  end
+endmodule
+```
+
+#### Exercise 5 Solution: Guarded Include Header & Consumer Module
+
+```systemverilog
+// File: tb_common_macros.svh (placed in +incdir+ search path)
+`ifndef TB_COMMON_MACROS_SVH
+`define TB_COMMON_MACROS_SVH
+
+  `define CLK_PERIOD     10ns
+  `define RST_VAL        1'b0
+  `define TIMEOUT_CYCLES 500
+  `define TB_LOG(msg)    $display("[%0t][%s:%0d] %s", $time, `__FILE__, `__LINE__, (msg))
+
+`endif // TB_COMMON_MACROS_SVH
+
+// File: tb_consumer.sv
+`include "tb_common_macros.svh"
+`include "tb_common_macros.svh" // Safe even if included twice thanks to header guard!
+
+module tb_consumer;
+  timeunit 1ns; timeprecision 1ps;
+  logic clk = 1'b0;
+  logic rst_n = `RST_VAL;
+
+  always #(`CLK_PERIOD / 2) clk = ~clk;
+
+  initial begin
+    `TB_LOG("Reset asserted via guarded macro header");
+    #25ns rst_n = ~`RST_VAL;
+    `TB_LOG("Reset released");
+    repeat (`TIMEOUT_CYCLES) @(posedge clk);
+    `TB_LOG("Timeout reached cleanly");
+    $finish;
   end
 endmodule
 ```

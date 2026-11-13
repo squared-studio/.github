@@ -1,0 +1,95 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 460" width="960" height="460">
+  <defs>
+    <style>
+      .bg { fill: #0f172a; }
+      .card { fill: #1e293b; stroke-width: 1.5; rx: 10; ry: 10; }
+      .pill { fill: #0f172a; stroke: #334155; stroke-width: 1; rx: 6; ry: 6; }
+      .title { font-family: 'Segoe UI', Arial, sans-serif; font-size: 19px; font-weight: 700; fill: #f8fafc; text-anchor: middle; }
+      .subtitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; fill: #94a3b8; text-anchor: middle; }
+      .qtitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 14px; font-weight: 700; }
+      .label { font-family: 'Segoe UI', Arial, sans-serif; font-size: 11px; font-weight: 700; }
+      .mono { font-family: Consolas, 'Courier New', monospace; font-size: 10.8px; fill: #e2e8f0; }
+    </style>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="960" height="460" />
+
+  <text class="title" x="480" y="30">SystemVerilog Built-In System Tasks &amp; Functions Master Taxonomy</text>
+  <text class="subtitle" x="480" y="50">IEEE 1800 Standard Categories Across Simulation Control, Queries, Verification, and I/O</text>
+
+  <!-- Quadrant 1: Simulation, Time & Severity Control -->
+  <rect class="card" x="20" y="68" width="450" height="182" stroke="#38bdf8" />
+  <text class="qtitle" x="36" y="91" fill="#38bdf8">1. Simulation, Time &amp; Severity Control</text>
+
+  <rect class="pill" x="34" y="102" width="422" height="42" />
+  <text class="label" x="44" y="120" fill="#7dd3fc">Sim Control</text>
+  <text class="mono" x="132" y="120">$finish(0|1|2)   $stop(0|1|2)</text>
+  <text class="mono" x="132" y="136">$exit() (program termination)</text>
+
+  <rect class="pill" x="34" y="150" width="422" height="42" />
+  <text class="label" x="44" y="168" fill="#7dd3fc">Time &amp; Scale</text>
+  <text class="mono" x="132" y="168">$time   $stime   $realtime</text>
+  <text class="mono" x="132" y="184">$timeformat   $printtimescale</text>
+
+  <rect class="pill" x="34" y="198" width="422" height="42" />
+  <text class="label" x="44" y="216" fill="#7dd3fc">Severity</text>
+  <text class="mono" x="132" y="216">$fatal(0|1|2, ...)   $error(...)</text>
+  <text class="mono" x="132" y="232">$warning(...)   $info(...)</text>
+
+  <!-- Quadrant 2: Data, Type, Array & Math Queries -->
+  <rect class="card" x="490" y="68" width="450" height="182" stroke="#a78bfa" />
+  <text class="qtitle" x="506" y="91" fill="#a78bfa">2. Data, Type, Array &amp; Math Queries</text>
+
+  <rect class="pill" x="504" y="102" width="422" height="42" />
+  <text class="label" x="514" y="120" fill="#c4b5fd">Conversion</text>
+  <text class="mono" x="602" y="120">$realtobits / $bitstoreal   $shortrealtobits</text>
+  <text class="mono" x="602" y="136">$rtoi / $itor   $signed / $unsigned   $cast</text>
+
+  <rect class="pill" x="504" y="150" width="422" height="42" />
+  <text class="label" x="514" y="168" fill="#c4b5fd">Data &amp; Array</text>
+  <text class="mono" x="602" y="168">$bits   $typename   $isunbounded   $dimensions</text>
+  <text class="mono" x="602" y="184">$unpacked_dimensions  $left/$right/$low/$high/$size</text>
+
+  <rect class="pill" x="504" y="198" width="422" height="42" />
+  <text class="label" x="514" y="216" fill="#c4b5fd">Math</text>
+  <text class="mono" x="602" y="216">$clog2   $ln   $log10   $exp   $sqrt   $pow</text>
+  <text class="mono" x="602" y="232">$floor / $ceil   $sin / $cos / $tan / $atan2</text>
+
+  <!-- Quadrant 3: Verification, SVA, Bit-Vector & Random -->
+  <rect class="card" x="20" y="264" width="450" height="182" stroke="#34d399" />
+  <text class="qtitle" x="36" y="287" fill="#34d399">3. Verification, SVA, Bit-Vector &amp; Random</text>
+
+  <rect class="pill" x="34" y="298" width="422" height="42" />
+  <text class="label" x="44" y="316" fill="#6ee7b7">Bit-Vector</text>
+  <text class="mono" x="132" y="316">$countbits   $countones   $isunknown</text>
+  <text class="mono" x="132" y="332">$onehot   $onehot0</text>
+
+  <rect class="pill" x="34" y="346" width="422" height="42" />
+  <text class="label" x="44" y="364" fill="#6ee7b7">SVA &amp; Ctrl</text>
+  <text class="mono" x="132" y="364">$rose  $fell  $stable  $changed  $past  $sampled</text>
+  <text class="mono" x="132" y="380">$asserton  $assertoff  $assertkill  $assertcontrol</text>
+
+  <rect class="pill" x="34" y="394" width="422" height="42" />
+  <text class="label" x="44" y="412" fill="#6ee7b7">Cov &amp; Rand</text>
+  <text class="mono" x="132" y="412">$get_coverage   $urandom   $urandom_range</text>
+  <text class="mono" x="132" y="428">$random   $dist_*   $q_* (queue)   $async$* (PLA)</text>
+
+  <!-- Quadrant 4: Display, File/Memory I/O, Plusargs & VCD -->
+  <rect class="card" x="490" y="264" width="450" height="182" stroke="#f59e0b" />
+  <text class="qtitle" x="506" y="287" fill="#f59e0b">4. Display, File &amp; Memory I/O, Plusargs &amp; VCD</text>
+
+  <rect class="pill" x="504" y="298" width="422" height="42" />
+  <text class="label" x="514" y="316" fill="#fcd34d">Display / Str</text>
+  <text class="mono" x="602" y="316">$display / $write   $monitor   $strobe</text>
+  <text class="mono" x="602" y="332">$sformatf / $sformat   $sscanf   $system</text>
+
+  <rect class="pill" x="504" y="346" width="422" height="42" />
+  <text class="label" x="514" y="364" fill="#fcd34d">File &amp; Mem</text>
+  <text class="mono" x="602" y="364">$fopen / $fclose  $fdisplay  $fgets  $fscanf  $fseek</text>
+  <text class="mono" x="602" y="380">$readmemh / $readmemb   $writememh / $writememb</text>
+
+  <rect class="pill" x="504" y="394" width="422" height="42" />
+  <text class="label" x="514" y="412" fill="#fcd34d">Args &amp; VCD</text>
+  <text class="mono" x="602" y="412">$test$plusargs   $value$plusargs</text>
+  <text class="mono" x="602" y="428">$dumpfile  $dumpvars  $dumpon/$dumpoff  $dumpports</text>
+</svg>

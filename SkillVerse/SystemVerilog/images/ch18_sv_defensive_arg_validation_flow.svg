@@ -1,0 +1,114 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 400" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGradCh18D" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#080c14" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <filter id="shadowCh18D" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+    <marker id="arrowCyan18D" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8"/>
+    </marker>
+    <marker id="arrowAmber18D" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#f59e0b"/>
+    </marker>
+    <marker id="arrowGreen18D" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#34d399"/>
+    </marker>
+    <marker id="arrowRed18D" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#f43f5e"/>
+    </marker>
+  </defs>
+
+  <rect width="920" height="400" rx="14" fill="url(#bgGradCh18D)"/>
+
+  <!-- Title -->
+  <text x="460" y="30" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="20" font-weight="700" fill="#f8fafc" text-anchor="middle">Defensive Command-Line Argument Parsing &amp; Validation Pipeline</text>
+  <text x="460" y="50" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13" fill="#94a3b8" text-anchor="middle">Initialize safe defaults, inspect return codes, validate ranges, and fail fast at 0 ns on invalid flags</text>
+
+  <!-- Stage 1: Initialize Safe Defaults -->
+  <g transform="translate(24, 78)">
+    <rect width="260" height="106" rx="10" fill="#0f172a" stroke="#38bdf8" stroke-width="1.8" filter="url(#shadowCh18D)"/>
+    <rect width="260" height="32" rx="10" fill="#075985"/>
+    <rect x="0" y="20" width="260" height="12" fill="#075985"/>
+    <text x="130" y="21" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="700" fill="#e0f2fe" text-anchor="middle">1. Initialize Safe Defaults</text>
+    <text x="14" y="56" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#bae6fd">int iterations = 10;</text>
+    <text x="14" y="75" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#bae6fd">string test_name = "reg_test";</text>
+    <text x="14" y="95" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#94a3b8">Guarantees valid starting state.</text>
+  </g>
+
+  <path d="M 284 131 L 324 131" stroke="#38bdf8" stroke-width="2" marker-end="url(#arrowCyan18D)"/>
+
+  <!-- Stage 2: Query Plusarg -->
+  <g transform="translate(328, 78)">
+    <rect width="276" height="106" rx="10" fill="#0f172a" stroke="#a78bfa" stroke-width="1.8" filter="url(#shadowCh18D)"/>
+    <rect width="276" height="32" rx="10" fill="#4c1d95"/>
+    <rect x="0" y="20" width="276" height="12" fill="#4c1d95"/>
+    <text x="138" y="21" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="700" fill="#ede9fe" text-anchor="middle">2. Query $value$plusargs</text>
+    <text x="14" y="56" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#ddd6fe">ok = $value$plusargs(</text>
+    <text x="24" y="74" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#ddd6fe">"ITERATIONS=%d", iterations);</text>
+    <text x="14" y="95" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#94a3b8">Inspects CLI +ITERATIONS=&lt;val&gt;.</text>
+  </g>
+
+  <!-- Branch: ok == 0 -> Right Card (Default Path) -->
+  <path d="M 604 131 L 644 131" stroke="#f59e0b" stroke-width="2" marker-end="url(#arrowAmber18D)"/>
+  <text x="624" y="121" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" font-weight="700" fill="#fbbf24" text-anchor="middle">0</text>
+
+  <g transform="translate(648, 78)">
+    <rect width="248" height="106" rx="10" fill="#1e1b18" stroke="#f59e0b" stroke-width="1.8" filter="url(#shadowCh18D)"/>
+    <rect width="248" height="32" rx="10" fill="#78350f"/>
+    <rect x="0" y="20" width="248" height="12" fill="#78350f"/>
+    <text x="124" y="21" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="700" fill="#fef3c7" text-anchor="middle">3A. Missing Arg (Fallback)</text>
+    <text x="14" y="56" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#fde68a">$display("Info: using default");</text>
+    <text x="14" y="75" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#fcd34d">Or $fatal if arg is mandatory.</text>
+    <text x="14" y="95" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#94a3b8">Proceeds safely with iterations=10.</text>
+  </g>
+
+  <!-- Branch: ok == 1 -> Down to Range Check -->
+  <path d="M 466 184 L 466 226" stroke="#34d399" stroke-width="2" marker-end="url(#arrowGreen18D)"/>
+  <text x="484" y="210" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" font-weight="700" fill="#34d399">ok == 1</text>
+
+  <!-- Stage 3B: Range & Domain Validation -->
+  <g transform="translate(310, 232)">
+    <rect width="312" height="142" rx="10" fill="#0f172a" stroke="#10b981" stroke-width="1.8" filter="url(#shadowCh18D)"/>
+    <rect width="312" height="32" rx="10" fill="#065f46"/>
+    <rect x="0" y="20" width="312" height="12" fill="#065f46"/>
+    <text x="156" y="21" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="700" fill="#d1fae5" text-anchor="middle">3B. Validate Domain &amp; Range</text>
+    <text x="156" y="56" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" font-weight="700" fill="#6ee7b7" text-anchor="middle">!(iterations inside {[1:1000]})</text>
+    <text x="156" y="78" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#cbd5e1" text-anchor="middle">Check enum / string whitelist / numeric bounds</text>
+    <text x="156" y="96" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#cbd5e1" text-anchor="middle">e.g. test_name inside {"smoke", "stress"}</text>
+    <rect x="20" y="108" width="272" height="24" rx="5" fill="#072c22" stroke="#34d399"/>
+    <text x="156" y="124" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" font-weight="700" fill="#34d399" text-anchor="middle">Print Configuration Banner &amp; Run</text>
+  </g>
+
+  <!-- Invalid path -> Left Card ($error + $fatal) -->
+  <path d="M 310 303 L 268 303" stroke="#f43f5e" stroke-width="2" marker-end="url(#arrowRed18D)"/>
+  <text x="289" y="293" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" font-weight="700" fill="#fda4af" text-anchor="middle">Invalid</text>
+
+  <g transform="translate(24, 240)">
+    <rect width="240" height="134" rx="10" fill="#4c0519" stroke="#f43f5e" stroke-width="1.8" filter="url(#shadowCh18D)"/>
+    <rect width="240" height="32" rx="10" fill="#881337"/>
+    <rect x="0" y="20" width="240" height="12" fill="#881337"/>
+    <text x="120" y="21" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="700" fill="#ffe4e6" text-anchor="middle">4. Fail Fast at 0 ns</text>
+    <text x="14" y="54" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#fecdd3">$error("Invalid value (%0d).",</text>
+    <text x="24" y="70" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#fecdd3">       iterations);</text>
+    <text x="14" y="90" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#fecdd3">$fatal(1, "Allowed: 1..1000");</text>
+    <text x="14" y="118" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#fda4af">Saves compute by aborting immediately.</text>
+  </g>
+
+  <!-- Valid path -> Right Card (Proceed) -->
+  <path d="M 622 303 L 664 303" stroke="#34d399" stroke-width="2" marker-end="url(#arrowGreen18D)"/>
+  <text x="643" y="293" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" font-weight="700" fill="#6ee7b7" text-anchor="middle">Valid</text>
+
+  <g transform="translate(668, 240)">
+    <rect width="228" height="134" rx="10" fill="#072c22" stroke="#10b981" stroke-width="1.8" filter="url(#shadowCh18D)"/>
+    <rect width="228" height="32" rx="10" fill="#065f46"/>
+    <rect x="0" y="20" width="228" height="12" fill="#065f46"/>
+    <text x="114" y="21" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="700" fill="#d1fae5" text-anchor="middle">5. Execute Simulation</text>
+    <text x="14" y="56" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#d1fae5">$display("CFG: %s (%0d)",</text>
+    <text x="24" y="72" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#d1fae5">  test_name, iterations);</text>
+    <text x="14" y="96" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#a7f3d0">Runs configured test scenario</text>
+    <text x="14" y="114" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#a7f3d0">with clean reproducibility logs.</text>
+  </g>
+</svg>

@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 400" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGradCh21A" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#080c14" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <filter id="shadowCh21A" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+  </defs>
+
+  <rect width="920" height="400" rx="14" fill="url(#bgGradCh21A)"/>
+
+  <!-- Title -->
+  <text x="460" y="30" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="20" font-weight="700" fill="#f8fafc" text-anchor="middle">Code Coverage vs. Functional Coverage &amp; Sign-Off Matrix</text>
+  <text x="460" y="50" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13" fill="#94a3b8" text-anchor="middle">Combine automatic RTL structural metrics with specification-driven functional bins to avoid blind spots</text>
+
+  <!-- Left Panel: Comparison Cards -->
+  <g transform="translate(24, 72)">
+    <rect width="398" height="304" rx="10" fill="#0f172a" stroke="#38bdf8" stroke-width="1.8" filter="url(#shadowCh21A)"/>
+    <rect width="398" height="34" rx="10" fill="#075985"/>
+    <rect x="0" y="22" width="398" height="12" fill="#075985"/>
+    <text x="199" y="22" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13" font-weight="700" fill="#e0f2fe" text-anchor="middle">Two Complementary Lenses</text>
+
+    <!-- Code Coverage Card -->
+    <rect x="14" y="46" width="370" height="114" rx="7" fill="#0c1c2e" stroke="#38bdf8"/>
+    <text x="24" y="67" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="700" fill="#38bdf8">Code Coverage (Simulator Automatic)</text>
+    <text x="24" y="86" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#e2e8f0">Answers: "Which RTL lines &amp; gates executed?"</text>
+    <text x="24" y="106" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#bae6fd">- Metrics: Statement, Branch, Condition, Toggle, FSM</text>
+    <text x="24" y="124" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#94a3b8">- Measures RTL implementation, NOT missing spec features.</text>
+    <text x="24" y="142" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#7dd3fc">- Enabled via compile/sim flags (e.g., VCS -cm line+cond+tgl).</text>
+
+    <!-- Functional Coverage Card -->
+    <rect x="14" y="172" width="370" height="118" rx="7" fill="#072c22" stroke="#10b981"/>
+    <text x="24" y="193" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="700" fill="#34d399">Functional Coverage (Engineer Defined)</text>
+    <text x="24" y="212" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#d1fae5">Answers: "Were all spec features &amp; corners tested?"</text>
+    <text x="24" y="232" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#a7f3d0">- Constructs: covergroup, coverpoint, cross, cover property</text>
+    <text x="24" y="250" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#cbd5e1">- Captures protocol modes, arbitration, error injection.</text>
+    <text x="24" y="268" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#6ee7b7">- Detects unimplemented spec requirements immediately.</text>
+  </g>
+
+  <!-- Right Panel: 2x2 Closure Matrix -->
+  <g transform="translate(440, 72)">
+    <rect width="456" height="304" rx="10" fill="#0f172a" stroke="#a78bfa" stroke-width="1.8" filter="url(#shadowCh21A)"/>
+    <rect width="456" height="34" rx="10" fill="#4c1d95"/>
+    <rect x="0" y="22" width="456" height="12" fill="#4c1d95"/>
+    <text x="228" y="22" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13" font-weight="700" fill="#ede9fe" text-anchor="middle">2x2 Verification Closure Diagnostic Matrix</text>
+
+    <!-- Column headers -->
+    <text x="150" y="54" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11.5" font-weight="700" fill="#fda4af" text-anchor="middle">Low Functional Cov</text>
+    <text x="348" y="54" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11.5" font-weight="700" fill="#34d399" text-anchor="middle">High Functional Cov</text>
+
+    <!-- Row 1 label -->
+    <text x="36" y="114" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="700" fill="#34d399" text-anchor="middle" transform="rotate(-90 36 114)">High Code</text>
+    <!-- Row 2 label -->
+    <text x="36" y="234" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="700" fill="#fda4af" text-anchor="middle" transform="rotate(-90 36 234)">Low Code</text>
+
+    <!-- Quadrant: High Code / Low Functional -->
+    <rect x="58" y="64" width="186" height="106" rx="7" fill="#451a03" stroke="#f59e0b"/>
+    <text x="151" y="88" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11.5" font-weight="700" fill="#fcd34d" text-anchor="middle">Incomplete Stimulus / Bug</text>
+    <text x="151" y="108" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#fde68a" text-anchor="middle">All RTL ran, but key combinations</text>
+    <text x="151" y="124" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#fde68a" text-anchor="middle">or spec features were never hit</text>
+    <text x="151" y="146" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" font-weight="700" fill="#fbbf24" text-anchor="middle">Action: Add targeted sequences</text>
+
+    <!-- Quadrant: High Code / High Functional -->
+    <rect x="256" y="64" width="186" height="106" rx="7" fill="#072c22" stroke="#10b981"/>
+    <text x="349" y="88" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11.5" font-weight="700" fill="#34d399" text-anchor="middle">Verification Sign-Off Goal</text>
+    <text x="349" y="108" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#d1fae5" text-anchor="middle">RTL logic thoroughly toggled</text>
+    <text x="349" y="124" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#d1fae5" text-anchor="middle">&amp; spec scenarios verified</text>
+    <text x="349" y="146" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" font-weight="700" fill="#6ee7b7" text-anchor="middle">Ready for regression closure</text>
+
+    <!-- Quadrant: Low Code / Low Functional -->
+    <rect x="58" y="182" width="186" height="106" rx="7" fill="#4c0519" stroke="#f43f5e"/>
+    <text x="151" y="206" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11.5" font-weight="700" fill="#fecdd3" text-anchor="middle">Early / Blocked Bring-Up</text>
+    <text x="151" y="226" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#fda4af" text-anchor="middle">Tests still incomplete, hung,</text>
+    <text x="151" y="242" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#fda4af" text-anchor="middle">or held in reset / bad clock</text>
+    <text x="151" y="264" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" font-weight="700" fill="#fb7185" text-anchor="middle">Action: Expand smoke &amp; tests</text>
+
+    <!-- Quadrant: Low Code / High Functional -->
+    <rect x="256" y="182" width="186" height="106" rx="7" fill="#1e1b4b" stroke="#818cf8"/>
+    <text x="349" y="206" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11.5" font-weight="700" fill="#c7d2fe" text-anchor="middle">Dead RTL or Weak Model</text>
+    <text x="349" y="226" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#e0e7ff" text-anchor="middle">Either RTL has unreachable dead</text>
+    <text x="349" y="242" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#e0e7ff" text-anchor="middle">logic OR coverpoints are too coarse</text>
+    <text x="349" y="264" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" font-weight="700" fill="#a5b4fc" text-anchor="middle">Action: Audit RTL &amp; refine bins</text>
+  </g>
+</svg>

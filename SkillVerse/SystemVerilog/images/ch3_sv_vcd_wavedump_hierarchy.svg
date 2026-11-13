@@ -1,0 +1,111 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 420" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGradCh3B" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#080c14" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <filter id="shadowCh3B" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+    <marker id="arrCyan3B" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#38bdf8"/>
+    </marker>
+  </defs>
+
+  <rect width="920" height="420" rx="14" fill="url(#bgGradCh3B)"/>
+
+  <!-- Title -->
+  <text x="460" y="34" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="20" font-weight="700" fill="#f8fafc" text-anchor="middle">Waveform Recording Pipeline: $dumpfile, $dumpvars Levels &amp; VCD Output</text>
+  <text x="460" y="56" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13" fill="#94a3b8" text-anchor="middle">Selecting design hierarchy scope and capturing Value Change Dump (VCD) transitions</text>
+
+  <!-- Left Card: Hierarchy Depth Selector -->
+  <g transform="translate(24, 78)">
+    <rect width="416" height="318" rx="10" fill="#0f172a" stroke="#38bdf8" stroke-width="1.8" filter="url(#shadowCh3B)"/>
+    <rect width="416" height="38" rx="10" fill="#075985"/>
+    <rect x="0" y="26" width="416" height="12" fill="#075985"/>
+    <text x="208" y="24" font-family="'JetBrains Mono', Consolas, monospace" font-size="12.5" font-weight="700" fill="#e0f2fe" text-anchor="middle">$dumpvars(levels, scope) — Scope Depth</text>
+
+    <!-- Level 1: top_tb -->
+    <rect x="20" y="54" width="376" height="48" rx="8" fill="#0c1e35" stroke="#38bdf8" stroke-width="1.5"/>
+    <text x="34" y="75" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" font-weight="700" fill="#38bdf8">top_tb (Level 1)</text>
+    <text x="34" y="92" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#cbd5e1">Signals: clk, enable, out</text>
+    <rect x="252" y="64" width="132" height="24" rx="4" fill="#082f49" stroke="#38bdf8"/>
+    <text x="318" y="80" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#7dd3fc" text-anchor="middle">$dumpvars(1, top_tb)</text>
+
+    <!-- Tree connector -->
+    <line x1="60" y1="102" x2="60" y2="124" stroke="#475569" stroke-width="2"/>
+
+    <!-- Level 2: u_dut -->
+    <rect x="44" y="124" width="352" height="48" rx="8" fill="#131d33" stroke="#a855f7" stroke-width="1.5"/>
+    <text x="58" y="145" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" font-weight="700" fill="#c084fc">u_dut (Level 2)</text>
+    <text x="58" y="162" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#cbd5e1">Includes top_tb + direct child u_dut</text>
+    <rect x="252" y="134" width="132" height="24" rx="4" fill="#2e1065" stroke="#a855f7"/>
+    <text x="318" y="150" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#e9d5ff" text-anchor="middle">$dumpvars(2, top_tb)</text>
+
+    <!-- Tree connectors to Level 3 -->
+    <line x1="84" y1="172" x2="84" y2="196" stroke="#475569" stroke-width="2"/>
+    <line x1="84" y1="184" x2="236" y2="184" stroke="#475569" stroke-width="2"/>
+    <line x1="236" y1="184" x2="236" y2="196" stroke="#475569" stroke-width="2"/>
+
+    <!-- Level 3: Leaf Submodules -->
+    <rect x="68" y="196" width="150" height="42" rx="6" fill="#072c22" stroke="#34d399" stroke-width="1.4"/>
+    <text x="143" y="215" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" font-weight="700" fill="#34d399" text-anchor="middle">u_datapath</text>
+    <text x="143" y="230" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#a7f3d0" text-anchor="middle">Registers &amp; ALU</text>
+
+    <rect x="230" y="196" width="166" height="42" rx="6" fill="#072c22" stroke="#34d399" stroke-width="1.4"/>
+    <text x="313" y="215" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" font-weight="700" fill="#34d399" text-anchor="middle">u_ctrl</text>
+    <text x="313" y="230" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#a7f3d0" text-anchor="middle">FSM &amp; Handshakes</text>
+
+    <!-- Level 0 Callout -->
+    <rect x="20" y="252" width="376" height="50" rx="6" fill="#1c1917" stroke="#f59e0b" stroke-width="1.2"/>
+    <text x="34" y="272" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" font-weight="700" fill="#fbbf24">$dumpvars(0, top_tb);  // 0 = ALL levels</text>
+    <text x="34" y="290" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#e2e8f0">Call $dumpfile("waveform.vcd") BEFORE $dumpvars.</text>
+  </g>
+
+  <!-- Arrow Left -> Right -->
+  <line x1="440" y1="237" x2="466" y2="237" stroke="#38bdf8" stroke-width="2.4" marker-end="url(#arrCyan3B)"/>
+
+  <!-- Right Card: VCD Output & Rendered Waveform -->
+  <g transform="translate(474, 78)">
+    <rect width="422" height="318" rx="10" fill="#0f172a" stroke="#34d399" stroke-width="1.8" filter="url(#shadowCh3B)"/>
+    <rect width="422" height="38" rx="10" fill="#065f46"/>
+    <rect x="0" y="26" width="422" height="12" fill="#065f46"/>
+    <text x="211" y="24" font-family="'JetBrains Mono', Consolas, monospace" font-size="12.5" font-weight="700" fill="#d1fae5" text-anchor="middle">waveform.vcd — GTKWave / Verdi View</text>
+
+    <!-- Waveform Canvas -->
+    <rect x="16" y="52" width="390" height="196" rx="8" fill="#080d18" stroke="#1e293b"/>
+
+    <!-- Time Grid -->
+    <g font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#94a3b8" text-anchor="middle">
+      <text x="96" y="70">0ns</text>
+      <line x1="96" y1="76" x2="96" y2="236" stroke="#1e293b" stroke-dasharray="3 3"/>
+      <text x="156" y="70">5ns</text>
+      <line x1="156" y1="76" x2="156" y2="236" stroke="#1e293b" stroke-dasharray="3 3"/>
+      <text x="216" y="70">10ns</text>
+      <line x1="216" y1="76" x2="216" y2="236" stroke="#1e293b" stroke-dasharray="3 3"/>
+      <text x="276" y="70">15ns</text>
+      <line x1="276" y1="76" x2="276" y2="236" stroke="#1e293b" stroke-dasharray="3 3"/>
+      <text x="336" y="70">20ns</text>
+      <line x1="336" y1="76" x2="336" y2="236" stroke="#1e293b" stroke-dasharray="3 3"/>
+      <text x="386" y="70">25ns</text>
+      <line x1="386" y1="76" x2="386" y2="236" stroke="#1e293b" stroke-dasharray="3 3"/>
+    </g>
+
+    <!-- Signal 1: clk -->
+    <text x="28" y="112" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" font-weight="700" fill="#38bdf8">clk</text>
+    <polyline points="96,118 156,118 156,92 216,92 216,118 276,118 276,92 336,92 336,118 386,118" fill="none" stroke="#38bdf8" stroke-width="2.2"/>
+
+    <!-- Signal 2: enable -->
+    <text x="28" y="162" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" font-weight="700" fill="#fbbf24">enable</text>
+    <polyline points="96,168 156,168 156,142 386,142" fill="none" stroke="#fbbf24" stroke-width="2.2"/>
+
+    <!-- Signal 3: out = clk & enable -->
+    <text x="28" y="212" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" font-weight="700" fill="#34d399">out</text>
+    <polyline points="96,218 156,218 156,192 216,192 216,218 276,218 276,192 336,192 336,218 386,218" fill="none" stroke="#34d399" stroke-width="2.2"/>
+
+    <!-- Pause/Flush Controls -->
+    <rect x="16" y="258" width="390" height="44" rx="6" fill="#072c22" stroke="#065f46"/>
+    <text x="28" y="276" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" font-weight="700" fill="#6ee7b7">$dumpoff / $dumpon / $dumpflush</text>
+    <text x="28" y="294" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#cbd5e1">Pause huge dumps during init; flush buffered VCD changes to disk</text>
+  </g>
+</svg>

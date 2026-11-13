@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 400" width="920" height="400">
+  <defs>
+    <style>
+      .bg { fill: #0f172a; }
+      .panel { fill: #1e293b; stroke-width: 1.5; rx: 10; ry: 10; }
+      .subbox { fill: #0f172a; stroke: #334155; stroke-width: 1.2; rx: 6; ry: 6; }
+      .bitcell { fill: #0f172a; stroke: #475569; stroke-width: 1.2; rx: 4; ry: 4; }
+      .title { font-family: 'Segoe UI', Arial, sans-serif; font-size: 18px; font-weight: 700; fill: #f8fafc; text-anchor: middle; }
+      .subtitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; fill: #94a3b8; text-anchor: middle; }
+      .ptitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 14px; font-weight: 700; }
+      .mono { font-family: Consolas, 'Courier New', monospace; font-size: 11.2px; fill: #e2e8f0; }
+      .note { font-family: 'Segoe UI', Arial, sans-serif; font-size: 11px; fill: #94a3b8; }
+      .bitval { font-family: Consolas, 'Courier New', monospace; font-size: 14px; font-weight: 700; text-anchor: middle; }
+      .bitidx { font-family: Consolas, 'Courier New', monospace; font-size: 9.5px; fill: #64748b; text-anchor: middle; }
+    </style>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="920" height="400" />
+  <text class="title" x="460" y="28">Array Dimension Numbering ($dimensions, $left, $size) &amp; Bit-Vector Queries</text>
+  <text class="subtitle" x="460" y="48">IEEE 1800 Unpacked-First Dimension Indexing and 4-State Vector Inspection Functions</text>
+
+  <!-- Left Panel: Array Query Functions -->
+  <rect class="panel" x="20" y="64" width="430" height="316" stroke="#a78bfa" />
+  <text class="ptitle" x="36" y="88" fill="#a78bfa">Array Dimension Indexing Order</text>
+
+  <!-- Declaration box -->
+  <rect class="subbox" x="36" y="100" width="398" height="38" stroke="#7c3aed" />
+  <text class="mono" x="48" y="123" fill="#f8fafc">logic  <tspan fill="#38bdf8">[3:0][7:0]</tspan>  mem  <tspan fill="#34d399">[0:1][15:8]</tspan>;</text>
+
+  <!-- Dimension boxes row -->
+  <rect class="subbox" x="36" y="148" width="194" height="58" stroke="#34d399" />
+  <text class="note" x="46" y="165" fill="#6ee7b7">Unpacked First (L -&gt; R)</text>
+  <text class="mono" x="46" y="183">D1: [0:1]   D2: [15:8]</text>
+  <text class="note" x="46" y="198">$unpacked_dimensions = 2</text>
+
+  <rect class="subbox" x="240" y="148" width="194" height="58" stroke="#38bdf8" />
+  <text class="note" x="250" y="165" fill="#7dd3fc">Packed Next (L -&gt; R)</text>
+  <text class="mono" x="250" y="183">D3: [3:0]   D4: [7:0]</text>
+  <text class="note" x="250" y="198">$dimensions = 4</text>
+
+  <!-- Query results for Dim 2 -->
+  <rect class="subbox" x="36" y="218" width="398" height="148" />
+  <text class="note" x="48" y="238" fill="#c4b5fd">Queries on Dimension 2 ([15:8]):</text>
+  <text class="mono" x="48" y="260">$left(mem, 2)  = 15     $right(mem, 2) = 8</text>
+  <text class="mono" x="48" y="282">$low(mem, 2)   = 8      $high(mem, 2)  = 15</text>
+  <text class="mono" x="48" y="304">$size(mem, 2)  = 8      $increment(mem, 2) = -1</text>
+  <line x1="48" y1="318" x2="420" y2="318" stroke="#334155" stroke-width="1" />
+  <text class="mono" x="48" y="338" fill="#fbbf24">$bits(mem) = 2 * 8 * 4 * 8 = 512 bits</text>
+  <text class="note" x="48" y="356">($increment: +1 if left &lt;= right, -1 if left &gt; right)</text>
+
+  <!-- Right Panel: Bit-Vector & Math System Functions -->
+  <rect class="panel" x="470" y="64" width="430" height="316" stroke="#34d399" />
+  <text class="ptitle" x="486" y="88" fill="#34d399">4-State Bit-Vector Queries &amp; $clog2</text>
+
+  <!-- Bit cells visualization -->
+  <rect class="subbox" x="486" y="100" width="398" height="76" />
+  <text class="mono" x="498" y="119" fill="#cbd5e1">vec = 8'b10x1_z010</text>
+  <!-- 8 cells from x=498, step 46 -->
+  <rect class="bitcell" x="498" y="128" width="38" height="30" /><text class="bitval" x="517" y="148" fill="#34d399">1</text><text class="bitidx" x="517" y="170">[7]</text>
+  <rect class="bitcell" x="544" y="128" width="38" height="30" /><text class="bitval" x="563" y="148" fill="#94a3b8">0</text><text class="bitidx" x="563" y="170">[6]</text>
+  <rect class="bitcell" x="590" y="128" width="38" height="30" stroke="#f87171" /><text class="bitval" x="609" y="148" fill="#f87171">x</text><text class="bitidx" x="609" y="170">[5]</text>
+  <rect class="bitcell" x="636" y="128" width="38" height="30" /><text class="bitval" x="655" y="148" fill="#34d399">1</text><text class="bitidx" x="655" y="170">[4]</text>
+  <rect class="bitcell" x="682" y="128" width="38" height="30" stroke="#fbbf24" /><text class="bitval" x="701" y="148" fill="#fbbf24">z</text><text class="bitidx" x="701" y="170">[3]</text>
+  <rect class="bitcell" x="728" y="128" width="38" height="30" /><text class="bitval" x="747" y="148" fill="#94a3b8">0</text><text class="bitidx" x="747" y="170">[2]</text>
+  <rect class="bitcell" x="774" y="128" width="38" height="30" /><text class="bitval" x="793" y="148" fill="#34d399">1</text><text class="bitidx" x="793" y="170">[1]</text>
+  <rect class="bitcell" x="820" y="128" width="38" height="30" /><text class="bitval" x="839" y="148" fill="#94a3b8">0</text><text class="bitidx" x="839" y="170">[0]</text>
+
+  <!-- Count & Unknown Queries -->
+  <rect class="subbox" x="486" y="186" width="398" height="58" />
+  <text class="mono" x="498" y="207">$countbits(vec, '1)     = 3   |  $countones(vec) = 3</text>
+  <text class="mono" x="498" y="229">$countbits(vec, 'x, 'z) = 2   |  $isunknown(vec) = 1</text>
+
+  <!-- One-Hot Checks -->
+  <rect class="subbox" x="486" y="254" width="398" height="56" />
+  <text class="mono" x="498" y="274" fill="#6ee7b7">8'b0001_0000:  $onehot = 1   $onehot0 = 1</text>
+  <text class="mono" x="498" y="296" fill="#cbd5e1">8'b0000_0000:  $onehot = 0   $onehot0 = 1</text>
+
+  <!-- $clog2 Address Width Sizing -->
+  <rect class="subbox" x="486" y="320" width="398" height="46" stroke="#38bdf8" />
+  <text class="mono" x="498" y="340" fill="#7dd3fc">$clog2(DEPTH) for RTL Address Widths:</text>
+  <text class="mono" x="498" y="358">DEPTH=8 -&gt; 3b ([2:0])  |  DEPTH=9 -&gt; 4b ([3:0])</text>
+</svg>

@@ -1,0 +1,92 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 420" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGradCh7C" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#080c14" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <filter id="shadowCh7C" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+  </defs>
+
+  <rect width="920" height="420" rx="14" fill="url(#bgGradCh7C)"/>
+
+  <!-- Title -->
+  <text x="460" y="34" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="20" font-weight="700" fill="#f8fafc" text-anchor="middle">Unary Reduction Operators &amp; 4-State Equality (== vs. === vs. ==?)</text>
+  <text x="460" y="56" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13" fill="#94a3b8" text-anchor="middle">Condensing vectors to 1-bit scalars and choosing the right equality operator when X or Z values appear</text>
+
+  <!-- Left Panel: Reduction Operators -->
+  <g transform="translate(24, 78)">
+    <rect width="414" height="318" rx="10" fill="#0f172a" stroke="#10b981" stroke-width="1.8" filter="url(#shadowCh7C)"/>
+    <rect width="414" height="38" rx="10" fill="#065f46"/>
+    <rect x="0" y="26" width="414" height="12" fill="#065f46"/>
+    <text x="207" y="24" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13.5" font-weight="700" fill="#d1fae5" text-anchor="middle">Unary Reduction: N-Bit Vector ──▶ 1-Bit Scalar</text>
+
+    <rect x="14" y="50" width="386" height="28" rx="5" fill="#072c22" stroke="#10b981"/>
+    <text x="207" y="68" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" font-weight="700" fill="#a7f3d0" text-anchor="middle">Operand Example:  vec = 4'b1101  (1 ^ 1 ^ 0 ^ 1)</text>
+
+    <!-- 6 Operators grid -->
+    <g transform="translate(14, 90)">
+      <rect x="0" y="0" width="188" height="42" rx="5" fill="#091526" stroke="#1e3a5f"/>
+      <text x="12" y="18" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" font-weight="700" fill="#38bdf8">&amp;vec = 1'b0</text>
+      <text x="12" y="34" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#94a3b8">All bits 1?</text>
+
+      <rect x="198" y="0" width="188" height="42" rx="5" fill="#091526" stroke="#1e3a5f"/>
+      <text x="210" y="18" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" font-weight="700" fill="#fb7185">~&amp;vec = 1'b1</text>
+      <text x="210" y="34" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#94a3b8">Reduction NAND</text>
+
+      <rect x="0" y="50" width="188" height="42" rx="5" fill="#091526" stroke="#1e3a5f"/>
+      <text x="12" y="68" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" font-weight="700" fill="#38bdf8">|vec = 1'b1</text>
+      <text x="12" y="84" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#94a3b8">Any bit 1? (non-zero)</text>
+
+      <rect x="198" y="50" width="188" height="42" rx="5" fill="#091526" stroke="#1e3a5f"/>
+      <text x="210" y="68" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" font-weight="700" fill="#fb7185">~|vec = 1'b0</text>
+      <text x="210" y="84" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#94a3b8">All bits 0? (NOR)</text>
+
+      <rect x="0" y="100" width="188" height="42" rx="5" fill="#091526" stroke="#10b981"/>
+      <text x="12" y="118" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" font-weight="700" fill="#34d399">^vec = 1'b1</text>
+      <text x="12" y="134" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#a7f3d0">Odd parity / X detect</text>
+
+      <rect x="198" y="100" width="188" height="42" rx="5" fill="#091526" stroke="#10b981"/>
+      <text x="210" y="118" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" font-weight="700" fill="#34d399">~^vec = 1'b0</text>
+      <text x="210" y="134" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#a7f3d0">Even parity (XNOR)</text>
+    </g>
+
+    <!-- X/Z detection tip -->
+    <rect x="14" y="246" width="386" height="58" rx="6" fill="#0c1e35" stroke="#38bdf8"/>
+    <text x="24" y="266" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="700" fill="#7dd3fc">Verification Idiom — Fast X/Z Bus Check:</text>
+    <text x="24" y="286" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" font-weight="700" fill="#f8fafc">if (^bus === 1'bx) $error("X or Z on bus!");</text>
+  </g>
+
+  <!-- Right Panel: Equality Comparison Operators -->
+  <g transform="translate(458, 78)">
+    <rect width="438" height="318" rx="10" fill="#0f172a" stroke="#38bdf8" stroke-width="1.8" filter="url(#shadowCh7C)"/>
+    <rect width="438" height="38" rx="10" fill="#075985"/>
+    <rect x="0" y="26" width="438" height="12" fill="#075985"/>
+    <text x="219" y="24" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13.5" font-weight="700" fill="#e0f2fe" text-anchor="middle">Equality Operators with 4-State Bits (X / Z)</text>
+
+    <!-- 1. Logical Equality == -->
+    <g transform="translate(14, 52)">
+      <rect width="410" height="76" rx="6" fill="#181208" stroke="#f59e0b" stroke-width="1.3"/>
+      <text x="12" y="21" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" font-weight="700" fill="#fbbf24">== / !=   Logical Equality (Synthesizable)</text>
+      <text x="12" y="42" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#e2e8f0">4'b10xx == 4'b10xx  ──▶  <tspan fill="#fbbf24" font-weight="700">1'bx</tspan>  (evaluates FALSE in 'if'!)</text>
+      <text x="12" y="62" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#94a3b8">Unknown bit propagates X; use for normal RTL data comparisons</text>
+    </g>
+
+    <!-- 2. Case Equality === -->
+    <g transform="translate(14, 138)">
+      <rect width="410" height="80" rx="6" fill="#072c22" stroke="#10b981" stroke-width="1.3"/>
+      <text x="12" y="21" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" font-weight="700" fill="#34d399">=== / !==   Case Equality (Simulation / TB Only)</text>
+      <text x="12" y="42" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#e2e8f0">4'b10xx === 4'b10xx ──▶ <tspan fill="#6ee7b7" font-weight="700">1'b1</tspan>  |  4'b10xx === 4'b10zz ──▶ <tspan fill="#fda4af" font-weight="700">1'b0</tspan></text>
+      <text x="12" y="64" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#cbd5e1">Exact 4-state bit match (0,1,X,Z); returns strict 1'b0 or 1'b1</text>
+    </g>
+
+    <!-- 3. Wildcard Equality ==? -->
+    <g transform="translate(14, 228)">
+      <rect width="410" height="76" rx="6" fill="#1e1b4b" stroke="#818cf8" stroke-width="1.3"/>
+      <text x="12" y="21" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" font-weight="700" fill="#a5b4fc">==? / !=?   Wildcard Equality (Asymmetric Mask)</text>
+      <text x="12" y="42" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#e2e8f0">4'b1011 ==? 4'b10??  ──▶  <tspan fill="#c7d2fe" font-weight="700">1'b1</tspan>  (RHS ?/X/Z = don't care)</text>
+      <text x="12" y="62" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#cbd5e1">Great for opcode/address prefix decoding (X on LHS still yields X)</text>
+    </g>
+  </g>
+</svg>

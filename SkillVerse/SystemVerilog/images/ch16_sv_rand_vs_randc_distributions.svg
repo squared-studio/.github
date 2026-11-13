@@ -1,0 +1,100 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 400" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGradCh16A" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#080c14" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <filter id="shadowCh16A" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+    <marker id="arrowAmber16A" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#fbbf24"/>
+    </marker>
+    <marker id="arrowGreen16A" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#34d399"/>
+    </marker>
+  </defs>
+
+  <rect width="920" height="400" rx="14" fill="url(#bgGradCh16A)"/>
+
+  <!-- Title -->
+  <text x="460" y="32" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="20" font-weight="700" fill="#f8fafc" text-anchor="middle">SystemVerilog Random Variable Types: Uniform rand vs. Cyclic Permutation randc</text>
+  <text x="460" y="54" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13" fill="#94a3b8" text-anchor="middle">Comparing independent uniform draws (rand) against non-repeating full-cycle permutations (randc)</text>
+
+  <!-- Left Panel: rand -->
+  <g transform="translate(24, 78)">
+    <rect width="424" height="298" rx="10" fill="#0f172a" stroke="#38bdf8" stroke-width="1.8" filter="url(#shadowCh16A)"/>
+    <rect width="424" height="36" rx="10" fill="#075985"/>
+    <rect x="0" y="24" width="424" height="12" fill="#075985"/>
+    <text x="212" y="23" font-family="'JetBrains Mono', Consolas, monospace" font-size="13.5" font-weight="700" fill="#e0f2fe" text-anchor="middle">rand bit [1:0] id;  (Sampling WITH Replacement)</text>
+
+    <rect x="16" y="50" width="392" height="72" rx="7" fill="#0c1c2e" stroke="#0284c7"/>
+    <text x="28" y="70" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11.5" font-weight="700" fill="#38bdf8">Example Output Across 6 randomize() Calls:</text>
+    <g transform="translate(28, 82)">
+      <rect x="0" y="0" width="52" height="28" rx="5" fill="#075985" stroke="#38bdf8"/>
+      <text x="26" y="19" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" font-weight="700" fill="#ffffff" text-anchor="middle">2</text>
+
+      <rect x="62" y="0" width="52" height="28" rx="5" fill="#4c0519" stroke="#f43f5e"/>
+      <text x="88" y="19" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" font-weight="700" fill="#fecdd3" text-anchor="middle">2</text>
+
+      <rect x="124" y="0" width="52" height="28" rx="5" fill="#075985" stroke="#38bdf8"/>
+      <text x="150" y="19" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" font-weight="700" fill="#ffffff" text-anchor="middle">0</text>
+
+      <rect x="186" y="0" width="52" height="28" rx="5" fill="#075985" stroke="#38bdf8"/>
+      <text x="212" y="19" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" font-weight="700" fill="#ffffff" text-anchor="middle">3</text>
+
+      <rect x="248" y="0" width="52" height="28" rx="5" fill="#4c0519" stroke="#f43f5e"/>
+      <text x="274" y="19" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" font-weight="700" fill="#fecdd3" text-anchor="middle">0</text>
+
+      <rect x="310" y="0" width="52" height="28" rx="5" fill="#4c0519" stroke="#f43f5e"/>
+      <text x="336" y="19" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" font-weight="700" fill="#fecdd3" text-anchor="middle">2</text>
+    </g>
+
+    <rect x="16" y="134" width="392" height="148" rx="7" fill="#091526" stroke="#334155"/>
+    <text x="28" y="156" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11.5" font-weight="700" fill="#7dd3fc">Key Behavior &amp; Hardware Verification Use:</text>
+    <text x="28" y="178" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#e2e8f0">- Equal probability across all allowed values (P = 1/4 each draw).</text>
+    <text x="28" y="197" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#fda4af">- Back-to-back repeats are common (e.g., 2, 2); missing values</text>
+    <text x="38" y="213" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#fda4af">may take more draws to hit (value 1 missed above).</text>
+    <text x="28" y="235" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#a7f3d0">- Best for payloads, IP addresses, dynamic arrays, and</text>
+    <text x="38" y="251" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#a7f3d0">variables shaped by dist constraints.</text>
+    <text x="28" y="271" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#94a3b8">Supports arbitrary bit widths (even 32-bit / 64-bit)</text>
+  </g>
+
+  <!-- Right Panel: randc -->
+  <g transform="translate(472, 78)">
+    <rect width="424" height="298" rx="10" fill="#0f172a" stroke="#10b981" stroke-width="1.8" filter="url(#shadowCh16A)"/>
+    <rect width="424" height="36" rx="10" fill="#065f46"/>
+    <rect x="0" y="24" width="424" height="12" fill="#065f46"/>
+    <text x="212" y="23" font-family="'JetBrains Mono', Consolas, monospace" font-size="13.5" font-weight="700" fill="#d1fae5" text-anchor="middle">randc bit [1:0] id;  (Cyclic Permutation)</text>
+
+    <rect x="16" y="50" width="392" height="72" rx="7" fill="#072c22" stroke="#10b981"/>
+    <text x="28" y="70" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11.5" font-weight="700" fill="#34d399">Cycle 1 (All 4 Values Used Once) -&gt; Cycle 2:</text>
+    <g transform="translate(28, 82)">
+      <rect x="0" y="0" width="44" height="28" rx="5" fill="#065f46" stroke="#34d399"/>
+      <text x="22" y="19" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" font-weight="700" fill="#ffffff" text-anchor="middle">3</text>
+      <rect x="50" y="0" width="44" height="28" rx="5" fill="#065f46" stroke="#34d399"/>
+      <text x="72" y="19" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" font-weight="700" fill="#ffffff" text-anchor="middle">1</text>
+      <rect x="100" y="0" width="44" height="28" rx="5" fill="#065f46" stroke="#34d399"/>
+      <text x="122" y="19" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" font-weight="700" fill="#ffffff" text-anchor="middle">0</text>
+      <rect x="150" y="0" width="44" height="28" rx="5" fill="#065f46" stroke="#34d399"/>
+      <text x="172" y="19" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" font-weight="700" fill="#ffffff" text-anchor="middle">2</text>
+
+      <line x1="202" y1="14" x2="226" y2="14" stroke="#fbbf24" stroke-width="2" marker-end="url(#arrowAmber16A)"/>
+
+      <rect x="234" y="0" width="44" height="28" rx="5" fill="#78350f" stroke="#fbbf24"/>
+      <text x="256" y="19" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" font-weight="700" fill="#fef3c7" text-anchor="middle">1</text>
+      <rect x="284" y="0" width="44" height="28" rx="5" fill="#78350f" stroke="#fbbf24"/>
+      <text x="306" y="19" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" font-weight="700" fill="#fef3c7" text-anchor="middle">3</text>
+      <text x="348" y="19" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" fill="#fde68a">...</text>
+    </g>
+
+    <rect x="16" y="134" width="392" height="148" rx="7" fill="#091526" stroke="#334155"/>
+    <text x="28" y="156" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11.5" font-weight="700" fill="#6ee7b7">Key Rules &amp; Per-Object Scope:</text>
+    <text x="28" y="178" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#e2e8f0">- Visits every legal value once before repeating any value.</text>
+    <text x="28" y="197" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#fbbf24">- State belongs to the OBJECT instance: reusing one pkt object</text>
+    <text x="38" y="213" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#fbbf24">with pkt.randomize() preserves the cycle; new() resets it!</text>
+    <text x="28" y="235" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#e2e8f0">- Keep randc domains compact (e.g., 2..8-bit IDs/opcodes);</text>
+    <text x="38" y="251" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#94a3b8">huge widths cost solver permutation memory.</text>
+    <text x="28" y="271" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#6ee7b7">randc variables are solved before regular rand variables</text>
+  </g>
+</svg>

@@ -1,0 +1,97 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 390" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGradCh17C" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#080c14" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <filter id="shadowCh17C" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+    <marker id="arrowGreen17C" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#34d399"/>
+    </marker>
+    <marker id="arrowRed17C" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#f43f5e"/>
+    </marker>
+  </defs>
+
+  <rect width="920" height="390" rx="14" fill="url(#bgGradCh17C)"/>
+
+  <!-- Title -->
+  <text x="460" y="32" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="20" font-weight="700" fill="#f8fafc" text-anchor="middle">Hierarchical Package Chaining: Why import Alone Does Not Re-Export</text>
+  <text x="460" y="54" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13" fill="#94a3b8" text-anchor="middle">Use export pkg::* (or export pkg::item) inside intermediate packages to forward symbols downstream</text>
+
+  <!-- Tier 1: data_types_pkg -->
+  <g transform="translate(24, 86)">
+    <rect width="194" height="176" rx="10" fill="#0c1c2e" stroke="#38bdf8" stroke-width="1.8" filter="url(#shadowCh17C)"/>
+    <rect width="194" height="34" rx="10" fill="#075985"/>
+    <rect x="0" y="22" width="194" height="12" fill="#075985"/>
+    <text x="97" y="22" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" font-weight="700" fill="#e0f2fe" text-anchor="middle">data_types_pkg</text>
+    <text x="14" y="64" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="700" fill="#38bdf8">Base Definitions:</text>
+    <text x="14" y="88" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#e2e8f0">typedef logic [7:0]</text>
+    <text x="22" y="104" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#7dd3fc">byte_t;</text>
+    <text x="14" y="128" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#e2e8f0">typedef logic [31:0]</text>
+    <text x="22" y="144" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#7dd3fc">word_t;</text>
+  </g>
+
+  <line x1="220" y1="174" x2="254" y2="174" stroke="#34d399" stroke-width="2.5" marker-end="url(#arrowGreen17C)"/>
+
+  <!-- Tier 2: byte_utils_pkg -->
+  <g transform="translate(258, 86)">
+    <rect width="204" height="176" rx="10" fill="#072c22" stroke="#10b981" stroke-width="1.8" filter="url(#shadowCh17C)"/>
+    <rect width="204" height="34" rx="10" fill="#065f46"/>
+    <rect x="0" y="22" width="204" height="12" fill="#065f46"/>
+    <text x="102" y="22" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" font-weight="700" fill="#d1fae5" text-anchor="middle">byte_utils_pkg</text>
+    <text x="12" y="60" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#a7f3d0">import data_types_pkg::*;</text>
+    <text x="12" y="80" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" font-weight="700" fill="#fbbf24">export data_types_pkg::*;</text>
+    <line x1="12" y1="96" x2="192" y2="96" stroke="#10b981"/>
+    <text x="12" y="118" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" font-weight="700" fill="#34d399">Own Helper:</text>
+    <text x="12" y="138" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#e2e8f0">function byte_t</text>
+    <text x="20" y="154" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#6ee7b7">invert_byte(b);</text>
+  </g>
+
+  <line x1="464" y1="174" x2="498" y2="174" stroke="#34d399" stroke-width="2.5" marker-end="url(#arrowGreen17C)"/>
+
+  <!-- Tier 3: word_utils_pkg -->
+  <g transform="translate(502, 86)">
+    <rect width="204" height="176" rx="10" fill="#181208" stroke="#f59e0b" stroke-width="1.8" filter="url(#shadowCh17C)"/>
+    <rect width="204" height="34" rx="10" fill="#78350f"/>
+    <rect x="0" y="22" width="204" height="12" fill="#78350f"/>
+    <text x="102" y="22" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" font-weight="700" fill="#fef3c7" text-anchor="middle">word_utils_pkg</text>
+    <text x="12" y="60" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#fde68a">import byte_utils_pkg::*;</text>
+    <text x="12" y="80" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" font-weight="700" fill="#34d399">export byte_utils_pkg::*;</text>
+    <line x1="12" y1="96" x2="192" y2="96" stroke="#b45309"/>
+    <text x="12" y="118" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" font-weight="700" fill="#fbbf24">Own Helper:</text>
+    <text x="12" y="138" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#e2e8f0">function word_t</text>
+    <text x="20" y="154" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#fde68a">invert_word(w);</text>
+  </g>
+
+  <line x1="708" y1="174" x2="742" y2="174" stroke="#34d399" stroke-width="2.5" marker-end="url(#arrowGreen17C)"/>
+
+  <!-- Consumer: chip_module -->
+  <g transform="translate(746, 86)">
+    <rect width="150" height="176" rx="10" fill="#1e1035" stroke="#a855f7" stroke-width="1.8" filter="url(#shadowCh17C)"/>
+    <rect width="150" height="34" rx="10" fill="#581c87"/>
+    <rect x="0" y="22" width="150" height="12" fill="#581c87"/>
+    <text x="75" y="22" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" font-weight="700" fill="#f3e8ff" text-anchor="middle">chip_module</text>
+    <text x="10" y="58" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#e9d5ff">import</text>
+    <text x="10" y="74" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" font-weight="700" fill="#d8b4fe">word_utils_pkg::*;</text>
+    <line x1="10" y1="88" x2="140" y2="88" stroke="#7e22ce"/>
+    <text x="10" y="108" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" font-weight="700" fill="#34d399">Visible Now:</text>
+    <text x="10" y="126" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#d1fae5">- byte_t, word_t</text>
+    <text x="10" y="143" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#d1fae5">- invert_byte()</text>
+    <text x="10" y="160" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#d1fae5">- invert_word()</text>
+  </g>
+
+  <!-- Bottom Contrast Callout -->
+  <g transform="translate(24, 280)">
+    <rect width="872" height="86" rx="9" fill="#091526" stroke="#334155"/>
+    <rect x="14" y="14" width="414" height="58" rx="6" fill="#072c22" stroke="#10b981"/>
+    <text x="221" y="36" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11.5" font-weight="700" fill="#34d399" text-anchor="middle">With export ...; (Forwarded Public API)</text>
+    <text x="221" y="56" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#d1fae5" text-anchor="middle">Downstream importers see types &amp; helpers via single package import</text>
+
+    <rect x="444" y="14" width="414" height="58" rx="6" fill="#4c0519" stroke="#f43f5e"/>
+    <text x="651" y="36" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11.5" font-weight="700" fill="#fecdd3" text-anchor="middle">Without export ...; (Encapsulated / Hidden)</text>
+    <text x="651" y="56" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#fda4af" text-anchor="middle">Imported items stay private to intermediate package; unseen by chip_module</text>
+  </g>
+</svg>

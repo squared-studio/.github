@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 410" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGradCh19C" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#080c14" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <filter id="shadowCh19C" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+    <marker id="arrowGreen19C" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#34d399"/>
+    </marker>
+  </defs>
+
+  <rect width="920" height="410" rx="14" fill="url(#bgGradCh19C)"/>
+
+  <!-- Title -->
+  <text x="460" y="30" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="20" font-weight="700" fill="#f8fafc" text-anchor="middle">File Writing Tasks &amp; Multi-Channel vs. File Descriptor Architecture</text>
+  <text x="460" y="50" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13" fill="#94a3b8" text-anchor="middle">Understand scheduling timing ($fwrite / $fdisplay / $fstrobe) and IEEE 1800 FD vs. MCD bit layouts</text>
+
+  <!-- Left Panel: Write Tasks -->
+  <g transform="translate(24, 72)">
+    <rect width="416" height="314" rx="10" fill="#0f172a" stroke="#38bdf8" stroke-width="1.8" filter="url(#shadowCh19C)"/>
+    <rect width="416" height="36" rx="10" fill="#075985"/>
+    <rect x="0" y="24" width="416" height="12" fill="#075985"/>
+    <text x="208" y="23" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13" font-weight="700" fill="#e0f2fe" text-anchor="middle">Output Task Timing &amp; Newline Behavior</text>
+
+    <!-- $fwrite -->
+    <rect x="14" y="48" width="388" height="76" rx="7" fill="#0c1c2e" stroke="#38bdf8"/>
+    <text x="24" y="69" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" font-weight="700" fill="#38bdf8">$fwrite(d, fmt, ...)</text>
+    <text x="24" y="88" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#e2e8f0">Active Region (Immediate)  |  NO auto newline</text>
+    <text x="24" y="106" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#94a3b8">Use for CSV columns, partial lines, or "%c" raw binary bytes.</text>
+
+    <!-- $fdisplay -->
+    <rect x="14" y="134" width="388" height="76" rx="7" fill="#072c22" stroke="#10b981"/>
+    <text x="24" y="155" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" font-weight="700" fill="#34d399">$fdisplay(d, fmt, ...)</text>
+    <text x="24" y="174" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#d1fae5">Active Region (Immediate)  |  Appends '\n'</text>
+    <text x="24" y="192" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#a7f3d0">Use for standard transaction logs and human-readable reports.</text>
+
+    <!-- $fstrobe -->
+    <rect x="14" y="220" width="388" height="80" rx="7" fill="#1e1b4b" stroke="#818cf8"/>
+    <text x="24" y="241" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" font-weight="700" fill="#c7d2fe">$fstrobe(d, fmt, ...)</text>
+    <text x="24" y="260" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#e0e7ff">Postponed Region (End of Timestep)  |  Appends '\n'</text>
+    <text x="24" y="278" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#a5b4fc">Samples settled values after all NBA (&lt;=) updates finish.</text>
+    <text x="24" y="292" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#fda4af">Never call $fclose() before $fstrobe executes at timestep end!</text>
+  </g>
+
+  <!-- Right Panel: MCD vs FD -->
+  <g transform="translate(460, 72)">
+    <rect width="436" height="314" rx="10" fill="#0f172a" stroke="#10b981" stroke-width="1.8" filter="url(#shadowCh19C)"/>
+    <rect width="436" height="36" rx="10" fill="#065f46"/>
+    <rect x="0" y="24" width="436" height="12" fill="#065f46"/>
+    <text x="218" y="23" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13" font-weight="700" fill="#d1fae5" text-anchor="middle">IEEE 1800 Descriptor Types: MCD vs. FD</text>
+
+    <!-- MCD Box -->
+    <rect x="14" y="48" width="408" height="128" rx="7" fill="#072c22" stroke="#34d399"/>
+    <text x="24" y="68" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" font-weight="700" fill="#34d399">1-Arg MCD: mcd = $fopen("sim.log");  (Bit 31 == 0)</text>
+    <text x="24" y="88" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#d1fae5">Bit [0] = stdout console (32'h0000_0001)</text>
+    <text x="24" y="106" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#d1fae5">Bits [30:1] = up to 30 one-hot file channels</text>
+    <rect x="24" y="118" width="388" height="46" rx="5" fill="#041f18" stroke="#10b981"/>
+    <text x="34" y="137" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#6ee7b7">int tee = log_mcd | 32'h0000_0001; // ORable!</text>
+    <text x="34" y="154" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#a7f3d0">$fdisplay(tee, "Written to file + console");</text>
+
+    <!-- FD Box -->
+    <rect x="14" y="188" width="408" height="112" rx="7" fill="#1e1b18" stroke="#f59e0b"/>
+    <text x="24" y="208" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" font-weight="700" fill="#fbbf24">2-Arg FD:  fd = $fopen("data.bin", "wb"); (Bit 31 == 1)</text>
+    <text x="24" y="228" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#fde68a">32'h8000_0000=stdin | 8000_0001=stdout | 8000_0002=stderr</text>
+    <text x="24" y="248" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#e2e8f0">Supports read, binary, append, $fseek, and unlimited handles.</text>
+    <text x="24" y="268" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" font-weight="700" fill="#fda4af">Note: Do NOT bitwise-OR two 2-argument FDs together!</text>
+    <text x="24" y="286" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#fcd34d">Use 1-arg $fopen() MCDs when broadcasting to multiple destinations.</text>
+  </g>
+</svg>

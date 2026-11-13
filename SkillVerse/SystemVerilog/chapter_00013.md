@@ -29,7 +29,9 @@ By the end of this chapter, you should be able to:
 
 ## Module Definition: Structuring Hardware Functionality
 
-Modules are defined using the `module` keyword, followed by the module name, an optional port list, and the module body enclosed within `endmodule`.
+Modules are defined using the `module` keyword, followed by the module name, an optional parameter list and port list, and the module body enclosed within `endmodule`.
+
+![SystemVerilog Module Anatomy Encapsulation Ports Parameters Internal Logic](images/ch13_sv_module_anatomy_boundary.svg)
 
 ### Basic Module Structure
 
@@ -97,16 +99,19 @@ This `sensor_interface_module` example, while minimal, demonstrates the basic st
 
 ## Ports and Parameters: Defining Module Interfaces and Configuration
 
-Modules communicate with their environment through ports, which are declared in the module's port list or within the module body. Parameters provide a way to configure module behavior and characteristics at instantiation time, making modules more flexible and reusable.
+Modules communicate with their environment through ports, which are declared in the module's port list or within the module body. Parameters provide a way to configure module behavior and characteristics at elaboration/instantiation time, making modules more flexible and reusable.
+
+![Parameterized Module Architecture Configurable Synchronous FIFO](images/ch13_sv_smart_buffer_fifo_datapath.svg)
 
 ### Interface Elements: Ports and Parameters
 
-| Element          | Purpose                                                | Syntax Example                                          |
-| ---------------- | ------------------------------------------------------ | ------------------------------------------------------- |
-| **Parameters**   | Configuration constants, customizable at instantiation | `#(parameter DATA_WIDTH=32, parameter BUFFER_DEPTH=64)` |
-| **Input Ports**  | Receive signals from external modules                  | `input logic clk, input logic [7:0] command_in`         |
-| **Output Ports** | Drive signals to external modules                      | `output logic data_valid, output logic [15:0] data_out` |
-| **Inout Ports**  | Bidirectional signals, for shared communication lines  | `inout wire memory_data_bus`                            |
+| Element          | Purpose                                                            | Syntax Example                                          |
+| ---------------- | ------------------------------------------------------------------ | ------------------------------------------------------- |
+| **Parameters**   | Configuration constants, customizable at instantiation             | `#(parameter DATA_WIDTH=32, parameter BUFFER_DEPTH=64)` |
+| **`localparam`** | Derived internal constants computed from parameters (non-override) | `localparam int ADDR_W = $clog2(BUFFER_DEPTH);`         |
+| **Input Ports**  | Receive signals from external modules                              | `input logic clk, input logic [7:0] command_in`         |
+| **Output Ports** | Drive signals to external modules                                  | `output logic data_valid, output logic [15:0] data_out` |
+| **Inout Ports**  | Bidirectional signals, for shared communication lines              | `inout wire memory_data_bus`                            |
 
 ### Parameterized Module Example: Configurable Smart Buffer
 
@@ -187,7 +192,9 @@ This `smart_buffer_module` example demonstrates:
 
 ## Module Instantiation: Creating Instances and Connecting Modules
 
-To use a module in a design, you need to instantiate it within another module. SystemVerilog offers two primary methods for connecting ports during instantiation: positional and named connections.
+To use a module in a design, you need to instantiate it within another module. SystemVerilog supports positional port connections as well as named port connections (`.port(sig)`, implicit `.sig` shorthand when signal and port names match, and `.*` wildcard auto-connection).
+
+![Hierarchical Composition and Port Connection Styles Named vs Positional](images/ch13_sv_hierarchical_instantiation_wiring.svg)
 
 ### Module Instantiation and Port Connection Methods
 
@@ -302,7 +309,9 @@ This hierarchical design example shows:
 
 ## Testbench Integration: Verifying Module Functionality
 
-Testbenches are essential for verifying the functionality of SystemVerilog modules. A testbench is also a module, typically a top-level module, that instantiates the Design Under Test (DUT) and provides stimuli and checks responses to verify its correct operation.
+Testbenches are essential for verifying the functionality of SystemVerilog modules. A testbench is also a module, typically a top-level portless module, that instantiates the Design Under Test (DUT) and provides stimuli and checks responses to verify its correct operation.
+
+![Testbench to DUT Integration Clock Reset Drivers Polarity Adaptation and Checkers](images/ch13_sv_testbench_dut_integration.svg)
 
 ### Basic Testbench Structure: Clock and Reset Generation, DUT Instantiation
 
@@ -431,61 +440,245 @@ This is a basic example, and real-world testbenches can be significantly more co
     - **Objective**: Create a `serial_encoder_module` that converts parallel byte data to a serial bit stream.
     - **Ports**:
       - `input logic clk`: Clock signal.
+      - `input logic rst_n`: Active-low reset signal.
       - `input logic data_valid`: Indicates when `byte_data` is valid.
       - `input logic [7:0] byte_data`: Parallel byte data input.
-      - `output logic serial_out`: Serial data output.
-    - **Functionality**: When `data_valid` is asserted, the module should transmit the `byte_data` serially bit by bit on `serial_out` synchronized to `clk`. Define a simple serial encoding scheme (e.g., start bit, 8 data bits, stop bit – NRZ, least significant bit first).
-    - **Implementation**: Use shift registers and control logic within an `always_ff` block to implement the serial encoding process.
+      - `output logic serial_out`: Serial data output (idles high).
+      - `output logic busy`: High while shifting a 10-bit UART-style frame (start + 8 data + stop).
+    - **Functionality**: When `data_valid` is asserted while idle, latch `byte_data` and shift `{1'b1, byte_data, 1'b0}` LSB-first on `serial_out` synchronized to `clk`.
+
+    ```systemverilog
+    module serial_encoder_module (
+      input  logic       clk,
+      input  logic       rst_n,
+      input  logic       data_valid,
+      input  logic [7:0] byte_data,
+      output logic       serial_out,
+      output logic       busy
+    );
+      logic [9:0] shift_reg;
+      logic [3:0] bit_cnt;
+
+      assign serial_out = busy ? shift_reg[0] : 1'b1;
+      assign busy       = (bit_cnt != 4'd0);
+
+      always_ff @(posedge clk or negedge rst_n) begin
+        if (!rst_n) begin
+          shift_reg <= 10'h3FF;
+          bit_cnt   <= 4'd0;
+        end else if (!busy) begin
+          if (data_valid) begin
+            shift_reg <= {1'b1, byte_data, 1'b0}; // Stop, 8 data bits, Start
+            bit_cnt   <= 4'd10;
+          end
+        end else begin
+          shift_reg <= {1'b1, shift_reg[9:1]};
+          bit_cnt   <= bit_cnt - 4'd1;
+        end
+      end
+    endmodule
+    ```
 
 2.  **Parameterized Design: Configurable FIFO**:
     - **Objective**: Implement a `configurable_fifo_module` with parameterizable data width and depth.
-    - **Parameters**:
-      - `parameter integer DATA_WIDTH = 8`: Data width of the FIFO (default 8 bits).
-      - `parameter integer DEPTH = 16`: Depth of the FIFO (number of entries, default 16).
-    - **Ports**: Standard FIFO ports (at least):
-      - `input logic clk`: Clock.
-      - `input logic rst_n`: Reset (active low).
-      - `input logic [DATA_WIDTH-1:0] write_data`: Data to be written into the FIFO.
-      - `input logic write_enable`: Write enable signal.
-      - `output logic [DATA_WIDTH-1:0] read_data`: Data read from the FIFO.
-      - `input logic read_enable`: Read enable signal.
-      - `output logic full`: FIFO full flag.
-      - `output logic empty`: FIFO empty flag.
-    - **Functionality**: Implement a synchronous FIFO buffer with the specified data width and depth using internal memory (an array of `logic` vectors). Include logic for write and read operations, full and empty flag generation, and reset.
-    - **Parameter Validation**: Add parameter validation to ensure `DATA_WIDTH` and `DEPTH` are positive integers and `DEPTH` is at least 2 (as per best practices in the example).
+    - **Parameters**: `parameter int DATA_WIDTH = 8`, `parameter int DEPTH = 16`.
+    - **Functionality & Validation**: Synchronous FIFO with overflow/underflow protection, `full`/`empty` flags, and elaboration/simulation validation requiring `DATA_WIDTH > 0` and `DEPTH >= 2`.
+
+    ```systemverilog
+    module configurable_fifo_module #(
+      parameter int DATA_WIDTH = 8,
+      parameter int DEPTH      = 16
+    ) (
+      input  logic                  clk,
+      input  logic                  rst_n,
+      input  logic [DATA_WIDTH-1:0] write_data,
+      input  logic                  write_enable,
+      output logic [DATA_WIDTH-1:0] read_data,
+      input  logic                  read_enable,
+      output logic                  full,
+      output logic                  empty
+    );
+      localparam int PTR_W = $clog2(DEPTH);
+
+      logic [DATA_WIDTH-1:0] mem [0:DEPTH-1];
+      logic [PTR_W-1:0]      wr_ptr, rd_ptr;
+      logic [$clog2(DEPTH+1)-1:0] count;
+      logic do_write, do_read;
+
+      assign full     = (count == DEPTH);
+      assign empty    = (count == '0);
+      assign do_write = write_enable && !full;
+      assign do_read  = read_enable  && !empty;
+
+      always_ff @(posedge clk or negedge rst_n) begin
+        if (!rst_n) begin
+          wr_ptr    <= '0;
+          rd_ptr    <= '0;
+          count     <= '0;
+          read_data <= '0;
+        end else begin
+          if (do_write) begin
+            mem[wr_ptr] <= write_data;
+            wr_ptr      <= (wr_ptr == DEPTH - 1) ? '0 : wr_ptr + 1'b1;
+          end
+          if (do_read) begin
+            read_data <= mem[rd_ptr];
+            rd_ptr    <= (rd_ptr == DEPTH - 1) ? '0 : rd_ptr + 1'b1;
+          end
+          case ({do_write, do_read})
+            2'b10:   count <= count + 1'b1;
+            2'b01:   count <= count - 1'b1;
+            default: count <= count;
+          endcase
+        end
+      end
+
+      initial begin
+        if (DATA_WIDTH <= 0 || DEPTH < 2) begin
+          $fatal(1, "Invalid configurable_fifo_module params: DATA_WIDTH=%0d, DEPTH=%0d",
+                 DATA_WIDTH, DEPTH);
+        end
+      end
+    endmodule
+    ```
 
 3.  **Hierarchical Integration: Network Interface Module**:
-    - **Objective**: Create a `network_interface_module` that integrates instances of `configurable_fifo_module` and `serial_encoder_module`.
-    - **Submodules to Instantiate**:
-      - Two instances of `configurable_fifo_module`:
-        - `rx_fifo`: For buffering received data (input FIFO).
-        - `tx_fifo`: For buffering data to be transmitted (output FIFO).
-        - Configure them with appropriate `DATA_WIDTH` and `DEPTH` parameters (e.g., `DATA_WIDTH=8`, `DEPTH=32` for both).
-      - One instance of `serial_encoder_module`:
-        - `serial_tx_encoder`: To serialize data from the `tx_fifo`.
-    - **Network Interface Ports**: Define ports for the `network_interface_module` to interact with a higher-level system and a physical serial interface. Include ports for data input/output to/from the system, serial output, clock, and reset.
-    - **Interconnection**: Connect the submodules within `network_interface_module`:
-      - Connect the output of `tx_fifo` to the `byte_data` input of `serial_tx_encoder`.
-      - Implement control logic to move data between the system interface and the FIFOs and to control the `serial_tx_encoder`.
-    - **Functionality**: The `network_interface_module` should act as an interface between a system (which exchanges data in bytes) and a serial communication channel. It should buffer data for transmission and reception and handle serial encoding for transmission.
+    - **Objective**: Create a `network_interface_module` that integrates `rx_fifo`, `tx_fifo` (`configurable_fifo_module #(.DATA_WIDTH(8), .DEPTH(32))`), and `serial_tx_encoder` (`serial_encoder_module`).
+
+    ```systemverilog
+    module network_interface_module (
+      input  logic       clk,
+      input  logic       rst_n,
+      // System TX push / RX pop ports
+      input  logic [7:0] sys_tx_data,
+      input  logic       sys_tx_valid,
+      output logic       sys_tx_full,
+      output logic [7:0] sys_rx_data,
+      input  logic       sys_rx_read,
+      output logic       sys_rx_empty,
+      // Simulated RX byte write-in & physical serial TX output
+      input  logic [7:0] phy_rx_byte,
+      input  logic       phy_rx_valid,
+      output logic       phy_rx_full,
+      output logic       serial_tx_out
+    );
+      logic [7:0] tx_fifo_rdata;
+      logic       tx_fifo_empty, tx_fifo_read;
+      logic       enc_busy, enc_valid;
+
+      // Registered read data from tx_fifo arrives 1 cycle after tx_fifo_read
+      always_ff @(posedge clk or negedge rst_n) begin
+        if (!rst_n) enc_valid <= 1'b0;
+        else        enc_valid <= tx_fifo_read;
+      end
+      assign tx_fifo_read = !tx_fifo_empty && !enc_busy && !enc_valid;
+
+      configurable_fifo_module #(.DATA_WIDTH(8), .DEPTH(32)) tx_fifo (
+        .clk(clk), .rst_n(rst_n),
+        .write_data(sys_tx_data), .write_enable(sys_tx_valid),
+        .read_data(tx_fifo_rdata), .read_enable(tx_fifo_read),
+        .full(sys_tx_full), .empty(tx_fifo_empty)
+      );
+
+      configurable_fifo_module #(.DATA_WIDTH(8), .DEPTH(32)) rx_fifo (
+        .clk(clk), .rst_n(rst_n),
+        .write_data(phy_rx_byte), .write_enable(phy_rx_valid),
+        .read_data(sys_rx_data), .read_enable(sys_rx_read),
+        .full(phy_rx_full), .empty(sys_rx_empty)
+      );
+
+      serial_encoder_module serial_tx_encoder (
+        .clk(clk), .rst_n(rst_n),
+        .data_valid(enc_valid), .byte_data(tx_fifo_rdata),
+        .serial_out(serial_tx_out), .busy(enc_busy)
+      );
+    endmodule
+    ```
 
 4.  **Testbench Development: Self-Checking FIFO Testbench**:
-    - **Objective**: Create a self-checking testbench for the `configurable_fifo_module` to verify its overflow protection and basic FIFO operations.
-    - **Testbench Features**:
-      - **Clock Generation**: Generate a 100MHz clock signal with a 10% duty cycle variance (simulate jitter or clock imperfections). You can achieve duty cycle variance by randomly adjusting the high and low periods of the clock within a certain percentage range in each clock cycle.
-      - **Reset Sequence**: Implement a power-on reset sequence to initialize the FIFO and the test environment.
-      - **Stimulus Generation**: Generate a sequence of write transactions to the FIFO, attempting to write more data than the FIFO's capacity to test overflow protection. Also, generate read transactions to verify data retrieval. Create different scenarios: write-only, read-only, interleaved write and read operations, full FIFO, empty FIFO conditions, etc.
-      - **Response Checking**: Implement self-checking mechanisms in the testbench.
-        - **Overflow Detection**: Verify that the `full` flag is asserted correctly when the FIFO is full and that write operations are ignored or handled gracefully in the overflow condition (no data corruption, appropriate error signaling if designed).
-        - **Data Integrity**: For valid write and read sequences (within FIFO capacity), verify that the data read from the FIFO matches the data written in the correct order (FIFO order). Use a scoreboard or reference model in the testbench to track expected data and compare it with the data read from the FIFO.
-      - **Assertions**: Incorporate assertion statements in the testbench to check for expected FIFO behavior and flag errors automatically during simulation. For example, assert that `full` is asserted when attempting to write to a full FIFO, or assert that data read from FIFO matches expected data.
-      - **Test Scenarios**: Design test scenarios to cover various FIFO conditions and operations:
-        - Write to FIFO until full, then attempt overflow.
-        - Read from FIFO until empty.
-        - Interleaved write and read operations.
-        - Write and read with varying burst lengths.
-        - Reset in different states (full, empty, partially filled).
-    - **Self-Checking**: The testbench should automatically determine if the FIFO is working correctly and report pass/fail status at the end of the simulation without manual waveform inspection. Use `$display` statements to indicate test status (pass/fail) clearly.
+    - **Objective**: Create a self-checking testbench for `configurable_fifo_module` with jittery 100 MHz clock generation, reset sequences, overflow protection verification, a reference queue scoreboard, and pass/fail reporting.
+
+    ```systemverilog
+    module configurable_fifo_tb;
+      timeunit 1ns;
+      timeprecision 1ps;
+
+      localparam int DW = 8;
+      localparam int DP = 4;
+
+      logic          clk = 1'b0;
+      logic          rst_n;
+      logic [DW-1:0] write_data;
+      logic          write_enable;
+      logic [DW-1:0] read_data;
+      logic          read_enable;
+      logic          full, empty;
+
+      logic [DW-1:0] ref_queue[$];
+      int            errors = 0;
+
+      configurable_fifo_module #(.DATA_WIDTH(DW), .DEPTH(DP)) dut (.*);
+
+      // ~100 MHz clock with up to +/-10% duty-cycle jitter (5ns nominal half-period)
+      initial begin
+        forever begin
+          realtime hi_ns = 4.5 + ($urandom_range(0, 100) / 100.0);
+          realtime lo_ns = 10.0 - hi_ns;
+          #lo_ns clk = 1'b1;
+          #hi_ns clk = 1'b0;
+        end
+      end
+
+      task automatic drive_push(input logic [DW-1:0] val);
+        @(negedge clk);
+        write_enable = 1'b1;
+        write_data   = val;
+        read_enable  = 1'b0;
+        @(posedge clk);
+        if (!full) ref_queue.push_back(val);
+        @(negedge clk);
+        write_enable = 1'b0;
+      endtask
+
+      task automatic drive_pop_and_check();
+        logic [DW-1:0] exp_val;
+        bit            had_data;
+        @(negedge clk);
+        read_enable  = 1'b1;
+        write_enable = 1'b0;
+        had_data     = !empty;
+        @(posedge clk);
+        #1ps;
+        if (had_data) begin
+          exp_val = ref_queue.pop_front();
+          if (read_data !== exp_val) begin
+            $error("[%0t] Mismatch: got 0x%02h, expected 0x%02h", $time, read_data, exp_val);
+            errors++;
+          end
+        end
+        @(negedge clk);
+        read_enable = 1'b0;
+      endtask
+
+      initial begin
+        rst_n = 1'b0; write_enable = 1'b0; read_enable = 1'b0; write_data = '0;
+        repeat (2) @(posedge clk);
+        rst_n = 1'b1;
+
+        // Fill FIFO to capacity + 2 overflow attempts
+        for (int i = 0; i < DP + 2; i++) drive_push(8'hA0 + i);
+        assert (full === 1'b1) else begin $error("FIFO should report full"); errors++; end
+
+        // Drain FIFO and verify ordering
+        repeat (DP) drive_pop_and_check();
+        assert (empty === 1'b1) else begin $error("FIFO should report empty"); errors++; end
+
+        if (errors == 0) $display("PASS: configurable_fifo_tb completed with 0 errors.");
+        else             $display("FAIL: configurable_fifo_tb detected %0d errors.", errors);
+        $finish;
+      end
+    endmodule
+    ```
 
 These exercises will provide hands-on practice in designing SystemVerilog modules, using parameters, creating hierarchical designs, and developing basic testbenches for verification. They cover essential concepts for building more complex hardware systems in SystemVerilog.
 

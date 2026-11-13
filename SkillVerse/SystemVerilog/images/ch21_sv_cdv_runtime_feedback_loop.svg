@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 390" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGradCh21D" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#080c14" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <filter id="shadowCh21D" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+    <marker id="arrowCyan21D" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8"/>
+    </marker>
+    <marker id="arrowGreen21D" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#34d399"/>
+    </marker>
+  </defs>
+
+  <rect width="920" height="390" rx="14" fill="url(#bgGradCh21D)"/>
+
+  <!-- Title -->
+  <text x="460" y="30" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="20" font-weight="700" fill="#f8fafc" text-anchor="middle">Runtime Coverage Queries: get_inst_coverage() vs. get_coverage()</text>
+  <text x="460" y="50" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13" fill="#94a3b8" text-anchor="middle">Aggregate per-instance and type-level coverage at runtime to steer constraint-based CDV loops</text>
+
+  <!-- Left: Multiple Instances -->
+  <g transform="translate(24, 74)">
+    <rect width="268" height="226" rx="10" fill="#0f172a" stroke="#38bdf8" stroke-width="1.8" filter="url(#shadowCh21D)"/>
+    <rect width="268" height="34" rx="10" fill="#075985"/>
+    <rect x="0" y="22" width="268" height="12" fill="#075985"/>
+    <text x="134" y="22" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="12.5" font-weight="700" fill="#e0f2fe" text-anchor="middle">Per-Instance Tracking</text>
+
+    <rect x="14" y="48" width="240" height="74" rx="7" fill="#0c1c2e" stroke="#38bdf8"/>
+    <text x="24" y="68" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" font-weight="700" fill="#38bdf8">cg_inst1  (Port 0)</text>
+    <text x="24" y="88" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#e2e8f0">cg_inst1.get_inst_coverage()</text>
+    <text x="24" y="108" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" font-weight="700" fill="#fbbf24">=&gt; 62.5% (needs option.per_instance=1)</text>
+
+    <rect x="14" y="136" width="240" height="74" rx="7" fill="#0c1c2e" stroke="#38bdf8"/>
+    <text x="24" y="156" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" font-weight="700" fill="#38bdf8">cg_inst2  (Port 1)</text>
+    <text x="24" y="176" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#e2e8f0">cg_inst2.get_inst_coverage()</text>
+    <text x="24" y="196" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" font-weight="700" fill="#34d399">=&gt; 87.5% (same type, own bins)</text>
+  </g>
+
+  <path d="M 292 186 L 330 186" stroke="#38bdf8" stroke-width="2" marker-end="url(#arrowCyan21D)"/>
+
+  <!-- Middle: Type-Level Aggregation -->
+  <g transform="translate(334, 74)">
+    <rect width="266" height="226" rx="10" fill="#0f172a" stroke="#10b981" stroke-width="1.8" filter="url(#shadowCh21D)"/>
+    <rect width="266" height="34" rx="10" fill="#065f46"/>
+    <rect x="0" y="22" width="266" height="12" fill="#065f46"/>
+    <text x="133" y="22" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="12.5" font-weight="700" fill="#d1fae5" text-anchor="middle">Type-Level Union (Static)</text>
+
+    <rect x="14" y="54" width="238" height="72" rx="7" fill="#072c22" stroke="#10b981"/>
+    <text x="133" y="77" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" font-weight="700" fill="#34d399" text-anchor="middle">my_cg::get_coverage()</text>
+    <text x="133" y="99" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#d1fae5" text-anchor="middle">Merges hits across ALL instances</text>
+    <text x="133" y="116" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" font-weight="700" fill="#6ee7b7" text-anchor="middle">=&gt; Combined 93.8%</text>
+
+    <rect x="14" y="140" width="238" height="70" rx="7" fill="#1e293b" stroke="#475569"/>
+    <text x="24" y="160" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" font-weight="700" fill="#fbbf24">Sampling Rule:</text>
+    <text x="24" y="179" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#cbd5e1">Use EITHER @(event) auto-sampling</text>
+    <text x="24" y="196" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#cbd5e1">OR explicit .sample() (never both!).</text>
+  </g>
+
+  <path d="M 600 186 L 638 186" stroke="#34d399" stroke-width="2" marker-end="url(#arrowGreen21D)"/>
+
+  <!-- Right: CDV Steering & Regression Merge -->
+  <g transform="translate(642, 74)">
+    <rect width="254" height="226" rx="10" fill="#0f172a" stroke="#a78bfa" stroke-width="1.8" filter="url(#shadowCh21D)"/>
+    <rect width="254" height="34" rx="10" fill="#4c1d95"/>
+    <rect x="0" y="22" width="254" height="12" fill="#4c1d95"/>
+    <text x="127" y="22" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="12.5" font-weight="700" fill="#ede9fe" text-anchor="middle">CDV Feedback &amp; Closure</text>
+
+    <rect x="14" y="48" width="226" height="80" rx="7" fill="#1e1b4b" stroke="#818cf8"/>
+    <text x="24" y="68" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="700" fill="#c7d2fe">Runtime CDV Loop:</text>
+    <text x="24" y="88" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#e0e7ff">while (cg.get_coverage() &lt; 95)</text>
+    <text x="24" y="106" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#34d399">  drive_targeted_corner();</text>
+
+    <rect x="14" y="140" width="226" height="70" rx="7" fill="#0c1c2e" stroke="#38bdf8"/>
+    <text x="24" y="160" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="700" fill="#38bdf8">Post-Sim Regression Merge:</text>
+    <text x="24" y="179" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#cbd5e1">Merge multi-seed UCDB / VDB</text>
+    <text x="24" y="196" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#cbd5e1">databases to rank &amp; close holes.</text>
+  </g>
+
+  <!-- Bottom note -->
+  <rect x="24" y="316" width="872" height="52" rx="8" fill="#1e293b" stroke="#475569"/>
+  <text x="460" y="338" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11.5" font-weight="700" fill="#f8fafc" text-anchor="middle">Tip: Set option.per_instance = 1 inside multi-channel covergroups so per-port bottlenecks stay visible in reports!</text>
+  <text x="460" y="356" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#94a3b8" text-anchor="middle">Otherwise, Port 1 hits can mask an unexercised Port 0 in type-level get_coverage() totals.</text>
+</svg>

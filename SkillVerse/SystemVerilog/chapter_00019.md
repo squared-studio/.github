@@ -5,9 +5,9 @@
 File operations in SystemVerilog are essential for enabling simulations to interact with the external environment. This capability is fundamental for a wide range of verification tasks, including:
 
 - **Data-Driven Verification**: Reading test vectors, stimulus data, and configuration parameters from external files to drive simulations. This allows for complex and reusable test scenarios defined outside the simulation code itself.
-- **Simulation Result Logging and Debugging**: Recording simulation events, waveforms, coverage data, and debug messages to external files for detailed analysis and post-simulation debugging. This provides crucial insights into the simulation behavior and helps identify design issues.
-- **Intermediate Data Handling**: Storing and retrieving intermediate data during simulation runs. This can be useful for complex verification flows where data needs to be passed between different simulation phases or tools.
-- **Report Generation**: Creating post-simulation reports summarizing simulation results, coverage metrics, and verification status. These reports are vital for documenting verification progress and communicating results.
+- **Simulation Result Logging and Debugging**: Recording simulation events, transactions, scoreboard mismatches, and debug messages to external files for detailed analysis and post-simulation debugging.
+- **Intermediate Data Handling**: Storing and retrieving intermediate data during simulation runs, such as passing memory images or expected golden packets between reference models and RTL testbenches.
+- **Report Generation**: Creating post-simulation reports summarizing simulation results, coverage metrics, and pass/fail status for CI/CD regression dashboards.
 
 Effective file handling is paramount for creating robust, data-driven verification environments and ensuring complete simulation traceability, from input stimulus to output analysis.
 
@@ -16,424 +16,634 @@ Effective file handling is paramount for creating robust, data-driven verificati
 By the end of this chapter, you should be able to:
 
 - Open, validate, use, and close text and binary files safely.
-- Choose between line-oriented, formatted, and byte-oriented file access.
-- Interpret the return values of the file I/O system functions correctly.
-- Produce timestamped logs and route output to both a file and the simulator console.
-- Design file-processing code with clear error handling and simulator portability in mind.
+- Choose between line-oriented (`$fgets` + `$sscanf`), formatted (`$fscanf`), and byte-oriented (`$fread`) file access.
+- Distinguish IEEE 1800 Multi-Channel Descriptors (`MCD`) from two-argument File Descriptors (`FD`).
+- Produce timestamped logs and broadcast output simultaneously to files and the console.
+- Design file-processing code with defensive error checking (`$fopen`, `$ferror`, `$fflush`) and clean resource cleanup.
 
 ## File Handling Fundamentals
 
+![SystemVerilog File I/O Lifecycle and Access Modes](images/ch19_sv_file_io_lifecycle_and_modes.svg)
+
 ### Opening Files: Establishing Communication Channels
 
-The `$fopen` system function is used to open a file and obtain a **file descriptor (file handle)**, which is an integer that acts as a unique identifier for the opened file. This handle is then used in subsequent file operations (read, write, close).
+The `$fopen` system function opens a file and returns an integer handle (either a two-argument **File Descriptor (`FD`)** or a single-argument **Multi-Channel Descriptor (`MCD`)**). When opening files for reading, appending, binary access, or explicit mode control, pass the filename and mode string:
 
 **Syntax:**
 
 ```systemverilog
-int file_descriptor;
-file_descriptor = $fopen("<filename>", "<mode>");
+int fd;
+fd = $fopen("<filename>", "<mode>");
 ```
 
-**File Modes:** The `<mode>` argument is a string that specifies how the file should be opened. Common modes include:
+**File Modes:** The `<mode>` argument follows standard C/IEEE 1800-2017 file-I/O conventions. Adding `"b"` selects binary mode, which disables newline/EOF translation on platforms that distinguish text from binary streams.
 
-The mode strings follow the simulator's supported file-I/O conventions. Text and binary modes are often treated the same on Unix-like hosts, while binary modes can matter on systems that distinguish text and binary translation. Check the simulator documentation for any portability restrictions.
+| Mode | Description | Behavior if File Exists | Behavior if File Doesn't Exist | Use Case |
+| :--- | :--- | :--- | :--- | :--- |
+| `"r"` | **Read-only** | File must exist (cursor at start) | Error, `$fopen` returns `0` | Reading input test vectors, configuration files |
+| `"w"` | **Write-only (truncate)** | **Truncates** to zero length | Creates a new file | Creating fresh simulation output logs |
+| `"a"` | **Append-only** | Opens and positions at **end** | Creates a new file | Appending regression status lines |
+| `"r+"` | **Read and Update** | Opens for read/write | Error, `$fopen` returns `0` | In-place updates on an existing file |
+| `"w+"` | **Write and Update** | **Truncates** to zero length | Creates a new file | Creating new files for mixed read/write |
+| `"rb"` | **Read Binary** | File must exist | Error, `$fopen` returns `0` | Reading raw firmware or payload images |
+| `"wb"` | **Write Binary** | **Truncates** to zero length | Creates a new file | Writing raw byte streams |
+| `"ab"` | **Append Binary** | Opens and positions at **end** | Creates a new file | Appending raw binary records |
+| `"r+b"` | **Read/Update Binary** | Opens for read/write | Error, `$fopen` returns `0` | Updating existing binary files |
+| `"w+b"` | **Write/Update Binary** | **Truncates** to zero length | Creates a new file | Creating binary files for read/write |
 
-| Mode    | Description                               | Behavior if File Exists        | Behavior if File Doesn't Exist | Use Case                                                                |
-| :------ | :---------------------------------------- | :----------------------------- | :----------------------------- | :---------------------------------------------------------------------- |
-| `"r"`   | **Read-only**                             | File must exist                | Error, `$fopen` returns 0      | Reading input test vectors, configuration files.                        |
-| `"w"`   | **Write-only (truncate)**                 | **Truncates** to zero length   | Creates a new file             | Creating new log files, simulation output files (overwriting existing). |
-| `"a"`   | **Append-only**                           | Opens and positions at **end** | Creates a new file             | Adding to existing log files, accumulating simulation data.             |
-| `"r+"`  | **Read and Update (existing file)**       | Opens for read/write           | Error, `$fopen` returns 0      | Modifying existing configuration files (use with caution).              |
-| `"w+"`  | **Write and Update (create/truncate)**    | **Truncates** to zero length   | Creates a new file             | Creating new files for read/write operations.                           |
-| `"rb"`  | **Read Binary**                           | File must exist                | Error, `$fopen` returns 0      | Reading binary data files.                                              |
-| `"wb"`  | **Write Binary**                          | **Truncates** to zero length   | Creates a new file             | Writing binary data files.                                              |
-| `"ab"`  | **Append Binary**                         | Opens and positions at **end** | Creates a new file             | Appending binary data to files.                                         |
-| `"r+b"` | **Read/Update Binary (existing file)**    | Opens for read/write           | Error, `$fopen` returns 0      | Modifying existing binary files (use with caution).                     |
-| `"w+b"` | **Write/Update Binary (create/truncate)** | **Truncates** to zero length   | Creates a new file             | Creating new binary files for read/write operations.                    |
-
-**Important Note:** Always check the return value of `$fopen`. It returns a non-zero file descriptor on success and `0` on failure (e.g., file not found in "r" mode, permission issues).
+**Important Note:** Always check the return value of `$fopen`. It returns a non-zero descriptor on success and `0` on failure (for example, file not found in `"r"` mode or insufficient permissions).
 
 ### Closing Files: Releasing System Resources
 
-It's crucial to close files using `$fclose(<file_descriptor>);` after you are finished with file operations. This releases system resources associated with the file handle and ensures data is properly written to the file (especially for buffered writes). Failing to close files can lead to resource leaks and data corruption.
+Always close opened files using `$fclose(fd);` once all reading or writing completes. Closing releases OS file descriptors and flushes buffered writes to disk. Never pass `0` (a failed open) into `$fclose()`.
 
 ## Reading Data from Files
 
-SystemVerilog provides several system functions for reading data from files, each suited for different data formats and reading requirements.
+SystemVerilog provides distinct system functions tailored for line-oriented text parsing, formatted token extraction, and raw binary reads.
+
+![SystemVerilog File Reading Strategies Comparison](images/ch19_sv_read_methods_comparison.svg)
 
 ### Line-by-Line Reading: `$fgets`
 
-`$fgets` reads a line of text from a file, including the line terminator when one is present, and stores it in a string or packed array. It is ideal for processing text files line by line. The standard call does not take a maximum-length argument; use a suitably sized destination when a bounded packed-array read is required.
+`$fgets` reads characters from a file until a newline (`\n`) or EOF is encountered, preserving the newline when present, and stores the line into a `string` variable (recommended) or packed vector.
 
 **Syntax:**
 
 ```systemverilog
-int result;
-string line_buffer; // String variable to store the read line
-result = $fgets(line_buffer, file_descriptor);
+int chars_read;
+string line_buffer;
+chars_read = $fgets(line_buffer, fd);
 ```
 
 **Return Value:**
 
-- Returns the number of characters read when at least one character is read.
-- Returns `0` at EOF when no characters are read, or when an error prevents any characters from being read. A final line does not need to end with a newline to be read successfully.
+- Returns the number of characters read (`> 0`) when at least one character was read (even if the final line has no trailing newline).
+- Returns `0` at EOF when no characters are left, or on an I/O error.
 
 **Example: Reading and Displaying Lines from a Text File**
 
 ```systemverilog
 module file_line_reader;
-  int file_descriptor;
+  int    fd;
   string line_of_text;
 
   initial begin
-    file_descriptor = $fopen("input_data.txt", "r"); // Open "input_data.txt" in read mode
-    if (file_descriptor == 0) begin
+    fd = $fopen("input_data.txt", "r");
+    if (fd === 0) begin
       $error("Error: Could not open file 'input_data.txt' for reading.");
-      $finish; // Terminate simulation if file opening fails
+      $finish;
     end
 
-    $display("--- Reading lines from file 'input_data.txt' ---");
-    while ($fgets(line_of_text, file_descriptor)) begin // Read line by line
-      $display("[Line Read] %s", line_of_text); // Display each line read
+    $display("--- Reading lines from 'input_data.txt' ---");
+    while ($fgets(line_of_text, fd) != 0) begin
+      // Strip trailing newline if present for clean $display output
+      if (line_of_text.len() > 0 && line_of_text[line_of_text.len()-1] == "\n")
+        line_of_text = line_of_text.substr(0, line_of_text.len()-2);
+      $display("[Line Read] %s", line_of_text);
     end
 
     $display("--- End of file reached ---");
-    $fclose(file_descriptor); // Close the file
+    $fclose(fd);
   end
 endmodule
 ```
 
-### Formatted Reading: `$fscanf`
+### Formatted Reading: `$fscanf` and `$sscanf`
 
-`$fscanf` reads formatted data from a file, similar to the `fscanf` function in C. It uses format specifiers (like `%d`, `%h`, `%s`, `%b`, `%f`) to parse data according to a specified format string. This is useful for reading structured data files.
+`$fscanf` scans formatted tokens directly from an open file descriptor using C-style format specifiers (`%d`, `%h`, `%x`, `%b`, `%o`, `%s`, `%f`). Its companion `$sscanf(str, fmt, vars...)` applies the exact same scanning logic to an in-memory `string`—making `$fgets` followed by `$sscanf` the safest way to skip blank lines and `#`/`//` comments!
 
 **Syntax:**
 
 ```systemverilog
 int items_read;
-<variable_declarations>; // Variables to store read values
-items_read = $fscanf(file_descriptor, "<format_string>", <variable1>, <variable2>, ...);
+items_read = $fscanf(fd, "<format_string>", var1, var2, ...);
 ```
 
 **Return Value:**
 
-- Returns the **number of input items successfully matched and assigned** to the provided variables.
-- Returns a value less than the number of variables if there is a format mismatch or EOF is reached before all expected items are read.
-- Returns `0` when input is present but no conversion matches. Returns `-1` when EOF is encountered before any item is matched.
+- Returns the **number of input items successfully matched and assigned**.
+- Returns a count smaller than the number of variables if conversion fails partway through.
+- Returns `0` when characters remain in the stream/line but the very first specifier fails to match, or `-1` (`EOF`) when EOF is reached before any item is matched.
 
 **Example: Reading Formatted Integer Values from a File**
 
 ```systemverilog
 module formatted_data_reader;
-  int file_descriptor;
-  integer read_value; // Variable to store the integer value read
+  int fd;
+  int read_value;
 
   initial begin
-    file_descriptor = $fopen("integer_values.txt", "r"); // Open "integer_values.txt" in read mode
-    if (file_descriptor == 0) $fatal(1, "Fatal Error: File 'integer_values.txt' could not be opened.");
+    fd = $fopen("integer_values.txt", "r");
+    if (fd === 0) $fatal(1, "Fatal Error: File 'integer_values.txt' could not be opened.");
 
-    $display("--- Reading integer values from file 'integer_values.txt' ---");
-    while ($fscanf(file_descriptor, "%d", read_value) == 1) begin // Read integers, one at a time
-      $display("Value Read: %0d", read_value); // Display each integer value read
+    $display("--- Reading integer values from 'integer_values.txt' ---");
+    while ($fscanf(fd, "%d", read_value) == 1) begin
+      $display("Value Read: %0d", read_value);
     end
 
     $display("--- Finished reading integer values ---");
-    $fclose(file_descriptor); // Close the file
+    $fclose(fd);
   end
 endmodule
 ```
 
 **Best Practices for File Reading:**
 
-- **Always Check `$fopen` Return Value**: Ensure the file is opened successfully before proceeding with read operations. A return value of `0` indicates failure.
-- **Use `$fgets` Return Value for Loop Control**: The return value of `$fgets` is the most reliable way to control loops when reading line by line. Avoid using `$feof` in loops controlled by `$fgets` as it can lead to reading an extra empty line after EOF.
-- **Validate `$fscanf` Return Value**: Check the return value of `$fscanf` to verify that the expected number of items were successfully parsed and read according to the format string. This is crucial for error detection and data integrity.
+- **Always Check `$fopen` Return Value**: Confirm `fd !== 0` before calling any read function.
+- **Control Line Loops with `$fgets`**: Drive `while ($fgets(line, fd) != 0)` instead of `while (!$feof(fd))`, because `$feof` only becomes true *after* attempting to read past EOF, which otherwise executes one bogus extra loop iteration.
+- **Validate `$fscanf` / `$sscanf` Return Counts**: Verify the returned integer equals the exact number of variables expected.
 
 ## Writing Data to Files
 
-SystemVerilog offers several system functions for writing data to files, providing flexibility in formatting and output control.
+SystemVerilog provides `$fwrite`, `$fdisplay`, and `$fstrobe` for writing formatted output to open files.
 
 ### Basic Writing Functions: `$fwrite`, `$fdisplay`, and `$fstrobe`
-
-These functions are used to write data to files pointed to by a file descriptor. They are similar to `$fwrite`, `$display`, and `$strobe` system tasks, but direct their output to a file instead of the standard output.
 
 **Syntax:**
 
 ```systemverilog
-$fwrite(file_descriptor, "<format_string>", <arguments>); // No automatic newline
-$fdisplay(file_descriptor, "<format_string>", <arguments>); // Automatic newline after each call
-$fstrobe(file_descriptor, "<format_string>", <arguments>); // Automatic newline, postponed execution
+$fwrite(fd, "<format_string>", arguments...);   // Active region, NO auto newline
+$fdisplay(fd, "<format_string>", arguments...); // Active region, auto newline
+$fstrobe(fd, "<format_string>", arguments...);  // Postponed region, auto newline
 ```
 
 **Key Differences and Use Cases:**
 
-| Function    | Newline Character | Formatting Support      | Execution Timing                      | Typical Use Case                                     |
-| :---------- | :---------------- | :---------------------- | :------------------------------------ | :--------------------------------------------------- |
-| `$fwrite`   | **No**            | Yes (format specifiers) | Immediate execution                   | Writing structured data, binary data, partial lines. |
-| `$fdisplay` | **Yes**           | Yes (full formatting)   | Immediate execution                   | Human-readable logging, general output.              |
-| `$fstrobe`  | **Yes**           | Yes (full formatting)   | **Postponed** in the postponed region | Recording final values at the end of a time step.    |
+| Function | Auto Newline | Formatting Support | Execution Scheduling Region | Typical Use Case |
+| :--- | :--- | :--- | :--- | :--- |
+| `$fwrite` | **No** | Yes (including `%c` raw bytes) | Immediate (`Active`) | CSV tables, partial lines, raw binary bytes |
+| `$fdisplay` | **Yes** | Yes | Immediate (`Active`) | General simulation logs and test reports |
+| `$fstrobe` | **Yes** | Yes | **Postponed** (end of current time step) | Capturing settled register/bus values after NBA (`<=`) updates |
+
+> **Important `$fstrobe` Timing Rule:** Because `$fstrobe` does not execute until the **Postponed** region at the end of the current simulation time step, do **not** call `$fclose(fd)` in the same procedural time step immediately after `$fstrobe`—advance time first (e.g., `#1ns;`) so `$fstrobe` runs while `fd` is still open.
 
 **Example: Writing Simulation Information to a Log File**
 
 ```systemverilog
 module file_writer;
-  int log_file_descriptor;
   timeunit 1ns;
   timeprecision 1ps;
 
+  int   log_fd;
+  logic [7:0] status_reg = 8'h00;
+
   initial begin
-    log_file_descriptor = $fopen("simulation_log.txt", "w"); // Open "simulation_log.txt" in write mode
-    if (log_file_descriptor == 0) begin
+    log_fd = $fopen("simulation_log.txt", "w");
+    if (log_fd === 0) begin
       $error("Error: Could not create log file 'simulation_log.txt'.");
-      return; // Exit initial block if file creation fails
+      return;
     end
 
-    // Using $fwrite (no newline - for writing parts of a line or structured data)
-    $fwrite(log_file_descriptor, "--- Simulation Start --- Time: %0t", $time); // No newline here
+    // Using $fwrite (no automatic newline — continues on same line)
+    $fwrite(log_fd, "--- Simulation Start at %0t --- ", $time);
 
-    // Using $fdisplay (automatic newline - for general logging messages)
-    $fdisplay(log_file_descriptor, "Configuration: Mode = %s, Speed = %0d", "Fast", 100); // Newline added
+    // Using $fdisplay (appends newline automatically)
+    $fdisplay(log_fd, "Mode = %s, Speed = %0d MHz", "Fast", 100);
 
-    // Using $fstrobe (postponed newline - for recording values at the end of time step)
-    #10ns; // Advance simulation time
-    $fstrobe(log_file_descriptor, "[%0t] Signal value at end of time step: %b", $time, 1'b1); // Newline, value at end of timestep
+    // Nonblocking update captured cleanly at end of 10ns step via $fstrobe
+    #10ns;
+    status_reg <= 8'hA5;
+    $fstrobe(log_fd, "[%0t] Settled status_reg = 0x%02h", $time, status_reg);
 
-    $fclose(log_file_descriptor); // Close the log file
+    // Advance past 10ns Postponed region BEFORE closing the file
+    #1ns;
+    $fclose(log_fd);
   end
 endmodule
 ```
 
-### Writing Binary Data
+### Writing and Reading Binary Data
 
-To write binary data to a file, you should open the file in a binary write mode (e.g., `"wb"`, `"w+b"`, `"ab"`). You can then use `$fwrite` with the `%c` format specifier to write byte-by-byte binary data.
+Open binary files with `"wb"` / `"rb"` and write raw bytes with `$fwrite(fd, "%c", byte_val)`. Read raw bytes back with `$fread(array_or_var, fd)`, which returns the total number of bytes transferred.
 
 **Example: Writing and Reading Binary Data**
 
 ```systemverilog
 module binary_file_operations;
-  int binary_file_descriptor;
-  int bytes_read;
-  byte binary_data[]; // Dynamic array of bytes
+  int  bin_fd;
+  int  bytes_read;
+  byte tx_data[] = '{8'hDE, 8'hAD, 8'hBE, 8'hEF};
+  byte rx_data[];
 
   initial begin
     // 1. Write Binary Data to File
-    binary_file_descriptor = $fopen("binary_data.bin", "wb"); // Open "binary_data.bin" in binary write mode
-    if (binary_file_descriptor == 0) $fatal(1, "Binary file open error for writing.");
+    bin_fd = $fopen("binary_data.bin", "wb");
+    if (bin_fd === 0) $fatal(1, "Binary file open error for writing.");
 
-    binary_data = '{8'hDE, 8'hAD, 8'hBE, 8'hEF}; // Initialize byte array with binary values
-    $display("--- Writing Binary Data to 'binary_data.bin' ---");
-    foreach (binary_data[i]) $fwrite(binary_file_descriptor, "%c", binary_data[i]); // Write each byte in binary format
-    $fclose(binary_file_descriptor); // Close the binary write file
+    foreach (tx_data[i]) $fwrite(bin_fd, "%c", tx_data[i]);
+    $fclose(bin_fd);
 
-    // 2. Read Binary Data from File
-    binary_file_descriptor = $fopen("binary_data.bin", "rb"); // Open "binary_data.bin" in binary read mode
-    if (binary_file_descriptor == 0) $fatal(1, "Binary file open error for reading.");
+    // 2. Read Binary Data Back from File
+    bin_fd = $fopen("binary_data.bin", "rb");
+    if (bin_fd === 0) $fatal(1, "Binary file open error for reading.");
 
-    $display("--- Reading Binary Data from 'binary_data.bin' ---");
-    binary_data = new[4]; // Allocate memory for reading 4 bytes
-    bytes_read = $fread(binary_data, binary_file_descriptor); // Read raw bytes into the array
-    if (bytes_read != binary_data.size())
-      $error("Expected %0d bytes but read %0d.", binary_data.size(), bytes_read);
-    $fclose(binary_file_descriptor); // Close the binary read file
+    rx_data = new[4];
+    bytes_read = $fread(rx_data, bin_fd);
+    if (bytes_read != rx_data.size()) begin
+      $error("Expected %0d bytes but read %0d.", rx_data.size(), bytes_read);
+    end
+    $fclose(bin_fd);
 
-    // 3. Display Read Binary Data (as hex)
-    $display("--- Displaying Read Binary Data (Hexadecimal) ---");
-    foreach (binary_data[i]) $display("Byte[%0d]: %h", i, binary_data[i]); // Display each byte in hex format
+    // 3. Verify Contents
+    foreach (rx_data[i]) $display("Byte[%0d]: 0x%02h", i, rx_data[i]);
   end
 endmodule
 ```
 
 ## Advanced File Output: Multi-Channel Output
 
-SystemVerilog allows writing to multiple output channels simultaneously using a bitwise OR combination of file descriptors. In the standard file-I/O convention, the descriptor `32'h8000_0000` (often written `1 << 31`) represents standard output (the console). Treat this value as a simulator-defined convention and verify it in the simulator documentation.
+![File Writing Tasks and MCD vs FD Architecture](images/ch19_sv_write_tasks_and_mcd_broadcast.svg)
 
-**Example: Writing to Both Log File and Console**
+IEEE 1800-2017 Section 21.3 defines **two distinct integer handle encodings** returned by `$fopen`:
+
+1. **Multi-Channel Descriptor (`MCD`) — single-argument `$fopen("<filename>")`**:
+   - Bit `31` (MSB) is always **`0`**.
+   - Bit `0` (`32'h0000_0001`) is permanently assigned to **standard output (the simulator console)**.
+   - Bits `[30:1]` are allocated one-hot to up to 30 open output files.
+   - Because each bit represents an independent channel, you can **bitwise-OR (`|`) multiple MCDs**—including `32'h0000_0001` for stdout—to tee a single `$fdisplay` or `$fwrite` call to multiple destinations simultaneously.
+2. **File Descriptor (`FD`) — two-argument `$fopen("<filename>", "<mode>")`**:
+   - Bit `31` (MSB) is always **`1`**, with predefined handles `32'h8000_0000` (`stdin`), `32'h8000_0001` (`stdout`), and `32'h8000_0002` (`stderr`).
+   - FDs support read, binary, append, `$fseek`, and unlimited handles, **but FDs cannot be bitwise-ORed** together or with `1 << 31`.
+
+**Example: Writing to Both Log File and Console with MCDs**
 
 ```systemverilog
 module multi_channel_logger;
-  int log_file_descriptor, console_output_channel;
-  int multi_channel_descriptor;
+  int log_mcd;
+  int tee_mcd;
+  localparam int CONSOLE_STDOUT_MCD = 32'h0000_0001; // IEEE 1800 bit 0 = stdout
 
   initial begin
-    log_file_descriptor = $fopen("simulation_activity.log", "w"); // Open log file for writing
-    console_output_channel = 1 << 31; // File descriptor for standard output (console)
+    // Single-argument $fopen returns an OR-able Multi-Channel Descriptor (MCD)
+    log_mcd = $fopen("simulation_activity.log");
+    if (log_mcd === 0) $fatal(1, "Log file creation error.");
 
-    if (log_file_descriptor == 0) $fatal(1, "Log file creation error.");
+    // Broadcast simultaneously to the log file AND the console
+    tee_mcd = log_mcd | CONSOLE_STDOUT_MCD;
 
-    // Create a multi-channel file descriptor by bitwise ORing log file and console descriptors
-    multi_channel_descriptor = log_file_descriptor | console_output_channel;
+    $fwrite(tee_mcd, "--- System Initialization Message ---\n");
+    $fdisplay(tee_mcd, "Timestamp: %0t, System State: Initialized", $time);
 
-    // Write to both the log file AND the console simultaneously
-    $fwrite(multi_channel_descriptor, "--- System Initialization Message ---\n");
-    $fdisplay(multi_channel_descriptor, "Timestamp: %0t, System State: Initialized", $time);
-
-    $fclose(log_file_descriptor); // Close the log file (console descriptor doesn't need closing)
+    // Close only the file channel (do not close bit 0 stdout)
+    $fclose(log_mcd);
   end
 endmodule
 ```
 
 ## Comprehensive Function Reference Table
 
-| Function                                         | Description                                                             | Return Value                            | Notes                                                            |
-| :----------------------------------------------- | :---------------------------------------------------------------------- | :-------------------------------------- | :--------------------------------------------------------------- |
-| `$fopen("<filename>", "<mode>")`                 | Opens a file with specified mode, returns file descriptor or 0 on error | File descriptor (int) or 0              | Modes: "r", "w", "a", "r+", "w+", "rb", "wb", "ab", "r+b", "w+b" |
-| `$fclose(file_descriptor)`                       | Closes an opened file, releasing resources                              | None                                    | Always close files after use.                                    |
-| `$fgets(string_var, file_descriptor)`            | Reads a line of text into `string_var` until newline or EOF             | Number of characters read, or 0 if none | Use return value for loop control.                               |
-| `$fscanf(file_descriptor, "<format>", <vars>)`   | Reads formatted input from file according to `<format>` string          | Number of items matched (int)           | Check return value for parsing errors.                           |
-| `$fread(memory_array, file_descriptor)`          | Reads binary data from file into `memory_array`                         | Number of bytes read (int)              | Reads until array is full or EOF.                                |
-| `$fwrite(file_descriptor, "<format>", <args>)`   | Writes formatted data to file without automatic newline                 | No portable status return               | Use for structured output, binary data.                          |
-| `$fdisplay(file_descriptor, "<format>", <args>)` | Writes formatted data to file with automatic newline                    | No portable status return               | Use for human-readable logs, general output.                     |
-| `$fstrobe(file_descriptor, "<format>", <args>)`  | Writes formatted data with newline in the postponed region              | No portable status return               | Use for recording final values at time step end.                 |
-| `$feof(file_descriptor)`                         | Checks for end-of-file condition on a file                              | 1 (EOF), 0 (not EOF)                    | Less reliable for loop control with `$fgets`.                    |
-| `$ferror(file_descriptor, error_string)`         | Retrieves file error status and a diagnostic message                    | Error code (int)                        | Useful for detailed error diagnostics after file operations.     |
+| Function / Task | Description | Return Value | Notes |
+| :--- | :--- | :--- | :--- |
+| `$fopen("<file>", "<mode>")` | Opens file in explicit mode and returns an `FD` (`bit 31 = 1`) | `FD` (`int`) or `0` on failure | Supports `"r"`, `"w"`, `"a"`, `"r+"`, `"w+"` and `"b"` binary variants |
+| `$fopen("<file>")` | Opens file for write and returns an OR-able `MCD` (`bit 31 = 0`) | `MCD` (`int`) or `0` on failure | Bit `0` (`32'h1`) is `stdout`; supports up to 30 open files |
+| `$fclose(handle)` | Closes an open `FD` or all channels selected in an `MCD` | None (`void`) | Never pass `0`; closes and flushes buffers |
+| `$fgets(str_var, fd)` | Reads next line (including `\n` if present) into `str_var` | Chars read (`> 0`), or `0` on EOF/error | Ideal loop guard: `while ($fgets(line, fd) != 0)` |
+| `$fscanf(fd, "<fmt>", vars...)` | Scans formatted items directly from `fd` | Assigned count (`int`); `0` mismatch; `-1` EOF | Verify return equals expected item count |
+| `$sscanf(str, "<fmt>", vars...)` | Scans formatted items from an in-memory `string` | Assigned count (`int`); `0` mismatch; `-1` EOF | Pair with `$fgets` to ignore comments/blank lines cleanly |
+| `$fread(mem_or_var, fd)` | Reads raw binary bytes from `fd` | Bytes read (`int`) | Use `"rb"` mode; works with packed vars or unpacked arrays |
+| `$fwrite(d, "<fmt>", args...)` | Writes formatted text or `%c` bytes with **no** newline | None (task) | Immediate `Active` region execution |
+| `$fdisplay(d, "<fmt>", args...)` | Writes formatted text followed by `\n` | None (task) | Immediate `Active` region execution |
+| `$fstrobe(d, "<fmt>", args...)` | Writes formatted text followed by `\n` at end of timestep | None (task) | Executes in `Postponed` region |
+| `$fflush(fd)` | Flushes buffered writes to OS disk immediately | None (task) | Pass `0` or omit arg on supported tools to flush all |
+| `$fseek(fd, offset, op)` / `$ftell(fd)` | Repositions (`0`=start, `1`=cur, `2`=end) / queries byte offset | `$fseek`: `0` ok, `-1` err; `$ftell`: offset (`longint`) | Applies to `FD` handles (not `MCD`) |
+| `$feof(fd)` | Checks whether EOF indicator was previously hit | `1` (EOF reached), `0` (not EOF) | Avoid as sole `while` condition with `$fgets` |
+| `$ferror(fd, err_str)` | Queries OS/simulator error code and human-readable message | Error code (`int`, `0` = no error) | Call after suspicious I/O failure |
+| `$readmemh` / `$readmemb` | Bulk-loads hex or binary text image directly into a memory array | None (task) | Fast initialization of ROM/SRAM arrays at `0ns` |
 
 ## Robust Error Handling Techniques
 
-Error handling is crucial for reliable file operations. Always check for potential errors and implement appropriate error handling mechanisms.
+Error handling is crucial for reliable file operations in automated regressions where missing stimulus files or permission failures must be diagnosed immediately.
+
+![Defensive File I/O and Error Diagnostics Pipeline](images/ch19_sv_defensive_file_error_handling.svg)
 
 ### Comprehensive File Operation Error Checking
 
 ```systemverilog
 module safe_file_writer;
-  int file_descriptor;
-  int error_code;
+  int    fd;
+  int    error_code;
   string error_message;
 
   initial begin
-    file_descriptor = $fopen("important_data.dat", "a"); // Open in append mode
-    if (file_descriptor === 0) begin // Check for file open failure (using === for 4-state comparison)
+    fd = $fopen("important_data.dat", "a");
+    if (fd === 0) begin // 4-state equality safely detects failure (0 or x)
       $error("Fatal File Open Error: Could not open 'important_data.dat' for appending.");
-      $fatal(1, "Simulation terminated due to file error."); // Terminate simulation as critical file operation failed
+      $fatal(1, "Simulation terminated due to file open error.");
     end else begin
       $display("Successfully opened 'important_data.dat' for appending.");
     end
 
-    // Attempt a file write operation. Output tasks have no portable status return.
-    $fdisplay(file_descriptor, "Critical data entry at time %0t", $time);
-    error_code = $ferror(file_descriptor, error_message);
+    $fdisplay(fd, "Critical data entry at time %0t", $time);
+    error_code = $ferror(fd, error_message);
     if (error_code != 0) begin
-      $error("File Write Error: Problem writing to 'important_data.dat'.");
-      $error("Error Code: %0d, Message: %s", error_code, error_message);
+      $error("File Write Error on 'important_data.dat' (Code %0d): %s", error_code, error_message);
     end else begin
       $display("Successfully wrote data to 'important_data.dat'.");
     end
 
-    $fclose(file_descriptor); // Close the file
-    $display("File 'important_data.dat' closed.");
+    $fflush(fd);
+    $fclose(fd);
+    $display("File 'important_data.dat' closed cleanly.");
   end
 endmodule
 ```
 
 **Key Error Handling Practices:**
 
-- **Explicitly Verify `$fopen`**: Always check if `$fopen` returns a non-zero file descriptor. Use `=== 0` for 4-state comparison to reliably detect failure.
-- **Check Return Values of File Functions**: For functions like `$fgets` and `$fscanf`, check their return values to ensure successful read operations and data parsing.
-- **Utilize `$ferror` for Diagnostics**: When an error is detected, use `$ferror(file_descriptor, error_string)` to get an implementation-defined error code and diagnostic message. This can help diagnose the cause of the file operation failure.
-- **Implement Appropriate Error Responses**: Decide how to handle file operation errors based on the criticality of the operation. For critical operations (like opening essential configuration files or log files), use `$fatal` to terminate the simulation if errors occur. For less critical operations, use `$error` or `$warning` to report the issue and potentially implement error recovery or alternative actions.
-- **Close Open Files in Error Scenarios**: If a file was opened successfully and a later operation fails, close it using `$fclose(file_descriptor)` to release resources. Do not treat descriptor `0` from a failed `$fopen` as an open file.
+- **Explicitly Verify `$fopen`**: Check `fd === 0` immediately before doing anything else with the handle.
+- **Check Return Values of Read Functions**: Inspect `$fgets != 0`, `$fscanf == expected_count`, and `$fread == expected_bytes`.
+- **Utilize `$ferror` for Diagnostics**: Retrieve both the implementation error code and descriptive text string when I/O fails.
+- **Close Valid Open Files Before Aborting**: If an error happens *after* a successful `$fopen`, call `$fclose(fd)` before calling `$fatal` or returning—never call `$fclose(0)` on a failed open.
 
 ## Best Practices Checklist for SystemVerilog File Operations
 
-☐ **Always Verify `$fopen` Return Values**: Immediately after opening a file, check if the file descriptor is non-zero to confirm successful file opening.
-
-☐ **Use Appropriate File Modes**: Select the correct file mode (`"r"`, `"w"`, `"a"`, `"rb"`, `"wb"`, etc.) based on your intended file operations (read, write, append, binary, text) and the desired behavior if the file exists or not.
-
-☐ **Close Files Explicitly with `$fclose`**: Make sure to close every file you open using `$fclose` when you are finished with file operations to release system resources and ensure data integrity.
-
-☐ **Prefer `$fdisplay` for Human-Readable Logs**: Use `$fdisplay` for writing general logging messages, simulation status updates, and human-readable output to log files due to its automatic newline feature and full formatting capabilities.
-
-☐ **Use `$fwrite` for Precise Format Control**: Utilize `$fwrite` when you need precise control over the output format, when writing structured data without automatic newlines (e.g., CSV, data tables), or when writing binary data.
-
-☐ **Check `$fscanf` Return Values for Parsing Validation**: Always validate the return value of `$fscanf` to ensure that the expected number of data items were successfully parsed from the file according to the format string.
-
-☐ **Utilize `$ferror` for Diagnostic Information**: Incorporate `$ferror` to retrieve specific error codes when file operations fail. This provides valuable information for debugging and troubleshooting file-related issues.
-
-☐ **Consider File Buffering for Large Datasets**: For very large files or performance-critical simulations, investigate file buffering techniques (if supported by your simulator) to optimize file I/O operations. However, for most verification tasks, standard file operations are sufficient.
+- **Always Verify `$fopen` Return Values**: Immediately verify `fd !== 0` after every `$fopen` call before issuing reads, writes, or `$fclose`.
+- **Use Appropriate File Modes**: Distinguish `"w"` (truncates existing data) from `"a"` (appends), and add `"b"` (`"rb"`, `"wb"`) whenever processing binary payloads.
+- **Close Files Explicitly with `$fclose`**: Close every successfully opened handle once I/O finishes, and allow Postponed `$fstrobe` tasks to complete before closing.
+- **Prefer `$fgets` + `$sscanf` for Robust Line Parsing**: Reading a full line with `$fgets` and parsing with `$sscanf` prevents `$fscanf` synchronization bugs on blank lines or comments.
+- **Use 1-Arg `$fopen` MCDs for Console+File Teeing**: Combine single-argument MCD handles with `32'h0000_0001` (`stdout`) via `|` instead of ORing two-argument FDs.
+- **Check `$fscanf` / `$fread` Return Counts**: Always confirm the exact count of parsed items or bytes transferred matches expectations.
+- **Use `$ferror` for Diagnostic Detail**: Report OS-level causes whenever unexpected read/write errors occur.
+- **Use `$readmemh` / `$readmemb` for Memory Preloading**: Prefer built-in bulk loaders when initializing large RTL RAM arrays rather than manual `$fscanf` loops.
 
 ## Practical Exercises to Solidify File Operation Skills
 
-1.  **File Content Analyzer**:
-    - Create a SystemVerilog module that takes a filename as a parameter.
-    - Open the specified file in read mode (`"r"`).
-    - Read the file line by line using `$fgets`.
-    - For each line, count the number of characters (excluding the newline character) and the number of words (you can assume words are separated by spaces).
-    - After reading the entire file, display the total number of lines, total characters, and total words in the file.
-    - Implement robust error handling to handle cases where the file cannot be opened.
+1. **File Content Analyzer**:
+   - Create a SystemVerilog module with a string `FILENAME` parameter that opens the file in `"r"` mode.
+   - Read it line by line with `$fgets`, counting total lines, total non-newline characters, and space-delimited words, with error handling if opening fails.
 
-2.  **Timestamped Simulation Activity Logger**:
-    - Develop a SystemVerilog module that creates a log file named "simulation_activity.log" in write mode (`"w"`).
-    - Use `$fdisplay` to record timestamped events in the log file.
-    - Implement at least three different simulation events (e.g., "Phase 1 Started", "Data Transaction Initiated", "Error Condition Detected").
-    - For each event, use `$time` to get the current simulation time and include it in the log message in a human-readable format (e.g., `"[<time>] Event Description"`).
-    - Demonstrate the logger by triggering these events at different simulation times using delays (`#delay`).
+2. **Timestamped Simulation Activity Logger**:
+   - Create a module that opens `"simulation_activity.log"` in `"w"` mode and records at least three distinct timestamped events (`[time] TAG: description`) triggered at different simulation delays.
 
-3.  **Configuration Parameter Parser**:
-    - Create a text file named "config.txt" with key-value pairs, where each line has the format: `parameter_name=value` (e.g., `CLOCK_PERIOD=10`, `DATA_WIDTH=32`, `SIMULATION_MODE=FAST`).
-    - Develop a SystemVerilog module that reads "config.txt".
-    - Use `$fgets` to read each line.
-    - Parse each line to extract the `parameter_name` and `value`. You can use string manipulation functions (e.g., `$sscanf`, `$substr`, and `len()`) to split the line at the `=` character.
-    - Store the parsed parameters in variables or parameters within your module.
-    - Display the parsed configuration parameters and their values.
-    - Add error handling for cases like invalid file format or file open errors.
+3. **Configuration Parameter Parser**:
+   - Parse a `"config.txt"` file containing `parameter_name=value` lines (e.g., `CLOCK_PERIOD=10`, `DATA_WIDTH=32`, `SIMULATION_MODE=FAST`) using `$fgets`, `.substr()` / character scanning, and `$sscanf`, reporting malformed lines gracefully.
 
-4.  **ASCII Hex to Binary File Converter**:
-    - Create a text file named "hex_data.txt" containing ASCII hexadecimal values, one value per line (e.g., `"DE"`, `"AD"`, `"BE"`, `"EF"`).
-    - Write a SystemVerilog module that reads "hex_data.txt".
-    - For each line, read the ASCII hex value using `$fscanf` with the `%h` format specifier and store it as a byte.
-    - Open a binary file named "output.bin" in binary write mode (`"wb"`).
-    - Write the converted byte values to "output.bin" using `$fwrite` with the `%c` format specifier.
-    - Close both files.
-    - Optionally, add code to read back "output.bin" in binary read mode (`"rb"`) and display the read byte values to verify the conversion.
+4. **ASCII Hex to Binary File Converter**:
+   - Read `"hex_data.txt"` containing one hex byte per line using `$fscanf(fd, "%h", byte_val)`, write raw bytes into `"output.bin"` (`"wb"` with `"%c"`), and verify correctness by reading `"output.bin"` back with `"rb"` and `$fread`.
 
-5.  **Robust File Wrapper Module with Error Recovery (Conceptual)**:
-    - _(Conceptual Exercise - Design Outline)_ Design a SystemVerilog module that acts as a wrapper for file operations.
-    - This module should encapsulate file opening, reading, writing, and closing operations.
-    - Implement error handling within the wrapper module for all file operations (check `$fopen`, `$fgets`, `$fscanf`, `$fwrite` return values, use `$ferror`).
-    - For file open errors, implement a simple error recovery mechanism, such as attempting to open the file again with a different mode or reporting a default value if a configuration file is missing but not critical.
-    - The wrapper module should provide tasks or functions that higher-level modules can call to perform file operations without needing to directly handle low-level file operations and error checking.
-    - _(Note: Full implementation of error recovery might be simulator-dependent and could involve more advanced techniques beyond basic SystemVerilog file I/O.)_
+5. **Robust File Wrapper Module with Error Recovery**:
+   - Encapsulate file open, read, write, `$ferror` checking, and safe fallback recovery inside reusable wrapper functions/tasks so callers do not repeat boilerplate checks.
+
+---
+
+### Reference Solutions
+
+#### Exercise 1 Solution: File Content Analyzer
 
 ```systemverilog
-// Sample Solution for Exercise 2: Timestamped Data Logger (Improved)
-module timestamp_data_logger;
-  int log_file_descriptor;
-  timeunit 1ns / 1ps; // Define time unit and precision for $time
+// Sample input file "sample_text.txt":
+// Hello SystemVerilog world
+// File I/O verification
+module file_content_analyzer #(
+  parameter string FILENAME = "sample_text.txt"
+);
+  int    fd;
+  string line;
+  int    total_lines = 0;
+  int    total_chars = 0;
+  int    total_words = 0;
+
+  function automatic int count_words_in_line(string s);
+    int count = 0;
+    bit in_word = 1'b0;
+    for (int i = 0; i < s.len(); i++) begin
+      byte ch = s[i];
+      if (ch == " " || ch == "\t" || ch == "\n" || ch == "\r") begin
+        in_word = 1'b0;
+      end else if (!in_word) begin
+        in_word = 1'b1;
+        count++;
+      end
+    end
+    return count;
+  endfunction
 
   initial begin
-    log_file_descriptor = $fopen("data_log_times.log", "w"); // Open log file in write mode
-    if (log_file_descriptor == 0) $fatal(1, "Fatal Error: Log file 'data_log_times.log' creation failed.");
+    fd = $fopen(FILENAME, "r");
+    if (fd === 0) begin
+      $error("Could not open '%s' for analysis.", FILENAME);
+      $fatal(1, "Terminating file analyzer.");
+    end
+
+    while ($fgets(line, fd) != 0) begin
+      int line_len = line.len();
+      if (line_len > 0 && line[line_len-1] == "\n") line_len--;
+      if (line_len > 0 && line[line_len-1] == "\r") line_len--;
+      total_lines++;
+      total_chars += line_len;
+      total_words += count_words_in_line(line);
+    end
+    $fclose(fd);
+
+    $display("File '%s' Summary -> Lines: %0d | Chars (no LF/CR): %0d | Words: %0d",
+             FILENAME, total_lines, total_chars, total_words);
+    $finish;
+  end
+endmodule
+```
+
+#### Exercise 2 Solution: Timestamped Simulation Activity Logger
+
+```systemverilog
+module timestamp_data_logger;
+  timeunit 1ns;
+  timeprecision 1ps;
+
+  int log_fd;
+
+  task automatic log_activity_event(string tag, string event_description);
+    $fdisplay(log_fd, "[%0t] %s: %s", $time, tag, event_description);
+  endtask
+
+  initial begin
+    log_fd = $fopen("simulation_activity.log", "w");
+    if (log_fd === 0) $fatal(1, "Fatal Error: Log file 'simulation_activity.log' creation failed.");
 
     $display("--- Simulation Timestamped Logger Started ---");
-
-    fork // Use fork-join to simulate concurrent events
+    fork
       begin
-        #10ns; // Wait for 10ns
-        log_activity_event("Phase 1 Completed"); // Log "Phase 1 Completed" event
+        #10ns;
+        log_activity_event("ACTIVITY", "Phase 1 Started");
       end
       begin
-        #25ns; // Wait for 25ns
-        log_activity_event("Phase 2 Started");   // Log "Phase 2 Started" event
+        #25ns;
+        log_activity_event("ACTIVITY", "Data Transaction Initiated");
       end
       begin
         #35ns;
-        log_error_event("Data integrity check failed!"); // Log an error event
+        log_activity_event("ERROR", "Data integrity check failed!");
       end
     join
 
-    $display("--- Simulation Logger Finished - Check 'data_log_times.log' ---");
-    $fclose(log_file_descriptor); // Close the log file
+    $fflush(log_fd);
+    $fclose(log_fd);
+    $display("--- Simulation Logger Finished - Check 'simulation_activity.log' ---");
+    $finish;
   end
+endmodule
+```
 
-  // Task to log a general activity event with timestamp
-  task log_activity_event(string event_description);
-    $fdisplay(log_file_descriptor, "[%0t] ACTIVITY: %s", $time, event_description); // Log with timestamp and "ACTIVITY" prefix
-  endtask : log_activity_event
+#### Exercise 3 Solution: Configuration Parameter Parser
 
-  // Task to log an error event with timestamp
-  task log_error_event(string error_message);
-    $fdisplay(log_file_descriptor, "[%0t] ERROR: %s", $time, error_message); // Log with timestamp and "ERROR" prefix
-  endtask : log_error_event
+```systemverilog
+// Example config.txt:
+// CLOCK_PERIOD=10
+// DATA_WIDTH=32
+// SIMULATION_MODE=FAST
+module config_param_parser;
+  int    fd;
+  string line;
+  int    line_no = 0;
 
+  int    clock_period    = 20;
+  int    data_width      = 16;
+  string simulation_mode = "NORMAL";
+
+  function automatic string strip_cr_lf(string s);
+    int n = s.len();
+    while (n > 0 && (s[n-1] == "\n" || s[n-1] == "\r" || s[n-1] == " ")) n--;
+    return (n > 0) ? s.substr(0, n-1) : "";
+  endfunction
+
+  initial begin
+    fd = $fopen("config.txt", "r");
+    if (fd === 0) $fatal(1, "Unable to open 'config.txt'.");
+
+    while ($fgets(line, fd) != 0) begin
+      string clean = strip_cr_lf(line);
+      int eq_idx = -1;
+      line_no++;
+      if (clean == "" || clean[0] == "#") continue;
+
+      for (int i = 0; i < clean.len(); i++) begin
+        if (clean[i] == "=") begin
+          eq_idx = i;
+          break;
+        end
+      end
+
+      if (eq_idx <= 0 || eq_idx >= clean.len()-1) begin
+        $warning("Line %0d malformed (expected key=value): '%s'", line_no, clean);
+        continue;
+      end
+
+      begin
+        string key = clean.substr(0, eq_idx-1);
+        string val = clean.substr(eq_idx+1, clean.len()-1);
+        case (key)
+          "CLOCK_PERIOD":    if ($sscanf(val, "%d", clock_period) != 1) $warning("Invalid int on line %0d", line_no);
+          "DATA_WIDTH":      if ($sscanf(val, "%d", data_width)   != 1) $warning("Invalid int on line %0d", line_no);
+          "SIMULATION_MODE": simulation_mode = val;
+          default:           $warning("Unknown config key '%s' on line %0d.", key, line_no);
+        endcase
+      end
+    end
+    $fclose(fd);
+
+    $display("Parsed Config -> CLOCK_PERIOD=%0d, DATA_WIDTH=%0d, SIMULATION_MODE=%s",
+             clock_period, data_width, simulation_mode);
+    $finish;
+  end
+endmodule
+```
+
+#### Exercise 4 Solution: ASCII Hex to Binary File Converter
+
+```systemverilog
+// Example hex_data.txt:
+// DE
+// AD
+// BE
+// EF
+module hex_to_bin_converter;
+  int       in_fd, bin_fd;
+  bit [7:0] hex_val;
+  byte      tx_bytes[$];
+  byte      rx_bytes[];
+  int       bytes_read;
+
+  initial begin
+    // 1. Read ASCII hex tokens
+    in_fd = $fopen("hex_data.txt", "r");
+    if (in_fd === 0) $fatal(1, "Cannot open 'hex_data.txt'.");
+
+    while ($fscanf(in_fd, "%h", hex_val) == 1) begin
+      tx_bytes.push_back(byte'(hex_val));
+    end
+    $fclose(in_fd);
+
+    // 2. Write raw bytes to output.bin
+    bin_fd = $fopen("output.bin", "wb");
+    if (bin_fd === 0) $fatal(1, "Cannot open 'output.bin' for binary write.");
+
+    foreach (tx_bytes[i]) $fwrite(bin_fd, "%c", tx_bytes[i]);
+    $fclose(bin_fd);
+
+    // 3. Read back binary file to verify
+    bin_fd = $fopen("output.bin", "rb");
+    if (bin_fd === 0) $fatal(1, "Cannot open 'output.bin' for verification.");
+
+    rx_bytes = new[tx_bytes.size()];
+    bytes_read = $fread(rx_bytes, bin_fd);
+    $fclose(bin_fd);
+
+    if (bytes_read != tx_bytes.size()) begin
+      $error("Verification size mismatch: expected %0d, got %0d.", tx_bytes.size(), bytes_read);
+    end else begin
+      foreach (rx_bytes[i]) $display("Verified Byte[%0d] = 0x%02h", i, rx_bytes[i]);
+    end
+    $finish;
+  end
+endmodule
+```
+
+#### Exercise 5 Solution: Robust File Wrapper Module with Error Recovery
+
+```systemverilog
+module safe_file_wrapper_demo;
+  function automatic int safe_open_with_fallback(string primary_path, string fallback_path, string mode);
+    int fd = $fopen(primary_path, mode);
+    if (fd !== 0) return fd;
+
+    $warning("Could not open '%s' (mode '%s'). Trying fallback '%s'.",
+             primary_path, mode, fallback_path);
+    fd = $fopen(fallback_path, mode);
+    if (fd === 0) begin
+      $error("Fallback open also failed for '%s'.", fallback_path);
+    end
+    return fd;
+  endfunction
+
+  task automatic safe_write_line(int fd, string msg);
+    int    err_code;
+    string err_msg;
+    if (fd === 0) begin
+      $error("safe_write_line called with invalid handle (0).");
+      return;
+    end
+    $fdisplay(fd, "%s", msg);
+    err_code = $ferror(fd, err_msg);
+    if (err_code != 0) begin
+      $error("Write error (%0d): %s", err_code, err_msg);
+    end
+  endtask
+
+  task automatic safe_close(ref int fd);
+    if (fd !== 0) begin
+      $fflush(fd);
+      $fclose(fd);
+      fd = 0; // Poison handle to prevent double-close bugs
+    end
+  endtask
+
+  initial begin
+    int log_fd = safe_open_with_fallback("/nonexistent_dir/run.log", "fallback_run.log", "w");
+    if (log_fd !== 0) begin
+      safe_write_line(log_fd, "Wrapper log initialized successfully.");
+      safe_close(log_fd);
+    end
+    $finish;
+  end
 endmodule
 ```
 

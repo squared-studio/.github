@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 400" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGradCh22A" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#080c14" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <filter id="shadowCh22A" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+    <marker id="arrowCyan22A" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8"/>
+    </marker>
+    <marker id="arrowGreen22A" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#34d399"/>
+    </marker>
+  </defs>
+
+  <rect width="920" height="400" rx="14" fill="url(#bgGradCh22A)"/>
+
+  <!-- Title -->
+  <text x="460" y="30" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="20" font-weight="700" fill="#f8fafc" text-anchor="middle">SystemVerilog Preprocessor Expansion &amp; Compilation-Unit Scope</text>
+  <text x="460" y="50" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13" fill="#94a3b8" text-anchor="middle">Macros perform zero-type textual substitution before compilation units are parsed into packages and modules</text>
+
+  <!-- Left Panel: Phase 1 Text Preprocessor -->
+  <g transform="translate(24, 72)">
+    <rect width="424" height="304" rx="10" fill="#0f172a" stroke="#f59e0b" stroke-width="1.8" filter="url(#shadowCh22A)"/>
+    <rect width="424" height="36" rx="10" fill="#78350f"/>
+    <rect x="0" y="24" width="424" height="12" fill="#78350f"/>
+    <text x="212" y="23" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13" font-weight="700" fill="#fef3c7" text-anchor="middle">Phase 1: Text Preprocessor (Zero SV Awareness)</text>
+
+    <rect x="14" y="48" width="396" height="90" rx="7" fill="#1e1b18" stroke="#d97706"/>
+    <text x="24" y="68" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" font-weight="700" fill="#fbbf24">Directives Resolved Strictly Top-to-Bottom:</text>
+    <text x="24" y="88" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#fde68a">1. `include "defs.svh"   (text paste inline)</text>
+    <text x="24" y="106" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#fde68a">2. `define / `undef      (macro table entry)</text>
+    <text x="24" y="124" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#fde68a">3. `ifdef / `ifndef / `elsif / `else / `endif</text>
+
+    <!-- Header Guard Box -->
+    <rect x="14" y="150" width="396" height="88" rx="7" fill="#0c1c2e" stroke="#38bdf8"/>
+    <text x="24" y="170" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="700" fill="#38bdf8">Standard Include Guard Pattern (defs.svh):</text>
+    <text x="24" y="190" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#e0f2fe">`ifndef DEFS_SVH</text>
+    <text x="24" y="207" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#7dd3fc">`define DEFS_SVH</text>
+    <text x="24" y="224" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#94a3b8">  // shared macros &amp; defs ...  `endif</text>
+
+    <rect x="14" y="248" width="396" height="44" rx="6" fill="#451a03" stroke="#f59e0b"/>
+    <text x="24" y="266" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" font-weight="700" fill="#fcd34d">No Module or Package Containment:</text>
+    <text x="24" y="282" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#fde68a">Macros bleed across files in the SAME compilation unit unless `undef'd.</text>
+  </g>
+
+  <path d="M 452 224 L 488 224" stroke="#34d399" stroke-width="2.5" marker-end="url(#arrowGreen22A)"/>
+
+  <!-- Right Panel: Phase 2 Compiler & Compilation Unit Isolation -->
+  <g transform="translate(492, 72)">
+    <rect width="404" height="304" rx="10" fill="#0f172a" stroke="#10b981" stroke-width="1.8" filter="url(#shadowCh22A)"/>
+    <rect width="404" height="36" rx="10" fill="#065f46"/>
+    <rect x="0" y="24" width="404" height="12" fill="#065f46"/>
+    <text x="202" y="23" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13" font-weight="700" fill="#d1fae5" text-anchor="middle">Phase 2: Compilation Units &amp; SV Parser</text>
+
+    <!-- Multifile Compilation Unit -->
+    <rect x="14" y="48" width="376" height="106" rx="7" fill="#072c22" stroke="#10b981"/>
+    <text x="24" y="68" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" font-weight="700" fill="#34d399">Single Compilation Unit (-mfcu / multi-file):</text>
+    <text x="24" y="88" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#d1fae5">file1.sv (`define W 32) --&gt; visible in file2.sv</text>
+    <text x="24" y="108" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#6ee7b7">Separate Compilation (-sfcu / per-file):</text>
+    <text x="24" y="126" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#fda4af">file1.sv (`define W 32) -X-&gt; NOT seen in file2.sv!</text>
+    <text x="24" y="143" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="9.5" fill="#a7f3d0">Fix: Always `include "defs.svh" explicitly where needed.</text>
+
+    <!-- CLI Overrides & Parser Stage -->
+    <rect x="14" y="166" width="376" height="126" rx="7" fill="#1e1b4b" stroke="#818cf8"/>
+    <text x="24" y="186" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="700" fill="#c7d2fe">Command-Line Compile Macros (+define+...):</text>
+    <text x="24" y="206" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#e0e7ff">vcs/questa/xrun: +define+DEBUG_MODE+WIDTH=64</text>
+    <text x="24" y="226" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#e0e7ff">verilator/iverilog: -DDEBUG_MODE -DWIDTH=64</text>
+    <text x="24" y="252" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#a5b4fc">After preprocessing completes, the SV parser checks</text>
+    <text x="24" y="270" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#a5b4fc">types, package scopes, parameters, and syntax errors.</text>
+  </g>
+</svg>

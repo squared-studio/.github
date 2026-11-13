@@ -1,0 +1,156 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 460" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGradHdvl" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#080c14" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <linearGradient id="rtlCardGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#0c2438" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <linearGradient id="verifCardGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#072c22" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <filter id="shadowHdvl" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+    <marker id="arrowCyan" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#38bdf8"/>
+    </marker>
+    <marker id="arrowEmerald" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#34d399"/>
+    </marker>
+    <marker id="arrowAmber" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#f59e0b"/>
+    </marker>
+  </defs>
+
+  <rect width="920" height="460" rx="14" fill="url(#bgGradHdvl)"/>
+
+  <!-- Title -->
+  <text x="460" y="34" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="20" font-weight="700" fill="#f8fafc" text-anchor="middle">SystemVerilog: One Unified Language Across Two Engineering Domains</text>
+  <text x="460" y="56" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13" fill="#94a3b8" text-anchor="middle">IEEE 1800 Hardware Description and Verification Language (HDVL) Architecture</text>
+
+  <!-- Left Card: Synthesizable Design / RTL Domain -->
+  <g transform="translate(24, 78)">
+    <rect width="286" height="276" rx="10" fill="url(#rtlCardGrad)" stroke="#38bdf8" stroke-width="1.8" filter="url(#shadowHdvl)"/>
+    <rect width="286" height="40" rx="10" fill="#075985"/>
+    <rect x="0" y="28" width="286" height="12" fill="#075985"/>
+    <text x="143" y="25" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="14" font-weight="700" fill="#e0f2fe" text-anchor="middle">Synthesizable Design (RTL)</text>
+
+    <g transform="translate(14, 54)">
+      <rect width="258" height="46" rx="6" fill="#0c1524" stroke="#1e3a5f" stroke-width="1"/>
+      <text x="12" y="19" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" font-weight="700" fill="#38bdf8">module &amp; parameter</text>
+      <text x="12" y="36" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#cbd5e1">Hardware hierarchy, ports &amp; parameterization</text>
+    </g>
+
+    <g transform="translate(14, 108)">
+      <rect width="258" height="46" rx="6" fill="#0c1524" stroke="#1e3a5f" stroke-width="1"/>
+      <text x="12" y="19" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" font-weight="700" fill="#38bdf8">always_ff / always_comb / always_latch</text>
+      <text x="12" y="36" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#cbd5e1">Explicit sequential, comb &amp; latch intent</text>
+    </g>
+
+    <g transform="translate(14, 162)">
+      <rect width="258" height="46" rx="6" fill="#0c1524" stroke="#1e3a5f" stroke-width="1"/>
+      <text x="12" y="19" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" font-weight="700" fill="#38bdf8">struct packed, enum &amp; [N-1:0]</text>
+      <text x="12" y="36" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#cbd5e1">Bit-accurate hardware buses &amp; FSM states</text>
+    </g>
+
+    <g transform="translate(14, 216)">
+      <rect width="258" height="46" rx="6" fill="#0c1524" stroke="#1e3a5f" stroke-width="1"/>
+      <text x="12" y="19" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" font-weight="700" fill="#38bdf8">assign &amp; generate</text>
+      <text x="12" y="36" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#cbd5e1">Continuous wiring &amp; structural replication</text>
+    </g>
+  </g>
+
+  <!-- Center Bridge Column: Shared Foundation -->
+  <g transform="translate(332, 78)">
+    <rect width="256" height="276" rx="10" fill="#131926" stroke="#f59e0b" stroke-width="1.8" filter="url(#shadowHdvl)"/>
+    <rect width="256" height="40" rx="10" fill="#78350f"/>
+    <rect x="0" y="28" width="256" height="12" fill="#78350f"/>
+    <text x="128" y="25" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="14" font-weight="700" fill="#fef3c7" text-anchor="middle">Shared Language Bridge</text>
+
+    <g transform="translate(14, 54)">
+      <rect width="228" height="46" rx="6" fill="#1c1917" stroke="#78350f" stroke-width="1"/>
+      <text x="12" y="19" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" font-weight="700" fill="#fbbf24">interface &amp; modport</text>
+      <text x="12" y="36" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#e2e8f0">Connects RTL ports to testbench</text>
+    </g>
+
+    <g transform="translate(14, 108)">
+      <rect width="228" height="46" rx="6" fill="#1c1917" stroke="#78350f" stroke-width="1"/>
+      <text x="12" y="19" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" font-weight="700" fill="#fbbf24">package &amp; typedef</text>
+      <text x="12" y="36" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#e2e8f0">Shared constants, structs &amp; types</text>
+    </g>
+
+    <g transform="translate(14, 162)">
+      <rect width="228" height="46" rx="6" fill="#1c1917" stroke="#78350f" stroke-width="1"/>
+      <text x="12" y="19" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" font-weight="700" fill="#fbbf24">logic (4-state) &amp; bit / int</text>
+      <text x="12" y="36" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#e2e8f0">0, 1, X, Z modeling vs. 2-state speed</text>
+    </g>
+
+    <g transform="translate(14, 216)">
+      <rect width="228" height="46" rx="6" fill="#1c1917" stroke="#78350f" stroke-width="1"/>
+      <text x="12" y="19" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" font-weight="700" fill="#fbbf24">assert / assume / cover</text>
+      <text x="12" y="36" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#e2e8f0">Executable specification &amp; SVA</text>
+    </g>
+  </g>
+
+  <!-- Right Card: Verification / Simulation Domain -->
+  <g transform="translate(610, 78)">
+    <rect width="286" height="276" rx="10" fill="url(#verifCardGrad)" stroke="#34d399" stroke-width="1.8" filter="url(#shadowHdvl)"/>
+    <rect width="286" height="40" rx="10" fill="#065f46"/>
+    <rect x="0" y="28" width="286" height="12" fill="#065f46"/>
+    <text x="143" y="25" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="14" font-weight="700" fill="#d1fae5" text-anchor="middle">Verification (Simulation-Only)</text>
+
+    <g transform="translate(14, 54)">
+      <rect width="258" height="46" rx="6" fill="#0c1524" stroke="#065f46" stroke-width="1"/>
+      <text x="12" y="19" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" font-weight="700" fill="#34d399">class, extends &amp; virtual</text>
+      <text x="12" y="36" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#cbd5e1">OOP encapsulation, inheritance &amp; UVM</text>
+    </g>
+
+    <g transform="translate(14, 108)">
+      <rect width="258" height="46" rx="6" fill="#0c1524" stroke="#065f46" stroke-width="1"/>
+      <text x="12" y="19" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" font-weight="700" fill="#34d399">rand, constraint &amp; randomize()</text>
+      <text x="12" y="36" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#cbd5e1">Constrained-random stimulus generation</text>
+    </g>
+
+    <g transform="translate(14, 162)">
+      <rect width="258" height="46" rx="6" fill="#0c1524" stroke="#065f46" stroke-width="1"/>
+      <text x="12" y="19" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" font-weight="700" fill="#34d399">queue [$], dynamic [], assoc [*]</text>
+      <text x="12" y="36" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#cbd5e1">Scoreboard buffers &amp; sparse memory models</text>
+    </g>
+
+    <g transform="translate(14, 216)">
+      <rect width="258" height="46" rx="6" fill="#0c1524" stroke="#065f46" stroke-width="1"/>
+      <text x="12" y="19" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" font-weight="700" fill="#34d399">covergroup, mailbox &amp; fork-join</text>
+      <text x="12" y="36" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#cbd5e1">Functional coverage &amp; concurrent threads</text>
+    </g>
+  </g>
+
+  <!-- Horizontal Bridge Connectors -->
+  <line x1="310" y1="216" x2="328" y2="216" stroke="#f59e0b" stroke-width="2" marker-end="url(#arrowAmber)"/>
+  <line x1="610" y1="216" x2="592" y2="216" stroke="#f59e0b" stroke-width="2" marker-end="url(#arrowAmber)"/>
+
+  <!-- Downward Arrows to Tool Flows -->
+  <line x1="167" y1="354" x2="167" y2="380" stroke="#38bdf8" stroke-width="2.2" marker-end="url(#arrowCyan)"/>
+  <line x1="460" y1="354" x2="460" y2="380" stroke="#f59e0b" stroke-width="2.2" marker-end="url(#arrowAmber)"/>
+  <line x1="753" y1="354" x2="753" y2="380" stroke="#34d399" stroke-width="2.2" marker-end="url(#arrowEmerald)"/>
+
+  <!-- Bottom Target Boxes -->
+  <g transform="translate(24, 386)">
+    <rect width="380" height="54" rx="8" fill="#0f1c30" stroke="#38bdf8" stroke-width="1.5"/>
+    <text x="190" y="22" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13" font-weight="700" fill="#38bdf8" text-anchor="middle">Logic Synthesis &amp; Physical Implementation</text>
+    <text x="190" y="40" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#cbd5e1" text-anchor="middle">Gates, Flip-Flops, SRAM, FPGA Bitstream / ASIC GDSII</text>
+  </g>
+
+  <g transform="translate(516, 386)">
+    <rect width="380" height="54" rx="8" fill="#0d2320" stroke="#34d399" stroke-width="1.5"/>
+    <text x="190" y="22" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13" font-weight="700" fill="#34d399" text-anchor="middle">Simulation &amp; Formal Verification Engines</text>
+    <text x="190" y="40" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#cbd5e1" text-anchor="middle">Stimulus, Checking, Coverage Reports &amp; Counterexamples</text>
+  </g>
+
+  <!-- Center Arrow Split to Bottom Boxes -->
+  <path d="M 460 384 L 412 413" fill="none" stroke="#f59e0b" stroke-width="1.8" stroke-dasharray="4 3"/>
+  <path d="M 460 384 L 508 413" fill="none" stroke="#f59e0b" stroke-width="1.8" stroke-dasharray="4 3"/>
+</svg>

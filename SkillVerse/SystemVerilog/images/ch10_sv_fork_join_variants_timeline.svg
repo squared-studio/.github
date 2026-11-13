@@ -1,0 +1,139 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 430" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGradCh10A" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#080c14" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <filter id="shadowCh10A" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+  </defs>
+
+  <rect width="920" height="430" rx="14" fill="url(#bgGradCh10A)"/>
+
+  <!-- Title -->
+  <text x="460" y="34" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="20" font-weight="700" fill="#f8fafc" text-anchor="middle">SystemVerilog Fork-Join Variants: When Does the Parent Resume?</text>
+  <text x="460" y="56" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13" fill="#94a3b8" text-anchor="middle">Comparing fork ... join, join_any, and join_none for Branch A (#5) and Branch B (#12)</text>
+
+  <!-- Card 1: fork ... join -->
+  <g transform="translate(24, 78)">
+    <rect width="278" height="328" rx="10" fill="#0f172a" stroke="#38bdf8" stroke-width="1.8" filter="url(#shadowCh10A)"/>
+    <rect width="278" height="40" rx="10" fill="#075985"/>
+    <rect x="0" y="28" width="278" height="12" fill="#075985"/>
+    <text x="139" y="25" font-family="'JetBrains Mono', Consolas, monospace" font-size="13.5" font-weight="700" fill="#e0f2fe" text-anchor="middle">1. fork ... join</text>
+
+    <text x="139" y="60" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="700" fill="#38bdf8" text-anchor="middle">Wait for ALL Branches (t = 12)</text>
+
+    <!-- Timeline bars -->
+    <g transform="translate(16, 78)">
+      <!-- Time markers -->
+      <text x="0" y="12" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#94a3b8">t=0</text>
+      <text x="95" y="12" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#94a3b8" text-anchor="middle">t=5</text>
+      <text x="198" y="12" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#38bdf8" font-weight="700" text-anchor="middle">t=12</text>
+
+      <!-- Branch A (#5) -->
+      <text x="0" y="34" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#cbd5e1">Branch A (#5)</text>
+      <rect x="0" y="40" width="95" height="22" rx="4" fill="#0c4a6e" stroke="#38bdf8"/>
+      <text x="47" y="55" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#e0f2fe" text-anchor="middle">running</text>
+
+      <!-- Branch B (#12) -->
+      <text x="0" y="82" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#cbd5e1">Branch B (#12)</text>
+      <rect x="0" y="88" width="198" height="22" rx="4" fill="#0c4a6e" stroke="#38bdf8"/>
+      <text x="99" y="103" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#e0f2fe" text-anchor="middle">running</text>
+
+      <!-- Parent -->
+      <text x="0" y="130" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#fbbf24" font-weight="700">Parent Thread</text>
+      <rect x="0" y="136" width="198" height="22" rx="4" fill="#2a0a14" stroke="#f43f5e" stroke-dasharray="4,2"/>
+      <text x="99" y="151" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#fda4af" text-anchor="middle">blocked</text>
+      <rect x="198" y="136" width="48" height="22" rx="4" fill="#064e3b" stroke="#10b981"/>
+      <text x="222" y="151" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="9.5" fill="#a7f3d0" text-anchor="middle">resumes</text>
+
+      <line x1="198" y1="20" x2="198" y2="164" stroke="#38bdf8" stroke-width="1.5" stroke-dasharray="3,2"/>
+    </g>
+
+    <rect x="14" y="256" width="250" height="58" rx="6" fill="#091526" stroke="#1e3a5f"/>
+    <text x="24" y="276" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" font-weight="700" fill="#7dd3fc">Use When:</text>
+    <text x="24" y="294" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#cbd5e1">Every parallel task has a definite end</text>
+    <text x="24" y="307" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#94a3b8">and all must finish before continuing.</text>
+  </g>
+
+  <!-- Card 2: fork ... join_any -->
+  <g transform="translate(321, 78)">
+    <rect width="278" height="328" rx="10" fill="#0f172a" stroke="#f59e0b" stroke-width="1.8" filter="url(#shadowCh10A)"/>
+    <rect width="278" height="40" rx="10" fill="#78350f"/>
+    <rect x="0" y="28" width="278" height="12" fill="#78350f"/>
+    <text x="139" y="25" font-family="'JetBrains Mono', Consolas, monospace" font-size="13.5" font-weight="700" fill="#fef3c7" text-anchor="middle">2. fork ... join_any</text>
+
+    <text x="139" y="60" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="700" fill="#fbbf24" text-anchor="middle">Wait for FIRST Branch (t = 5)</text>
+
+    <!-- Timeline bars -->
+    <g transform="translate(16, 78)">
+      <text x="0" y="12" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#94a3b8">t=0</text>
+      <text x="95" y="12" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#fbbf24" font-weight="700" text-anchor="middle">t=5</text>
+      <text x="198" y="12" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#94a3b8" text-anchor="middle">t=12</text>
+
+      <!-- Branch A (#5) -->
+      <text x="0" y="34" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#cbd5e1">Branch A (#5) — Winner</text>
+      <rect x="0" y="40" width="95" height="22" rx="4" fill="#064e3b" stroke="#10b981"/>
+      <text x="47" y="55" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#a7f3d0" text-anchor="middle">done @ 5</text>
+
+      <!-- Branch B (#12) -->
+      <text x="0" y="82" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#cbd5e1">Branch B (#12) — Still Active!</text>
+      <rect x="0" y="88" width="198" height="22" rx="4" fill="#451a03" stroke="#f59e0b"/>
+      <text x="99" y="103" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#fde68a" text-anchor="middle">keeps running unless disabled</text>
+
+      <!-- Parent -->
+      <text x="0" y="130" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#fbbf24" font-weight="700">Parent Thread</text>
+      <rect x="0" y="136" width="95" height="22" rx="4" fill="#2a0a14" stroke="#f43f5e" stroke-dasharray="4,2"/>
+      <text x="47" y="151" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#fda4af" text-anchor="middle">blocked</text>
+      <rect x="95" y="136" width="151" height="22" rx="4" fill="#064e3b" stroke="#10b981"/>
+      <text x="170" y="151" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#a7f3d0" text-anchor="middle">resumes at t=5!</text>
+
+      <line x1="95" y1="20" x2="95" y2="164" stroke="#fbbf24" stroke-width="1.5" stroke-dasharray="3,2"/>
+    </g>
+
+    <rect x="14" y="256" width="250" height="58" rx="6" fill="#181208" stroke="#92400e"/>
+    <text x="24" y="276" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" font-weight="700" fill="#fbbf24">Use When:</text>
+    <text x="24" y="294" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#cbd5e1">Racing completion vs. timeout (must</text>
+    <text x="24" y="307" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#fde68a">disable remaining branches explicitly).</text>
+  </g>
+
+  <!-- Card 3: fork ... join_none -->
+  <g transform="translate(618, 78)">
+    <rect width="278" height="328" rx="10" fill="#0f172a" stroke="#10b981" stroke-width="1.8" filter="url(#shadowCh10A)"/>
+    <rect width="278" height="40" rx="10" fill="#065f46"/>
+    <rect x="0" y="28" width="278" height="12" fill="#065f46"/>
+    <text x="139" y="25" font-family="'JetBrains Mono', Consolas, monospace" font-size="13.5" font-weight="700" fill="#d1fae5" text-anchor="middle">3. fork ... join_none</text>
+
+    <text x="139" y="60" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="700" fill="#34d399" text-anchor="middle">Parent Continues Immediately (t = 0)</text>
+
+    <!-- Timeline bars -->
+    <g transform="translate(16, 78)">
+      <text x="0" y="12" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#34d399" font-weight="700">t=0</text>
+      <text x="95" y="12" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#94a3b8" text-anchor="middle">t=5</text>
+      <text x="198" y="12" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#94a3b8" text-anchor="middle">t=12</text>
+
+      <!-- Branch A (#5) -->
+      <text x="0" y="34" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#cbd5e1">Branch A (#5) — Background</text>
+      <rect x="0" y="40" width="95" height="22" rx="4" fill="#072c22" stroke="#10b981"/>
+      <text x="47" y="55" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#a7f3d0" text-anchor="middle">background</text>
+
+      <!-- Branch B (#12) -->
+      <text x="0" y="82" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#cbd5e1">Branch B (#12) — Background</text>
+      <rect x="0" y="88" width="198" height="22" rx="4" fill="#072c22" stroke="#10b981"/>
+      <text x="99" y="103" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#a7f3d0" text-anchor="middle">runs independently</text>
+
+      <!-- Parent -->
+      <text x="0" y="130" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#34d399" font-weight="700">Parent Thread</text>
+      <rect x="0" y="136" width="246" height="22" rx="4" fill="#064e3b" stroke="#34d399"/>
+      <text x="123" y="151" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#d1fae5" text-anchor="middle">no wait! runs at t=0; children start on block</text>
+
+      <line x1="1" y1="20" x2="1" y2="164" stroke="#34d399" stroke-width="2" stroke-dasharray="3,2"/>
+    </g>
+
+    <rect x="14" y="256" width="250" height="58" rx="6" fill="#072c22" stroke="#047857"/>
+    <text x="24" y="276" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" font-weight="700" fill="#6ee7b7">Use When:</text>
+    <text x="24" y="294" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#cbd5e1">Launching background monitors/workers</text>
+    <text x="24" y="307" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#94a3b8">(sync later with 'wait fork;' if needed).</text>
+  </g>
+</svg>

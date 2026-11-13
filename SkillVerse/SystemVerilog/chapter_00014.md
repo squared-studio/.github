@@ -4,6 +4,8 @@
 
 SystemVerilog interfaces represent a significant advancement in hardware design methodology, fundamentally changing how modules communicate and interact. In essence, interfaces act as **communication contracts**, encapsulating a bundle of related signals and the protocols that govern their interaction within a single, reusable entity. This approach offers a powerful alternative to traditional, often verbose and error-prone, port lists, especially as designs grow in complexity.
 
+![SystemVerilog Interface Revolution Traditional Wiring vs Interface Bundle](images/ch14_sv_traditional_ports_vs_interface_bundle.svg)
+
 **Key Advantages of Using Interfaces:**
 
 - **Reduced Redundancy and Complexity**: Interfaces eliminate the need to repeatedly declare the same sets of signals in module port lists. Instead of listing individual signals (like `clk`, `rst_n`, `data`, `valid`, `ready`) for every module that uses a particular communication protocol, you define them once within an interface. This drastically reduces code duplication and makes module declarations cleaner and more manageable.
@@ -59,6 +61,8 @@ endinterface
 ## Implementing Interfaces in Modules: Connecting and Using Communication Contracts
 
 To use an interface, modules declare interface instances as ports in their port lists. This establishes a connection between the module and the communication channel defined by the interface.
+
+![Interface Anatomy and Top Level Module Binding](images/ch14_sv_interface_anatomy_and_module_binding.svg)
 
 ### Module Connection Syntax with Interfaces
 
@@ -118,6 +122,8 @@ In this example:
 ## Modports: Enforcing Directionality and Access Control within Interfaces
 
 Modports (Module Ports within Interfaces) are a powerful feature of SystemVerilog interfaces that provide **directional control** and **access policies** for interface signals. Modports define different "views" or perspectives of an interface, specifying which signals are inputs and outputs from the viewpoint of a particular type of module connecting to the interface.
+
+![Enforcing Signal Directionality with Modports Source Sink Passive Monitor Views](images/ch14_sv_modport_directional_views.svg)
 
 ### The Importance of Modports: Clarity, Error Prevention, and Reusability
 
@@ -254,6 +260,102 @@ endmodule
 1.  Complete the `memory_controller` and `memory_array` modules to implement basic memory read and write operations using the `memory_if` interface.
 2.  Write a testbench in `top_memory_system` to drive the `memory_if` signals and verify memory read and write functionality.
 
+**Reference Solution (using `wire [31:0] data` for bidirectional tristate bus sharing):**
+
+```systemverilog
+interface memory_if;
+  logic        clk;
+  logic        cs_n;
+  logic        we_n;
+  logic [15:0] addr;
+  wire  [31:0] data; // Net type required for bidirectional multi-driver tristate bus
+endinterface
+
+module memory_controller(memory_if mem_intf);
+  logic [31:0] drive_data;
+  logic        drive_en;
+
+  assign mem_intf.data = drive_en ? drive_data : 32'hZZZZ_ZZZZ;
+
+  task automatic write_word(input logic [15:0] a, input logic [31:0] d);
+    @(negedge mem_intf.clk);
+    mem_intf.cs_n <= 1'b0;
+    mem_intf.we_n <= 1'b0;
+    mem_intf.addr <= a;
+    drive_data    <= d;
+    drive_en      <= 1'b1;
+    @(posedge mem_intf.clk);
+    @(negedge mem_intf.clk);
+    mem_intf.cs_n <= 1'b1;
+    mem_intf.we_n <= 1'b1;
+    drive_en      <= 1'b0;
+  endtask
+
+  task automatic read_word(input logic [15:0] a, output logic [31:0] d);
+    @(negedge mem_intf.clk);
+    drive_en      <= 1'b0;
+    mem_intf.cs_n <= 1'b0;
+    mem_intf.we_n <= 1'b1;
+    mem_intf.addr <= a;
+    @(posedge mem_intf.clk);
+    #1;
+    d = mem_intf.data;
+    @(negedge mem_intf.clk);
+    mem_intf.cs_n <= 1'b1;
+  endtask
+
+  initial begin
+    mem_intf.cs_n = 1'b1;
+    mem_intf.we_n = 1'b1;
+    mem_intf.addr = 16'h0000;
+    drive_data    = 32'h0;
+    drive_en      = 1'b0;
+  end
+endmodule
+
+module memory_array(memory_if mem_intf);
+  logic [31:0] mem [0:255];
+  logic [31:0] rdata_reg;
+  logic        read_oe;
+
+  assign mem_intf.data = read_oe ? rdata_reg : 32'hZZZZ_ZZZZ;
+
+  always_ff @(posedge mem_intf.clk) begin
+    if (!mem_intf.cs_n && !mem_intf.we_n) begin
+      mem[mem_intf.addr[7:0]] <= mem_intf.data;
+    end
+  end
+
+  always_comb begin
+    read_oe   = (!mem_intf.cs_n && mem_intf.we_n);
+    rdata_reg = mem[mem_intf.addr[7:0]];
+  end
+endmodule
+
+module top_memory_system;
+  memory_if         memory_bus();
+  memory_controller ctrl (.mem_intf(memory_bus));
+  memory_array      mem  (.mem_intf(memory_bus));
+
+  initial begin
+    memory_bus.clk = 1'b0;
+    forever #5 memory_bus.clk = ~memory_bus.clk;
+  end
+
+  initial begin
+    logic [31:0] rd_val;
+    #12;
+    ctrl.write_word(16'h000A, 32'hDEAD_BEEF);
+    ctrl.read_word(16'h000A, rd_val);
+    assert (rd_val === 32'hDEAD_BEEF)
+      $display("[%0t] Memory PASS: read 0x%08h", $time, rd_val);
+    else
+      $error("[%0t] Memory FAIL: got 0x%08h", $time, rd_val);
+    $finish;
+  end
+endmodule
+```
+
 ### Exercise 2: Creating a Direction-Controlled UART Interface with Modports
 
 **Task**: Implement a UART (Universal Asynchronous Receiver/Transmitter) interface using modports to define directions for DTE (Data Terminal Equipment) and DCE (Data Communication Equipment) connections.
@@ -302,9 +404,74 @@ endmodule
 1.  Complete the `uart_transmitter` and `uart_receiver` modules, using the `DTE_port` and `DCE_port` modports respectively, to implement basic UART communication.
 2.  Write a testbench in `top_uart_system` to drive the `uart_if` signals and verify UART data transmission and reception.
 
+**Reference Solution:**
+
+```systemverilog
+module uart_transmitter(uart_if.DTE_port uart_dte_intf);
+  task automatic send_byte(input logic [7:0] data_byte);
+    logic [9:0] frame;
+    frame = {1'b1, data_byte, 1'b0}; // Stop, 8 data bits LSB-first, Start
+    wait (!uart_dte_intf.rts);        // Respect DCE ready-to-receive flow control
+    for (int i = 0; i < 10; i++) begin
+      @(posedge uart_dte_intf.clk);
+      uart_dte_intf.tx <= frame[i];
+    end
+    @(posedge uart_dte_intf.clk);
+    uart_dte_intf.tx <= 1'b1; // Idle high
+  endtask
+
+  initial begin
+    uart_dte_intf.tx  = 1'b1;
+    uart_dte_intf.cts = 1'b0;
+  end
+endmodule
+
+module uart_receiver(uart_if.DCE_port uart_dce_intf);
+  logic [7:0] last_rx_byte;
+  bit         rx_valid = 1'b0;
+
+  initial begin
+    uart_dce_intf.clk = 1'b0;
+    forever #5 uart_dce_intf.clk = ~uart_dce_intf.clk;
+  end
+
+  initial begin
+    uart_dce_intf.rts = 1'b0; // Ready to receive
+    uart_dce_intf.rx  = 1'b1;
+    forever begin
+      @(posedge uart_dce_intf.clk);
+      if (uart_dce_intf.tx === 1'b0) begin // Detected start bit
+        for (int i = 0; i < 8; i++) begin
+          @(posedge uart_dce_intf.clk);
+          last_rx_byte[i] = uart_dce_intf.tx;
+        end
+        @(posedge uart_dce_intf.clk); // Stop bit
+        rx_valid = (uart_dce_intf.tx === 1'b1);
+        $display("[%0t] DCE RX decoded byte: 0x%02h (valid=%0b)", $time, last_rx_byte, rx_valid);
+      end
+    end
+  end
+endmodule
+
+module top_uart_system;
+  uart_if          uart_bus();
+  uart_transmitter tx_unit (.uart_dte_intf(uart_bus));
+  uart_receiver    rx_unit (.uart_dce_intf(uart_bus));
+
+  initial begin
+    #20;
+    tx_unit.send_byte(8'h5A);
+    #40;
+    $finish;
+  end
+endmodule
+```
+
 ### Exercise 3: Creating a Parameterized AXI-Lite Interface
 
 **Challenge**: Design a parameterized AXI-Lite interface to support configurable address and data widths.
+
+![Parameterized 5 Channel AXI Lite Interface Architecture](images/ch14_sv_axi_lite_5channel_interface.svg)
 
 ```systemverilog
 interface axi_lite_if #(parameter ADDR_WIDTH = 32, parameter DATA_WIDTH = 32);
@@ -377,6 +544,109 @@ endmodule
 3.  Implement basic logic for `axi_lite_master_unit` and `axi_lite_slave_unit` modules to perform AXI-Lite write transactions.
 4.  Write a testbench in `top_axi_lite_system` to instantiate the parameterized `axi_lite_if` with different address and data widths and verify basic AXI-Lite write operations between the master and slave units.
 
+**Reference Solution:**
+
+```systemverilog
+module axi_lite_master_unit #(parameter int AW = 32, parameter int DW = 64) (
+  axi_lite_if.master_port axi_master_intf
+);
+  task automatic axi_write(input logic [AW-1:0] addr, input logic [DW-1:0] data);
+    @(posedge axi_master_intf.aclk);
+    axi_master_intf.awaddr  <= addr;
+    axi_master_intf.awvalid <= 1'b1;
+    axi_master_intf.wdata   <= data;
+    axi_master_intf.wvalid  <= 1'b1;
+    axi_master_intf.bready  <= 1'b1;
+
+    fork
+      begin
+        wait (axi_master_intf.awvalid && axi_master_intf.awready);
+        @(posedge axi_master_intf.aclk);
+        axi_master_intf.awvalid <= 1'b0;
+      end
+      begin
+        wait (axi_master_intf.wvalid && axi_master_intf.wready);
+        @(posedge axi_master_intf.aclk);
+        axi_master_intf.wvalid <= 1'b0;
+      end
+    join
+
+    wait (axi_master_intf.bvalid);
+    $display("[%0t] AXI-Lite Master: Write complete addr=0x%08h data=0x%016h bresp=%0d",
+             $time, addr, data, axi_master_intf.bresp);
+    @(posedge axi_master_intf.aclk);
+    axi_master_intf.bready <= 1'b0;
+  endtask
+
+  initial begin
+    axi_master_intf.awaddr  = '0; axi_master_intf.awvalid = 1'b0;
+    axi_master_intf.wdata   = '0; axi_master_intf.wvalid  = 1'b0;
+    axi_master_intf.bready  = 1'b0;
+    axi_master_intf.araddr  = '0; axi_master_intf.arvalid = 1'b0;
+    axi_master_intf.rready  = 1'b0;
+  end
+endmodule
+
+module axi_lite_slave_unit #(parameter int AW = 32, parameter int DW = 64) (
+  axi_lite_if.slave_port axi_slave_intf
+);
+  logic [DW-1:0] reg_file [0:15];
+  logic [AW-1:0] latched_awaddr;
+  bit            got_aw, got_w;
+
+  always_ff @(posedge axi_slave_intf.aclk or negedge axi_slave_intf.aresetn) begin
+    if (!axi_slave_intf.aresetn) begin
+      axi_slave_intf.awready <= 1'b1;
+      axi_slave_intf.wready  <= 1'b1;
+      axi_slave_intf.bvalid  <= 1'b0;
+      axi_slave_intf.bresp   <= 2'b00; // OKAY
+      axi_slave_intf.arready <= 1'b0;
+      axi_slave_intf.rvalid  <= 1'b0;
+      axi_slave_intf.rdata   <= '0;
+      axi_slave_intf.rresp   <= 2'b00;
+      got_aw                 <= 1'b0;
+      got_w                  <= 1'b0;
+    end else begin
+      if (axi_slave_intf.awvalid && axi_slave_intf.awready) begin
+        latched_awaddr <= axi_slave_intf.awaddr;
+        got_aw         <= 1'b1;
+      end
+      if (axi_slave_intf.wvalid && axi_slave_intf.wready) begin
+        reg_file[latched_awaddr[5:2]] <= axi_slave_intf.wdata;
+        got_w                         <= 1'b1;
+      end
+      if (got_aw && got_w && !axi_slave_intf.bvalid) begin
+        axi_slave_intf.bvalid <= 1'b1;
+        axi_slave_intf.bresp  <= 2'b00;
+        got_aw                <= 1'b0;
+        got_w                 <= 1'b0;
+      end else if (axi_slave_intf.bvalid && axi_slave_intf.bready) begin
+        axi_slave_intf.bvalid <= 1'b0;
+      end
+    end
+  end
+endmodule
+
+module top_axi_lite_system;
+  axi_lite_if #(.ADDR_WIDTH(32), .DATA_WIDTH(64)) axi_lite_bus();
+
+  axi_lite_master_unit #(.AW(32), .DW(64)) master_inst (.axi_master_intf(axi_lite_bus));
+  axi_lite_slave_unit  #(.AW(32), .DW(64)) slave_inst  (.axi_slave_intf(axi_lite_bus));
+
+  initial begin
+    axi_lite_bus.aclk = 1'b0;
+    forever #5 axi_lite_bus.aclk = ~axi_lite_bus.aclk;
+  end
+
+  initial begin
+    axi_lite_bus.aresetn = 1'b0;
+    #20 axi_lite_bus.aresetn = 1'b1;
+    master_inst.axi_write(32'h0000_0008, 64'hCAFE_BABE_1234_5678);
+    #20 $finish;
+  end
+endmodule
+```
+
 ## Best Practices and Common Pitfalls to Avoid
 
 ### SystemVerilog Interface "Do's" for Robust Designs
@@ -420,16 +690,14 @@ interface smart_bus_if #(parameter DATA_WIDTH = 8);
 
   // Modport for Transmitter (Source)
   modport transmitter_port (
-    output logic [DATA_WIDTH-1:0] data,
-    output logic valid,
-    input logic clk, rst_n, ready
+    output data, valid,
+    input  clk, rst_n, ready
   );
 
   // Modport for Receiver (Sink)
   modport receiver_port (
-    input logic [DATA_WIDTH-1:0] data,
-    input logic valid, clk, rst_n,
-    output logic ready
+    input  data, valid, clk, rst_n,
+    output ready
   );
 
   // Reset Task encapsulated within the interface; call from a testbench that owns these signals

@@ -1,0 +1,107 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 400" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGradCh15A" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#080c14" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <filter id="shadowCh15A" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+    <marker id="arrowCyan15A" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8"/>
+    </marker>
+    <marker id="arrowGreen15A" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#34d399"/>
+    </marker>
+  </defs>
+
+  <rect width="920" height="400" rx="14" fill="url(#bgGradCh15A)"/>
+
+  <!-- Title -->
+  <text x="460" y="32" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="20" font-weight="700" fill="#f8fafc" text-anchor="middle">SystemVerilog Class Handles vs. Heap Objects: null, new(), and Handle Aliasing</text>
+  <text x="460" y="54" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13" fill="#94a3b8" text-anchor="middle">Class variables hold references (handles) to dynamic objects on the simulation heap — assigning a handle does NOT clone the object</text>
+
+  <!-- Card 1: Uninitialized Handle -->
+  <g transform="translate(24, 78)">
+    <rect width="272" height="296" rx="10" fill="#0f172a" stroke="#f43f5e" stroke-width="1.8" filter="url(#shadowCh15A)"/>
+    <rect width="272" height="36" rx="10" fill="#881337"/>
+    <rect x="0" y="24" width="272" height="12" fill="#881337"/>
+    <text x="136" y="23" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13" font-weight="700" fill="#ffe4e6" text-anchor="middle">1. Uninitialized Handle (null)</text>
+
+    <rect x="16" y="52" width="240" height="58" rx="7" fill="#180a10" stroke="#e11d48"/>
+    <text x="136" y="74" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" font-weight="700" fill="#fda4af" text-anchor="middle">SimpleClass h1;</text>
+    <text x="136" y="96" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#e2e8f0" text-anchor="middle">No new() called yet -&gt; h1 == null</text>
+
+    <!-- Handle box pointing to null -->
+    <rect x="34" y="132" width="84" height="44" rx="6" fill="#091526" stroke="#f43f5e"/>
+    <text x="76" y="158" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" font-weight="700" fill="#fecdd3" text-anchor="middle">h1</text>
+
+    <line x1="118" y1="154" x2="170" y2="154" stroke="#f43f5e" stroke-width="2" stroke-dasharray="4,2"/>
+    <rect x="172" y="132" width="66" height="44" rx="6" fill="#4c0519" stroke="#e11d48"/>
+    <text x="205" y="158" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" font-weight="700" fill="#fda4af" text-anchor="middle">null</text>
+
+    <rect x="16" y="196" width="240" height="84" rx="7" fill="#091526" stroke="#334155"/>
+    <text x="136" y="218" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="700" fill="#fda4af" text-anchor="middle">Runtime Error If Dereferenced:</text>
+    <text x="136" y="239" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#fecdd3" text-anchor="middle">h1.data = 42; // Null pointer!</text>
+    <text x="136" y="262" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#94a3b8" text-anchor="middle">Always guard with if (h1 != null)</text>
+  </g>
+
+  <!-- Card 2: Instantiation & Handle Aliasing -->
+  <g transform="translate(324, 78)">
+    <rect width="272" height="296" rx="10" fill="#0f172a" stroke="#f59e0b" stroke-width="1.8" filter="url(#shadowCh15A)"/>
+    <rect width="272" height="36" rx="10" fill="#78350f"/>
+    <rect x="0" y="24" width="272" height="12" fill="#78350f"/>
+    <text x="136" y="23" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13" font-weight="700" fill="#fef3c7" text-anchor="middle">2. Allocation &amp; Handle Aliasing</text>
+
+    <rect x="16" y="52" width="240" height="58" rx="7" fill="#181208" stroke="#d97706"/>
+    <text x="136" y="72" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" font-weight="700" fill="#fbbf24" text-anchor="middle">h1 = new();  h2 = h1;</text>
+    <text x="136" y="94" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#fde68a" text-anchor="middle">Both handles share ONE heap object</text>
+
+    <!-- Two handles pointing to same object -->
+    <rect x="24" y="128" width="66" height="32" rx="5" fill="#091526" stroke="#38bdf8"/>
+    <text x="57" y="148" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" font-weight="700" fill="#7dd3fc" text-anchor="middle">h1</text>
+
+    <rect x="24" y="172" width="66" height="32" rx="5" fill="#091526" stroke="#fbbf24"/>
+    <text x="57" y="192" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" font-weight="700" fill="#fde68a" text-anchor="middle">h2</text>
+
+    <line x1="90" y1="144" x2="132" y2="158" stroke="#38bdf8" stroke-width="2" marker-end="url(#arrowCyan15A)"/>
+    <line x1="90" y1="188" x2="132" y2="174" stroke="#38bdf8" stroke-width="2" marker-end="url(#arrowCyan15A)"/>
+
+    <rect x="136" y="128" width="118" height="76" rx="8" fill="#0c1c2e" stroke="#38bdf8" stroke-width="1.6"/>
+    <text x="195" y="148" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" font-weight="700" fill="#e0f2fe" text-anchor="middle">Object @ Heap</text>
+    <text x="195" y="170" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#6ee7b7" text-anchor="middle">data = 99</text>
+    <text x="195" y="190" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="9.5" fill="#94a3b8" text-anchor="middle">h2.data=99 changes h1!</text>
+
+    <rect x="16" y="218" width="240" height="62" rx="7" fill="#091526" stroke="#b45309"/>
+    <text x="136" y="240" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" font-weight="700" fill="#fbbf24" text-anchor="middle">Handle Assignment = Shallow Alias</text>
+    <text x="136" y="260" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#e2e8f0" text-anchor="middle">Essential caution before mailbox.put(pkt)</text>
+  </g>
+
+  <!-- Card 3: Independent Object Copy -->
+  <g transform="translate(624, 78)">
+    <rect width="272" height="296" rx="10" fill="#0f172a" stroke="#10b981" stroke-width="1.8" filter="url(#shadowCh15A)"/>
+    <rect width="272" height="36" rx="10" fill="#065f46"/>
+    <rect x="0" y="24" width="272" height="12" fill="#065f46"/>
+    <text x="136" y="23" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13" font-weight="700" fill="#d1fae5" text-anchor="middle">3. Independent Object (Clone)</text>
+
+    <rect x="16" y="52" width="240" height="58" rx="7" fill="#072c22" stroke="#10b981"/>
+    <text x="136" y="72" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" font-weight="700" fill="#6ee7b7" text-anchor="middle">h3 = new h1; // Shallow clone</text>
+    <text x="136" y="94" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#d1fae5" text-anchor="middle">Allocates separate heap storage</text>
+
+    <rect x="24" y="128" width="66" height="32" rx="5" fill="#091526" stroke="#38bdf8"/>
+    <text x="57" y="148" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" font-weight="700" fill="#7dd3fc" text-anchor="middle">h1</text>
+    <line x1="90" y1="144" x2="132" y2="144" stroke="#38bdf8" stroke-width="2" marker-end="url(#arrowCyan15A)"/>
+    <rect x="136" y="126" width="118" height="36" rx="6" fill="#0c1c2e" stroke="#38bdf8"/>
+    <text x="195" y="149" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#e0f2fe" text-anchor="middle">Obj A: data = 42</text>
+
+    <rect x="24" y="176" width="66" height="32" rx="5" fill="#091526" stroke="#34d399"/>
+    <text x="57" y="196" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" font-weight="700" fill="#6ee7b7" text-anchor="middle">h3</text>
+    <line x1="90" y1="192" x2="132" y2="192" stroke="#34d399" stroke-width="2" marker-end="url(#arrowGreen15A)"/>
+    <rect x="136" y="174" width="118" height="36" rx="6" fill="#072c22" stroke="#10b981"/>
+    <text x="195" y="197" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#d1fae5" text-anchor="middle">Obj B: data = 77</text>
+
+    <rect x="16" y="218" width="240" height="62" rx="7" fill="#091526" stroke="#10b981"/>
+    <text x="136" y="240" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" font-weight="700" fill="#34d399" text-anchor="middle">Mutating h3 leaves h1 intact!</text>
+    <text x="136" y="260" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#cbd5e1" text-anchor="middle">Implement deep copy() for nested handles</text>
+  </g>
+</svg>

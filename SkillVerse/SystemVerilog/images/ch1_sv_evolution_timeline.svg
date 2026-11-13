@@ -1,0 +1,108 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 380" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGradHist" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#080c14" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <linearGradient id="lineGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#64748b" />
+      <stop offset="35%" stop-color="#f59e0b" />
+      <stop offset="70%" stop-color="#38bdf8" />
+      <stop offset="100%" stop-color="#34d399" />
+    </linearGradient>
+    <filter id="shadowHist" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="3" stdDeviation="5" flood-color="#000000" flood-opacity="0.45"/>
+    </filter>
+  </defs>
+
+  <rect width="920" height="380" rx="14" fill="url(#bgGradHist)"/>
+
+  <!-- Title -->
+  <text x="460" y="34" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="20" font-weight="700" fill="#f8fafc" text-anchor="middle">Evolution of SystemVerilog: From Gateway Verilog to IEEE 1800</text>
+  <text x="460" y="56" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13" fill="#94a3b8" text-anchor="middle">Four decades of hardware description and verification standardization</text>
+
+  <!-- Era Band Labels -->
+  <rect x="30" y="76" width="275" height="24" rx="5" fill="#1e293b"/>
+  <text x="167" y="92" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="700" fill="#94a3b8" text-anchor="middle">VERILOG HDL ERA (IEEE 1364)</text>
+
+  <rect x="318" y="76" width="142" height="24" rx="5" fill="#451a03"/>
+  <text x="389" y="92" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="700" fill="#fbbf24" text-anchor="middle">ACCELLERA MERGE</text>
+
+  <rect x="473" y="76" width="417" height="24" rx="5" fill="#082f49"/>
+  <text x="681" y="92" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="700" fill="#38bdf8" text-anchor="middle">UNIFIED SYSTEMVERILOG HDVL ERA (IEEE 1800)</text>
+
+  <!-- Central Timeline Spine -->
+  <line x1="70" y1="226" x2="850" y2="226" stroke="url(#lineGrad)" stroke-width="4" stroke-linecap="round"/>
+
+  <!-- Milestone 1: 1984 / 1995 (Card Top) -->
+  <g transform="translate(26, 114)">
+    <rect width="136" height="90" rx="8" fill="#131d33" stroke="#64748b" stroke-width="1.5" filter="url(#shadowHist)"/>
+    <text x="68" y="20" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" font-weight="700" fill="#cbd5e1" text-anchor="middle">1984 / 1995</text>
+    <text x="68" y="36" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="700" fill="#f8fafc" text-anchor="middle">IEEE 1364-1995</text>
+    <text x="68" y="54" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#94a3b8" text-anchor="middle">Verilog HDL origin</text>
+    <text x="68" y="69" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#94a3b8" text-anchor="middle">wire, reg, gates,</text>
+    <text x="68" y="82" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#94a3b8" text-anchor="middle">initial &amp; always</text>
+  </g>
+  <line x1="94" y1="204" x2="94" y2="226" stroke="#64748b" stroke-width="2"/>
+  <circle cx="94" cy="226" r="7" fill="#0f172a" stroke="#94a3b8" stroke-width="3"/>
+
+  <!-- Milestone 2: 2001 (Card Bottom) -->
+  <line x1="240" y1="226" x2="240" y2="252" stroke="#94a3b8" stroke-width="2"/>
+  <circle cx="240" cy="226" r="7" fill="#0f172a" stroke="#cbd5e1" stroke-width="3"/>
+  <g transform="translate(172, 252)">
+    <rect width="136" height="96" rx="8" fill="#131d33" stroke="#94a3b8" stroke-width="1.5" filter="url(#shadowHist)"/>
+    <text x="68" y="20" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" font-weight="700" fill="#e2e8f0" text-anchor="middle">2001</text>
+    <text x="68" y="36" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="700" fill="#f8fafc" text-anchor="middle">IEEE 1364-2001</text>
+    <text x="68" y="54" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#94a3b8" text-anchor="middle">ANSI-style ports,</text>
+    <text x="68" y="69" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#94a3b8" text-anchor="middle">generate, localparam,</text>
+    <text x="68" y="84" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#94a3b8" text-anchor="middle">signed &amp; @* sensitivity</text>
+  </g>
+
+  <!-- Milestone 3: 2002-2004 (Card Top) -->
+  <g transform="translate(318, 114)">
+    <rect width="142" height="90" rx="8" fill="#1c1917" stroke="#f59e0b" stroke-width="1.5" filter="url(#shadowHist)"/>
+    <text x="71" y="20" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" font-weight="700" fill="#fbbf24" text-anchor="middle">2002–2004</text>
+    <text x="71" y="36" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="700" fill="#fef3c7" text-anchor="middle">Accellera SV 3.0/3.1a</text>
+    <text x="71" y="54" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#fde68a" text-anchor="middle">Superlog + OpenVera</text>
+    <text x="71" y="69" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#cbd5e1" text-anchor="middle">OOP, interfaces,</text>
+    <text x="71" y="82" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#cbd5e1" text-anchor="middle">random &amp; assertions</text>
+  </g>
+  <line x1="389" y1="204" x2="389" y2="226" stroke="#f59e0b" stroke-width="2"/>
+  <circle cx="389" cy="226" r="7" fill="#0f172a" stroke="#f59e0b" stroke-width="3"/>
+
+  <!-- Milestone 4: 2005 (Card Bottom) -->
+  <line x1="534" y1="226" x2="534" y2="252" stroke="#38bdf8" stroke-width="2"/>
+  <circle cx="534" cy="226" r="7" fill="#0f172a" stroke="#38bdf8" stroke-width="3"/>
+  <g transform="translate(464, 252)">
+    <rect width="140" height="96" rx="8" fill="#0c1e35" stroke="#38bdf8" stroke-width="1.5" filter="url(#shadowHist)"/>
+    <text x="70" y="20" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" font-weight="700" fill="#38bdf8" text-anchor="middle">2005</text>
+    <text x="70" y="36" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="700" fill="#e0f2fe" text-anchor="middle">IEEE 1800-2005</text>
+    <text x="70" y="54" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#cbd5e1" text-anchor="middle">First IEEE SV standard</text>
+    <text x="70" y="69" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#cbd5e1" text-anchor="middle">always_ff/comb/latch,</text>
+    <text x="70" y="84" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#cbd5e1" text-anchor="middle">SVA &amp; covergroups</text>
+  </g>
+
+  <!-- Milestone 5: 2009 / 2012 (Card Top) -->
+  <g transform="translate(604, 114)">
+    <rect width="146" height="90" rx="8" fill="#18122b" stroke="#a855f7" stroke-width="1.5" filter="url(#shadowHist)"/>
+    <text x="73" y="20" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" font-weight="700" fill="#c084fc" text-anchor="middle">2009 / 2012</text>
+    <text x="73" y="36" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="700" fill="#f3e8ff" text-anchor="middle">IEEE 1800-2009/12</text>
+    <text x="73" y="54" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#cbd5e1" text-anchor="middle">Merged 1364 + 1800</text>
+    <text x="73" y="69" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#cbd5e1" text-anchor="middle">checker, LTL, soft</text>
+    <text x="73" y="82" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#cbd5e1" text-anchor="middle">constraints &amp; interfaces</text>
+  </g>
+  <line x1="677" y1="204" x2="677" y2="226" stroke="#a855f7" stroke-width="2"/>
+  <circle cx="677" cy="226" r="7" fill="#0f172a" stroke="#a855f7" stroke-width="3"/>
+
+  <!-- Milestone 6: 2017 / 2023 (Card Bottom) -->
+  <line x1="822" y1="226" x2="822" y2="252" stroke="#34d399" stroke-width="2"/>
+  <circle cx="822" cy="226" r="7" fill="#0f172a" stroke="#34d399" stroke-width="3"/>
+  <g transform="translate(746, 252)">
+    <rect width="150" height="96" rx="8" fill="#072c22" stroke="#34d399" stroke-width="1.5" filter="url(#shadowHist)"/>
+    <text x="75" y="20" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" font-weight="700" fill="#34d399" text-anchor="middle">2017 / 2023</text>
+    <text x="75" y="36" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="700" fill="#d1fae5" text-anchor="middle">IEEE 1800-2017/23</text>
+    <text x="75" y="54" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#cbd5e1" text-anchor="middle">Modern clarifications,</text>
+    <text x="75" y="69" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#cbd5e1" text-anchor="middle">macro/type refinements,</text>
+    <text x="75" y="84" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#cbd5e1" text-anchor="middle">UVM (1800.2) alignment</text>
+  </g>
+</svg>

@@ -2,77 +2,83 @@
 
 ## Introduction to Assertion-Based Verification: Specifying and Validating Design Behavior
 
-SystemVerilog Assertions (SVA) are a cornerstone of modern hardware verification, shifting the focus from traditional simulation-only testing to a more proactive and formal approach. SVAs are not just about finding bugs; they are about formally **specifying design intent** and then **automatically verifying** that the design adheres to these specifications. This methodology, known as Assertion-Based Verification (ABV), offers significant advantages:
+SystemVerilog Assertions (SVA) are a cornerstone of modern hardware verification, shifting the focus from manual testbench checks toward proactive formal specification. SVAs do more than find bugs—they **formally specify design intent** and **automatically verify** adherence continuously during simulation and formal proof:
 
 **Key Benefits of Assertion-Based Verification (ABV) with SystemVerilog Assertions (SVA):**
 
-- **Formal Specification of Design Requirements**: SVAs provide a precise and unambiguous way to document design requirements directly within the RTL code. Assertions act as executable specifications, capturing the intended behavior of the design in a formal language that both simulators and formal verification tools can understand. This self-documenting approach ensures that the verification intent is tightly coupled with the design itself.
-- **Temporal Property Checking During Simulation**: Concurrent assertions, in particular, excel at checking temporal properties – the behavior of signals and design states over time and clock cycles. They continuously monitor the design during simulation, automatically checking for violations of specified temporal relationships and sequences. This real-time checking significantly enhances the effectiveness of simulation-based verification.
-- **Coverage Metric Collection for Verification Completeness**: SVAs, through coverage properties, can be used to track the extent to which design properties and scenarios have been exercised during simulation. Assertion coverage metrics provide valuable feedback on the completeness of verification, guiding engineers to target uncovered areas and improve test stimulus. This coverage-driven approach helps ensure thorough verification.
-- **Early Error Detection and Root Cause Analysis**: Assertions are designed to detect errors as close as possible to their source, often much earlier than traditional testbench-driven error detection. When an assertion fails, it provides immediate feedback, pinpointing the exact location and time of the violation. This early detection and clear failure context dramatically reduce debug time and accelerate root cause analysis.
-- **Reusable Verification Components and Intellectual Property (IP) Verification**: Assertions, especially when parameterized and organized into packages, become reusable verification IP. These assertion libraries can be applied across different designs or reused when verifying different instances of the same IP. This promotes verification IP reuse and reduces redundant assertion development effort.
-- **Bridge to Formal Verification**: SVAs serve as a bridge between simulation and formal verification. The same assertions used in simulation can be leveraged by formal verification tools to mathematically prove (or disprove) design properties exhaustively. This integration allows for a more comprehensive verification strategy, combining the strengths of both simulation and formal methods.
+- **Formal Specification of Design Requirements**: SVAs act as executable specifications directly alongside or bound to RTL code, eliminating ambiguity across architecture, RTL, and verification teams.
+- **Temporal Property Checking During Simulation**: Concurrent assertions monitor multi-cycle handshakes, pipeline latencies, and protocol invariants on every clock edge.
+- **Coverage Metric Collection (`cover property`)**: Tracking sequence and property hits measures whether corner-case temporal scenarios actually occurred during regression runs.
+- **Early Error Detection and Root Cause Analysis**: Assertions fire at the exact cycle and hierarchy where an invariant breaks, avoiding long debug trails downstream at external pins.
+- **Reusable Verification IP**: Parameterized assertion modules bound via `bind` can be instantiated across projects without touching golden RTL.
+- **Bridge to Formal Verification**: The exact same `assert property` and `assume property` statements used in dynamic simulation drive formal model checkers exhaustively.
 
 ### Learning Goals
 
 By the end of this chapter, you should be able to:
 
-- Distinguish immediate assertions from clocked concurrent assertions.
-- Write properties and sequences using implication, delays, repetition, and sampled-value functions.
-- Make assertions reset-aware and avoid vacuous or underconstrained checks.
-- Use assertion coverage and covergroups for complementary coverage goals.
-- Apply, debug, and review assertions while accounting for tool and language limitations.
+- Distinguish immediate (and deferred immediate) assertions from clocked concurrent assertions.
+- Write properties and sequences using implication (`|->`, `|=>`), delays (`##`), repetition (`[*n]`, `[->n]`, `[=n]`), and sampled-value functions (`$rose`, `$fell`, `$stable`, `$past`).
+- Make assertions reset-aware with `disable iff` and prevent false failures or vacuous passes.
+- Combine assertion coverage (`cover property`) with functional covergroups.
+- Attach assertion IP non-intrusively via `bind` and debug assertions systematically.
 
 ## Assertion Types: Immediate vs. Concurrent - Choosing the Right Tool for the Job
 
-SystemVerilog Assertions come in two primary flavors: **Immediate Assertions** and **Concurrent Assertions**. Understanding their differences is crucial for choosing the right type of assertion for a given verification task.
+![Immediate vs. Concurrent SVA Architecture and Scheduling Regions](images/ch20_sv_immediate_vs_concurrent_architecture.svg)
 
-| Feature                             | Immediate Assertions                                                                                                                                                          | Concurrent Assertions                                                                                                                                                                                          |
-| :---------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Evaluation Trigger**              | **Procedural Execution**: Evaluated when the procedural code containing the assertion is executed (e.g., in `always` blocks, `initial` blocks, tasks, functions).             | **Clock Edges or Temporal Events**: Evaluated at specific clock edges or based on temporal events defined in clocking blocks or property definitions.                                                          |
-| **Temporal Checking**               | **Immediate (Current Values)**: Check conditions based on signal values _at the moment_ the assertion is executed within the procedural code. No history or temporal context. | **Multi-Cycle Behavior**: Designed for checking temporal relationships and sequences of events that unfold _over multiple clock cycles_. Can specify delays, repetitions, and sequences of signal transitions. |
-| **Typical Usage**                   | **Combinational Logic Checks**: Verifying conditions in combinational logic, checking input/output relationships, and validating data integrity within procedural code.       | **Sequential Logic and Protocol Verification**: Verifying state machine behavior, protocol compliance, interface timing, data flow sequences, and complex temporal relationships in sequential circuits.       |
-| **Execution Context**               | **Procedural Blocks**: Placed inside `always` blocks, `initial` blocks, tasks, and functions, executing within the procedural simulation flow.                                | **Module Scope or Clocking Blocks**: Typically declared at the module level or within clocking blocks, operating in parallel with the design's functional logic, triggered by clock events.                    |
-| **Simulation Performance Overhead** | **Low**: Minimal performance impact as they are evaluated only when procedural code is executed.                                                                              | **Moderate**: Can have a higher performance overhead compared to immediate assertions because they are continuously monitored at clock edges throughout the simulation.                                        |
+SystemVerilog provides two primary assertion categories—**Immediate Assertions** and **Concurrent Assertions**—designed for different scheduling regions and verification scopes.
+
+| Feature | Immediate Assertions | Concurrent Assertions |
+| :--- | :--- | :--- |
+| **Evaluation Trigger** | **Procedural Execution**: Evaluated inline when execution reaches the statement (`always_comb`, `always_ff`, `initial`, tasks, functions). | **Clocking Events**: Evaluated across clock cycles based on explicit `@(posedge clk)` or `default clocking`. |
+| **Temporal Checking** | **Current Sample Snapshot**: Checks single-point boolean expressions only; temporal operators (`##n`, `|->`) are illegal. | **Multi-Cycle Sequences**: Checks temporal sequences, delays, repetitions, and implications across cycles. |
+| **Typical Usage** | Combinational invariants, function argument checks, range assertions, procedural invariants. | Handshakes, bus protocols, FSM sequencing, FIFO overflow/underflow checks. |
+| **Sampling Semantics** | Evaluates current procedural values in the `Active` region (use `assert #0` / `assert final` to eliminate combinational glitches). | Samples inputs in the race-free **Preponed** region, evaluates in **Observed**, runs action blocks in **Reactive**. |
+| **Simulation Overhead** | **Low**: Runs only when the enclosing procedural block triggers. | **Moderate**: Evaluated at each active clock tick across tracked sequence threads. |
 
 **Analogy:**
 
-- **Immediate Assertion**: Like a quick "snapshot" check within a piece of code. "Is `x` greater than 5 _right now_ at this point in the procedure?"
-- **Concurrent Assertion**: Like a security camera continuously monitoring a sequence of events over time. "Is it _always_ the case that after signal `enable` rises, signal `ack` rises within 1 to 3 clock cycles, _unless_ reset is active?"
+- **Immediate Assertion**: A checkpoint inside software or combinational logic: *"Right now, as this line runs, is `count <= DEPTH` true?"*
+- **Concurrent Assertion**: A hardware logic analyzer continuously watching clock edges: *"Every time `req` rises outside reset, does `ack` arrive within 1 to 3 clock cycles?"*
 
 ## Immediate Assertions: Instantaneous Checks in Procedural Code
 
-Immediate assertions are embedded within procedural blocks (`always`, `initial`, tasks, functions) and are evaluated when the simulation execution reaches that point in the code. They are primarily used for checking conditions that are expected to be true _immediately_ when the assertion statement is encountered.
+Immediate assertions sit inside procedural blocks (`always_comb`, `always_ff`, `initial`, `task`, `function`) and test single-cycle boolean expressions.
 
-### Syntax and Basic Usage
+### Syntax and Glitch-Free Deferred Forms
 
 ```systemverilog
+// 1. Simple immediate assertion (fires immediately in Active region)
 assert (expression)
-  [action_block] // Optional block executed on assertion success (not commonly used)
+  [pass_action]
 else
-  [action_block]; // Optional block executed on assertion failure (most common use)
+  [fail_action];
+
+// 2. Observed deferred immediate assertion (glitch-free within delta cycles)
+assert #0 (expression) else $error("...");
+
+// 3. Final deferred immediate assertion (settled values in Postponed region)
+assert final (expression) else $error("...");
 ```
 
-- **`assert (expression)`**: The core of the assertion. `expression` is a boolean expression that is evaluated.
-- **`[action_block]` (Success)**: Optional block of statements executed if the `expression` is TRUE (assertion passes). Rarely used in practice.
-- **`else [action_block]` (Failure)**: Optional block of statements executed if the `expression` is FALSE (assertion fails). This is where you typically place error reporting actions using `$error`, `$warning`, `$fatal`, etc.
+Because combinational blocks (`always_comb`) can execute multiple delta cycles in a single simulation time step before inputs finish settling, simple `assert (...)` statements can suffer transient **delta-cycle glitch false failures**. Using **deferred immediate assertions (`assert #0` or `assert final`)** waits until signals stabilize before reporting a violation, while keeping the familiar procedural syntax.
 
 ### Enhanced Example: Parameterized Range Checker with Immediate Assertion
 
 ```systemverilog
 module parameterized_range_checker #(
-  parameter integer MIN_VALUE = 0,      // Parameter for minimum allowed value (default 0)
-  parameter integer MAX_VALUE = 255     // Parameter for maximum allowed value (default 255)
+  parameter int MIN_VALUE = 0,
+  parameter int MAX_VALUE = 255
 ) (
-  input logic [7:0] data_input          // 8-bit data input port
+  input logic [7:0] data_input
 );
 
-  always_comb begin : data_range_assertion_block // Named 'always_comb' block for clarity
-    assert (data_input >= MIN_VALUE && data_input <= MAX_VALUE) // Check if data is within the parameterized range
-      else $error(
-             "Data Value Out of Range: Value = %0d, Allowed Range = [%0d:%0d]", // Formatted error message
-             data_input, MIN_VALUE, MAX_VALUE // Arguments for formatted message
-           );
+  always_comb begin : data_range_assertion_block
+    // assert #0 prevents transient combinational delta-cycle false alarms
+    assert #0 (data_input >= MIN_VALUE && data_input <= MAX_VALUE)
+      else $error("Data Out of Range: Value=%0d, Allowed=[%0d:%0d]",
+                  data_input, MIN_VALUE, MAX_VALUE);
   end : data_range_assertion_block
 
 endmodule : parameterized_range_checker
@@ -80,508 +86,580 @@ endmodule : parameterized_range_checker
 
 **Best Practices for Immediate Assertions:**
 
-- **Use in `always_comb` Blocks for Combinational Checks**: For verifying combinational logic relationships, place immediate assertions inside `always_comb` blocks to ensure they are re-evaluated whenever inputs change.
-- **Avoid Side Effects in Assertion Expressions**: Assertion expressions should ideally be pure boolean conditions without side effects (e.g., assignments, incrementing variables). Side effects can make assertions harder to understand and debug.
-- **Parameterize for Reusability**: Use parameters to make immediate assertions reusable across different modules or instances with varying constraints. This enhances assertion IP reuse.
-- **Provide Specific and Formatted Error Messages**: Use the `else $error(...)` action block with informative, formatted error messages using `$error`, `$warning`, or `$fatal`. Include relevant signal values and parameter values in the error message to aid in debugging. Use format specifiers (`%0d`, `%0h`, `%s`) for clear output.
+- **Prefer `assert #0` inside `always_comb`**: Eliminates false triggers caused by delta-cycle signal skew.
+- **Avoid Side Effects in Expressions**: Keep assertion expressions purely read-only so disabling assertions never changes functional behavior.
+- **Parameterize Bounds**: Expose `parameter` thresholds to build reusable checkers.
+- **Include Signal Context in `else $error(...)`**: Always log failing signal values and expected ranges.
 
 ## Concurrent Assertions: Temporal Verification for Sequential Behavior
 
-Concurrent assertions are the workhorses of temporal verification in SystemVerilog. They are designed to monitor signal behavior over time, triggered by clock edges or other temporal events. They are essential for verifying sequential logic, protocols, and interfaces.
+Concurrent assertions verify behavior spanning clock cycles. Under IEEE 1800, they avoid Verilog simulation races through three dedicated scheduling regions:
+
+1. **Preponed Region**: All signals referenced by the concurrent assertion (including `$past`, `$rose`, `$fell`, `$stable`) are sampled *before* `Active` RTL blocks or testbench drivers update signals on that clock edge.
+2. **Observed Region**: SVA sequences and properties advance their state machines using those Preponed samples.
+3. **Reactive Region**: Pass/fail action blocks (`$info`, `$error`, `$fatal`) execute safely without racing against DUT flops.
 
 ### Concurrent Assertion Architecture: Properties, Sequences, and Clocking
 
-Concurrent assertions are built upon three core concepts:
+Concurrent assertions follow a clean four-layer abstraction:
 
-1.  **Sequences**: Define temporal sequences of events or conditions. Sequences are the building blocks of properties, specifying the patterns of signal behavior to be checked.
-2.  **Properties**: Describe temporal relationships between sequences or signals. Properties use sequences and temporal operators to express complex temporal requirements (e.g., "if `request` occurs, then `grant` must occur within 3 clock cycles").
-3.  **Clocking**: Concurrent assertions are inherently clock-domain aware. They are typically evaluated at specific clock edges, defined either explicitly within the property or using default clocking blocks. Clocking synchronizes assertion evaluation with the design's clocking scheme.
+1. **Boolean Layer**: Combinational expressions evaluated at sampled clock edges (`req && !stall`).
+2. **Sequence Layer (`sequence ... endsequence`)**: Multi-cycle temporal patterns built from booleans, cycle delays (`##`), and repetition operators.
+3. **Property Layer (`property ... endproperty`)**: Ties sequences together with implications (`|->`, `|=>`), clocking, and `disable iff` reset guards.
+4. **Verification Directives**: `assert property`, `assume property`, `cover property`, or `restrict property`.
 
 ### Clock Declaration Styles for Concurrent Assertions
 
-Concurrent assertions that use clock-cycle delays or sampled-value functions need a clocking event to define their time base. A property may also be written with an event expression for an unclocked or event-based check. SystemVerilog provides two common ways to specify clocking for clocked concurrent assertions:
+Clocked concurrent assertions obtain their clock from either an explicit clocking event in the property or a enclosing `default clocking` block:
 
-1.  **Explicit Clock in Property Definition**: Specify the clock edge directly within each `property` definition using the `@(posedge clk)` or `@(negedge clk)` construct. This is useful when you have different clock domains or want to associate specific assertions with particular clocks.
+1. **Explicit Clock in Property Definition**:
 
-    ```systemverilog
-    property request_grant_sequence_explicit_clock;
-      @(posedge clk_a)  // Explicit clock 'clk_a' for this property
-      request_a |-> ##[1:5] grant_a; // Sequence: request_a followed by grant_a within 1-5 cycles of clk_a
-    endproperty : request_grant_sequence_explicit_clock
-    ```
+```systemverilog
+property request_grant_explicit;
+  @(posedge clk_a)
+  request_a |-> ##[1:5] grant_a;
+endproperty : request_grant_explicit
+```
 
-2.  **Default Clocking Block**: Define a `default clocking` block to specify a default clock and input/output sampling behavior for all concurrent assertions within a scope (e.g., module, interface). This simplifies assertion syntax when most assertions use the same clock.
+2. **Default Clocking Block**:
 
-    ```systemverilog
-    default clocking main_clocking_block @(posedge clk_main); // Default clocking block named 'main_clocking_block' for posedge 'clk_main'
-      default input  #1step; // Default input sampling: 1-step delay from clock edge
-      default output #0;     // Default output skew: 0 delay from clock edge
-    endclocking : main_clocking_block
+```systemverilog
+default clocking main_cb @(posedge clk_main);
+  default input  #1step;
+  default output #0;
+endclocking : main_cb
 
-    property data_valid_after_address_default_clock;
-      address ##1 valid_data; // Property using default clock 'clk_main' from 'main_clocking_block'
-    endproperty : data_valid_after_address_default_clock
-    ```
+property data_valid_after_address;
+  address_valid ##1 data_valid;
+endproperty : data_valid_after_address
+```
 
-    - `default input #1step;` and `default output #0;` within the `clocking` block define default input sampling and output skew. These are timing parameters that control when clocking-block signals are sampled or driven relative to the clock edge. They do not by themselves change the sampling semantics of a property that directly references ordinary module signals.
+- `default input #1step;` and `default output #0;` configure sampling/driving skew for signals accessed through `main_cb.sig`; standalone concurrent assertions referencing `clk_main` still sample in the Preponed region (`#1step` before the active clock edge).
 
 ### Reset-Aware Assertions: Handling Asynchronous Reset
 
-In real-world designs, assertions often need to be disabled or qualified during reset conditions. SystemVerilog provides the `disable iff (reset_condition)` clause within properties to make assertions reset-aware.
+Real hardware requires disabling temporal checks while reset is active using `disable iff (<reset_expr>)`:
 
 ```systemverilog
 property data_transfer_valid_reset_aware;
-  @(posedge clk)  // Clocked property
-  disable iff (reset_n == 1'b0) // Assertion disabled when reset_n is low (active low reset)
-  valid_request |-> ##1 data_ready; // Property: valid_request followed by data_ready in the next cycle (if not reset)
+  @(posedge clk)
+  disable iff (reset_n !== 1'b1) // Aborts active attempts while reset_n is low OR unknown (X/Z)
+  valid_request |-> ##1 data_ready;
 endproperty : data_transfer_valid_reset_aware
 ```
 
-- `disable iff (reset_n == 1'b0)`: This clause aborts active attempts and prevents new attempts while the condition is true. With a 4-state reset signal, an unknown reset value should be handled deliberately rather than assumed to mean inactive.
-- The assertion is active when `reset_n` is high (reset is inactive), subject to the sampled values and any attempts already in progress.
+- Using `reset_n !== 1'b1` (or `disable iff (!reset_n)` once initialized) aborts in-flight sequence threads whenever reset asserts. Notice that `!== 1'b1` also prevents false failures at time `0` before testbenches drive `reset_n` out of `X`.
 
 ## Temporal Operators: Building Blocks for Sequence and Property Definitions
 
-SystemVerilog provides a rich set of temporal operators that allow you to express complex temporal relationships and sequences in concurrent assertions. These operators are used within sequences and properties to define the temporal behavior you want to verify.
+![SVA Implication and Repetition Operators Timelines](images/ch20_sv_implication_and_repetition_timelines.svg)
 
-| Operator                                 | Description                                                                                                                                                                  | Example                                                                    | Explanation                                                                                                                                                                                                                                                                                              |
-| :--------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **`##n`**                                | **Delay**: Delays the sequence by exactly `n` clock cycles.                                                                                                                  | `req ##2 gnt`                                                              | `gnt` must be true exactly 2 clock cycles after `req` becomes true.                                                                                                                                                                                                                                      |
-| **`##[m:n]`**                            | **Range Delay**: Delays the sequence by between `m` and `n` clock cycles (inclusive).                                                                                        | `req ##[1:4] gnt`                                                          | `gnt` must be true between 1 to 4 clock cycles after `req` becomes true.                                                                                                                                                                                                                                 |
-| **`[*n]`**                               | **Consecutive Repetition**: The preceding expression must be true for exactly `n` consecutive clock cycles.                                                                  | `valid [*3]`                                                               | `valid` must be true for exactly 3 consecutive clock cycles.                                                                                                                                                                                                                                             |
-| **`[*m:n]`**                             | **Consecutive Repetition Range**: The preceding expression must be true for between `m` and `n` consecutive clock cycles.                                                    | `valid [*1:inf]`                                                           | `valid` must be true for at least 1 consecutive clock cycle, with no finite upper bound. `inf` represents infinity.                                                                                                                                                                                      |
-| **`[->n]`**                              | **Non-Consecutive Goto Repetition**: The preceding expression must be true `n` times, not necessarily consecutively, and the sequence ends on the `n`th match.               | `req [->3] ##1 gnt`                                                        | `req` must be true 3 times, possibly with gaps, before the following sequence element is matched.                                                                                                                                                                                                        |
-| **`[=n]`**                               | **Non-Consecutive Repetition**: The preceding expression must occur `n` times, not necessarily consecutively; the sequence may remain open for trailing cycles.              | `req [=2] ##1 gnt`                                                         | `req` must be true 2 times, possibly with gaps, before the following sequence element is matched.                                                                                                                                                                                                        |
-| **`throughout`**                         | **Condition Maintained Throughout Sequence**: Ensures a condition is true throughout the duration of a sequence.                                                             | `valid_data throughout data_sequence ##1 ack`                              | `valid_data` must be true for the entire duration of `data_sequence`, and then `ack` must be true 1 cycle after `data_sequence` completes.                                                                                                                                                               |
-| **`within`**                             | **Sequence Containment**: Checks if one sequence occurs _within_ another sequence.                                                                                           | `sequence s1; ... endsequence <br> sequence s2; s1 within s2; endsequence` | Sequence `s1` must complete entirely within the duration of sequence `s2`.                                                                                                                                                                                                                               |
-| **`and`**                                | **Sequence Conjunction**: Both sequences must match and complete at the same time.                                                                                           | `sequence s_combined; s1 and s2; endsequence`                              | Both sequence `s1` and sequence `s2` must start at the same time and complete successfully at the same time for `s_combined` to succeed.                                                                                                                                                                 |
-| **`or`**                                 | **Sequence Disjunction**: Either sequence can match.                                                                                                                         | `property p_either_seq; s1 or s2; endproperty`                             | Property `p_either_seq` passes if either sequence `s1` _or_ sequence `s2` matches.                                                                                                                                                                                                                       |
-| **`intersect`**                          | **Sequence Intersection**: Both sequences must match over the same start time and end time.                                                                                  | `sequence s_intersect; s1 intersect s2; endsequence`                       | Sequence `s_intersect` matches only when both `s1` and `s2` match and complete on the same cycle.                                                                                                                                                                                                        |
-| **Implication `\|->` (Overlapping)**     | **Implication (Overlapping)**: If the antecedent sequence (left side) matches, then the consequent property (right side) must also hold, starting in the _same_ clock cycle. | `req \|-> gnt`                                                             | If `req` becomes true, then `gnt` must also become true in the _same_ clock cycle or in subsequent cycles as defined by the property following the implication. Overlapping means the consequent check starts in the _same_ cycle as the antecedent.                                                     |
-| **Implication `\|=>` (Non-Overlapping)** | **Implication (Non-Overlapping)**: If the antecedent sequence (left side) matches, then the consequent property (right side) must hold, starting in the _next_ clock cycle.  | `req \|=> gnt`                                                             | If `req` becomes true, then `gnt` must become true in the clock cycle _immediately following_ the cycle in which `req` became true, or in subsequent cycles as defined by the property following the implication. Non-overlapping means the consequent check starts in the _cycle after_ the antecedent. |
+| Operator | Description | Example | Explanation |
+| :--- | :--- | :--- | :--- |
+| **`##n`** | **Fixed Delay**: Advances exactly `n` clock cycles (`n >= 0`). | `req ##2 gnt` | `gnt` must hold true 2 clock cycles after `req` matches. |
+| **`##[m:n]`** | **Range Delay**: Matches `m` to `n` cycles later (`##[1:$]` for unbounded). | `req ##[1:4] gnt` | `gnt` must become true 1, 2, 3, or 4 cycles after `req`. |
+| **`[*n]`** | **Consecutive Repetition**: Expression holds true for `n` back-to-back cycles. | `valid [*3]` | `valid` stays high for 3 consecutive clock edges. |
+| **`[*m:n]`** | **Consecutive Repetition Range**: Bounded (`[*1:4]`) or unbounded (`[*1:$]`). | `busy [*1:$] ##1 done` | `busy` holds for at least 1 consecutive cycle until `done`. |
+| **`[->n]`** | **Goto Repetition**: Non-consecutive `n` occurrences; sequence ends on the `n`th hit. | `req [->3] ##1 gnt` | `req` occurs 3 times (gaps allowed); `gnt` follows immediately after the 3rd `req`. |
+| **`[=n]`** | **Non-Consecutive Repetition**: `n` occurrences; trailing `!expr` cycles permitted before next term. | `req [=2] ##1 gnt` | `req` occurs 2 times, followed by zero or more `!req` cycles before `gnt`. |
+| **`throughout`** | **Invariant Over Duration**: LHS boolean stays true across every cycle of RHS sequence. | `cs_n_low throughout burst_seq` | `cs_n_low` remains asserted during every clock of `burst_seq`. |
+| **`within`** | **Sequence Containment**: Sub-sequence `s1` starts and ends inside envelope `s2`. | `s1 within s2` | `s1` completes entirely during `s2`'s match span. |
+| **`and` / `intersect`** | **Sequence Conjunction**: Both match; `intersect` also enforces equal duration. | `s1 intersect s2` | `s1` and `s2` start together and finish on the exact same cycle. |
+| **`or`** | **Sequence Disjunction**: Passes if either `s1` or `s2` matches. | `s1 or s2` | Succeeds on whichever branch completes. |
+| **`\|->` (Overlapping)** | **Same-Cycle Implication**: Consequent starts in the **same cycle** antecedent completes. | `req \|-> ack` | If `req` is high at `T`, `ack` is checked starting at `T`. |
+| **`\|=>` (Non-Overlapping)** | **Next-Cycle Implication**: Consequent starts **1 cycle after** antecedent completes. | `req \|=> ack` | Equivalent to `req \|-> ##1 ack`. |
 
 ## Assertion Severity Levels: Controlling Simulation Response to Assertion Failures
 
-SystemVerilog provides a hierarchy of severity levels for assertion failure messages, allowing you to control the simulation's response based on the criticality of the assertion violation.
+SystemVerilog defines four standard severity tasks for assertion action blocks:
 
-| Severity Level | Typical Usage Scenario                                                                                                                          | Simulation Impact                                                                                                                                                                                                                         | Description |
-| :------------- | :---------------------------------------------------------------------------------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :---------- |
-| **`$fatal`**   | **Critical, Unrecoverable Errors**: Safety violations, catastrophic design flaws that make further simulation meaningless.                      | **Terminates Simulation Immediately**: Stops the simulation run immediately upon assertion failure.                                                                                                                                       |
-| **`$error`**   | **Design Requirement Violations**: Functional errors, protocol violations, incorrect behavior that violates specified design functionality.     | **Increments Error Count, Continues Simulation**: Reports an error message, increments the simulation error count, but allows the simulation to continue running. This is the most common severity level for functional assertions.       |
-| **`$warning`** | **Potential Issues Requiring Review**: Unexpected or suspicious behavior that might indicate a problem, but not necessarily a functional error. | **Logs Warning Message, Continues Simulation**: Reports a warning message, but the simulation continues without incrementing the error count. Useful for flagging potential issues that need investigation but are not critical failures. |
-| **`$info`**    | **Diagnostic Information, Status Messages**: Reporting progress, milestones, or specific design states reached during simulation.               | **Logs Informational Message, Continues Simulation**: Reports an informational message. Used for providing feedback on simulation progress or for debugging purposes.                                                                     |
-| **`$system`**  | **Not an Assertion Severity**: `$system` invokes a host operating-system command; it is not a standard assertion action severity.               | **Tool/Host Dependent**: Avoid using it as a portable assertion response. Use `$fatal`, `$error`, `$warning`, or `$info` for assertion action blocks.                                                                                     |
+| Severity Task | Typical Usage Scenario | Simulation Impact |
+| :--- | :--- | :--- |
+| **`$fatal`** | Catastrophic safety invariants, corrupted control state | Prints error message and terminates simulation immediately |
+| **`$error`** | Functional spec violations, protocol errors (default for failing `assert`) | Increments error counter, logs error, continues simulation |
+| **`$warning`** | Suspicious or suboptimal timing/conditions needing review | Logs warning without incrementing failure count |
+| **`$info`** | Coverage hit notifications, debug milestones | Logs informational status message |
+
+> **Note:** `$system(...)` invokes an external OS shell command and is **not** an assertion severity task—avoid it inside portable assertion action blocks.
 
 ### Severity Level Usage Example: Traffic Light Controller Verification
 
 ```systemverilog
-module traffic_light_controller_checker(
-  input logic clk,
-  input logic rst,
-  input logic [1:0] light_state // 2-bit signal representing traffic light state
+module traffic_light_controller_checker (
+  input logic       clk,
+  input logic       rst,
+  input logic [1:0] light_state
 );
-
-  // Property: No Dual Red - Ensure that both directions are never red simultaneously (safety property)
-  property no_concurrent_red_lights;
+  // Property: Safety invariant preventing both directions from turning green/red dangerously
+  property no_concurrent_invalid_state;
     @(posedge clk)
-    disable iff (rst) // Reset disable clause
-    ! (light_state == 2'b11); // '11' might represent both directions being red
-  endproperty : no_concurrent_red_lights
+    disable iff (rst)
+    !(light_state == 2'b11);
+  endproperty : no_concurrent_invalid_state
 
-  // Assertion: Check the 'no_concurrent_red_lights' property. If violated, it's a fatal safety error.
-  assert property (no_concurrent_red_lights)
-    else $fatal(1, "!!! SAFETY VIOLATION !!!: Both traffic directions are RED simultaneously! State = %b Time = %0t", light_state, $time);
+  assert property (no_concurrent_invalid_state)
+    else $fatal(1, "SAFETY VIOLATION: Invalid light_state=%b at Time=%0t", light_state, $time);
 
-  // Coverage Property: Track when the "all lights off" state (state '00') is observed (coverage metric)
-  cover property (@(posedge clk) light_state == 2'b00)
-    $info("INFO: Traffic light 'All Lights Off' state observed at Time = %0t", $time); // Informational message when "all off" state is reached
-
+  cover property (@(posedge clk) disable iff (rst) light_state == 2'b00)
+    $info("INFO: All-off light state observed at Time=%0t", $time);
 endmodule : traffic_light_controller_checker
 ```
 
 ## Coverage-Driven Verification with Assertions: Measuring Verification Progress
 
-SystemVerilog assertions are not just for error detection; they are also powerful tools for **coverage-driven verification**. Coverage properties allow you to track whether specific design behaviors or scenarios, as defined by assertions, have been exercised during simulation. This helps measure verification completeness and identify areas that need more testing.
+Assertions also measure **whether scenarios actually occurred** during simulation, preventing false confidence from vacuous passes (where an antecedent never triggered!).
 
 ### Coverage Property Types: Event, Sequence, and Property Coverage
 
-SystemVerilog provides assertion coverage through `cover property`; covergroups provide a separate functional-coverage mechanism. The following patterns show common ways to cover events, sequences, and properties:
+1. **Boolean / Event Coverage**:
 
-1.  **Event Coverage**: Use a covergroup coverpoint or a procedural event counter to track a simple boolean event or condition. `cover (event_expression)` is not the portable concurrent-assertion syntax for this purpose.
+```systemverilog
+cover property (@(posedge clk) disable iff (!rst_n) enable_signal);
+```
 
-    ```systemverilog
-    cover property (@(posedge clk) enable_signal); // Track an occurrence of 'enable_signal'
-    ```
+2. **Sequence Coverage**:
 
-2.  **Sequence Coverage**: Use `cover property (sequence_expression)` to track the occurrence of a defined temporal sequence. Useful for verifying that specific sequences of events in a protocol or state machine are exercised.
+```systemverilog
+sequence req_ack_seq;
+  request ##[1:3] acknowledge;
+endsequence : req_ack_seq
 
-    ```systemverilog
-    sequence req_ack_seq;
-      request ##[1:3] acknowledge; // Sequence: request followed by acknowledge within 1-3 cycles
-    endsequence : req_ack_seq
+cover property (@(posedge clk) disable iff (!rst_n) req_ack_seq);
+```
 
-    cover property (@(posedge clk) req_ack_seq); // Track coverage of the 'req_ack_seq' sequence
-    ```
+3. **Property Coverage**:
 
-3.  **Property Coverage**: `cover property (property_expression)` - Tracks whether a defined property (which can be complex temporal property) holds true during simulation. Useful for measuring the coverage of design properties and ensuring that assertions are actually being triggered and tested.
+```systemverilog
+localparam logic [31:0] MIN_ADDR = 32'h1000_0000;
+localparam logic [31:0] MAX_ADDR = 32'h1FFF_FFFF;
 
-    ```systemverilog
-    property valid_address_range;
-      address >= MIN_ADDR && address <= MAX_ADDR; // Property: address within valid range
-    endproperty : valid_address_range
+property valid_address_range;
+  valid_txn |-> (address >= MIN_ADDR && address <= MAX_ADDR);
+endproperty : valid_address_range
 
-    cover property (@(posedge clk) valid_address_range); // Track coverage of the 'valid_address_range' property
-    ```
+cover property (@(posedge clk) valid_address_range);
+```
 
 ### Cross-Coverage with Covergroups: Analyzing Combined Coverage
 
-SystemVerilog covergroups can be used in conjunction with assertion coverage to perform **cross-coverage analysis**. This allows you to analyze the coverage of combinations of different assertion coverage points, providing a more comprehensive view of verification coverage.
-
-**Example: Cross-Coverage of Protocol State Transitions and Completion Status**
+Covergroups pair naturally with SVA checkers to cross state transitions with completion status:
 
 ```systemverilog
-module protocol_coverage_example;
-  logic clk;
-  logic start_transaction;
-  logic transaction_done;
-  enum logic [1:0] { IDLE, PROCESSING, COMPLETE } protocol_state;
+module protocol_coverage_example (
+  input logic clk,
+  input logic start_transaction,
+  input logic transaction_done
+);
+  typedef enum logic [1:0] { IDLE, PROCESSING, COMPLETE } state_e;
+  state_e protocol_state = IDLE;
 
-  covergroup protocol_coverage_group @(posedge clk); // Covergroup sampled at posedge clk
-    start_state_coverage: coverpoint protocol_state { // Coverpoint for 'protocol_state'
-      bins idle_to_busy = (IDLE => PROCESSING); // Bin for IDLE to BUSY state transition
-      bins busy_to_complete = (PROCESSING => COMPLETE); // Bin for PROCESSING to COMPLETE transition
+  covergroup protocol_coverage_group @(posedge clk);
+    start_state_coverage: coverpoint protocol_state {
+      bins idle_to_busy     = (IDLE => PROCESSING);
+      bins busy_to_complete = (PROCESSING => COMPLETE);
     }
 
-    completion_status_coverage: coverpoint transaction_done { // Coverpoint for 'transaction_done' signal
-      bins normal_completion = (1'b1); // Bin for 'transaction_done' being 1 (normal completion)
-      bins timeout_completion = (1'b0); // Bin for 'transaction_done' being 0 (timeout or incomplete)
+    completion_status_coverage: coverpoint transaction_done {
+      bins normal_completion  = {1'b1};
+      bins timeout_completion = {1'b0};
     }
 
-    // Cross-coverage: Analyze combinations of 'start_state_coverage' and 'completion_status_coverage'
     state_completion_cross_coverage: cross start_state_coverage, completion_status_coverage;
   endgroup : protocol_coverage_group
 
-  protocol_coverage_group protocol_coverage_instance = new(); // Instantiate the covergroup
+  protocol_coverage_group protocol_coverage_instance = new();
 
-  always @(posedge clk) begin
-    if (start_transaction) begin
-      protocol_state <= PROCESSING;
-    end else if (transaction_done) begin
-      protocol_state <= COMPLETE;
-    end else begin
-      protocol_state <= IDLE;
-    end
+  always_ff @(posedge clk) begin
+    if (start_transaction)     protocol_state <= PROCESSING;
+    else if (transaction_done) protocol_state <= COMPLETE;
+    else                       protocol_state <= IDLE;
   end
-
-  // ... (Stimulus and other design logic) ...
-
 endmodule : protocol_coverage_example
 ```
-
-In this cross-coverage example:
-
-- `protocol_coverage_group` is a covergroup sampled at `posedge clk`.
-- `start_state_coverage` coverpoint tracks state transitions in `protocol_state`.
-- `completion_status_coverage` coverpoint tracks the values of `transaction_done`.
-- `state_completion_cross_coverage` is a `cross` coverpoint that analyzes the combinations of bins from `start_state_coverage` and `completion_status_coverage`. This allows you to see, for example, how often the "IDLE to BUSY" transition occurs in combination with "normal completion" vs. "timeout completion," providing insights into different protocol scenarios exercised.
 
 ## Advanced Assertion Techniques: Recursion and Binding
 
 ### Parameterized Properties: Defining Checks Based on Previous Occurrences
 
-SystemVerilog properties can be parameterized and can use sampled-value functions such as `$past` to refer to previous clock cycles. A property that refers to itself recursively is a more specialized construct; the example below uses a repetition operator instead because it expresses the requirement directly and is supported by more tools.
-
-**Example: Checking for a Maximum Number of Consecutive '1's in a Data Stream**
+Writing concise parameterized properties with repetition or `$past` avoids fragile procedural counters and maximizes simulator/formal tool compatibility:
 
 ```systemverilog
-module recursive_assertion_example (input logic clk, input logic data_input);
+module run_length_assertion_example #(
+  parameter int MAX_CONSEC_ONES = 7
+) (
+  input logic clk,
+  input logic rst_n,
+  input logic data_input
+);
   property consecutive_ones_limit(int max_ones);
     @(posedge clk)
-    not (data_input[* (max_ones + 1)]); // No run may contain more than max_ones consecutive ones
+    disable iff (!rst_n)
+    not (data_input [* (max_ones + 1)]);
   endproperty : consecutive_ones_limit
 
-  assert property (consecutive_ones_limit(7)); // Assert that there are never more than 7 consecutive '1's
-endmodule : recursive_assertion_example
+  assert property (consecutive_ones_limit(MAX_CONSEC_ONES))
+    else $error("Exceeded maximum %0d consecutive '1's!", MAX_CONSEC_ONES);
+endmodule : run_length_assertion_example
 ```
-
-- `property consecutive_ones_limit(int max_ones)`: Defines a parameterized property that accepts the maximum permitted run length.
-- `data_input[* (max_ones + 1)]`: Describes a run of one-valued samples that would violate the limit; `not` rejects such a run.
-- The repetition form avoids maintaining a mutable local counter. A counter-based or genuinely recursive formulation can be useful for more complex patterns, but it should be introduced only when the requirement cannot be expressed directly with SVA operators.
 
 ### Assertion Bindings: Applying Assertions Externally
 
-SystemVerilog's `bind` construct allows you to **externally bind** assertions to modules or instances _without modifying the original RTL code_. This is extremely useful for:
+![Non-Intrusive Assertion Injection with SystemVerilog bind](images/ch20_sv_assertion_bind_nonintrusive_flow.svg)
 
-- **Adding assertions to third-party IP or legacy code** where you cannot or do not want to modify the source.
-- **Creating separate verification modules** that contain assertions for a specific module, keeping assertions organized and modular.
-- **Applying different sets of assertions** to the same design for different verification scenarios.
-
-**Example: Binding Assertions to a FIFO Module Externally**
+SystemVerilog's `bind` construct attaches standalone assertion modules to RTL modules or specific hierarchy instances **without editing RTL source files**.
 
 ```systemverilog
-// 1. FIFO Module (Assume this is pre-existing IP you cannot modify)
-module fifo #(parameter DEPTH = 8) (
-  input logic clk, rst_n, wr_en, rd_en,
-  input logic [7:0] data_in,
+module fifo #(parameter int DEPTH = 8) (
+  input  logic       clk, rst_n, wr_en, rd_en,
+  input  logic [7:0] data_in,
   output logic [7:0] data_out,
-  output logic full, empty
-  // ... (FIFO implementation - not shown for brevity) ...
+  output logic       full, empty
 );
+  // RTL implementation...
 endmodule : fifo
 
-// 2. Separate Assertion Module for FIFO
-module fifo_assertions #(parameter DEPTH_ASSERT = 8) (
+module fifo_assertions #(parameter int DEPTH_ASSERT = 8) (
   input logic clk,
   input logic rst_n,
   input logic wr_en,
-  input logic full
-); // Signals sampled by the assertion checker
-
-  property fifo_overflow_check; // Property to check for FIFO overflow
-    @(posedge clk)
-    disable iff (!rst_n)
-    !(wr_en && full); // Condition: a write must not be accepted while FIFO is full
+  input logic rd_en,
+  input logic full,
+  input logic empty
+);
+  property fifo_overflow_check;
+    @(posedge clk) disable iff (!rst_n)
+    !(wr_en && full);
   endproperty : fifo_overflow_check
 
-  assert property (fifo_overflow_check) // Assertion for overflow check
-    else $error("FIFO Overflow detected! Write when FIFO is full at Time = %0t", $time);
+  property fifo_underflow_check;
+    @(posedge clk) disable iff (!rst_n)
+    !(rd_en && empty);
+  endproperty : fifo_underflow_check
 
-  // ... (More FIFO assertions can be added here) ...
+  assert property (fifo_overflow_check)
+    else $error("FIFO Overflow (DEPTH=%0d): wr_en asserted while full at %0t", DEPTH_ASSERT, $time);
 
+  assert property (fifo_underflow_check)
+    else $error("FIFO Underflow (DEPTH=%0d): rd_en asserted while empty at %0t", DEPTH_ASSERT, $time);
 endmodule : fifo_assertions
 
-// 3. Interface to connect assertions to FIFO signals
-interface fifo_if (
-  input logic clk, rst_n, wr_en, rd_en, full, empty,
-  input logic [7:0] data_in, data_out
-);
-  modport tb (input clk, rst_n, wr_en, rd_en, full, empty, data_in, data_out);
-  modport dut (input clk, rst_n, wr_en, rd_en, full, empty, data_in, data_out);
-endinterface : fifo_if
-
-// 4. Top-Level Module Instantiating FIFO and Binding Assertions
 module top_module;
   logic clk_top, rst_n_top, wr_en_top, rd_en_top, full_top, empty_top;
   logic [7:0] data_in_top, data_out_top;
 
-  fifo_if fifo_interface (clk_top, rst_n_top, wr_en_top, rd_en_top, full_top, empty_top, data_in_top, data_out_top);
-
-  fifo #(.DEPTH(16)) fifo_instance ( // Instantiate FIFO
+  fifo #(.DEPTH(16)) fifo_instance (
     .clk(clk_top), .rst_n(rst_n_top), .wr_en(wr_en_top), .rd_en(rd_en_top),
     .data_in(data_in_top), .data_out(data_out_top), .full(full_top), .empty(empty_top)
   );
 
-  bind fifo fifo_instance fifo_assertions #(.DEPTH_ASSERT(16)) fifo_checks ( // **BIND ASSERTIONS TO FIFO INSTANCE**
-    .clk(clk), .rst_n(rst_n), .wr_en(wr_en), .full(full)
+  // Target one specific instance with colon separator: bind <module> : <instance_list> ...
+  bind fifo : top_module.fifo_instance fifo_assertions #(.DEPTH_ASSERT(16)) fifo_checks (
+    .clk  (clk),
+    .rst_n(rst_n),
+    .wr_en(wr_en),
+    .rd_en(rd_en),
+    .full (full),
+    .empty(empty)
   );
-
-  // ... (Testbench stimulus and clock generation) ...
-
+  // Note: Omit ": <instance>" (e.g. "bind fifo fifo_assertions ...") to bind every fifo instance.
 endmodule : top_module
 ```
 
-- `bind fifo fifo_instance fifo_assertions #(.DEPTH_ASSERT(16)) fifo_checks (fifo_interface.dut);`: This `bind` statement does the following:
-  - `bind fifo fifo_instance`: Targets the instance named `fifo_instance` of module type `fifo` in the `top_module`.
-  - `fifo_assertions #(.DEPTH_ASSERT(16))`: Instantiates the `fifo_assertions` module, parameterizing it with `DEPTH_ASSERT = 16`.
-  - `fifo_checks (...)`: Instantiates the checker as `fifo_checks` and connects signals in the targeted FIFO scope to its checker ports. An interface such as `fifo_if` can also be used when the checker is designed with an interface port, but the direct signal connections shown here make the binding scope explicit.
-
 ## Debugging Methodologies for SystemVerilog Assertions
-
-When assertions fail, effective debugging is crucial. SystemVerilog provides several features to aid in assertion debugging:
 
 ### Assertion Control System Tasks: `$asserton`, `$assertoff`, `$assertkill`, `$assertvacuouson`, and `$assertvacuousoff`
 
-These system tasks provide runtime control over assertion behavior, useful for debugging and focused verification:
-
-- **`$assertoff(levels, [hierarchy_name])`**: Disables assertions. `levels` selects assertion-control levels defined by the language or simulator; it is not a severity selector. `hierarchy_name` optionally specifies a hierarchical scope to disable assertions within.
-- **`$asserton(levels, [hierarchy_name])`**: Enables assertions that were previously disabled.
-- **`$assertkill(levels, [hierarchy_name])`**: Terminates currently active assertion attempts in the selected scope. It does not permanently disable future attempts.
-- **`$assertvacuouson(levels, [hierarchy_name])`** and **`$assertvacuousoff(levels, [hierarchy_name])`**: Enable or disable reporting of vacuous successes, where supported by the simulator. Vacuity occurs when an implication's antecedent never becomes true, making the property pass without checking its consequent. Verify exact argument support in the simulator documentation.
-
-**Example: Disabling and Enabling Assertions During Simulation**
+- **`$assertoff(levels, [hierarchy_list])`**: Stops future assertion evaluations in the specified hierarchy (e.g., while power is gated or reset is being initialized).
+- **`$asserton(levels, [hierarchy_list])`**: Re-enables assertion checking.
+- **`$assertkill(levels, [hierarchy_list])`**: Immediately aborts currently active in-flight assertion attempts without disabling new ones.
+- **`$assertvacuouson` / `$assertvacuousoff`**: Controls whether vacuous passes of implication properties contribute to pass statistics.
 
 ```systemverilog
 initial begin
-  // Initially disable all assertions within the 'top.dut.arbiter' hierarchy
-  $assertoff(0, "top.dut.arbiter");
-
-  // ... (Simulation initialization and reset sequence) ...
-
-  // Enable assertions within 'top.dut.arbiter' after reset is de-asserted
-  wait (reset_signal == 1'b0); // Wait for reset to become inactive
-  $asserton(0, "top.dut.arbiter");
-
-  // ... (Continue simulation with assertions enabled) ...
+  // Disable all assertion scopes under top.dut.arbiter during cold boot (levels = 0 => all subscopes)
+  $assertoff(0, top.dut.arbiter);
+  wait (reset_n === 1'b1);
+  $asserton(0, top.dut.arbiter);
 end
 ```
 
 ### Waveform Markers and `$info` for Debugging Context
 
-- **`$info` in Assertion Action Blocks**: Use `$info` severity within assertion action blocks (both success and failure blocks) to print messages, display signal values, and provide context when an assertion is evaluated or triggers. This helps trace assertion execution and understand the design state around assertion events.
-- **Waveform Markers**: Many simulators allow you to configure assertions to generate waveform markers or annotations when they are evaluated or when they fail. These markers visually highlight assertion activity in waveform viewers, making it easier to correlate assertion behavior with signal waveforms and debug temporal issues.
-
-**Example: Using `$info` to Add Debugging Context to Assertions**
+- Attach `$info(...)` inside sequence match items or pass action blocks so waveform logs record both triggers and successes:
 
 ```systemverilog
-property memory_write_acknowledgement_check;
-  @(posedge clk)
-  write_enable |-> ##[1:2] ( // Write enable followed by acknowledgement within 1-2 cycles
+property memory_write_ack_check;
+  @(posedge clk) disable iff (!rst_n)
+  write_enable |-> ##[1:2] (
     acknowledge_signal,
-    $info("INFO: Write operation acknowledged at Time = %0t, Address = %h", $time, current_address) // $info on success
+    $info("Write acknowledged at Time=%0t, Addr=0x%08h", $time, current_address)
   );
-endproperty : memory_write_acknowledgement_check
+endproperty : memory_write_ack_check
 
-assert property (memory_write_acknowledgement_check)
-  else $error("ERROR: Memory write acknowledgement timeout! Write request at Time = %0t, Address = %h", $time, current_address); // $error on failure
+assert property (memory_write_ack_check)
+  else $error("Memory write ack timeout at Time=%0t, Addr=0x%08h", $time, current_address);
 ```
 
 ## Best Practices Checklist for Effective SystemVerilog Assertion Usage
 
-☐ **Use Named Properties and Sequences for Complex Assertions**: For any assertion more complex than a simple immediate check, define named `property` and `sequence` blocks. This improves readability, reusability, and maintainability of assertions.
-
-☐ **Synchronize Assertions with Design Clock Domains**: Ensure that concurrent assertions are properly clocked and synchronized with the relevant clock domains in your design using `@(posedge clk)` or `default clocking` blocks. Incorrect clocking is a common source of assertion errors.
-
-☐ **Include `disable iff (reset_condition)` for Reset Awareness**: Make assertions reset-aware by using the `disable iff (reset_condition)` clause, especially for sequential assertions. This prevents assertions from firing spuriously during reset and makes them more relevant to functional verification.
-
-☐ **Avoid Combinatorial Loops in Assertion Expressions**: Be careful to avoid creating combinatorial loops when writing assertion expressions, especially immediate assertions in `always_comb` blocks. Ensure that assertion expressions are sensitive to inputs and do not create unintended feedback paths.
-
-☐ **Use Coverage Properties to Track Scenario Execution**: Actively use `cover property` for temporal scenarios and covergroups for event/value coverage. Regularly analyze coverage reports to guide testbench development and improve verification completeness.
-
-☐ **Parameterize Assertions for Reuse and Configurability**: Parameterize assertions (both immediate and concurrent) to make them reusable across different modules, instances, or configurations. This promotes assertion IP reuse and reduces redundancy.
-
-☐ **Combine Assertions with Functional Coverage Points**: Integrate assertion coverage with traditional functional coverage. Use assertions to verify specific functional properties and use functional coverage to measure the overall coverage of design features and functionalities.
-
-☐ **Document Assertion Purpose Clearly Using Comments**: Document each assertion with clear and concise comments explaining the design property being checked, the intended behavior, and any relevant context. Good documentation is essential for assertion maintainability and understanding.
-
-☐ **Use Severity Levels Appropriately to Control Simulation Response**: Choose appropriate severity levels (`$fatal`, `$error`, `$warning`, `$info`) based on the criticality of the property being asserted. Use `$fatal` for safety-critical violations, `$error` for functional errors, and `$warning` for potential issues requiring review.
-
-☐ **Verify Assertion Activation and Coverage in Simulation Reports**: Regularly review simulation reports and assertion coverage reports to ensure that assertions are being activated, triggered, and contributing to coverage metrics. Inactive or trivially passing assertions provide no verification value.
+- **Use Named Properties and Sequences**: Give every non-trivial check a meaningful `property`/`sequence` name for clean failure messages and debug traces.
+- **Keep Concurrent Assertions Reset-Aware**: Include `disable iff (!rst_n)` (or `rst_n !== 1'b1`) so uninitialized power-on X/reset cycles do not pollute logs.
+- **Avoid Combinational Glitches with `assert #0`**: Use deferred immediate assertions inside `always_comb` blocks instead of bare immediate `assert`.
+- **Add `cover property` Alongside Every Implication**: Verify the antecedent of `a |-> b` actually fired at least once—never rely solely on zero failures!
+- **Parameterize and Bind Externally**: Encapsulate protocol checkers into modules/interfaces and attach them via `bind` rather than intruding into golden RTL.
+- **Match Failure Severity to Impact**: Reserve `$fatal` for catastrophic safety violations, `$error` for functional bugs, and `$warning`/`$info` for advisories.
 
 ## Practical Exercises to Master SystemVerilog Assertions
 
-### Packet Protocol Assertion Suite
+1. **Packet Protocol Assertion Suite**: Write concurrent assertions in `packet_protocol_checker` verifying 1-cycle `start_bit`, 8-cycle payload phase, even parity checking, 1-cycle `stop_bit`, and mutual exclusion across frame phases.
+2. **UART Controller State Machine Coverage**: Implement `uart_fsm_coverage` tracking `IDLE => START_BIT_DETECT`, all 8 data bit indices in `DATA_RECEIVE`, `STOP_BIT_DETECT`, `ERROR_STATE`, and cross-coverage between transitions and error flags.
+3. **Memory Access Assertion Suite**: Build `mem_ctrl_assertions` verifying address stability between `write_enable`/`read_enable` and `acknowledge`, bus contention prevention (`!(write_enable && read_enable)`), minimum enable width, and basic read-after-write scoreboard verification.
+4. **AMBA AHB-Lite Bus Protocol Assertions**: Implement key AHB-Lite properties (`HSEL` phase control validity, `HTRANS`/`HREADY` sequencing, `HBURST` incrementing address progression across `INCR4`, and `HRESP` error signaling).
 
-Create a SystemVerilog module `packet_protocol_checker` with concurrent assertions to verify a simple packet protocol. Assume the protocol has the following signals:
+---
 
-- `clk`: Clock signal
-- `rst_n`: Active-low reset
-- `start_bit`: Indicates the start of a packet (1 clock cycle pulse)
-- `data [7:0]`: 8-bit data payload
-- `parity_bit`: Even parity bit for the data
-- `stop_bit`: Indicates the end of a packet (1 clock cycle pulse)
+### Reference Solutions
 
-Implement concurrent assertions to check the following:
-
-- **Start Bit Detection**: Assert that whenever `start_bit` is asserted, it is asserted for exactly one clock cycle.
-- **8-bit Data Transfer**: After the `start_bit`, assert that 8 clock cycles of data transfer follow immediately.
-- **Even Parity Check**: Assert that the `parity_bit` is correct for the 8-bit `data` (even parity).
-- **Stop Bit Verification**: After the 8 data bits and parity bit, assert that the `stop_bit` is asserted for exactly one clock cycle.
-- **No Overlap**: Assert that `start_bit`, `data`, `parity_bit`, and `stop_bit` are not asserted simultaneously (mutually exclusive in time, except for the intended sequence).
+#### Exercise 1 Solution: Packet Protocol Assertion Suite
 
 ```systemverilog
-module packet_protocol_checker(
-  input logic clk,
-  input logic rst_n,
-  input logic start_bit,
+module packet_protocol_checker (
+  input logic       clk,
+  input logic       rst_n,
+  input logic       start_bit,
+  input logic       data_valid,
   input logic [7:0] data,
-  input logic parity_bit,
-  input logic stop_bit
+  input logic       parity_bit,
+  input logic       parity_valid,
+  input logic       stop_bit
 );
-  default clocking packet_clk_block @(posedge clk);
+  default clocking cb @(posedge clk);
   endclocking
 
-  // Assertions for Packet Protocol Verification (Implement here)
+  // 1. Start bit must be a clean 1-cycle pulse
+  property p_start_one_cycle;
+    disable iff (!rst_n)
+    start_bit |=> !start_bit;
+  endproperty
+  assert property (p_start_one_cycle)
+    else $error("Start bit held for >1 cycle!");
 
+  // 2. Mutual exclusion among active packet phase strobes
+  property p_phase_mutex;
+    disable iff (!rst_n)
+    $onehot0({start_bit, data_valid, parity_valid, stop_bit});
+  endproperty
+  assert property (p_phase_mutex)
+    else $error("Overlapping packet phase indicators detected!");
+
+  // 3. After start_bit, 8 cycles of data_valid, then parity_valid, then 1-cycle stop_bit
+  property p_full_frame_sequence;
+    disable iff (!rst_n)
+    $rose(start_bit) |=> (data_valid [*8]) ##1 parity_valid ##1 (stop_bit ##1 !stop_bit);
+  endproperty
+  assert property (p_full_frame_sequence)
+    else $error("Packet frame sequence violation after start_bit!");
+
+  // 4. Even parity check across captured data byte during parity_valid
+  property p_even_parity;
+    disable iff (!rst_n)
+    parity_valid |-> (parity_bit === ^$past(data, 1));
+  endproperty
+  assert property (p_even_parity)
+    else $error("Even parity mismatch: parity_bit=%b, ^data=%b", parity_bit, ^$past(data, 1));
+
+  cover property (@(posedge clk) disable iff (!rst_n) $rose(start_bit));
 endmodule : packet_protocol_checker
 ```
 
-### UART Controller State Machine Coverage
+#### Exercise 2 Solution: UART Controller State Machine Coverage
 
-Define coverage points for a simplified UART (Universal Asynchronous Receiver/Transmitter) controller state machine. Assume the UART has the following states (represented by an `enum`): `IDLE`, `START_BIT_DETECT`, `DATA_RECEIVE`, `PARITY_CHECK`, `STOP_BIT_DETECT`, `ERROR_STATE`.
+```systemverilog
+module uart_fsm_coverage (
+  input logic       clk,
+  input logic       rst_n,
+  input logic [2:0] bit_idx,
+  input logic       parity_err,
+  input logic       framing_err
+);
+  typedef enum logic [2:0] {
+    IDLE,
+    START_BIT_DETECT,
+    DATA_RECEIVE,
+    PARITY_CHECK,
+    STOP_BIT_DETECT,
+    ERROR_STATE
+  } uart_state_e;
 
-Define a covergroup with coverpoints to track:
+  uart_state_e state;
+  wire any_err = parity_err || framing_err;
 
-- **Idle to Start State Transition**: Cover the transition from `IDLE` state to `START_BIT_DETECT` state.
-- **Data Bits Reception Coverage**: Cover the reception of all 8 data bits in the `DATA_RECEIVE` state. You can create bins for each bit position (bit 0 received, bit 1 received, ..., bit 7 received) or group them.
-- **Stop Bit Detection**: Cover the successful detection of the `STOP_BIT_DETECT` state.
-- **Error State Coverage**: Cover reaching the `ERROR_STATE` (you'll need to define conditions that lead to the `ERROR_STATE` in your UART design, e.g., parity error, framing error).
-- **Cross-Coverage**: Create cross-coverage between state transitions and error/success outcomes (e.g., cross between state transitions and whether an error occurred during data reception).
+  covergroup cg_uart @(posedge clk);
+    option.per_instance = 1;
 
-### Memory Access Assertion Suite
+    cp_state_trans: coverpoint state {
+      bins idle_to_start  = (IDLE => START_BIT_DETECT);
+      bins start_to_data  = (START_BIT_DETECT => DATA_RECEIVE);
+      bins stop_detected  = {STOP_BIT_DETECT};
+      bins entered_error  = (DATA_RECEIVE, PARITY_CHECK, STOP_BIT_DETECT => ERROR_STATE);
+    }
 
-Develop concurrent assertions for a simple memory controller interface. Assume the memory controller has the following signals:
+    cp_data_bits: coverpoint bit_idx iff (state == DATA_RECEIVE) {
+      bins bit_pos[8] = {[0:7]};
+    }
 
-- `clk`: Clock
-- `rst_n`: Reset
-- `address [31:0]`: Memory address bus
-- `data_in [31:0]`: Data input bus (for writes)
-- `data_out [31:0]`: Data output bus (for reads)
-- `write_enable`: Write enable signal
-- `read_enable`: Read enable signal
-- `acknowledge`: Acknowledge signal (indicates memory operation completion)
+    cp_error_flag: coverpoint any_err {
+      bins clean = {1'b0};
+      bins error = {1'b1};
+    }
 
-Implement concurrent assertions to check:
+    cx_state_vs_err: cross cp_state_trans, cp_error_flag;
+  endgroup : cg_uart
 
-- **Address Stability During Write/Read**: Assert that the `address` signal remains stable throughout a write or read transaction (from `write_enable`/`read_enable` assertion to `acknowledge` assertion).
-- **Data Bus Contention Check**: Assert that `data_in` and `data_out` are not driven simultaneously.
-- **Write Enable Pulse Width**: Assert that the `write_enable` pulse is asserted for at least one clock cycle.
-- **Read-After-Write Hazard Detection (Optional - Advanced)**: If applicable to your memory controller design, try to assert that a read operation to the same address immediately after a write operation returns the written data (or flags a hazard if not supported).
+  cg_uart u_cg_uart = new();
 
-### AMBA AHB Bus Protocol Assertions (Simplified)
+  assert property (@(posedge clk) disable iff (!rst_n) (state == ERROR_STATE) |-> $past(any_err) || any_err)
+    else $warning("Entered ERROR_STATE without parity_err or framing_err asserted.");
+endmodule : uart_fsm_coverage
+```
 
-Implement simplified concurrent assertions for key aspects of the AMBA AHB (Advanced High-Performance Bus) protocol. Focus on:
+#### Exercise 3 Solution: Memory Access Assertion Suite
 
-- **Address Phase Validity**: Assert that during the address phase of a transfer (HSEL is asserted), signals like HADDR, HWRITE, HSIZE, HBURST, HPROT are stable and valid.
-- **Data Phase Sequencing**: Assert that after the address phase, the data phase follows, and data transfer occurs according to HWRITE (read or write) and HBURST type.
-- **Burst Mode Transitions (Simplified)**: For incrementing bursts (HBURST = INCR, INCR4, INCR8, INCR16), assert that the address (HADDR) increments correctly in each data phase of the burst.
-- **Error Response Handling**: If your AHB model includes error responses (e.g., using HRESP signal), assert that error responses are generated under specific error conditions (you'll need to define what constitutes an error condition in your simplified AHB model).
+```systemverilog
+module mem_ctrl_assertions (
+  input logic        clk,
+  input logic        rst_n,
+  input logic [31:0] address,
+  input logic [31:0] data_in,
+  input logic [31:0] data_out,
+  input logic        write_enable,
+  input logic        read_enable,
+  input logic        acknowledge
+);
+  default clocking cb @(posedge clk);
+  endclocking
 
-These exercises provide a progressive path to learning and applying SystemVerilog Assertions, starting from basic protocol checks to more complex state machine coverage and bus protocol verification. Remember to utilize the best practices and debugging techniques discussed to create effective and robust assertion suites for your verification projects.
+  // 1. Address and write data must stay stable until acknowledge
+  property p_addr_stable_during_txn;
+    disable iff (!rst_n)
+    ((write_enable || read_enable) && !acknowledge) |=> $stable(address);
+  endproperty
+  assert property (p_addr_stable_during_txn)
+    else $error("Address changed before memory acknowledge!");
+
+  // 2. Simultaneous read & write contention prohibited
+  property p_no_rw_contention;
+    disable iff (!rst_n)
+    !(write_enable && read_enable);
+  endproperty
+  assert property (p_no_rw_contention)
+    else $error("Bus contention: write_enable and read_enable asserted together!");
+
+  // 3. Write enable held until acknowledge arrives
+  property p_we_held_until_ack;
+    disable iff (!rst_n)
+    $rose(write_enable) |-> (write_enable throughout (acknowledge [->1]));
+  endproperty
+  assert property (p_we_held_until_ack)
+    else $error("write_enable deasserted prematurely before acknowledge!");
+
+  // 4. Lightweight scoreboard + RAW hazard check
+  logic [31:0] shadow_mem [logic [31:0]];
+  always_ff @(posedge clk) begin
+    if (rst_n && write_enable && acknowledge) begin
+      shadow_mem[address] <= data_in;
+    end
+  end
+
+  property p_read_matches_written;
+    disable iff (!rst_n)
+    (read_enable && acknowledge && shadow_mem.exists(address))
+      |-> (data_out === shadow_mem[address]);
+  endproperty
+  assert property (p_read_matches_written)
+    else $error("Read data mismatch / RAW hazard at addr 0x%08h!", address);
+endmodule : mem_ctrl_assertions
+```
+
+#### Exercise 4 Solution: AMBA AHB-Lite Bus Protocol Assertions
+
+```systemverilog
+module ahb_lite_protocol_assertions (
+  input logic        hclk,
+  input logic        hresetn,
+  input logic        hsel,
+  input logic [1:0]  htrans,   // 00:IDLE, 01:BUSY, 10:NONSEQ, 11:SEQ
+  input logic [2:0]  hburst,   // 000:SINGLE, 001:INCR, 011:INCR4 ...
+  input logic [2:0]  hsize,    // 010 => 4-byte word
+  input logic        hwrite,
+  input logic [31:0] haddr,
+  input logic        hready,
+  input logic        hresp     // 0:OKAY, 1:ERROR
+);
+  localparam logic [1:0] TRANS_IDLE   = 2'b00;
+  localparam logic [1:0] TRANS_NONSEQ = 2'b10;
+  localparam logic [1:0] TRANS_SEQ    = 2'b11;
+  localparam logic [2:0] BURST_INCR4  = 3'b011;
+
+  default clocking cb @(posedge hclk);
+  endclocking
+
+  // 1. Control and address phase must stay valid/known and stable during wait states (!hready)
+  property p_ctrl_stable_when_stalled;
+    disable iff (!hresetn)
+    (hsel && htrans != TRANS_IDLE && !hready) |=> $stable({haddr, hwrite, hsize, hburst, htrans});
+  endproperty
+  assert property (p_ctrl_stable_when_stalled)
+    else $error("AHB address/control changed while HREADY=0!");
+
+  property p_addr_phase_known;
+    disable iff (!hresetn)
+    (hsel && htrans != TRANS_IDLE) |-> !$isunknown({haddr, hwrite, hsize, hburst});
+  endproperty
+  assert property (p_addr_phase_known)
+    else $error("AHB address phase signals contain X/Z during active transfer!");
+
+  // 2. Incrementing INCR4 word burst progression across sequential beats
+  property p_incr4_word_addr_step;
+    disable iff (!hresetn)
+    (hsel && hready && hburst == BURST_INCR4 && hsize == 3'b010 &&
+     (htrans == TRANS_NONSEQ || htrans == TRANS_SEQ))
+      ##1 (hsel && htrans == TRANS_SEQ)
+      |-> (haddr == $past(haddr) + 32'd4);
+  endproperty
+  assert property (p_incr4_word_addr_step)
+    else $error("AHB INCR4 sequential beat address did not increment by 4 bytes!");
+
+  // 3. AHB two-cycle ERROR response protocol: cycle 1 HRESP=1 & HREADY=0, cycle 2 HRESP=1 & HREADY=1
+  property p_ahb_two_cycle_error;
+    disable iff (!hresetn)
+    $rose(hresp) |-> (!hready ##1 (hresp && hready));
+  endproperty
+  assert property (p_ahb_two_cycle_error)
+    else $error("AHB two-cycle ERROR handshake violated (must assert HREADY=0 then HREADY=1 with HRESP=1)!");
+
+  cover property (@(posedge hclk) disable iff (!hresetn) (hsel && htrans == TRANS_NONSEQ && hwrite));
+endmodule : ahb_lite_protocol_assertions
+```
 
 ## Comprehensive Function Reference Table for SystemVerilog Assertions
 
-| Construct                                                                | Description                                                                                                                      | Example                                                                      | Notes                                                                                                                                                                  |
-| :----------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------- | :--------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **`sequence sequence_name; ... endsequence`**                            | Defines a named temporal sequence, which can be reused in properties.                                                            | `sequence req_ack_seq; req ##1 ack; endsequence`                             | Sequences are building blocks for properties, defining temporal patterns.                                                                                              |
-| **`property property_name; ... endproperty`**                            | Defines a named assertion property, encapsulating a temporal assertion rule.                                                     | `property req_ack_prop; @(posedge clk) req \|-> ack; endproperty`            | Properties are the core of concurrent assertions, specifying temporal relationships to be checked.                                                                     |
-| **`assert property (property_name) [action_block] else [action_block]`** | Checks if a named property holds true during simulation.                                                                         | `assert property (req_ack_prop) else $error("Req-Ack protocol violation!");` | The `assert` statement triggers the property check during simulation. The `else` block is executed on failure.                                                         |
-| **`cover property (property_name) [action_block]`**                      | Tracks coverage of a named property. Measures how often the property holds true.                                                 | `cover property (req_ack_prop) $info("Req-Ack sequence covered!");`          | `cover` properties are used for coverage-driven verification, measuring the extent to which design properties are exercised.                                           |
-| **`assume property (property_name)`**                                    | Specifies assumptions for formal verification tools. Constraints the environment for formal proofs.                              | `assume property (valid_input_data);`                                        | `assume` properties are primarily used in formal verification to define constraints on inputs or environment behavior that the formal tool can use to simplify proofs. |
-| **`$past(signal, n)`**                                                   | Accesses the value of `signal` from `n` clock cycles ago.                                                                        | `$past(data_bus, 2)`                                                         | Used in concurrent assertions to refer to signal values from previous clock cycles, enabling history-based checks.                                                     |
-| **`$rose(signal)`**                                                      | Detects a rising edge (0 to 1 transition) of `signal`.                                                                           | `$rose(enable_signal)`                                                       | Temporal operator to detect rising edges.                                                                                                                              |
-| **`$fell(signal)`**                                                      | Detects a falling edge (1 to 0 transition) of `signal`.                                                                          | `$fell(reset_n)`                                                             | Temporal operator to detect falling edges.                                                                                                                             |
-| **`$stable(signal)`**                                                    | Checks if `signal` remains stable (does not change value) in the current cycle.                                                  | `$stable(address_bus)`                                                       | Temporal operator to check for signal stability.                                                                                                                       |
-| **`$countones(expression)`**                                             | Counts the number of '1' bits in `expression`.                                                                                   | `$countones(control_vector)`                                                 | System function usable in assertion expressions to count set bits.                                                                                                     |
-| **`$onehot(expression)`**                                                | Checks if exactly one bit in `expression` is '1' (one-hot encoding).                                                             | `$onehot(state_encoding)`                                                    | System function to verify one-hot encoding.                                                                                                                            |
-| **`$isunknown(expression)`**                                             | Checks if `expression` contains any X or Z (unknown or high-impedance) bits.                                                     | `$isunknown(data_bus)`                                                       | System function to detect X or Z values, often used for error or undefined state detection.                                                                            |
-| **`disable iff (condition)`**                                            | Conditional disable clause for properties. Active attempts are aborted and new attempts are prevented while `condition` is true. | `property p_reset_aware; @(posedge clk) disable iff (rst) ... endproperty`   | Used to make assertions reset-aware or conditionally disable them based on any boolean condition. Essential for handling reset and other exceptional conditions.       |
+![SVA Sampled-Value and Bit-Vector System Functions](images/ch20_sv_sampled_value_functions_waveforms.svg)
 
-```systemverilog
-// Sample Solution for Exercise 1: Packet Protocol Assertions (Example - Start Bit Detection)
-module packet_protocol_checker(
-  input logic clk,
-  input logic rst_n,
-  input logic start_bit,
-  input logic [7:0] data,
-  input logic parity_bit,
-  input logic stop_bit
-);
-  default clocking packet_clk_block @(posedge clk);
-  endclocking
-
-  // Assertion 1: A sampled start bit must be low on the next clock cycle
-  property start_bit_duration_check;
-    @(posedge clk)
-    disable iff (!rst_n)
-    start_bit |=> !start_bit; // A start-bit pulse lasts for one sampled cycle
-  endproperty : start_bit_duration_check
-
-  assert property (start_bit_duration_check)
-    else $error("Start bit duration violation: Start bit asserted for more than one clock cycle!");
-
-  // ... (Implement other assertions for data transfer, parity, stop bit, no overlap) ...
-
-endmodule : packet_protocol_checker
-```
+| Construct / Function | Description | Example | Notes |
+| :--- | :--- | :--- | :--- |
+| **`sequence ... endsequence`** | Defines a reusable temporal signal pattern | `sequence req_ack_seq; req ##1 ack; endsequence` | Building block for properties |
+| **`property ... endproperty`** | Encapsulates a temporal relationship, clock, and reset guard | `property p; @(posedge clk) req \|-> ack; endproperty` | Verified with `assert`, `assume`, or `cover` |
+| **`assert property (...)`** | Verifies a property holds across simulation / formal runs | `assert property (p) else $error("Violation!");` | Executes `else` block in `Reactive` region on fail |
+| **`cover property (...)`** | Records whether a property/sequence succeeded non-vacuously | `cover property (req_ack_seq);` | Essential to detect untried antecedents |
+| **`assume property (...)`** | Constrains legal inputs for formal tools / testbench monitors | `assume property (valid_cfg);` | Prevents false formal counterexamples |
+| **`$past(expr, n)`** | Returns Preponed value of `expr` from `n` clock cycles ago | `$past(data_bus, 2)` | Default `n = 1` when omitted |
+| **`$rose(signal)`** | Detects LSB `0/X/Z -> 1` transition between clock samples | `$rose(start_bit)` | Uses Preponed sampled values |
+| **`$fell(signal)`** | Detects LSB `1/X/Z -> 0` transition between clock samples | `$fell(rst_n)` | Inverse of `$rose` |
+| **`$stable(signal)`** | True if sampled value equals the previous cycle's sample | `$stable(haddr)` | Equivalent to `!$changed(signal)` |
+| **`$countones(expr)`** | Counts set `'1'` bits in `expr` (ignores `0`, `X`, `Z`) | `$countones(req_vec) <= 2` | Useful for arbiter/credit checks |
+| **`$onehot(expr)` / `$onehot0(expr)`** | Checks if **exact 1** (`$onehot`) or **0/1** (`$onehot0`) bit is `'1'` | `$onehot(grant_bus)` | Core invariant for mux/FSM/arbiter ports |
+| **`$isunknown(expr)`** | True if any bit in `expr` is `X` or `Z` | `!$isunknown(data_bus)` | Guard against uninitialized control buses |
+| **`disable iff (cond)`** | Aborts active attempts and suspends property while `cond` is true | `disable iff (!rst_n)` | Must be used for reset awareness |
 
 ##### Copyright (c) 2026 squared-studio

@@ -1,0 +1,103 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 410" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGradCh14C" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#080c14" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <filter id="shadowCh14C" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+    <marker id="arrowCyan14C" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8"/>
+    </marker>
+    <marker id="arrowGreen14C" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#34d399"/>
+    </marker>
+    <marker id="arrowPurple14C" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#c084fc"/>
+    </marker>
+  </defs>
+
+  <rect width="920" height="410" rx="14" fill="url(#bgGradCh14C)"/>
+
+  <!-- Title -->
+  <text x="460" y="32" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="20" font-weight="700" fill="#f8fafc" text-anchor="middle">Enforcing Signal Directionality with Modports: Source, Sink &amp; Passive Monitor Views</text>
+  <text x="460" y="54" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13" fill="#94a3b8" text-anchor="middle">Formal interface ports select role-specific modport views from a single shared axi_stream_if instance</text>
+
+  <!-- Left Box: Source Module -->
+  <g transform="translate(24, 80)">
+    <rect width="246" height="196" rx="10" fill="#0f172a" stroke="#38bdf8" stroke-width="1.8" filter="url(#shadowCh14C)"/>
+    <rect width="246" height="36" rx="10" fill="#075985"/>
+    <rect x="0" y="24" width="246" height="12" fill="#075985"/>
+    <text x="123" y="23" font-family="'JetBrains Mono', Consolas, monospace" font-size="12.5" font-weight="700" fill="#e0f2fe" text-anchor="middle">axi_stream_data_source</text>
+
+    <rect x="12" y="48" width="222" height="28" rx="5" fill="#091526" stroke="#0284c7"/>
+    <text x="123" y="66" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" font-weight="700" fill="#7dd3fc" text-anchor="middle">axi_stream_if.source_port</text>
+
+    <text x="16" y="100" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" font-weight="700" fill="#34d399">output: tdata, tvalid</text>
+    <text x="16" y="122" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#e2e8f0">input:  tready, aclk, aresetn</text>
+
+    <rect x="12" y="138" width="222" height="44" rx="6" fill="#4c0519" stroke="#f43f5e"/>
+    <text x="123" y="156" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" font-weight="700" fill="#fecdd3" text-anchor="middle">Compile-Time Guard:</text>
+    <text x="123" y="172" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#fda4af" text-anchor="middle">Cannot drive tready (input only)</text>
+  </g>
+
+  <!-- Center Box: axi_stream_if -->
+  <g transform="translate(328, 80)">
+    <rect width="264" height="196" rx="10" fill="#181208" stroke="#f59e0b" stroke-width="2" filter="url(#shadowCh14C)"/>
+    <rect width="264" height="36" rx="10" fill="#78350f"/>
+    <rect x="0" y="24" width="264" height="12" fill="#78350f"/>
+    <text x="132" y="23" font-family="'JetBrains Mono', Consolas, monospace" font-size="13" font-weight="700" fill="#fef3c7" text-anchor="middle">axi_stream_if axi_stream_bus()</text>
+
+    <text x="132" y="60" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="700" fill="#fbbf24" text-anchor="middle">Shared Physical Wires / Variables:</text>
+    <text x="20" y="84" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#e2e8f0">logic        aclk, aresetn;</text>
+    <text x="20" y="104" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#38bdf8">logic [31:0] tdata;</text>
+    <text x="20" y="124" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#38bdf8">logic        tvalid;</text>
+    <text x="20" y="144" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#34d399">logic        tready;</text>
+
+    <rect x="16" y="158" width="232" height="26" rx="5" fill="#091526" stroke="#b45309"/>
+    <text x="132" y="175" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#fde68a" text-anchor="middle">Transfer occurs when tvalid &amp;&amp; tready</text>
+  </g>
+
+  <!-- Arrows Source <-> Interface <-> Sink -->
+  <line x1="272" y1="148" x2="324" y2="148" stroke="#38bdf8" stroke-width="2.4" marker-end="url(#arrowCyan14C)"/>
+  <text x="298" y="138" font-family="'JetBrains Mono', Consolas, monospace" font-size="9.5" fill="#7dd3fc" text-anchor="middle">tdata/val</text>
+
+  <line x1="326" y1="196" x2="274" y2="196" stroke="#34d399" stroke-width="2.4" marker-end="url(#arrowGreen14C)"/>
+  <text x="298" y="212" font-family="'JetBrains Mono', Consolas, monospace" font-size="9.5" fill="#6ee7b7" text-anchor="middle">tready</text>
+
+  <line x1="594" y1="148" x2="646" y2="148" stroke="#38bdf8" stroke-width="2.4" marker-end="url(#arrowCyan14C)"/>
+  <text x="620" y="138" font-family="'JetBrains Mono', Consolas, monospace" font-size="9.5" fill="#7dd3fc" text-anchor="middle">tdata/val</text>
+
+  <line x1="648" y1="196" x2="596" y2="196" stroke="#34d399" stroke-width="2.4" marker-end="url(#arrowGreen14C)"/>
+  <text x="620" y="212" font-family="'JetBrains Mono', Consolas, monospace" font-size="9.5" fill="#6ee7b7" text-anchor="middle">tready</text>
+
+  <!-- Right Box: Sink Module -->
+  <g transform="translate(650, 80)">
+    <rect width="246" height="196" rx="10" fill="#0f172a" stroke="#10b981" stroke-width="1.8" filter="url(#shadowCh14C)"/>
+    <rect width="246" height="36" rx="10" fill="#065f46"/>
+    <rect x="0" y="24" width="246" height="12" fill="#065f46"/>
+    <text x="123" y="23" font-family="'JetBrains Mono', Consolas, monospace" font-size="12.5" font-weight="700" fill="#d1fae5" text-anchor="middle">axi_stream_data_sink</text>
+
+    <rect x="12" y="48" width="222" height="28" rx="5" fill="#072c22" stroke="#10b981"/>
+    <text x="123" y="66" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" font-weight="700" fill="#6ee7b7" text-anchor="middle">axi_stream_if.sink_port</text>
+
+    <text x="16" y="100" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#e2e8f0">input:  tdata, tvalid, aclk, rst</text>
+    <text x="16" y="122" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" font-weight="700" fill="#34d399">output: tready</text>
+
+    <rect x="12" y="138" width="222" height="44" rx="6" fill="#4c0519" stroke="#f43f5e"/>
+    <text x="123" y="156" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" font-weight="700" fill="#fecdd3" text-anchor="middle">Compile-Time Guard:</text>
+    <text x="123" y="172" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#fda4af" text-anchor="middle">Cannot drive tdata or tvalid</text>
+  </g>
+
+  <!-- Tap arrow to Monitor -->
+  <line x1="460" y1="276" x2="460" y2="306" stroke="#c084fc" stroke-width="2.2" marker-end="url(#arrowPurple14C)"/>
+
+  <!-- Bottom Box: Passive Monitor -->
+  <g transform="translate(180, 310)">
+    <rect width="560" height="78" rx="10" fill="#1e1035" stroke="#a855f7" stroke-width="1.8" filter="url(#shadowCh14C)"/>
+    <text x="280" y="24" font-family="'JetBrains Mono', Consolas, monospace" font-size="12.5" font-weight="700" fill="#e9d5ff" text-anchor="middle">monitor_unit (axi_stream_if.monitor_port)</text>
+    <text x="280" y="46" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#c084fc" text-anchor="middle">input aclk, aresetn, tdata, tvalid, tready;</text>
+    <text x="280" y="66" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#cbd5e1" text-anchor="middle">Read-only view for protocol checkers, assertions, and scoreboard sampling — zero bus contention risk</text>
+  </g>
+</svg>

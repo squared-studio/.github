@@ -1,0 +1,91 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 400" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGradCh14B" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#080c14" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <filter id="shadowCh14B" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+    <marker id="arrowCyan14B" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8"/>
+    </marker>
+    <marker id="arrowGreen14B" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#34d399"/>
+    </marker>
+    <marker id="arrowAmber14B" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#fbbf24"/>
+    </marker>
+  </defs>
+
+  <rect width="920" height="400" rx="14" fill="url(#bgGradCh14B)"/>
+
+  <!-- Title -->
+  <text x="460" y="32" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="20" font-weight="700" fill="#f8fafc" text-anchor="middle">Interface Anatomy &amp; Top-Level Module Binding (simple_bus_if)</text>
+  <text x="460" y="54" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13" fill="#94a3b8" text-anchor="middle">Instantiating an interface channel inside top_level_design and accessing signals &amp; methods via port handle</text>
+
+  <!-- Outer Top-Level Module -->
+  <g transform="translate(24, 72)">
+    <rect width="872" height="306" rx="12" fill="#0f172a" stroke="#a855f7" stroke-width="1.8" filter="url(#shadowCh14B)"/>
+    <rect width="872" height="34" rx="12" fill="#581c87"/>
+    <rect x="0" y="22" width="872" height="12" fill="#581c87"/>
+    <text x="436" y="22" font-family="'JetBrains Mono', Consolas, monospace" font-size="13.5" font-weight="700" fill="#f3e8ff" text-anchor="middle">module top_level_design;</text>
+
+    <!-- Left: Producer Module -->
+    <g transform="translate(20, 54)">
+      <rect width="234" height="164" rx="9" fill="#0c1c2e" stroke="#38bdf8" stroke-width="1.8"/>
+      <rect width="234" height="32" rx="9" fill="#075985"/>
+      <rect x="0" y="20" width="234" height="12" fill="#075985"/>
+      <text x="117" y="21" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" font-weight="700" fill="#e0f2fe" text-anchor="middle">data_producer producer_unit</text>
+
+      <text x="14" y="54" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#7dd3fc">Port: simple_bus_if bus_intf</text>
+      <text x="14" y="76" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#e2e8f0">always_ff @(posedge bus_intf.clk)</text>
+      <text x="20" y="96" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#6ee7b7">bus_intf.data  &lt;= data + 1;</text>
+      <text x="20" y="114" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#6ee7b7">bus_intf.valid &lt;= 1'b1;</text>
+      <text x="117" y="148" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#fbbf24" text-anchor="middle">.bus_intf(bus_instance)</text>
+    </g>
+
+    <!-- Center: Interface Instance -->
+    <g transform="translate(304, 54)">
+      <rect width="264" height="164" rx="9" fill="#181208" stroke="#f59e0b" stroke-width="2"/>
+      <rect width="264" height="32" rx="9" fill="#78350f"/>
+      <rect x="0" y="20" width="264" height="12" fill="#78350f"/>
+      <text x="132" y="21" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" font-weight="700" fill="#fef3c7" text-anchor="middle">simple_bus_if bus_instance()</text>
+
+      <text x="16" y="54" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="700" fill="#fbbf24">Bundled Protocol Signals:</text>
+      <text x="16" y="73" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#e2e8f0">logic clk, rst_n, valid;</text>
+      <text x="16" y="90" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#e2e8f0">logic [7:0] data;</text>
+
+      <line x1="16" y1="104" x2="248" y2="104" stroke="#78350f"/>
+      <text x="16" y="122" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="700" fill="#34d399">Encapsulated Methods:</text>
+      <text x="16" y="140" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#a7f3d0">function bit is_active();</text>
+      <text x="16" y="156" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#a7f3d0">task reset_bus();</text>
+    </g>
+
+    <!-- Arrows -->
+    <line x1="256" y1="136" x2="300" y2="136" stroke="#38bdf8" stroke-width="2.5" marker-end="url(#arrowCyan14B)"/>
+    <line x1="570" y1="136" x2="614" y2="136" stroke="#34d399" stroke-width="2.5" marker-end="url(#arrowGreen14B)"/>
+
+    <!-- Right: Consumer Module -->
+    <g transform="translate(618, 54)">
+      <rect width="234" height="164" rx="9" fill="#072c22" stroke="#10b981" stroke-width="1.8"/>
+      <rect width="234" height="32" rx="9" fill="#065f46"/>
+      <rect x="0" y="20" width="234" height="12" fill="#065f46"/>
+      <text x="117" y="21" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" font-weight="700" fill="#d1fae5" text-anchor="middle">data_consumer consumer_unit</text>
+
+      <text x="14" y="54" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#6ee7b7">Port: simple_bus_if bus_intf</text>
+      <text x="14" y="76" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#e2e8f0">always_ff @(posedge bus_intf.clk)</text>
+      <text x="18" y="96" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#a7f3d0">if (bus_intf.valid &amp;&amp;</text>
+      <text x="26" y="113" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#fbbf24">bus_intf.is_active())</text>
+      <text x="117" y="148" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#fbbf24" text-anchor="middle">.bus_intf(bus_instance)</text>
+    </g>
+
+    <!-- Bottom: Top-Level Clock & Reset Drivers -->
+    <g transform="translate(20, 232)">
+      <rect width="832" height="58" rx="8" fill="#091526" stroke="#334155"/>
+      <text x="16" y="22" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11.5" font-weight="700" fill="#d8b4fe">Direct Hierarchical Access from Top-Level / Testbench:</text>
+      <text x="16" y="43" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#e2e8f0">bus_instance.rst_n = 0;  #20 bus_instance.rst_n = 1;    |    always #5 bus_instance.clk = ~bus_instance.clk;</text>
+      <line x1="416" y1="0" x2="416" y2="-12" stroke="#fbbf24" stroke-width="2" marker-end="url(#arrowAmber14B)"/>
+    </g>
+  </g>
+</svg>

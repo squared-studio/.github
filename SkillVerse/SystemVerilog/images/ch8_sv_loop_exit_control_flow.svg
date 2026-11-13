@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 390" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGradCh8D" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#080c14" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <filter id="shadowCh8D" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+  </defs>
+
+  <rect width="920" height="390" rx="14" fill="url(#bgGradCh8D)"/>
+
+  <!-- Title -->
+  <text x="460" y="34" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="20" font-weight="700" fill="#f8fafc" text-anchor="middle">Loop Control &amp; Exit Mechanisms: continue, break, return &amp; disable</text>
+  <text x="460" y="56" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13" fill="#94a3b8" text-anchor="middle">Choose the narrowest jump construct that cleanly expresses your exit scope</text>
+
+  <!-- 4 Cards in 2x2 Grid -->
+  <!-- Card 1: continue -->
+  <g transform="translate(24, 78)">
+    <rect width="424" height="138" rx="10" fill="#0f172a" stroke="#38bdf8" stroke-width="1.8" filter="url(#shadowCh8D)"/>
+    <rect width="424" height="34" rx="10" fill="#075985"/>
+    <rect x="0" y="22" width="424" height="12" fill="#075985"/>
+    <text x="16" y="22" font-family="'JetBrains Mono', Consolas, monospace" font-size="13" font-weight="700" fill="#e0f2fe">1. continue  (Skip Remainder of Iteration)</text>
+
+    <text x="16" y="56" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" fill="#e2e8f0">for (int i = 0; i &lt; 8; i++) begin</text>
+    <text x="28" y="74" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" fill="#7dd3fc">if (skip_mask[i]) continue;  // Jumps to i++</text>
+    <text x="28" y="92" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" fill="#cbd5e1">process(data[i]);</text>
+    <text x="16" y="110" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" fill="#e2e8f0">end</text>
+    <text x="16" y="128" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#94a3b8">Executes loop step (i++) and re-evaluates condition for next pass</text>
+  </g>
+
+  <!-- Card 2: break -->
+  <g transform="translate(472, 78)">
+    <rect width="424" height="138" rx="10" fill="#0f172a" stroke="#10b981" stroke-width="1.8" filter="url(#shadowCh8D)"/>
+    <rect width="424" height="34" rx="10" fill="#065f46"/>
+    <rect x="0" y="22" width="424" height="12" fill="#065f46"/>
+    <text x="16" y="22" font-family="'JetBrains Mono', Consolas, monospace" font-size="13" font-weight="700" fill="#d1fae5">2. break  (Exit Innermost Loop Only)</text>
+
+    <text x="16" y="56" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" fill="#e2e8f0">forever begin</text>
+    <text x="28" y="74" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" fill="#e2e8f0">@(posedge clk);</text>
+    <text x="28" y="92" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" fill="#6ee7b7">if (done) break;  // Exits loop cleanly</text>
+    <text x="16" y="110" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" fill="#e2e8f0">end</text>
+    <text x="16" y="128" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#94a3b8">Preferred way to exit single loops; resumes right after 'end'</text>
+  </g>
+
+  <!-- Card 3: return -->
+  <g transform="translate(24, 232)">
+    <rect width="424" height="138" rx="10" fill="#0f172a" stroke="#f59e0b" stroke-width="1.8" filter="url(#shadowCh8D)"/>
+    <rect width="424" height="34" rx="10" fill="#78350f"/>
+    <rect x="0" y="22" width="424" height="12" fill="#78350f"/>
+    <text x="16" y="22" font-family="'JetBrains Mono', Consolas, monospace" font-size="13" font-weight="700" fill="#fef3c7">3. return [val]  (Exit Task or Function)</text>
+
+    <text x="16" y="56" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" fill="#e2e8f0">function int find_first_nz(int q[$]);</text>
+    <text x="28" y="74" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" fill="#e2e8f0">foreach (q[i])</text>
+    <text x="40" y="92" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" fill="#fde68a">if (q[i] != 0) return i;  // Exits function</text>
+    <text x="28" y="110" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" fill="#e2e8f0">return -1;</text>
+    <text x="16" y="128" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#94a3b8">Immediately returns from the enclosing function/task across all loops</text>
+  </g>
+
+  <!-- Card 4: disable named_block -->
+  <g transform="translate(472, 232)">
+    <rect width="424" height="138" rx="10" fill="#0f172a" stroke="#a855f7" stroke-width="1.8" filter="url(#shadowCh8D)"/>
+    <rect width="424" height="34" rx="10" fill="#581c87"/>
+    <rect x="0" y="22" width="424" height="12" fill="#581c87"/>
+    <text x="16" y="22" font-family="'JetBrains Mono', Consolas, monospace" font-size="13" font-weight="700" fill="#f3e8ff">4. disable block_name  (Multi-Level Exit)</text>
+
+    <text x="16" y="56" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" fill="#d8b4fe">begin : search_grid</text>
+    <text x="28" y="74" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" fill="#e2e8f0">for (int r = 0; r &lt; R; r++) for (int c = 0; c &lt; C; c++)</text>
+    <text x="40" y="92" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" fill="#d8b4fe">if (hit[r][c]) disable search_grid;</text>
+    <text x="16" y="110" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" fill="#d8b4fe">end</text>
+    <text x="16" y="128" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#fda4af">Caution: 'disable' kills ALL concurrent callers if inside a re-entrant task!</text>
+  </g>
+</svg>

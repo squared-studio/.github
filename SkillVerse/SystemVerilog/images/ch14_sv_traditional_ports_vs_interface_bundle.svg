@@ -1,0 +1,100 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 400" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGradCh14A" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#080c14" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <filter id="shadowCh14A" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+    <marker id="arrowRed14A" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#f43f5e"/>
+    </marker>
+    <marker id="arrowGreen14A" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#34d399"/>
+    </marker>
+  </defs>
+
+  <rect width="920" height="400" rx="14" fill="url(#bgGradCh14A)"/>
+
+  <!-- Title -->
+  <text x="460" y="32" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="20" font-weight="700" fill="#f8fafc" text-anchor="middle">SystemVerilog Interface Revolution: Traditional Wiring vs. Interface Bundle</text>
+  <text x="460" y="54" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13" fill="#94a3b8" text-anchor="middle">Replace repetitive point-to-point signal lists with a single, parameterized communication contract</text>
+
+  <!-- Left Panel: Traditional Discrete Port Lists -->
+  <g transform="translate(24, 76)">
+    <rect width="424" height="302" rx="10" fill="#0f172a" stroke="#f43f5e" stroke-width="1.8" filter="url(#shadowCh14A)"/>
+    <rect width="424" height="36" rx="10" fill="#881337"/>
+    <rect x="0" y="24" width="424" height="12" fill="#881337"/>
+    <text x="212" y="23" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13.5" font-weight="700" fill="#ffe4e6" text-anchor="middle">Traditional Discrete Ports (Error-Prone &amp; Verbose)</text>
+
+    <!-- Producer Box -->
+    <rect x="16" y="56" width="126" height="162" rx="7" fill="#180a10" stroke="#e11d48"/>
+    <text x="79" y="76" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" font-weight="700" fill="#fda4af" text-anchor="middle">Producer</text>
+    <text x="26" y="100" font-family="'JetBrains Mono', Consolas, monospace" font-size="9.5" fill="#cbd5e1">output addr[31:0]</text>
+    <text x="26" y="120" font-family="'JetBrains Mono', Consolas, monospace" font-size="9.5" fill="#cbd5e1">output data[31:0]</text>
+    <text x="26" y="140" font-family="'JetBrains Mono', Consolas, monospace" font-size="9.5" fill="#cbd5e1">output valid</text>
+    <text x="26" y="160" font-family="'JetBrains Mono', Consolas, monospace" font-size="9.5" fill="#cbd5e1">input  ready</text>
+    <text x="26" y="180" font-family="'JetBrains Mono', Consolas, monospace" font-size="9.5" fill="#cbd5e1">input  clk, rst_n</text>
+
+    <!-- Spaghetti Wires -->
+    <line x1="142" y1="96" x2="278" y2="96" stroke="#f43f5e" stroke-width="1.6" marker-end="url(#arrowRed14A)"/>
+    <line x1="142" y1="116" x2="278" y2="116" stroke="#f43f5e" stroke-width="1.6" marker-end="url(#arrowRed14A)"/>
+    <line x1="142" y1="136" x2="278" y2="136" stroke="#f43f5e" stroke-width="1.6" marker-end="url(#arrowRed14A)"/>
+    <line x1="282" y1="156" x2="146" y2="156" stroke="#fb7185" stroke-width="1.6" marker-end="url(#arrowRed14A)"/>
+    <line x1="142" y1="176" x2="282" y2="176" stroke="#94a3b8" stroke-width="1.4" stroke-dasharray="3,2"/>
+    <text x="212" y="88" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="9.5" fill="#fda4af" text-anchor="middle">Duplicated per module</text>
+
+    <!-- Consumer Box -->
+    <rect x="282" y="56" width="126" height="162" rx="7" fill="#180a10" stroke="#e11d48"/>
+    <text x="345" y="76" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" font-weight="700" fill="#fda4af" text-anchor="middle">Consumer</text>
+    <text x="292" y="100" font-family="'JetBrains Mono', Consolas, monospace" font-size="9.5" fill="#cbd5e1">input  addr[31:0]</text>
+    <text x="292" y="120" font-family="'JetBrains Mono', Consolas, monospace" font-size="9.5" fill="#cbd5e1">input  data[31:0]</text>
+    <text x="292" y="140" font-family="'JetBrains Mono', Consolas, monospace" font-size="9.5" fill="#cbd5e1">input  valid</text>
+    <text x="292" y="160" font-family="'JetBrains Mono', Consolas, monospace" font-size="9.5" fill="#cbd5e1">output ready</text>
+    <text x="292" y="180" font-family="'JetBrains Mono', Consolas, monospace" font-size="9.5" fill="#cbd5e1">input  clk, rst_n</text>
+
+    <rect x="16" y="230" width="392" height="58" rx="7" fill="#091526" stroke="#334155"/>
+    <text x="28" y="250" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="700" fill="#fda4af">Maintenance Pain Points:</text>
+    <text x="28" y="268" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#e2e8f0">Adding 1 new bus signal requires editing every module port list,</text>
+    <text x="28" y="282" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#e2e8f0">top-level netlist wire declaration, and testbench port map.</text>
+  </g>
+
+  <!-- Right Panel: SystemVerilog Interface Bundle -->
+  <g transform="translate(472, 76)">
+    <rect width="424" height="302" rx="10" fill="#0f172a" stroke="#10b981" stroke-width="1.8" filter="url(#shadowCh14A)"/>
+    <rect width="424" height="36" rx="10" fill="#065f46"/>
+    <rect x="0" y="24" width="424" height="12" fill="#065f46"/>
+    <text x="212" y="23" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13.5" font-weight="700" fill="#d1fae5" text-anchor="middle">SystemVerilog interface Contract (Modular &amp; Reusable)</text>
+
+    <!-- Producer Box -->
+    <rect x="16" y="72" width="112" height="124" rx="7" fill="#0c1c2e" stroke="#38bdf8"/>
+    <text x="72" y="96" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" font-weight="700" fill="#38bdf8" text-anchor="middle">Producer</text>
+    <text x="72" y="122" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#e0f2fe" text-anchor="middle">bus_if.master</text>
+    <text x="72" y="142" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#7dd3fc" text-anchor="middle">bus</text>
+    <text x="72" y="176" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="9.5" fill="#94a3b8" text-anchor="middle">1 interface port</text>
+
+    <!-- Single Bundled Channel -->
+    <rect x="148" y="56" width="128" height="158" rx="8" fill="#072c22" stroke="#10b981" stroke-width="1.8"/>
+    <text x="212" y="78" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" font-weight="700" fill="#6ee7b7" text-anchor="middle">bus_if #(W)</text>
+    <text x="212" y="100" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#d1fae5" text-anchor="middle">- Signals &amp; Widths</text>
+    <text x="212" y="118" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#d1fae5" text-anchor="middle">- modport views</text>
+    <text x="212" y="136" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#d1fae5" text-anchor="middle">- tasks &amp; functions</text>
+    <text x="212" y="154" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#d1fae5" text-anchor="middle">- SVA protocol checks</text>
+    <text x="212" y="172" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#fbbf24" text-anchor="middle">- virtual if (TB/UVM)</text>
+    <line x1="128" y1="134" x2="146" y2="134" stroke="#34d399" stroke-width="3" marker-end="url(#arrowGreen14A)"/>
+    <line x1="276" y1="134" x2="294" y2="134" stroke="#34d399" stroke-width="3" marker-end="url(#arrowGreen14A)"/>
+
+    <!-- Consumer Box -->
+    <rect x="296" y="72" width="112" height="124" rx="7" fill="#0c1c2e" stroke="#38bdf8"/>
+    <text x="352" y="96" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" font-weight="700" fill="#38bdf8" text-anchor="middle">Consumer</text>
+    <text x="352" y="122" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#e0f2fe" text-anchor="middle">bus_if.slave</text>
+    <text x="352" y="142" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#7dd3fc" text-anchor="middle">bus</text>
+    <text x="352" y="176" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="9.5" fill="#94a3b8" text-anchor="middle">1 interface port</text>
+
+    <rect x="16" y="230" width="392" height="58" rx="7" fill="#091526" stroke="#10b981"/>
+    <text x="28" y="250" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="700" fill="#34d399">Architectural Advantage:</text>
+    <text x="28" y="268" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#e2e8f0">One shared definition drives RTL connectivity, direction checks,</text>
+    <text x="28" y="282" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#e2e8f0">protocol assertions, and testbench virtual-interface abstraction.</text>
+  </g>
+</svg>

@@ -1,0 +1,99 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 410" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGradCh12C" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#080c14" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <filter id="shadowCh12C" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+  </defs>
+
+  <rect width="920" height="410" rx="14" fill="url(#bgGradCh12C)"/>
+
+  <!-- Title -->
+  <text x="460" y="34" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="20" font-weight="700" fill="#f8fafc" text-anchor="middle">SystemVerilog Events: @(ev) Edge Wait vs. wait(ev.triggered) Race Protection</text>
+  <text x="460" y="56" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13" fill="#94a3b8" text-anchor="middle">Closing same-timestamp delta-cycle races while understanding why .triggered resets on time advance</text>
+
+  <!-- Left Panel: @(ev) Race Bug -->
+  <g transform="translate(24, 78)">
+    <rect width="424" height="308" rx="10" fill="#0f172a" stroke="#f43f5e" stroke-width="1.8" filter="url(#shadowCh12C)"/>
+    <rect width="424" height="36" rx="10" fill="#881337"/>
+    <rect x="0" y="24" width="424" height="12" fill="#881337"/>
+    <text x="212" y="23" font-family="'JetBrains Mono', Consolas, monospace" font-size="13" font-weight="700" fill="#ffe4e6" text-anchor="middle">Edge-Sensitive @(ev): Same-Time Race Risk</text>
+
+    <!-- Delta Timeline -->
+    <g transform="translate(16, 50)">
+      <rect width="392" height="148" rx="8" fill="#180a10" stroke="#9f1239"/>
+      <text x="12" y="20" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="700" fill="#fda4af">Simulation Time Slot: t = 25</text>
+
+      <!-- Delta 0 -->
+      <rect x="14" y="32" width="172" height="52" rx="6" fill="#4c0519" stroke="#f43f5e"/>
+      <text x="100" y="50" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" font-weight="700" fill="#fecdd3" text-anchor="middle">Delta 0: Process A</text>
+      <text x="100" y="68" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#ffffff" text-anchor="middle">-&gt; ev;  (fires pulse)</text>
+
+      <!-- Delta 1 -->
+      <rect x="206" y="32" width="172" height="52" rx="6" fill="#2d0a16" stroke="#e11d48" stroke-dasharray="4,2"/>
+      <text x="292" y="50" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" font-weight="700" fill="#fda4af" text-anchor="middle">Delta 1: Process B</text>
+      <text x="292" y="68" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#fca5a5" text-anchor="middle">@(ev);  (arrives late!)</text>
+
+      <!-- Missed Signal Bar -->
+      <line x1="20" y1="116" x2="372" y2="116" stroke="#475569" stroke-width="1.5"/>
+      <line x1="100" y1="116" x2="100" y2="94" stroke="#f43f5e" stroke-width="3"/>
+      <circle cx="100" cy="94" r="4" fill="#fb7185"/>
+      <text x="100" y="134" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#fda4af" text-anchor="middle">Instantaneous edge already passed</text>
+      <text x="292" y="108" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" font-weight="700" fill="#f43f5e" text-anchor="middle">MISSED -&gt; HANGS FOREVER</text>
+    </g>
+
+    <g transform="translate(16, 210)">
+      <rect width="392" height="82" rx="8" fill="#091526" stroke="#334155"/>
+      <text x="12" y="21" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="700" fill="#fda4af">Why @(ev) Hangs in Zero-Time Races:</text>
+      <text x="12" y="41" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#e2e8f0">1. Scheduler execution order between two processes at t = 25</text>
+      <text x="22" y="56" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#e2e8f0">is nondeterministic unless Process B started waiting earlier.</text>
+      <text x="12" y="73" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#cbd5e1">2. ->> ev (NBA trigger) schedules in NBA region of same step.</text>
+    </g>
+  </g>
+
+  <!-- Right Panel: wait(ev.triggered) -->
+  <g transform="translate(472, 78)">
+    <rect width="424" height="308" rx="10" fill="#0f172a" stroke="#10b981" stroke-width="1.8" filter="url(#shadowCh12C)"/>
+    <rect width="424" height="36" rx="10" fill="#065f46"/>
+    <rect x="0" y="24" width="424" height="12" fill="#065f46"/>
+    <text x="212" y="23" font-family="'JetBrains Mono', Consolas, monospace" font-size="13" font-weight="700" fill="#d1fae5" text-anchor="middle">Level-Sensitive wait(ev.triggered): Race-Safe</text>
+
+    <!-- Time Slot Persistence Diagram -->
+    <g transform="translate(16, 50)">
+      <rect width="392" height="148" rx="8" fill="#072c22" stroke="#10b981"/>
+      <text x="12" y="20" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="700" fill="#6ee7b7">ev.triggered State Across Simulation Time:</text>
+
+      <!-- Waveform for ev.triggered -->
+      <text x="14" y="52" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#a7f3d0">ev.triggered</text>
+      <polyline points="100,66 146,66 146,38 286,38 286,66 376,66" fill="none" stroke="#34d399" stroke-width="2.5"/>
+      <rect x="146" y="38" width="140" height="28" fill="#10b981" fill-opacity="0.2"/>
+      <text x="216" y="56" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" font-weight="700" fill="#ecfdf5" text-anchor="middle">= 1 during t = 25</text>
+
+      <!-- Time Markers -->
+      <line x1="146" y1="72" x2="146" y2="132" stroke="#34d399" stroke-dasharray="3,2"/>
+      <line x1="286" y1="72" x2="286" y2="132" stroke="#fbbf24" stroke-dasharray="3,2"/>
+      <text x="122" y="84" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#94a3b8" text-anchor="middle">t &lt; 25</text>
+      <text x="216" y="84" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" font-weight="700" fill="#6ee7b7" text-anchor="middle">Slot t = 25</text>
+      <text x="331" y="84" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#fbbf24" text-anchor="middle">t &gt; 25 (e.g. t=30)</text>
+
+      <rect x="152" y="94" width="128" height="40" rx="5" fill="#064e3b" stroke="#34d399"/>
+      <text x="216" y="111" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" font-weight="700" fill="#a7f3d0" text-anchor="middle">Delta 1: wait(...)</text>
+      <text x="216" y="126" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#6ee7b7" text-anchor="middle">PASSES IMMEDIATELY</text>
+
+      <rect x="292" y="94" width="90" height="40" rx="5" fill="#451a03" stroke="#f59e0b"/>
+      <text x="337" y="111" font-family="'JetBrains Mono', Consolas, monospace" font-size="9.5" font-weight="700" fill="#fde68a" text-anchor="middle">Resets to 0!</text>
+      <text x="337" y="126" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="9.5" fill="#fcd34d" text-anchor="middle">Late wait blocks</text>
+    </g>
+
+    <g transform="translate(16, 210)">
+      <rect width="392" height="82" rx="8" fill="#091526" stroke="#334155"/>
+      <text x="12" y="21" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="700" fill="#34d399">Design Rule for Cross-Timestamp Sync:</text>
+      <text x="12" y="41" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#e2e8f0">1. wait(ev.triggered) fixes Delta-cycle races within t = 25.</text>
+      <text x="12" y="59" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#fbbf24">2. If Consumer arrives at t &gt; 25, pair with a persistent bit flag</text>
+      <text x="22" y="74" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#fde68a">(wait(done_flag || ev.triggered);) or use a mailbox.</text>
+    </g>
+  </g>
+</svg>

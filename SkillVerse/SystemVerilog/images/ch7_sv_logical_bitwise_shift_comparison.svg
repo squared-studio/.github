@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 420" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGradCh7B" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#080c14" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <filter id="shadowCh7B" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+  </defs>
+
+  <rect width="920" height="420" rx="14" fill="url(#bgGradCh7B)"/>
+
+  <!-- Title -->
+  <text x="460" y="34" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="20" font-weight="700" fill="#f8fafc" text-anchor="middle">Logical vs. Bitwise Operators &amp; Logical (&gt;&gt;) vs. Arithmetic (&gt;&gt;&gt;) Shifts</text>
+  <text x="460" y="56" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13" fill="#94a3b8" text-anchor="middle">Two classic RTL bugs: mixing bitwise &amp; with Boolean &amp;&amp; on vectors, and shifting signed numbers with &gt;&gt;</text>
+
+  <!-- Top Panel: Logical vs Bitwise -->
+  <g transform="translate(24, 76)">
+    <rect width="872" height="156" rx="10" fill="#0f172a" stroke="#38bdf8" stroke-width="1.6" filter="url(#shadowCh7B)"/>
+    <rect width="872" height="34" rx="10" fill="#075985"/>
+    <rect x="0" y="22" width="872" height="12" fill="#075985"/>
+    <text x="436" y="22" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13.5" font-weight="700" fill="#e0f2fe" text-anchor="middle">Multi-Bit Vector Pitfall:  A = 4'b0010 (2)   and   B = 4'b0100 (4)</text>
+
+    <!-- Left sub-card: Logical AND -->
+    <g transform="translate(16, 46)">
+      <rect width="412" height="96" rx="8" fill="#072c22" stroke="#10b981" stroke-width="1.4"/>
+      <text x="14" y="22" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="12.5" font-weight="700" fill="#34d399">Logical AND:  (A &amp;&amp; B)  — Boolean Truthiness</text>
+      <text x="14" y="44" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" fill="#e2e8f0">A != 0 (true) &amp;&amp; B != 0 (true)  ──▶  <tspan fill="#6ee7b7" font-weight="700">1'b1 (TRUE)</tspan></text>
+      <text x="14" y="66" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#cbd5e1">• Evaluates whole operands as Boolean non-zero / zero</text>
+      <text x="14" y="83" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#a7f3d0">• Returns 1-bit scalar (0, 1, or X); short-circuits on A==0</text>
+    </g>
+
+    <!-- Right sub-card: Bitwise AND -->
+    <g transform="translate(444, 46)">
+      <rect width="412" height="96" rx="8" fill="#2a0a14" stroke="#f43f5e" stroke-width="1.4"/>
+      <text x="14" y="22" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="12.5" font-weight="700" fill="#fb7185">Bitwise AND:  (A &amp; B)  — Per-Bit Lane Operation</text>
+      <text x="14" y="44" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" fill="#e2e8f0">4'b0010 &amp; 4'b0100  ──▶  <tspan fill="#fda4af" font-weight="700">4'b0000 (FALSE in 'if'!)</tspan></text>
+      <text x="14" y="66" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#cbd5e1">• Combines bit[3]&amp;bit[3], bit[2]&amp;bit[2], bit[1]&amp;bit[1], bit[0]&amp;bit[0]</text>
+      <text x="14" y="83" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#fda4af">• No shared bit position set → vector is 0 → condition fails!</text>
+    </g>
+  </g>
+
+  <!-- Bottom Panel: Logical >> vs Arithmetic >>> Shift -->
+  <g transform="translate(24, 248)">
+    <rect width="872" height="152" rx="10" fill="#0f172a" stroke="#f59e0b" stroke-width="1.6" filter="url(#shadowCh7B)"/>
+    <rect width="872" height="34" rx="10" fill="#78350f"/>
+    <rect x="0" y="22" width="872" height="12" fill="#78350f"/>
+    <text x="436" y="22" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13.5" font-weight="700" fill="#fef3c7" text-anchor="middle">Right Shift on Signed Values:  logic signed [7:0] s = -8  (8'b1111_1000)</text>
+
+    <!-- Logical Right Shift >> -->
+    <g transform="translate(16, 46)">
+      <rect width="412" height="92" rx="8" fill="#181208" stroke="#f43f5e" stroke-width="1.4"/>
+      <text x="14" y="22" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" font-weight="700" fill="#fb7185">s &gt;&gt; 2   (Logical Right Shift)</text>
+      <text x="14" y="46" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" fill="#e2e8f0">8'b<tspan fill="#fb7185" font-weight="700">00</tspan>11_1110  =  <tspan fill="#fda4af" font-weight="700">+62  (Sign Corrupted!)</tspan></text>
+      <text x="14" y="72" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#cbd5e1">Always shifts in <tspan font-weight="700" fill="#fb7185">0</tspan> into MSB bits regardless of signedness</text>
+    </g>
+
+    <!-- Arithmetic Right Shift >>> -->
+    <g transform="translate(444, 46)">
+      <rect width="412" height="92" rx="8" fill="#072c22" stroke="#10b981" stroke-width="1.4"/>
+      <text x="14" y="22" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" font-weight="700" fill="#34d399">s &gt;&gt;&gt; 2   (Arithmetic Right Shift)</text>
+      <text x="14" y="46" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" fill="#e2e8f0">8'b<tspan fill="#34d399" font-weight="700">11</tspan>11_1110  =  <tspan fill="#6ee7b7" font-weight="700">-2   (Sign Extended!)</tspan></text>
+      <text x="14" y="72" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#cbd5e1">Sign-extends MSB (<tspan font-weight="700" fill="#34d399">1</tspan>) when operand is <tspan font-family="'JetBrains Mono', Consolas, monospace" fill="#a7f3d0">signed</tspan> (else 0-fills)</text>
+    </g>
+  </g>
+</svg>

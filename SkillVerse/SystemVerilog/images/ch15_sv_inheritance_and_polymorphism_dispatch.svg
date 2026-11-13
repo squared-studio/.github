@@ -1,0 +1,99 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 410" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGradCh15B" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#080c14" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <filter id="shadowCh15B" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+    <marker id="arrowCyan15B" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8"/>
+    </marker>
+    <marker id="arrowAmber15B" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#fbbf24"/>
+    </marker>
+  </defs>
+
+  <rect width="920" height="410" rx="14" fill="url(#bgGradCh15B)"/>
+
+  <!-- Title -->
+  <text x="460" y="32" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="20" font-weight="700" fill="#f8fafc" text-anchor="middle">Inheritance Hierarchy &amp; Virtual Method Dynamic Dispatch (Polymorphism)</text>
+  <text x="460" y="54" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13" fill="#94a3b8" text-anchor="middle">Upcasting derived objects to a base handle resolves virtual method calls by runtime object type, not handle type</text>
+
+  <!-- Left Panel: Inheritance Hierarchy -->
+  <g transform="translate(24, 78)">
+    <rect width="424" height="308" rx="10" fill="#0f172a" stroke="#38bdf8" stroke-width="1.8" filter="url(#shadowCh15B)"/>
+    <rect width="424" height="36" rx="10" fill="#075985"/>
+    <rect x="0" y="24" width="424" height="12" fill="#075985"/>
+    <text x="212" y="23" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13.5" font-weight="700" fill="#e0f2fe" text-anchor="middle">Class Inheritance Tree (extends &amp; super)</text>
+
+    <!-- Base Class: Shape -->
+    <rect x="112" y="52" width="200" height="72" rx="8" fill="#0c1c2e" stroke="#38bdf8" stroke-width="1.8"/>
+    <text x="212" y="72" font-family="'JetBrains Mono', Consolas, monospace" font-size="12.5" font-weight="700" fill="#38bdf8" text-anchor="middle">class Shape (Base)</text>
+    <line x1="126" y1="80" x2="298" y2="80" stroke="#0284c7"/>
+    <text x="212" y="99" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" font-weight="700" fill="#fbbf24" text-anchor="middle">virtual function void draw();</text>
+    <text x="212" y="116" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#94a3b8" text-anchor="middle">Enables runtime vtable dispatch</text>
+
+    <!-- Inheritance Connectors -->
+    <line x1="162" y1="124" x2="108" y2="162" stroke="#38bdf8" stroke-width="2"/>
+    <line x1="262" y1="124" x2="316" y2="162" stroke="#38bdf8" stroke-width="2"/>
+    <text x="112" y="144" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#7dd3fc">extends</text>
+    <text x="282" y="144" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#7dd3fc">extends</text>
+
+    <!-- Derived Class 1: Circle -->
+    <rect x="18" y="166" width="184" height="82" rx="8" fill="#072c22" stroke="#10b981" stroke-width="1.6"/>
+    <text x="110" y="186" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" font-weight="700" fill="#34d399" text-anchor="middle">Circle extends Shape</text>
+    <text x="110" y="206" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#d1fae5" text-anchor="middle">draw() -&gt; "Drawing circle"</text>
+    <text x="110" y="226" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#94a3b8" text-anchor="middle">super.method() calls parent</text>
+
+    <!-- Derived Class 2: Square -->
+    <rect x="222" y="166" width="184" height="82" rx="8" fill="#181208" stroke="#f59e0b" stroke-width="1.6"/>
+    <text x="314" y="186" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" font-weight="700" fill="#fbbf24" text-anchor="middle">Square extends Shape</text>
+    <text x="314" y="206" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#fde68a" text-anchor="middle">draw() -&gt; "Drawing square"</text>
+    <text x="314" y="226" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#94a3b8" text-anchor="middle">Inherits base members</text>
+
+    <rect x="18" y="260" width="388" height="36" rx="6" fill="#091526" stroke="#334155"/>
+    <text x="212" y="282" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#cbd5e1" text-anchor="middle">Without 'virtual', calls bind statically to the Handle type (Shape::draw)</text>
+  </g>
+
+  <!-- Right Panel: Polymorphic Array Dispatch & $cast -->
+  <g transform="translate(472, 78)">
+    <rect width="424" height="308" rx="10" fill="#0f172a" stroke="#10b981" stroke-width="1.8" filter="url(#shadowCh15B)"/>
+    <rect width="424" height="36" rx="10" fill="#065f46"/>
+    <rect x="0" y="24" width="424" height="12" fill="#065f46"/>
+    <text x="212" y="23" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13.5" font-weight="700" fill="#d1fae5" text-anchor="middle">Dynamic Dispatch &amp; Safe Downcasting</text>
+
+    <!-- Handle Array -->
+    <g transform="translate(16, 50)">
+      <text x="0" y="16" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" font-weight="700" fill="#7dd3fc">Shape shape_array[2];  // Uniform Base Handle Array</text>
+
+      <!-- Slot 0 -->
+      <rect x="0" y="26" width="164" height="44" rx="6" fill="#0c1c2e" stroke="#38bdf8"/>
+      <text x="82" y="45" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" font-weight="700" fill="#e0f2fe" text-anchor="middle">shape_array[0]</text>
+      <text x="82" y="61" font-family="'JetBrains Mono', Consolas, monospace" font-size="9.5" fill="#7dd3fc" text-anchor="middle">(Shape handle)</text>
+      <line x1="164" y1="48" x2="216" y2="48" stroke="#38bdf8" stroke-width="2" marker-end="url(#arrowCyan15B)"/>
+      <rect x="220" y="26" width="172" height="44" rx="6" fill="#072c22" stroke="#10b981"/>
+      <text x="306" y="45" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" font-weight="700" fill="#6ee7b7" text-anchor="middle">Circle::draw()</text>
+      <text x="306" y="61" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="9.5" fill="#d1fae5" text-anchor="middle">"Drawing a circle"</text>
+
+      <!-- Slot 1 -->
+      <rect x="0" y="82" width="164" height="44" rx="6" fill="#0c1c2e" stroke="#38bdf8"/>
+      <text x="82" y="101" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" font-weight="700" fill="#e0f2fe" text-anchor="middle">shape_array[1]</text>
+      <text x="82" y="117" font-family="'JetBrains Mono', Consolas, monospace" font-size="9.5" fill="#7dd3fc" text-anchor="middle">(Shape handle)</text>
+      <line x1="164" y1="104" x2="216" y2="104" stroke="#fbbf24" stroke-width="2" marker-end="url(#arrowAmber15B)"/>
+      <rect x="220" y="82" width="172" height="44" rx="6" fill="#181208" stroke="#f59e0b"/>
+      <text x="306" y="101" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" font-weight="700" fill="#fbbf24" text-anchor="middle">Square::draw()</text>
+      <text x="306" y="117" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="9.5" fill="#fde68a" text-anchor="middle">"Drawing a square"</text>
+    </g>
+
+    <!-- Upcast vs Downcast Box -->
+    <g transform="translate(16, 194)">
+      <rect width="392" height="100" rx="8" fill="#091526" stroke="#a855f7"/>
+      <text x="12" y="21" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11.5" font-weight="700" fill="#d8b4fe">Upcasting (Implicit) vs. Downcasting ($cast):</text>
+      <text x="12" y="42" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#6ee7b7">shape_h = circle_h;          // Upcast: always legal</text>
+      <text x="12" y="61" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#fbbf24">if ($cast(circle_h, shape_h)) // Downcast: runtime check</text>
+      <text x="12" y="82" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#94a3b8">Required before accessing derived-only methods/properties</text>
+    </g>
+  </g>
+</svg>

@@ -12,9 +12,13 @@ After completing this chapter, you should be able to:
 
 This chapter is an orientation and vocabulary guide. The later chapters develop the syntax and techniques introduced here in detail.
 
+---
+
 ## Demystifying SystemVerilog
 
 SystemVerilog is a standardized **Hardware Description and Verification Language (HDVL)** that significantly expands Verilog HDL. It can describe hardware structure and behavior, and it can also express verification environments, stimulus, checks, assertions, and coverage. It is used for **Integrated Circuits (ICs)**, **Field-Programmable Gate Arrays (FPGAs)**, and Systems-on-Chip (SoCs).
+
+![SystemVerilog Unified HDVL Architecture](images/ch1_sv_hdvl_dual_domains.svg)
 
 An important distinction is that SystemVerilog is one language with two common usage domains:
 
@@ -22,6 +26,22 @@ An important distinction is that SystemVerilog is one language with two common u
 - **Verification (usually simulation-only):** code such as classes, constrained randomization, mailboxes, and coverage that models stimulus and checking rather than physical hardware.
 
 The language does not make a design correct automatically. It provides precise ways to state intent, model behavior, generate stimulus, check results, and measure progress. Tool support and synthesizability also depend on the selected construct, coding style, and vendor flow, so the target simulator and synthesis tool must always be checked.
+
+### Four-State vs. Two-State Logic Values
+
+To model physical hardware hazards (such as uninitialized flip-flops or tri-state bus contention) alongside fast software-style verification models, SystemVerilog supports both **4-state** types (such as `logic`) and **2-state** types (such as `bit` and `int`):
+
+| Value | Meaning in Hardware / Simulation | Supported in `logic` (4-State)? | Supported in `bit` / `int` (2-State)? |
+| :---: | :--- | :---: | :---: |
+| **`0`** | Logic low / False | Yes | Yes |
+| **`1`** | Logic high / True | Yes | Yes |
+| **`X`** | Unknown / Uninitialized / Multi-driver contention | Yes | No (defaults to `0`) |
+| **`Z`** | High-impedance / Undriven tri-state net | Yes | No (defaults to `0`) |
+
+> [!TIP]
+> **Why `logic` matters in RTL:** Because `logic` preserves `X` and `Z`, simulation immediately exposes missing resets and bus conflicts instead of silently masking them as `0`.
+
+### A First Synthesizable RTL Example
 
 For example, a small piece of synthesizable sequential RTL can express both the intended hardware and its timing discipline:
 
@@ -42,13 +62,30 @@ module counter #(
 endmodule
 ```
 
-The `always_ff` block communicates sequential intent; the nonblocking assignment models the update of a flip-flop at the clock edge. A testbench can then drive `clk` and `rst_n`, observe `count`, and check the expected sequence without being synthesized into the counter itself.
+The `always_ff` block communicates sequential intent; the nonblocking assignment (`<=`) models the update of a flip-flop at the clock edge. A testbench can then drive `clk` and `rst_n`, observe `count`, and check the expected sequence without being synthesized into the counter itself.
+
+---
 
 ## A Brief History of SystemVerilog
 
-SystemVerilog's origin is rooted in the growing demands of the semiconductor industry for a more powerful and versatile language. As digital designs became increasingly complex, the limitations of traditional Verilog became apparent, particularly in verification. SystemVerilog emerged as an evolutionary step, incorporating advanced features to address these challenges.
+SystemVerilog's origin is rooted in the growing demands of the semiconductor industry for a more powerful and versatile language. As digital designs became increasingly complex, the limitations of traditional Verilog became apparent, particularly in verification. SystemVerilog emerged as an evolutionary step, incorporating advanced features from Superlog, OpenVera, and assertion languages (Sugar/OVA) to address these challenges.
 
-Initially developed through the **Accellera Systems Initiative**, SystemVerilog was donated to the **IEEE** and standardized as **IEEE 1800-2005**. Later revisions included **IEEE 1800-2009**, **IEEE 1800-2012**, and **IEEE 1800-2017**. These revisions refined the language and its verification features. IEEE 1800-2023 is a later revision, but projects and tools may support different subsets and revisions; always consult the version supported by the tool flow. The IEEE website is the authoritative source for the standard.
+![Evolution of SystemVerilog Timeline](images/ch1_sv_evolution_timeline.svg)
+
+Initially developed through the **Accellera Systems Initiative**, SystemVerilog was donated to the **IEEE** and standardized as **IEEE 1800-2005**. Later revisions included **IEEE 1800-2009**, **IEEE 1800-2012**, and **IEEE 1800-2017**. These revisions refined the language and its verification features. **IEEE 1800-2023** is a later revision, but projects and tools may support different subsets and revisions; always consult the version supported by the tool flow. The IEEE website is the authoritative source for the standard.
+
+| Standard Revision | Year | Key Milestones &amp; Technical Additions |
+| :--- | :---: | :--- |
+| **IEEE 1364-1995** | 1995 | First IEEE Verilog HDL standard (`wire`, `reg`, gate primitives, `always`, `initial`) |
+| **IEEE 1364-2001** | 2001 | ANSI-style port declarations, `generate` blocks, `localparam`, signed math, `@*` sensitivity |
+| **Accellera SV 3.0–3.1a** | 2002–2004 | Pre-IEEE donation merging RTL enhancements, OOP classes, constraints, and assertions |
+| **IEEE 1800-2005** | 2005 | First IEEE SystemVerilog standard (`logic`, `always_ff`/`always_comb`, `interface`, SVA, `covergroup`) |
+| **IEEE 1800-2009** | 2009 | Merged IEEE 1364 Verilog and IEEE 1800 into one document; added `checker` and LTL operators |
+| **IEEE 1800-2012** | 2012 | Added `soft` constraints, `unique` constraints, interface classes (`implements`), and assertion enhancements |
+| **IEEE 1800-2017** | 2017 | Maintenance release clarifying scheduling semantics, randomization, and tool interoperability |
+| **IEEE 1800-2023** | 2023 | Latest revision refining language rules, macro/type semantics, and alignment with IEEE 1800.2 (UVM) |
+
+---
 
 ## Why Use SystemVerilog? Key Applications
 
@@ -64,7 +101,11 @@ SystemVerilog's versatility makes it indispensable across various facets of digi
 
 ### A Useful Mental Model
 
-The **design under test (DUT)** is the hardware being evaluated. The **testbench** supplies inputs, observes outputs, predicts expected results, and records evidence. A complete verification argument normally combines:
+The **design under test (DUT)** is the hardware being evaluated. The **testbench** supplies inputs, observes outputs, predicts expected results, and records evidence.
+
+![Closed-Loop Verification Architecture](images/ch1_sv_closed_loop_verification.svg)
+
+A complete verification argument normally combines:
 
 1. A specification that defines intended behavior.
 2. Stimulus that explores normal, boundary, illegal, and error scenarios.
@@ -73,6 +114,8 @@ The **design under test (DUT)** is the hardware being evaluated. The **testbench
 5. Debug and review of failures, exclusions, assumptions, and remaining risks.
 
 Coverage is evidence of what was observed, not a substitute for a correct specification or a checker that can detect the bug.
+
+---
 
 ## The Winning Advantages of SystemVerilog
 
@@ -84,12 +127,26 @@ Choosing SystemVerilog brings numerous benefits to digital design and verificati
   - **Functional Coverage**: Provides metrics to quantify how thoroughly the design's intended functionality has been verified.
   - **Assertions**: Enables the embedding of design intent directly into the code, facilitating early error detection and formal verification.
   - **Object-Oriented Programming (OOP)**: Supports OOP principles, allowing for the creation of modular, reusable, and maintainable verification environments, which are essential for managing the complexity of large verification projects.
-- **Integration with Verilog**: SystemVerilog was designed to support Verilog source and common Verilog coding styles, allowing teams to adopt features incrementally and reuse legacy code. “Backward compatible” does not mean every old file behaves identically in every tool: compilation mode, language version, scheduling semantics, and stricter SystemVerilog rules can matter. Mixed-language builds should therefore be compiled and tested explicitly.
+- **Integration with Verilog**: SystemVerilog was designed to support Verilog source and common Verilog coding styles, allowing teams to adopt features incrementally and reuse legacy code. "Backward compatible" does not mean every old file behaves identically in every tool: compilation mode, language version, scheduling semantics, and stricter SystemVerilog rules can matter. Mixed-language builds should therefore be compiled and tested explicitly.
 - **Industry-Standard Reliability**: As an IEEE standard, SystemVerilog benefits from broad industry acceptance and support. This standardization ensures:
   - **Consistency**: A published language definition gives tools and teams a common reference, although tool support and corner-case interpretation can still vary.
   - **Interoperability**: Compatibility and seamless integration with a wide range of EDA (Electronic Design Automation) tools from various vendors.
   - **Widespread Support**: A large community and many resources, including libraries, training, and tool support, make it easier to learn and implement.
 - **Scalability for Any Project**: Whether you're working on a small IP block or a massive SoC, SystemVerilog scales effectively. Its features and methodologies are designed to handle the increasing complexity of digital designs, ensuring efficient verification and design management regardless of project size.
+
+### Legacy Verilog (IEEE 1364) vs. SystemVerilog (IEEE 1800)
+
+| Capability | Legacy Verilog (IEEE 1364) | SystemVerilog (IEEE 1800) |
+| :--- | :--- | :--- |
+| **Signal &amp; Data Types** | `wire`, `reg`, `integer`; confusion between storage and wiring | `logic`, `bit`, `int`, `enum`, `struct`, `union`, `typedef` |
+| **Procedural Intent** | Single overloaded `always` block | Explicit `always_ff`, `always_comb`, `always_latch` |
+| **Inter-Module Wiring** | Long, error-prone port-by-port signal lists | Bundled `interface` with directional `modport` views |
+| **Dynamic Collections** | Fixed-size arrays only | Dynamic arrays (`[]`), associative arrays (`[*]`), queues (`[$]`) |
+| **Testbench Architecture** | Procedural modules and tasks; limited reuse | Full OOP (`class`, inheritance, polymorphism) &amp; UVM |
+| **Stimulus Generation** | Manual directed tests and `$urandom` | Built-in `rand` / `randc`, `constraint` solver |
+| **Assertions &amp; Coverage** | Ad-hoc `if` checks and code coverage only | Native SVA (`assert`/`assume`/`cover`) and `covergroup` |
+
+---
 
 ## Core Features That Set SystemVerilog Apart
 
@@ -101,10 +158,13 @@ SystemVerilog's richness lies in its extensive set of features, making it a powe
 - **Advanced Control Flow for Expressiveness**: SystemVerilog enhances code clarity and conciseness with improved control flow constructs:
   - `unique` and `priority` keywords for case statements, ensuring design intent is accurately captured and avoiding unintended behavior.
   - `foreach` loops for efficient iteration over arrays, simplifying data processing and manipulation.
-  - **Specialized Procedural Blocks**: SystemVerilog introduces specialized procedural blocks that clearly delineate design intent:
+- **Specialized Procedural Blocks**: SystemVerilog introduces specialized procedural blocks that clearly delineate design intent:
   - `always_comb`: Specifically for combinational logic, ensuring correct synthesis and simulation behavior.
   - `always_ff`: For sequential logic (flip-flops), simplifying the modeling of clocked elements.
   - `always_latch`: For level-sensitive latches. Latches are valid hardware when intentionally designed, but accidental latch inference is usually a bug; coding standards should make the intent explicit.
+
+![Specialized Procedural Blocks and Hardware Intent](images/ch1_sv_procedural_blocks_hardware.svg)
+
 - **Modular Code with Tasks and Functions**: SystemVerilog's tasks and functions are more powerful than their Verilog counterparts, enabling:
   - **Modular Design**: Breaking down complex operations into manageable, reusable blocks of code.
   - **Improved Code Reusability**: Creating libraries of common operations that can be easily reused across different parts of a design or in multiple projects.
@@ -127,18 +187,30 @@ SystemVerilog's richness lies in its extensive set of features, making it a powe
 
 By leveraging these features, SystemVerilog empowers hardware engineers to design and verify increasingly sophisticated digital systems with greater efficiency, reliability, and confidence.
 
+---
+
 ## Design and Verification Boundaries
 
-The same source file may contain both synthesizable and simulation-only constructs, but they serve different purposes. Typical synthesizable constructs include modules, continuous assignments, combinational logic, clocked processes, parameters, packed vectors, and many enumerations and structures. Typical verification constructs include classes, dynamic and associative arrays, queues, constrained randomization, mailboxes, semaphores, coverage groups, and many system tasks. The exact supported subset is tool- and flow-dependent.
+The same source file may contain both synthesizable and simulation-only constructs, but they serve different purposes. The exact supported subset is tool- and flow-dependent.
+
+### Construct Classification Matrix
+
+| Domain | Typical Constructs | Primary Purpose |
+| :--- | :--- | :--- |
+| **Synthesizable RTL** | `module`, `parameter`, `localparam`, `assign`, `always_ff`, `always_comb`, `always_latch`, `generate`, packed vectors, `enum`, `struct packed` | Translated into gates, flip-flops, SRAMs, and FPGA/ASIC wiring |
+| **Dual-Domain / Bridge** | `interface`, `modport`, `package`, `typedef`, `function`, `logic`, `assert` / `assume` / `cover` (tool-dependent for synthesis/formal) | Shared structural wiring, types, and formal/simulation property specifications |
+| **Verification-Only** | `initial`, `#delay`, `class`, `rand`/`constraint`, dynamic/associative arrays, `queue [$]`, `fork`/`join_none`, `mailbox`, `semaphore`, `covergroup`, `$display`, `$finish` | Simulation stimulus, transaction modeling, IPC, checking, and coverage |
 
 Keep these principles in mind:
 
 - Use `always_comb` for combinational logic and assign every output on every path to avoid unintended storage.
 - Use `always_ff` for clocked state and follow the project's reset and clock-domain rules.
-- Use nonblocking assignments for sequential state updates and blocking assignments for local combinational calculations when that matches the coding standard.
+- Use nonblocking assignments (`<=`) for sequential state updates and blocking assignments (`=`) for local combinational calculations when that matches the coding standard.
 - Treat `X` and `Z` values deliberately. Four-state simulation can expose unknown initialization and bus-contention problems that two-state abstractions hide.
 - Separate checking from driving where practical. A monitor should observe the DUT without changing it, while a driver applies legal protocol activity.
 - Define assumptions and coverage exclusions explicitly. Unexplained exclusions can make a high coverage number misleading.
+
+---
 
 ## A Small Verification Example
 
@@ -154,22 +226,110 @@ end
 
 This example is intentionally simple. In a real counter, wraparound may be legal, so the requirement and assertion must agree. That is the central verification habit: write the check from the specification, not from an assumption about the implementation.
 
+### Putting It Together: A Complete Self-Checking Testbench
+
+To see how RTL design and verification constructs collaborate in one simulation, consider a 4-bit `counter` paired with a minimal self-checking testbench (`counter_tb`) that drives clock and reset, checks expected transitions, and samples functional coverage:
+
+```systemverilog
+module counter_tb;
+    localparam int unsigned WIDTH = 4;
+
+    logic             clk = 1'b0;
+    logic             rst_n;
+    logic [WIDTH-1:0] count;
+
+    // 1. Instantiate the Design Under Test (DUT)
+    counter #(.WIDTH(WIDTH)) dut (
+        .clk   (clk),
+        .rst_n (rst_n),
+        .count (count)
+    );
+
+    // 2. Clock generation (10 ns period, simulation-only)
+    always #5ns clk = ~clk;
+
+    // 3. Functional coverage for boundary values
+    covergroup cg_count @(posedge clk);
+        cp_val : coverpoint count {
+            bins zero     = {0};
+            bins mid      = {[1 : 14]};
+            bins max_val  = {15};
+            bins rollover = (15 => 0);
+        }
+    endgroup
+    cg_count cov = new();
+
+    // 4. Stimulus and self-checking sequence
+    initial begin
+        rst_n = 1'b0;
+        repeat (2) @(posedge clk);
+        assert (count === '0) else $error("Reset failed: count=%0d", count);
+
+        rst_n = 1'b1;
+        for (int expected = 1; expected <= 16; expected++) begin
+            @(posedge clk);
+            #1ns; // Sample after nonblocking DUT update
+            assert (count === expected[WIDTH-1:0])
+                else $error("Mismatch: got %0d, expected %0d", count, expected[WIDTH-1:0]);
+        end
+
+        $display("PASS: count wrapped cleanly, coverage = %0.2f%%", cov.get_inst_coverage());
+        $finish;
+    end
+endmodule
+```
+
+Notice how the testbench combines simulation-only features (`initial`, `always #5ns`, `covergroup`, `$display`, `$finish`) with the synthesizable `counter` module without adding non-synthesizable code inside the DUT itself.
+
+---
+
 ## Practical Study Path
+
+![SystemVerilog Practical Study Path](images/ch1_sv_study_roadmap.svg)
 
 Use this chapter as a map for the chapters that follow:
 
-- Start with syntax, modules, procedural blocks, and system tasks.
-- Learn data types and arrays before writing reusable transactions.
-- Study operators and control flow, then apply them in synthesizable RTL.
-- Learn tasks, functions, interfaces, and packages to structure reusable code.
-- Move to randomization, classes, interprocess communication, assertions, and coverage for scalable verification.
-- Revisit the verification plan as features become more complex; the plan should evolve with the design and its risks.
+- **Foundations &amp; Simulation (Chapters 2–3):** Start with syntax, `module` structure, `initial` blocks, `$display`, wavedumps, and `$finish`.
+- **Data Types, Arrays &amp; Operators (Chapters 4–7):** Learn 4-state vs. 2-state types, packed/unpacked arrays, queues, and operators before writing reusable transactions or RTL datapaths.
+- **Control Flow, Procedural Blocks &amp; Modularity (Chapters 8–9, 11, 13–14, 17):** Apply `unique`/`priority` control flow, `always_comb`/`always_ff`, tasks/functions, `interface`/`modport`, and `package` definitions.
+- **Concurrency, OOP &amp; Randomization (Chapters 10, 12, 15–16):** Master `fork`/`join`, mailboxes/semaphores/events, classes, and constrained randomization for scalable verification.
+- **Assertions, Coverage &amp; Utilities (Chapters 18–23):** Use command-line arguments, file I/O, SystemVerilog Assertions (SVA), `covergroup` metrics, macros, and built-in system tasks.
+- **Continuous Refinement:** Revisit the verification plan as features become more complex; the plan should evolve with the design and its risks.
+
+---
 
 ## Exercises
 
-1. Label each construct as usually synthesizable RTL, usually verification-only, or tool-dependent: `always_ff`, `class`, `covergroup`, `interface`, `queue`, `parameter`, and `$display`.
+1. Label each construct as **usually synthesizable RTL**, **usually verification-only**, or **tool-dependent / dual-domain**: `always_ff`, `class`, `covergroup`, `interface`, `queue`, `parameter`, and `$display`.
 2. For the counter example, write a short list of legal behaviors for reset, counting, and wraparound. Then identify one immediate assertion and one functional coverage point.
 3. Explain why 100% line coverage does not prove that a protocol checker or scoreboard is correct.
 4. Compile the example with the SystemVerilog mode of the simulator used in your environment, and record any warnings about language version or unsupported constructs.
+
+### Reference Solutions
+
+1. **Construct Classification:**
+   - `always_ff`: Usually synthesizable RTL (models edge-triggered flip-flops).
+   - `class`: Usually verification-only (dynamic OOP allocation is not synthesizable).
+   - `covergroup`: Usually verification-only (tracks simulation functional coverage).
+   - `interface`: Dual-domain / tool-dependent (synthesizable for bundling module ports and `modport` connections, while verification constructs like `clocking` blocks inside an interface are simulation-only).
+   - `queue`: Usually verification-only (dynamically resized collection `[$]`).
+   - `parameter`: Usually synthesizable RTL (compile-time/elaboration-time constant configuration, also used in testbenches).
+   - `$display`: Usually verification-only (ignored or disallowed by synthesis tools).
+
+2. **Counter Legal Behaviors, Assertion &amp; Coverage:**
+   - **Reset:** When `rst_n == 0`, `count` asynchronously resets to `'0` and remains `'0` while reset is asserted.
+   - **Counting:** When `rst_n == 1`, `count` increments by `1` on every `posedge clk`.
+   - **Wraparound:** When `rst_n == 1` and `count == {WIDTH{1'b1}}`, the next `posedge clk` wraps `count` cleanly back to `'0`.
+   - **Immediate Assertion:** `assert (count === '0)` checked right after reset release.
+   - **Functional Coverage Point:** A `coverpoint` on `count` containing bins for `0`, mid-range values, `2**WIDTH - 1`, and the transition `(2**WIDTH - 1 => 0)`.
+
+3. **Why 100% Line Coverage Is Insufficient:**
+   Line coverage only measures whether every syntactic line in the RTL was executed at least once. It cannot detect **missing functionality** (requirements never coded in RTL), **weak or absent checkers** (a testbench that drives inputs without verifying outputs can still hit 100% line coverage), or **untested combinations of concurrent inputs and corner-case sequences**.
+
+4. **Simulator Compilation Check:**
+   Run with SystemVerilog enabled—for example:
+   - Verilator: `verilator --lint-only -Wall counter.sv` (or `--binary` for testbench simulation; note that some open-source simulators have partial `covergroup` support).
+   - Icarus Verilog: `iverilog -g2012 counter.sv counter_tb.sv` (check for unsupported OOP/covergroup features depending on version).
+   - Commercial simulators (VCS, Questa, Xcelium): enable `-sverilog` / `-sv` and confirm IEEE 1800 compliance with zero unintended latch or width-mismatch warnings.
 
 ##### Copyright (c) 2026 squared-studio

@@ -4,6 +4,8 @@ SystemVerilog provides a rich set of built-in system tasks and functions, identi
 
 Below is a categorized list of common SystemVerilog system tasks and functions:
 
+![SystemVerilog Built-In System Tasks and Functions Master Taxonomy](images/ch23_sv_system_tasks_master_taxonomy.svg)
+
 ## Simulation Control Tasks
 
 These tasks are used to control the execution flow of a simulation.
@@ -11,26 +13,23 @@ These tasks are used to control the execution flow of a simulation.
 ### `$finish`
 
 **Description:**
-The `$realtime` function returns the current simulation time as a `real` number, expressed in the calling scope's time unit. It preserves fractional time when the scope's precision allows it.
-The `$finish` task terminates a simulation after the simulator performs its normal end-of-simulation processing. You can optionally provide an argument to select the amount of termination information reported; exact formatting is simulator-dependent.
+
+The `$finish` task terminates a simulation after the simulator performs its normal end-of-simulation processing. You can optionally provide an argument to select the amount of termination information reported; exact formatting is simulator-dependent. It is the most commonly used task for ending a simulation gracefully.
 
 - `$finish;` or `$finish(0);`: Terminates simulation with no additional messages.
 - `$finish(1);`: Terminates simulation and prints the simulation time and location.
-  The `$stime` function returns the current simulation time as a 32-bit integer, expressed in the calling scope's time unit. Any fractional part is rounded according to the simulator's time conversion rules, and the result can overflow its 32-bit range.
-
-It is the most commonly used task for ending a simulation gracefully.
+- `$finish(2);`: Terminates simulation and prints the simulation time, location, and memory/CPU statistics.
 
 **Example:**
-The `$time` function returns the current simulation time as a 64-bit integer, expressed in the calling scope's time unit. It differs from `$realtime$ because fractional values are converted to an integer according to the simulator's time conversion rules. The effective time unit comes from the module/program/interface declaration or the applicable `` `timescale`directive; use an explicit time unit or` `timescale`` rather than relying on a tool default.
 
 ```systemverilog
 module finish_example;
 
-**Return Type:** 32-bit `integer`
+  initial begin
     $display("Simulation started at time %0t", $time);
-**Return Type:** 64-bit `time`
+
     #100; // Wait for 100 time units
--   `$cast$ is frequently used for casting object handles in object-oriented SystemVerilog (like UVM), but it can also be used for value casting between compatible scalar or aggregate types. For real-to-integral conversion, use `$rtoi$, `$itor$, or an explicit cast when the desired rounding rule must be obvious.
+    $display("Simulation reached 100 time units.");
 
     #50;  // Wait for another 50 time units
     $display("Simulation reached 150 time units. Calling $finish.");
@@ -97,46 +96,45 @@ In this example, the simulation starts, prints messages, waits for 50 time units
 
 **Description:**
 
-`$exit` is not a portable IEEE SystemVerilog simulation-control task. Some simulators provide it as an extension that terminates the simulation or the simulator process immediately, sometimes with an exit code. Prefer `$finish` for portable, orderly termination and document the simulator requirement when `$exit` is used.
+In IEEE 1800 SystemVerilog, `$exit` (with **no arguments**) is a standard system task used inside a `program` block to explicitly terminate all threads belonging to the calling `program` instance. When all `program` blocks in a simulation have exited (either naturally or by calling `$exit`), the simulator automatically invokes `$finish` to end the simulation.
 
-- `$exit;` or `$exit(0);`: In simulators that support this extension, requests immediate termination with a zero exit code.
-- `$exit(code);`: In simulators that support this extension, requests termination with the specified implementation-defined process status.
+Calling `$exit(code)` with an integer OS status code, or invoking `$exit` inside a `module` block, is **not** standard IEEE 1800 behavior—it is a simulator-specific extension supported only by certain tools. Prefer standard `$finish` inside modules for portable termination.
+
+- `$exit;`: Standard IEEE 1800 usage inside a `program` block; ends the calling program instance.
+- `$exit(code);`: Simulator-specific extension (non-portable) that immediately exits with a process status code.
 
 **Example:**
 
 ```systemverilog
-module exit_example;
+program automatic exit_example;
 
-  parameter MAX_CYCLES = 100;
-  integer cycle_count = 0;
-  logic clk = 0;
+  parameter int MAX_CYCLES = 100;
+  int cycle_count = 0;
 
   initial begin
-    $display("Simulation started at time %0t", $time);
+    $display("Program started at time %0t", $time);
 
-    // Simulate some clock cycles
     repeat (MAX_CYCLES) begin
-      #10 clk = ~clk;
+      #10;
       cycle_count++;
       $display("Cycle %0d at time %0t", cycle_count, $time);
 
       if (cycle_count == 50) begin
         $display("Reached 50 cycles. Calling $exit.");
-        $exit(1); // Terminate immediately with exit code 1
+        $exit; // Exits this program block; simulator finishes when all programs exit
       end
     end
 
     // This line will not be reached because $exit is called at cycle 50
-    $display("Simulation completed %0d cycles.", MAX_CYCLES);
-    $finish;
+    $display("Program completed %0d cycles.", MAX_CYCLES);
   end
 
-endmodule
+endprogram
 ```
 
 **Explanation:**
 
-This example simulates a clock and increments a `cycle_count`. When the `cycle_count` reaches 50, the code prints a message and calls `$exit(1)`. The simulation terminates immediately at that point, and the operating system process running the simulation will exit with a status code of 1. The code after the `if` block will not be executed. Using `$exit` means normal simulation shutdown procedures might be skipped, so use it cautiously.
+This example runs a loop inside a `program` block and increments `cycle_count`. When `cycle_count` reaches `50`, it prints a message and calls standard IEEE 1800 `$exit`. That terminates the `program` instance (including any forked child threads it created). Because `exit_example` is the only active `program` block, the simulator implicitly triggers `$finish` once `$exit` executes. If you need to terminate from a `module` block or ensure immediate shutdown everywhere, use `$finish` (or `$fatal` for error status).
 
 ## Simulation Time Functions
 
@@ -364,6 +362,8 @@ The output clearly demonstrates how `$timeformat` controls the appearance of tim
 ## Conversion Functions
 
 Functions for converting between different data types, such as real to bits and vice-versa, or signed/unsigned conversions.
+
+![Simulation Time Scaling and Type Conversion Pipeline](images/ch23_sv_time_and_conversion_pipeline.svg)
 
 ### `$bitstoreal` and `$realtobits`
 
@@ -766,6 +766,9 @@ This function is valuable for introspection and dynamic behavior based on data t
 ## Array Query Functions
 
 Functions to obtain information about arrays, including dimensions, bounds, and size.
+
+![Array Dimension Numbering and Bit-Vector Queries](images/ch23_sv_array_and_bitvector_query_anatomy.svg)
+
 Consider the following SystemVerilog array declarations to illustrate these functions:
 
 ```systemverilog
@@ -2623,6 +2626,8 @@ This illustrates how `$system` allows you to integrate external command executio
 Tasks for outputting text to the console or logs in various formats.
 All of these tasks use format specifiers similar to the C `printf` function (e.g., `%d` for decimal, `%h` for hexadecimal, `%b` for binary, `%s` for string, `%f` for real, `%0t` for time) within a format string.
 
+![Display Scheduling, File and Memory IO, Plusargs and VCD Waveform Ecosystem](images/ch23_sv_io_memory_plusargs_vcd_ecosystem.svg)
+
 ### `$display` and `$write` (Immediate Output)
 
 **Descriptions:**
@@ -2792,43 +2797,46 @@ Tasks and functions for interacting with files, including opening, closing, read
 
 These tasks manage the connection between your simulation and external files.
 
-- `$fopen(string_file_name [, string_mode])`: Opens a file specified by `string_file_name`.
-  - `string_mode`: Specifies the file access mode. Common modes include:
+- `$fopen(string_file_name [, string_mode])`: Opens a file specified by `string_file_name` and returns a 32-bit `integer` descriptor (`0` on failure):
+  - **Without `string_mode`** (`$fopen("log.txt")`): Opens for writing in **multi-channel descriptor (MCD)** mode, returning a 32-bit bitmask with bit 31 = `0` and one channel bit set (bit 0 `32'h0000_0001` is reserved for standard output). You can bitwise-OR multiple MCDs together to broadcast writes simultaneously.
+  - **With `string_mode`** (`$fopen("log.txt", "w")`): Opens in **file descriptor (FD)** mode, returning an FD with bit 31 = `1` (`32'h8000_0000`..`32'h8000_0002` are pre-opened `stdin`/`stdout`/`stderr` FDs; do **not** bitwise-OR FDs). Common modes include:
     - `"r"`: Read mode. File must exist.
-    - `"w"`: Write mode. Creates the file if it doesn't exist, overwrites if it does.
-    - `"a"`: Append mode. Creates the file if it doesn't exist, writes to the end if it does.
-    - `"r+"`, `"w+"`, `"a+"`: Read and update modes.
-  - Returns a multi-channel descriptor (an integer). A value of 0 indicates failure. This descriptor is used by subsequent file I/O tasks. SystemVerilog allows writing to multiple files simultaneously using bit flags in the descriptor. Standard output is represented by descriptor 1, standard error by 2.
-- `$fclose(multi_channel_descriptor)`: Closes the file(s) associated with the given descriptor. Returns 0 on success, EOF on failure.
+    - `"w"`: Write mode. Creates the file if it doesn't exist, truncates if it does.
+    - `"a"`: Append mode. Creates the file if it doesn't exist, writes at the end if it does.
+    - `"r+"`, `"w+"`, `"a+"`: Read and update modes (append `"b"` such as `"rb"` or `"wb"` for binary I/O).
+- `$fclose(fd_or_mcd)`: System **task** (`void` — it returns no value) that closes the file(s) associated with the given FD or MCD. Check stream errors beforehand using `$ferror(fd, err_str)`.
 
 **Example:**
 
 ```systemverilog
 module file_handling_example;
 
-  integer file_desc;
-  integer status;
+  int    file_desc;
+  int    err_code;
+  string err_str;
 
   initial begin
     $display("--- File Handling Example ---");
 
-    // Open a file for writing
+    // Open a file for writing (returns an FD because mode "w" is provided)
     file_desc = $fopen("output.txt", "w");
 
-    if (file_desc) begin
-      $display("Time %0t: Successfully opened output.txt for writing (descriptor %0d).", $time, file_desc);
+    if (file_desc != 0) begin
+      $display("Time %0t: Successfully opened output.txt for writing (FD 0x%08h).", $time, file_desc);
 
       // Write some data (details in file writing section below)
       $fwrite(file_desc, "This is the first line.\n");
       $fwrite(file_desc, "This is the second line.\n");
 
-      // Close the file
-      status = $fclose(file_desc);
-      if (status == 0) begin
-        $display("Time %0t: Successfully closed output.txt.", $time);
-      end else begin
-        $error("Time %0t: Error closing output.txt.", $time);
+      // Check stream error status before closing
+      err_code = $ferror(file_desc, err_str);
+      if (err_code != 0) begin
+        $error("Time %0t: Write error (%0d): %s", $time, err_code, err_str);
       end
+
+      // Close the file ($fclose is a void system task in IEEE 1800)
+      $fclose(file_desc);
+      $display("Time %0t: Closed output.txt.", $time);
     end else begin
       $error("Time %0t: Failed to open output.txt.", $time);
     end
@@ -2842,7 +2850,7 @@ endmodule
 
 **Explanation:**
 
-This example attempts to open a file named "output.txt" in write mode. If successful, it prints a message, writes two lines using `$fwrite` (described later), then closes the file using `$fclose` and checks the return status.
+This example opens `"output.txt"` in write mode using `$fopen("output.txt", "w")`, checks that the returned FD is non-zero, writes two lines with `$fwrite`, inspects `$ferror` for any stream errors, and then calls `$fclose(file_desc);` as a `void` system task (since IEEE 1800 `$fclose` does not return a status integer).
 
 ### File Status
 

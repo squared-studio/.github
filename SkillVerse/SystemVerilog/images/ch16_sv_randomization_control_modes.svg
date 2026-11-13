@@ -1,0 +1,96 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 400" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGradCh16C" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#080c14" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <filter id="shadowCh16C" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+    <marker id="arrowCyan16C" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8"/>
+    </marker>
+    <marker id="arrowGreen16C" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#34d399"/>
+    </marker>
+  </defs>
+
+  <rect width="920" height="400" rx="14" fill="url(#bgGradCh16C)"/>
+
+  <!-- Title -->
+  <text x="460" y="32" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="20" font-weight="700" fill="#f8fafc" text-anchor="middle">Orchestrating Randomization: srandom, rand_mode, constraint_mode &amp; Inline with</text>
+  <text x="460" y="54" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13" fill="#94a3b8" text-anchor="middle">Runtime knobs and callbacks let verification engineers steer stimulus without editing base transaction classes</text>
+
+  <!-- Left Column: Pre-Solve Controls -->
+  <g transform="translate(24, 78)">
+    <rect width="268" height="296" rx="10" fill="#0f172a" stroke="#38bdf8" stroke-width="1.8" filter="url(#shadowCh16C)"/>
+    <rect width="268" height="36" rx="10" fill="#075985"/>
+    <rect x="0" y="24" width="268" height="12" fill="#075985"/>
+    <text x="134" y="23" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13" font-weight="700" fill="#e0f2fe" text-anchor="middle">1. Runtime Control Knobs</text>
+
+    <rect x="14" y="50" width="240" height="68" rx="6" fill="#0c1c2e" stroke="#0284c7"/>
+    <text x="24" y="69" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" font-weight="700" fill="#38bdf8">obj.srandom(seed);</text>
+    <text x="24" y="88" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#e2e8f0">Seeds object RNG for repeatable runs</text>
+    <text x="24" y="105" font-family="'JetBrains Mono', Consolas, monospace" font-size="9.5" fill="#7dd3fc">process::self().srandom(seed);</text>
+
+    <rect x="14" y="130" width="240" height="68" rx="6" fill="#181208" stroke="#f59e0b"/>
+    <text x="24" y="149" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" font-weight="700" fill="#fbbf24">obj.field.rand_mode(0/1);</text>
+    <text x="24" y="168" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#fde68a">Freezes field as a state variable (0)</text>
+    <text x="24" y="185" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#94a3b8">instead of randomizing it</text>
+
+    <rect x="14" y="210" width="240" height="72" rx="6" fill="#1e1035" stroke="#a855f7"/>
+    <text x="24" y="229" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" font-weight="700" fill="#d8b4fe">obj.c_name.constraint_mode(0/1);</text>
+    <text x="24" y="248" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#f3e8ff">Disables/enables named constraint</text>
+    <text x="24" y="265" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#cbd5e1">Useful for intentional error tests</text>
+  </g>
+
+  <line x1="294" y1="226" x2="328" y2="226" stroke="#38bdf8" stroke-width="2.5" marker-end="url(#arrowCyan16C)"/>
+
+  <!-- Center Column: randomize() Invocation Variants -->
+  <g transform="translate(332, 78)">
+    <rect width="276" height="296" rx="10" fill="#0f172a" stroke="#f59e0b" stroke-width="1.8" filter="url(#shadowCh16C)"/>
+    <rect width="276" height="36" rx="10" fill="#78350f"/>
+    <rect x="0" y="24" width="276" height="12" fill="#78350f"/>
+    <text x="138" y="23" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13" font-weight="700" fill="#fef3c7" text-anchor="middle">2. Calling randomize() Safely</text>
+
+    <rect x="14" y="50" width="248" height="68" rx="6" fill="#091526" stroke="#334155"/>
+    <text x="24" y="69" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" font-weight="700" fill="#6ee7b7">obj.randomize()</text>
+    <text x="24" y="88" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#e2e8f0">Solves all enabled rand/randc fields</text>
+    <text x="24" y="104" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#94a3b8">under all active constraints</text>
+
+    <rect x="14" y="130" width="248" height="72" rx="6" fill="#091526" stroke="#38bdf8"/>
+    <text x="24" y="149" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" font-weight="700" fill="#7dd3fc">obj.randomize() with { ... };</text>
+    <text x="24" y="168" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#e2e8f0">Adds temporary inline constraints</text>
+    <text x="24" y="185" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#fbbf24">for one test call only</text>
+
+    <rect x="14" y="214" width="248" height="68" rx="6" fill="#091526" stroke="#f59e0b"/>
+    <text x="24" y="233" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" font-weight="700" fill="#fde68a">obj.randomize(length);</text>
+    <text x="24" y="252" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#e2e8f0">Partial solve: updates ONLY 'length'</text>
+    <text x="24" y="269" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#94a3b8">(other rand fields act as state vars)</text>
+  </g>
+
+  <line x1="610" y1="226" x2="644" y2="226" stroke="#34d399" stroke-width="2.5" marker-end="url(#arrowGreen16C)"/>
+
+  <!-- Right Column: Hooks & Status Checking -->
+  <g transform="translate(648, 78)">
+    <rect width="248" height="296" rx="10" fill="#0f172a" stroke="#10b981" stroke-width="1.8" filter="url(#shadowCh16C)"/>
+    <rect width="248" height="36" rx="10" fill="#065f46"/>
+    <rect x="0" y="24" width="248" height="12" fill="#065f46"/>
+    <text x="124" y="23" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13" font-weight="700" fill="#d1fae5" text-anchor="middle">3. Callbacks &amp; Error Guard</text>
+
+    <rect x="14" y="50" width="220" height="72" rx="6" fill="#072c22" stroke="#10b981"/>
+    <text x="24" y="70" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" font-weight="700" fill="#34d399">pre_randomize()</text>
+    <text x="24" y="90" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#d1fae5">Adjust modes or state variables</text>
+    <text x="24" y="106" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#d1fae5">immediately before solver runs</text>
+
+    <rect x="14" y="132" width="220" height="72" rx="6" fill="#072c22" stroke="#10b981"/>
+    <text x="24" y="152" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" font-weight="700" fill="#6ee7b7">post_randomize()</text>
+    <text x="24" y="172" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#d1fae5">Compute derived CRC/checksum</text>
+    <text x="24" y="188" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#d1fae5">only after solver returns 1</text>
+
+    <rect x="14" y="214" width="220" height="68" rx="6" fill="#4c0519" stroke="#f43f5e"/>
+    <text x="24" y="234" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" font-weight="700" fill="#fecdd3">if (!obj.randomize())</text>
+    <text x="34" y="252" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#ffe4e6">$fatal(1, "Conflict!");</text>
+    <text x="24" y="270" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="9.5" fill="#fda4af">Never ignore return value of randomize()</text>
+  </g>
+</svg>

@@ -2,7 +2,7 @@
 
 ## Introduction
 
-SystemVerilog elevates array manipulation beyond basic indexing, offering powerful built-in methods for dynamic arrays, queues, and associative arrays. While these methods are primarily for dynamic and associative types, a solid grasp of array indexing is fundamental across all array types in SystemVerilog. This guide explores both essential indexing techniques and advanced manipulation methods, optimized for efficient verification and robust RTL design.
+SystemVerilog elevates array manipulation far beyond simple index lookups by providing built-in locator, ordering, and reduction methods for unpacked arrays. These methods apply directly to fixed-size unpacked arrays, dynamic arrays, and queues, while associative arrays support the locator and reduction subsets. Combining precision multidimensional indexing with these built-in array methods lets you write concise, bug-free testbench processing alongside clean, synthesizable RTL data structures.
 
 ## Learning Goals
 
@@ -16,41 +16,40 @@ By the end of this chapter, you should be able to:
 
 ## Array Indexing: Precision Access to Multidimensional Data
 
-SystemVerilog excels in handling complex, multidimensional arrays, incorporating both packed and unpacked dimensions. Mastering indexing is key to effectively model hardware and process data.
+SystemVerilog handles complex multidimensional arrays that combine unpacked dimensions (after the identifier) and packed dimensions (before the identifier). Mastering the exact left-to-right indexing order is essential for slicing hardware structures cleanly.
 
 ### Example: Dissecting a Multidimensional Array
 
-Let's consider a complex array structure as an example to illustrate indexing:
+Consider a multidimensional array declaration with both packed and unpacked dimensions:
 
 ```systemverilog
 logic [127:0][7:0] my_array [8][64][32];
 ```
 
-#### Understanding Dimensions:
+#### Understanding Dimensions
 
-1.  **Unpacked Dimensions (Array Structure)**: These dimensions define the number of elements and the array's organization in memory:
-    - `[8][64][32]`: This creates a 3-dimensional unpacked array with a total of 8 \* 64 \* 32 = 16,384 elements. Think of it as 8 banks, each with 64 rows, and each row containing 32 columns.
+1. **Unpacked Dimensions (`[8][64][32]`)**: Declared **after** the variable name, these organize the array into discrete addressable elements—here `8 * 64 * 32 = 16,384` elements (imagine 8 banks, each with 64 rows, and each row with 32 columns). Unpacked indices `[bank][row][col]` are always applied **first**.
+2. **Packed Dimensions (`[127:0][7:0]`)**: Declared **before** the variable name, these define the contiguous bit layout of each individual element—128 bytes × 8 bits = `1,024` bits per element. Packed indices `[byte_idx][bit_idx]` are applied **after** selecting the unpacked element.
 
-2.  **Packed Dimensions (Element Bit Structure)**: These dimensions define the bit-level structure of each element within the unpacked array:
-    - `[127:0][7:0]`: Each element is itself a 2-dimensional packed array, representing a 128x8 bit matrix, totaling 1,024 bits (128 bytes) per element.
+![Multidimensional Array Anatomy: Packed 128x8 Bit Element Inside 3D Unpacked Array](images/ch6_sv_multidim_packed_unpacked_indexing.svg)
 
 ### Indexing Techniques: Navigating the Array
 
-| Access Level           | Example                                     | Description                                                                      |
-| ---------------------- | ------------------------------------------- | -------------------------------------------------------------------------------- |
-| **Full Element**       | `my_array[2][5][17]`                        | Retrieves the entire 128-byte element located at unpacked indices [2][5][17].    |
-| **Single Byte**        | `my_array[1][3][20][byte_index]`            | Accesses a specific byte within an element. `byte_index` (0-127) selects a byte. |
-| **Single Bit**         | `my_array[0][10][5][byte_index][bit_index]` | Accesses a specific bit. `byte_index` (0-127) and `bit_index` (0-7) are used.    |
-| **Byte Range (Slice)** | `my_array[4][25][10][15:0]`                 | Extracts a contiguous slice of bytes (bytes 0 through 15) from an element.       |
-| **Bit Slice (Nibble)** | `my_array[7][63][31][127][3:0]`             | Extracts a bit slice (lower nibble, bits 3 down to 0) from a specific byte.      |
+| Access Level | Example | Description |
+| --- | --- | --- |
+| **Full Element** | `my_array[2][5][17]` | Retrieves the entire 128-byte (1,024-bit) packed vector at bank 2, row 5, col 17. |
+| **Single Byte** | `my_array[1][3][20][byte_index]` | Accesses a single 8-bit byte (`byte_index` from `0` to `127`) inside that element. |
+| **Single Bit** | `my_array[0][10][5][byte_index][bit_index]` | Accesses a single bit (`byte_index` `0..127`, `bit_index` `0..7`). |
+| **Byte Range (Slice)** | `my_array[4][25][10][15:0]` | Extracts a contiguous 16-byte slice (bytes `0` through `15`). |
+| **Bit Slice (Nibble)** | `my_array[7][63][31][127][3:0]` | Extracts the lower 4-bit nibble (`[3:0]`) of byte `127`. |
 
 ### Efficient Iteration with `foreach`
 
-SystemVerilog's `foreach` loop is ideal for iterating through multidimensional arrays:
+SystemVerilog's `foreach` loop automatically adapts to the bounds of each dimension without hardcoding loop limits:
 
 ```systemverilog
-foreach (my_array[i,j,k]) begin // Iterating over unpacked dimensions (banks, rows, cols)
-  foreach (my_array[i][j][k][byte_index]) begin // Iterating over packed byte dimensions
+foreach (my_array[i, j, k]) begin // Iterates over all unpacked banks, rows, cols
+  foreach (my_array[i][j][k][byte_index]) begin // Iterates over packed bytes 127..0
     $display("Bank %0d, Row %0d, Col %0d, Byte %0d: %h",
              i, j, k, byte_index, my_array[i][j][k][byte_index]);
   end
@@ -59,64 +58,71 @@ end
 
 ### Key Indexing Considerations
 
-1.  **Packed Dimension Order**: In packed dimensions (e.g., `[7:0]`), the **rightmost dimension is the least significant and changes fastest** during linear memory traversal.
-2.  **Memory Footprint**: Packed arrays provide a contiguous bit representation, while the storage and overhead of unpacked arrays depend on the element type, array kind, and implementation. Do not assume that an unpacked array uses pointers or has a particular physical layout.
-3.  **Synthesis Implications**: Synthesis results depend on access patterns, dimensions, timing constraints, and tool directives. An unpacked memory array may infer block RAM, registers, or another structure; a packed array may also infer memories when used as part of a larger storage model. Verify the result with synthesis reports.
+1. **Packed Dimension Order**: In packed dimensions (such as `[127:0][7:0]`), the **rightmost dimension is the least significant** and varies fastest in contiguous bit order.
+2. **Storage Semantics**: Packed dimensions guarantee contiguous bit layout and whole-vector arithmetic; unpacked arrays store discrete elements whose physical layout depends on simulator or synthesis optimizations.
+3. **Synthesis Implications**: Synthesis inference (block RAM, distributed LUT RAM, or flip-flop arrays) depends on read/write port structure, array depth, and tool directives. Always verify inferred hardware in synthesis reports.
 
 ## Array Manipulation Methods: Beyond Basic Indexing
 
-SystemVerilog provides a suite of powerful built-in methods to manipulate array data efficiently. These methods apply to several unpacked array kinds, including fixed-size and dynamic arrays and queues; associative arrays support a relevant but smaller method set. Always check the method's return type and the array kind before composing operations.
+SystemVerilog's built-in array methods replace verbose boilerplate `foreach` loops in testbenches. Always pay attention to two properties before chaining or assigning results: **what the method returns** and **whether it mutates the receiver in place**.
 
-### Searching and Filtering
+![SystemVerilog Array Manipulation Methods: Return Types & Side Effects](images/ch6_sv_array_methods_classification.svg)
 
-| Method                | Description                                                            | Example with Expression                  |
-| --------------------- | ---------------------------------------------------------------------- | ---------------------------------------- |
-| **`.find()`**         | Returns a queue containing all elements that satisfy a condition.      | `array.find(x) with (x > threshold)`     |
-| **`.find_index()`**   | Returns a queue of indices for elements meeting a condition.           | `array.find_index(x) with (x % 2 != 0)`  |
-| **`.find_first()`**   | Returns a queue containing the first element that matches a condition. | `array.find_first(x) with (x < min_val)` |
-| **`.find_last()`**    | Returns a queue containing the last element that matches a condition.  | `array.find_last(x) with (x == target)`  |
-| **`.unique()`**       | Returns a queue of unique values from the array.                       | `array.unique()`                         |
-| **`.unique_index()`** | Returns indices of the first occurrence of each unique value.          | `array.unique_index()`                   |
+### Searching and Filtering (Return Queue `[$]`, Source Unchanged)
 
-### Sorting and Ordering
+Locator methods **always return a queue (`[$]`)** of matching elements (or matching indices), even when `0` or `1` match is found:
 
-| Method           | Description                                                   | Example with Custom Sort Clause |
-| ---------------- | ------------------------------------------------------------- | ------------------------------- |
-| **`.sort()`**    | Sorts array elements in ascending order (in-place).           | `array.sort() with (x < y)`     |
-| **`.rsort()`**   | Sorts array elements in descending order (in-place).          | `array.rsort() with (y < x)`    |
-| **`.reverse()`** | Reverses the order of elements within the array (in-place).   | `array.reverse()`               |
-| **`.shuffle()`** | Randomizes the order of elements within the array (in-place). | `array.shuffle()`               |
+| Method | Description | Example with `with` Expression |
+| --- | --- | --- |
+| **`.find()`** | Returns a queue containing all elements matching the predicate. | `arr.find(x) with (x > threshold)` |
+| **`.find_index()`** | Returns a queue of indices for all elements matching the predicate. | `arr.find_index(x) with (x % 2 != 0)` |
+| **`.find_first()`** | Returns a 1-element (or empty) queue with the first matching element. | `arr.find_first(x) with (x < min_val)` |
+| **`.find_last()`** | Returns a 1-element (or empty) queue with the last matching element. | `arr.find_last(x) with (x == target)` |
+| **`.unique()`** | Returns a queue containing one copy of each distinct value. | `arr.unique()` |
+| **`.unique_index()`** | Returns a queue of indices for the first occurrence of each distinct value. | `arr.unique_index()` |
 
-### Mathematical Reduction Operations
+> **Safe Single-Match Check**: Because `.find()`, `.find_first()`, `.min()`, and `.max()` return queues, check `.size() != 0` before indexing `[0]`:
+> ```systemverilog
+> int matches[$] = temperatures.find_first(x) with (x < 0);
+> if (matches.size() != 0)
+>   $display("First freezing sample: %0d", matches[0]);
+> ```
 
-| Method           | Description                                  | Important Notes                                       |
-| ---------------- | -------------------------------------------- | ----------------------------------------------------- |
-| **`.sum()`**     | Calculates the sum of all elements.          | Result type automatically matches array element type. |
-| **`.product()`** | Calculates the product of all elements.      | Consider `longint` to prevent potential overflow.     |
-| **`.min()`**     | Finds and returns the minimum element value. | Can be used with `with` clauses for complex logic.    |
-| **`.max()`**     | Finds and returns the maximum element value. | Supports complex expressions within `with` clauses.   |
+### Sorting and Ordering (Mutate In-Place, Return `void`)
 
-### Bitwise Reduction Operations (Packed Arrays)
+Ordering methods modify fixed-size unpacked arrays, dynamic arrays, and queues **in place** (they are **not** supported on associative arrays, whose keys remain sorted by key order):
 
-| Method       | Description                                               | Typical Use Case                                            |
-| ------------ | --------------------------------------------------------- | ----------------------------------------------------------- |
-| **`.and()`** | Performs bitwise AND reduction across all array elements. | `array.and()` is equivalent to `&array[0] & array[1] & ...` |
-| **`.or()`**  | Performs bitwise OR reduction across all array elements.  | Combining flag bits, checking if any flag is set.           |
-| **`.xor()`** | Performs bitwise XOR reduction across all array elements. | Parity bit calculation across a data array.                 |
+| Method | Description | Example with Key Clause |
+| --- | --- | --- |
+| **`.sort()`** | Sorts elements ascending in place (optional `with` sort key). | `people.sort(x) with (x.age)` |
+| **`.rsort()`** | Sorts elements descending in place (optional `with` sort key). | `names.rsort(x) with (x.len())` |
+| **`.reverse()`** | Reverses element order in place (`with` clause not allowed). | `arr.reverse()` |
+| **`.shuffle()`** | Randomly permutes element order in place (`with` clause not allowed). | `arr.shuffle()` |
 
-Locator methods return queues, even when the queue contains zero or one element. For example, a safe first-match check is:
+Note that the `with (...)` clause on `.sort()` and `.rsort()` evaluates a **single-element key expression** (using the declared iterator identifier `x`, or default `item` if omitted such as `names.sort() with (item.len())`)—it is not a two-operand comparator like `(a < b)`.
 
-```systemverilog
-int matches[$] = temperatures.find(x) with (x < 0);
-if (matches.size() != 0)
-    $display("First matching value: %0d", matches[0]);
-```
+### Mathematical and Extremum Operations
 
-The `with` expression is evaluated for each element. Use an explicit iterator name consistently, and remember that a locator method does not change the source array.
+| Method | Return Type | Description &amp; Overflow Note |
+| --- | --- | --- |
+| **`.sum()`** | Scalar | Sums all elements; default result type matches the element type (use `with (int'(x))` to widen narrow bytes). |
+| **`.product()`** | Scalar | Multiplies all elements; use `longint` casts in `with` to avoid 32-bit overflow. |
+| **`.min()`** | Queue `[$]` | Returns a queue holding the minimum element (or `'{}` if the array is empty). |
+| **`.max()`** | Queue `[$]` | Returns a queue holding the maximum element (or `'{}` if the array is empty). |
+
+### Bitwise Reduction Operations (Across Unpacked Elements)
+
+| Method | Description | Typical Use Case |
+| --- | --- | --- |
+| **`.and()`** | Bitwise AND across all array elements: `arr[0] & arr[1] & ...` | Verifying which mask bits are set in *every* active channel. |
+| **`.or()`** | Bitwise OR across all array elements: `arr[0] | arr[1] | ...` | Aggregating sticky error flags across multiple sources. |
+| **`.xor()`** | Bitwise XOR across all array elements: `arr[0] ^ arr[1] ^ ...` | Computing packet-level multi-byte XOR parity / LRC checksums. |
 
 ## Illustrative Examples with Expected Outputs
 
-### Filtering with `find()` for Temperature Data
+![The 'with' Clause, Key Sorting & Method Chaining Pipeline](images/ch6_sv_with_clause_chaining_pipeline.svg)
+
+### Filtering with `.find()` for Temperature Data
 
 ```systemverilog
 int temperatures[] = '{-5, 12, 23, -3, 42, 18};
@@ -125,25 +131,25 @@ $display("Temperatures below freezing: %p", below_freezing);
 // Output: Temperatures below freezing: '{-5, -3}
 ```
 
-### Sorting Strings by Length using `sort()` with `with` Clause
+### Sorting Strings by Length using `.sort()` with Key Clause
 
 ```systemverilog
 string names[] = '{"Alice", "Bob", "Charlie"};
-names.sort() with (x.len()); // Sort names based on string length
+names.sort(x) with (x.len()); // Sort in-place using string length as the key
 $display("Sorted by length: %p", names);
 // Output: Sorted by length: '{"Bob", "Alice", "Charlie"}
 ```
 
-### Bitwise AND Reduction on a Packed Array of Masks
+### Bitwise AND Reduction Across Elements
 
 ```systemverilog
 bit [3:0] masks[] = '{4'b1010, 4'b1100, 4'b1111};
 bit [3:0] combined_mask = masks.and();
 $display("Combined AND mask: %b", combined_mask);
-// Output: Combined AND mask: 1000 (1010 & 1100 & 1111 = 1000)
+// Output: Combined AND mask: 1000  (4'b1010 & 4'b1100 & 4'b1111 = 4'b1000)
 ```
 
-### Finding Unique Indices with `unique_index()`
+### Finding Unique Indices with `.unique_index()`
 
 ```systemverilog
 int data_stream[] = '{5, 2, 5, 7, 2, 9};
@@ -154,72 +160,116 @@ $display("Indices of first unique values: %p", unique_indices);
 
 ### Method Chaining for Concise Operations
 
+Because locator methods return a queue `[$]`, you can immediately chain another array method onto the result:
+
 ```systemverilog
 int sample_values[] = '{8, 3, 5, 8, 2, 5};
-int unique_sum = sample_values.unique().sum(); // Chain unique() and sum()
+int unique_sum = sample_values.unique().sum(); // '{8, 3, 5, 2}.sum()
 $display("Sum of unique values: %0d", unique_sum);
-// Output: Sum of unique values: 18 (unique values are {8, 3, 5, 2}, sum is 18)
+// Output: Sum of unique values: 18
 ```
 
 ## Important Considerations for Array Manipulation
 
-1.  **In-Place Modification**: Be aware that methods like `.sort()`, `.rsort()`, `.reverse()`, and `.shuffle()` directly modify the original array. If you need to preserve the original array, create a copy before applying these methods.
-2.  **Method Applicability**: Built-in array manipulation methods are primarily designed for dynamic arrays, queues, and associative arrays. They are not directly applicable to fixed-size arrays.
-3.  **Flexibility of `with` Clause**: The `with` clause offers powerful customization for filtering and sorting. It can incorporate complex expressions and even access struct members for sophisticated data manipulation:
+1. **In-Place Mutation vs. New Queue Return**: `.sort()`, `.rsort()`, `.reverse()`, and `.shuffle()` mutate the source array directly and return `void`. If you need the original order intact, copy the array before calling them.
+2. **Array Kind Applicability**: Built-in array manipulation methods apply to **1-D unpacked arrays** (fixed-size unpacked, dynamic arrays, and queues). Associative arrays support locator and reduction methods (with keys visited in sorted key order), but **not** ordering methods (`.sort()`, `.rsort()`, `.reverse()`, `.shuffle()`).
+3. **Flexibility of the `with` Clause**: You can access struct/class fields, perform arithmetic casts, or inspect indices (`x.index` when iterating with `find`/`sort`) inside `with (...)`:
 
-    ```systemverilog
-    typedef struct { int age; string name; } person_t;
-    person_t people[]; // Populate this dynamic array before sorting.
-    people.sort() with (x.age); // Sort an array of structs based on the 'age' field
-    ```
+   ```systemverilog
+   typedef struct { int age; string name; } person_t;
+   person_t people[];
+   // ... populate 'people' ...
+   people.sort(x) with (x.age); // Sort array of structs ascending by 'age'
+   ```
 
-4.  **Empty Result Handling**: Searching and filtering methods (e.g., `.find()`, `.find_index()`) return empty queues when no matching elements are found. Always check the size of the returned queue to handle cases with no matches gracefully.
-5.  **Performance**: Methods for associative arrays, especially those involving searching or sorting, may have a time complexity of O(n log n) in the worst case, where n is the number of elements. Be mindful of performance implications when using these methods on very large associative arrays.
+4. **Empty Result Handling**: Searching methods return an empty queue `'{}` when no matches exist (or when called on an empty array). Always verify `result.size() > 0` before reading `result[0]`.
+5. **Sum Width & Overflow**: `byte arr[]` calls `arr.sum()` with an 8-bit `byte` accumulator by default! Whenever an arithmetic sum could exceed the element bit width, widen the expression inside `with`, e.g., `int'(arr.sum(x) with (int'(x)))`.
 
 ## Practical Exercises to Enhance Your Skills
 
-1.  **Memory Byte Extraction**: Given the `my_array[8][64][32]` structure from the introduction, write code to extract bytes 64-127 from the first element `my_array[0][0][0]` and display them.
-2.  **Financial Transaction Validation**: You have a queue of transaction objects, each with an amount. Use array methods to find all transactions with amounts exceeding $1000 and return a queue containing these transactions.
-3.  **Packet Checksum Calculation**: For a dynamic array representing a data packet, calculate the bitwise XOR checksum of all bytes in the packet, excluding the first 4 bytes (header).
-4.  **Unique Address Generation**: Create a dynamic array to store 100 unique 32-bit addresses. Use a combination of `.unique()` and `.shuffle()` to generate and ensure uniqueness and randomness in the address list.
-5.  **Error Event Sorting**: You have an associative array where keys are error codes (strings) and values are timestamps (time type). Sort the error codes based on their timestamps in ascending order and display the sorted error codes.
+Try solving each task below before expanding or comparing against the reference solutions.
+
+1. **Memory Byte Extraction**: Using `logic [127:0][7:0] my_array [8][64][32];`, extract bytes `64` through `127` from `my_array[0][0][0]` into a `logic [63:0][7:0] upper_half` variable and display it.
+
+   ```systemverilog
+   logic [63:0][7:0] upper_half;
+   upper_half = my_array[0][0][0][127:64];
+   $display("Upper 64 bytes: %h", upper_half);
+   ```
+
+2. **Financial Transaction Validation**: Given a queue `txn_t txns[$]` where each item has an `int amount`, find all transactions strictly exceeding `1000` into a new queue `large_txns[$]`.
+
+   ```systemverilog
+   txn_t large_txns[$] = txns.find(t) with (t.amount > 1000);
+   ```
+
+3. **Packet Checksum Calculation**: Given a dynamic array `byte pkt[]`, compute the 8-bit XOR checksum of all payload bytes starting at index `4` (skipping the 4-byte header).
+
+   ```systemverilog
+   // XOR with 8'h00 is identity, skipping header indices 0..3 safely
+   byte checksum = (pkt.size() > 4) ? pkt.xor(b) with (b.index >= 4 ? b : 8'h00) : 8'h00;
+   ```
+
+4. **Unique Random Address List**: Generate `100` unique 32-bit addresses using a dynamic array or queue and `.shuffle()` them cleanly without duplicates.
+
+   ```systemverilog
+   bit [31:0] addrs[] = new[100];
+   foreach (addrs[i]) addrs[i] = 32'h1000_0000 + (i * 4);
+   addrs.shuffle();
+   ```
+
+5. **Associative Array Value Sorting**: Given `time err_time [string];` (mapping error code keys to timestamps), collect the keys into a queue and sort the error codes in ascending timestamp order.
+
+   ```systemverilog
+   string codes[$];
+   string k;
+   if (err_time.first(k)) begin
+     do codes.push_back(k); while (err_time.next(k));
+   end
+   codes.sort(c) with (err_time[c]);
+   ```
 
 ## Pro-Level Tips for Array Mastery
 
-1.  **Combined Indexing and Method Application**: SystemVerilog allows for powerful combinations of indexing and array methods. For example, to extract a slice of bytes from all elements of a multidimensional array concisely:
+![Unary Bitwise Reduction (Packed RTL) vs. Array Reduction Methods (Unpacked)](images/ch6_sv_rtl_packed_vs_tb_methods.svg)
 
-    ```systemverilog
-    // Extract bytes 64-127 (upper half) from all elements of 'my_array'
-    foreach (my_array[i, j, k]) begin
-        upper_bytes[i][j][k] = my_array[i][j][k][127:64];
-    end
-    ```
+1. **Combined Indexing and Slice Extraction**: Combine `foreach` over unpacked indices with packed slice ranges to extract fields cleanly across large structures:
 
-2.  **Efficient Condition-Based Searching**: Leverage the `with` clause for highly efficient searches within arrays, especially for complex conditions:
+   ```systemverilog
+   // Extract upper 64 bytes [127:64] from every element of 'my_array'
+   foreach (my_array[i, j, k]) begin
+     upper_bytes[i][j][k] = my_array[i][j][k][127:64];
+   end
+   ```
 
-    ```systemverilog
-    // Find the first element in a 2D matrix that falls within the range [10:20]
-    int matrix[10][20]; // Example 2D fixed-size array
-    int found_elements[$] = matrix.find_first() with (item inside {[10:20]});
-    ```
+2. **Searching Multidimensional Arrays Row-by-Row**: Array locator methods operate on one unpacked dimension at a time. To search a 2D unpacked array `int matrix[10][20]`, iterate over the outer dimension with `foreach`:
 
-3.  **Conditional Summation for Targeted Aggregation**: Use the `with` clause within `.sum()` to perform conditional summations, allowing you to aggregate only specific elements based on criteria:
+   ```systemverilog
+   int found[$];
+   foreach (matrix[r]) begin
+     found = matrix[r].find_first(x) with (x inside {[10:20]});
+     if (found.size() > 0) begin
+       $display("First match in row %0d: %0d", r, found[0]);
+       break;
+     end
+   end
+   ```
 
-    ```systemverilog
-    // Calculate the sum of only positive values in an array
-    int all_values[]; // Populate this dynamic array before reducing it.
-    int positive_sum = all_values.sum() with (item > 0 ? item : 0);
-    ```
+3. **Conditional Summation for Targeted Aggregation**: Combine a ternary expression and explicit type cast inside `.sum()` to filter and sum in one pass:
 
-4.  **RTL Design with Packed Arrays and Bitwise Methods**: For synthesis-friendly RTL code, utilize packed arrays and bitwise reduction methods for efficient hardware implementations:
+   ```systemverilog
+   int all_values[] = '{-4, 10, -2, 7, 3};
+   int positive_sum = all_values.sum(x) with (x > 0 ? x : 0); // Result: 20
+   ```
 
-    ```systemverilog
-    // Example: Register file parity calculation using packed array and .xor()
-    logic [7:0][31:0] register_file; // Packed array representing a register file
-    logic parity_bit;
-    assign parity_bit = ^register_file[3]; // Calculate parity of register 3
-    ```
+4. **RTL Synthesis: Use Unary Reductions on Packed Vectors, Not `.xor()` Methods**: In synthesizable RTL, use Verilog/SystemVerilog unary reduction operators (`&`, `|`, `^`) on packed slices to build combinational parity or flag trees cleanly, reserving `.sum()`, `.find()`, and `.sort()` for verification code:
 
-By deeply understanding and practicing these array manipulation techniques, you will significantly enhance your SystemVerilog proficiency, enabling you to tackle complex verification challenges and design sophisticated hardware architectures with greater efficiency and precision.
+   ```systemverilog
+   logic [7:0][31:0] register_file;
+   logic parity_bit;
+   assign parity_bit = ^register_file[3]; // Unary XOR across all 32 bits of reg 3
+   ```
+
+By mastering packed/unpacked indexing alongside locator, ordering, and reduction methods, you gain clean expressive power for testbenches while keeping RTL hardware models deterministic and synthesis-friendly.
 
 ##### Copyright (c) 2026 squared-studio

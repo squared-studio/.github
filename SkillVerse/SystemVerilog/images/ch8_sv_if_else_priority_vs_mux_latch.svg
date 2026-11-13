@@ -1,0 +1,105 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 410" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGradCh8A" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#080c14" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <filter id="shadowCh8A" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+    <marker id="arrowCh8A" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 8 5 L 0 9 z" fill="#38bdf8" />
+    </marker>
+    <marker id="arrowGreenCh8A" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 8 5 L 0 9 z" fill="#34d399" />
+    </marker>
+  </defs>
+
+  <rect width="920" height="410" rx="14" fill="url(#bgGradCh8A)"/>
+
+  <!-- Title -->
+  <text x="460" y="34" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="19.5" font-weight="700" fill="#f8fafc" text-anchor="middle">Conditional Branching: Priority Multiplexer Chain vs. Unintended Latch Inference</text>
+  <text x="460" y="56" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13" fill="#94a3b8" text-anchor="middle">if-else chains synthesize into ordered priority multiplexers; missing assignments in always_comb create latches</text>
+
+  <!-- Left Panel: Priority Mux Chain & X/Z behavior -->
+  <g transform="translate(24, 78)">
+    <rect width="424" height="308" rx="10" fill="#0f172a" stroke="#38bdf8" stroke-width="1.8" filter="url(#shadowCh8A)"/>
+    <rect width="424" height="38" rx="10" fill="#075985"/>
+    <rect x="0" y="26" width="424" height="12" fill="#075985"/>
+    <text x="212" y="24" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13.5" font-weight="700" fill="#e0f2fe" text-anchor="middle">if - else if - else  ──▶  Priority Multiplexer Chain</text>
+
+    <!-- Code block -->
+    <rect x="14" y="50" width="396" height="62" rx="6" fill="#0c1e35" stroke="#0284c7"/>
+    <text x="24" y="69" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" fill="#e2e8f0"><tspan fill="#38bdf8" font-weight="700">if</tspan> (sel_hi)       y = a;   <tspan fill="#94a3b8">// Highest priority</tspan></text>
+    <text x="24" y="86" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" fill="#e2e8f0"><tspan fill="#38bdf8" font-weight="700">else if</tspan> (sel_mid) y = b;   <tspan fill="#94a3b8">// Checked if !sel_hi</tspan></text>
+    <text x="24" y="103" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" fill="#e2e8f0"><tspan fill="#38bdf8" font-weight="700">else</tspan>              y = c;   <tspan fill="#94a3b8">// Fallback (also 0/X/Z)</tspan></text>
+
+    <!-- Cascaded Mux Diagram -->
+    <g transform="translate(14, 126)">
+      <!-- Inputs b and c into Mux 2 -->
+      <rect x="0" y="42" width="42" height="24" rx="4" fill="#082f49" stroke="#38bdf8"/>
+      <text x="21" y="58" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" font-weight="700" fill="#f8fafc" text-anchor="middle">b</text>
+      <rect x="0" y="76" width="42" height="24" rx="4" fill="#082f49" stroke="#38bdf8"/>
+      <text x="21" y="92" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" font-weight="700" fill="#f8fafc" text-anchor="middle">c</text>
+
+      <line x1="44" y1="54" x2="78" y2="54" stroke="#38bdf8" stroke-width="1.6" marker-end="url(#arrowCh8A)"/>
+      <line x1="44" y1="88" x2="78" y2="88" stroke="#38bdf8" stroke-width="1.6" marker-end="url(#arrowCh8A)"/>
+
+      <!-- Mux 2 -->
+      <polygon points="82,36 146,48 146,94 82,106" fill="#1e1b4b" stroke="#818cf8" stroke-width="1.6"/>
+      <text x="114" y="74" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" font-weight="700" fill="#c7d2fe" text-anchor="middle">MUX 2</text>
+      <text x="114" y="28" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#a5b4fc" text-anchor="middle">sel_mid</text>
+      <line x1="114" y1="32" x2="114" y2="42" stroke="#a5b4fc" stroke-width="1.5"/>
+
+      <!-- Input a into Mux 1 -->
+      <rect x="176" y="14" width="42" height="24" rx="4" fill="#082f49" stroke="#38bdf8"/>
+      <text x="197" y="30" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" font-weight="700" fill="#f8fafc" text-anchor="middle">a</text>
+      <line x1="220" y1="26" x2="250" y2="26" stroke="#38bdf8" stroke-width="1.6" marker-end="url(#arrowCh8A)"/>
+      <line x1="148" y1="71" x2="250" y2="71" stroke="#38bdf8" stroke-width="1.6" marker-end="url(#arrowCh8A)"/>
+
+      <!-- Mux 1 -->
+      <polygon points="254,12 318,24 318,74 254,86" fill="#064e3b" stroke="#34d399" stroke-width="1.8"/>
+      <text x="286" y="53" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" font-weight="700" fill="#a7f3d0" text-anchor="middle">MUX 1</text>
+      <text x="286" y="4" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#6ee7b7" text-anchor="middle">sel_hi</text>
+      <line x1="286" y1="7" x2="286" y2="17" stroke="#34d399" stroke-width="1.5"/>
+
+      <line x1="320" y1="49" x2="348" y2="49" stroke="#34d399" stroke-width="2" marker-end="url(#arrowGreenCh8A)"/>
+      <rect x="352" y="36" width="42" height="26" rx="4" fill="#064e3b" stroke="#34d399"/>
+      <text x="373" y="53" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" font-weight="700" fill="#f8fafc" text-anchor="middle">y</text>
+    </g>
+
+    <!-- 4-State Note -->
+    <rect x="14" y="244" width="396" height="50" rx="6" fill="#091526" stroke="#1e3a5f"/>
+    <text x="24" y="264" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="700" fill="#fbbf24">4-State Rule in Simulation:</text>
+    <text x="24" y="282" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#cbd5e1">An 'X' or 'Z' condition is NOT true — execution falls through to 'else'.</text>
+  </g>
+
+  <!-- Right Panel: Latch Inference vs Safe Default -->
+  <g transform="translate(472, 78)">
+    <rect width="424" height="308" rx="10" fill="#0f172a" stroke="#10b981" stroke-width="1.8" filter="url(#shadowCh8A)"/>
+    <rect width="424" height="38" rx="10" fill="#065f46"/>
+    <rect x="0" y="26" width="424" height="12" fill="#065f46"/>
+    <text x="212" y="24" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13.5" font-weight="700" fill="#d1fae5" text-anchor="middle">Combinational Logic: Avoiding Unintended Latches</text>
+
+    <!-- Bad Example -->
+    <g transform="translate(14, 52)">
+      <rect width="396" height="114" rx="8" fill="#2a0a14" stroke="#f43f5e" stroke-width="1.5"/>
+      <text x="14" y="22" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="700" fill="#fb7185">✗ Incomplete Branch ──▶ Infers a Latch!</text>
+      <text x="14" y="44" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" fill="#e2e8f0">always_comb begin</text>
+      <text x="26" y="61" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" fill="#fda4af">if (en) y = d;  // What is 'y' when en == 0?</text>
+      <text x="14" y="78" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" fill="#e2e8f0">end</text>
+      <text x="14" y="101" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#fecdd3">Must hold previous 'y' when en==0 → latch (and always_comb error!)</text>
+    </g>
+
+    <!-- Good Example -->
+    <g transform="translate(14, 178)">
+      <rect width="396" height="116" rx="8" fill="#072c22" stroke="#10b981" stroke-width="1.5"/>
+      <text x="14" y="22" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="700" fill="#34d399">✓ Complete Assignment ──▶ Pure Combinational Mux</text>
+      <text x="14" y="44" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" fill="#e2e8f0">always_comb begin</text>
+      <text x="26" y="61" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" fill="#6ee7b7">y = '0;         // Safe default before 'if'/'case'</text>
+      <text x="26" y="78" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" fill="#e2e8f0">if (en) y = d;</text>
+      <text x="14" y="95" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" fill="#e2e8f0">end</text>
+      <text x="14" y="110" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#a7f3d0">Or supply a full 'else y = ...;' branch for every output</text>
+    </g>
+  </g>
+</svg>

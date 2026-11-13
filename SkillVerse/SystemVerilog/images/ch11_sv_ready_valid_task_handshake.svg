@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 400" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGradCh11B" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#080c14" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <filter id="shadowCh11B" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+    <marker id="arrowCh11B" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 8 5 L 0 9 z" fill="#38bdf8" />
+    </marker>
+    <marker id="arrowGreenB" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 8 5 L 0 9 z" fill="#34d399" />
+    </marker>
+  </defs>
+
+  <rect width="920" height="400" rx="14" fill="url(#bgGradCh11B)"/>
+
+  <!-- Title -->
+  <text x="460" y="34" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="20" font-weight="700" fill="#f8fafc" text-anchor="middle">Task-Driven Ready/Valid Handshake: send_data() &amp; recv_data() Timeline</text>
+  <text x="460" y="56" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13" fill="#94a3b8" text-anchor="middle">Concurrent tasks synchronize across rising clock edges using @(posedge clk) inside do...while loops</text>
+
+  <!-- Top Card: Task Roles -->
+  <g transform="translate(24, 74)">
+    <rect width="380" height="86" rx="8" fill="#0f172a" stroke="#38bdf8" stroke-width="1.5" filter="url(#shadowCh11B)"/>
+    <text x="14" y="22" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" font-weight="700" fill="#38bdf8">Sender: send_data(8'hA5) @ t=10ns</text>
+    <text x="14" y="42" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#e2e8f0">data &lt;= 8'hA5; valid &lt;= 1;</text>
+    <text x="14" y="60" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#7dd3fc">do @(posedge clk); while (!ready);</text>
+    <text x="14" y="76" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#94a3b8">valid &lt;= 0;</text>
+
+    <line x1="384" y1="30" x2="508" y2="30" stroke="#38bdf8" stroke-width="1.8" marker-end="url(#arrowCh11B)"/>
+    <text x="446" y="22" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#7dd3fc" text-anchor="middle">data, valid</text>
+
+    <line x1="508" y1="60" x2="384" y2="60" stroke="#34d399" stroke-width="1.8" marker-end="url(#arrowGreenB)"/>
+    <text x="446" y="74" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#6ee7b7" text-anchor="middle">ready</text>
+
+    <rect x="512" y="0" width="360" height="86" rx="8" fill="#0f172a" stroke="#10b981" stroke-width="1.5" filter="url(#shadowCh11B)"/>
+    <text x="526" y="22" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" font-weight="700" fill="#34d399">Receiver: recv_data(val) @ t=20ns</text>
+    <text x="526" y="42" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#e2e8f0">ready &lt;= 1;</text>
+    <text x="526" y="60" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#a7f3d0">do @(posedge clk); while (!valid);</text>
+    <text x="526" y="76" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#94a3b8">ready &lt;= 0; val = data;</text>
+  </g>
+
+  <!-- Bottom Card: Waveform -->
+  <g transform="translate(24, 174)">
+    <rect width="872" height="206" rx="10" fill="#0f172a" stroke="#475569" stroke-width="1.5" filter="url(#shadowCh11B)"/>
+
+    <!-- Time Axis Header -->
+    <text x="120" y="22" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#94a3b8" text-anchor="middle">0ns</text>
+    <text x="240" y="22" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#94a3b8" text-anchor="middle">5ns↑</text>
+    <text x="360" y="22" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#38bdf8" font-weight="700" text-anchor="middle">10ns</text>
+    <text x="480" y="22" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#94a3b8" text-anchor="middle">15ns↑</text>
+    <text x="600" y="22" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#34d399" font-weight="700" text-anchor="middle">20ns</text>
+    <text x="720" y="22" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#fbbf24" font-weight="700" text-anchor="middle">25ns↑ (Xfer!)</text>
+    <text x="840" y="22" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#94a3b8" text-anchor="middle">30ns</text>
+
+    <!-- Grid lines -->
+    <line x1="240" y1="28" x2="240" y2="188" stroke="#1e293b" stroke-dasharray="3,3"/>
+    <line x1="480" y1="28" x2="480" y2="188" stroke="#1e293b" stroke-dasharray="3,3"/>
+    <line x1="720" y1="28" x2="720" y2="188" stroke="#f59e0b" stroke-width="1.8" stroke-dasharray="4,2"/>
+
+    <!-- clk -->
+    <text x="24" y="54" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" font-weight="700" fill="#e2e8f0">clk</text>
+    <polyline points="120,60 240,60 240,38 360,38 360,60 480,60 480,38 600,38 600,60 720,60 720,38 840,38" fill="none" stroke="#94a3b8" stroke-width="2"/>
+
+    <!-- data[7:0] -->
+    <text x="24" y="94" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" font-weight="700" fill="#7dd3fc">data[7:0]</text>
+    <rect x="120" y="76" width="240" height="24" fill="#091526" stroke="#334155"/>
+    <text x="240" y="92" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#64748b" text-anchor="middle">8'h00</text>
+    <rect x="360" y="76" width="480" height="24" fill="#0c4a6e" stroke="#38bdf8"/>
+    <text x="600" y="92" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" font-weight="700" fill="#e0f2fe" text-anchor="middle">8'hA5  (Driven at t=10ns)</text>
+
+    <!-- valid -->
+    <text x="24" y="134" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" font-weight="700" fill="#38bdf8">valid</text>
+    <polyline points="120,140 360,140 360,116 720,116 720,140 840,140" fill="none" stroke="#38bdf8" stroke-width="2.4"/>
+
+    <!-- ready -->
+    <text x="24" y="174" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" font-weight="700" fill="#34d399">ready</text>
+    <polyline points="120,180 600,180 600,156 720,156 720,180 840,180" fill="none" stroke="#34d399" stroke-width="2.4"/>
+
+    <!-- Callout at 25ns -->
+    <rect x="652" y="118" width="136" height="20" rx="4" fill="#451a03" stroke="#f59e0b"/>
+    <text x="720" y="132" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" font-weight="700" fill="#fde68a" text-anchor="middle">valid &amp;&amp; ready @ 25ns</text>
+  </g>
+</svg>

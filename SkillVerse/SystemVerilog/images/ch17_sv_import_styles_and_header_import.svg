@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 410" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGradCh17B" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#080c14" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <filter id="shadowCh17B" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+  </defs>
+
+  <rect width="920" height="410" rx="14" fill="url(#bgGradCh17B)"/>
+
+  <!-- Title -->
+  <text x="460" y="32" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="20" font-weight="700" fill="#f8fafc" text-anchor="middle">Controlling Namespace Visibility: Explicit Import, Wildcard Import &amp; Scope Resolution</text>
+  <text x="460" y="54" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13" fill="#94a3b8" text-anchor="middle">Balance conciseness with collision safety across module headers, bodies, and disambiguating expressions</text>
+
+  <!-- Card 1: Explicit Import -->
+  <g transform="translate(24, 76)">
+    <rect width="424" height="148" rx="10" fill="#0f172a" stroke="#10b981" stroke-width="1.8" filter="url(#shadowCh17B)"/>
+    <rect width="424" height="34" rx="10" fill="#065f46"/>
+    <rect x="0" y="22" width="424" height="12" fill="#065f46"/>
+    <text x="212" y="22" font-family="'JetBrains Mono', Consolas, monospace" font-size="12.5" font-weight="700" fill="#d1fae5" text-anchor="middle">1. Explicit Import: import pkg::item;  [Recommended]</text>
+    <text x="16" y="56" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#6ee7b7">import type_pkg::byte_t;</text>
+    <text x="16" y="74" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#6ee7b7">import math_utils_pkg::add_words;</text>
+    <text x="16" y="100" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#e2e8f0">- Pulls ONLY listed symbols directly into scope.</text>
+    <text x="16" y="118" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#e2e8f0">- Documents exact dependencies; catches name clashes</text>
+    <text x="24" y="134" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#a7f3d0">immediately at compile time.</text>
+  </g>
+
+  <!-- Card 2: Wildcard Import -->
+  <g transform="translate(472, 76)">
+    <rect width="424" height="148" rx="10" fill="#0f172a" stroke="#f59e0b" stroke-width="1.8" filter="url(#shadowCh17B)"/>
+    <rect width="424" height="34" rx="10" fill="#78350f"/>
+    <rect x="0" y="22" width="424" height="12" fill="#78350f"/>
+    <text x="212" y="22" font-family="'JetBrains Mono', Consolas, monospace" font-size="12.5" font-weight="700" fill="#fef3c7" text-anchor="middle">2. Wildcard Import: import pkg::*;  [Use Carefully]</text>
+    <text x="16" y="56" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#fbbf24">import package_A_pkg::*;</text>
+    <text x="16" y="74" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#fbbf24">import package_B_pkg::*;  // Both define foo()</text>
+    <text x="16" y="100" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#e2e8f0">- Imports candidate symbols on demand when referenced.</text>
+    <text x="16" y="118" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#fda4af">- Calling foo() triggers compile-time ambiguity error!</text>
+    <text x="16" y="134" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#94a3b8">- Does NOT transitively import items unless exported.</text>
+  </g>
+
+  <!-- Card 3: Explicit Scope Resolution -->
+  <g transform="translate(24, 240)">
+    <rect width="424" height="148" rx="10" fill="#0f172a" stroke="#38bdf8" stroke-width="1.8" filter="url(#shadowCh17B)"/>
+    <rect width="424" height="34" rx="10" fill="#075985"/>
+    <rect x="0" y="22" width="424" height="12" fill="#075985"/>
+    <text x="212" y="22" font-family="'JetBrains Mono', Consolas, monospace" font-size="12.5" font-weight="700" fill="#e0f2fe" text-anchor="middle">3. Explicit Scope Resolution: pkg::item</text>
+    <text x="16" y="56" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#7dd3fc">package_A_pkg::print_message();</text>
+    <text x="16" y="74" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#7dd3fc">int w = config_pkg::DATA_WIDTH;</text>
+    <text x="16" y="100" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#e2e8f0">- Zero import statements required; zero namespace pollution.</text>
+    <text x="16" y="118" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#a7f3d0">- Ideal for disambiguating same-named items from two packages.</text>
+    <text x="16" y="134" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#94a3b8">- Best when referencing a package symbol only once or twice.</text>
+  </g>
+
+  <!-- Card 4: ANSI Header Import -->
+  <g transform="translate(472, 240)">
+    <rect width="424" height="148" rx="10" fill="#0f172a" stroke="#a855f7" stroke-width="1.8" filter="url(#shadowCh17B)"/>
+    <rect width="424" height="34" rx="10" fill="#581c87"/>
+    <rect x="0" y="22" width="424" height="12" fill="#581c87"/>
+    <text x="212" y="22" font-family="'JetBrains Mono', Consolas, monospace" font-size="12.5" font-weight="700" fill="#f3e8ff" text-anchor="middle">4. ANSI Module Header Import (For Port Types)</text>
+    <text x="16" y="56" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#e9d5ff">module pkt_router import type_pkg::*; (</text>
+    <text x="24" y="74" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#d8b4fe">input  logic  clk,</text>
+    <text x="24" y="92" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#6ee7b7">input  byte_t rx_byte,  // Visible in ports!</text>
+    <text x="16" y="110" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#e9d5ff">);</text>
+    <text x="16" y="134" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#cbd5e1">Header imports precede parameter &amp; port lists cleanly.</text>
+  </g>
+</svg>

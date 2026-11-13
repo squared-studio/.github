@@ -1,0 +1,93 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 390" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGradCh9D" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#080c14" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <filter id="shadowCh9D" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+    <marker id="arrowRoseD" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 8 5 L 0 9 z" fill="#fb7185" />
+    </marker>
+    <marker id="arrowGreenD" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 8 5 L 0 9 z" fill="#34d399" />
+    </marker>
+  </defs>
+
+  <rect width="920" height="390" rx="14" fill="url(#bgGradCh9D)"/>
+
+  <!-- Title -->
+  <text x="460" y="34" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="20" font-weight="700" fill="#f8fafc" text-anchor="middle">Why Sequential Logic Uses Non-Blocking (&lt;=): 2-Stage Shift Register</text>
+  <text x="460" y="56" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13" fill="#94a3b8" text-anchor="middle">Using blocking (=) in clocked logic collapses pipeline stages and creates source-order race conditions</text>
+
+  <!-- Left Panel: Buggy Blocking (=) -->
+  <g transform="translate(24, 78)">
+    <rect width="424" height="288" rx="10" fill="#0f172a" stroke="#f43f5e" stroke-width="1.8" filter="url(#shadowCh9D)"/>
+    <rect width="424" height="38" rx="10" fill="#881337"/>
+    <rect x="0" y="26" width="424" height="12" fill="#881337"/>
+    <text x="212" y="24" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13.5" font-weight="700" fill="#ffe4e6" text-anchor="middle">✗ Buggy Shift Register Using Blocking (=)</text>
+
+    <rect x="14" y="52" width="396" height="62" rx="6" fill="#2a0a14" stroke="#e11d48"/>
+    <text x="24" y="71" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" fill="#e2e8f0">always @(posedge clk) begin</text>
+    <text x="36" y="88" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" font-weight="700" fill="#fda4af">q1 = d;   q2 = q1;  // Immediate overwrite!</text>
+    <text x="24" y="105" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" fill="#e2e8f0">end</text>
+
+    <!-- Single FF hardware result -->
+    <g transform="translate(14, 132)">
+      <text x="198" y="12" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11.5" font-weight="700" fill="#fb7185" text-anchor="middle">Collapses to 1 Flip-Flop Stage (q1 == q2 == d!)</text>
+      <rect x="18" y="38" width="44" height="30" rx="4" fill="#1e293b" stroke="#fb7185"/>
+      <text x="40" y="58" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" font-weight="700" fill="#f8fafc" text-anchor="middle">d</text>
+      <line x1="64" y1="53" x2="118" y2="53" stroke="#fb7185" stroke-width="2" marker-end="url(#arrowRoseD)"/>
+
+      <rect x="122" y="26" width="110" height="54" rx="6" fill="#2a0a14" stroke="#f43f5e" stroke-width="1.6"/>
+      <text x="177" y="48" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="700" fill="#fda4af" text-anchor="middle">Single DFF</text>
+      <text x="177" y="66" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#fecdd3" text-anchor="middle">q1 &amp; q2 tied</text>
+
+      <line x1="234" y1="53" x2="294" y2="53" stroke="#fb7185" stroke-width="2" marker-end="url(#arrowRoseD)"/>
+      <rect x="298" y="38" width="84" height="30" rx="4" fill="#1e293b" stroke="#fb7185"/>
+      <text x="340" y="58" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" font-weight="700" fill="#fda4af" text-anchor="middle">q1, q2</text>
+    </g>
+
+    <text x="24" y="248" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#cbd5e1">• <tspan font-family="'JetBrains Mono', Consolas, monospace" fill="#fda4af">q1 = d</tspan> updates q1 immediately before <tspan font-family="'JetBrains Mono', Consolas, monospace" fill="#fda4af">q2 = q1</tspan> reads it.</text>
+    <text x="24" y="268" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#94a3b8">• Swapping statement order changes hardware behavior (race!)</text>
+  </g>
+
+  <!-- Right Panel: Correct Non-Blocking (<=) -->
+  <g transform="translate(472, 78)">
+    <rect width="424" height="288" rx="10" fill="#0f172a" stroke="#10b981" stroke-width="1.8" filter="url(#shadowCh9D)"/>
+    <rect width="424" height="38" rx="10" fill="#065f46"/>
+    <rect x="0" y="26" width="424" height="12" fill="#065f46"/>
+    <text x="212" y="24" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13.5" font-weight="700" fill="#d1fae5" text-anchor="middle">✓ True 2-Stage Pipeline Using Non-Blocking (&lt;=)</text>
+
+    <rect x="14" y="52" width="396" height="62" rx="6" fill="#072c22" stroke="#10b981"/>
+    <text x="24" y="71" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" fill="#e2e8f0">always_ff @(posedge clk) begin</text>
+    <text x="36" y="88" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" font-weight="700" fill="#6ee7b7">q1 &lt;= d;  q2 &lt;= q1; // Order-independent!</text>
+    <text x="24" y="105" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" fill="#e2e8f0">end</text>
+
+    <!-- 2 FF hardware pipeline -->
+    <g transform="translate(14, 132)">
+      <text x="198" y="12" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11.5" font-weight="700" fill="#34d399" text-anchor="middle">Synthesizes 2 Cascaded Flip-Flops (1-Cycle Delay Each)</text>
+      <rect x="6" y="38" width="38" height="30" rx="4" fill="#082f49" stroke="#38bdf8"/>
+      <text x="25" y="58" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" font-weight="700" fill="#f8fafc" text-anchor="middle">d</text>
+      <line x1="46" y1="53" x2="80" y2="53" stroke="#34d399" stroke-width="2" marker-end="url(#arrowGreenD)"/>
+
+      <rect x="84" y="26" width="84" height="54" rx="6" fill="#064e3b" stroke="#10b981" stroke-width="1.6"/>
+      <text x="126" y="48" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="700" fill="#a7f3d0" text-anchor="middle">DFF 1</text>
+      <text x="126" y="66" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#f8fafc" text-anchor="middle">q1</text>
+
+      <line x1="170" y1="53" x2="212" y2="53" stroke="#34d399" stroke-width="2" marker-end="url(#arrowGreenD)"/>
+
+      <rect x="216" y="26" width="84" height="54" rx="6" fill="#064e3b" stroke="#10b981" stroke-width="1.6"/>
+      <text x="258" y="48" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="700" fill="#a7f3d0" text-anchor="middle">DFF 2</text>
+      <text x="258" y="66" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#f8fafc" text-anchor="middle">q2</text>
+
+      <line x1="302" y1="53" x2="340" y2="53" stroke="#34d399" stroke-width="2" marker-end="url(#arrowGreenD)"/>
+      <rect x="344" y="38" width="44" height="30" rx="4" fill="#082f49" stroke="#38bdf8"/>
+      <text x="366" y="58" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" font-weight="700" fill="#f8fafc" text-anchor="middle">q2</text>
+    </g>
+
+    <text x="24" y="248" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#e2e8f0">• DFF 2 samples <tspan font-weight="700" fill="#6ee7b7">old q1</tspan> before DFF 1 commits the new <tspan font-weight="700" fill="#6ee7b7">d</tspan>.</text>
+    <text x="24" y="268" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#a7f3d0">• Writing q2 &lt;= q1; q1 &lt;= d; produces the identical 2-FF circuit.</text>
+  </g>
+</svg>

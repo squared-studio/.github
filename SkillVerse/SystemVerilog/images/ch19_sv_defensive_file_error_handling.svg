@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 400" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGradCh19D" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#080c14" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <filter id="shadowCh19D" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+    <marker id="arrowCyan19D" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8"/>
+    </marker>
+    <marker id="arrowRed19D" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#f43f5e"/>
+    </marker>
+    <marker id="arrowGreen19D" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#34d399"/>
+    </marker>
+  </defs>
+
+  <rect width="920" height="400" rx="14" fill="url(#bgGradCh19D)"/>
+
+  <!-- Title -->
+  <text x="460" y="30" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="20" font-weight="700" fill="#f8fafc" text-anchor="middle">Defensive File I/O &amp; Error Diagnostics Pipeline</text>
+  <text x="460" y="50" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13" fill="#94a3b8" text-anchor="middle">Guard against missing files, EOF off-by-one reads, partial format matches, and unclosed handles</text>
+
+  <!-- Step 1: $fopen check -->
+  <g transform="translate(24, 76)">
+    <rect width="276" height="112" rx="10" fill="#0f172a" stroke="#38bdf8" stroke-width="1.8" filter="url(#shadowCh19D)"/>
+    <rect width="276" height="32" rx="10" fill="#075985"/>
+    <rect x="0" y="20" width="276" height="12" fill="#075985"/>
+    <text x="138" y="21" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="700" fill="#e0f2fe" text-anchor="middle">1. Guard $fopen Descriptor</text>
+    <text x="14" y="54" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#bae6fd">fd = $fopen(path, "r");</text>
+    <text x="14" y="74" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#fecdd3">if (fd === 0) $fatal(1, ...);</text>
+    <text x="14" y="96" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#94a3b8">Never pass fd == 0 into $fclose().</text>
+  </g>
+
+  <path d="M 300 132 L 336 132" stroke="#38bdf8" stroke-width="2" marker-end="url(#arrowCyan19D)"/>
+
+  <!-- Step 2: Loop & Parse Validation -->
+  <g transform="translate(340, 76)">
+    <rect width="286" height="112" rx="10" fill="#0f172a" stroke="#a78bfa" stroke-width="1.8" filter="url(#shadowCh19D)"/>
+    <rect width="286" height="32" rx="10" fill="#4c1d95"/>
+    <rect x="0" y="20" width="286" height="12" fill="#4c1d95"/>
+    <text x="143" y="21" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="700" fill="#ede9fe" text-anchor="middle">2. Validate Read &amp; Parse Counts</text>
+    <text x="14" y="54" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#ddd6fe">while ($fgets(line, fd) != 0)</text>
+    <text x="14" y="74" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#34d399">  if ($sscanf(line, ..., a, b) == 2)</text>
+    <text x="14" y="96" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#94a3b8">Avoid !$feof() loops that read extra empty lines.</text>
+  </g>
+
+  <path d="M 626 132 L 662 132" stroke="#34d399" stroke-width="2" marker-end="url(#arrowGreen19D)"/>
+
+  <!-- Step 3: Clean Close & Flush -->
+  <g transform="translate(666, 76)">
+    <rect width="230" height="112" rx="10" fill="#072c22" stroke="#10b981" stroke-width="1.8" filter="url(#shadowCh19D)"/>
+    <rect width="230" height="32" rx="10" fill="#065f46"/>
+    <rect x="0" y="20" width="230" height="12" fill="#065f46"/>
+    <text x="115" y="21" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="700" fill="#d1fae5" text-anchor="middle">3. Flush &amp; Close Safely</text>
+    <text x="14" y="54" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#d1fae5">$fflush(fd);</text>
+    <text x="14" y="74" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#6ee7b7">$fclose(fd);</text>
+    <text x="14" y="96" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#a7f3d0">Releases OS descriptors cleanly.</text>
+  </g>
+
+  <!-- Error Branch Arrow Down from Step 2 -->
+  <path d="M 483 188 L 483 224" stroke="#f43f5e" stroke-width="2" marker-end="url(#arrowRed19D)"/>
+  <text x="530" y="210" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" font-weight="700" fill="#fda4af">On I/O or format error</text>
+
+  <!-- Bottom Card: $ferror + Cleanup -->
+  <g transform="translate(110, 228)">
+    <rect width="700" height="148" rx="10" fill="#4c0519" stroke="#f43f5e" stroke-width="1.8" filter="url(#shadowCh19D)"/>
+    <rect width="700" height="34" rx="10" fill="#881337"/>
+    <rect x="0" y="22" width="700" height="12" fill="#881337"/>
+    <text x="350" y="22" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="12.5" font-weight="700" fill="#ffe4e6" text-anchor="middle">Diagnostic Recovery with $ferror(fd, err_str) &amp; Guaranteed Cleanup</text>
+
+    <text x="20" y="58" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#fecdd3">err_code = $ferror(fd, err_msg);</text>
+    <text x="20" y="78" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#ffe4e6">if (err_code != 0) begin</text>
+    <text x="20" y="98" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#fda4af">  $error("I/O Failure (%0d): %s", err_code, err_msg);</text>
+    <text x="20" y="118" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#fda4af">  $fclose(fd); // Close valid open handle before aborting or falling back</text>
+    <text x="20" y="136" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#ffe4e6">end</text>
+  </g>
+</svg>

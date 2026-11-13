@@ -1,0 +1,91 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 410" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGradCh21C" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#080c14" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <filter id="shadowCh21C" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+  </defs>
+
+  <rect width="920" height="410" rx="14" fill="url(#bgGradCh21C)"/>
+
+  <!-- Title -->
+  <text x="460" y="30" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="20" font-weight="700" fill="#f8fafc" text-anchor="middle">SystemVerilog covergroup Anatomy: Coverpoint Bins &amp; Cross Matrix</text>
+  <text x="460" y="50" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13" fill="#94a3b8" text-anchor="middle">Categorize values with explicit bins, filter exclusions, and verify feature interactions with cross</text>
+
+  <!-- Left Panel: Coverpoint Bin Types -->
+  <g transform="translate(24, 72)">
+    <rect width="430" height="314" rx="10" fill="#0f172a" stroke="#38bdf8" stroke-width="1.8" filter="url(#shadowCh21C)"/>
+    <rect width="430" height="36" rx="10" fill="#075985"/>
+    <rect x="0" y="24" width="430" height="12" fill="#075985"/>
+    <text x="215" y="23" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13" font-weight="700" fill="#e0f2fe" text-anchor="middle">Coverpoint Bin Taxonomy</text>
+
+    <rect x="14" y="48" width="402" height="42" rx="6" fill="#0c1c2e" stroke="#38bdf8"/>
+    <text x="24" y="65" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" font-weight="700" fill="#38bdf8">bins lo = {[0:15]};  bins hi = {[16:$]};</text>
+    <text x="24" y="81" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#cbd5e1">Single bin per bucket; $ marks max value of signal type.</text>
+
+    <rect x="14" y="96" width="402" height="42" rx="6" fill="#1e1b4b" stroke="#818cf8"/>
+    <text x="24" y="113" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" font-weight="700" fill="#c7d2fe">bins each[] = {[0:7]};</text>
+    <text x="24" y="129" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#e0e7ff">Vector bin: creates 8 separate bins (each[0] .. each[7]).</text>
+
+    <rect x="14" y="144" width="402" height="42" rx="6" fill="#072c22" stroke="#10b981"/>
+    <text x="24" y="161" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" font-weight="700" fill="#34d399">bins tx = (IDLE =&gt; BUSY =&gt; DONE);</text>
+    <text x="24" y="177" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#d1fae5">Transition bin: captures multi-sample value sequences.</text>
+
+    <rect x="14" y="192" width="402" height="52" rx="6" fill="#1e1b18" stroke="#f59e0b"/>
+    <text x="24" y="210" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" font-weight="700" fill="#fbbf24">bins rest = default;</text>
+    <text x="24" y="226" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#fde68a">Catches unbinned hits for debug, but excluded from coverage %</text>
+    <text x="24" y="238" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#fde68a">and excluded from cross products (IEEE 1800 Section 19.5).</text>
+
+    <rect x="14" y="252" width="402" height="48" rx="6" fill="#4c0519" stroke="#f43f5e"/>
+    <text x="24" y="270" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" font-weight="700" fill="#fecdd3">ignore_bins ig = {3}; | illegal_bins err = {6};</text>
+    <text x="24" y="288" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#fda4af">ignore_bins omits from denominator; illegal_bins flags failure!</text>
+  </g>
+
+  <!-- Right Panel: Cross Matrix -->
+  <g transform="translate(472, 72)">
+    <rect width="424" height="314" rx="10" fill="#0f172a" stroke="#10b981" stroke-width="1.8" filter="url(#shadowCh21C)"/>
+    <rect width="424" height="36" rx="10" fill="#065f46"/>
+    <rect x="0" y="24" width="424" height="12" fill="#065f46"/>
+    <text x="212" y="23" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13" font-weight="700" fill="#d1fae5" text-anchor="middle">Cross Coverage Grid (opcode x error_flag)</text>
+
+    <!-- Headers -->
+    <text x="150" y="64" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" font-weight="700" fill="#cbd5e1" text-anchor="middle">err = 0</text>
+    <text x="245" y="64" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" font-weight="700" fill="#cbd5e1" text-anchor="middle">err = 1</text>
+    <text x="352" y="64" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="700" fill="#94a3b8" text-anchor="middle">Status</text>
+
+    <!-- Row 1: READ -->
+    <text x="58" y="96" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" font-weight="700" fill="#7dd3fc" text-anchor="middle">READ</text>
+    <rect x="110" y="76" width="80" height="32" rx="5" fill="#065f46" stroke="#34d399"/>
+    <text x="150" y="96" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" font-weight="700" fill="#d1fae5" text-anchor="middle">HIT (12)</text>
+    <rect x="205" y="76" width="80" height="32" rx="5" fill="#065f46" stroke="#34d399"/>
+    <text x="245" y="96" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" font-weight="700" fill="#d1fae5" text-anchor="middle">HIT (3)</text>
+    <text x="352" y="96" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#34d399" text-anchor="middle">100%</text>
+
+    <!-- Row 2: WRITE -->
+    <text x="58" y="138" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" font-weight="700" fill="#7dd3fc" text-anchor="middle">WRITE</text>
+    <rect x="110" y="118" width="80" height="32" rx="5" fill="#065f46" stroke="#34d399"/>
+    <text x="150" y="138" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" font-weight="700" fill="#d1fae5" text-anchor="middle">HIT (18)</text>
+    <rect x="205" y="118" width="80" height="32" rx="5" fill="#4c0519" stroke="#f43f5e"/>
+    <text x="245" y="138" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" font-weight="700" fill="#fecdd3" text-anchor="middle">HOLE (0)</text>
+    <text x="352" y="138" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#fda4af" text-anchor="middle">50% Hole!</text>
+
+    <!-- Row 3: NOP -->
+    <text x="58" y="180" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" font-weight="700" fill="#7dd3fc" text-anchor="middle">NOP</text>
+    <rect x="110" y="160" width="80" height="32" rx="5" fill="#065f46" stroke="#34d399"/>
+    <text x="150" y="180" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" font-weight="700" fill="#d1fae5" text-anchor="middle">HIT (9)</text>
+    <rect x="205" y="160" width="80" height="32" rx="5" fill="#1e293b" stroke="#64748b" stroke-dasharray="4,3"/>
+    <text x="245" y="180" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" font-weight="700" fill="#94a3b8" text-anchor="middle">IGNORED</text>
+    <text x="352" y="180" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#cbd5e1" text-anchor="middle">Filtered</text>
+
+    <!-- Cross Filter Code Snippet -->
+    <rect x="14" y="206" width="396" height="94" rx="7" fill="#0c1c2e" stroke="#1e3a5f"/>
+    <text x="24" y="226" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="700" fill="#38bdf8">Excluding Unreachable Cross Cells with binsof():</text>
+    <text x="24" y="246" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#e2e8f0">cx: cross opcode_cp, err_cp {</text>
+    <text x="24" y="264" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#fbbf24">  ignore_bins nop_err = binsof(opcode_cp.nop)</text>
+    <text x="24" y="282" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#fbbf24">                      &amp;&amp; binsof(err_cp.error_set);</text>
+    <text x="24" y="296" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#e2e8f0">}</text>
+  </g>
+</svg>

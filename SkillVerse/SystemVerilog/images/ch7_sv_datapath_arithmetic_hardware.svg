@@ -1,0 +1,117 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 410" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGradCh7A" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#080c14" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <filter id="shadowCh7A" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+    <marker id="arrowCh7A" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 8 5 L 0 9 z" fill="#38bdf8" />
+    </marker>
+    <marker id="arrowGreenCh7A" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 8 5 L 0 9 z" fill="#34d399" />
+    </marker>
+  </defs>
+
+  <rect width="920" height="410" rx="14" fill="url(#bgGradCh7A)"/>
+
+  <!-- Title -->
+  <text x="460" y="34" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="20" font-weight="700" fill="#f8fafc" text-anchor="middle">Arithmetic &amp; Shift Operators: RTL Datapath Synthesis &amp; Hardware Cost</text>
+  <text x="460" y="56" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13" fill="#94a3b8" text-anchor="middle">Understanding how arithmetic and shift operators map to wires, carry chains, DSP blocks, and multi-cycle logic</text>
+
+  <!-- Left Panel: Address Calculation Unit -->
+  <g transform="translate(24, 78)">
+    <rect width="432" height="308" rx="10" fill="#0f172a" stroke="#38bdf8" stroke-width="1.8" filter="url(#shadowCh7A)"/>
+    <rect width="432" height="38" rx="10" fill="#075985"/>
+    <rect x="0" y="26" width="432" height="12" fill="#075985"/>
+    <text x="216" y="24" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13.5" font-weight="700" fill="#e0f2fe" text-anchor="middle">Datapath Example: Address Calculation Unit</text>
+
+    <!-- RTL Expression -->
+    <rect x="14" y="50" width="404" height="32" rx="6" fill="#0c1e35" stroke="#0284c7"/>
+    <text x="216" y="70" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" font-weight="700" fill="#38bdf8" text-anchor="middle">effective_address = base_address + (32'(index) &lt;&lt; 2);</text>
+
+    <!-- Block diagram -->
+    <g transform="translate(14, 96)">
+      <!-- base_address -->
+      <rect x="0" y="6" width="144" height="44" rx="6" fill="#082f49" stroke="#38bdf8"/>
+      <text x="72" y="25" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" font-weight="700" fill="#e0f2fe" text-anchor="middle">base_address</text>
+      <text x="72" y="42" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#7dd3fc" text-anchor="middle">[31:0]</text>
+
+      <!-- index -> constant shift -->
+      <rect x="0" y="76" width="84" height="44" rx="6" fill="#082f49" stroke="#38bdf8"/>
+      <text x="42" y="95" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" font-weight="700" fill="#e0f2fe" text-anchor="middle">index</text>
+      <text x="42" y="112" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#7dd3fc" text-anchor="middle">[5:0]</text>
+
+      <line x1="86" y1="98" x2="108" y2="98" stroke="#34d399" stroke-width="1.8" marker-end="url(#arrowGreenCh7A)"/>
+
+      <!-- Shift by const 2 (wire routing) -->
+      <rect x="112" y="76" width="112" height="44" rx="6" fill="#064e3b" stroke="#10b981"/>
+      <text x="168" y="95" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" font-weight="700" fill="#a7f3d0" text-anchor="middle">&lt;&lt; 2 (Wires)</text>
+      <text x="168" y="112" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="9.5" fill="#6ee7b7" text-anchor="middle">0 gates (append 2'b00)</text>
+
+      <!-- Inputs to Adder -->
+      <line x1="146" y1="28" x2="250" y2="50" stroke="#38bdf8" stroke-width="1.8" marker-end="url(#arrowCh7A)"/>
+      <line x1="226" y1="98" x2="250" y2="76" stroke="#34d399" stroke-width="1.8" marker-end="url(#arrowGreenCh7A)"/>
+
+      <!-- 32-bit Adder -->
+      <rect x="254" y="34" width="66" height="58" rx="8" fill="#1e1b4b" stroke="#818cf8" stroke-width="1.8"/>
+      <text x="287" y="61" font-family="'JetBrains Mono', Consolas, monospace" font-size="22" font-weight="700" fill="#c7d2fe" text-anchor="middle">+</text>
+      <text x="287" y="81" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="9.5" fill="#a5b4fc" text-anchor="middle">32b Adder</text>
+
+      <line x1="322" y1="63" x2="342" y2="63" stroke="#38bdf8" stroke-width="1.8" marker-end="url(#arrowCh7A)"/>
+
+      <!-- Output -->
+      <rect x="346" y="41" width="58" height="44" rx="6" fill="#082f49" stroke="#38bdf8"/>
+      <text x="375" y="60" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" font-weight="700" fill="#e0f2fe" text-anchor="middle">eff_</text>
+      <text x="375" y="75" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" font-weight="700" fill="#e0f2fe" text-anchor="middle">addr</text>
+    </g>
+
+    <!-- Bottom Note -->
+    <rect x="14" y="232" width="404" height="62" rx="6" fill="#091526" stroke="#1e3a5f"/>
+    <text x="26" y="253" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11.5" font-weight="700" fill="#fbbf24">Combinational Delay vs. Sequential Latency</text>
+    <text x="26" y="272" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#e2e8f0">• Operators add combinational propagation delay, not clock cycles.</text>
+    <text x="26" y="287" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#94a3b8">• Explicitly widen operands (32'(index)) before left-shifting!</text>
+  </g>
+
+  <!-- Right Panel: Synthesis Cost Spectrum -->
+  <g transform="translate(472, 78)">
+    <rect width="424" height="308" rx="10" fill="#0f172a" stroke="#10b981" stroke-width="1.8" filter="url(#shadowCh7A)"/>
+    <rect width="424" height="38" rx="10" fill="#065f46"/>
+    <rect x="0" y="26" width="424" height="12" fill="#065f46"/>
+    <text x="212" y="24" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13.5" font-weight="700" fill="#d1fae5" text-anchor="middle">Synthesis Cost &amp; Area/Delay Tiers</text>
+
+    <!-- Tier 1 -->
+    <g transform="translate(14, 52)">
+      <rect width="396" height="54" rx="6" fill="#072c22" stroke="#10b981"/>
+      <text x="12" y="20" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11.5" font-weight="700" fill="#34d399">Tier 1: Constant Shifts (&lt;&lt; K, &gt;&gt; K, &gt;&gt;&gt; K)</text>
+      <text x="384" y="20" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" font-weight="700" fill="#a7f3d0" text-anchor="end">Zero Gates</text>
+      <text x="12" y="40" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#cbd5e1">Pure wire routing &amp; bit slicing; prefer powers of 2 over * or /</text>
+    </g>
+
+    <!-- Tier 2 -->
+    <g transform="translate(14, 114)">
+      <rect width="396" height="54" rx="6" fill="#0c1e35" stroke="#38bdf8"/>
+      <text x="12" y="20" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11.5" font-weight="700" fill="#38bdf8">Tier 2: Addition &amp; Subtraction (+, -)</text>
+      <text x="384" y="20" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" font-weight="700" fill="#7dd3fc" text-anchor="end">Fast Carry Chain</text>
+      <text x="12" y="40" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#cbd5e1">Dedicated carry logic; subtraction uses 2's complement inversion</text>
+    </g>
+
+    <!-- Tier 3 -->
+    <g transform="translate(14, 176)">
+      <rect width="396" height="54" rx="6" fill="#181208" stroke="#f59e0b"/>
+      <text x="12" y="20" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11.5" font-weight="700" fill="#fbbf24">Tier 3: Multiply (*) &amp; Variable Shift (&lt;&lt; shamt)</text>
+      <text x="384" y="20" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" font-weight="700" fill="#fde68a" text-anchor="end">DSP / Mux Tree</text>
+      <text x="12" y="40" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#cbd5e1">Infers DSP blocks or barrel-shifter muxes; pipeline wide widths</text>
+    </g>
+
+    <!-- Tier 4 -->
+    <g transform="translate(14, 238)">
+      <rect width="396" height="54" rx="6" fill="#2a0a14" stroke="#f43f5e"/>
+      <text x="12" y="20" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11.5" font-weight="700" fill="#fb7185">Tier 4: General Division (/), Mod (%) &amp; Power (**)</text>
+      <text x="384" y="20" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" font-weight="700" fill="#fda4af" text-anchor="end">Very Expensive</text>
+      <text x="12" y="40" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#cbd5e1">Non-power-of-2 / and % bloat area/delay; use multi-cycle IP or TB</text>
+    </g>
+  </g>
+</svg>

@@ -1,0 +1,100 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 440" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGradCh3A" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#080c14" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <filter id="shadowCh3A" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+    <marker id="arrAmber3A" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#f59e0b"/>
+    </marker>
+    <marker id="arrEmerald3A" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#34d399"/>
+    </marker>
+  </defs>
+
+  <rect width="920" height="440" rx="14" fill="url(#bgGradCh3A)"/>
+
+  <!-- Title -->
+  <text x="460" y="34" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="20" font-weight="700" fill="#f8fafc" text-anchor="middle">Display Tasks in a Simulation Time Slot: $display, $strobe &amp; $monitor</text>
+  <text x="460" y="56" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13" fill="#94a3b8" text-anchor="middle">How blocking (=) and nonblocking (&lt;=) updates interact with IEEE 1800 scheduling regions</text>
+
+  <!-- Time Slot Wrapper Banner -->
+  <rect x="24" y="74" width="872" height="28" rx="6" fill="#131d33" stroke="#1e293b"/>
+  <text x="460" y="92" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="700" fill="#cbd5e1" text-anchor="middle">SINGLE SIMULATION TIMESTAMP (e.g., t = 0 ns) — EVENT SCHEDULING ORDER</text>
+
+  <!-- Column 1: Active Region -->
+  <g transform="translate(24, 114)">
+    <rect width="272" height="302" rx="10" fill="#0f172a" stroke="#38bdf8" stroke-width="1.8" filter="url(#shadowCh3A)"/>
+    <rect width="272" height="40" rx="10" fill="#075985"/>
+    <rect x="0" y="28" width="272" height="12" fill="#075985"/>
+    <text x="136" y="25" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13.5" font-weight="700" fill="#e0f2fe" text-anchor="middle">1. Active Region</text>
+
+    <!-- Code Steps -->
+    <rect x="14" y="54" width="244" height="58" rx="6" fill="#080d18" stroke="#1e3a5f"/>
+    <text x="24" y="75" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" fill="#7dd3fc">a = 42;     <tspan fill="#94a3b8">// blocking</tspan></text>
+    <text x="24" y="96" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#e2e8f0">Takes effect immediately: a == 42</text>
+
+    <rect x="14" y="122" width="244" height="58" rx="6" fill="#080d18" stroke="#1e3a5f"/>
+    <text x="24" y="143" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" fill="#fbbf24">a &lt;= 65;    <tspan fill="#94a3b8">// nonblocking</tspan></text>
+    <text x="24" y="164" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#e2e8f0">Queued for NBA; a is still 42 now</text>
+
+    <rect x="14" y="190" width="244" height="96" rx="6" fill="#0c1e35" stroke="#38bdf8"/>
+    <text x="24" y="212" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" font-weight="700" fill="#38bdf8">$display("a = %0d", a);</text>
+    <text x="24" y="233" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#cbd5e1">Executes at this exact statement.</text>
+    <rect x="24" y="246" width="224" height="28" rx="4" fill="#082f49"/>
+    <text x="136" y="264" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" font-weight="700" fill="#e0f2fe" text-anchor="middle">Output: Display says a is 42</text>
+  </g>
+
+  <!-- Arrow 1 -> 2 -->
+  <line x1="296" y1="265" x2="318" y2="265" stroke="#f59e0b" stroke-width="2.4" marker-end="url(#arrAmber3A)"/>
+
+  <!-- Column 2: NBA Region -->
+  <g transform="translate(324, 114)">
+    <rect width="272" height="302" rx="10" fill="#0f172a" stroke="#f59e0b" stroke-width="1.8" filter="url(#shadowCh3A)"/>
+    <rect width="272" height="40" rx="10" fill="#78350f"/>
+    <rect x="0" y="28" width="272" height="12" fill="#78350f"/>
+    <text x="136" y="25" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13.5" font-weight="700" fill="#fef3c7" text-anchor="middle">2. NBA Region</text>
+
+    <rect x="14" y="54" width="244" height="104" rx="6" fill="#1c1917" stroke="#78350f"/>
+    <text x="136" y="78" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="700" fill="#fbbf24" text-anchor="middle">Nonblocking Assignment Update</text>
+    <text x="24" y="102" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" fill="#fde68a">a &lt;= 65  ──▶  a becomes 65</text>
+    <text x="24" y="126" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#e2e8f0">All scheduled &lt;= RHS values commit</text>
+    <text x="24" y="144" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#e2e8f0">before simulation time advances.</text>
+
+    <rect x="14" y="172" width="244" height="114" rx="6" fill="#131d33" stroke="#1e293b"/>
+    <text x="24" y="195" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11.5" font-weight="700" fill="#cbd5e1">Combinational Fanout Re-eval</text>
+    <text x="24" y="216" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#94a3b8">• Continuous assigns (assign)</text>
+    <text x="24" y="234" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#94a3b8">• always_comb blocks sensitive to a</text>
+    <text x="24" y="254" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#fde68a">• Loops back to Active if triggered,</text>
+    <text x="24" y="271" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#fde68a">  settling delta cycles at t = 0 ns</text>
+  </g>
+
+  <!-- Arrow 2 -> 3 -->
+  <line x1="596" y1="265" x2="618" y2="265" stroke="#34d399" stroke-width="2.4" marker-end="url(#arrEmerald3A)"/>
+
+  <!-- Column 3: Postponed Region -->
+  <g transform="translate(624, 114)">
+    <rect width="272" height="302" rx="10" fill="#0f172a" stroke="#34d399" stroke-width="1.8" filter="url(#shadowCh3A)"/>
+    <rect width="272" height="40" rx="10" fill="#065f46"/>
+    <rect x="0" y="28" width="272" height="12" fill="#065f46"/>
+    <text x="136" y="25" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13.5" font-weight="700" fill="#d1fae5" text-anchor="middle">3. Postponed Region</text>
+
+    <!-- $strobe -->
+    <rect x="14" y="54" width="244" height="106" rx="6" fill="#072c22" stroke="#34d399"/>
+    <text x="24" y="76" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" font-weight="700" fill="#34d399">$strobe("a = %0d", a);</text>
+    <text x="24" y="96" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#cbd5e1">One-shot print after NBA settles.</text>
+    <rect x="24" y="112" width="224" height="34" rx="4" fill="#064e3b"/>
+    <text x="136" y="133" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" font-weight="700" fill="#d1fae5" text-anchor="middle">Output: Strobe says a is 65</text>
+
+    <!-- $monitor -->
+    <rect x="14" y="172" width="244" height="114" rx="6" fill="#18122b" stroke="#a855f7"/>
+    <text x="24" y="194" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" font-weight="700" fill="#c084fc">$monitor("a=%0d", a);</text>
+    <text x="24" y="214" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#e2e8f0">• Persistent watch across time</text>
+    <text x="24" y="233" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#e2e8f0">• Prints when any arg changes</text>
+    <text x="24" y="252" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#e2e8f0">• Only ONE $monitor active at once</text>
+    <text x="24" y="272" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#d8b4fe">$monitoron / $monitoroff</text>
+  </g>
+</svg>

@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 420" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGradCh9C" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#080c14" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <filter id="shadowCh9C" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+    <marker id="arrowCh9C" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 8 5 L 0 9 z" fill="#10b981" />
+    </marker>
+  </defs>
+
+  <rect width="920" height="420" rx="14" fill="url(#bgGradCh9C)"/>
+
+  <!-- Title -->
+  <text x="460" y="34" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="20" font-weight="700" fill="#f8fafc" text-anchor="middle">Blocking (=) vs. Non-Blocking (&lt;=): Active vs. NBA Scheduling Regions</text>
+  <text x="460" y="56" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13" fill="#94a3b8" text-anchor="middle">How immediate blocking updates compare with two-phase Active-evaluate / NBA-commit updates</text>
+
+  <!-- Left Panel: Blocking (=) -->
+  <g transform="translate(24, 78)">
+    <rect width="424" height="318" rx="10" fill="#0f172a" stroke="#38bdf8" stroke-width="1.8" filter="url(#shadowCh9C)"/>
+    <rect width="424" height="38" rx="10" fill="#075985"/>
+    <rect x="0" y="26" width="424" height="12" fill="#075985"/>
+    <text x="212" y="24" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13.5" font-weight="700" fill="#e0f2fe" text-anchor="middle">Blocking Assignment (=): Immediate Update</text>
+
+    <rect x="14" y="50" width="396" height="58" rx="6" fill="#0c1e35" stroke="#0284c7"/>
+    <text x="24" y="70" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" font-weight="700" fill="#38bdf8">x = 5;        // Step 1: x becomes 5 NOW</text>
+    <text x="24" y="92" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" font-weight="700" fill="#7dd3fc">y = x + 3;    // Step 2: reads new x (5) → y = 8</text>
+
+    <!-- Region Box -->
+    <g transform="translate(14, 122)">
+      <rect width="396" height="106" rx="6" fill="#091526" stroke="#1e3a5f"/>
+      <text x="12" y="21" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11.5" font-weight="700" fill="#38bdf8">Active Region Execution Order:</text>
+      <text x="12" y="42" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#e2e8f0">1. Evaluate RHS &amp; update LHS immediately in one step</text>
+      <text x="12" y="62" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#e2e8f0">2. Next statement immediately sees the updated LHS</text>
+      <text x="12" y="82" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#fbbf24">• Swap needs temp: <tspan font-family="'JetBrains Mono', Consolas, monospace">tmp = a; a = b; b = tmp;</tspan></text>
+    </g>
+
+    <rect x="14" y="242" width="396" height="62" rx="6" fill="#072c22" stroke="#10b981"/>
+    <text x="24" y="263" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11.5" font-weight="700" fill="#34d399">Where to Use Blocking (=):</text>
+    <text x="24" y="282" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#e2e8f0">✓ Combinational logic (<tspan font-family="'JetBrains Mono', Consolas, monospace">always_comb</tspan>), temporary variables,</text>
+    <text x="24" y="297" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#cbd5e1">   step-by-step testbench sequences (<tspan font-family="'JetBrains Mono', Consolas, monospace">initial</tspan>, <tspan font-family="'JetBrains Mono', Consolas, monospace">final</tspan>).</text>
+  </g>
+
+  <!-- Right Panel: Non-Blocking (<=) -->
+  <g transform="translate(472, 78)">
+    <rect width="424" height="318" rx="10" fill="#0f172a" stroke="#10b981" stroke-width="1.8" filter="url(#shadowCh9C)"/>
+    <rect width="424" height="38" rx="10" fill="#065f46"/>
+    <rect x="0" y="26" width="424" height="12" fill="#065f46"/>
+    <text x="212" y="24" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13.5" font-weight="700" fill="#d1fae5" text-anchor="middle">Non-Blocking (&lt;=): Two-Phase Scheduled Update</text>
+
+    <rect x="14" y="50" width="396" height="58" rx="6" fill="#072c22" stroke="#10b981"/>
+    <text x="24" y="70" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" font-weight="700" fill="#34d399">reg_a &lt;= 2'b10;  // Phase 1: sample RHS (2'b10)</text>
+    <text x="24" y="92" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" font-weight="700" fill="#a7f3d0">reg_b &lt;= reg_a;  // Reads OLD reg_a (2'b00)!</text>
+
+    <!-- Two-Phase Flow -->
+    <g transform="translate(14, 122)">
+      <rect x="0" y="0" width="186" height="106" rx="6" fill="#0c1e35" stroke="#38bdf8"/>
+      <text x="93" y="20" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11.5" font-weight="700" fill="#38bdf8" text-anchor="middle">Phase 1: Active Region</text>
+      <text x="12" y="42" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#e2e8f0">• Evaluate ALL RHS expressions</text>
+      <text x="12" y="60" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#e2e8f0">• LHS variables still hold OLD</text>
+      <text x="12" y="76" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#cbd5e1">  pre-edge values!</text>
+      <text x="12" y="95" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#7dd3fc">Queue updates → NBA</text>
+
+      <line x1="188" y1="53" x2="206" y2="53" stroke="#10b981" stroke-width="2" marker-end="url(#arrowCh9C)"/>
+
+      <rect x="210" y="0" width="186" height="106" rx="6" fill="#064e3b" stroke="#10b981"/>
+      <text x="303" y="20" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11.5" font-weight="700" fill="#34d399" text-anchor="middle">Phase 2: NBA Region</text>
+      <text x="220" y="42" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#e2e8f0">• Commit ALL scheduled LHS</text>
+      <text x="220" y="60" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#e2e8f0">  updates simultaneously</text>
+      <text x="220" y="80" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#a7f3d0">reg_a = 10, reg_b = 00</text>
+      <text x="220" y="97" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#6ee7b7">Swap: a &lt;= b; b &lt;= a;</text>
+    </g>
+
+    <rect x="14" y="242" width="396" height="62" rx="6" fill="#091526" stroke="#1e3a5f"/>
+    <text x="24" y="263" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11.5" font-weight="700" fill="#fbbf24">Where to Use Non-Blocking (&lt;=):</text>
+    <text x="24" y="282" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#e2e8f0">✓ Sequential flip-flops (<tspan font-family="'JetBrains Mono', Consolas, monospace">always_ff</tspan>) — eliminates order</text>
+    <text x="24" y="297" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#cbd5e1">   dependence and simulation race conditions across FFs.</text>
+  </g>
+</svg>

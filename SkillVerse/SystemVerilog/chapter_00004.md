@@ -91,9 +91,28 @@ end
 
 For hardware interfaces, prefer explicitly sized vectors. For counters and arithmetic in verification code, use a named integer type with intentional signedness. Do not rely on an implicit width or sign when the result affects a protocol, address, comparison, or array index.
 
+![SystemVerilog 4-State vs. 2-State Data Types](images/ch4_sv_4state_vs_2state_types.svg)
+
+### Built-In Data Types Quick Reference
+
+| Type | States | Width | Default Signedness | Default Initial Value |
+| :--- | :---: | :--- | :--- | :---: |
+| **`logic`** / **`reg`** | 4-state | 1-bit (or `[N-1:0]`) | Unsigned | `'x` |
+| **`wire`** (net) | 4-state | 1-bit (or `[N-1:0]`) | Unsigned | `'z` (when undriven) |
+| **`integer`** | 4-state | 32-bit | Signed | `'x` |
+| **`time`** | 4-state | 64-bit | Unsigned | `'x` |
+| **`bit`** | 2-state | 1-bit (or `[N-1:0]`) | Unsigned | `'0` |
+| **`byte`** | 2-state | 8-bit | Signed | `0` |
+| **`shortint`** | 2-state | 16-bit | Signed | `0` |
+| **`int`** | 2-state | 32-bit | Signed | `0` |
+| **`longint`** | 2-state | 64-bit | Signed | `0` |
+| **`shortreal`** / **`real`** | 2-state | 32-bit / 64-bit IEEE float | Signed | `0.0` |
+
 ## **Advanced Built-in Types: Specialized Hardware Modeling**
 
 SystemVerilog includes advanced net types designed to model specific hardware scenarios, particularly those involving multiple drivers or wired connections. These are connection semantics rather than replacements for ordinary single-driver `logic` variables.
+
+![Single-Driver Variables vs. Multi-Driver Net Resolution](images/ch4_sv_net_resolution_types.svg)
 
 ### **Tri-State and Multi-Driver Resolution Types**
 
@@ -121,6 +140,8 @@ endmodule
 ## **User-Defined Data Types: Enhancing Readability and Abstraction**
 
 User-defined data types allow you to create custom types, improving code readability, maintainability, and abstraction.
+
+![User-Defined Types: enum, struct packed, and union packed](images/ch4_sv_user_defined_types_layout.svg)
 
 ### **`typedef`**: Creating Type Aliases
 
@@ -158,7 +179,7 @@ case (current_state)
 endcase
 ```
 
-**Benefit**: `enum` makes state machine code much more readable and less error-prone than using raw integer values for states. The optional type declaration (`logic [2:0]`) specifies the underlying packed representation for the enum, allowing type-aware operations. Assigning arbitrary integer values to an enum may require an explicit cast, which helps expose accidental invalid states.
+**Benefit**: `enum` makes state machine code much more readable and less error-prone than using raw integer values for states. The optional type declaration (`logic [2:0]`) specifies the underlying packed representation for the enum, allowing type-aware operations. Assigning arbitrary integer values to an enum may require an explicit cast, which helps expose accidental invalid states. Enumerations also provide built-in traversal and debug methods such as `.first()`, `.last()`, `.next()`, `.prev()`, `.num()`, and `.name()` (for printing state names directly in `$display` logs).
 
 ### **`struct`**: Grouping Related Data
 
@@ -199,9 +220,19 @@ $display("Union as float: %0.2f", data_var.float_val);   // Interpret bit patter
 
 **Caution**: Using unions requires careful management as writing to one member will overwrite the value of other members because they share the same memory location.
 
+### Comparing Composite Types
+
+| Composite Type | Memory Layout | Bit-Vector Operations? | Typical Use Case |
+| :--- | :--- | :---: | :--- |
+| **`struct packed`** | Contiguous bit vector (sum of field widths) | Yes | Bus packets, instruction formats, hardware registers |
+| **Unpacked `struct`** | Independent fields (may include `string`, dynamic arrays) | No | High-level testbench records and configuration objects |
+| **`union packed`** | Overlapping view of the **same** bit storage | Yes | Reinterpreting identical bits across multiple formats |
+
 ## **Packed vs. Unpacked Arrays: Memory Layout Matters**
 
 SystemVerilog arrays come in two flavors, packed and unpacked, which differ significantly in their memory representation and intended use.
+
+![Packed vs. Unpacked Arrays Syntax and Storage Model](images/ch4_sv_packed_vs_unpacked_layout.svg)
 
 ### **Packed Arrays: Contiguous Bit Vectors**
 
@@ -340,8 +371,8 @@ The examples below are small declarations intended to illustrate type syntax. Wh
 9. **Initialize a Packed Array with Literal Values**:
 
    ```systemverilog
-   logic [1:0][3:0] nibble_matrix = {4'h3, 4'h6, 4'h9, 4'hC};
-   // Solution: Initializes a 2x4 packed array 'nibble_matrix' with hexadecimal nibble values.
+   logic [3:0][3:0] nibble_matrix = {4'h3, 4'h6, 4'h9, 4'hC};
+   // Solution: Initializes a 4x4 packed array 'nibble_matrix' (16 bits total) with four hexadecimal nibbles.
    ```
 
 10. **Iterate Through an Unpacked Array and Display Elements**:

@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 390" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGradCh3D" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#080c14" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <filter id="shadowCh3D" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+    <marker id="arrEmerald3D" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#34d399"/>
+    </marker>
+    <marker id="arrAmber3D" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#f59e0b"/>
+    </marker>
+    <marker id="arrPurple3D" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#a855f7"/>
+    </marker>
+  </defs>
+
+  <rect width="920" height="390" rx="14" fill="url(#bgGradCh3D)"/>
+
+  <!-- Title -->
+  <text x="460" y="34" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="20" font-weight="700" fill="#f8fafc" text-anchor="middle">Simulation Control Tasks: $finish, $stop &amp; $exit</text>
+  <text x="460" y="56" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13" fill="#94a3b8" text-anchor="middle">Managing normal termination, interactive debugging pauses, and diagnostic verbosity</text>
+
+  <!-- Left Node: Running Simulation -->
+  <g transform="translate(24, 152)">
+    <rect width="194" height="118" rx="10" fill="#0c1e35" stroke="#38bdf8" stroke-width="2" filter="url(#shadowCh3D)"/>
+    <text x="97" y="34" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="14" font-weight="700" fill="#38bdf8" text-anchor="middle">Active Simulation</text>
+    <text x="97" y="56" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11.5" fill="#e2e8f0" text-anchor="middle">Event queue running</text>
+    <text x="97" y="76" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11.5" fill="#cbd5e1" text-anchor="middle">Clocks &amp; processes</text>
+    <text x="97" y="96" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11.5" fill="#7dd3fc" text-anchor="middle">advancing in time</text>
+  </g>
+
+  <!-- Branch Arrows -->
+  <path d="M 218 182 L 268 182 L 268 126 L 306 126" fill="none" stroke="#34d399" stroke-width="2.2" marker-end="url(#arrEmerald3D)"/>
+  <line x1="218" y1="211" x2="306" y2="226" stroke="#f59e0b" stroke-width="2.2" marker-end="url(#arrAmber3D)"/>
+  <path d="M 218 240 L 268 240 L 268 324 L 306 324" fill="none" stroke="#a855f7" stroke-width="2.2" marker-end="url(#arrPurple3D)"/>
+
+  <!-- Branch 1: $finish -->
+  <g transform="translate(314, 78)">
+    <rect width="582" height="92" rx="10" fill="#072c22" stroke="#34d399" stroke-width="1.8" filter="url(#shadowCh3D)"/>
+    <rect x="14" y="14" width="140" height="64" rx="6" fill="#064e3b" stroke="#34d399"/>
+    <text x="84" y="42" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="700" fill="#34d399" text-anchor="middle">$finish(n);</text>
+    <text x="84" y="62" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#d1fae5" text-anchor="middle">Normal Termination</text>
+
+    <text x="170" y="30" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="700" fill="#a7f3d0">Gracefully ends the simulation run and runs final blocks</text>
+    <text x="170" y="50" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#e2e8f0">• Stops infinite clocks/monitors and flushes console &amp; VCD files.</text>
+    <text x="170" y="70" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#6ee7b7">n=0: silent | n=1 (default): time+loc | n=2: +CPU/mem</text>
+  </g>
+
+  <!-- Branch 2: $stop -->
+  <g transform="translate(314, 182)">
+    <rect width="582" height="92" rx="10" fill="#1c1917" stroke="#f59e0b" stroke-width="1.8" filter="url(#shadowCh3D)"/>
+    <rect x="14" y="14" width="140" height="64" rx="6" fill="#451a03" stroke="#f59e0b"/>
+    <text x="84" y="42" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="700" fill="#fbbf24" text-anchor="middle">$stop(n);</text>
+    <text x="84" y="62" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#fef3c7" text-anchor="middle">Interactive Pause</text>
+
+    <text x="170" y="30" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="700" fill="#fde68a">Suspends simulation and enters interactive debug mode</text>
+    <text x="170" y="50" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#e2e8f0">• Inspect registers, memories, and signal state at breakpoint.</text>
+    <text x="170" y="70" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#fcd34d">• Resumable via simulator CLI/GUI (e.g., run -continue).</text>
+  </g>
+
+  <!-- Branch 3: $exit -->
+  <g transform="translate(314, 286)">
+    <rect width="582" height="84" rx="10" fill="#18122b" stroke="#a855f7" stroke-width="1.8" filter="url(#shadowCh3D)"/>
+    <rect x="14" y="12" width="140" height="60" rx="6" fill="#2e1065" stroke="#a855f7"/>
+    <text x="84" y="38" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="700" fill="#c084fc" text-anchor="middle">$exit;</text>
+    <text x="84" y="57" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#f3e8ff" text-anchor="middle">Program Block Exit</text>
+
+    <text x="170" y="28" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="700" fill="#e9d5ff">Terminates an enclosing SystemVerilog program block</text>
+    <text x="170" y="48" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#e2e8f0">• Behavior outside program blocks is tool-dependent (non-portable).</text>
+    <text x="170" y="66" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#d8b4fe">• Module-based testbenches should use $finish for normal exit.</text>
+  </g>
+</svg>

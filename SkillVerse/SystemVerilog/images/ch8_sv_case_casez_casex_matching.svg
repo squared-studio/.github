@@ -1,0 +1,84 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 420" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGradCh8B" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#080c14" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <filter id="shadowCh8B" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+  </defs>
+
+  <rect width="920" height="420" rx="14" fill="url(#bgGradCh8B)"/>
+
+  <!-- Title -->
+  <text x="460" y="34" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="20" font-weight="700" fill="#f8fafc" text-anchor="middle">Multi-Way Branching: case vs. casez vs. casex &amp; Decision Modifiers</text>
+  <text x="460" y="56" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13" fill="#94a3b8" text-anchor="middle">How unknown (X), high-impedance (Z), and don't-care (?) bits match, plus unique/priority synthesis intent</text>
+
+  <!-- Top Panel: 3 Case Forms Comparison -->
+  <g transform="translate(24, 76)">
+    <!-- case -->
+    <rect width="278" height="196" rx="10" fill="#0f172a" stroke="#38bdf8" stroke-width="1.8" filter="url(#shadowCh8B)"/>
+    <rect width="278" height="36" rx="10" fill="#075985"/>
+    <rect x="0" y="24" width="278" height="12" fill="#075985"/>
+    <text x="139" y="23" font-family="'JetBrains Mono', Consolas, monospace" font-size="13.5" font-weight="700" fill="#e0f2fe" text-anchor="middle">case  (Exact 4-State)</text>
+    <text x="14" y="58" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11.5" font-weight="700" fill="#38bdf8">Wildcards: None</text>
+    <text x="14" y="78" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#e2e8f0">4'b1010 vs 4'b1010 → <tspan fill="#6ee7b7" font-weight="700">MATCH</tspan></text>
+    <text x="14" y="96" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#e2e8f0">4'b10z0 vs 4'b10?? → <tspan fill="#fda4af" font-weight="700">NO</tspan></text>
+    <text x="14" y="114" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#e2e8f0">4'b10x0 vs 4'b10?? → <tspan fill="#fda4af" font-weight="700">NO</tspan></text>
+    <rect x="12" y="130" width="254" height="54" rx="6" fill="#0c1e35" stroke="#0284c7"/>
+    <text x="22" y="150" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="700" fill="#7dd3fc">Best for RTL Opcodes &amp; FSMs</text>
+    <text x="22" y="168" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#cbd5e1">Unknown 'X' hits 'default' safely</text>
+
+    <!-- casez -->
+    <g transform="translate(297, 0)">
+      <rect width="278" height="196" rx="10" fill="#0f172a" stroke="#10b981" stroke-width="1.8" filter="url(#shadowCh8B)"/>
+      <rect width="278" height="36" rx="10" fill="#065f46"/>
+      <rect x="0" y="24" width="278" height="12" fill="#065f46"/>
+      <text x="139" y="23" font-family="'JetBrains Mono', Consolas, monospace" font-size="13.5" font-weight="700" fill="#d1fae5" text-anchor="middle">casez  (? and Z = Wildcard)</text>
+      <text x="14" y="58" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11.5" font-weight="700" fill="#34d399">Wildcards: ? and Z (X stays strict)</text>
+      <text x="14" y="78" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#e2e8f0">4'b1010 vs 4'b10?? → <tspan fill="#6ee7b7" font-weight="700">MATCH</tspan></text>
+      <text x="14" y="96" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#e2e8f0">4'b10z0 vs 4'b10?? → <tspan fill="#6ee7b7" font-weight="700">MATCH</tspan></text>
+      <text x="14" y="114" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#e2e8f0">4'b10x0 vs 4'b10?? → <tspan fill="#fda4af" font-weight="700">NO (X caught!)</tspan></text>
+      <rect x="12" y="130" width="254" height="54" rx="6" fill="#072c22" stroke="#10b981"/>
+      <text x="22" y="150" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="700" fill="#6ee7b7">Best for Priority Encoders</text>
+      <text x="22" y="168" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#cbd5e1">Use '?' in masks; still flags bugs with X</text>
+    </g>
+
+    <!-- casex -->
+    <g transform="translate(594, 0)">
+      <rect width="278" height="196" rx="10" fill="#0f172a" stroke="#f43f5e" stroke-width="1.8" filter="url(#shadowCh8B)"/>
+      <rect width="278" height="36" rx="10" fill="#881337"/>
+      <rect x="0" y="24" width="278" height="12" fill="#881337"/>
+      <text x="139" y="23" font-family="'JetBrains Mono', Consolas, monospace" font-size="13.5" font-weight="700" fill="#ffe4e6" text-anchor="middle">casex  (X, Z, ? = Wildcard)</text>
+      <text x="14" y="58" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11.5" font-weight="700" fill="#fb7185">Wildcards: X, Z, and ? (BOTH sides)</text>
+      <text x="14" y="78" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#e2e8f0">4'b1010 vs 4'b10?? → <tspan fill="#6ee7b7" font-weight="700">MATCH</tspan></text>
+      <text x="14" y="96" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#e2e8f0">4'b10z0 vs 4'b1010 → <tspan fill="#fbbf24" font-weight="700">MATCH</tspan></text>
+      <text x="14" y="114" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#e2e8f0">4'b10x1 vs 4'b1011 → <tspan fill="#fb7185" font-weight="700">MATCH (DANGER!)</tspan></text>
+      <rect x="12" y="130" width="254" height="54" rx="6" fill="#2a0a14" stroke="#f43f5e"/>
+      <text x="22" y="150" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="700" fill="#fda4af">Avoid in Synthesizable RTL</text>
+      <text x="22" y="168" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#fecdd3">Hides uninitialized 'X' signals as valid</text>
+    </g>
+  </g>
+
+  <!-- Bottom Panel: unique / unique0 / priority Modifiers -->
+  <g transform="translate(24, 288)">
+    <rect width="872" height="114" rx="10" fill="#0f172a" stroke="#f59e0b" stroke-width="1.6" filter="url(#shadowCh8B)"/>
+    <text x="20" y="25" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13" font-weight="700" fill="#fbbf24">SystemVerilog Decision Modifiers (Assertions + Synthesis Hints — First-Match Rule Still Applies!)</text>
+
+    <rect x="16" y="38" width="270" height="62" rx="6" fill="#181208" stroke="#b45309"/>
+    <text x="26" y="57" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" font-weight="700" fill="#fde68a">unique case (...)</text>
+    <text x="26" y="75" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#e2e8f0">Warns if &gt;1 item matches OR 0 items match</text>
+    <text x="26" y="91" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#94a3b8">(Unless a 'default' branch covers remaining)</text>
+
+    <rect x="301" y="38" width="270" height="62" rx="6" fill="#181208" stroke="#b45309"/>
+    <text x="311" y="57" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" font-weight="700" fill="#fde68a">unique0 case (...)</text>
+    <text x="311" y="75" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#e2e8f0">Warns only if &gt;1 item matches (overlap)</text>
+    <text x="311" y="91" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#94a3b8">Allows 0 matches silently (e.g. one-hot idle)</text>
+
+    <rect x="586" y="38" width="270" height="62" rx="6" fill="#181208" stroke="#b45309"/>
+    <text x="596" y="57" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" font-weight="700" fill="#fde68a">priority case (...)</text>
+    <text x="596" y="75" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#e2e8f0">Overlaps OK (first wins); warns if 0 match</text>
+    <text x="596" y="91" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#94a3b8">Signals ordered priority encoder to tools</text>
+  </g>
+</svg>

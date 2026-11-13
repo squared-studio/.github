@@ -1,0 +1,116 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 410" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGradCh13A" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#080c14" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <filter id="shadowCh13A" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+    <marker id="arrowCyan13A" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8"/>
+    </marker>
+    <marker id="arrowGreen13A" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#34d399"/>
+    </marker>
+    <marker id="arrowAmber13A" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#fbbf24"/>
+    </marker>
+  </defs>
+
+  <rect width="920" height="410" rx="14" fill="url(#bgGradCh13A)"/>
+
+  <!-- Title -->
+  <text x="460" y="32" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="20" font-weight="700" fill="#f8fafc" text-anchor="middle">SystemVerilog Module Anatomy: Encapsulation, Ports, Parameters &amp; Internal Logic</text>
+  <text x="460" y="54" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13" fill="#94a3b8" text-anchor="middle">A module defines an isolated hardware boundary configured by parameters and wired through typed ANSI ports</text>
+
+  <!-- Left External Signals (Inputs) -->
+  <g transform="translate(18, 128)">
+    <text x="8" y="16" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11.5" font-weight="700" fill="#7dd3fc">Input Ports</text>
+
+    <rect x="0" y="28" width="128" height="32" rx="6" fill="#0c1c2e" stroke="#0284c7"/>
+    <text x="64" y="48" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#e0f2fe" text-anchor="middle">input logic clk</text>
+    <line x1="128" y1="44" x2="176" y2="44" stroke="#38bdf8" stroke-width="2" marker-end="url(#arrowCyan13A)"/>
+
+    <rect x="0" y="76" width="128" height="32" rx="6" fill="#0c1c2e" stroke="#0284c7"/>
+    <text x="64" y="96" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#e0f2fe" text-anchor="middle">input logic rst_n</text>
+    <line x1="128" y1="92" x2="176" y2="92" stroke="#38bdf8" stroke-width="2" marker-end="url(#arrowCyan13A)"/>
+
+    <rect x="0" y="124" width="128" height="40" rx="6" fill="#0c1c2e" stroke="#0284c7"/>
+    <text x="64" y="141" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#e0f2fe" text-anchor="middle">input [W-1:0]</text>
+    <text x="64" y="156" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#7dd3fc" text-anchor="middle">data_in</text>
+    <line x1="128" y1="144" x2="176" y2="144" stroke="#38bdf8" stroke-width="2" marker-end="url(#arrowCyan13A)"/>
+  </g>
+
+  <!-- Center Module Boundary -->
+  <g transform="translate(198, 72)">
+    <rect width="524" height="316" rx="12" fill="#0f172a" stroke="#38bdf8" stroke-width="2" filter="url(#shadowCh13A)"/>
+
+    <!-- Module Header + Parameter Bar -->
+    <rect width="524" height="58" rx="12" fill="#075985"/>
+    <rect x="0" y="42" width="524" height="16" fill="#075985"/>
+    <text x="262" y="23" font-family="'JetBrains Mono', Consolas, monospace" font-size="13.5" font-weight="700" fill="#ffffff" text-anchor="middle">module my_hw_unit #(parameter DATA_WIDTH = 32, DEPTH = 16)</text>
+    <text x="262" y="45" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#bae6fd" text-anchor="middle">localparam int PTR_W = $clog2(DEPTH); // Derived non-overridable constant</text>
+
+    <!-- 2x2 Internal Cards -->
+    <!-- Card 1: Declarations -->
+    <g transform="translate(16, 72)">
+      <rect width="238" height="102" rx="8" fill="#091526" stroke="#0284c7"/>
+      <text x="12" y="21" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11.5" font-weight="700" fill="#38bdf8">1. Internal Signals &amp; Types</text>
+      <text x="12" y="42" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#e2e8f0">logic [DATA_WIDTH-1:0] mem[DEPTH];</text>
+      <text x="12" y="60" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#7dd3fc">logic [PTR_W-1:0] wr_ptr, rd_ptr;</text>
+      <text x="12" y="78" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#94a3b8">typedef enum logic [1:0] {...};</text>
+      <text x="12" y="94" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="9.5" fill="#64748b">Encapsulated inside module scope</text>
+    </g>
+
+    <!-- Card 2: Procedural & Continuous Logic -->
+    <g transform="translate(270, 72)">
+      <rect width="238" height="102" rx="8" fill="#072c22" stroke="#10b981"/>
+      <text x="12" y="21" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11.5" font-weight="700" fill="#34d399">2. Concurrent Hardware Logic</text>
+      <text x="12" y="42" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#e2e8f0">assign busy = (cnt != 0);</text>
+      <text x="12" y="60" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#a7f3d0">always_comb begin ... end</text>
+      <text x="12" y="78" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#6ee7b7">always_ff @(posedge clk) ...</text>
+      <text x="12" y="94" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="9.5" fill="#64748b">Synthesizable RTL blocks</text>
+    </g>
+
+    <!-- Card 3: Hierarchy & Generate -->
+    <g transform="translate(16, 186)">
+      <rect width="238" height="102" rx="8" fill="#181208" stroke="#f59e0b"/>
+      <text x="12" y="21" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11.5" font-weight="700" fill="#fbbf24">3. Submodules &amp; Generate</text>
+      <text x="12" y="42" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#fde68a">sub_mod #(.W(DATA_WIDTH)) u0 (</text>
+      <text x="20" y="59" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#e2e8f0">.clk(clk), .in(data_in)</text>
+      <text x="12" y="76" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#fde68a">);</text>
+      <text x="12" y="93" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="9.5" fill="#94a3b8">Named connections &amp; generate loops</text>
+    </g>
+
+    <!-- Card 4: Validation & Assertions -->
+    <g transform="translate(270, 186)">
+      <rect width="238" height="102" rx="8" fill="#1e1035" stroke="#a855f7"/>
+      <text x="12" y="21" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11.5" font-weight="700" fill="#d8b4fe">4. Guards &amp; Simulation Blocks</text>
+      <text x="12" y="42" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#f3e8ff">initial if (DEPTH &lt; 2)</text>
+      <text x="20" y="59" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#fda4af">$error("DEPTH must be &gt;= 2");</text>
+      <text x="12" y="76" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#e9d5ff">assert property (...);</text>
+      <text x="12" y="93" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="9.5" fill="#94a3b8">Parameter checks &amp; SVA verification</text>
+    </g>
+
+    <text x="262" y="306" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" font-weight="700" fill="#64748b" text-anchor="middle">endmodule</text>
+  </g>
+
+  <!-- Right External Signals (Outputs / Inout) -->
+  <g transform="translate(772, 128)">
+    <text x="8" y="16" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11.5" font-weight="700" fill="#6ee7b7">Output &amp; Inout Ports</text>
+
+    <line x1="-46" y1="44" x2="-2" y2="44" stroke="#34d399" stroke-width="2" marker-end="url(#arrowGreen13A)"/>
+    <rect x="0" y="28" width="130" height="32" rx="6" fill="#072c22" stroke="#10b981"/>
+    <text x="65" y="48" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#d1fae5" text-anchor="middle">output valid_out</text>
+
+    <line x1="-46" y1="92" x2="-2" y2="92" stroke="#34d399" stroke-width="2" marker-end="url(#arrowGreen13A)"/>
+    <rect x="0" y="72" width="130" height="40" rx="6" fill="#072c22" stroke="#10b981"/>
+    <text x="65" y="89" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#d1fae5" text-anchor="middle">output [W-1:0]</text>
+    <text x="65" y="104" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#6ee7b7" text-anchor="middle">data_out</text>
+
+    <line x1="-46" y1="144" x2="-2" y2="144" stroke="#fbbf24" stroke-width="2" marker-end="url(#arrowAmber13A)"/>
+    <rect x="0" y="128" width="130" height="32" rx="6" fill="#181208" stroke="#f59e0b"/>
+    <text x="65" y="148" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#fde68a" text-anchor="middle">inout wire io_pin</text>
+  </g>
+</svg>

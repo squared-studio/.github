@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 410" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGradCh22B" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#080c14" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <filter id="shadowCh22B" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+  </defs>
+
+  <rect width="920" height="410" rx="14" fill="url(#bgGradCh22B)"/>
+
+  <!-- Title -->
+  <text x="460" y="30" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="20" font-weight="700" fill="#f8fafc" text-anchor="middle">Macro Forms &amp; IEEE 1800 Token Operators</text>
+  <text x="460" y="50" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13" fill="#94a3b8" text-anchor="middle">Master line continuation (\), default arguments, stringification (`"), and token pasting (``)</text>
+
+  <!-- Card 1: Object-Like & Multi-Line -->
+  <g transform="translate(24, 72)">
+    <rect width="424" height="150" rx="10" fill="#0f172a" stroke="#38bdf8" stroke-width="1.8" filter="url(#shadowCh22B)"/>
+    <rect width="424" height="32" rx="10" fill="#075985"/>
+    <rect x="0" y="20" width="424" height="12" fill="#075985"/>
+    <text x="212" y="21" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="12.5" font-weight="700" fill="#e0f2fe" text-anchor="middle">1. Object-Like &amp; Multi-Line Continuation (\)</text>
+    <text x="16" y="54" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#38bdf8">`define BUS_W 32</text>
+    <text x="16" y="76" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#e2e8f0">`define INIT_ZERO(sig) \</text>
+    <text x="16" y="96" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#7dd3fc">  initial sig = '0;</text>
+    <text x="16" y="124" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#94a3b8">No spaces after '\' on continued lines! Comments must precede '\' or follow the end.</text>
+  </g>
+
+  <!-- Card 2: Parameterized & Default Args -->
+  <g transform="translate(472, 72)">
+    <rect width="424" height="150" rx="10" fill="#0f172a" stroke="#10b981" stroke-width="1.8" filter="url(#shadowCh22B)"/>
+    <rect width="424" height="32" rx="10" fill="#065f46"/>
+    <rect x="0" y="20" width="424" height="12" fill="#065f46"/>
+    <text x="212" y="21" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="12.5" font-weight="700" fill="#d1fae5" text-anchor="middle">2. Parameterized + Default Arguments (SV-2009+)</text>
+    <text x="16" y="54" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#34d399">`define LOG(msg, tag="INFO") \</text>
+    <text x="16" y="74" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#d1fae5">  $display("[%s] %s", tag, msg)</text>
+    <text x="16" y="100" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#a7f3d0">`LOG("Booting");       // tag defaults to "INFO"</text>
+    <text x="16" y="120" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#fbbf24">`LOG("Timeout", "ERR"); // overrides tag with "ERR"</text>
+  </g>
+
+  <!-- Card 3: Stringification (`" and `\`") -->
+  <g transform="translate(24, 236)">
+    <rect width="424" height="152" rx="10" fill="#0f172a" stroke="#a78bfa" stroke-width="1.8" filter="url(#shadowCh22B)"/>
+    <rect width="424" height="32" rx="10" fill="#4c1d95"/>
+    <rect x="0" y="20" width="424" height="12" fill="#4c1d95"/>
+    <text x="212" y="21" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="12.5" font-weight="700" fill="#ede9fe" text-anchor="middle">3. Stringification Operator (`")</text>
+    <text x="16" y="54" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#c4b5fd">`define SHOW_EXPR(ex) \</text>
+    <text x="16" y="74" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#e0e7ff">  $display("%s = %0d", `"ex`", (ex))</text>
+    <text x="16" y="102" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#34d399">`SHOW_EXPR(cnt + 1);</text>
+    <text x="16" y="122" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#94a3b8">-&gt; $display("%s = %0d", "cnt + 1", (cnt + 1));</text>
+  </g>
+
+  <!-- Card 4: Token Concatenation (``) -->
+  <g transform="translate(472, 236)">
+    <rect width="424" height="152" rx="10" fill="#0f172a" stroke="#f59e0b" stroke-width="1.8" filter="url(#shadowCh22B)"/>
+    <rect width="424" height="32" rx="10" fill="#78350f"/>
+    <rect x="0" y="20" width="424" height="12" fill="#78350f"/>
+    <text x="212" y="21" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="12.5" font-weight="700" fill="#fef3c7" text-anchor="middle">4. Token Concatenation / Pasting (``)</text>
+    <text x="16" y="54" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#fbbf24">`define MAKE_REG(name, w) \</text>
+    <text x="16" y="74" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#fde68a">  logic [w-1:0] reg_``name``_q;</text>
+    <text x="16" y="102" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#34d399">`MAKE_REG(status, 8)</text>
+    <text x="16" y="122" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#94a3b8">-&gt; logic [8-1:0] reg_status_q;</text>
+  </g>
+</svg>

@@ -1,0 +1,105 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 430" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGradCh6A" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#080c14" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <filter id="shadowCh6A" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+    <marker id="arrowCh6A" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 8 5 L 0 9 z" fill="#38bdf8" />
+    </marker>
+  </defs>
+
+  <rect width="920" height="430" rx="14" fill="url(#bgGradCh6A)"/>
+
+  <!-- Title -->
+  <text x="460" y="34" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="19.5" font-weight="700" fill="#f8fafc" text-anchor="middle">Multidimensional Array Anatomy: logic [127:0][7:0] my_array [8][64][32]</text>
+  <text x="460" y="56" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13" fill="#94a3b8" text-anchor="middle">Unpacked indices select an element first (left-to-right), followed by packed byte and bit slices</text>
+
+  <!-- Left Panel: Unpacked 3D Hierarchy -->
+  <g transform="translate(24, 78)">
+    <rect width="410" height="328" rx="10" fill="#0f172a" stroke="#10b981" stroke-width="1.8" filter="url(#shadowCh6A)"/>
+    <rect width="410" height="38" rx="10" fill="#065f46"/>
+    <rect x="0" y="26" width="410" height="12" fill="#065f46"/>
+    <text x="205" y="24" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13.5" font-weight="700" fill="#d1fae5" text-anchor="middle">1. Unpacked Dimensions [8][64][32] (16,384 Elements)</text>
+
+    <!-- Declaration Highlight -->
+    <rect x="14" y="50" width="382" height="32" rx="6" fill="#072c22" stroke="#10b981"/>
+    <text x="205" y="70" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" font-weight="700" fill="#e2e8f0" text-anchor="middle">my_array<tspan fill="#34d399">[2]</tspan><tspan fill="#34d399">[5]</tspan><tspan fill="#34d399">[17]</tspan>   // Bank 2, Row 5, Col 17</text>
+
+    <!-- Step 1: Bank [8] -->
+    <g transform="translate(14, 96)">
+      <rect width="382" height="58" rx="6" fill="#091526" stroke="#1e3a5f"/>
+      <text x="12" y="20" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11.5" font-weight="700" fill="#34d399">Dimension 1: [8]  ([0:7] Banks)</text>
+      <text x="12" y="42" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#cbd5e1">[0]  [1]  <tspan fill="#fbbf24" font-weight="700">[2]</tspan>  [3]  [4]  [5]  [6]  [7]</text>
+    </g>
+
+    <!-- Step 2: Row [64] -->
+    <g transform="translate(14, 166)">
+      <rect width="382" height="58" rx="6" fill="#091526" stroke="#1e3a5f"/>
+      <text x="12" y="20" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11.5" font-weight="700" fill="#34d399">Dimension 2: [64]  ([0:63] Rows inside Bank 2)</text>
+      <text x="12" y="42" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#cbd5e1">Row 0 ... Row 4  <tspan fill="#fbbf24" font-weight="700">[Row 5]</tspan>  Row 6 ... Row 63</text>
+    </g>
+
+    <!-- Step 3: Col [32] -->
+    <g transform="translate(14, 236)">
+      <rect width="382" height="76" rx="6" fill="#091526" stroke="#10b981" stroke-width="1.3"/>
+      <text x="12" y="20" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11.5" font-weight="700" fill="#34d399">Dimension 3: [32]  ([0:31] Columns inside Row 5)</text>
+      <text x="12" y="42" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#cbd5e1">Col 0 ... <tspan fill="#fbbf24" font-weight="700">[Col 17]</tspan> ... Col 31</text>
+      <text x="12" y="62" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#a7f3d0">Selects ONE 1,024-bit (128-byte) packed element</text>
+    </g>
+  </g>
+
+  <!-- Arrow between Left and Right Panels -->
+  <line x1="436" y1="242" x2="462" y2="242" stroke="#38bdf8" stroke-width="2.4" marker-end="url(#arrowCh6A)"/>
+
+  <!-- Right Panel: Packed 2D Element Bit Structure -->
+  <g transform="translate(466, 78)">
+    <rect width="430" height="328" rx="10" fill="#0f172a" stroke="#38bdf8" stroke-width="1.8" filter="url(#shadowCh6A)"/>
+    <rect width="430" height="38" rx="10" fill="#075985"/>
+    <rect x="0" y="26" width="430" height="12" fill="#075985"/>
+    <text x="215" y="24" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13.5" font-weight="700" fill="#e0f2fe" text-anchor="middle">2. Packed Element [127:0][7:0] (128 Bytes × 8 Bits)</text>
+
+    <!-- Visual byte strip -->
+    <g transform="translate(14, 52)">
+      <text x="0" y="13" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="600" fill="#7dd3fc">Each element is 1,024 contiguous bits:</text>
+      <rect x="0" y="22" width="128" height="44" rx="4" fill="#082f49" stroke="#38bdf8"/>
+      <text x="64" y="40" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" font-weight="700" fill="#e0f2fe" text-anchor="middle">Byte [127]</text>
+      <text x="64" y="56" font-family="'JetBrains Mono', Consolas, monospace" font-size="9.5" fill="#94a3b8" text-anchor="middle">bits [7:0]</text>
+
+      <rect x="134" y="22" width="134" height="44" rx="4" fill="#0c1e35" stroke="#475569" stroke-dasharray="3,2"/>
+      <text x="201" y="48" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#94a3b8" text-anchor="middle">... [126:1] ...</text>
+
+      <rect x="274" y="22" width="128" height="44" rx="4" fill="#172554" stroke="#fbbf24" stroke-width="1.4"/>
+      <text x="338" y="40" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" font-weight="700" fill="#fde68a" text-anchor="middle">Byte [0]</text>
+      <text x="338" y="56" font-family="'JetBrains Mono', Consolas, monospace" font-size="9.5" fill="#fbbf24" text-anchor="middle">bits [7:0] (LSB)</text>
+    </g>
+
+    <!-- 5 Access Granularities -->
+    <g transform="translate(14, 130)">
+      <text x="0" y="14" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="700" fill="#f8fafc">5 Indexing Granularities (Most Coarse ──▶ Bit):</text>
+
+      <rect x="0" y="24" width="402" height="30" rx="4" fill="#091526" stroke="#1e3a5f"/>
+      <text x="10" y="43" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" font-weight="700" fill="#34d399">my_array[2][5][17]</text>
+      <text x="392" y="43" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#cbd5e1" text-anchor="end">Full 128-byte vector</text>
+
+      <rect x="0" y="59" width="402" height="30" rx="4" fill="#091526" stroke="#1e3a5f"/>
+      <text x="10" y="78" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" font-weight="700" fill="#38bdf8">my_array[4][25][10][15:0]</text>
+      <text x="392" y="78" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#cbd5e1" text-anchor="end">16-byte slice</text>
+
+      <rect x="0" y="94" width="402" height="30" rx="4" fill="#091526" stroke="#1e3a5f"/>
+      <text x="10" y="113" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" font-weight="700" fill="#38bdf8">my_array[1][3][20][byte_idx]</text>
+      <text x="392" y="113" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#cbd5e1" text-anchor="end">Single byte (8 bits)</text>
+
+      <rect x="0" y="129" width="402" height="30" rx="4" fill="#091526" stroke="#1e3a5f"/>
+      <text x="10" y="148" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" font-weight="700" fill="#fbbf24">my_array[7][63][31][127][3:0]</text>
+      <text x="392" y="148" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#cbd5e1" text-anchor="end">Lower nibble (4 bits)</text>
+
+      <rect x="0" y="164" width="402" height="30" rx="4" fill="#091526" stroke="#1e3a5f"/>
+      <text x="10" y="183" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" font-weight="700" fill="#c084fc">my_array[0][10][5][b_i][bit_i]</text>
+      <text x="392" y="183" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#cbd5e1" text-anchor="end">Single bit (1-bit)</text>
+    </g>
+  </g>
+</svg>

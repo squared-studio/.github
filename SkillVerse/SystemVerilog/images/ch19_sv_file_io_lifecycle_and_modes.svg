@@ -1,0 +1,111 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 410" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGradCh19A" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#080c14" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <filter id="shadowCh19A" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+    <marker id="arrowCyan19A" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8"/>
+    </marker>
+  </defs>
+
+  <rect width="920" height="410" rx="14" fill="url(#bgGradCh19A)"/>
+
+  <!-- Title -->
+  <text x="460" y="30" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="20" font-weight="700" fill="#f8fafc" text-anchor="middle">SystemVerilog File I/O Lifecycle &amp; Access Modes</text>
+  <text x="460" y="50" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13" fill="#94a3b8" text-anchor="middle">Always open, validate a non-zero descriptor, perform I/O, verify status, and close explicitly</text>
+
+  <!-- Top 5-Stage Lifecycle Pipeline -->
+  <!-- Stage 1 -->
+  <g transform="translate(24, 72)">
+    <rect width="154" height="86" rx="9" fill="#0c1c2e" stroke="#38bdf8" stroke-width="1.8" filter="url(#shadowCh19A)"/>
+    <text x="77" y="24" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="700" fill="#38bdf8" text-anchor="middle">1. Open File</text>
+    <text x="77" y="47" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#e2e8f0" text-anchor="middle">fd = $fopen(</text>
+    <text x="77" y="64" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#7dd3fc" text-anchor="middle">"data.txt", "r");</text>
+  </g>
+  <path d="M 178 115 L 198 115" stroke="#38bdf8" stroke-width="2" marker-end="url(#arrowCyan19A)"/>
+
+  <!-- Stage 2 -->
+  <g transform="translate(202, 72)">
+    <rect width="154" height="86" rx="9" fill="#4c0519" stroke="#f43f5e" stroke-width="1.8" filter="url(#shadowCh19A)"/>
+    <text x="77" y="24" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="700" fill="#fecdd3" text-anchor="middle">2. Verify Handle</text>
+    <text x="77" y="47" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#ffe4e6" text-anchor="middle">if (fd === 0)</text>
+    <text x="77" y="64" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#fda4af" text-anchor="middle">$fatal(1, ...);</text>
+  </g>
+  <path d="M 356 115 L 376 115" stroke="#38bdf8" stroke-width="2" marker-end="url(#arrowCyan19A)"/>
+
+  <!-- Stage 3 -->
+  <g transform="translate(380, 72)">
+    <rect width="160" height="86" rx="9" fill="#072c22" stroke="#10b981" stroke-width="1.8" filter="url(#shadowCh19A)"/>
+    <text x="80" y="24" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="700" fill="#34d399" text-anchor="middle">3. Stream Data</text>
+    <text x="80" y="47" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#d1fae5" text-anchor="middle">$fgets / $fscanf</text>
+    <text x="80" y="64" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#a7f3d0" text-anchor="middle">$fdisplay / $fread</text>
+  </g>
+  <path d="M 540 115 L 560 115" stroke="#38bdf8" stroke-width="2" marker-end="url(#arrowCyan19A)"/>
+
+  <!-- Stage 4 -->
+  <g transform="translate(564, 72)">
+    <rect width="154" height="86" rx="9" fill="#1e1b18" stroke="#f59e0b" stroke-width="1.8" filter="url(#shadowCh19A)"/>
+    <text x="77" y="24" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="700" fill="#fbbf24" text-anchor="middle">4. Status &amp; Flush</text>
+    <text x="77" y="47" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#fde68a" text-anchor="middle">$ferror(fd, msg);</text>
+    <text x="77" y="64" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#fcd34d" text-anchor="middle">$fflush(fd);</text>
+  </g>
+  <path d="M 718 115 L 738 115" stroke="#38bdf8" stroke-width="2" marker-end="url(#arrowCyan19A)"/>
+
+  <!-- Stage 5 -->
+  <g transform="translate(742, 72)">
+    <rect width="154" height="86" rx="9" fill="#1e1b4b" stroke="#818cf8" stroke-width="1.8" filter="url(#shadowCh19A)"/>
+    <text x="77" y="24" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="700" fill="#c7d2fe" text-anchor="middle">5. Close Handle</text>
+    <text x="77" y="47" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#e0e7ff" text-anchor="middle">$fclose(fd);</text>
+    <text x="77" y="64" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#a5b4fc" text-anchor="middle">Flushes OS buffers</text>
+  </g>
+
+  <!-- Bottom 3 Cards: File Mode Families -->
+  <!-- Card A: Read Modes -->
+  <g transform="translate(24, 184)">
+    <rect width="278" height="202" rx="10" fill="#0f172a" stroke="#38bdf8" stroke-width="1.6" filter="url(#shadowCh19A)"/>
+    <rect width="278" height="34" rx="10" fill="#075985"/>
+    <rect x="0" y="22" width="278" height="12" fill="#075985"/>
+    <text x="139" y="22" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="12.5" font-weight="700" fill="#e0f2fe" text-anchor="middle">Read Modes: "r" / "rb"</text>
+    <text x="14" y="56" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#38bdf8">"r"   (text)   |  "rb"  (binary)</text>
+    <text x="14" y="80" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#e2e8f0">File must already exist on disk.</text>
+    <text x="14" y="100" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#cbd5e1">Returns 0 if file is missing or</text>
+    <text x="14" y="116" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#cbd5e1">read permission is denied.</text>
+    <rect x="14" y="136" width="250" height="50" rx="6" fill="#0c1c2e" stroke="#1e3a5f"/>
+    <text x="24" y="156" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" font-weight="700" fill="#7dd3fc">Typical Usage:</text>
+    <text x="24" y="174" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#bae6fd">Stimulus vectors, config, firmware bins.</text>
+  </g>
+
+  <!-- Card B: Write / Truncate Modes -->
+  <g transform="translate(321, 184)">
+    <rect width="278" height="202" rx="10" fill="#0f172a" stroke="#f43f5e" stroke-width="1.6" filter="url(#shadowCh19A)"/>
+    <rect width="278" height="34" rx="10" fill="#881337"/>
+    <rect x="0" y="22" width="278" height="12" fill="#881337"/>
+    <text x="139" y="22" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="12.5" font-weight="700" fill="#ffe4e6" text-anchor="middle">Write / Truncate: "w" / "wb" / "w+"</text>
+    <text x="14" y="56" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#fda4af">"w" / "wb" (write) | "w+" / "w+b" (r/w)</text>
+    <text x="14" y="80" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#e2e8f0">Creates new file if none exists.</text>
+    <text x="14" y="100" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="700" fill="#fecdd3">CAUTION: Truncates existing file</text>
+    <text x="14" y="116" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#fda4af">to zero bytes immediately on open!</text>
+    <rect x="14" y="136" width="250" height="50" rx="6" fill="#4c0519" stroke="#be123c"/>
+    <text x="24" y="156" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" font-weight="700" fill="#fecdd3">Typical Usage:</text>
+    <text x="24" y="174" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#fda4af">Fresh per-run logs, golden output dumps.</text>
+  </g>
+
+  <!-- Card C: Append & Update Modes -->
+  <g transform="translate(618, 184)">
+    <rect width="278" height="202" rx="10" fill="#0f172a" stroke="#10b981" stroke-width="1.6" filter="url(#shadowCh19A)"/>
+    <rect width="278" height="34" rx="10" fill="#065f46"/>
+    <rect x="0" y="22" width="278" height="12" fill="#065f46"/>
+    <text x="139" y="22" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="12.5" font-weight="700" fill="#d1fae5" text-anchor="middle">Append &amp; Update: "a" / "r+"</text>
+    <text x="14" y="56" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#34d399">"a"/"ab" (append) | "r+"/"r+b" (update)</text>
+    <text x="14" y="80" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#e2e8f0">"a" / "ab": appends at EOF; creates</text>
+    <text x="14" y="96" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#cbd5e1">file if missing without overwriting.</text>
+    <text x="14" y="116" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#cbd5e1">"r+" / "r+b": requires existing file.</text>
+    <rect x="14" y="136" width="250" height="50" rx="6" fill="#072c22" stroke="#10b981"/>
+    <text x="24" y="156" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" font-weight="700" fill="#6ee7b7">Typical Usage:</text>
+    <text x="24" y="174" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#d1fae5">Regression summaries, in-place patching.</text>
+  </g>
+</svg>

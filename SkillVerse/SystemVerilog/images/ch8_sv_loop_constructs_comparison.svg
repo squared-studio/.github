@@ -1,0 +1,106 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 430" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGradCh8C" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#080c14" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <filter id="shadowCh8C" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+    <marker id="arrowCh8C" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 8 5 L 0 9 z" fill="#34d399" />
+    </marker>
+  </defs>
+
+  <rect width="920" height="430" rx="14" fill="url(#bgGradCh8C)"/>
+
+  <!-- Title -->
+  <text x="460" y="34" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="20" font-weight="700" fill="#f8fafc" text-anchor="middle">SystemVerilog Loop Constructs: RTL Hardware Unrolling vs. Testbench Iteration</text>
+  <text x="460" y="56" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13" fill="#94a3b8" text-anchor="middle">Static loops in RTL unroll into parallel hardware; dynamic &amp; time-controlled loops drive simulation testbenches</text>
+
+  <!-- Left Panel: RTL Static Unrolling -->
+  <g transform="translate(24, 78)">
+    <rect width="414" height="328" rx="10" fill="#0f172a" stroke="#10b981" stroke-width="1.8" filter="url(#shadowCh8C)"/>
+    <rect width="414" height="38" rx="10" fill="#065f46"/>
+    <rect x="0" y="26" width="414" height="12" fill="#065f46"/>
+    <text x="207" y="24" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13.5" font-weight="700" fill="#d1fae5" text-anchor="middle">RTL Loops: Compile-Time Static Unrolling</text>
+
+    <rect x="14" y="50" width="386" height="58" rx="6" fill="#072c22" stroke="#10b981"/>
+    <text x="24" y="69" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" font-weight="700" fill="#34d399">always_comb begin</text>
+    <text x="36" y="86" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" fill="#e2e8f0">for (int i = 0; i &lt; 4; i++) out[i] = in[i] ^ mask[i];</text>
+    <text x="24" y="102" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" font-weight="700" fill="#34d399">end</text>
+
+    <line x1="207" y1="112" x2="207" y2="138" stroke="#34d399" stroke-width="2" marker-end="url(#arrowCh8C)"/>
+    <text x="220" y="130" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="700" fill="#6ee7b7">Synthesizes as 4 Parallel Slices</text>
+
+    <!-- 4 Unrolled Hardware Slices -->
+    <g transform="translate(14, 144)">
+      <rect x="0" y="0" width="90" height="72" rx="6" fill="#064e3b" stroke="#34d399"/>
+      <text x="45" y="20" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" font-weight="700" fill="#a7f3d0" text-anchor="middle">Slice i=0</text>
+      <text x="45" y="42" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#f8fafc" text-anchor="middle">in[0]^m[0]</text>
+      <text x="45" y="60" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#6ee7b7" text-anchor="middle">──▶ out[0]</text>
+
+      <rect x="98" y="0" width="90" height="72" rx="6" fill="#064e3b" stroke="#34d399"/>
+      <text x="143" y="20" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" font-weight="700" fill="#a7f3d0" text-anchor="middle">Slice i=1</text>
+      <text x="143" y="42" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#f8fafc" text-anchor="middle">in[1]^m[1]</text>
+      <text x="143" y="60" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#6ee7b7" text-anchor="middle">──▶ out[1]</text>
+
+      <rect x="196" y="0" width="90" height="72" rx="6" fill="#064e3b" stroke="#34d399"/>
+      <text x="241" y="20" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" font-weight="700" fill="#a7f3d0" text-anchor="middle">Slice i=2</text>
+      <text x="241" y="42" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#f8fafc" text-anchor="middle">in[2]^m[2]</text>
+      <text x="241" y="60" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#6ee7b7" text-anchor="middle">──▶ out[2]</text>
+
+      <rect x="294" y="0" width="90" height="72" rx="6" fill="#064e3b" stroke="#34d399"/>
+      <text x="339" y="20" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" font-weight="700" fill="#a7f3d0" text-anchor="middle">Slice i=3</text>
+      <text x="339" y="42" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#f8fafc" text-anchor="middle">in[3]^m[3]</text>
+      <text x="339" y="60" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#6ee7b7" text-anchor="middle">──▶ out[3]</text>
+    </g>
+
+    <rect x="14" y="232" width="386" height="82" rx="6" fill="#091526" stroke="#1e3a5f"/>
+    <text x="26" y="253" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11.5" font-weight="700" fill="#34d399">Key RTL Rule:</text>
+    <text x="26" y="272" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#e2e8f0">• Use compile-time constant bounds (<tspan font-family="'JetBrains Mono', Consolas, monospace" fill="#7dd3fc">for</tspan> or <tspan font-family="'JetBrains Mono', Consolas, monospace" fill="#7dd3fc">foreach</tspan>).</text>
+    <text x="26" y="290" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#94a3b8">• Loop iterations happen simultaneously in hardware — not sequentially across clocks.</text>
+  </g>
+
+  <!-- Right Panel: 5 Loop Families in Simulation & RTL -->
+  <g transform="translate(454, 78)">
+    <rect width="442" height="328" rx="10" fill="#0f172a" stroke="#38bdf8" stroke-width="1.8" filter="url(#shadowCh8C)"/>
+    <rect width="442" height="38" rx="10" fill="#075985"/>
+    <rect x="0" y="26" width="442" height="12" fill="#075985"/>
+    <text x="221" y="24" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13.5" font-weight="700" fill="#e0f2fe" text-anchor="middle">Loop Constructs Quick Reference</text>
+
+    <!-- for / foreach -->
+    <g transform="translate(14, 50)">
+      <rect width="414" height="58" rx="6" fill="#0c1e35" stroke="#0284c7"/>
+      <text x="12" y="20" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" font-weight="700" fill="#38bdf8">for (...)  &amp;  foreach (arr[i])</text>
+      <text x="402" y="20" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" font-weight="700" fill="#6ee7b7" text-anchor="end">RTL &amp; TB</text>
+      <text x="12" y="42" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#e2e8f0">Counted iteration or auto-bounded array traversal (no off-by-1 bugs)</text>
+    </g>
+
+    <!-- repeat -->
+    <g transform="translate(14, 116)">
+      <rect width="414" height="54" rx="6" fill="#0c1e35" stroke="#0284c7"/>
+      <text x="12" y="20" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" font-weight="700" fill="#38bdf8">repeat (N) begin ... end</text>
+      <text x="402" y="20" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" font-weight="700" fill="#fbbf24" text-anchor="end">Mostly TB</text>
+      <text x="12" y="40" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#e2e8f0">Evaluates N once at entry (e.g. repeat (5) @(posedge clk);)</text>
+    </g>
+
+    <!-- while & do-while -->
+    <g transform="translate(14, 178)">
+      <rect width="414" height="62" rx="6" fill="#1e1b4b" stroke="#818cf8"/>
+      <text x="12" y="20" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" font-weight="700" fill="#a5b4fc">while (cond)  vs.  do ... while (cond);</text>
+      <text x="402" y="20" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" font-weight="700" fill="#c7d2fe" text-anchor="end">Condition</text>
+      <text x="12" y="39" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#e2e8f0">while checks before entry (exits if 0/X/Z); do-while always runs ≥1 time</text>
+      <text x="12" y="54" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#94a3b8">Ideal for associative traversal: if (map.first(k)) do ... while (map.next(k));</text>
+    </g>
+
+    <!-- forever -->
+    <g transform="translate(14, 248)">
+      <rect width="414" height="66" rx="6" fill="#2a0a14" stroke="#f43f5e"/>
+      <text x="12" y="20" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" font-weight="700" fill="#fb7185">forever begin ... end</text>
+      <text x="402" y="20" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" font-weight="700" fill="#fda4af" text-anchor="end">TB Only!</text>
+      <text x="12" y="39" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#e2e8f0">Runs forever for clock gen / monitors. MUST contain time advance (#/@)</text>
+      <text x="12" y="55" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#fecdd3">or break/disable, or simulation freezes at the current timestamp!</text>
+    </g>
+  </g>
+</svg>

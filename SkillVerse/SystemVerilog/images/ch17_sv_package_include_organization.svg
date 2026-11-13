@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 390" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGradCh17D" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#080c14" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <filter id="shadowCh17D" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+    <marker id="arrowCyan17D" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8"/>
+    </marker>
+  </defs>
+
+  <rect width="920" height="390" rx="14" fill="url(#bgGradCh17D)"/>
+
+  <!-- Title -->
+  <text x="460" y="32" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="20" font-weight="700" fill="#f8fafc" text-anchor="middle">Modular Package File Organization with Included Header Files (.svh)</text>
+  <text x="460" y="54" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13" fill="#94a3b8" text-anchor="middle">Compile only the top wrapper package file (usb_pkg.sv); `include inserts partitioned .svh files in dependency order</text>
+
+  <!-- Left Panel: Compilation Wrapper -->
+  <g transform="translate(24, 80)">
+    <rect width="348" height="284" rx="10" fill="#0f172a" stroke="#38bdf8" stroke-width="1.8" filter="url(#shadowCh17D)"/>
+    <rect width="348" height="36" rx="10" fill="#075985"/>
+    <rect x="0" y="24" width="348" height="12" fill="#075985"/>
+    <text x="174" y="23" font-family="'JetBrains Mono', Consolas, monospace" font-size="13" font-weight="700" fill="#e0f2fe" text-anchor="middle">usb_pkg.sv (Single Compile Target)</text>
+
+    <rect x="16" y="52" width="316" height="172" rx="7" fill="#091526" stroke="#0284c7"/>
+    <text x="28" y="74" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" font-weight="700" fill="#38bdf8">package usb_pkg;</text>
+    <text x="38" y="98" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#fde68a">`include "usb_constants.svh"</text>
+    <text x="38" y="120" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#7dd3fc">`include "usb_types.svh"</text>
+    <text x="38" y="142" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#a7f3d0">`include "usb_functions.svh"</text>
+    <text x="38" y="164" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#a7f3d0">`include "usb_tasks.svh"</text>
+    <text x="38" y="186" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#d8b4fe">`include "usb_classes.svh"</text>
+    <text x="28" y="210" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" font-weight="700" fill="#38bdf8">endpackage : usb_pkg</text>
+
+    <rect x="16" y="236" width="316" height="34" rx="6" fill="#072c22" stroke="#10b981"/>
+    <text x="174" y="257" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#d1fae5" text-anchor="middle">Never pass .svh files directly on compiler command line</text>
+  </g>
+
+  <!-- Right Panel: Included Files -->
+  <g transform="translate(420, 80)">
+    <!-- File 1 -->
+    <line x1="-46" y1="92" x2="-4" y2="30" stroke="#38bdf8" stroke-width="1.8" marker-end="url(#arrowCyan17D)"/>
+    <rect x="0" y="6" width="476" height="46" rx="7" fill="#181208" stroke="#f59e0b"/>
+    <text x="14" y="25" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" font-weight="700" fill="#fbbf24">usb_constants.svh</text>
+    <text x="178" y="25" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#e2e8f0">parameters, localparams, PID/CRC constants</text>
+    <text x="14" y="42" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="9.5" fill="#94a3b8">Included 1st so widths/depths exist for all typedefs below</text>
+
+    <!-- File 2 -->
+    <line x1="-46" y1="114" x2="-4" y2="86" stroke="#38bdf8" stroke-width="1.8" marker-end="url(#arrowCyan17D)"/>
+    <rect x="0" y="62" width="476" height="46" rx="7" fill="#0c1c2e" stroke="#38bdf8"/>
+    <text x="14" y="81" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" font-weight="700" fill="#7dd3fc">usb_types.svh</text>
+    <text x="178" y="81" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#e2e8f0">enums (usb_state_e), packed structs (usb_transaction_t)</text>
+    <text x="14" y="98" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="9.5" fill="#94a3b8">Synthesizable shared data types used by RTL &amp; TB</text>
+
+    <!-- File 3 -->
+    <line x1="-46" y1="136" x2="-4" y2="142" stroke="#38bdf8" stroke-width="1.8" marker-end="url(#arrowCyan17D)"/>
+    <rect x="0" y="118" width="476" height="46" rx="7" fill="#072c22" stroke="#10b981"/>
+    <text x="14" y="137" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" font-weight="700" fill="#6ee7b7">usb_functions.svh</text>
+    <text x="178" y="137" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#e2e8f0">CRC helpers, usb_state_to_string(), decode utilities</text>
+    <text x="14" y="154" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="9.5" fill="#94a3b8">Pure zero-time automatic functions</text>
+
+    <!-- File 4 -->
+    <line x1="-46" y1="158" x2="-4" y2="198" stroke="#38bdf8" stroke-width="1.8" marker-end="url(#arrowCyan17D)"/>
+    <rect x="0" y="174" width="476" height="46" rx="7" fill="#072c22" stroke="#10b981"/>
+    <text x="14" y="193" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" font-weight="700" fill="#34d399">usb_tasks.svh</text>
+    <text x="178" y="193" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#e2e8f0">Protocol formatting, common logging &amp; reporting tasks</text>
+    <text x="14" y="210" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="9.5" fill="#94a3b8">Textual inclusion keeps files modular for team edits</text>
+
+    <!-- File 5 -->
+    <line x1="-46" y1="180" x2="-4" y2="254" stroke="#38bdf8" stroke-width="1.8" marker-end="url(#arrowCyan17D)"/>
+    <rect x="0" y="230" width="476" height="54" rx="7" fill="#1e1035" stroke="#a855f7"/>
+    <text x="14" y="249" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" font-weight="700" fill="#d8b4fe">usb_classes.svh</text>
+    <text x="178" y="249" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#f3e8ff">usb_packet, usb_driver, usb_monitor, usb_scoreboard</text>
+    <text x="14" y="270" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="9.5" fill="#cbd5e1">Note: editing any .svh requires recompiling usb_pkg and all importers</text>
+  </g>
+</svg>

@@ -1,0 +1,150 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 430" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGradProc" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#080c14" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <filter id="shadowProc" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+    <marker id="arrCyanP" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#38bdf8"/>
+    </marker>
+    <marker id="arrEmeraldP" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#34d399"/>
+    </marker>
+    <marker id="arrAmberP" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#f59e0b"/>
+    </marker>
+  </defs>
+
+  <rect width="920" height="430" rx="14" fill="url(#bgGradProc)"/>
+
+  <!-- Title -->
+  <text x="460" y="34" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="20" font-weight="700" fill="#f8fafc" text-anchor="middle">Specialized Procedural Blocks &amp; Hardware Intent</text>
+  <text x="460" y="56" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13" fill="#94a3b8" text-anchor="middle">Replacing Verilog's ambiguous 'always' block with synthesis-checked constructs</text>
+
+  <!-- Column 1: always_ff -->
+  <g transform="translate(26, 78)">
+    <rect width="276" height="328" rx="10" fill="#0f172a" stroke="#38bdf8" stroke-width="1.8" filter="url(#shadowProc)"/>
+    <rect width="276" height="42" rx="10" fill="#075985"/>
+    <rect x="0" y="30" width="276" height="12" fill="#075985"/>
+    <text x="138" y="26" font-family="'JetBrains Mono', Consolas, monospace" font-size="15" font-weight="700" fill="#e0f2fe" text-anchor="middle">always_ff</text>
+
+    <!-- Code Snippet Box -->
+    <rect x="14" y="54" width="248" height="58" rx="6" fill="#09101c" stroke="#1e3a5f"/>
+    <text x="24" y="73" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#7dd3fc">always_ff @(posedge clk</text>
+    <text x="24" y="88" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#7dd3fc">          or negedge rst_n)</text>
+    <text x="24" y="103" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#e2e8f0">  q &lt;= (!rst_n) ? '0 : d;</text>
+
+    <!-- Hardware Schematic Box: D Flip-Flop -->
+    <rect x="14" y="122" width="248" height="106" rx="6" fill="#0c1524" stroke="#1e293b"/>
+    <text x="138" y="139" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="600" fill="#38bdf8" text-anchor="middle">Inferred Hardware: Edge-Triggered Flip-Flop</text>
+    <!-- DFF Body -->
+    <rect x="98" y="150" width="80" height="62" rx="4" fill="#102a43" stroke="#38bdf8" stroke-width="2"/>
+    <text x="110" y="170" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#e0f2fe">D</text>
+    <text x="163" y="170" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#e0f2fe">Q</text>
+    <!-- Clock triangle -->
+    <polyline points="98,191 110,198 98,205" fill="none" stroke="#38bdf8" stroke-width="2"/>
+    <text x="114" y="201" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#7dd3fc">CLK</text>
+    <!-- Wires -->
+    <line x1="50" y1="166" x2="92" y2="166" stroke="#38bdf8" stroke-width="2" marker-end="url(#arrCyanP)"/>
+    <text x="38" y="170" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#cbd5e1">d</text>
+    <line x1="178" y1="166" x2="222" y2="166" stroke="#38bdf8" stroke-width="2" marker-end="url(#arrCyanP)"/>
+    <text x="234" y="170" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#cbd5e1">q</text>
+    <line x1="50" y1="198" x2="92" y2="198" stroke="#a855f7" stroke-width="2" marker-end="url(#arrCyanP)"/>
+    <text x="32" y="202" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#c084fc">clk</text>
+    <line x1="138" y1="222" x2="138" y2="212" stroke="#f43f5e" stroke-width="2"/>
+    <text x="160" y="222" font-family="'JetBrains Mono', Consolas, monospace" font-size="9.5" fill="#fda4af">rst_n</text>
+
+    <!-- Rules -->
+    <g transform="translate(16, 240)">
+      <text x="0" y="14" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11.5" font-weight="700" fill="#7dd3fc">Key Rules &amp; Tool Checks</text>
+      <text x="0" y="34" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#cbd5e1">• Models clocked state registers</text>
+      <text x="0" y="52" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#cbd5e1">• Use nonblocking assignments (&lt;=)</text>
+      <text x="0" y="70" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#cbd5e1">• Tools flag non-FF / latch inference</text>
+    </g>
+  </g>
+
+  <!-- Column 2: always_comb -->
+  <g transform="translate(322, 78)">
+    <rect width="276" height="328" rx="10" fill="#0f172a" stroke="#34d399" stroke-width="1.8" filter="url(#shadowProc)"/>
+    <rect width="276" height="42" rx="10" fill="#065f46"/>
+    <rect x="0" y="30" width="276" height="12" fill="#065f46"/>
+    <text x="138" y="26" font-family="'JetBrains Mono', Consolas, monospace" font-size="15" font-weight="700" fill="#d1fae5" text-anchor="middle">always_comb</text>
+
+    <!-- Code Snippet Box -->
+    <rect x="14" y="54" width="248" height="58" rx="6" fill="#09101c" stroke="#065f46"/>
+    <text x="24" y="74" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#6ee7b7">always_comb begin</text>
+    <text x="24" y="90" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#e2e8f0">  y = sel ? (a + b) : (a - b);</text>
+    <text x="24" y="105" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#6ee7b7">end</text>
+
+    <!-- Hardware Schematic Box: Combinational Gates & Mux -->
+    <rect x="14" y="122" width="248" height="106" rx="6" fill="#0c1524" stroke="#1e293b"/>
+    <text x="138" y="139" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="600" fill="#34d399" text-anchor="middle">Inferred Hardware: Pure Combinational Logic</text>
+    <!-- Combinational cloud / blocks -->
+    <rect x="74" y="152" width="52" height="24" rx="4" fill="#064e3b" stroke="#34d399" stroke-width="1.5"/>
+    <text x="100" y="168" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#d1fae5" text-anchor="middle">a + b</text>
+    <rect x="74" y="186" width="52" height="24" rx="4" fill="#064e3b" stroke="#34d399" stroke-width="1.5"/>
+    <text x="100" y="202" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#d1fae5" text-anchor="middle">a - b</text>
+    <!-- Mux Trapezoid -->
+    <polygon points="154,152 184,162 184,200 154,210" fill="#064e3b" stroke="#34d399" stroke-width="2"/>
+    <text x="169" y="185" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" font-weight="700" fill="#d1fae5" text-anchor="middle">MUX</text>
+    <!-- Wires -->
+    <line x1="126" y1="164" x2="150" y2="164" stroke="#34d399" stroke-width="1.8" marker-end="url(#arrEmeraldP)"/>
+    <line x1="126" y1="198" x2="150" y2="198" stroke="#34d399" stroke-width="1.8" marker-end="url(#arrEmeraldP)"/>
+    <line x1="184" y1="181" x2="222" y2="181" stroke="#34d399" stroke-width="2" marker-end="url(#arrEmeraldP)"/>
+    <text x="234" y="185" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#cbd5e1">y</text>
+    <line x1="169" y1="223" x2="169" y2="207" stroke="#fbbf24" stroke-width="1.8"/>
+    <text x="190" y="222" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#fbbf24">sel</text>
+    <text x="34" y="168" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#cbd5e1">a,b →</text>
+    <text x="34" y="202" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#cbd5e1">a,b →</text>
+
+    <!-- Rules -->
+    <g transform="translate(16, 240)">
+      <text x="0" y="14" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11.5" font-weight="700" fill="#6ee7b7">Key Rules &amp; Tool Checks</text>
+      <text x="0" y="34" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#cbd5e1">• Auto sensitivity + runs at time 0</text>
+      <text x="0" y="52" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#cbd5e1">• Assign every output on every path</text>
+      <text x="0" y="70" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#cbd5e1">• Warns if accidental latch inferred</text>
+    </g>
+  </g>
+
+  <!-- Column 3: always_latch -->
+  <g transform="translate(618, 78)">
+    <rect width="276" height="328" rx="10" fill="#0f172a" stroke="#f59e0b" stroke-width="1.8" filter="url(#shadowProc)"/>
+    <rect width="276" height="42" rx="10" fill="#78350f"/>
+    <rect x="0" y="30" width="276" height="12" fill="#78350f"/>
+    <text x="138" y="26" font-family="'JetBrains Mono', Consolas, monospace" font-size="15" font-weight="700" fill="#fef3c7" text-anchor="middle">always_latch</text>
+
+    <!-- Code Snippet Box -->
+    <rect x="14" y="54" width="248" height="58" rx="6" fill="#09101c" stroke="#78350f"/>
+    <text x="24" y="74" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#fbbf24">always_latch begin</text>
+    <text x="24" y="90" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#e2e8f0">  if (en) q &lt;= d;</text>
+    <text x="24" y="105" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#fbbf24">end</text>
+
+    <!-- Hardware Schematic Box: Level-Sensitive Latch -->
+    <rect x="14" y="122" width="248" height="106" rx="6" fill="#0c1524" stroke="#1e293b"/>
+    <text x="138" y="139" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="600" fill="#fbbf24" text-anchor="middle">Inferred Hardware: Level-Sensitive Latch</text>
+    <!-- Latch Body -->
+    <rect x="98" y="150" width="80" height="62" rx="4" fill="#291d0c" stroke="#f59e0b" stroke-width="2"/>
+    <text x="110" y="170" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#fef3c7">D</text>
+    <text x="163" y="170" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#fef3c7">Q</text>
+    <text x="110" y="201" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#fbbf24">EN</text>
+    <text x="148" y="201" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="9" fill="#fde68a">(level)</text>
+    <!-- Wires -->
+    <line x1="50" y1="166" x2="92" y2="166" stroke="#f59e0b" stroke-width="2" marker-end="url(#arrAmberP)"/>
+    <text x="38" y="170" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#cbd5e1">d</text>
+    <line x1="178" y1="166" x2="222" y2="166" stroke="#f59e0b" stroke-width="2" marker-end="url(#arrAmberP)"/>
+    <text x="234" y="170" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#cbd5e1">q</text>
+    <line x1="50" y1="198" x2="92" y2="198" stroke="#f59e0b" stroke-width="2" marker-end="url(#arrAmberP)"/>
+    <text x="32" y="202" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#fbbf24">en</text>
+
+    <!-- Rules -->
+    <g transform="translate(16, 240)">
+      <text x="0" y="14" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11.5" font-weight="700" fill="#fbbf24">Key Rules &amp; Tool Checks</text>
+      <text x="0" y="34" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#cbd5e1">• Explicitly documents intent to latch</text>
+      <text x="0" y="52" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#cbd5e1">• Transparent while enable is active</text>
+      <text x="0" y="70" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#cbd5e1">• Tools check latch behavior matches</text>
+    </g>
+  </g>
+</svg>

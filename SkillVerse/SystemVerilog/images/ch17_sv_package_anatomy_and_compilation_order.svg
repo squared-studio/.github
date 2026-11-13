@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 400" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGradCh17A" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#080c14" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <filter id="shadowCh17A" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+    <marker id="arrowCyan17A" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8"/>
+    </marker>
+    <marker id="arrowGreen17A" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#34d399"/>
+    </marker>
+  </defs>
+
+  <rect width="920" height="400" rx="14" fill="url(#bgGradCh17A)"/>
+
+  <!-- Title -->
+  <text x="460" y="32" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="20" font-weight="700" fill="#f8fafc" text-anchor="middle">SystemVerilog Package Anatomy &amp; Compilation Dependency Order</text>
+  <text x="460" y="54" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13" fill="#94a3b8" text-anchor="middle">Packages bundle shareable declarations into isolated namespaces and must be compiled before importers</text>
+
+  <!-- Left Panel: Allowed vs Prohibited -->
+  <g transform="translate(24, 78)">
+    <rect width="434" height="298" rx="10" fill="#0f172a" stroke="#38bdf8" stroke-width="1.8" filter="url(#shadowCh17A)"/>
+    <rect width="434" height="36" rx="10" fill="#075985"/>
+    <rect x="0" y="24" width="434" height="12" fill="#075985"/>
+    <text x="217" y="23" font-family="'JetBrains Mono', Consolas, monospace" font-size="13" font-weight="700" fill="#e0f2fe" text-anchor="middle">package my_pkg; ... endpackage</text>
+
+    <!-- Allowed Card -->
+    <rect x="14" y="48" width="406" height="134" rx="7" fill="#072c22" stroke="#10b981"/>
+    <text x="26" y="68" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11.5" font-weight="700" fill="#34d399">Allowed Inside package (Declarative Items):</text>
+    <text x="26" y="89" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#d1fae5">- typedef (enum, packed/unpacked struct, union)</text>
+    <text x="26" y="108" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#d1fae5">- parameter / localparam / const constants</text>
+    <text x="26" y="127" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#d1fae5">- function / task (automatic recommended)</text>
+    <text x="26" y="146" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#d1fae5">- class definitions &amp; constraints</text>
+    <text x="26" y="165" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#7dd3fc">- import / export of other compiled packages</text>
+
+    <!-- Prohibited Card -->
+    <rect x="14" y="194" width="406" height="90" rx="7" fill="#4c0519" stroke="#f43f5e"/>
+    <text x="26" y="214" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11.5" font-weight="700" fill="#fecdd3">Prohibited Inside package (Design/Procedural Scopes):</text>
+    <text x="26" y="235" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#fda4af">- module, interface, program, checker definitions</text>
+    <text x="26" y="254" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#fda4af">- always, always_ff, always_comb, initial, assign</text>
+    <text x="26" y="273" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#fda4af">- hardware net declarations (wire, tri)</text>
+  </g>
+
+  <!-- Right Panel: Compilation Order DAG -->
+  <g transform="translate(476, 78)">
+    <rect width="420" height="298" rx="10" fill="#0f172a" stroke="#f59e0b" stroke-width="1.8" filter="url(#shadowCh17A)"/>
+    <rect width="420" height="36" rx="10" fill="#78350f"/>
+    <rect x="0" y="24" width="420" height="12" fill="#78350f"/>
+    <text x="210" y="23" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13.5" font-weight="700" fill="#fef3c7" text-anchor="middle">Strict Compilation Order (No Cycles)</text>
+
+    <!-- Step 1 -->
+    <rect x="60" y="50" width="300" height="44" rx="7" fill="#0c1c2e" stroke="#38bdf8"/>
+    <text x="210" y="69" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" font-weight="700" fill="#38bdf8" text-anchor="middle">1. data_types_pkg.sv</text>
+    <text x="210" y="85" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#cbd5e1" text-anchor="middle">Base typedefs &amp; constants (no dependencies)</text>
+
+    <line x1="210" y1="94" x2="210" y2="114" stroke="#38bdf8" stroke-width="2" marker-end="url(#arrowCyan17A)"/>
+
+    <!-- Step 2 -->
+    <rect x="60" y="116" width="300" height="48" rx="7" fill="#181208" stroke="#f59e0b"/>
+    <text x="210" y="135" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" font-weight="700" fill="#fbbf24" text-anchor="middle">2. protocol_pkg.sv</text>
+    <text x="210" y="153" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#fde68a" text-anchor="middle">import data_types_pkg::*; + classes</text>
+
+    <line x1="140" y1="164" x2="108" y2="192" stroke="#34d399" stroke-width="2" marker-end="url(#arrowGreen17A)"/>
+    <line x1="280" y1="164" x2="312" y2="192" stroke="#34d399" stroke-width="2" marker-end="url(#arrowGreen17A)"/>
+
+    <!-- Step 3A & 3B -->
+    <rect x="20" y="196" width="176" height="46" rx="7" fill="#072c22" stroke="#10b981"/>
+    <text x="108" y="216" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" font-weight="700" fill="#6ee7b7" text-anchor="middle">3a. rtl_dut.sv</text>
+    <text x="108" y="232" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="9.5" fill="#d1fae5" text-anchor="middle">Imports shared types</text>
+
+    <rect x="224" y="196" width="176" height="46" rx="7" fill="#1e1035" stroke="#a855f7"/>
+    <text x="312" y="216" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" font-weight="700" fill="#d8b4fe" text-anchor="middle">3b. tb_top.sv</text>
+    <text x="312" y="232" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="9.5" fill="#e9d5ff" text-anchor="middle">Imports classes &amp; utils</text>
+
+    <!-- Rule footer -->
+    <rect x="20" y="252" width="380" height="34" rx="6" fill="#091526" stroke="#334155"/>
+    <text x="210" y="273" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#fda4af" text-anchor="middle">Circular imports (pkg_A &lt;-&gt; pkg_B) fail elaboration; keep DAG acyclic</text>
+  </g>
+</svg>

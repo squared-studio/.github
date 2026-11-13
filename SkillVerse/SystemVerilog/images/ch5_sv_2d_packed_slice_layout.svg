@@ -1,0 +1,112 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 390" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGradCh5B" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#080c14" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <filter id="shadowCh5B" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+  </defs>
+
+  <rect width="920" height="390" rx="14" fill="url(#bgGradCh5B)"/>
+
+  <!-- Title -->
+  <text x="460" y="34" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="20" font-weight="700" fill="#f8fafc" text-anchor="middle">2D Packed Array Bit Layout vs. Unpacked Element Indexing</text>
+  <text x="460" y="56" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13" fill="#94a3b8" text-anchor="middle">Packed dimensions slice a single contiguous bit vector; unpacked dimensions index separate element slots</text>
+
+  <!-- Left Panel: 2D Packed Array -->
+  <g transform="translate(24, 78)">
+    <rect width="456" height="288" rx="10" fill="#0f172a" stroke="#38bdf8" stroke-width="1.8" filter="url(#shadowCh5B)"/>
+    <rect width="456" height="38" rx="10" fill="#075985"/>
+    <rect x="0" y="26" width="456" height="12" fill="#075985"/>
+    <text x="228" y="24" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13.5" font-weight="700" fill="#e0f2fe" text-anchor="middle">Packed 2D Bit Layout (Contiguous 48-Bit Vector)</text>
+
+    <!-- Code header -->
+    <rect x="14" y="50" width="428" height="30" rx="6" fill="#0c1e35" stroke="#1e3a5f"/>
+    <text x="228" y="69" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" font-weight="700" fill="#38bdf8" text-anchor="middle">logic [2:0][15:0] register_file = 48'h2345_6789_ABCD;</text>
+
+    <!-- 3 Words -->
+    <g transform="translate(14, 96)">
+      <!-- Word [2] -->
+      <rect x="0" y="0" width="136" height="80" rx="6" fill="#082f49" stroke="#0284c7" stroke-width="1.4"/>
+      <text x="68" y="20" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" font-weight="700" fill="#7dd3fc" text-anchor="middle">reg_file[2]</text>
+      <text x="68" y="42" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="700" fill="#f8fafc" text-anchor="middle">16'h2345</text>
+      <text x="68" y="64" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#94a3b8" text-anchor="middle">Bits [47:32]</text>
+
+      <!-- Word [1] Split into [15:8] and [7:0] -->
+      <rect x="146" y="0" width="136" height="80" rx="6" fill="#172554" stroke="#f59e0b" stroke-width="1.8"/>
+      <text x="214" y="20" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" font-weight="700" fill="#fbbf24" text-anchor="middle">reg_file[1]</text>
+      <!-- Upper byte highlighted -->
+      <rect x="152" y="28" width="60" height="30" rx="4" fill="#451a03" stroke="#f59e0b" stroke-width="1.4"/>
+      <text x="182" y="48" font-family="'JetBrains Mono', Consolas, monospace" font-size="13" font-weight="700" fill="#fde68a" text-anchor="middle">8'h67</text>
+      <!-- Lower byte -->
+      <rect x="216" y="28" width="60" height="30" rx="4" fill="#0f172a" stroke="#475569"/>
+      <text x="246" y="48" font-family="'JetBrains Mono', Consolas, monospace" font-size="13" font-weight="700" fill="#cbd5e1" text-anchor="middle">8'h89</text>
+      <text x="182" y="72" font-family="'JetBrains Mono', Consolas, monospace" font-size="9.5" fill="#fbbf24" text-anchor="middle">[15:8]</text>
+      <text x="246" y="72" font-family="'JetBrains Mono', Consolas, monospace" font-size="9.5" fill="#94a3b8" text-anchor="middle">[7:0]</text>
+
+      <!-- Word [0] -->
+      <rect x="292" y="0" width="136" height="80" rx="6" fill="#082f49" stroke="#0284c7" stroke-width="1.4"/>
+      <text x="360" y="20" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" font-weight="700" fill="#7dd3fc" text-anchor="middle">reg_file[0]</text>
+      <text x="360" y="42" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="700" fill="#f8fafc" text-anchor="middle">16'hABCD</text>
+      <text x="360" y="64" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#94a3b8" text-anchor="middle">Bits [15:0]</text>
+    </g>
+
+    <!-- Callout below Word [1] -->
+    <path d="M 196 176 L 196 196" stroke="#f59e0b" stroke-width="1.8" stroke-dasharray="3,2"/>
+    <rect x="14" y="198" width="428" height="74" rx="6" fill="#131c2e" stroke="#f59e0b" stroke-width="1.2"/>
+    <text x="28" y="220" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" font-weight="700" fill="#fbbf24">byte_slice = register_file[1][15:8];  // Result: 8'h67</text>
+    <text x="28" y="242" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#e2e8f0">• Outer index [1] selects word 1; inner slice [15:8] extracts upper byte</text>
+    <text x="28" y="260" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#94a3b8">• Assigning &gt;48 bits truncates MSB bits; whole vector supports +, &amp;, &lt;&lt;</text>
+  </g>
+
+  <!-- Right Panel: Unpacked Element Indexing & Patterns -->
+  <g transform="translate(496, 78)">
+    <rect width="400" height="288" rx="10" fill="#0f172a" stroke="#10b981" stroke-width="1.8" filter="url(#shadowCh5B)"/>
+    <rect width="400" height="38" rx="10" fill="#065f46"/>
+    <rect x="0" y="26" width="400" height="12" fill="#065f46"/>
+    <text x="200" y="24" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13.5" font-weight="700" fill="#d1fae5" text-anchor="middle">Unpacked Element Indexing &amp; Ranges</text>
+
+    <!-- Ascending Shorthand -->
+    <g transform="translate(14, 52)">
+      <rect width="372" height="96" rx="6" fill="#072c22" stroke="#10b981" stroke-width="1.2"/>
+      <text x="12" y="21" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" font-weight="700" fill="#34d399">int scores [5]  ≡  int scores [0:4]</text>
+      <g transform="translate(12, 32)">
+        <rect x="0" y="0" width="66" height="44" rx="4" fill="#064e3b" stroke="#34d399"/>
+        <text x="33" y="16" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#a7f3d0" text-anchor="middle">[0]</text>
+        <text x="33" y="34" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" font-weight="700" fill="#f8fafc" text-anchor="middle">95</text>
+
+        <rect x="70" y="0" width="66" height="44" rx="4" fill="#064e3b" stroke="#34d399"/>
+        <text x="103" y="16" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#a7f3d0" text-anchor="middle">[1]</text>
+        <text x="103" y="34" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" font-weight="700" fill="#f8fafc" text-anchor="middle">88</text>
+
+        <rect x="140" y="0" width="66" height="44" rx="4" fill="#064e3b" stroke="#34d399"/>
+        <text x="173" y="16" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#a7f3d0" text-anchor="middle">[2]</text>
+        <text x="173" y="34" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" font-weight="700" fill="#f8fafc" text-anchor="middle">76</text>
+
+        <rect x="210" y="0" width="66" height="44" rx="4" fill="#064e3b" stroke="#34d399"/>
+        <text x="243" y="16" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#a7f3d0" text-anchor="middle">[3]</text>
+        <text x="243" y="34" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" font-weight="700" fill="#f8fafc" text-anchor="middle">99</text>
+
+        <rect x="280" y="0" width="66" height="44" rx="4" fill="#064e3b" stroke="#34d399"/>
+        <text x="313" y="16" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#a7f3d0" text-anchor="middle">[4]</text>
+        <text x="313" y="34" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" font-weight="700" fill="#f8fafc" text-anchor="middle">82</text>
+      </g>
+    </g>
+
+    <!-- Descending Explicit Range -->
+    <g transform="translate(14, 160)">
+      <rect width="372" height="58" rx="6" fill="#1e1b4b" stroke="#818cf8" stroke-width="1.2"/>
+      <text x="12" y="21" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" font-weight="700" fill="#a5b4fc">logic [7:0] mem [3:0]; // Descending!</text>
+      <text x="12" y="42" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#e2e8f0">Leftmost slot is mem[3], rightmost slot is mem[0]</text>
+    </g>
+
+    <!-- Assignment Patterns -->
+    <g transform="translate(14, 228)">
+      <rect width="372" height="46" rx="6" fill="#131c2e" stroke="#475569"/>
+      <text x="12" y="19" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" font-weight="700" fill="#fbbf24">transaction_data = '{default: 0};</text>
+      <text x="12" y="36" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#cbd5e1">Assignment pattern '{...} sets each discrete element separately</text>
+    </g>
+  </g>
+</svg>

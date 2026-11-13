@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 390" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGradCh6D" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#080c14" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <filter id="shadowCh6D" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+    <marker id="arrowCh6D" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 8 5 L 0 9 z" fill="#38bdf8" />
+    </marker>
+    <marker id="arrowGreenD" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 8 5 L 0 9 z" fill="#34d399" />
+    </marker>
+  </defs>
+
+  <rect width="920" height="390" rx="14" fill="url(#bgGradCh6D)"/>
+
+  <!-- Title -->
+  <text x="460" y="34" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="19.5" font-weight="700" fill="#f8fafc" text-anchor="middle">Unary Bitwise Reduction (Packed RTL) vs. Array Reduction Methods (Unpacked)</text>
+  <text x="460" y="56" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13" fill="#94a3b8" text-anchor="middle">Unary operators (^vec) reduce bits within one packed vector; .and()/.or()/.xor() reduce across unpacked elements</text>
+
+  <!-- Left Panel: Packed Vector Unary Reduction (RTL) -->
+  <g transform="translate(24, 78)">
+    <rect width="424" height="288" rx="10" fill="#0f172a" stroke="#38bdf8" stroke-width="1.8" filter="url(#shadowCh6D)"/>
+    <rect width="424" height="38" rx="10" fill="#075985"/>
+    <rect x="0" y="26" width="424" height="12" fill="#075985"/>
+    <text x="212" y="24" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13.5" font-weight="700" fill="#e0f2fe" text-anchor="middle">Synthesizable RTL: Unary Bitwise Reduction</text>
+
+    <rect x="14" y="52" width="396" height="44" rx="6" fill="#0c1e35" stroke="#0284c7"/>
+    <text x="24" y="70" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" font-weight="700" fill="#38bdf8">logic [7:0][31:0] register_file;</text>
+    <text x="24" y="88" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" font-weight="700" fill="#7dd3fc">assign parity_bit = ^register_file[3];</text>
+
+    <!-- Horizontal 32 bits reduced to 1 bit -->
+    <g transform="translate(14, 114)">
+      <text x="0" y="13" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="600" fill="#cbd5e1">XORs all 32 bits inside ONE packed word [3]:</text>
+      <rect x="0" y="24" width="396" height="34" rx="5" fill="#082f49" stroke="#38bdf8"/>
+      <text x="198" y="45" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" font-weight="700" fill="#e2e8f0" text-anchor="middle">bit[31] ^ bit[30] ^ ... ^ bit[1] ^ bit[0]</text>
+      <line x1="198" y1="60" x2="198" y2="86" stroke="#38bdf8" stroke-width="2" marker-end="url(#arrowCh6D)"/>
+      <rect x="124" y="90" width="148" height="32" rx="5" fill="#064e3b" stroke="#10b981"/>
+      <text x="198" y="110" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" font-weight="700" fill="#a7f3d0" text-anchor="middle">1-bit parity_bit</text>
+    </g>
+
+    <text x="24" y="272" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#34d399" font-weight="600">✓ Synthesizes directly to a combinational XOR tree</text>
+  </g>
+
+  <!-- Right Panel: Unpacked Array Reduction Method -->
+  <g transform="translate(472, 78)">
+    <rect width="424" height="288" rx="10" fill="#0f172a" stroke="#10b981" stroke-width="1.8" filter="url(#shadowCh6D)"/>
+    <rect width="424" height="38" rx="10" fill="#065f46"/>
+    <rect x="0" y="26" width="424" height="12" fill="#065f46"/>
+    <text x="212" y="24" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13.5" font-weight="700" fill="#d1fae5" text-anchor="middle">Array Methods: Element-Wise Reduction</text>
+
+    <rect x="14" y="52" width="396" height="44" rx="6" fill="#072c22" stroke="#10b981"/>
+    <text x="24" y="70" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" font-weight="700" fill="#34d399">bit [3:0] masks[] = '{4'b1010, 4'b1100, 4'b1111};</text>
+    <text x="24" y="88" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" font-weight="700" fill="#a7f3d0">bit [3:0] combined = masks.and();</text>
+
+    <!-- Vertical bit-column alignment -->
+    <g transform="translate(14, 114)">
+      <text x="0" y="13" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="600" fill="#cbd5e1">Bitwise AND across unpacked elements [0..2]:</text>
+      <rect x="0" y="24" width="396" height="72" rx="5" fill="#091526" stroke="#1e3a5f"/>
+      <text x="24" y="43" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" fill="#cbd5e1">masks[0] = <tspan fill="#38bdf8" font-weight="700">4'b1010</tspan></text>
+      <text x="24" y="61" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" fill="#cbd5e1">masks[1] = <tspan fill="#38bdf8" font-weight="700">4'b1100</tspan>   (AND per bit lane)</text>
+      <text x="24" y="79" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" fill="#cbd5e1">masks[2] = <tspan fill="#38bdf8" font-weight="700">4'b1111</tspan></text>
+
+      <line x1="198" y1="98" x2="198" y2="116" stroke="#34d399" stroke-width="2" marker-end="url(#arrowGreenD)"/>
+      <rect x="108" y="120" width="180" height="30" rx="5" fill="#064e3b" stroke="#10b981"/>
+      <text x="198" y="140" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" font-weight="700" fill="#a7f3d0" text-anchor="middle">4-bit result: 4'b1000</text>
+    </g>
+
+    <text x="24" y="278" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#94a3b8">Preserves element width (4 bits); ideal for TB masks &amp; checksums</text>
+  </g>
+</svg>

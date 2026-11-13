@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 410" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGradCh10B" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#080c14" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <filter id="shadowCh10B" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+  </defs>
+
+  <rect width="920" height="410" rx="14" fill="url(#bgGradCh10B)"/>
+
+  <!-- Title -->
+  <text x="460" y="34" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="20" font-weight="700" fill="#f8fafc" text-anchor="middle">Controlling Child Processes: wait fork Synchronization vs. Scoped disable</text>
+  <text x="460" y="56" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13" fill="#94a3b8" text-anchor="middle">Synchronizing background join_none workers with wait fork and safely scoping cancellation</text>
+
+  <!-- Left Panel: join_none + wait fork -->
+  <g transform="translate(24, 78)">
+    <rect width="424" height="308" rx="10" fill="#0f172a" stroke="#38bdf8" stroke-width="1.8" filter="url(#shadowCh10B)"/>
+    <rect width="424" height="38" rx="10" fill="#075985"/>
+    <rect x="0" y="26" width="424" height="12" fill="#075985"/>
+    <text x="212" y="24" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13.5" font-weight="700" fill="#e0f2fe" text-anchor="middle">join_none + wait fork Synchronization Barrier</text>
+
+    <rect x="14" y="50" width="396" height="82" rx="6" fill="#0c1e35" stroke="#0284c7"/>
+    <text x="24" y="69" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#7dd3fc">fork  #5 WorkerA();  #8 WorkerB();  join_none</text>
+    <text x="24" y="88" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#e2e8f0">#3;         // Parent does local work until t=3</text>
+    <text x="24" y="107" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" font-weight="700" fill="#34d399">wait fork;  // Pauses parent from t=3 until t=8!</text>
+    <text x="24" y="124" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#94a3b8">// Both WorkerA and WorkerB are guaranteed complete</text>
+
+    <!-- Timeline -->
+    <g transform="translate(14, 146)">
+      <text x="0" y="12" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#94a3b8">t=0</text>
+      <text x="115" y="12" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#fbbf24" text-anchor="middle">t=3 (wait fork)</text>
+      <text x="210" y="12" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#94a3b8" text-anchor="middle">t=5</text>
+      <text x="320" y="12" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#34d399" font-weight="700" text-anchor="middle">t=8 (barrier)</text>
+
+      <rect x="0" y="24" width="210" height="22" rx="4" fill="#082f49" stroke="#38bdf8"/>
+      <text x="105" y="39" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#e0f2fe" text-anchor="middle">Worker A (#5)</text>
+
+      <rect x="0" y="54" width="320" height="22" rx="4" fill="#082f49" stroke="#38bdf8"/>
+      <text x="160" y="69" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#e0f2fe" text-anchor="middle">Worker B (#8)</text>
+
+      <rect x="0" y="84" width="115" height="22" rx="4" fill="#064e3b" stroke="#10b981"/>
+      <text x="57" y="99" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#a7f3d0" text-anchor="middle">parent (#3)</text>
+
+      <rect x="115" y="84" width="205" height="22" rx="4" fill="#2a0a14" stroke="#f59e0b" stroke-dasharray="4,2"/>
+      <text x="217" y="99" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#fde68a" text-anchor="middle">blocked at wait fork</text>
+
+      <rect x="320" y="84" width="76" height="22" rx="4" fill="#064e3b" stroke="#34d399"/>
+      <text x="358" y="99" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#d1fae5" text-anchor="middle">resumes</text>
+
+      <line x1="320" y1="18" x2="320" y2="112" stroke="#34d399" stroke-width="1.6" stroke-dasharray="3,2"/>
+    </g>
+
+    <text x="24" y="292" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#94a3b8">Note: wait fork waits for ALL active children of the calling process.</text>
+  </g>
+
+  <!-- Right Panel: Cancellation Scope -->
+  <g transform="translate(472, 78)">
+    <rect width="424" height="308" rx="10" fill="#0f172a" stroke="#f43f5e" stroke-width="1.8" filter="url(#shadowCh10B)"/>
+    <rect width="424" height="38" rx="10" fill="#881337"/>
+    <rect x="0" y="26" width="424" height="12" fill="#881337"/>
+    <text x="212" y="24" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13.5" font-weight="700" fill="#ffe4e6" text-anchor="middle">Process Cancellation: Named Scope vs. disable fork</text>
+
+    <!-- Unscoped danger -->
+    <g transform="translate(14, 52)">
+      <rect width="396" height="106" rx="8" fill="#2a0a14" stroke="#f43f5e" stroke-width="1.4"/>
+      <text x="12" y="21" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="700" fill="#fb7185">⚠ Unscoped 'disable fork;' Kills ALL Descendants</text>
+      <text x="12" y="42" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#e2e8f0">fork bg_monitor(); join_none  // Earlier child</text>
+      <text x="12" y="59" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#e2e8f0">fork taskA(); taskB(); join_any</text>
+      <text x="12" y="76" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" font-weight="700" fill="#fda4af">disable fork;  // ALSO kills bg_monitor()!</text>
+      <text x="12" y="96" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#fecdd3">Cancels every child spawned anywhere earlier in this thread</text>
+    </g>
+
+    <!-- Safe scoped idioms -->
+    <g transform="translate(14, 170)">
+      <rect width="396" height="124" rx="8" fill="#072c22" stroke="#10b981" stroke-width="1.4"/>
+      <text x="12" y="21" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="700" fill="#34d399">✓ Safe Scoped Cancellation Idioms</text>
+      <text x="12" y="43" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#a7f3d0">1) fork : my_race  ...  join_any</text>
+      <text x="30" y="60" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" font-weight="700" fill="#6ee7b7">disable my_race;   // Stops ONLY my_race</text>
+      <text x="12" y="83" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#a7f3d0">2) fork begin // Sub-process isolates disable fork</text>
+      <text x="30" y="100" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" font-weight="700" fill="#6ee7b7">fork taskA(); taskB(); join_any; disable fork;</text>
+      <text x="12" y="116" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#a7f3d0">end join</text>
+    </g>
+  </g>
+</svg>

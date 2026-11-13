@@ -1,0 +1,101 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 410" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGradCh4D" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#080c14" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <filter id="shadowCh4D" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+  </defs>
+
+  <rect width="920" height="410" rx="14" fill="url(#bgGradCh4D)"/>
+
+  <!-- Title -->
+  <text x="460" y="34" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="20" font-weight="700" fill="#f8fafc" text-anchor="middle">Packed vs. Unpacked Arrays: Syntax &amp; Storage Model</text>
+  <text x="460" y="56" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13" fill="#94a3b8" text-anchor="middle">Dimensions before the identifier pack into a contiguous vector; dimensions after form an element list</text>
+
+  <!-- Top Syntax Anatomy Banner -->
+  <rect x="24" y="74" width="872" height="54" rx="8" fill="#131d33" stroke="#1e293b"/>
+  <text x="460" y="96" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="700" fill="#e2e8f0" text-anchor="middle"><tspan fill="#94a3b8">logic </tspan><tspan fill="#38bdf8">[3:0][7:0]</tspan> <tspan fill="#fbbf24">packet_words</tspan> <tspan fill="#c084fc">[0:1023]</tspan>;</text>
+  <text x="348" y="117" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="600" fill="#7dd3fc" text-anchor="middle">↑ Packed (before name): 32-bit vector</text>
+  <text x="615" y="117" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="600" fill="#d8b4fe" text-anchor="middle">↑ Unpacked (after name): 1024 elements</text>
+
+  <!-- Left Card: Packed Array -->
+  <g transform="translate(24, 144)">
+    <rect width="424" height="244" rx="10" fill="#0f172a" stroke="#38bdf8" stroke-width="1.8" filter="url(#shadowCh4D)"/>
+    <rect width="424" height="38" rx="10" fill="#075985"/>
+    <rect x="0" y="26" width="424" height="12" fill="#075985"/>
+    <text x="212" y="24" font-family="'JetBrains Mono', Consolas, monospace" font-size="12.5" font-weight="700" fill="#e0f2fe" text-anchor="middle">logic [3:0][7:0] byte_array_packed;</text>
+
+    <!-- Contiguous 32-bit Vector Bar -->
+    <text x="212" y="60" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11.5" font-weight="600" fill="#7dd3fc" text-anchor="middle">Single Contiguous 32-Bit Vector = 32'h1122_3344</text>
+
+    <g transform="translate(18, 72)">
+      <rect x="0" y="0" width="97" height="58" fill="#0c1e35" stroke="#38bdf8" stroke-width="1.5"/>
+      <text x="48" y="20" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" font-weight="700" fill="#38bdf8" text-anchor="middle">[3]</text>
+      <text x="48" y="37" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" font-weight="700" fill="#f8fafc" text-anchor="middle">8'h11</text>
+      <text x="48" y="52" font-family="'JetBrains Mono', Consolas, monospace" font-size="9.5" fill="#94a3b8" text-anchor="middle">bits [31:24]</text>
+
+      <rect x="97" y="0" width="97" height="58" fill="#0c1e35" stroke="#38bdf8" stroke-width="1.5"/>
+      <text x="145" y="20" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" font-weight="700" fill="#38bdf8" text-anchor="middle">[2]</text>
+      <text x="145" y="37" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" font-weight="700" fill="#f8fafc" text-anchor="middle">8'h22</text>
+      <text x="145" y="52" font-family="'JetBrains Mono', Consolas, monospace" font-size="9.5" fill="#94a3b8" text-anchor="middle">bits [23:16]</text>
+
+      <rect x="194" y="0" width="97" height="58" fill="#0c1e35" stroke="#38bdf8" stroke-width="1.5"/>
+      <text x="242" y="20" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" font-weight="700" fill="#38bdf8" text-anchor="middle">[1]</text>
+      <text x="242" y="37" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" font-weight="700" fill="#f8fafc" text-anchor="middle">8'h33</text>
+      <text x="242" y="52" font-family="'JetBrains Mono', Consolas, monospace" font-size="9.5" fill="#94a3b8" text-anchor="middle">bits [15:8]</text>
+
+      <rect x="291" y="0" width="97" height="58" fill="#082f49" stroke="#34d399" stroke-width="2"/>
+      <text x="339" y="20" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" font-weight="700" fill="#34d399" text-anchor="middle">[0]</text>
+      <text x="339" y="37" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" font-weight="700" fill="#d1fae5" text-anchor="middle">8'h44</text>
+      <text x="339" y="52" font-family="'JetBrains Mono', Consolas, monospace" font-size="9.5" fill="#6ee7b7" text-anchor="middle">bits [7:0]</text>
+    </g>
+
+    <g transform="translate(18, 146)">
+      <rect width="388" height="82" rx="6" fill="#080d18" stroke="#1e293b"/>
+      <text x="12" y="20" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11.5" font-weight="700" fill="#38bdf8">Packed Properties</text>
+      <text x="12" y="40" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#cbd5e1">• Treated as one integral vector (bitwise ops &amp;, |, +)</text>
+      <text x="12" y="58" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#cbd5e1">• Slice individual bytes: byte_array_packed[0] == 8'h44</text>
+      <text x="12" y="75" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#cbd5e1">• Ideal for RTL buses, headers, and bit-field registers</text>
+    </g>
+  </g>
+
+  <!-- Right Card: Unpacked Array -->
+  <g transform="translate(472, 144)">
+    <rect width="424" height="244" rx="10" fill="#0f172a" stroke="#a855f7" stroke-width="1.8" filter="url(#shadowCh4D)"/>
+    <rect width="424" height="38" rx="10" fill="#581c87"/>
+    <rect x="0" y="26" width="424" height="12" fill="#581c87"/>
+    <text x="212" y="24" font-family="'JetBrains Mono', Consolas, monospace" font-size="12.5" font-weight="700" fill="#f3e8ff" text-anchor="middle">int integer_array_unpacked [0:3];</text>
+
+    <text x="212" y="60" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11.5" font-weight="600" fill="#d8b4fe" text-anchor="middle">Collection of Separate Elements (Indexed Row-by-Row)</text>
+
+    <!-- 4 Separate Element Boxes -->
+    <g transform="translate(18, 70)">
+      <rect x="0" y="0" width="90" height="60" rx="6" fill="#18122b" stroke="#a855f7" stroke-width="1.5"/>
+      <text x="45" y="20" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" font-weight="700" fill="#c084fc" text-anchor="middle">arr[0]</text>
+      <text x="45" y="42" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" font-weight="700" fill="#f8fafc" text-anchor="middle">123</text>
+
+      <rect x="99" y="0" width="90" height="60" rx="6" fill="#18122b" stroke="#a855f7" stroke-width="1.5"/>
+      <text x="144" y="20" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" font-weight="700" fill="#c084fc" text-anchor="middle">arr[1]</text>
+      <text x="144" y="42" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" font-weight="700" fill="#f8fafc" text-anchor="middle">456</text>
+
+      <rect x="198" y="0" width="90" height="60" rx="6" fill="#18122b" stroke="#a855f7" stroke-width="1.5"/>
+      <text x="243" y="20" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" font-weight="700" fill="#c084fc" text-anchor="middle">arr[2]</text>
+      <text x="243" y="42" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" font-weight="700" fill="#f8fafc" text-anchor="middle">789</text>
+
+      <rect x="297" y="0" width="91" height="60" rx="6" fill="#18122b" stroke="#a855f7" stroke-width="1.5"/>
+      <text x="342" y="20" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" font-weight="700" fill="#c084fc" text-anchor="middle">arr[3]</text>
+      <text x="342" y="42" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" font-weight="700" fill="#f8fafc" text-anchor="middle">-12</text>
+    </g>
+
+    <g transform="translate(18, 146)">
+      <rect width="388" height="82" rx="6" fill="#080d18" stroke="#1e293b"/>
+      <text x="12" y="20" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11.5" font-weight="700" fill="#c084fc">Unpacked Properties</text>
+      <text x="12" y="40" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#cbd5e1">• Cannot perform whole-array bitwise math directly</text>
+      <text x="12" y="58" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#cbd5e1">• Assigned element-wise or with '{123, 456, ...}</text>
+      <text x="12" y="75" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#cbd5e1">• Ideal for RAMs, LUTs, and testbench collections</text>
+    </g>
+  </g>
+</svg>

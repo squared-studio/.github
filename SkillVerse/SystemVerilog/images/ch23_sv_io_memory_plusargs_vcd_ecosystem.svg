@@ -1,0 +1,98 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 400" width="920" height="400">
+  <defs>
+    <style>
+      .bg { fill: #0f172a; }
+      .col { fill: #1e293b; stroke-width: 1.5; rx: 10; ry: 10; }
+      .subbox { fill: #0f172a; stroke: #334155; stroke-width: 1.2; rx: 6; ry: 6; }
+      .title { font-family: 'Segoe UI', Arial, sans-serif; font-size: 18px; font-weight: 700; fill: #f8fafc; text-anchor: middle; }
+      .subtitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; fill: #94a3b8; text-anchor: middle; }
+      .ctitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 13.5px; font-weight: 700; text-anchor: middle; }
+      .btitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 11.5px; font-weight: 700; }
+      .mono { font-family: Consolas, 'Courier New', monospace; font-size: 10.8px; fill: #e2e8f0; }
+      .note { font-family: 'Segoe UI', Arial, sans-serif; font-size: 10.5px; fill: #94a3b8; }
+    </style>
+    <marker id="arrowAmber" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#f59e0b" />
+    </marker>
+    <marker id="arrowGreen" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#34d399" />
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="920" height="400" />
+  <text class="title" x="460" y="28">Display Scheduling, File &amp; Memory I/O, Plusargs &amp; VCD Waveform Ecosystem</text>
+  <text class="subtitle" x="460" y="48">Data Movement Across CLI Runtime Arguments, Simulation Regions, Disk Streams, and VCD Traces</text>
+
+  <!-- Column 1: External Inputs -->
+  <rect class="col" x="20" y="66" width="270" height="314" stroke="#38bdf8" />
+  <text class="ctitle" x="155" y="90" fill="#38bdf8">1. External Inputs &amp; Stimulus</text>
+
+  <rect class="subbox" x="34" y="104" width="242" height="76" />
+  <text class="btitle" x="44" y="122" fill="#7dd3fc">CLI Plusargs</text>
+  <text class="mono" x="44" y="140">+VERBOSE  +SEED=42</text>
+  <text class="mono" x="44" y="157" fill="#a5f3fc">$test$plusargs("VERBOSE")</text>
+  <text class="mono" x="44" y="172" fill="#a5f3fc">$value$plusargs("SEED=%0d", s)</text>
+
+  <rect class="subbox" x="34" y="190" width="242" height="78" />
+  <text class="btitle" x="44" y="208" fill="#7dd3fc">Memory Initialization Files</text>
+  <text class="mono" x="44" y="226">firmware.hex (@0010 addr)</text>
+  <text class="mono" x="44" y="243" fill="#a5f3fc">$readmemh("fw.hex", mem)</text>
+  <text class="mono" x="44" y="258" fill="#a5f3fc">$readmemb("rom.bin", rom)</text>
+
+  <rect class="subbox" x="34" y="278" width="242" height="88" />
+  <text class="btitle" x="44" y="296" fill="#7dd3fc">File Input Streams (FD)</text>
+  <text class="mono" x="44" y="314">fd = $fopen("in.txt", "r")</text>
+  <text class="mono" x="44" y="331" fill="#a5f3fc">$fgets / $fscanf / $fread</text>
+  <text class="mono" x="44" y="348" fill="#a5f3fc">$fseek / $ftell / $feof / $ferror</text>
+
+  <!-- Arrows Col 1 -> Col 2 -->
+  <line x1="290" y1="220" x2="318" y2="220" stroke="#f59e0b" stroke-width="2" marker-end="url(#arrowAmber)" />
+
+  <!-- Column 2: Simulator Time-Slot Scheduling -->
+  <rect class="col" x="322" y="66" width="276" height="314" stroke="#f59e0b" />
+  <text class="ctitle" x="460" y="90" fill="#f59e0b">2. Simulation Region Scheduling</text>
+
+  <rect class="subbox" x="336" y="104" width="248" height="84" stroke="#f59e0b" />
+  <text class="btitle" x="346" y="122" fill="#fcd34d">Active / Reactive Region</text>
+  <text class="mono" x="346" y="140">$display / $write</text>
+  <text class="mono" x="346" y="156">$fdisplay / $fwrite</text>
+  <text class="note" x="346" y="176">Executes immediately when reached</text>
+
+  <rect class="subbox" x="336" y="198" width="248" height="68" />
+  <text class="btitle" x="346" y="216" fill="#c4b5fd">In-Memory String Formatting</text>
+  <text class="mono" x="346" y="234">str = $sformatf("a=%0h", a)</text>
+  <text class="mono" x="346" y="251">$sscanf(str, "a=%0h", out)</text>
+
+  <rect class="subbox" x="336" y="276" width="248" height="90" stroke="#34d399" />
+  <text class="btitle" x="346" y="294" fill="#6ee7b7">Postponed Region (End of Slot)</text>
+  <text class="mono" x="346" y="312">$strobe / $fstrobe</text>
+  <text class="mono" x="346" y="328">$monitor / $fmonitor</text>
+  <text class="note" x="346" y="346">Reads final settled values for time step</text>
+  <text class="note" x="346" y="360">(Do not $fclose before $fstrobe runs!)</text>
+
+  <!-- Arrows Col 2 -> Col 3 -->
+  <line x1="598" y1="220" x2="626" y2="220" stroke="#34d399" stroke-width="2" marker-end="url(#arrowGreen)" />
+
+  <!-- Column 3: External Outputs & Waveforms -->
+  <rect class="col" x="630" y="66" width="270" height="314" stroke="#34d399" />
+  <text class="ctitle" x="765" y="90" fill="#34d399">3. Outputs, Snapshots &amp; VCD</text>
+
+  <rect class="subbox" x="644" y="104" width="242" height="76" />
+  <text class="btitle" x="654" y="122" fill="#6ee7b7">MCD &amp; FD File Writing</text>
+  <text class="mono" x="654" y="140">mcd = $fopen("log.txt")</text>
+  <text class="note" x="654" y="156">Bit 31=0: Multi-Channel bitmask</text>
+  <text class="note" x="654" y="171">Bit 31=1: Single FD | $fclose is void</text>
+
+  <rect class="subbox" x="644" y="190" width="242" height="78" />
+  <text class="btitle" x="654" y="208" fill="#6ee7b7">Memory Dump Files</text>
+  <text class="mono" x="654" y="226" fill="#a7f3d0">$writememh("dump.hex", mem)</text>
+  <text class="mono" x="654" y="242" fill="#a7f3d0">$writememb("dump.bin", mem)</text>
+  <text class="note" x="654" y="258">Optional [start_addr, finish_addr]</text>
+
+  <rect class="subbox" x="644" y="278" width="242" height="88" />
+  <text class="btitle" x="654" y="296" fill="#6ee7b7">VCD &amp; Port Dump (EVCD)</text>
+  <text class="mono" x="654" y="314">$dumpfile("waves.vcd")</text>
+  <text class="mono" x="654" y="330">$dumpvars(0, top_tb)</text>
+  <text class="mono" x="654" y="346">$dumpoff/$dumpon  $dumpall</text>
+  <text class="mono" x="654" y="361">$dumpflush  $dumpports</text>
+</svg>

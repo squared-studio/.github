@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 410" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGradCh22C" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#080c14" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <filter id="shadowCh22C" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+  </defs>
+
+  <rect width="920" height="410" rx="14" fill="url(#bgGradCh22C)"/>
+
+  <!-- Title -->
+  <text x="460" y="30" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="20" font-weight="700" fill="#f8fafc" text-anchor="middle">Common Macro Pitfalls &amp; Defensive SystemVerilog Idioms</text>
+  <text x="460" y="50" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13" fill="#94a3b8" text-anchor="middle">Prevent silent operator-precedence bugs, dangling-else syntax breakage, and side-effect hazards</text>
+
+  <!-- Row 1: Operator Precedence -->
+  <g transform="translate(24, 68)">
+    <rect width="424" height="98" rx="8" fill="#4c0519" stroke="#f43f5e" filter="url(#shadowCh22C)"/>
+    <text x="16" y="22" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11.5" font-weight="700" fill="#fecdd3">Pitfall 1: Unparenthesized Expression / Args</text>
+    <text x="16" y="44" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#fda4af">`define MUL(a, b) a * b</text>
+    <text x="16" y="64" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#ffe4e6">`MUL(1+2, 3+4)  -&gt;  1 + 2 * 3 + 4  == 11  (WRONG!)</text>
+    <text x="16" y="84" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#fda4af">Even (a * b) breaks on MUL(1+2, 3+4) without parens on a &amp; b.</text>
+  </g>
+  <g transform="translate(472, 68)">
+    <rect width="424" height="98" rx="8" fill="#072c22" stroke="#10b981" filter="url(#shadowCh22C)"/>
+    <text x="16" y="22" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11.5" font-weight="700" fill="#34d399">Fix 1: Wrap BOTH Every Arg AND Whole Body</text>
+    <text x="16" y="44" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#a7f3d0">`define MUL(a, b) ((a) * (b))</text>
+    <text x="16" y="64" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#d1fae5">`MUL(1+2, 3+4)  -&gt;  ((1+2) * (3+4)) == 21 (SAFE)</text>
+    <text x="16" y="84" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#6ee7b7">Preserves arithmetic and boolean precedence in all contexts.</text>
+  </g>
+
+  <!-- Row 2: Dangling-Else & Trailing Semicolons -->
+  <g transform="translate(24, 180)">
+    <rect width="424" height="106" rx="8" fill="#4c0519" stroke="#f43f5e" filter="url(#shadowCh22C)"/>
+    <text x="16" y="22" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11.5" font-weight="700" fill="#fecdd3">Pitfall 2: Multi-Stmt Macro Breaking if/else</text>
+    <text x="16" y="43" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#fda4af">`define CHK(x) if (!(x)) $error("fail");</text>
+    <text x="16" y="63" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#ffe4e6">if (en) `CHK(ok); else $display("ok");</text>
+    <text x="16" y="84" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#fda4af">Extra ';' after `CHK(ok); terminates 'if', leaving orphan 'else' error!</text>
+  </g>
+  <g transform="translate(472, 180)">
+    <rect width="424" height="106" rx="8" fill="#072c22" stroke="#10b981" filter="url(#shadowCh22C)"/>
+    <text x="16" y="22" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11.5" font-weight="700" fill="#34d399">Fix 2: Wrap in do begin ... end while (0)</text>
+    <text x="16" y="43" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#a7f3d0">`define CHK(x) do begin \</text>
+    <text x="16" y="61" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#d1fae5">  if (!(x)) $error("fail"); end while (0)</text>
+    <text x="16" y="84" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#6ee7b7">NO trailing ';' in definition -> caller's ';' cleanly closes while(0)!</text>
+  </g>
+
+  <!-- Row 3: Double Evaluation of Side Effects -->
+  <g transform="translate(24, 300)">
+    <rect width="424" height="90" rx="8" fill="#4c0519" stroke="#f43f5e" filter="url(#shadowCh22C)"/>
+    <text x="16" y="22" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11.5" font-weight="700" fill="#fecdd3">Pitfall 3: Double Evaluation of Side Effects</text>
+    <text x="16" y="44" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#fda4af">`define MAX(a,b) (((a)&gt;(b)) ? (a) : (b))</text>
+    <text x="16" y="64" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#ffe4e6">`MAX(idx++, 5) -&gt; increments idx TWICE if idx&gt;5!</text>
+  </g>
+  <g transform="translate(472, 300)">
+    <rect width="424" height="90" rx="8" fill="#072c22" stroke="#10b981" filter="url(#shadowCh22C)"/>
+    <text x="16" y="22" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11.5" font-weight="700" fill="#34d399">Fix 3: Prefer function automatic for Logic</text>
+    <text x="16" y="44" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#a7f3d0">function automatic int max_int(int a, int b);</text>
+    <text x="16" y="64" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#d1fae5">Evaluates args once + full type checking &amp; debug symbols!</text>
+  </g>
+</svg>

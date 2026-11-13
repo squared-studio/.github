@@ -30,6 +30,8 @@ By the end of this chapter, you should be able to:
 
 SystemVerilog offers several types of random variables, each designed to address specific verification scenarios and stimulus generation requirements. Choosing the appropriate random variable type is crucial for effective CRV.
 
+![SystemVerilog Random Variable Types Uniform rand vs Cyclic Permutation randc](images/ch16_sv_rand_vs_randc_distributions.svg)
+
 | Random Variable Type             | Behavior                                                                                                                                                                                                                                                | Use Case Examples                                                                                                                                                                                                                                                                                                                                            |
 | -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | **`rand`**                       | **Uniform Distribution**: Generates random values with a uniform probability across the defined range. Each value within the allowed range has an equal chance of being selected.                                                                       | - Generating general-purpose data values for packet payloads, register configurations, or memory contents where no specific value preference is needed. <br> - Randomizing input port values or control signals to broadly explore the design's input space.                                                                                                 |
@@ -58,8 +60,8 @@ module packet_generator;
     network_packet pkt = new(); // Create an instance of the network_packet class
 
     repeat (5) begin // Generate and display 5 random packets
-      assert pkt.randomize(); // Randomize the packet object
-      pkt.display();         // Display the randomized packet information
+      assert (pkt.randomize()); // Randomize the packet object (or check 'if (!pkt.randomize()) $fatal(...)')
+      pkt.display();            // Display the randomized packet information
     end
   end
 endmodule
@@ -73,7 +75,9 @@ In this example:
 
 ## Constraint Specification: Guiding Randomization for Targeted Verification
 
-Constraints are the rules that define the valid and relevant stimulus space for your verification. They are essential for directing the randomization process towards meaningful test scenarios and preventing the generation of irrelevant or illegal stimulus.
+Constraints are the rules that define the valid and relevant stimulus space for your verification. They are essential for directing the randomization process towards meaningful test scenarios and preventing the generation of irrelevant or illegal stimulus. In `dist` weight expressions, `:=` applies a weight to **each individual value** in a range, whereas `:/` divides the specified weight **across the entire range** (critical when weighting multi-address memory regions fairly).
+
+![SystemVerilog Constraint Toolkit Inside Implication Soft Unique and dist](images/ch16_sv_constraint_types_and_dist.svg)
 
 ### Common Constraint Types in SystemVerilog
 
@@ -180,6 +184,8 @@ endclass
 
 SystemVerilog provides specific methods and system tasks to initiate and manage the randomization process. These control mechanisms are essential for integrating randomization into your testbench and achieving the desired verification outcomes.
 
+![Orchestrating Randomization srandom rand_mode constraint_mode and Inline with](images/ch16_sv_randomization_control_modes.svg)
+
 ### Core Randomization Control Methods
 
 ```systemverilog
@@ -254,6 +260,8 @@ SystemVerilog provides callback methods that are automatically executed _before_
 ## Verification Integration: Building Coverage-Driven Random Testbenches
 
 Randomization is most effective when integrated into a comprehensive verification environment. A typical SystemVerilog testbench leverages randomization to generate stimulus, drive the Design Under Test (DUT), and collect coverage metrics to guide the verification process.
+
+![Coverage Driven Verification CDV Closed Loop Architecture](images/ch16_sv_cdv_closed_loop_flow.svg)
 
 ### Typical Testbench Structure with Randomization
 
@@ -383,7 +391,7 @@ To maximize the benefits of SystemVerilog randomization and CRV, follow these be
           if (!$value$plusargs("SEED=%d", seed)) begin // Check for +SEED=value on command line
             seed = 42; // Default seed if +SEED is not provided
           end
-          srandom(seed);
+          process::self().srandom(seed); // Seed the active simulation process RNG
           $display("Using random seed: %0d", seed);
           // ... rest of testbench ...
         end
@@ -415,76 +423,180 @@ To maximize the benefits of SystemVerilog randomization and CRV, follow these be
 ## Exercises to Master SystemVerilog Randomization
 
 1.  **Basic Packet Generator with Constraints**:
-    - **Objective**: Create a class `ip_packet_class` to represent IP packets with randomized and constrained fields.
-    - **Class Properties**:
-      - `rand bit [31:0] source_address`: Random source IP address.
-      - `rand bit [31:0] destination_address`: Random destination IP address.
-      - `rand bit [11:0] packet_length`: Random packet length in bytes.
-      - `rand enum {TCP, UDP, ICMP} protocol`: Randomly selected protocol type (TCP, UDP, or ICMP).
-    - **Constraints**:
-      - `packet_length` should be constrained to be between 20 and 1500 bytes (inclusive).
-      - Create a constraint to ensure that the `protocol` field is randomized to be TCP 60% of the time, UDP 30% of the time, and ICMP 10% of the time (using probability distribution).
-    - **Task**: Write a SystemVerilog module that:
-      - Creates an instance of `ip_packet_class`.
-      - Randomizes the packet object.
-      - Displays the randomized values of `source_address`, `destination_address`, `packet_length`, and `protocol`.
-      - Repeat this process 10 times and observe the generated random packet values.
+    - **Objective**: Create a class `ip_packet_class` with `source_address`, `destination_address`, `packet_length` (`[20:1500]`), and weighted `protocol` (`TCP` 60%, `UDP` 30%, `ICMP` 10%), then generate 10 randomized packets.
+
+    ```systemverilog
+    module ex1_ip_packet_gen;
+      typedef enum {TCP, UDP, ICMP} proto_e;
+
+      class ip_packet_class;
+        rand bit [31:0] source_address;
+        rand bit [31:0] destination_address;
+        rand bit [11:0] packet_length;
+        rand proto_e    protocol;
+
+        constraint c_len   { packet_length inside {[20:1500]}; }
+        constraint c_proto { protocol dist {TCP := 60, UDP := 30, ICMP := 10}; }
+      endclass
+
+      initial begin
+        ip_packet_class pkt = new();
+        repeat (10) begin
+          if (!pkt.randomize()) $fatal(1, "Packet randomization failed");
+          $display("src=0x%08h dst=0x%08h len=%0d proto=%s",
+                   pkt.source_address, pkt.destination_address,
+                   pkt.packet_length, pkt.protocol.name());
+        end
+      end
+    endmodule
+    ```
 
 2.  **Advanced Constraints for Memory Transactions**:
-    - **Objective**: Implement a `memory_transaction_class` to model memory read and write transactions with advanced constraints.
-    - **Class Properties**:
-      - `rand bit [31:0] address`: Random memory address.
-      - `rand enum {READ, WRITE} operation`: Randomly selected memory operation type (READ or WRITE).
-      - `rand bit [7:0] burst_length`: Random burst length for the transaction.
-    - **Constraints**:
-      - `address` should be constrained to fall within one of three memory map regions:
-        - Region 1: Address range `[0x0000_0000 : 0x0FFF_FFFF]`
-        - Region 2: Address range `[0x4000_0000 : 0x4FFF_FFFF]`
-        - Region 3: Address range `[0x8000_0000 : 0x8FFF_FFFF]`
-        - Use a `dist` constraint to make Region 1 addresses more likely (e.g., Region 1: 60%, Region 2: 30%, Region 3: 10% probability).
-      - `operation` should be biased towards READ operations (e.g., 70% READ, 30% WRITE using `dist` constraint).
-      - `burst_length` should be constrained to be a power of 2 value between 1 and 16 (i.e., 1, 2, 4, 8, 16). Use `inside` and set membership to achieve this.
-    - **Task**: Write a SystemVerilog module that:
-      - Creates an instance of `memory_transaction_class`.
-      - Randomizes the transaction object.
-      - Displays the randomized values of `address`, `operation`, and `burst_length`.
-      - Repeat this process 20 times and verify that the generated transactions adhere to all defined constraints.
+    - **Objective**: Implement `memory_transaction_class` with weighted 3-region `address` (`:/` weights 60/30/10 so each 256MB region receives the intended total weight), `operation` biased 70% `READ` / 30% `WRITE`, and `burst_length` in `{1, 2, 4, 8, 16}`, then generate 20 transactions.
+
+    ```systemverilog
+    module ex2_memory_transactions;
+      typedef enum {READ, WRITE} mem_op_e;
+
+      class memory_transaction_class;
+        rand bit [31:0] address;
+        rand mem_op_e   operation;
+        rand bit [7:0]  burst_length;
+
+        constraint c_addr_regions {
+          address dist {
+            [32'h0000_0000 : 32'h0FFF_FFFF] :/ 60,
+            [32'h4000_0000 : 32'h4FFF_FFFF] :/ 30,
+            [32'h8000_0000 : 32'h8FFF_FFFF] :/ 10
+          };
+        }
+        constraint c_op    { operation dist {READ := 70, WRITE := 30}; }
+        constraint c_burst { burst_length inside {1, 2, 4, 8, 16}; }
+      endclass
+
+      initial begin
+        memory_transaction_class tx = new();
+        repeat (20) begin
+          if (!tx.randomize()) $fatal(1, "Memory tx randomization failed");
+          $display("addr=0x%08h op=%-5s burst=%0d",
+                   tx.address, tx.operation.name(), tx.burst_length);
+        end
+      end
+    endmodule
+    ```
 
 3.  **Error Injection with Correlated Error Types**:
-    - **Objective**: Develop an `error_generator_class` to inject different types of errors into a data stream with configurable probabilities and correlations.
-    - **Class Properties**:
-      - `rand bit error_enable`: Enable/disable error injection.
-      - `rand enum {NO_ERROR, SINGLE_BIT, BURST_ERROR, CRC_ERROR} error_type`: Randomly selected error type.
-      - `rand bit [7:0] error_position`: Random bit position for single-bit errors (within a byte).
-      - `rand bit [3:0] burst_error_length`: Random length of a burst error (in bits).
-    - **Constraints**:
-      - `error_enable` should be randomized such that errors are injected with a configurable probability (e.g., parameterize the error probability and use a `dist` constraint).
-      - If `error_type` is `SINGLE_BIT`, `error_position` should be constrained to be within the range `[0:7]`.
-      - If `error_type` is `BURST_ERROR`, `burst_error_length` should be constrained to be between 2 and 8 bits.
-      - Create an implication constraint such that if `error_enable` is 0 (error injection disabled), then `error_type` must be `NO_ERROR`.
-    - **Task**: Write a SystemVerilog module that:
-      - Creates an instance of `error_generator_class`.
-      - Configures the error probability parameter.
-      - Randomizes the error generator object.
-      - Based on the randomized `error_enable` and `error_type`, simulate injecting the corresponding error into a data byte (you can simply display a message indicating the error type and parameters, actual error injection logic is not required for this exercise).
-      - Repeat this process 30 times and observe the different types of errors being generated and their parameters.
+    - **Objective**: Develop `error_generator_class` with configurable `error_prob_pct`, `error_enable` `dist` weight, correlated implication constraints for `SINGLE_BIT` (`error_position inside {[0:7]}`), `BURST_ERROR` (`burst_error_length inside {[2:8]}`), and `error_enable == 0 -> error_type == NO_ERROR`.
+
+    ```systemverilog
+    module ex3_error_injection;
+      typedef enum {NO_ERROR, SINGLE_BIT, BURST_ERROR, CRC_ERROR} err_e;
+
+      class error_generator_class;
+        int unsigned error_prob_pct;
+        rand bit       error_enable;
+        rand err_e     error_type;
+        rand bit [7:0] error_position;
+        rand bit [3:0] burst_error_length;
+
+        function new(int unsigned prob_pct = 30);
+          error_prob_pct = (prob_pct > 100) ? 100 : prob_pct;
+        endfunction
+
+        constraint c_enable_dist {
+          solve error_enable before error_type;
+          error_enable dist {1'b1 := error_prob_pct, 1'b0 := (100 - error_prob_pct)};
+        }
+        constraint c_correlated {
+          (error_enable == 1'b0) -> (error_type == NO_ERROR);
+          (error_enable == 1'b1) -> (error_type != NO_ERROR);
+          (error_type == SINGLE_BIT)  -> (error_position inside {[0:7]});
+          (error_type == BURST_ERROR) -> (burst_error_length inside {[2:8]});
+        }
+      endclass
+
+      initial begin
+        error_generator_class egen = new(40); // 40% error injection rate
+        repeat (30) begin
+          if (!egen.randomize()) $fatal(1, "Error generator randomization failed");
+          $display("en=%0b type=%-11s pos=%0d burst_len=%0d",
+                   egen.error_enable, egen.error_type.name(),
+                   egen.error_position, egen.burst_error_length);
+        end
+      end
+    endmodule
+    ```
 
 4.  **Coverage Integration for USB Packet Verification**:
-    - **Objective**: Create a self-checking testbench that generates random USB packets, collects functional coverage, and verifies constraint coverage.
-    - **Reuse or Define a `usb_packet_class`**: Define a class `usb_packet_class` (or reuse an existing one) with relevant random properties for USB packets (e.g., packet type, data payload length, address, control fields, error flags). Add constraints to define valid USB packet structures and ranges for these properties.
-    - **Create a `usb_testbench_module`**:
-      - Instantiate a `usb_packet_class` object.
-      - Instantiate a `coverage_collector_class` (similar to the `coverage_collector` example, but with coverpoints relevant to USB packets, e.g., packet types, payload lengths, error conditions).
-      - In an `initial` block, run a loop to generate 1000 random USB packets:
-        - Randomize the `usb_packet_class` object.
-        - Call `coverage_collector.sample()` to collect coverage.
-        - (Optionally) Simulate sending the packet to a DUT and checking the response (DUT and response checking logic are not required for this exercise, focus on randomization and coverage).
-      - After the loop, use system tasks (e.g., `$display`, `$fwrite`) to:
-        - Report the total number of test cases run.
-        - Report the coverage statistics from the `coverage_collector` (coverage percentage for each coverpoint and overall coverage).
-        - Implement a check to verify that the intended scenarios were observed at least once during the 1000 random test cases. Constraints are declarative and cannot update flags during solving; track observed values with coverpoints, counters, or post-randomization code, then check those measurements after the simulation.
-      - Use `$finish` to end the simulation.
-    - **Run Simulation and Analyze Coverage**: Run the simulation and analyze the generated coverage report. Verify that the coverage goals are met and that all constraints have been exercised. If coverage is not sufficient, refine the constraints, add more coverpoints, or increase the number of test cases.
+    - **Objective**: Build a self-checking `usb_testbench_module` that generates 1000 constrained-random `usb_packet_class` objects, samples a `coverage_collector_class` covergroup, tracks observed scenarios post-randomization, and reports coverage pass/fail before `$finish`.
+
+    ```systemverilog
+    module usb_testbench_module;
+      typedef enum {TOKEN, DATA, HANDSHAKE} usb_pkt_e;
+
+      class usb_packet_class;
+        rand usb_pkt_e  pkt_type;
+        rand bit [6:0]  dev_addr;
+        rand bit [10:0] payload_len;
+        rand bit        crc_err;
+
+        constraint c_usb_valid {
+          solve pkt_type before payload_len;
+          dev_addr inside {[0:127]};
+          (pkt_type == TOKEN || pkt_type == HANDSHAKE) -> (payload_len == 0);
+          (pkt_type == DATA) -> (payload_len inside {[1:1024]});
+          crc_err dist {1'b0 := 90, 1'b1 := 10};
+        }
+      endclass
+
+      class coverage_collector_class;
+        usb_packet_class pkt;
+
+        covergroup usb_cg;
+          cp_type: coverpoint pkt.pkt_type;
+          cp_len:  coverpoint pkt.payload_len iff (pkt.pkt_type == DATA) {
+            bins short_p = {[1:64]};
+            bins mid_p   = {[65:512]};
+            bins max_p   = {[513:1024]};
+          }
+          cp_err:  coverpoint pkt.crc_err;
+        endgroup
+
+        function new(usb_packet_class p);
+          pkt    = p;
+          usb_cg = new();
+        endfunction
+
+        function void sample();
+          usb_cg.sample();
+        endfunction
+
+        function real get_total_cov();
+          return usb_cg.get_inst_coverage();
+        endfunction
+      endclass
+
+      initial begin
+        usb_packet_class         pkt = new();
+        coverage_collector_class cov = new(pkt);
+        int err_seen = 0;
+
+        for (int i = 0; i < 1000; i++) begin
+          if (!pkt.randomize()) $fatal(1, "USB packet randomize failed at %0d", i);
+          if (pkt.crc_err) err_seen++;
+          cov.sample();
+        end
+
+        $display("Ran 1000 USB packets | Errors observed=%0d | Coverage=%.2f%%",
+                 err_seen, cov.get_total_cov());
+        if (err_seen > 0 && cov.get_total_cov() >= 99.0)
+          $display("PASS: USB coverage goals satisfied.");
+        else
+          $error("FAIL: Insufficient scenario coverage.");
+        $finish;
+      end
+    endmodule
+    ```
 
 These exercises provide a practical introduction to using SystemVerilog randomization for verification, covering various aspects from basic random variable generation to advanced constraints, error injection, and coverage-driven verification methodologies. By completing these exercises, you will gain hands-on experience in leveraging randomization to create effective and efficient verification environments.
 

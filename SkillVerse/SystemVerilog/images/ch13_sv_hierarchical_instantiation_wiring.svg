@@ -1,0 +1,101 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 410" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGradCh13C" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#080c14" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <filter id="shadowCh13C" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+    <marker id="arrowCyan13C" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8"/>
+    </marker>
+    <marker id="arrowAmber13C" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#fbbf24"/>
+    </marker>
+    <marker id="arrowGreen13C" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#34d399"/>
+    </marker>
+  </defs>
+
+  <rect width="920" height="410" rx="14" fill="url(#bgGradCh13C)"/>
+
+  <!-- Title -->
+  <text x="460" y="32" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="20" font-weight="700" fill="#f8fafc" text-anchor="middle">Hierarchical Composition &amp; Port Connection Styles: Named vs. Positional</text>
+  <text x="460" y="54" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13" fill="#94a3b8" text-anchor="middle">Connecting parameterized submodules cleanly using order-independent named port mapping</text>
+
+  <!-- Left Panel: Top-Level Module Hierarchy -->
+  <g transform="translate(24, 76)">
+    <rect width="468" height="312" rx="10" fill="#0f172a" stroke="#38bdf8" stroke-width="1.8" filter="url(#shadowCh13C)"/>
+    <rect width="468" height="36" rx="10" fill="#075985"/>
+    <rect x="0" y="24" width="468" height="12" fill="#075985"/>
+    <text x="234" y="23" font-family="'JetBrains Mono', Consolas, monospace" font-size="13" font-weight="700" fill="#e0f2fe" text-anchor="middle">sensor_subsystem_module (Top Hierarchy)</text>
+
+    <!-- Submodule 1: clock_divider -->
+    <g transform="translate(22, 66)">
+      <rect width="194" height="114" rx="8" fill="#181208" stroke="#f59e0b" stroke-width="1.6"/>
+      <text x="97" y="22" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" font-weight="700" fill="#fbbf24" text-anchor="middle">clock_generator_instance</text>
+      <text x="97" y="39" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#fde68a" text-anchor="middle">(clock_divider_module)</text>
+      <text x="12" y="64" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#7dd3fc">.master_clk(core_system_clk)</text>
+      <text x="12" y="81" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#7dd3fc">.reset_n(system_reset_n)</text>
+      <text x="12" y="98" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#6ee7b7">.divided_clk(processing_clock)</text>
+    </g>
+
+    <!-- Arrow from clock divider to DSP -->
+    <line x1="216" y1="122" x2="256" y2="122" stroke="#fbbf24" stroke-width="2.2" marker-end="url(#arrowAmber13C)"/>
+    <text x="236" y="109" font-family="'JetBrains Mono', Consolas, monospace" font-size="9.5" fill="#fde68a" text-anchor="middle">proc_clk</text>
+
+    <!-- Submodule 2: data_processor -->
+    <g transform="translate(260, 66)">
+      <rect width="188" height="156" rx="8" fill="#072c22" stroke="#10b981" stroke-width="1.6"/>
+      <text x="94" y="22" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" font-weight="700" fill="#34d399" text-anchor="middle">data_dsp_unit</text>
+      <text x="94" y="39" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#a7f3d0" text-anchor="middle">data_processor_module</text>
+      <text x="94" y="54" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#fbbf24" text-anchor="middle">#(.PRECISION(16))</text>
+      <text x="10" y="78" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#e2e8f0">.clk(processing_clock)</text>
+      <text x="10" y="96" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#e2e8f0">.reset_n(system_reset_n)</text>
+      <text x="10" y="114" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#7dd3fc">.raw_sensor_input(adc)</text>
+      <text x="10" y="132" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#6ee7b7">.calibrated_output(out)</text>
+    </g>
+
+    <!-- External Bus Summary -->
+    <g transform="translate(22, 236)">
+      <rect width="426" height="60" rx="7" fill="#091526" stroke="#334155"/>
+      <text x="12" y="21" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="700" fill="#38bdf8">Hierarchy Signal Flow:</text>
+      <text x="12" y="39" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#e2e8f0">core_system_clk -&gt; processing_clock (internal wire) -&gt; data_dsp_unit</text>
+      <text x="12" y="53" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#6ee7b7">analog_sensor_adc_data[15:0] -&gt; processed_sensor_data_output[15:0]</text>
+    </g>
+  </g>
+
+  <!-- Right Panel: Port Connection Styles -->
+  <g transform="translate(508, 76)">
+    <rect width="388" height="312" rx="10" fill="#0f172a" stroke="#10b981" stroke-width="1.8" filter="url(#shadowCh13C)"/>
+    <rect width="388" height="36" rx="10" fill="#065f46"/>
+    <rect x="0" y="24" width="388" height="12" fill="#065f46"/>
+    <text x="194" y="23" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13.5" font-weight="700" fill="#d1fae5" text-anchor="middle">Port Connection Styles Compared</text>
+
+    <!-- Style 1: Explicit Named -->
+    <g transform="translate(14, 48)">
+      <rect width="360" height="86" rx="7" fill="#072c22" stroke="#10b981"/>
+      <text x="12" y="20" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11.5" font-weight="700" fill="#34d399">Explicit Named .port(signal)  [Recommended]</text>
+      <text x="12" y="40" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#e2e8f0">smart_buffer #(.DATA_WIDTH(128)) u_buf (</text>
+      <text x="20" y="57" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#a7f3d0">.clk(sys_clk), .rst_n(rst_n), .full()</text>
+      <text x="12" y="74" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#6ee7b7">Order-independent; empty () leaves unused out open</text>
+    </g>
+
+    <!-- Style 2: Implicit Named / Wildcard -->
+    <g transform="translate(14, 144)">
+      <rect width="360" height="72" rx="7" fill="#0c1c2e" stroke="#38bdf8"/>
+      <text x="12" y="20" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11.5" font-weight="700" fill="#38bdf8">Implicit Named (.sig) &amp; Wildcard (.*)</text>
+      <text x="12" y="40" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#e0f2fe">uart_tx u_tx (.clk, .rst_n, .*);</text>
+      <text x="12" y="58" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#94a3b8">Auto-binds matching names &amp; widths; concise in wrappers</text>
+    </g>
+
+    <!-- Style 3: Positional -->
+    <g transform="translate(14, 226)">
+      <rect width="360" height="72" rx="7" fill="#4c0519" stroke="#f43f5e" stroke-dasharray="4,2"/>
+      <text x="12" y="20" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11.5" font-weight="700" fill="#fda4af">Positional (sig1, sig2, ...)  [Avoid]</text>
+      <text x="12" y="40" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#fecdd3">d_flipflop uut (clk, rst_n, d, q);</text>
+      <text x="12" y="58" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#fda4af">Silent bugs if ports are reordered or widths swapped</text>
+    </g>
+  </g>
+</svg>

@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 400" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGradCh12B" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#080c14" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <filter id="shadowCh12B" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+    <marker id="arrowAmber12B" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#fbbf24"/>
+    </marker>
+  </defs>
+
+  <rect width="920" height="400" rx="14" fill="url(#bgGradCh12B)"/>
+
+  <!-- Title -->
+  <text x="460" y="34" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="20" font-weight="700" fill="#f8fafc" text-anchor="middle">SystemVerilog Semaphore: Key Pool &amp; Mutual Exclusion Timeline</text>
+  <text x="460" y="56" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13" fill="#94a3b8" text-anchor="middle">semaphore resource_sem = new(1); enforces atomic access to shared variables and hardware interfaces</text>
+
+  <!-- Top Panel: Key Bucket & IEEE 1800 API -->
+  <g transform="translate(24, 74)">
+    <rect width="872" height="108" rx="10" fill="#0f172a" stroke="#a855f7" stroke-width="1.6" filter="url(#shadowCh12B)"/>
+
+    <!-- Left sub-card: Key Pool -->
+    <g transform="translate(14, 14)">
+      <rect width="278" height="80" rx="8" fill="#1e1035" stroke="#9333ea"/>
+      <text x="139" y="22" font-family="'JetBrains Mono', Consolas, monospace" font-size="12.5" font-weight="700" fill="#e9d5ff" text-anchor="middle">Key Bucket: new(keyCount = 1)</text>
+      <rect x="94" y="34" width="90" height="26" rx="5" fill="#4c1d95" stroke="#c084fc"/>
+      <text x="139" y="51" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" font-weight="700" fill="#f5d0fe" text-anchor="middle">[ KEY #1 ]</text>
+      <text x="139" y="73" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#cbd5e1" text-anchor="middle">1 = Mutex (binary) | &gt;1 = Counting Pool</text>
+    </g>
+
+    <!-- Right sub-card: Standard Methods -->
+    <g transform="translate(308, 14)">
+      <rect width="550" height="80" rx="8" fill="#091526" stroke="#334155"/>
+      <text x="14" y="20" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11.5" font-weight="700" fill="#38bdf8">Standard IEEE 1800 Semaphore Methods (Note: semaphore has NO .num() method):</text>
+      <text x="14" y="42" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#fbbf24">get(k=1) [Task]</text>
+      <text x="140" y="42" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#e2e8f0">Blocks in FIFO wait queue if available keys &lt; k</text>
+      <text x="14" y="60" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#6ee7b7">try_get(k=1) [Func]</text>
+      <text x="158" y="60" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#e2e8f0">Non-blocking: returns 1 if acquired, 0 immediately if not</text>
+      <text x="536" y="42" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#c084fc" text-anchor="end">put(k=1) [Func]</text>
+      <text x="536" y="60" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#94a3b8" text-anchor="end">Returns k keys immediately</text>
+    </g>
+  </g>
+
+  <!-- Bottom Panel: Arbitration Timeline -->
+  <g transform="translate(24, 198)">
+    <rect width="872" height="182" rx="10" fill="#0f172a" stroke="#334155" stroke-width="1.5" filter="url(#shadowCh12B)"/>
+    <text x="20" y="24" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13" font-weight="700" fill="#f8fafc">Concurrent Access Arbitration Timeline (shared_data protection)</text>
+
+    <!-- Time Axis Grid -->
+    <line x1="150" y1="36" x2="150" y2="152" stroke="#334155" stroke-dasharray="3,3"/>
+    <line x1="305" y1="36" x2="305" y2="152" stroke="#334155" stroke-dasharray="3,3"/>
+    <line x1="460" y1="36" x2="460" y2="152" stroke="#fbbf24" stroke-dasharray="4,3" stroke-width="1.4"/>
+    <line x1="692" y1="36" x2="692" y2="152" stroke="#334155" stroke-dasharray="3,3"/>
+    <line x1="835" y1="36" x2="835" y2="152" stroke="#334155" stroke-dasharray="3,3"/>
+
+    <text x="150" y="168" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#94a3b8" text-anchor="middle">t = 0</text>
+    <text x="305" y="168" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#94a3b8" text-anchor="middle">t = 10</text>
+    <text x="460" y="168" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" font-weight="700" fill="#fbbf24" text-anchor="middle">t = 20 (Key Handoff)</text>
+    <text x="692" y="168" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#94a3b8" text-anchor="middle">t = 35</text>
+    <text x="835" y="168" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#94a3b8" text-anchor="middle">t = 50 ($finish)</text>
+
+    <!-- Process 1 Row -->
+    <text x="20" y="66" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" font-weight="700" fill="#38bdf8">Process 1</text>
+    <text x="20" y="81" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#64748b">shared_data++</text>
+
+    <rect x="150" y="46" width="310" height="38" rx="6" fill="#064e3b" stroke="#10b981" stroke-width="1.6"/>
+    <text x="305" y="63" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" font-weight="700" fill="#d1fae5" text-anchor="middle">get(1) OK -&gt; Critical Section (shared_data = 1)</text>
+    <text x="305" y="78" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#6ee7b7" text-anchor="middle">Holds Key #1 exclusively from t = 0 to t = 20</text>
+
+    <!-- Handoff Arrow -->
+    <path d="M 460 84 L 460 100" stroke="#fbbf24" stroke-width="2" marker-end="url(#arrowAmber12B)"/>
+    <text x="530" y="96" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#fde68a">put(1) wakes Process 2</text>
+
+    <!-- Process 2 Row -->
+    <text x="20" y="124" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" font-weight="700" fill="#f59e0b">Process 2</text>
+    <text x="20" y="139" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#64748b">shared_data += 5</text>
+
+    <rect x="305" y="104" width="155" height="38" rx="6" fill="#4c0519" stroke="#f43f5e" stroke-width="1.6" stroke-dasharray="4,2"/>
+    <text x="382" y="121" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" font-weight="700" fill="#fecdd3" text-anchor="middle">BLOCKED in get(1)</text>
+    <text x="382" y="135" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#fda4af" text-anchor="middle">0 keys free (t=10..20)</text>
+
+    <rect x="460" y="104" width="232" height="38" rx="6" fill="#075985" stroke="#38bdf8" stroke-width="1.6"/>
+    <text x="576" y="121" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" font-weight="700" fill="#e0f2fe" text-anchor="middle">Acquired -&gt; Critical Section (= 6)</text>
+    <text x="576" y="135" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#7dd3fc" text-anchor="middle">put(1) releases at t = 35</text>
+  </g>
+</svg>

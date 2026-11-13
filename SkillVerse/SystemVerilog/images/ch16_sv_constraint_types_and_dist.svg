@@ -1,0 +1,94 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 410" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGradCh16B" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#080c14" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <filter id="shadowCh16B" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+  </defs>
+
+  <rect width="920" height="410" rx="14" fill="url(#bgGradCh16B)"/>
+
+  <!-- Title -->
+  <text x="460" y="32" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="20" font-weight="700" fill="#f8fafc" text-anchor="middle">SystemVerilog Constraint Toolkit: Inside, Implication, Soft, Unique &amp; dist</text>
+  <text x="460" y="54" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13" fill="#94a3b8" text-anchor="middle">Declarative rules solved simultaneously to shape legal, targeted, and probability-weighted verification stimulus</text>
+
+  <!-- Card 1: Range & Set Membership -->
+  <g transform="translate(24, 76)">
+    <rect width="278" height="148" rx="9" fill="#0f172a" stroke="#38bdf8" stroke-width="1.6" filter="url(#shadowCh16B)"/>
+    <rect width="278" height="32" rx="9" fill="#075985"/>
+    <rect x="0" y="20" width="278" height="12" fill="#075985"/>
+    <text x="139" y="21" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="700" fill="#e0f2fe" text-anchor="middle">1. Range &amp; Set Membership (inside)</text>
+    <text x="14" y="54" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#7dd3fc">length inside {[64:1518]};</text>
+    <text x="14" y="76" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#a7f3d0">burst  inside {1, 2, 4, 8, 16};</text>
+    <text x="14" y="98" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#fda4af">!(addr inside {[0:32'hFF]});</text>
+    <text x="14" y="128" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#94a3b8">Inclusive ranges &amp; discrete legal sets</text>
+  </g>
+
+  <!-- Card 2: Probability Distributions := vs :/ -->
+  <g transform="translate(321, 76)">
+    <rect width="278" height="148" rx="9" fill="#0f172a" stroke="#10b981" stroke-width="1.6" filter="url(#shadowCh16B)"/>
+    <rect width="278" height="32" rx="9" fill="#065f46"/>
+    <rect x="0" y="20" width="278" height="12" fill="#065f46"/>
+    <text x="139" y="21" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="700" fill="#d1fae5" text-anchor="middle">2. Weighted Distribution (:= vs. :/)</text>
+    <text x="14" y="54" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#6ee7b7">x dist {[0:3] := 10, 4 := 60};</text>
+    <text x="14" y="72" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#d1fae5">':=' gives 10 to EACH (0,1,2,3 =&gt; 40 total)</text>
+    <text x="14" y="96" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#fde68a">x dist {[0:3] :/ 40, 4 := 60};</text>
+    <text x="14" y="114" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#fde68a">':/' splits 40 across [0:3] (10 each)</text>
+    <text x="14" y="135" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="9.5" fill="#94a3b8">Use :/ when assigning total weight to a range</text>
+  </g>
+
+  <!-- Card 3: Implication -> -->
+  <g transform="translate(618, 76)">
+    <rect width="278" height="148" rx="9" fill="#0f172a" stroke="#a855f7" stroke-width="1.6" filter="url(#shadowCh16B)"/>
+    <rect width="278" height="32" rx="9" fill="#581c87"/>
+    <rect x="0" y="20" width="278" height="12" fill="#581c87"/>
+    <text x="139" y="21" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="700" fill="#f3e8ff" text-anchor="middle">3. Implication (-&gt; &amp; if-else)</text>
+    <text x="14" y="54" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#e9d5ff">(err_en == 0) -&gt; (err == NONE);</text>
+    <text x="14" y="76" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#d8b4fe">(len &gt; 1518)  -&gt; (pay.size() &gt; 1500);</text>
+    <text x="14" y="102" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#e2e8f0">Bidirectional solver propagation:</text>
+    <text x="14" y="118" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#fbbf24">Use solve A before B to break skew</text>
+    <text x="14" y="134" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="9.5" fill="#94a3b8">on condition vs. consequent probabilities</text>
+  </g>
+
+  <!-- Card 4: Soft Constraints -->
+  <g transform="translate(24, 240)">
+    <rect width="278" height="148" rx="9" fill="#0f172a" stroke="#f59e0b" stroke-width="1.6" filter="url(#shadowCh16B)"/>
+    <rect width="278" height="32" rx="9" fill="#78350f"/>
+    <rect x="0" y="20" width="278" height="12" fill="#78350f"/>
+    <text x="139" y="21" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="700" fill="#fef3c7" text-anchor="middle">4. Soft Constraints (Overridable)</text>
+    <text x="14" y="54" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#fbbf24">soft payload.size() inside {[64:256]};</text>
+    <text x="14" y="78" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#6ee7b7">pkt.randomize() with {</text>
+    <text x="24" y="95" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#6ee7b7">payload.size() == 1000; };</text>
+    <text x="14" y="122" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#e2e8f0">Hard inline rules cleanly override soft</text>
+    <text x="14" y="136" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#94a3b8">defaults without solver conflicts</text>
+  </g>
+
+  <!-- Card 5: Unique Constraints -->
+  <g transform="translate(321, 240)">
+    <rect width="278" height="148" rx="9" fill="#0f172a" stroke="#38bdf8" stroke-width="1.6" filter="url(#shadowCh16B)"/>
+    <rect width="278" height="32" rx="9" fill="#075985"/>
+    <rect x="0" y="20" width="278" height="12" fill="#075985"/>
+    <text x="139" y="21" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="700" fill="#e0f2fe" text-anchor="middle">5. Uniqueness (unique) &amp; Loops</text>
+    <text x="14" y="54" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#7dd3fc">unique {address_sequence};</text>
+    <text x="14" y="76" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#e2e8f0">foreach (payload[i])</text>
+    <text x="24" y="94" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#a7f3d0">payload[i] != 8'hFF;</text>
+    <text x="14" y="122" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#cbd5e1">Guarantees mutually distinct elements</text>
+    <text x="14" y="136" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#94a3b8">across unpacked arrays or variables</text>
+  </g>
+
+  <!-- Card 6: Solver Ordering -->
+  <g transform="translate(618, 240)">
+    <rect width="278" height="148" rx="9" fill="#0f172a" stroke="#10b981" stroke-width="1.6" filter="url(#shadowCh16B)"/>
+    <rect width="278" height="32" rx="9" fill="#065f46"/>
+    <rect x="0" y="20" width="278" height="12" fill="#065f46"/>
+    <text x="139" y="21" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="700" fill="#d1fae5" text-anchor="middle">6. Ordering (solve ... before)</text>
+    <text x="14" y="54" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#6ee7b7">solve length before payload;</text>
+    <text x="14" y="76" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#e2e8f0">payload.size() == length - 18;</text>
+    <text x="14" y="104" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#e2e8f0">Fixes probability bias so 'length' picks</text>
+    <text x="14" y="119" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#e2e8f0">fairly before dependent arrays size</text>
+    <text x="14" y="135" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="9.5" fill="#94a3b8">Does not change legal solution set</text>
+  </g>
+</svg>

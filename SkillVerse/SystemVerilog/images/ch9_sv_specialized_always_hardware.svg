@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 420" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGradCh9B" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#080c14" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <filter id="shadowCh9B" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+  </defs>
+
+  <rect width="920" height="420" rx="14" fill="url(#bgGradCh9B)"/>
+
+  <!-- Title -->
+  <text x="460" y="34" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="20" font-weight="700" fill="#f8fafc" text-anchor="middle">SystemVerilog Specialized Always Blocks: Intent-Checked Hardware Mapping</text>
+  <text x="460" y="56" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13" fill="#94a3b8" text-anchor="middle">Specialized always_* blocks enforce single-driver rules and tell both simulator and synthesis tool your exact intent</text>
+
+  <!-- Card 1: always_comb -->
+  <g transform="translate(24, 78)">
+    <rect width="424" height="154" rx="10" fill="#0f172a" stroke="#10b981" stroke-width="1.8" filter="url(#shadowCh9B)"/>
+    <rect width="424" height="34" rx="10" fill="#065f46"/>
+    <rect x="0" y="22" width="424" height="12" fill="#065f46"/>
+    <text x="16" y="22" font-family="'JetBrains Mono', Consolas, monospace" font-size="13.5" font-weight="700" fill="#d1fae5">always_comb  ──▶  Combinational Gates / Mux</text>
+
+    <text x="16" y="54" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#e2e8f0">• <tspan font-weight="700" fill="#34d399">Auto-sensitivity</tspan> (including signals read inside called functions)</text>
+    <text x="16" y="72" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#e2e8f0">• Evaluates once automatically at t = 0; uses blocking <tspan font-family="'JetBrains Mono', Consolas, monospace" fill="#6ee7b7">=</tspan></text>
+    <text x="16" y="90" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#e2e8f0">• Enforces <tspan font-weight="700" fill="#fbbf24">single-driver rule</tspan> &amp; flags accidental latches</text>
+
+    <rect x="14" y="102" width="396" height="40" rx="5" fill="#072c22" stroke="#10b981"/>
+    <text x="24" y="126" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" font-weight="700" fill="#a7f3d0">always_comb sum = a + b;  // Blocking '='</text>
+  </g>
+
+  <!-- Card 2: always_ff -->
+  <g transform="translate(472, 78)">
+    <rect width="424" height="154" rx="10" fill="#0f172a" stroke="#38bdf8" stroke-width="1.8" filter="url(#shadowCh9B)"/>
+    <rect width="424" height="34" rx="10" fill="#075985"/>
+    <rect x="0" y="22" width="424" height="12" fill="#075985"/>
+    <text x="16" y="22" font-family="'JetBrains Mono', Consolas, monospace" font-size="13.5" font-weight="700" fill="#e0f2fe">always_ff  ──▶  Edge-Triggered Flip-Flops</text>
+
+    <text x="16" y="54" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#e2e8f0">• Requires explicit <tspan font-family="'JetBrains Mono', Consolas, monospace" fill="#7dd3fc">@(posedge clk ...)</tspan> edge control</text>
+    <text x="16" y="72" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#e2e8f0">• Never put data inputs in @(...); uses non-blocking <tspan font-family="'JetBrains Mono', Consolas, monospace" fill="#7dd3fc">&lt;=</tspan></text>
+    <text x="16" y="90" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#e2e8f0">• Enforces single-driver rule &amp; checks FF-compatible structure</text>
+
+    <rect x="14" y="102" width="396" height="40" rx="5" fill="#0c1e35" stroke="#0284c7"/>
+    <text x="24" y="126" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" font-weight="700" fill="#bae6fd">always_ff @(posedge clk) q &lt;= d;  // Non-blocking '&lt;='</text>
+  </g>
+
+  <!-- Card 3: always_latch -->
+  <g transform="translate(24, 248)">
+    <rect width="424" height="150" rx="10" fill="#0f172a" stroke="#f59e0b" stroke-width="1.8" filter="url(#shadowCh9B)"/>
+    <rect width="424" height="34" rx="10" fill="#78350f"/>
+    <rect x="0" y="22" width="424" height="12" fill="#78350f"/>
+    <text x="16" y="22" font-family="'JetBrains Mono', Consolas, monospace" font-size="13.5" font-weight="700" fill="#fef3c7">always_latch  ──▶  Level-Sensitive Latch</text>
+
+    <text x="16" y="54" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#e2e8f0">• Auto-sensitivity like always_comb; signals <tspan font-weight="700" fill="#fbbf24">intentional</tspan> latch</text>
+    <text x="16" y="72" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#e2e8f0">• Holds value when enable is inactive (use sparingly in RTL)</text>
+    <text x="16" y="90" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#e2e8f0">• Tool warns if latch behavior is NOT actually inferred</text>
+
+    <rect x="14" y="100" width="396" height="38" rx="5" fill="#181208" stroke="#b45309"/>
+    <text x="24" y="123" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" font-weight="700" fill="#fde68a">always_latch if (en) q = d;  // Intentional storage</text>
+  </g>
+
+  <!-- Card 4: General always -->
+  <g transform="translate(472, 248)">
+    <rect width="424" height="150" rx="10" fill="#0f172a" stroke="#a855f7" stroke-width="1.8" filter="url(#shadowCh9B)"/>
+    <rect width="424" height="34" rx="10" fill="#581c87"/>
+    <rect x="0" y="22" width="424" height="12" fill="#581c87"/>
+    <text x="16" y="22" font-family="'JetBrains Mono', Consolas, monospace" font-size="13.5" font-weight="700" fill="#f3e8ff">always  ──▶  Testbench Loops &amp; Legacy RTL</text>
+
+    <text x="16" y="54" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#e2e8f0">• Repeats body forever; <tspan font-weight="700" fill="#f43f5e">MUST have timing control (#/@)</tspan></text>
+    <text x="16" y="72" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#e2e8f0">• No automatic single-driver or latch/FF intent checking</text>
+    <text x="16" y="90" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#e2e8f0">• Reserve for testbench clocks; prefer always_* in modern RTL</text>
+
+    <rect x="14" y="100" width="396" height="38" rx="5" fill="#2e1065" stroke="#a855f7"/>
+    <text x="24" y="123" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" font-weight="700" fill="#e9d5ff">always #5 clk = ~clk;  // Free-running 10ns TB clock</text>
+  </g>
+</svg>

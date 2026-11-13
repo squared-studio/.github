@@ -1,0 +1,92 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 400" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGradCh16D" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#080c14" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <filter id="shadowCh16D" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+    <marker id="arrowCyan16D" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8"/>
+    </marker>
+    <marker id="arrowGreen16D" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#34d399"/>
+    </marker>
+    <marker id="arrowAmber16D" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#fbbf24"/>
+    </marker>
+  </defs>
+
+  <rect width="920" height="400" rx="14" fill="url(#bgGradCh16D)"/>
+
+  <!-- Title -->
+  <text x="460" y="32" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="20" font-weight="700" fill="#f8fafc" text-anchor="middle">Coverage-Driven Verification (CDV) Closed-Loop Architecture</text>
+  <text x="460" y="54" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13" fill="#94a3b8" text-anchor="middle">Reproducible random seeds drive DUT verification while covergroups measure progress and highlight constraint gaps</text>
+
+  <!-- Step 1: Seed + CLI -->
+  <g transform="translate(24, 92)">
+    <rect width="176" height="176" rx="10" fill="#1e1035" stroke="#a855f7" stroke-width="1.8" filter="url(#shadowCh16D)"/>
+    <rect width="176" height="34" rx="10" fill="#581c87"/>
+    <rect x="0" y="22" width="176" height="12" fill="#581c87"/>
+    <text x="88" y="22" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="700" fill="#f3e8ff" text-anchor="middle">1. Seed Config</text>
+    <text x="88" y="64" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#e9d5ff" text-anchor="middle">+SEED=&lt;int&gt;</text>
+    <text x="88" y="86" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#c084fc" text-anchor="middle">$value$plusargs(...)</text>
+    <text x="88" y="114" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#fde68a" text-anchor="middle">gen.frame.srandom(s)</text>
+    <text x="88" y="148" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#cbd5e1" text-anchor="middle">Logs exact seed for</text>
+    <text x="88" y="162" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#cbd5e1" text-anchor="middle">bug reproduction</text>
+  </g>
+
+  <line x1="202" y1="180" x2="236" y2="180" stroke="#38bdf8" stroke-width="2.4" marker-end="url(#arrowCyan16D)"/>
+
+  <!-- Step 2: Random Generator -->
+  <g transform="translate(240, 92)">
+    <rect width="196" height="176" rx="10" fill="#0c1c2e" stroke="#38bdf8" stroke-width="1.8" filter="url(#shadowCh16D)"/>
+    <rect width="196" height="34" rx="10" fill="#075985"/>
+    <rect x="0" y="22" width="196" height="12" fill="#075985"/>
+    <text x="98" y="22" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="700" fill="#e0f2fe" text-anchor="middle">2. Constrained Solver</text>
+    <text x="98" y="64" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" font-weight="700" fill="#7dd3fc" text-anchor="middle">gen.frame.randomize()</text>
+    <text x="98" y="88" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#e2e8f0" text-anchor="middle">Solves valid lengths,</text>
+    <text x="98" y="104" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#e2e8f0" text-anchor="middle">opcodes &amp; error rates</text>
+    <rect x="16" y="122" width="164" height="38" rx="6" fill="#091526" stroke="#0284c7"/>
+    <text x="98" y="145" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#6ee7b7" text-anchor="middle">Check return == 1</text>
+  </g>
+
+  <line x1="438" y1="180" x2="472" y2="180" stroke="#38bdf8" stroke-width="2.4" marker-end="url(#arrowCyan16D)"/>
+
+  <!-- Step 3: DUT & Scoreboard -->
+  <g transform="translate(476, 92)">
+    <rect width="196" height="176" rx="10" fill="#181208" stroke="#f59e0b" stroke-width="1.8" filter="url(#shadowCh16D)"/>
+    <rect width="196" height="34" rx="10" fill="#78350f"/>
+    <rect x="0" y="22" width="196" height="12" fill="#78350f"/>
+    <text x="98" y="22" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="700" fill="#fef3c7" text-anchor="middle">3. DUT &amp; Scoreboard</text>
+    <text x="98" y="64" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#fde68a" text-anchor="middle">send_frame_to_dut()</text>
+    <text x="98" y="88" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#fde68a" text-anchor="middle">wait_for_response()</text>
+    <text x="98" y="112" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#fde68a" text-anchor="middle">check_response()</text>
+    <text x="98" y="148" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#e2e8f0" text-anchor="middle">Self-checks actual DUT</text>
+    <text x="98" y="162" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#e2e8f0" text-anchor="middle">output vs reference model</text>
+  </g>
+
+  <line x1="674" y1="180" x2="708" y2="180" stroke="#34d399" stroke-width="2.4" marker-end="url(#arrowGreen16D)"/>
+
+  <!-- Step 4: Coverage Collector -->
+  <g transform="translate(712, 92)">
+    <rect width="184" height="176" rx="10" fill="#072c22" stroke="#10b981" stroke-width="1.8" filter="url(#shadowCh16D)"/>
+    <rect width="184" height="34" rx="10" fill="#065f46"/>
+    <rect x="0" y="22" width="184" height="12" fill="#065f46"/>
+    <text x="92" y="22" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="700" fill="#d1fae5" text-anchor="middle">4. Covergroup Sample</text>
+    <text x="92" y="64" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" font-weight="700" fill="#6ee7b7" text-anchor="middle">cov.sample()</text>
+    <text x="92" y="90" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#d1fae5" text-anchor="middle">length_cp bins:</text>
+    <text x="92" y="106" font-family="'JetBrains Mono', Consolas, monospace" font-size="9.5" fill="#a7f3d0" text-anchor="middle">small | medium | large</text>
+    <text x="92" y="128" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#d1fae5" text-anchor="middle">error_cp: {0, 1}</text>
+    <text x="92" y="156" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#fbbf24" text-anchor="middle">get_coverage() %</text>
+  </g>
+
+  <!-- Feedback Loop Arrow -->
+  <path d="M 804 268 L 804 334 L 338 334 L 338 272" fill="none" stroke="#fbbf24" stroke-width="2.2" stroke-dasharray="5,3" marker-end="url(#arrowAmber16D)"/>
+
+  <!-- Feedback Label Box -->
+  <rect x="370" y="310" width="400" height="48" rx="8" fill="#091526" stroke="#f59e0b"/>
+  <text x="570" y="330" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11.5" font-weight="700" fill="#fbbf24" text-anchor="middle">Coverage Closure Feedback Loop</text>
+  <text x="570" y="348" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#e2e8f0" text-anchor="middle">Uncovered bins guide constraint weights, inline tests, and iteration count until 100% goals hit</text>
+</svg>

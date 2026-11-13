@@ -1,0 +1,100 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 420" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGradRoad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#080c14" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <filter id="shadowRoad" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+    <marker id="arrRoadCyan" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#38bdf8"/>
+    </marker>
+    <marker id="arrRoadEmerald" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#34d399"/>
+    </marker>
+    <marker id="arrRoadAmber" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#f59e0b"/>
+    </marker>
+    <marker id="arrRoadPurple" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#a855f7"/>
+    </marker>
+  </defs>
+
+  <rect width="920" height="420" rx="14" fill="url(#bgGradRoad)"/>
+
+  <!-- Title -->
+  <text x="460" y="34" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="20" font-weight="700" fill="#f8fafc" text-anchor="middle">SystemVerilog Practical Study Path (Chapters 1–23)</text>
+  <text x="460" y="56" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13" fill="#94a3b8" text-anchor="middle">Structured progression from core syntax and RTL design to scalable verification</text>
+
+  <!-- Row 1: Stage 1 -> Stage 2 -> Stage 3 -->
+  <!-- Stage 1 -->
+  <g transform="translate(26, 80)">
+    <rect width="266" height="134" rx="10" fill="#0c1e35" stroke="#38bdf8" stroke-width="1.8" filter="url(#shadowRoad)"/>
+    <rect width="266" height="34" rx="10" fill="#075985"/>
+    <rect x="0" y="24" width="266" height="10" fill="#075985"/>
+    <text x="133" y="22" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13" font-weight="700" fill="#e0f2fe" text-anchor="middle">Stage 1: Foundations (Ch 1–3)</text>
+    <text x="16" y="54" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11.5" fill="#cbd5e1">• HDVL concepts &amp; RTL vs. TB</text>
+    <text x="16" y="74" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11.5" fill="#cbd5e1">• Syntax, module &amp; initial blocks</text>
+    <text x="16" y="94" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11.5" fill="#cbd5e1">• $display, wavedump &amp; $finish</text>
+    <text x="16" y="116" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#7dd3fc">Core simulation workflow</text>
+  </g>
+
+  <line x1="292" y1="147" x2="320" y2="147" stroke="#38bdf8" stroke-width="2.2" marker-end="url(#arrRoadCyan)"/>
+
+  <!-- Stage 2 -->
+  <g transform="translate(327, 80)">
+    <rect width="266" height="134" rx="10" fill="#072c22" stroke="#34d399" stroke-width="1.8" filter="url(#shadowRoad)"/>
+    <rect width="266" height="34" rx="10" fill="#065f46"/>
+    <rect x="0" y="24" width="266" height="10" fill="#065f46"/>
+    <text x="133" y="22" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13" font-weight="700" fill="#d1fae5" text-anchor="middle">Stage 2: Data &amp; Operators (Ch 4–7)</text>
+    <text x="16" y="54" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11.5" fill="#cbd5e1">• 4-state (logic) vs. 2-state (bit/int)</text>
+    <text x="16" y="74" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11.5" fill="#cbd5e1">• Fixed, dynamic, assoc arrays &amp; queues</text>
+    <text x="16" y="94" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11.5" fill="#cbd5e1">• Array methods &amp; operator rules</text>
+    <text x="16" y="116" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#6ee7b7">struct / enum / typedef</text>
+  </g>
+
+  <line x1="593" y1="147" x2="621" y2="147" stroke="#34d399" stroke-width="2.2" marker-end="url(#arrRoadEmerald)"/>
+
+  <!-- Stage 3 -->
+  <g transform="translate(628, 80)">
+    <rect width="266" height="134" rx="10" fill="#1c1917" stroke="#f59e0b" stroke-width="1.8" filter="url(#shadowRoad)"/>
+    <rect width="266" height="34" rx="10" fill="#78350f"/>
+    <rect x="0" y="24" width="266" height="10" fill="#78350f"/>
+    <text x="133" y="22" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="700" fill="#fef3c7" text-anchor="middle">Stage 3: RTL (Ch 8–9,11,13–14,17)</text>
+    <text x="16" y="54" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11.5" fill="#cbd5e1">• Control flow &amp; procedural blocks</text>
+    <text x="16" y="74" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11.5" fill="#cbd5e1">• Tasks, functions &amp; module ports</text>
+    <text x="16" y="94" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11.5" fill="#cbd5e1">• Interfaces, modports &amp; packages</text>
+    <text x="16" y="116" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#fbbf24">always_ff / always_comb / modport</text>
+  </g>
+
+  <!-- Connector from Stage 3 down to Stage 4 -->
+  <path d="M 761 214 L 761 236 L 236 236 L 236 254" fill="none" stroke="#f59e0b" stroke-width="2.2" marker-end="url(#arrRoadAmber)"/>
+
+  <!-- Row 2: Stage 4 -> Stage 5 -->
+  <!-- Stage 4 -->
+  <g transform="translate(66, 260)">
+    <rect width="360" height="136" rx="10" fill="#18122b" stroke="#a855f7" stroke-width="1.8" filter="url(#shadowRoad)"/>
+    <rect width="360" height="34" rx="10" fill="#581c87"/>
+    <rect x="0" y="24" width="360" height="10" fill="#581c87"/>
+    <text x="180" y="22" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13" font-weight="700" fill="#f3e8ff" text-anchor="middle">Stage 4: Concurrency, OOP &amp; Random (Ch 10,12,15–16)</text>
+    <text x="18" y="54" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11.5" fill="#cbd5e1">• fork / join / join_any / join_none concurrency</text>
+    <text x="18" y="74" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11.5" fill="#cbd5e1">• IPC: mailboxes, semaphores &amp; events</text>
+    <text x="18" y="94" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11.5" fill="#cbd5e1">• Classes, inheritance &amp; rand constraints</text>
+    <text x="18" y="116" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#c084fc">Scalable transaction-level verification</text>
+  </g>
+
+  <line x1="426" y1="328" x2="486" y2="328" stroke="#a855f7" stroke-width="2.2" marker-end="url(#arrRoadPurple)"/>
+
+  <!-- Stage 5 -->
+  <g transform="translate(494, 260)">
+    <rect width="360" height="136" rx="10" fill="#231222" stroke="#f43f5e" stroke-width="1.8" filter="url(#shadowRoad)"/>
+    <rect width="360" height="34" rx="10" fill="#881337"/>
+    <rect x="0" y="24" width="360" height="10" fill="#881337"/>
+    <text x="180" y="22" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13" font-weight="700" fill="#ffe4e6" text-anchor="middle">Stage 5: Sign-Off &amp; Utilities (Ch 18–23)</text>
+    <text x="18" y="54" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11.5" fill="#cbd5e1">• Command-line plusargs &amp; file I/O operations</text>
+    <text x="18" y="74" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11.5" fill="#cbd5e1">• SystemVerilog Assertions (SVA) &amp; temporal checks</text>
+    <text x="18" y="94" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11.5" fill="#cbd5e1">• Code &amp; functional coverage, macros, tasks</text>
+    <text x="18" y="116" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#fda4af">Coverage-driven verification &amp; UVM readiness</text>
+  </g>
+</svg>

@@ -1,0 +1,116 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 440" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGradCh2A" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#080c14" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <filter id="shadowCh2A" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+    <marker id="arrCyan2A" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#38bdf8"/>
+    </marker>
+    <marker id="arrEmerald2A" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#34d399"/>
+    </marker>
+    <marker id="arrAmber2A" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#f59e0b"/>
+    </marker>
+  </defs>
+
+  <rect width="920" height="440" rx="14" fill="url(#bgGradCh2A)"/>
+
+  <!-- Title -->
+  <text x="460" y="34" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="20" font-weight="700" fill="#f8fafc" text-anchor="middle">Anatomy of a Minimal SystemVerilog Testbench &amp; Simulation Flow</text>
+  <text x="460" y="56" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13" fill="#94a3b8" text-anchor="middle">How source constructs map to compilation, event-driven execution, and console output</text>
+
+  <!-- Left Card: Annotated Code Anatomy (testbench.sv) -->
+  <g transform="translate(24, 78)">
+    <rect width="464" height="338" rx="10" fill="#0f172a" stroke="#38bdf8" stroke-width="1.8" filter="url(#shadowCh2A)"/>
+    <rect width="464" height="38" rx="10" fill="#075985"/>
+    <rect x="0" y="26" width="464" height="12" fill="#075985"/>
+    <text x="18" y="24" font-family="'JetBrains Mono', Consolas, monospace" font-size="13" font-weight="700" fill="#e0f2fe">testbench.sv — Annotated Source Anatomy</text>
+
+    <!-- Code Editor Surface -->
+    <rect x="14" y="50" width="436" height="274" rx="8" fill="#080d18" stroke="#1e293b"/>
+
+    <!-- Line 1: Comment -->
+    <text x="26" y="74" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" fill="#64748b">// Single-line comment (ignored by tool)</text>
+    <rect x="330" y="59" width="108" height="20" rx="4" fill="#1e293b"/>
+    <text x="384" y="73" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" font-weight="600" fill="#94a3b8" text-anchor="middle">Annotation</text>
+
+    <!-- Line 2: module testbench; -->
+    <text x="26" y="106" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" fill="#38bdf8">module <tspan fill="#f8fafc">testbench</tspan><tspan fill="#f59e0b">;</tspan></text>
+    <rect x="268" y="90" width="170" height="22" rx="4" fill="#082f49" stroke="#38bdf8" stroke-width="1"/>
+    <text x="353" y="105" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" font-weight="600" fill="#7dd3fc" text-anchor="middle">Portless top-level container</text>
+
+    <!-- Line 3: initial begin -->
+    <text x="42" y="140" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" fill="#c084fc">initial begin</text>
+    <rect x="268" y="124" width="170" height="22" rx="4" fill="#2e1065" stroke="#a855f7" stroke-width="1"/>
+    <text x="353" y="139" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" font-weight="600" fill="#e9d5ff" text-anchor="middle">Starts once at t = 0 (group)</text>
+
+    <!-- Line 4: $display -->
+    <text x="58" y="176" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" fill="#34d399">$display<tspan fill="#e2e8f0">(</tspan><tspan fill="#fde68a">"Hello World!"</tspan><tspan fill="#e2e8f0">)</tspan><tspan fill="#f59e0b">;</tspan></text>
+    <rect x="284" y="160" width="154" height="22" rx="4" fill="#064e3b" stroke="#34d399" stroke-width="1"/>
+    <text x="361" y="175" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" font-weight="600" fill="#a7f3d0" text-anchor="middle">Prints text + newline</text>
+
+    <!-- Line 5: $finish -->
+    <text x="58" y="212" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" fill="#fb7185">$finish<tspan fill="#f59e0b">;</tspan></text>
+    <rect x="284" y="196" width="154" height="22" rx="4" fill="#4c0519" stroke="#f43f5e" stroke-width="1"/>
+    <text x="361" y="211" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" font-weight="600" fill="#fecdd3" text-anchor="middle">Ends simulation run</text>
+
+    <!-- Line 6: end -->
+    <text x="42" y="246" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" fill="#c084fc">end</text>
+    <rect x="268" y="230" width="170" height="22" rx="4" fill="#1e293b"/>
+    <text x="353" y="245" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#cbd5e1" text-anchor="middle">No semicolon after end</text>
+
+    <!-- Line 7: endmodule -->
+    <text x="26" y="280" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" fill="#38bdf8">endmodule</text>
+    <rect x="268" y="264" width="170" height="22" rx="4" fill="#1e293b"/>
+    <text x="353" y="279" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#cbd5e1" text-anchor="middle">Closes module scope</text>
+
+    <!-- Semicolon Callout Footer -->
+    <rect x="26" y="294" width="412" height="22" rx="4" fill="#291d0c" stroke="#f59e0b" stroke-width="1"/>
+    <text x="232" y="309" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" font-weight="600" fill="#fde68a" text-anchor="middle">; (Semicolon) terminates every declaration and individual statement</text>
+  </g>
+
+  <!-- Arrow from Left Card to Right Card -->
+  <line x1="488" y1="247" x2="516" y2="247" stroke="#38bdf8" stroke-width="2.4" marker-end="url(#arrCyan2A)"/>
+
+  <!-- Right Card: 3-Stage Event-Driven Simulation Flow -->
+  <g transform="translate(524, 78)">
+    <rect width="372" height="338" rx="10" fill="#0f172a" stroke="#34d399" stroke-width="1.8" filter="url(#shadowCh2A)"/>
+    <rect width="372" height="38" rx="10" fill="#065f46"/>
+    <rect x="0" y="26" width="372" height="12" fill="#065f46"/>
+    <text x="186" y="24" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13.5" font-weight="700" fill="#d1fae5" text-anchor="middle">Event-Driven Simulator Execution</text>
+
+    <!-- Stage 1 -->
+    <g transform="translate(18, 52)">
+      <rect width="336" height="74" rx="8" fill="#0c1e35" stroke="#38bdf8" stroke-width="1.4"/>
+      <text x="14" y="22" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="12.5" font-weight="700" fill="#38bdf8">1. Compile &amp; Elaborate (.sv Source)</text>
+      <text x="14" y="42" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#cbd5e1">• Checks syntax, keywords &amp; case sensitivity</text>
+      <text x="14" y="60" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#cbd5e1">• Builds module hierarchy &amp; top-level instance</text>
+    </g>
+
+    <line x1="186" y1="126" x2="186" y2="144" stroke="#f59e0b" stroke-width="2" marker-end="url(#arrAmber2A)"/>
+
+    <!-- Stage 2 -->
+    <g transform="translate(18, 150)">
+      <rect width="336" height="86" rx="8" fill="#1c1917" stroke="#f59e0b" stroke-width="1.4"/>
+      <text x="14" y="22" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="12.5" font-weight="700" fill="#fbbf24">2. Event Queue Execution (t = 0 → t + Δ)</text>
+      <text x="14" y="42" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#cbd5e1">• Activates all initial processes at time 0</text>
+      <text x="14" y="59" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#cbd5e1">• Executes statements sequentially inside begin...end</text>
+      <text x="14" y="76" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#fde68a">• Advances simulated clock only via #delay or @event</text>
+    </g>
+
+    <line x1="186" y1="236" x2="186" y2="254" stroke="#34d399" stroke-width="2" marker-end="url(#arrEmerald2A)"/>
+
+    <!-- Stage 3 -->
+    <g transform="translate(18, 260)">
+      <rect width="336" height="64" rx="8" fill="#072c22" stroke="#34d399" stroke-width="1.4"/>
+      <text x="14" y="22" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="12.5" font-weight="700" fill="#34d399">3. Console Output &amp; Termination</text>
+      <text x="14" y="42" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#a7f3d0">Console: Hello World!</text>
+      <text x="14" y="57" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#cbd5e1">$finish halts event loop cleanly at current time</text>
+    </g>
+  </g>
+</svg>

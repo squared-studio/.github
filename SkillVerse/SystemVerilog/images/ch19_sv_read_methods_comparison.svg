@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 400" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGradCh19B" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#080c14" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <filter id="shadowCh19B" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+  </defs>
+
+  <rect width="920" height="400" rx="14" fill="url(#bgGradCh19B)"/>
+
+  <!-- Title -->
+  <text x="460" y="30" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="20" font-weight="700" fill="#f8fafc" text-anchor="middle">SystemVerilog File Reading Strategies: $fgets vs. $fscanf vs. $fread</text>
+  <text x="460" y="50" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13" fill="#94a3b8" text-anchor="middle">Choose line-buffered parsing, structured token scanning, or raw binary streaming by file format</text>
+
+  <!-- Column 1: $fgets -->
+  <g transform="translate(24, 72)">
+    <rect width="278" height="304" rx="10" fill="#0f172a" stroke="#38bdf8" stroke-width="1.8" filter="url(#shadowCh19B)"/>
+    <rect width="278" height="38" rx="10" fill="#075985"/>
+    <rect x="0" y="24" width="278" height="14" fill="#075985"/>
+    <text x="139" y="24" font-family="'JetBrains Mono', Consolas, monospace" font-size="13" font-weight="700" fill="#e0f2fe" text-anchor="middle">$fgets(line_str, fd)</text>
+
+    <text x="14" y="60" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11.5" font-weight="700" fill="#7dd3fc">Granularity: Entire Text Line</text>
+    <text x="14" y="80" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#cbd5e1">Reads up to '\n' or EOF; includes '\n'</text>
+    <text x="14" y="96" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#cbd5e1">when present in the file.</text>
+
+    <rect x="14" y="112" width="250" height="72" rx="6" fill="#0c1c2e" stroke="#1e3a5f"/>
+    <text x="22" y="132" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#e2e8f0">while ($fgets(line, fd) != 0) begin</text>
+    <text x="22" y="150" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#7dd3fc">  // skip blanks or # comments</text>
+    <text x="22" y="168" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#34d399">  n = $sscanf(line, ...);</text>
+
+    <rect x="14" y="196" width="250" height="48" rx="6" fill="#1e293b" stroke="#475569"/>
+    <text x="22" y="215" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" font-weight="700" fill="#fbbf24">Return Value:</text>
+    <text x="22" y="233" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#e2e8f0">&gt; 0 chars read; 0 at EOF or error.</text>
+
+    <text x="139" y="268" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" font-weight="700" fill="#38bdf8" text-anchor="middle">Best paired with $sscanf()</text>
+    <text x="139" y="286" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#94a3b8" text-anchor="middle">Handles variable fields &amp; comments safely</text>
+  </g>
+
+  <!-- Column 2: $fscanf -->
+  <g transform="translate(321, 72)">
+    <rect width="278" height="304" rx="10" fill="#0f172a" stroke="#a78bfa" stroke-width="1.8" filter="url(#shadowCh19B)"/>
+    <rect width="278" height="38" rx="10" fill="#4c1d95"/>
+    <rect x="0" y="24" width="278" height="14" fill="#4c1d95"/>
+    <text x="139" y="24" font-family="'JetBrains Mono', Consolas, monospace" font-size="12.5" font-weight="700" fill="#ede9fe" text-anchor="middle">$fscanf(fd, fmt, vars...)</text>
+
+    <text x="14" y="60" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11.5" font-weight="700" fill="#c4b5fd">Granularity: Formatted Fields</text>
+    <text x="14" y="80" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#cbd5e1">Skips whitespace and converts tokens</text>
+    <text x="14" y="96" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#cbd5e1">using %d, %h, %b, %s, %f specifiers.</text>
+
+    <rect x="14" y="112" width="250" height="72" rx="6" fill="#1e1b4b" stroke="#6366f1"/>
+    <text x="22" y="132" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#e2e8f0">while ($fscanf(fd, "%h %d",</text>
+    <text x="22" y="150" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#c4b5fd">               addr, val) == 2)</text>
+    <text x="22" y="168" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#34d399">  drive_write(addr, val);</text>
+
+    <rect x="14" y="196" width="250" height="48" rx="6" fill="#1e293b" stroke="#475569"/>
+    <text x="22" y="215" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" font-weight="700" fill="#fbbf24">Return Value:</text>
+    <text x="22" y="233" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#e2e8f0">Assigned count; 0 mismatch; -1 EOF.</text>
+
+    <text x="139" y="268" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" font-weight="700" fill="#a78bfa" text-anchor="middle">Check == expected_count</text>
+    <text x="139" y="286" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#94a3b8" text-anchor="middle">Direct parsing for clean tabular vectors</text>
+  </g>
+
+  <!-- Column 3: $fread -->
+  <g transform="translate(618, 72)">
+    <rect width="278" height="304" rx="10" fill="#0f172a" stroke="#10b981" stroke-width="1.8" filter="url(#shadowCh19B)"/>
+    <rect width="278" height="38" rx="10" fill="#065f46"/>
+    <rect x="0" y="24" width="278" height="14" fill="#065f46"/>
+    <text x="139" y="24" font-family="'JetBrains Mono', Consolas, monospace" font-size="13" font-weight="700" fill="#d1fae5" text-anchor="middle">$fread(mem, fd, [st, cnt])</text>
+
+    <text x="14" y="60" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11.5" font-weight="700" fill="#6ee7b7">Granularity: Raw Binary Bytes</text>
+    <text x="14" y="80" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#cbd5e1">Loads raw unformatted bytes directly</text>
+    <text x="14" y="96" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#cbd5e1">into a vector or unpacked array ("rb").</text>
+
+    <rect x="14" y="112" width="250" height="72" rx="6" fill="#072c22" stroke="#10b981"/>
+    <text x="22" y="132" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#e2e8f0">byte buf[] = new[256];</text>
+    <text x="22" y="150" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#a7f3d0">nbytes = $fread(buf, fd);</text>
+    <text x="22" y="168" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#34d399">if (nbytes != buf.size()) ...</text>
+
+    <rect x="14" y="196" width="250" height="48" rx="6" fill="#1e293b" stroke="#475569"/>
+    <text x="22" y="215" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" font-weight="700" fill="#fbbf24">Return Value:</text>
+    <text x="22" y="233" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#e2e8f0">Total bytes read (0 on EOF or error).</text>
+
+    <text x="139" y="268" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" font-weight="700" fill="#34d399" text-anchor="middle">Pair with "rb" open mode</text>
+    <text x="139" y="286" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#94a3b8" text-anchor="middle">Ideal for firmware images &amp; DMA payloads</text>
+  </g>
+</svg>

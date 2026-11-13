@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 390" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGradCh15C" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#080c14" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <filter id="shadowCh15C" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+  </defs>
+
+  <rect width="920" height="390" rx="14" fill="url(#bgGradCh15C)"/>
+
+  <!-- Title -->
+  <text x="460" y="32" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="20" font-weight="700" fill="#f8fafc" text-anchor="middle">SystemVerilog Class Encapsulation: local, protected, and public Visibility Scopes</text>
+  <text x="460" y="54" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13" fill="#94a3b8" text-anchor="middle">Access qualifiers enforce encapsulation boundaries across base classes, subclasses, and testbench callers</text>
+
+  <!-- Column Headers -->
+  <g transform="translate(24, 76)">
+    <rect width="872" height="290" rx="10" fill="#0f172a" stroke="#334155" stroke-width="1.6" filter="url(#shadowCh15C)"/>
+
+    <!-- Table Header -->
+    <rect width="872" height="44" rx="10" fill="#1e293b"/>
+    <rect x="0" y="32" width="872" height="12" fill="#1e293b"/>
+    <text x="120" y="27" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="12.5" font-weight="700" fill="#f8fafc" text-anchor="middle">Access Qualifier</text>
+    <text x="330" y="27" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="12.5" font-weight="700" fill="#7dd3fc" text-anchor="middle">Same Class (BankAccount)</text>
+    <text x="556" y="27" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="12.5" font-weight="700" fill="#fde68a" text-anchor="middle">Derived Subclass (extends)</text>
+    <text x="770" y="27" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="12.5" font-weight="700" fill="#d8b4fe" text-anchor="middle">External Module / Caller</text>
+
+    <!-- Row 1: local -->
+    <g transform="translate(14, 58)">
+      <rect width="206" height="66" rx="7" fill="#4c0519" stroke="#f43f5e"/>
+      <text x="103" y="27" font-family="'JetBrains Mono', Consolas, monospace" font-size="13" font-weight="700" fill="#fecdd3" text-anchor="middle">local int balance;</text>
+      <text x="103" y="48" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#fda4af" text-anchor="middle">Strictly private to owner class</text>
+
+      <rect x="216" y="0" width="212" height="66" rx="7" fill="#072c22" stroke="#10b981"/>
+      <text x="322" y="27" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="700" fill="#34d399" text-anchor="middle">ALLOWED</text>
+      <text x="322" y="48" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#a7f3d0" text-anchor="middle">deposit() / withdraw()</text>
+
+      <rect x="438" y="0" width="212" height="66" rx="7" fill="#180a10" stroke="#e11d48" stroke-dasharray="4,2"/>
+      <text x="544" y="27" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="700" fill="#f43f5e" text-anchor="middle">COMPILE ERROR</text>
+      <text x="544" y="48" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#fda4af" text-anchor="middle">Hidden even from child classes</text>
+
+      <rect x="660" y="0" width="184" height="66" rx="7" fill="#180a10" stroke="#e11d48" stroke-dasharray="4,2"/>
+      <text x="752" y="27" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="700" fill="#f43f5e" text-anchor="middle">COMPILE ERROR</text>
+      <text x="752" y="48" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#fda4af" text-anchor="middle">acc.balance = 5000;</text>
+    </g>
+
+    <!-- Row 2: protected -->
+    <g transform="translate(14, 136)">
+      <rect width="206" height="66" rx="7" fill="#181208" stroke="#f59e0b"/>
+      <text x="103" y="27" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" font-weight="700" fill="#fbbf24" text-anchor="middle">protected int rate;</text>
+      <text x="103" y="48" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#fde68a" text-anchor="middle">Family-only access across tree</text>
+
+      <rect x="216" y="0" width="212" height="66" rx="7" fill="#072c22" stroke="#10b981"/>
+      <text x="322" y="27" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="700" fill="#34d399" text-anchor="middle">ALLOWED</text>
+      <text x="322" y="48" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#a7f3d0" text-anchor="middle">Base methods read/write</text>
+
+      <rect x="438" y="0" width="212" height="66" rx="7" fill="#072c22" stroke="#10b981"/>
+      <text x="544" y="27" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="700" fill="#34d399" text-anchor="middle">ALLOWED</text>
+      <text x="544" y="48" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#a7f3d0" text-anchor="middle">Subclass inherits direct access</text>
+
+      <rect x="660" y="0" width="184" height="66" rx="7" fill="#180a10" stroke="#e11d48" stroke-dasharray="4,2"/>
+      <text x="752" y="27" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="700" fill="#f43f5e" text-anchor="middle">COMPILE ERROR</text>
+      <text x="752" y="48" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#fda4af" text-anchor="middle">Blocked outside hierarchy</text>
+    </g>
+
+    <!-- Row 3: public (default) -->
+    <g transform="translate(14, 214)">
+      <rect width="206" height="62" rx="7" fill="#0c1c2e" stroke="#38bdf8"/>
+      <text x="103" y="25" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" font-weight="700" fill="#38bdf8" text-anchor="middle">(default) public API</text>
+      <text x="103" y="46" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#7dd3fc" text-anchor="middle">No keyword needed in SV</text>
+
+      <rect x="216" y="0" width="212" height="62" rx="7" fill="#072c22" stroke="#10b981"/>
+      <text x="322" y="25" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="700" fill="#34d399" text-anchor="middle">ALLOWED</text>
+      <text x="322" y="46" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#a7f3d0" text-anchor="middle">Full access</text>
+
+      <rect x="438" y="0" width="212" height="62" rx="7" fill="#072c22" stroke="#10b981"/>
+      <text x="544" y="25" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="700" fill="#34d399" text-anchor="middle">ALLOWED</text>
+      <text x="544" y="46" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#a7f3d0" text-anchor="middle">Inherited &amp; overridable</text>
+
+      <rect x="660" y="0" width="184" height="62" rx="7" fill="#072c22" stroke="#10b981"/>
+      <text x="752" y="25" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="700" fill="#34d399" text-anchor="middle">ALLOWED</text>
+      <text x="752" y="46" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#a7f3d0" text-anchor="middle">acc.getBalance()</text>
+    </g>
+  </g>
+</svg>

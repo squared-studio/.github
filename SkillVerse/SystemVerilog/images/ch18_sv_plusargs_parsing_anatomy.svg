@@ -1,0 +1,93 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 400" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGradCh18A" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#080c14" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <filter id="shadowCh18A" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+    <marker id="arrowCyan18A" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8"/>
+    </marker>
+    <marker id="arrowGreen18A" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#34d399"/>
+    </marker>
+  </defs>
+
+  <rect width="920" height="400" rx="14" fill="url(#bgGradCh18A)"/>
+
+  <!-- Title -->
+  <text x="460" y="30" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="20" font-weight="700" fill="#f8fafc" text-anchor="middle">SystemVerilog Runtime Plusargs: $value$plusargs vs. $test$plusargs</text>
+  <text x="460" y="50" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13" fill="#94a3b8" text-anchor="middle">Runtime command-line tokens starting with '+' control simulation behavior without recompiling RTL</text>
+
+  <!-- CLI Invocation Banner -->
+  <g transform="translate(24, 66)">
+    <rect width="872" height="48" rx="8" fill="#1e293b" stroke="#475569" stroke-width="1.5" filter="url(#shadowCh18A)"/>
+    <text x="16" y="29" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" fill="#94a3b8">$ ./simv</text>
+    <rect x="86" y="10" width="174" height="28" rx="5" fill="#075985" stroke="#38bdf8"/>
+    <text x="173" y="29" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" font-weight="700" fill="#e0f2fe" text-anchor="middle">+TESTCASE=mem_test</text>
+    <rect x="272" y="10" width="154" height="28" rx="5" fill="#075985" stroke="#38bdf8"/>
+    <text x="349" y="29" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" font-weight="700" fill="#e0f2fe" text-anchor="middle">+ITERATIONS=100</text>
+    <rect x="438" y="10" width="160" height="28" rx="5" fill="#075985" stroke="#38bdf8"/>
+    <text x="518" y="29" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" font-weight="700" fill="#e0f2fe" text-anchor="middle">+SEED=dead_beef</text>
+    <rect x="610" y="10" width="114" height="28" rx="5" fill="#065f46" stroke="#34d399"/>
+    <text x="667" y="29" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" font-weight="700" fill="#d1fae5" text-anchor="middle">+VERBOSE</text>
+    <rect x="736" y="10" width="122" height="28" rx="5" fill="#312e81" stroke="#818cf8"/>
+    <text x="797" y="29" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" font-weight="700" fill="#e0e7ff" text-anchor="middle">+VERBOSE_TX</text>
+  </g>
+
+  <!-- Routing Arrows -->
+  <path d="M 240 114 L 240 134" stroke="#38bdf8" stroke-width="2" marker-end="url(#arrowCyan18A)"/>
+  <path d="M 678 114 L 678 134" stroke="#34d399" stroke-width="2" marker-end="url(#arrowGreen18A)"/>
+
+  <!-- Left Card: $value$plusargs -->
+  <g transform="translate(24, 138)">
+    <rect width="424" height="240" rx="10" fill="#0f172a" stroke="#38bdf8" stroke-width="1.8" filter="url(#shadowCh18A)"/>
+    <rect width="424" height="36" rx="10" fill="#075985"/>
+    <rect x="0" y="24" width="424" height="12" fill="#075985"/>
+    <text x="212" y="23" font-family="'JetBrains Mono', Consolas, monospace" font-size="12.5" font-weight="700" fill="#e0f2fe" text-anchor="middle">$value$plusargs("KEY=%&lt;fmt&gt;", var)</text>
+
+    <text x="16" y="56" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11.5" font-weight="700" fill="#7dd3fc">Extracts typed value into one destination variable:</text>
+
+    <!-- Example 1 -->
+    <rect x="14" y="68" width="396" height="50" rx="6" fill="#0c1c2e" stroke="#1e3a5f"/>
+    <text x="24" y="87" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#e2e8f0">ok = $value$plusargs("TESTCASE=%s", test_name);</text>
+    <text x="24" y="106" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#34d399">=&gt; ok = 1,  test_name = "mem_test"</text>
+
+    <!-- Example 2 -->
+    <rect x="14" y="126" width="396" height="50" rx="6" fill="#0c1c2e" stroke="#1e3a5f"/>
+    <text x="24" y="145" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#e2e8f0">ok = $value$plusargs("SEED=%h", seed_val);</text>
+    <text x="24" y="164" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#34d399">=&gt; ok = 1,  seed_val = 32'hDEAD_BEEF</text>
+
+    <!-- Miss Behavior -->
+    <rect x="14" y="184" width="396" height="44" rx="6" fill="#1e293b" stroke="#475569"/>
+    <text x="24" y="202" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" font-weight="600" fill="#fbbf24">When key is absent or conversion fails:</text>
+    <text x="24" y="218" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#cbd5e1">Returns 0 and leaves var unchanged (preserves initialized default).</text>
+  </g>
+
+  <!-- Right Card: $test$plusargs -->
+  <g transform="translate(472, 138)">
+    <rect width="424" height="240" rx="10" fill="#0f172a" stroke="#34d399" stroke-width="1.8" filter="url(#shadowCh18A)"/>
+    <rect width="424" height="36" rx="10" fill="#065f46"/>
+    <rect x="0" y="24" width="424" height="12" fill="#065f46"/>
+    <text x="212" y="23" font-family="'JetBrains Mono', Consolas, monospace" font-size="12.5" font-weight="700" fill="#d1fae5" text-anchor="middle">$test$plusargs("PREFIX")</text>
+
+    <text x="16" y="56" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11.5" font-weight="700" fill="#6ee7b7">Boolean prefix check (no value extraction):</text>
+
+    <!-- Example 1 -->
+    <rect x="14" y="68" width="396" height="50" rx="6" fill="#072c22" stroke="#10b981"/>
+    <text x="24" y="87" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#e2e8f0">if ($test$plusargs("VERBOSE")) ...</text>
+    <text x="24" y="106" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#34d399">=&gt; returns 1 (matches +VERBOSE &amp; +VERBOSE_TX)</text>
+
+    <!-- Example 2 -->
+    <rect x="14" y="126" width="396" height="50" rx="6" fill="#072c22" stroke="#10b981"/>
+    <text x="24" y="145" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#e2e8f0">if ($test$plusargs("DUMP_WAVES")) ...</text>
+    <text x="24" y="164" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#f87171">=&gt; returns 0 (not present on command line)</text>
+
+    <!-- Prefix Matching Caution -->
+    <rect x="14" y="184" width="396" height="44" rx="6" fill="#451a03" stroke="#f59e0b"/>
+    <text x="24" y="202" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" font-weight="700" fill="#fcd34d">IEEE 1800 Prefix Matching Note:</text>
+    <text x="24" y="218" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#fde68a">"VERBOSE" matches +VERBOSE, +VERBOSE=1, and +VERBOSE_TX.</text>
+  </g>
+</svg>

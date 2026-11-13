@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 400" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGradCh5D" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#080c14" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <filter id="shadowCh5D" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+    <marker id="arrowCh5D" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 8 5 L 0 9 z" fill="#f59e0b" />
+    </marker>
+  </defs>
+
+  <rect width="920" height="400" rx="14" fill="url(#bgGradCh5D)"/>
+
+  <!-- Title -->
+  <text x="460" y="34" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="20" font-weight="700" fill="#f8fafc" text-anchor="middle">Associative Arrays: Sparse Address Modeling &amp; Key-Value Traversal</text>
+  <text x="460" y="56" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13" fill="#94a3b8" text-anchor="middle">Allocates entries on demand for huge sparse spaces or non-integer keys, accessed via .exists() and .first()/.next()</text>
+
+  <!-- Left Panel: Sparse Memory & String Keys -->
+  <g transform="translate(24, 78)">
+    <rect width="432" height="298" rx="10" fill="#0f172a" stroke="#f59e0b" stroke-width="1.8" filter="url(#shadowCh5D)"/>
+    <rect width="432" height="38" rx="10" fill="#78350f"/>
+    <rect x="0" y="26" width="432" height="12" fill="#78350f"/>
+    <text x="216" y="24" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13.5" font-weight="700" fill="#fef3c7" text-anchor="middle">On-Demand Sparse Storage (Zero Waste)</text>
+
+    <!-- Sparse 64-bit address space -->
+    <g transform="translate(14, 52)">
+      <text x="0" y="14" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" font-weight="700" fill="#fbbf24">byte sparse_mem [bit [63:0]];</text>
+      <rect x="0" y="24" width="404" height="114" rx="6" fill="#181208" stroke="#92400e"/>
+
+      <!-- Row 1 -->
+      <rect x="10" y="32" width="160" height="26" rx="4" fill="#451a03" stroke="#f59e0b"/>
+      <text x="90" y="49" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#fde68a" text-anchor="middle">64'h0000_0000_1000</text>
+      <line x1="172" y1="45" x2="210" y2="45" stroke="#f59e0b" stroke-width="1.6" marker-end="url(#arrowCh5D)"/>
+      <rect x="214" y="32" width="76" height="26" rx="4" fill="#064e3b" stroke="#10b981"/>
+      <text x="252" y="49" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" font-weight="700" fill="#a7f3d0" text-anchor="middle">8'hA5</text>
+      <text x="300" y="49" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#94a3b8">Allocated node</text>
+
+      <!-- Row 2 (gap indicator) -->
+      <text x="90" y="74" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#64748b" text-anchor="middle">... 2⁶⁴ - 3 unallocated addresses (0 B RAM) ...</text>
+
+      <!-- Row 3 -->
+      <rect x="10" y="84" width="160" height="26" rx="4" fill="#451a03" stroke="#f59e0b"/>
+      <text x="90" y="101" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#fde68a" text-anchor="middle">64'hFFFF_0000_1234</text>
+      <line x1="172" y1="97" x2="210" y2="97" stroke="#f59e0b" stroke-width="1.6" marker-end="url(#arrowCh5D)"/>
+      <rect x="214" y="84" width="76" height="26" rx="4" fill="#064e3b" stroke="#10b981"/>
+      <text x="252" y="101" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" font-weight="700" fill="#a7f3d0" text-anchor="middle">8'h3C</text>
+      <text x="300" y="101" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#94a3b8">Allocated node</text>
+    </g>
+
+    <!-- String-keyed dictionary -->
+    <g transform="translate(14, 202)">
+      <text x="0" y="14" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" font-weight="700" fill="#38bdf8">string error_messages [string];</text>
+      <rect x="0" y="24" width="404" height="58" rx="6" fill="#091526" stroke="#1e3a5f"/>
+      <text x="12" y="45" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#e2e8f0">["E100"] ──▶ <tspan fill="#7dd3fc">"Invalid Opcode"</tspan></text>
+      <text x="12" y="67" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#e2e8f0">["W201"] ──▶ <tspan fill="#7dd3fc">"Memory Access Violation"</tspan></text>
+    </g>
+  </g>
+
+  <!-- Right Panel: Safe Access & Traversal -->
+  <g transform="translate(476, 78)">
+    <rect width="420" height="298" rx="10" fill="#0f172a" stroke="#38bdf8" stroke-width="1.8" filter="url(#shadowCh5D)"/>
+    <rect width="420" height="38" rx="10" fill="#075985"/>
+    <rect x="0" y="26" width="420" height="12" fill="#075985"/>
+    <text x="210" y="24" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13.5" font-weight="700" fill="#e0f2fe" text-anchor="middle">Safe Lookup &amp; Ordered Key Iteration</text>
+
+    <!-- Guarded Read -->
+    <g transform="translate(14, 52)">
+      <rect width="392" height="86" rx="6" fill="#072c22" stroke="#10b981" stroke-width="1.2"/>
+      <text x="12" y="20" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="700" fill="#34d399">1. Always Guard Reads with .exists(key)</text>
+      <text x="12" y="42" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#e2e8f0">if (error_messages.exists("E100"))</text>
+      <text x="24" y="60" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#a7f3d0">$display("%s", error_messages["E100"]);</text>
+      <text x="12" y="77" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#94a3b8">Reading an absent key returns default (0 or "") &amp; warns</text>
+    </g>
+
+    <!-- Iteration loop -->
+    <g transform="translate(14, 150)">
+      <rect width="392" height="134" rx="6" fill="#1e1b4b" stroke="#818cf8" stroke-width="1.2"/>
+      <text x="12" y="20" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="700" fill="#a5b4fc">2. Key Iteration (.first / .next / .prev / .last)</text>
+      <text x="12" y="44" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#e2e8f0">string key;</text>
+      <text x="12" y="62" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#c7d2fe">if (error_messages.first(key)) begin</text>
+      <text x="26" y="80" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#e2e8f0">do $display("%s", key);</text>
+      <text x="26" y="98" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#c7d2fe">while (error_messages.next(key));</text>
+      <text x="12" y="114" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#c7d2fe">end</text>
+      <text x="12" y="128" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#94a3b8">Visits keys in sorted key order (not insertion order)</text>
+    </g>
+  </g>
+</svg>

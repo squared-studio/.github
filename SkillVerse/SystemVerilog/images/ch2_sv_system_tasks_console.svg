@@ -1,0 +1,95 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 390" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGradCh2D" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#080c14" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <filter id="shadowCh2D" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+  </defs>
+
+  <rect width="920" height="390" rx="14" fill="url(#bgGradCh2D)"/>
+
+  <!-- Title -->
+  <text x="460" y="34" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="20" font-weight="700" fill="#f8fafc" text-anchor="middle">System Tasks for Console Formatting &amp; Simulation Control</text>
+  <text x="460" y="56" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13" fill="#94a3b8" text-anchor="middle">Anatomy of $display format specifiers and simulator lifecycle commands</text>
+
+  <!-- Top Panel: Format Specifier Breakdown -->
+  <g transform="translate(24, 76)">
+    <rect width="872" height="176" rx="10" fill="#0f172a" stroke="#38bdf8" stroke-width="1.6" filter="url(#shadowCh2D)"/>
+
+    <!-- Code Statement -->
+    <rect x="16" y="14" width="840" height="38" rx="6" fill="#080d18" stroke="#1e3a5f"/>
+    <text x="436" y="38" font-family="'JetBrains Mono', Consolas, monospace" font-size="13" fill="#e2e8f0" text-anchor="middle"><tspan fill="#34d399" font-weight="700">$display</tspan>(<tspan fill="#fde68a">"[<tspan fill="#c084fc" font-weight="700">%0t</tspan> ns] count=<tspan fill="#38bdf8" font-weight="700">%0d</tspan> data=0x<tspan fill="#f59e0b" font-weight="700">%0h</tspan> bin=<tspan fill="#fb7185" font-weight="700">%b</tspan>"</tspan>, $time, count, data, data[3:0]);</text>
+
+    <!-- 4 Specifier Pill Cards -->
+    <g transform="translate(16, 64)">
+      <rect width="198" height="52" rx="6" fill="#18122b" stroke="#a855f7"/>
+      <text x="99" y="21" font-family="'JetBrains Mono', Consolas, monospace" font-size="13" font-weight="700" fill="#c084fc" text-anchor="middle">%0t  ($time)</text>
+      <text x="99" y="40" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#cbd5e1" text-anchor="middle">Compact simulation time</text>
+    </g>
+
+    <g transform="translate(230, 64)">
+      <rect width="198" height="52" rx="6" fill="#0c1e35" stroke="#38bdf8"/>
+      <text x="99" y="21" font-family="'JetBrains Mono', Consolas, monospace" font-size="13" font-weight="700" fill="#38bdf8" text-anchor="middle">%0d  (count = 3)</text>
+      <text x="99" y="40" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#cbd5e1" text-anchor="middle">Decimal (0 = no padding)</text>
+    </g>
+
+    <g transform="translate(444, 64)">
+      <rect width="198" height="52" rx="6" fill="#1c1917" stroke="#f59e0b"/>
+      <text x="99" y="21" font-family="'JetBrains Mono', Consolas, monospace" font-size="13" font-weight="700" fill="#fbbf24" text-anchor="middle">%0h  (data = 8'hA5)</text>
+      <text x="99" y="40" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#cbd5e1" text-anchor="middle">Compact hexadecimal</text>
+    </g>
+
+    <g transform="translate(658, 64)">
+      <rect width="198" height="52" rx="6" fill="#2c0b16" stroke="#f43f5e"/>
+      <text x="99" y="21" font-family="'JetBrains Mono', Consolas, monospace" font-size="13" font-weight="700" fill="#fb7185" text-anchor="middle">%b  (data[3:0])</text>
+      <text x="99" y="40" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#cbd5e1" text-anchor="middle">Bit-by-bit binary output</text>
+    </g>
+
+    <!-- Rendered Console Output Bar -->
+    <rect x="16" y="128" width="840" height="34" rx="6" fill="#072c22" stroke="#34d399"/>
+    <text x="32" y="150" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11.5" font-weight="700" fill="#34d399">CONSOLE OUTPUT:</text>
+    <text x="162" y="150" font-family="'JetBrains Mono', Consolas, monospace" font-size="12.5" font-weight="700" fill="#d1fae5">[10 ns] count=3 data=0xa5 bin=0101</text>
+  </g>
+
+  <!-- Bottom Panel: 4 Essential System Tasks -->
+  <g transform="translate(24, 270)">
+    <!-- $display -->
+    <g transform="translate(0, 0)">
+      <rect width="206" height="98" rx="10" fill="#0f172a" stroke="#34d399" stroke-width="1.5" filter="url(#shadowCh2D)"/>
+      <text x="103" y="26" font-family="'JetBrains Mono', Consolas, monospace" font-size="13.5" font-weight="700" fill="#34d399" text-anchor="middle">$display(...);</text>
+      <text x="103" y="48" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#e2e8f0" text-anchor="middle">Prints formatted message</text>
+      <text x="103" y="65" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#e2e8f0" text-anchor="middle">immediately with automatic</text>
+      <text x="103" y="82" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#a7f3d0" text-anchor="middle">trailing newline (\n)</text>
+    </g>
+
+    <!-- $write -->
+    <g transform="translate(222, 0)">
+      <rect width="206" height="98" rx="10" fill="#0f172a" stroke="#38bdf8" stroke-width="1.5" filter="url(#shadowCh2D)"/>
+      <text x="103" y="26" font-family="'JetBrains Mono', Consolas, monospace" font-size="13.5" font-weight="700" fill="#38bdf8" text-anchor="middle">$write(...);</text>
+      <text x="103" y="48" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#e2e8f0" text-anchor="middle">Prints formatted message</text>
+      <text x="103" y="65" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#e2e8f0" text-anchor="middle">without adding a newline;</text>
+      <text x="103" y="82" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#7dd3fc" text-anchor="middle">useful for multi-part lines</text>
+    </g>
+
+    <!-- $stop -->
+    <g transform="translate(444, 0)">
+      <rect width="206" height="98" rx="10" fill="#0f172a" stroke="#f59e0b" stroke-width="1.5" filter="url(#shadowCh2D)"/>
+      <text x="103" y="26" font-family="'JetBrains Mono', Consolas, monospace" font-size="13.5" font-weight="700" fill="#fbbf24" text-anchor="middle">$stop;</text>
+      <text x="103" y="48" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#e2e8f0" text-anchor="middle">Pauses simulation and drops</text>
+      <text x="103" y="65" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#e2e8f0" text-anchor="middle">into interactive debugger;</text>
+      <text x="103" y="82" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#fde68a" text-anchor="middle">run can still be resumed</text>
+    </g>
+
+    <!-- $finish -->
+    <g transform="translate(666, 0)">
+      <rect width="206" height="98" rx="10" fill="#0f172a" stroke="#f43f5e" stroke-width="1.5" filter="url(#shadowCh2D)"/>
+      <text x="103" y="26" font-family="'JetBrains Mono', Consolas, monospace" font-size="13.5" font-weight="700" fill="#fb7185" text-anchor="middle">$finish;</text>
+      <text x="103" y="48" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#e2e8f0" text-anchor="middle">Terminates simulation cleanly</text>
+      <text x="103" y="65" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#e2e8f0" text-anchor="middle">once tests complete; stops</text>
+      <text x="103" y="82" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#fecdd3" text-anchor="middle">infinite clocks/loops</text>
+    </g>
+  </g>
+</svg>

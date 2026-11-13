@@ -1,0 +1,121 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 430" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGradCh2C" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#080c14" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <filter id="shadowCh2C" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+    <marker id="arrCyan2C" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#38bdf8"/>
+    </marker>
+    <marker id="arrEmerald2C" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#34d399"/>
+    </marker>
+  </defs>
+
+  <rect width="920" height="430" rx="14" fill="url(#bgGradCh2C)"/>
+
+  <!-- Title -->
+  <text x="460" y="34" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="20" font-weight="700" fill="#f8fafc" text-anchor="middle">Sequential begin...end Blocks vs. Concurrent initial Processes</text>
+  <text x="460" y="56" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13" fill="#94a3b8" text-anchor="middle">Statements inside one begin...end run in sequence; separate initial blocks run concurrently from t = 0</text>
+
+  <!-- Main Timeline Card -->
+  <g transform="translate(24, 78)">
+    <rect width="872" height="226" rx="10" fill="#0f172a" stroke="#1e293b" stroke-width="1.5" filter="url(#shadowCh2C)"/>
+
+    <!-- Simulation Time Axis -->
+    <text x="40" y="32" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="700" fill="#94a3b8">SIMULATION TIME</text>
+    <line x1="210" y1="28" x2="835" y2="28" stroke="#475569" stroke-width="2"/>
+
+    <!-- Time Grid Ticks & Dashed Lines -->
+    <g font-family="'JetBrains Mono', Consolas, monospace" font-size="11" font-weight="700" fill="#cbd5e1" text-anchor="middle">
+      <circle cx="220" cy="28" r="4" fill="#38bdf8"/>
+      <text x="220" y="18">0 ns</text>
+      <line x1="220" y1="36" x2="220" y2="212" stroke="#334155" stroke-width="1" stroke-dasharray="4 3"/>
+
+      <circle cx="370" cy="28" r="4" fill="#34d399"/>
+      <text x="370" y="18">5 ns</text>
+      <line x1="370" y1="36" x2="370" y2="212" stroke="#334155" stroke-width="1" stroke-dasharray="4 3"/>
+
+      <circle cx="520" cy="28" r="4" fill="#38bdf8"/>
+      <text x="520" y="18">10 ns</text>
+      <line x1="520" y1="36" x2="520" y2="212" stroke="#334155" stroke-width="1" stroke-dasharray="4 3"/>
+
+      <circle cx="670" cy="28" r="4" fill="#34d399"/>
+      <text x="670" y="18">15 ns</text>
+      <line x1="670" y1="36" x2="670" y2="212" stroke="#334155" stroke-width="1" stroke-dasharray="4 3"/>
+
+      <circle cx="820" cy="28" r="4" fill="#f43f5e"/>
+      <text x="820" y="18">20 ns</text>
+      <line x1="820" y1="36" x2="820" y2="212" stroke="#334155" stroke-width="1" stroke-dasharray="4 3"/>
+    </g>
+
+    <!-- Track 1: initial Block A (Stimulus) -->
+    <rect x="20" y="54" width="155" height="62" rx="8" fill="#0c1e35" stroke="#38bdf8" stroke-width="1.5"/>
+    <text x="97" y="79" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" font-weight="700" fill="#38bdf8" text-anchor="middle">initial (Proc A)</text>
+    <text x="97" y="99" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#cbd5e1" text-anchor="middle">Reset &amp; Termination</text>
+
+    <!-- Track 1 Events -->
+    <rect x="180" y="64" width="84" height="40" rx="6" fill="#075985" stroke="#38bdf8"/>
+    <text x="222" y="88" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" font-weight="700" fill="#e0f2fe" text-anchor="middle">rst_n = 0</text>
+
+    <line x1="264" y1="84" x2="472" y2="84" stroke="#38bdf8" stroke-width="2" marker-end="url(#arrCyan2C)"/>
+    <rect x="332" y="69" width="74" height="20" rx="4" fill="#0f172a" stroke="#1e3a5f"/>
+    <text x="369" y="83" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#7dd3fc" text-anchor="middle">#10ns</text>
+
+    <rect x="478" y="64" width="84" height="40" rx="6" fill="#075985" stroke="#38bdf8"/>
+    <text x="520" y="88" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" font-weight="700" fill="#e0f2fe" text-anchor="middle">rst_n = 1</text>
+
+    <line x1="562" y1="84" x2="770" y2="84" stroke="#38bdf8" stroke-width="2" marker-end="url(#arrCyan2C)"/>
+    <rect x="632" y="69" width="74" height="20" rx="4" fill="#0f172a" stroke="#1e3a5f"/>
+    <text x="669" y="83" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#7dd3fc" text-anchor="middle">#10ns</text>
+
+    <rect x="776" y="64" width="82" height="40" rx="6" fill="#4c0519" stroke="#f43f5e"/>
+    <text x="817" y="88" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" font-weight="700" fill="#fecdd3" text-anchor="middle">$finish;</text>
+
+    <!-- Track 2: initial Block B (Logger) -->
+    <rect x="20" y="138" width="155" height="62" rx="8" fill="#072c22" stroke="#34d399" stroke-width="1.5"/>
+    <text x="97" y="163" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" font-weight="700" fill="#34d399" text-anchor="middle">initial (Proc B)</text>
+    <text x="97" y="183" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#cbd5e1" text-anchor="middle">Status Logger</text>
+
+    <!-- Track 2 Events -->
+    <rect x="180" y="148" width="84" height="40" rx="6" fill="#065f46" stroke="#34d399"/>
+    <text x="222" y="165" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" font-weight="700" fill="#d1fae5" text-anchor="middle">$display</text>
+    <text x="222" y="180" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#a7f3d0" text-anchor="middle">("Start")</text>
+
+    <line x1="264" y1="168" x2="322" y2="168" stroke="#34d399" stroke-width="2" marker-end="url(#arrEmerald2C)"/>
+    <text x="293" y="159" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#6ee7b7" text-anchor="middle">#5ns</text>
+
+    <rect x="328" y="148" width="84" height="40" rx="6" fill="#065f46" stroke="#34d399"/>
+    <text x="370" y="165" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" font-weight="700" fill="#d1fae5" text-anchor="middle">$display</text>
+    <text x="370" y="180" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#a7f3d0" text-anchor="middle">("Mid")</text>
+
+    <line x1="412" y1="168" x2="622" y2="168" stroke="#34d399" stroke-width="2" marker-end="url(#arrEmerald2C)"/>
+    <rect x="482" y="153" width="74" height="20" rx="4" fill="#0f172a" stroke="#065f46"/>
+    <text x="519" y="167" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#6ee7b7" text-anchor="middle">#10ns</text>
+
+    <rect x="628" y="148" width="84" height="40" rx="6" fill="#065f46" stroke="#34d399"/>
+    <text x="670" y="165" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" font-weight="700" fill="#d1fae5" text-anchor="middle">$display</text>
+    <text x="670" y="180" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#a7f3d0" text-anchor="middle">("Done")</text>
+
+    <rect x="726" y="155" width="130" height="26" rx="5" fill="#1e293b"/>
+    <text x="791" y="172" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#94a3b8" text-anchor="middle">Proc B inactive</text>
+  </g>
+
+  <!-- Bottom Two Callout Cards -->
+  <g transform="translate(24, 320)">
+    <rect width="424" height="90" rx="10" fill="#131d33" stroke="#a855f7" stroke-width="1.5" filter="url(#shadowCh2C)"/>
+    <text x="16" y="26" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13" font-weight="700" fill="#c084fc">Sequential Execution Inside begin...end</text>
+    <text x="16" y="48" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11.5" fill="#cbd5e1">• Statements execute top-to-bottom within a single process.</text>
+    <text x="16" y="68" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11.5" fill="#cbd5e1">• Delays (#5ns, #10ns) accumulate along that process's timeline.</text>
+  </g>
+
+  <g transform="translate(472, 320)">
+    <rect width="424" height="90" rx="10" fill="#1c1917" stroke="#f59e0b" stroke-width="1.5" filter="url(#shadowCh2C)"/>
+    <text x="16" y="26" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13" font-weight="700" fill="#fbbf24">Concurrency &amp; Race Condition Avoidance</text>
+    <text x="16" y="48" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11.5" fill="#cbd5e1">• Events at the same timestamp (t = 0) have no source-order guarantee.</text>
+    <text x="16" y="68" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11.5" fill="#fde68a">• Drive each signal from one process; synchronize with delays or events.</text>
+  </g>
+</svg>

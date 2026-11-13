@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 400" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGradCh6C" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#080c14" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <filter id="shadowCh6C" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+    <marker id="arrowCyanC" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 8 5 L 0 9 z" fill="#38bdf8" />
+    </marker>
+    <marker id="arrowAmberC" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 8 5 L 0 9 z" fill="#fbbf24" />
+    </marker>
+    <marker id="arrowGreenC" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 8 5 L 0 9 z" fill="#34d399" />
+    </marker>
+  </defs>
+
+  <rect width="920" height="400" rx="14" fill="url(#bgGradCh6C)"/>
+
+  <!-- Title -->
+  <text x="460" y="34" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="20" font-weight="700" fill="#f8fafc" text-anchor="middle">The 'with' Clause, Key Sorting &amp; Method Chaining Pipeline</text>
+  <text x="460" y="56" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13" fill="#94a3b8" text-anchor="middle">Expressive element-wise predicates, sort keys, and multi-stage reductions without manual loops</text>
+
+  <!-- Top Left Card: Predicate Filtering -->
+  <g transform="translate(24, 78)">
+    <rect width="424" height="156" rx="10" fill="#0f172a" stroke="#38bdf8" stroke-width="1.6" filter="url(#shadowCh6C)"/>
+    <rect width="424" height="32" rx="10" fill="#075985"/>
+    <rect x="0" y="20" width="424" height="12" fill="#075985"/>
+    <text x="16" y="21" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="12.5" font-weight="700" fill="#e0f2fe">Filtering with Predicate: .find(x) with (x &lt; 0)</text>
+
+    <text x="16" y="54" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" fill="#cbd5e1">temps = '{ <tspan fill="#38bdf8" font-weight="700">-5</tspan>, 12, 23, <tspan fill="#38bdf8" font-weight="700">-3</tspan>, 42, 18 };</text>
+    <line x1="212" y1="64" x2="212" y2="86" stroke="#38bdf8" stroke-width="1.8" marker-end="url(#arrowCyanC)"/>
+    <rect x="16" y="92" width="392" height="48" rx="6" fill="#0c1e35" stroke="#0284c7"/>
+    <text x="28" y="112" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" font-weight="700" fill="#38bdf8">int cold[$] = temps.find(x) with (x &lt; 0);</text>
+    <text x="28" y="130" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#a7f3d0">Result: '{ -5, -3 }   (source 'temps' unchanged)</text>
+  </g>
+
+  <!-- Top Right Card: Key-Based Sorting -->
+  <g transform="translate(472, 78)">
+    <rect width="424" height="156" rx="10" fill="#0f172a" stroke="#f59e0b" stroke-width="1.6" filter="url(#shadowCh6C)"/>
+    <rect width="424" height="32" rx="10" fill="#78350f"/>
+    <rect x="0" y="20" width="424" height="12" fill="#78350f"/>
+    <text x="16" y="21" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="12.5" font-weight="700" fill="#fef3c7">Key-Based Sort: .sort(x) with (x.len())</text>
+
+    <text x="16" y="54" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#cbd5e1">names = '{"Alice"<tspan fill="#fbbf24">(5)</tspan>, "Bob"<tspan fill="#fbbf24">(3)</tspan>, "Charlie"<tspan fill="#fbbf24">(7)</tspan>};</text>
+    <line x1="212" y1="64" x2="212" y2="86" stroke="#fbbf24" stroke-width="1.8" marker-end="url(#arrowAmberC)"/>
+    <rect x="16" y="92" width="392" height="48" rx="6" fill="#181208" stroke="#b45309"/>
+    <text x="28" y="112" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" font-weight="700" fill="#fbbf24">names.sort(x) with (x.len());</text>
+    <text x="28" y="130" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#fde68a">In-place: '{"Bob", "Alice", "Charlie"}</text>
+  </g>
+
+  <!-- Bottom Card: Method Chaining & Safe Reductions -->
+  <g transform="translate(24, 250)">
+    <rect width="872" height="130" rx="10" fill="#0f172a" stroke="#10b981" stroke-width="1.8" filter="url(#shadowCh6C)"/>
+    <rect width="872" height="32" rx="10" fill="#065f46"/>
+    <rect x="0" y="20" width="872" height="12" fill="#065f46"/>
+    <text x="16" y="21" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="12.5" font-weight="700" fill="#d1fae5">Method Chaining &amp; Width-Safe Conditional Reductions</text>
+
+    <!-- Chain boxes -->
+    <g transform="translate(16, 46)">
+      <rect x="0" y="0" width="248" height="44" rx="6" fill="#091526" stroke="#334155"/>
+      <text x="124" y="17" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#94a3b8" text-anchor="middle">Input Dynamic Array</text>
+      <text x="124" y="34" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" font-weight="700" fill="#e2e8f0" text-anchor="middle">'{ 8, 3, 5, 8, 2, 5 }</text>
+
+      <line x1="252" y1="22" x2="294" y2="22" stroke="#34d399" stroke-width="2" marker-end="url(#arrowGreenC)"/>
+      <text x="273" y="13" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#6ee7b7" text-anchor="middle">.unique()</text>
+
+      <rect x="298" y="0" width="232" height="44" rx="6" fill="#0c1e35" stroke="#38bdf8"/>
+      <text x="414" y="17" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#7dd3fc" text-anchor="middle">Intermediate Queue [$]</text>
+      <text x="414" y="34" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" font-weight="700" fill="#f8fafc" text-anchor="middle">'{ 8, 3, 5, 2 }</text>
+
+      <line x1="534" y1="22" x2="576" y2="22" stroke="#34d399" stroke-width="2" marker-end="url(#arrowGreenC)"/>
+      <text x="555" y="13" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#6ee7b7" text-anchor="middle">.sum()</text>
+
+      <rect x="580" y="0" width="260" height="44" rx="6" fill="#064e3b" stroke="#10b981"/>
+      <text x="710" y="17" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#a7f3d0" text-anchor="middle">Scalar Result (int)</text>
+      <text x="710" y="34" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" font-weight="700" fill="#f8fafc" text-anchor="middle">unique_sum == 18</text>
+    </g>
+
+    <text x="16" y="114" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#cbd5e1">Tip: Use conditional casting inside reductions to avoid overflow: <tspan font-family="'JetBrains Mono', Consolas, monospace" fill="#fbbf24">vals.sum(x) with (int'(x &gt; 0 ? x : 0))</tspan></text>
+  </g>
+</svg>

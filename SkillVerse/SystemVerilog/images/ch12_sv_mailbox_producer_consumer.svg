@@ -1,0 +1,127 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 410" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGradCh12A" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#080c14" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <filter id="shadowCh12A" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+    <marker id="arrowCyan12A" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8"/>
+    </marker>
+    <marker id="arrowGreen12A" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#34d399"/>
+    </marker>
+    <marker id="arrowAmber12A" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#fbbf24"/>
+    </marker>
+  </defs>
+
+  <rect width="920" height="410" rx="14" fill="url(#bgGradCh12A)"/>
+
+  <!-- Title -->
+  <text x="460" y="34" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="20" font-weight="700" fill="#f8fafc" text-anchor="middle">SystemVerilog Parameterized Mailbox: Producer-Consumer FIFO Channel</text>
+  <text x="460" y="56" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13" fill="#94a3b8" text-anchor="middle">Type-safe FIFO message passing with blocking (put / get / peek) and non-blocking (try_put / try_get / try_peek) APIs</text>
+
+  <!-- Left Panel: Producer -->
+  <g transform="translate(24, 82)">
+    <rect width="248" height="296" rx="10" fill="#0f172a" stroke="#38bdf8" stroke-width="1.8" filter="url(#shadowCh12A)"/>
+    <rect width="248" height="36" rx="10" fill="#075985"/>
+    <rect x="0" y="24" width="248" height="12" fill="#075985"/>
+    <text x="124" y="23" font-family="'JetBrains Mono', Consolas, monospace" font-size="13.5" font-weight="700" fill="#e0f2fe" text-anchor="middle">Producer Process</text>
+
+    <g transform="translate(12, 50)">
+      <rect width="224" height="84" rx="7" fill="#0c1c2e" stroke="#0284c7"/>
+      <text x="10" y="20" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" font-weight="700" fill="#38bdf8">put(pkt)  [Task]</text>
+      <text x="10" y="40" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#e2e8f0">Blocking send: appends pkt to tail.</text>
+      <text x="10" y="57" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#fbbf24">If bounded FIFO is FULL, suspends</text>
+      <text x="10" y="73" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#fbbf24">until consumer frees a slot.</text>
+    </g>
+
+    <g transform="translate(12, 146)">
+      <rect width="224" height="84" rx="7" fill="#0c1c2e" stroke="#0284c7"/>
+      <text x="10" y="20" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" font-weight="700" fill="#7dd3fc">try_put(pkt)  [Function]</text>
+      <text x="10" y="40" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#e2e8f0">Non-blocking backpressure check.</text>
+      <text x="10" y="57" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#a7f3d0">Returns &gt; 0 (1) if queued,</text>
+      <text x="10" y="73" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#fda4af">Returns 0 immediately if FULL.</text>
+    </g>
+
+    <text x="124" y="262" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#94a3b8" text-anchor="middle">Generates packet_type tx</text>
+    <text x="124" y="280" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#64748b" text-anchor="middle">Never drops tx if followed by put()</text>
+  </g>
+
+  <!-- Arrow Producer -> Mailbox -->
+  <line x1="274" y1="214" x2="322" y2="214" stroke="#38bdf8" stroke-width="2.5" marker-end="url(#arrowCyan12A)"/>
+  <text x="298" y="202" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#7dd3fc" text-anchor="middle">enqueue</text>
+
+  <!-- Center Panel: Bounded Mailbox FIFO -->
+  <g transform="translate(326, 82)">
+    <rect width="268" height="296" rx="10" fill="#0f172a" stroke="#f59e0b" stroke-width="1.8" filter="url(#shadowCh12A)"/>
+    <rect width="268" height="36" rx="10" fill="#78350f"/>
+    <rect x="0" y="24" width="268" height="12" fill="#78350f"/>
+    <text x="134" y="23" font-family="'JetBrains Mono', Consolas, monospace" font-size="12.5" font-weight="700" fill="#fef3c7" text-anchor="middle">mailbox #(packet_type) = new(2)</text>
+
+    <!-- Capacity Badge -->
+    <g transform="translate(14, 48)">
+      <rect width="240" height="38" rx="6" fill="#181208" stroke="#b45309"/>
+      <text x="120" y="16" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" font-weight="700" fill="#fbbf24" text-anchor="middle">new(N) = Bounded  |  new() = Unbounded</text>
+      <text x="120" y="31" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#fde68a" text-anchor="middle">Compile-time type check prevents wrong payload types</text>
+    </g>
+
+    <!-- FIFO Queue Visualization -->
+    <g transform="translate(14, 98)">
+      <text x="0" y="14" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="700" fill="#e2e8f0">Bounded FIFO Buffer (Capacity = 2):</text>
+
+      <!-- Slot 0 (Head) -->
+      <rect x="0" y="24" width="240" height="44" rx="6" fill="#064e3b" stroke="#10b981" stroke-width="1.5"/>
+      <text x="12" y="42" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" font-weight="700" fill="#6ee7b7">Slot [0]  HEAD (Next to get/peek)</text>
+      <text x="12" y="59" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#d1fae5">pkt_0: { data_id: 0, payload: 32'hA1... }</text>
+
+      <!-- Slot 1 (Tail) -->
+      <rect x="0" y="76" width="240" height="44" rx="6" fill="#1e293b" stroke="#38bdf8" stroke-width="1.5"/>
+      <text x="12" y="94" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" font-weight="700" fill="#7dd3fc">Slot [1]  TAIL (Most recent put)</text>
+      <text x="12" y="111" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#cbd5e1">pkt_1: { data_id: 1, payload: 32'h4F... }</text>
+    </g>
+
+    <!-- Occupancy Method -->
+    <g transform="translate(14, 234)">
+      <rect width="240" height="48" rx="6" fill="#091526" stroke="#334155"/>
+      <text x="120" y="19" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" font-weight="700" fill="#38bdf8" text-anchor="middle">pkt_mbox.num()  -&gt;  2</text>
+      <text x="120" y="37" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#94a3b8" text-anchor="middle">Non-blocking function returning queued message count</text>
+    </g>
+  </g>
+
+  <!-- Arrow Mailbox -> Consumer (dequeue & peek) -->
+  <line x1="596" y1="186" x2="644" y2="186" stroke="#34d399" stroke-width="2.5" marker-end="url(#arrowGreen12A)"/>
+  <text x="620" y="174" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#6ee7b7" text-anchor="middle">dequeue</text>
+
+  <line x1="596" y1="262" x2="644" y2="262" stroke="#fbbf24" stroke-width="2" stroke-dasharray="4,3" marker-end="url(#arrowAmber12A)"/>
+  <text x="620" y="250" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#fbbf24" text-anchor="middle">peek</text>
+
+  <!-- Right Panel: Consumer -->
+  <g transform="translate(648, 82)">
+    <rect width="248" height="296" rx="10" fill="#0f172a" stroke="#10b981" stroke-width="1.8" filter="url(#shadowCh12A)"/>
+    <rect width="248" height="36" rx="10" fill="#065f46"/>
+    <rect x="0" y="24" width="248" height="12" fill="#065f46"/>
+    <text x="124" y="23" font-family="'JetBrains Mono', Consolas, monospace" font-size="13.5" font-weight="700" fill="#d1fae5" text-anchor="middle">Consumer Process</text>
+
+    <g transform="translate(12, 50)">
+      <rect width="224" height="106" rx="7" fill="#072c22" stroke="#10b981"/>
+      <text x="10" y="20" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" font-weight="700" fill="#34d399">get(pkt)  /  peek(pkt)  [Tasks]</text>
+      <text x="10" y="40" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#e2e8f0">Both are BLOCKING when empty!</text>
+      <text x="10" y="58" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#a7f3d0">- get(pkt): removes head message</text>
+      <text x="10" y="74" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#fde68a">- peek(pkt): copies head without</text>
+      <text x="18" y="90" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#fde68a">removing it from the mailbox</text>
+    </g>
+
+    <g transform="translate(12, 168)">
+      <rect width="224" height="114" rx="7" fill="#072c22" stroke="#10b981"/>
+      <text x="10" y="20" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" font-weight="700" fill="#6ee7b7">try_get(pkt) / try_peek(pkt)</text>
+      <text x="10" y="38" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#e2e8f0">Non-blocking Functions:</text>
+      <text x="10" y="56" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#a7f3d0">- Returns &gt; 0 (1) if msg available</text>
+      <text x="10" y="72" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#fda4af">- Returns 0 immediately if EMPTY</text>
+      <text x="10" y="92" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#94a3b8">Use try_peek() for non-blocking lookahead</text>
+    </g>
+  </g>
+</svg>

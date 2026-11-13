@@ -58,6 +58,8 @@ In this `SimpleClass` example:
 
 Objects are concrete instances of classes. Think of a class as a cookie cutter and objects as the cookies created using that cutter. Objects are dynamically created at runtime using the `new()` constructor. Objects are accessed and manipulated through object handles, which are references to class objects rather than synthesizable hardware pointers. A handle may be `null`; dereferencing a null handle is a runtime error.
 
+![SystemVerilog Class Handles vs Heap Objects null new and Handle Aliasing](images/ch15_sv_object_handles_and_memory.svg)
+
 ### Example: Instantiating and Using a Class Object
 
 ```systemverilog
@@ -99,7 +101,7 @@ class Animal;
   string name; // Public property: animal's name
 
   // Method: generic animal sound
-  function virtual void speak(); // 'virtual' keyword enables polymorphism
+  virtual function void speak(); // 'virtual' keyword enables polymorphism
     $display("%0s makes a generic animal sound", name);
   endfunction : speak
 
@@ -110,7 +112,7 @@ class Dog extends Animal;
   // Inherits 'name' property and 'speak()' method from Animal
 
   // Override the 'speak()' method to provide Dog-specific behavior
-  function virtual void speak(); // Override base class method; repeating 'virtual' is optional
+  virtual function void speak(); // Override base class method; repeating 'virtual' is optional
     super.speak();          // Optional: Call the base class's speak() method first
     $display("%0s barks: Woof!", name); // Then add Dog-specific barking behavior
   endfunction : speak
@@ -157,6 +159,8 @@ Key points in the inheritance example:
 ## Polymorphism: Dynamic Method Dispatch for Flexible Behavior
 
 Polymorphism, specifically through **virtual methods**, is a powerful OOP feature that allows objects of different classes to be treated through a common base class interface. The key mechanism for polymorphism in SystemVerilog is the `virtual` keyword used in method declarations. When a method is declared `virtual` in a base class, derived classes can override it with their own implementations. When you call a virtual method through a base class handle that actually points to a derived class object, SystemVerilog dynamically determines and executes the _overridden method in the derived class_, not the base class method. This is known as **dynamic method dispatch** or runtime polymorphism.
+
+![Inheritance Hierarchy and Virtual Method Dynamic Dispatch](images/ch15_sv_inheritance_and_polymorphism_dispatch.svg)
 
 ### Example: Polymorphism with `Shape`, `Circle`, and `Square` Classes
 
@@ -222,10 +226,13 @@ In this polymorphism example:
 - `shape_obj = circle_obj;` and `shape_obj = square_obj;` demonstrate **upcasting**, where handles of derived classes (`Circle`, `Square`) are assigned to a handle of the base class (`Shape`). Upcasting is always safe and allowed in OOP.
 - `shape_obj.draw();` calls demonstrate dynamic dispatch. The actual method that gets executed (`Circle::draw()` or `Square::draw()`) is determined at _runtime_ based on the _actual object type_ that `shape_obj` is currently pointing to, not just the handle type (`Shape`).
 - The `shape_array` example further illustrates polymorphism by showing how an array of base class handles can hold objects of different derived classes, and calling a virtual method on each element will result in the correct derived class method being invoked.
+- **Safe Downcasting with `$cast(dest, src)`**: While upcasting (`shape_obj = circle_obj;`) is always implicit, converting a base handle back to a derived handle requires `$cast(circle_obj, shape_obj)`. Calling `$cast` as a function returns `1` on success (when the runtime object is compatible) and `0` on failure.
 
 ## Encapsulation: Data Hiding and Controlled Access
 
 Encapsulation is the principle of bundling data (properties) and methods that operate on that data within a class, and controlling access to the internal data to protect it from direct, unauthorized modification. SystemVerilog provides access modifiers (`local` and `protected`) to implement encapsulation.
+
+![SystemVerilog Class Encapsulation local protected and public Visibility Scopes](images/ch15_sv_encapsulation_access_levels.svg)
 
 - **`local`**: Declares a member (property or method) as _private_ to the class in which it is declared. `local` members can only be accessed from within the class itself. They are not accessible from derived classes or from outside the class.
 - **`protected`**: Declares a member as accessible within the class in which it's declared and in any classes derived from that class (subclasses). `protected` members are not accessible from outside the class hierarchy.
@@ -316,6 +323,8 @@ In this encapsulation example:
 
 Classes are the foundation for randomization in SystemVerilog verification. You can declare properties within a class as `rand` or `randc` to make them randomizable. Constraints, defined using `constraint` blocks within the class, are used to specify the rules and restrictions for the random values generated for these `rand` variables.
 
+![Class Based Constrained Random Generation Flow rand constraint randomize](images/ch15_sv_class_constrained_randomization_flow.svg)
+
 ### Example: Random Packet Generation with Constraints
 
 ```systemverilog
@@ -376,41 +385,185 @@ In this randomization example:
     - Create a SystemVerilog class named `Car`.
     - Add the following _public_ properties:
       - `string model;` (to store the car model name)
-      - `int speed;` (to store the current speed of the car, initially 0)
-    - Implement a _public virtual_ method `function void accelerate();` that increases the `speed` property of the `Car` object by 10. Declaring it virtual enables the override and dynamic dispatch in later exercises.
-    - In a module, instantiate a `Car` object, set its `model` property to "Sedan", call the `accelerate()` method twice, and then display the final `speed` of the car.
+      - `int speed;` (to store the current speed of the car, initially `0`)
+    - Implement a _public virtual_ method `virtual function void accelerate();` that increases `speed` by `10`.
+    - Instantiate a `Car` object, set `model = "Sedan"`, call `accelerate()` twice, and display the final speed (`20`).
+
+    ```systemverilog
+    module ex1_car_class;
+      class Car;
+        string model;
+        int    speed = 0;
+
+        virtual function void accelerate();
+          speed += 10;
+        endfunction
+      endclass
+
+      initial begin
+        Car my_car = new();
+        my_car.model = "Sedan";
+        my_car.accelerate();
+        my_car.accelerate();
+        $display("Model: %s, Speed: %0d", my_car.model, my_car.speed); // 20
+      end
+    endmodule
+    ```
 
 2.  **Object Usage and Interaction**:
-    - Extend the `Car` class from Exercise 1.
-    - Add a new _public_ method `function void brake(int decrement);` to the `Car` class that decreases the `speed` by the amount specified by the `decrement` argument. Ensure that the speed does not become negative (clamp it at 0 if necessary).
-    - In a module, create two `Car` objects, set their `model` names, accelerate both of them, then apply `brake()` to only one of them. Display the `model` and `speed` of both cars to demonstrate independent object behavior.
+    - Extend `Car` with `function void brake(int decrement);` that decreases `speed` clamped at `0`.
+    - Create two independent `Car` objects, accelerate both, brake only one, and display both speeds.
+
+    ```systemverilog
+    module ex2_car_interaction;
+      class Car;
+        string model;
+        int    speed = 0;
+
+        virtual function void accelerate();
+          speed += 10;
+        endfunction
+
+        function void brake(int decrement);
+          if (decrement >= speed) speed = 0;
+          else if (decrement > 0) speed -= decrement;
+        endfunction
+      endclass
+
+      initial begin
+        Car car_a = new();
+        Car car_b = new();
+        car_a.model = "Sedan";
+        car_b.model = "Coupe";
+
+        car_a.accelerate(); car_a.accelerate();
+        car_b.accelerate(); car_b.accelerate();
+        car_a.brake(15);
+
+        $display("%s speed = %0d, %s speed = %0d",
+                 car_a.model, car_a.speed, car_b.model, car_b.speed); // 5, 20
+      end
+    endmodule
+    ```
 
 3.  **Inheritance: `ElectricCar` Derived Class**:
-    - Create a new class `ElectricCar` that _inherits_ from the `Car` class (Exercise 1).
-    - _Override_ the `accelerate()` method in the `ElectricCar` class so that it increases the `speed` by 20 instead of 10 (as in the base `Car` class). You can either implement the 20-unit behavior directly, or call `super.accelerate()` and add only 10 more units; doing both with an additional 20-unit increment would produce 30, not 20.
-    - In a module, create objects of both `Car` and `ElectricCar` classes. Call the `accelerate()` method on both objects and display their speeds to demonstrate that the overridden method in `ElectricCar` is executed.
+    - Create `ElectricCar extends Car` overriding `accelerate()` to increment speed by `20` instead of `10`.
+
+    ```systemverilog
+    module ex3_electric_car;
+      class Car;
+        string model;
+        int    speed = 0;
+
+        virtual function void accelerate();
+          speed += 10;
+        endfunction
+      endclass
+
+      class ElectricCar extends Car;
+        virtual function void accelerate();
+          super.accelerate(); // +10
+          speed += 10;        // total +20
+        endfunction
+      endclass
+
+      initial begin
+        Car         gas_car = new();
+        ElectricCar ev_car  = new();
+        gas_car.accelerate();
+        ev_car.accelerate();
+        $display("Car speed = %0d, ElectricCar speed = %0d",
+                 gas_car.speed, ev_car.speed); // 10, 20
+      end
+    endmodule
+    ```
 
 4.  **Polymorphism: Virtual `start_engine()` Method**:
-    - Add a new _virtual_ method `virtual function void start_engine();` to the base `Car` class. In the base class implementation, make it display a message like `"Generic engine started"`.
-    - _Override_ the `start_engine()` method in the `ElectricCar` class to display a message like `"Electric engine started silently"`.
-    - In a module, declare a handle of type `Car`. Create objects of both `Car` and `ElectricCar` classes. Assign the `ElectricCar` object to the `Car` handle. Call the `start_engine()` method using the `Car` handle. Demonstrate that the `ElectricCar`'s `start_engine()` method is executed (dynamic dispatch). Also, create a `Car` object and call `start_engine()` on it directly to show that the base class method is executed in that case.
+    - Add `virtual function void start_engine();` to `Car` and override it in `ElectricCar`; call `start_engine()` via a base `Car` handle pointing to an `ElectricCar` object.
+
+    ```systemverilog
+    module ex4_car_polymorphism;
+      class Car;
+        virtual function void start_engine();
+          $display("Generic engine started");
+        endfunction
+      endclass
+
+      class ElectricCar extends Car;
+        virtual function void start_engine();
+          $display("Electric engine started silently");
+        endfunction
+      endclass
+
+      initial begin
+        Car         car_h;
+        Car         base_car = new();
+        ElectricCar ev_car   = new();
+
+        base_car.start_engine(); // Generic engine started
+        car_h = ev_car;          // Upcast ElectricCar -> Car handle
+        car_h.start_engine();    // Dynamic dispatch -> Electric engine started silently
+      end
+    endmodule
+    ```
 
 5.  **Encapsulation: Private `speed` and Access Methods**:
-    - Modify the `Car` class (from Exercise 1 or 3) to make the `speed` property `local` (private).
-    - Add two _public_ methods:
-      - `function int getSpeed();` that returns the current value of the `speed` property.
-      - `function void setSpeed(int new_speed);` that allows setting the `speed` property to a new value, but only if the `new_speed` is not negative (add a check to prevent negative speeds). If the `new_speed` is negative, display an error message and do not update the speed.
-    - In a module, create a `Car` object. Try to directly access and modify the `speed` property (this should result in a compilation error, demonstrating encapsulation). Use the `setSpeed()` method to set the speed to a valid value, then use `getSpeed()` to retrieve and display the speed, demonstrating controlled access through public methods. Also, try to use `setSpeed()` to set a negative speed and observe the error message and that the speed is not updated.
+    - Make `speed` `local` and provide `getSpeed()` and validated `setSpeed(int new_speed)` methods rejecting negative values.
+
+    ```systemverilog
+    module ex5_car_encapsulation;
+      class Car;
+        local int speed = 0;
+
+        function int getSpeed();
+          return speed;
+        endfunction
+
+        function void setSpeed(int new_speed);
+          if (new_speed < 0) begin
+            $error("Invalid speed %0d: speed cannot be negative.", new_speed);
+          end else begin
+            speed = new_speed;
+          end
+        endfunction
+      endclass
+
+      initial begin
+        Car c = new();
+        // c.speed = 50; // Compile error: 'speed' is local
+        c.setSpeed(65);
+        $display("Current speed = %0d", c.getSpeed()); // 65
+        c.setSpeed(-10); // Logs error, keeps speed = 65
+        $display("Speed after invalid set = %0d", c.getSpeed());
+      end
+    endmodule
+    ```
 
 6.  **Randomization: `Transaction` Class with Constraints**:
-    - Create a class named `Transaction`.
-    - Add the following _random_ properties (`rand` keyword):
-      - `rand bit [31:0] address;`
-      - `rand bit [7:0] data;`
-    - Add _constraint blocks_ to the `Transaction` class to define the following constraints:
-      - `address` should be within the range `[0x1000 : 0x8000]` (inclusive).
-      - `data` should be an even number and within the range `[0 : 254]` (inclusive). You'll need two separate constraints or combine them appropriately.
-    - In a module, create a `Transaction` object. In a loop that iterates 10 times, call `randomize()` on the `Transaction` object. After each successful randomization, display the randomized values of `address` and `data`. Run the simulation and verify that all generated `address` and `data` values satisfy the defined constraints.
+    - Create `Transaction` with `rand bit [31:0] address;` (`32'h1000..32'h8000`) and `rand bit [7:0] data;` (even and `0..254`), randomize 10 times, and check results.
+
+    ```systemverilog
+    module ex6_transaction_randomization;
+      class Transaction;
+        rand bit [31:0] address;
+        rand bit [7:0]  data;
+
+        constraint c_addr { address inside {[32'h1000 : 32'h8000]}; }
+        constraint c_data {
+          data inside {[0 : 254]};
+          (data % 2) == 0;
+        }
+      endclass
+
+      initial begin
+        Transaction tx = new();
+        repeat (10) begin
+          if (!tx.randomize()) $fatal(1, "Transaction randomization failed!");
+          $display("TX addr=0x%04h, data=%0d (0x%02h)", tx.address, tx.data, tx.data);
+        end
+      end
+    endmodule
+    ```
 
 These exercises will provide a solid foundation in SystemVerilog classes and object-oriented programming concepts, essential for building advanced verification environments. They cover class definition, object instantiation, inheritance, polymorphism, encapsulation, and randomization, all within the context of SystemVerilog for hardware verification.
 

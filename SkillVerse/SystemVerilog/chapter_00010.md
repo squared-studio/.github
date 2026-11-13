@@ -2,51 +2,51 @@
 
 ## Introduction
 
-SystemVerilog procedural statements normally execute in order within a process. The `fork` construct lets one process start multiple child processes so they can make progress concurrently. This is especially useful in testbenches, where independent drivers, monitors, timeouts, and background checks often need to run at the same time.
+SystemVerilog procedural statements execute sequentially inside a single process. When a verification testbench needs drivers, monitors, background checkers, and timeout watchdogs running simultaneously, the `fork` construct spawns multiple independent child processes concurrently.
 
-The matching join keyword determines when the parent process continues: after every child ends, after the first child ends, or immediately. Choosing the right form—and managing any children that remain active—is essential for predictable simulations.
+The matching join keyword—`join`, `join_any`, or `join_none`—determines when the parent process resumes: after every child finishes, after the first child finishes, or immediately. Choosing the right join variant, synchronizing with `wait fork`, and scoping process cancellation cleanly are essential for race-free simulation.
 
 ## Learning Goals
 
 By the end of this chapter, you should be able to:
 
 - Explain how a `fork` block creates concurrent child processes.
-- Choose among `join`, `join_any`, and `join_none`.
-- Synchronize with outstanding processes using `wait fork`.
-- Stop processes deliberately and understand the scope of `disable fork`.
-- Avoid races caused by shared variables and loop-variable capture.
-- Recognize that fork-join is primarily a simulation and verification construct, not synthesizable RTL.
+- Choose among `join`, `join_any`, and `join_none` based on synchronization needs.
+- Wait on outstanding child processes using `wait fork`.
+- Stop competing or unneeded processes deliberately using named forks or isolated `disable fork` scopes.
+- Avoid simulation races caused by shared variables and `join_none` loop-variable capture.
+- Recognize that `fork...join` is a verification/simulation construct, not synthesizable RTL.
 
 ## The `fork` Construct: Starting Concurrent Processes
 
-A `fork` block creates a child process for each statement in its body. Each branch begins as a separate process; statements within a branch still execute sequentially unless that branch contains its own concurrency or timing controls. The parent process reaches the join keyword after starting the branches.
+A `fork` block creates a separate child process for **each statement** inside its body. Use `begin ... end` to group multiple sequential statements into a single concurrent branch; without `begin ... end`, every individual line becomes its own parallel branch!
 
-Use `begin` and `end` to group multiple statements into a single branch:
+![SystemVerilog Fork-Join Variants: When Does the Parent Resume](images/ch10_sv_fork_join_variants_timeline.svg)
 
 ```systemverilog
 initial begin
   fork
-    begin
+    begin // Branch 1
       #5  $display("First branch finished at %0t", $time);
     end
-    begin
+    begin // Branch 2
       #12 $display("Second branch finished at %0t", $time);
     end
   join
 
-  $display("All branches finished at %0t", $time);
+  $display("All branches finished at %0t", $time); // Prints at t = 12
 end
 ```
 
-Both branches run concurrently. Their completion order depends on their timing and any other synchronization in the simulation. If two branches act in the same time slot, do not rely on their source order to determine which side effect occurs first.
+Both branches start concurrently at `t = 0` and progress independently. If two branches read/write shared state in the same timestamp, never depend on source-code order—use explicit synchronization (`event`, `semaphore`, `mailbox`).
 
 ### `fork` Does Not Mean Parallel Hardware
 
-Forked processes are simulator processes, not a request to synthesize parallel hardware. They are useful in `initial` blocks, testbench tasks, and other verification code. Do not use fork-join as a substitute for describing RTL with `always_comb`, `always_ff`, or continuous assignments.
+Forked processes are simulator threads, **not** parallel RTL hardware blocks. Reserve `fork...join` for `initial` blocks, testbench tasks, scoreboards, and drivers; model parallel hardware in RTL with `always_comb`, `always_ff`, continuous `assign`, and module instances.
 
 ## `join`: Wait for Every Branch
 
-`join` suspends the parent process until all branches spawned by that fork have completed. It is the right choice when the parent must not continue until every concurrent activity is done.
+`join` suspends the parent process until **every branch** spawned by that `fork` completes.
 
 ```systemverilog
 initial begin
@@ -58,44 +58,40 @@ initial begin
     end
     begin
       #4;
-      #9 $display("Protocol check complete at %0t", $time);
+      #9  $display("Protocol check complete at %0t", $time); // Total: 13 time units
     end
   join
 
-  $display("Both checks completed at %0t", $time);
+  $display("Both checks completed at %0t", $time); // Prints at t = 13
 end
 ```
 
-The parent resumes only after both branches finish. In this example, the second branch takes 13 time units, so the final message is printed after that branch completes.
-
-Use `join` for work that has a definite end and for which every branch must finish before the caller proceeds. A branch that never completes—for example, an unbounded clock generator—will keep a `join` from returning.
+Use `join` when all branches have a definite end and the caller cannot proceed until every branch completes. Note that if any branch contains an infinite loop (such as `forever`), `fork ... join` will block forever.
 
 ## `join_any`: Continue After the First Branch
 
-`join_any` suspends the parent until at least one branch completes. Other branches are not automatically stopped; they continue running after the parent resumes.
+`join_any` suspends the parent only until **the first branch** finishes. Any remaining branches **keep running in the background** unless you stop them explicitly.
 
 ```systemverilog
 initial begin
   fork
     begin
-      #20 $display("Transaction completed at %0t", $time);
+      #20  $display("Transaction completed at %0t", $time);
     end
     begin
       #100 $error("Transaction timed out");
     end
   join_any
 
-  $display("At least one branch finished at %0t", $time);
+  $display("First branch finished at %0t", $time); // Prints at t = 20
 end
 ```
 
-This pattern is useful for racing an operation against a timeout, but the timeout branch remains active if the transaction branch finishes first. If it should no longer run, explicitly terminate or otherwise coordinate the remaining branch before continuing. Leaving it active can cause a misleading timeout later in the simulation.
-
-If two or more branches complete in the same time slot, the parent resumes after a branch completes; do not depend on a particular branch winning a same-time race.
+In this snippet, without explicit cancellation, the `#100 $error(...)` branch stays alive after `t = 20` and will still fire at `t = 100`! Always cancel or coordinate losing branches after `join_any` when modeling races.
 
 ## `join_none`: Continue Without Waiting
 
-`join_none` lets the parent continue immediately without waiting for any child to complete:
+`join_none` lets the parent resume **immediately at the current timestamp** without waiting for any child to finish. Child processes stay active in the background.
 
 ```systemverilog
 initial begin
@@ -105,18 +101,16 @@ initial begin
     end
   join_none
 
-  $display("Parent continues at %0t", $time);
-  #20;
+  $display("Parent continues immediately at %0t", $time); // Prints at t = 0
+  #20; // Parent waits, allowing child to run and print at t = 10
 end
 ```
 
-The child process remains active after the parent moves on. As with `join_any`, `join_none` does not cancel child processes.
-
-There is an important scheduling detail: child processes spawned by `join_none` do not begin executing until the parent process suspends or terminates. For example, if the parent starts several children in a loop and does not block until after the loop, those children begin when the parent reaches that blocking point. This behavior matters when a child reads a loop variable or other state that the parent changes first.
+**Important Scheduling Detail**: Child threads spawned by `join_none` are queued to run, and **do not execute their first statement until the parent process suspends** (at `#delay`, `@event`, `wait`, `wait fork;`) or finishes. This subtle rule is why unsynchronized loop variables change before `join_none` workers read them.
 
 ## Waiting for Outstanding Children with `wait fork`
 
-The procedural statement `wait fork;` suspends the calling process until all of its currently active child processes have completed. It is commonly used after `join_none` when background work should be allowed to run concurrently but must be finished before the current procedure exits.
+`wait fork;` blocks the calling process until **all currently active child processes spawned by that caller** finish. It is the standard barrier used after launching background workers with `join_none`.
 
 ```systemverilog
 initial begin
@@ -129,141 +123,154 @@ initial begin
     end
   join_none
 
-  $display("Parent performs other work at %0t", $time);
+  $display("Parent performs local work at %0t", $time); // t = 0
   #3;
-  $display("Parent now waits at %0t", $time);
-  wait fork;
+  $display("Parent now waits at %0t", $time);           // t = 3
+  wait fork;                                            // Blocks until t = 8
   $display("All child processes are done at %0t", $time);
 end
 ```
 
-`wait fork` concerns the calling process's child processes, not every process in the simulation. Use it at a point where the parent is responsible for waiting on those children; otherwise, it may wait for additional outstanding children created by that same parent.
+Keep in mind that `wait fork;` waits for *every* active child thread owned by the calling process (not just the most recent `fork`), so be careful if the caller earlier spawned persistent background monitors meant to run forever.
 
 ## Ending Processes Deliberately
 
-Some concurrent branches are intended to run only until another branch completes. A named fork block can be disabled when its remaining processes are no longer needed:
+![Controlling Child Processes: wait fork Synchronization vs. Scoped disable](images/ch10_sv_wait_fork_and_disable_fork.svg)
+
+To cleanly stop remaining processes after a `join_any` race—without accidentally killing unrelated background monitors—use one of two scoped patterns:
+
+1. **Named `fork : label` + `disable label;`** (stops only branches inside that named fork):
 
 ```systemverilog
 initial begin
   fork : transaction_or_timeout
     begin
-      #20 $display("Transaction completed at %0t", $time);
+      #20  $display("Transaction completed at %0t", $time);
     end
     begin
       #100 $error("Transaction timed out");
     end
   join_any
 
-  disable transaction_or_timeout;
-  $display("No transaction or timeout process remains active");
+  disable transaction_or_timeout; // Terminates only the pending timeout branch
+  $display("Clean exit at %0t", $time);
 end
 ```
 
-Disabling the named fork block terminates its still-active branch processes. This is a useful way to clean up the losing side of a bounded race, such as a transaction versus a timeout.
+2. **Isolated Sub-Process Wrapper (`fork begin ... join` + `disable fork;`)**: Calling `disable fork;` directly kills *all* active descendants of the **calling process**. Wrapping the `fork ... join_any; disable fork;` race inside an outer single-branch `fork begin ... end join` gives it its own child process boundary, protecting earlier monitors spawned by the outer `initial` process:
 
-`disable fork;` is another process-control statement, but it terminates active descendants of the calling process. It is broader than disabling a carefully scoped named fork: it can affect other child work owned by that process, including nested descendants. Use it only when that broader cancellation is intended. Keep forked work grouped and scoped so cleanup cannot accidentally stop unrelated activity.
+```systemverilog
+initial begin
+  fork background_monitor(); join_none // Protected outer monitor
 
-Cancellation is not the same as graceful completion. If a branch must release resources, report a result, or perform cleanup, design an explicit completion protocol rather than assuming that terminating the process will run ordinary code after the termination point.
+  fork // Single-branch outer fork creates an isolated child process boundary
+    begin
+      fork
+        do_transaction();
+        #100 $error("Timeout!");
+      join_any
+      disable fork; // Terminates ONLY do_transaction / timeout inside this child process
+    end
+  join
+end
+```
+
+Remember that `disable` is an **abrupt termination**: code after the cancellation point inside the killed branch will not run, so do not rely on a killed thread to release semaphores or close files.
 
 ## A Practical Race: Timeout Versus Completion
 
-A transaction test often needs to wait for either a completion event or a timeout. The following example uses a named fork to ensure the losing branch does not keep running:
+![The Timeout Watchdog Pattern: Racing Completion Against a Deadline](images/ch10_sv_timeout_watchdog_pattern.svg)
+
+A classic verification pattern races a transaction completion event against a maximum latency timeout:
 
 ```systemverilog
 module transaction_watchdog;
-  bit transaction_done;
+  bit transaction_done = 1'b0;
 
   initial begin
-    transaction_done = 0;
-
     fork : completion_race
       begin
-        wait (transaction_done);
+        wait (transaction_done === 1'b1);
         $display("Transaction completed at %0t", $time);
       end
       begin
         #100;
-        if (!transaction_done)
-          $error("Transaction timed out at %0t", $time);
+        $error("Transaction timed out at %0t", $time);
       end
     join_any
 
-    disable completion_race;
+    disable completion_race; // Immediately kills whichever branch lost
   end
 
   initial begin
-    #30 transaction_done = 1;
+    #30 transaction_done = 1'b1; // Finishes well before timeout at t = 100
   end
 endmodule
 ```
 
-The completion branch and timeout branch run concurrently. Once either branch completes, the parent resumes and disables the named fork, stopping the other branch if it is still active. In a real testbench, define what should happen if completion and timeout become true in the same time slot; use clocking blocks, event regions, or an explicit synchronization protocol when deterministic sampling is required.
+At `t = 30`, `wait (transaction_done === 1'b1)` completes, `join_any` unblocks the parent, and `disable completion_race;` immediately cancels the sleeping `#100` timeout branch so no false error fires at `t = 100`.
 
 ## Shared Variables and Race Conditions
 
-Concurrent processes can access the same variables. If multiple branches write a shared variable without synchronization, the resulting value can depend on scheduling order. That is a race condition.
+When two concurrent branches write to the same variable without synchronization, the final result depends on arbitrary simulator thread ordering:
 
 ```systemverilog
-integer result;
+int result;
 
 initial begin
   fork
     result = 1;
     result = 2;
   join
-
-  // Do not assume result is 1 or 2 based on source order.
+  // Race condition: simulator may schedule branch 1 or branch 2 last!
   $display("result = %0d", result);
 end
 ```
 
-Avoid simultaneous, unsynchronized writes to the same variable. Prefer separate per-branch results and combine them after `join`, or use a mailbox, semaphore, event, or other explicit synchronization mechanism appropriate to the testbench.
-
-Clocked RTL has its own assignment and scheduling rules. Do not try to resolve races by arbitrarily adding delays; instead, define which process owns each signal and how processes coordinate.
+Give each branch its own output variable (and combine after `join`), or coordinate shared resources explicitly using `mailbox`, `semaphore`, or named `event` handshakes rather than inserting artificial `#1` delays.
 
 ## Loop Variables with `join_none`
 
-Because `join_none` child processes can start only after their parent suspends or ends, a loop variable may have advanced by the time a child reads it. Capture a separate automatic variable for each iteration:
+![The join_none Loop Variable Trap vs. Per-Iteration Automatic Capture](images/ch10_sv_join_none_loop_capture_bug.svg)
+
+Because `join_none` threads only start executing after the parent hits a blocking statement (typically `wait fork;` *after* the `for` loop has finished), referencing the loop index `i` directly causes every spawned worker to read the final post-loop value (`3`)!
+
+Fix this by capturing a fresh **`automatic`** variable inside every loop iteration before entering `fork ... join_none`:
 
 ```systemverilog
 initial begin
   for (int i = 0; i < 3; i++) begin
-    automatic int index = i;
+    automatic int index = i; // Separate per-iteration automatic variable
 
     fork
       begin
-        #1 $display("Worker %0d at %0t", index, $time);
+        #1 $display("Worker %0d running at %0t", index, $time);
       end
     join_none
   end
 
-  wait fork;
+  wait fork; // Prints Worker 0, Worker 1, Worker 2 cleanly
 end
 ```
 
-Each child refers to that iteration's `index`, rather than racing to read the loop variable after it has changed. The final `wait fork` lets all workers finish before the parent exits.
-
 ## Best Practices and Common Pitfalls
 
-1. **Choose the join behavior intentionally**:
-   - Use `join` when every branch must complete before the parent continues.
-   - Use `join_any` when the parent can continue after the first completion, and decide what to do with the remaining branches.
-   - Use `join_none` when the parent should proceed immediately, and arrange explicit synchronization or cleanup later.
-
-2. **Do not assume source order between branches**: Each branch is a separate process. If ordering matters, add an event, mailbox, semaphore, or another explicit synchronization mechanism.
-
-3. **Clean up losing branches**: A timeout or background watcher can outlive the operation it was meant to supervise. Use a named fork or another deliberate process-control strategy to stop work that is no longer needed.
-
-4. **Keep cancellation scoped**: `disable fork` affects active descendants of the calling process. Prefer a named fork when only one group of branches should be terminated.
-
-5. **Capture changing loop values**: For forked work started with `join_none`, use a per-iteration automatic variable when a child needs the loop index or other changing state.
-
-6. **Avoid unsynchronized shared writes**: Give concurrent branches separate state or coordinate access explicitly.
-
-7. **Keep fork-join in verification code**: Forked procedural processes are simulation constructs and are generally not synthesizable hardware descriptions.
+1. **Match the Join Variant to the Synchronization Goal**: Use `join` for barrier completion, `join_any` for first-to-finish races, and `join_none` for background tasks.
+2. **Never Assume Source Order Between Concurrent Branches**: Coordinate shared accesses with events, semaphores, or mailboxes.
+3. **Always Clean Up Losing Branches After `join_any`**: Leftover timeout branches fire later in simulation and cause false failures.
+4. **Scope Cancellation Tightly**: Prefer `fork : race_name ... join_any; disable race_name;` (or a helper task wrapping `disable fork;`) over bare `disable fork;` inside a thread that owns long-lived background monitors.
+5. **Capture Loop Indices in `automatic` Variables Before `join_none`**: Prevents all workers from seeing the terminal loop count.
+6. **Keep `fork...join` in Testbenches**: Use `always_comb`, `always_ff`, and `assign` for synthesizable RTL hardware.
 
 ## Summary
 
-`fork` starts concurrent child processes, while the join keyword controls when the parent may continue. `join` waits for all branches, `join_any` waits for one and leaves the others active, and `join_none` does not wait. Use `wait fork` when a parent needs to wait for its outstanding children, and use named process scopes or other explicit coordination to clean up work safely. Predictable fork-join code depends on deliberate synchronization, scoped process ownership, and avoiding unsynchronized access to shared state.
+| Construct | Parent Blocks Until... | Remaining Children After Unblock | Typical Role |
+| --- | --- | --- | --- |
+| `fork ... join` | **All** branches finish | None (all finished) | Parallel drivers/checkers that must all complete |
+| `fork ... join_any` | **First** branch finishes | Keep running until done or disabled | Timeout watchdogs &amp; racing events |
+| `fork ... join_none` | **Immediate** (no wait) | Start when parent suspends/exits | Background monitors &amp; independent workers |
+| `wait fork;` | All active child processes of caller finish | All finished | Joining previously launched `join_none` work |
+| `disable <label>;` | Immediate | Kills threads inside named `<label>` only | Targeted cleanup of a specific `join_any` race |
+| `disable fork;` | Immediate | Kills **all** descendants of calling process | Full teardown inside an isolated scope or task |
 
 ##### Copyright (c) 2026 squared-studio

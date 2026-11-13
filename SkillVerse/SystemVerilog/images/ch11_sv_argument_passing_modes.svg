@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 400" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGradCh11D" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#080c14" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <filter id="shadowCh11D" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+    <marker id="arrowCyanD" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 8 5 L 0 9 z" fill="#38bdf8" />
+    </marker>
+    <marker id="arrowGreenD" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 8 5 L 0 9 z" fill="#34d399" />
+    </marker>
+    <marker id="arrowPurpleD" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 8 5 L 0 9 z" fill="#c084fc" />
+    </marker>
+  </defs>
+
+  <rect width="920" height="400" rx="14" fill="url(#bgGradCh11D)"/>
+
+  <!-- Title -->
+  <text x="460" y="34" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="20" font-weight="700" fill="#f8fafc" text-anchor="middle">Argument Passing Modes: input, output, inout, ref &amp; const ref</text>
+  <text x="460" y="56" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13" fill="#94a3b8" text-anchor="middle">Copy-on-entry / copy-on-exit value semantics vs. zero-copy real-time variable aliasing with ref</text>
+
+  <!-- 4 Horizontal Cards -->
+  <!-- 1. input -->
+  <g transform="translate(24, 78)">
+    <rect width="872" height="66" rx="8" fill="#0f172a" stroke="#38bdf8" stroke-width="1.5" filter="url(#shadowCh11D)"/>
+    <rect x="12" y="14" width="128" height="38" rx="6" fill="#075985"/>
+    <text x="76" y="38" font-family="'JetBrains Mono', Consolas, monospace" font-size="13" font-weight="700" fill="#e0f2fe" text-anchor="middle">input (default)</text>
+
+    <text x="160" y="28" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="700" fill="#38bdf8">Caller ──(copy at entry)──▶ Subroutine Local</text>
+    <text x="160" y="48" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#cbd5e1">Value copied once when called; writes inside the subroutine do NOT modify caller variable.</text>
+  </g>
+
+  <!-- 2. output -->
+  <g transform="translate(24, 156)">
+    <rect width="872" height="66" rx="8" fill="#0f172a" stroke="#10b981" stroke-width="1.5" filter="url(#shadowCh11D)"/>
+    <rect x="12" y="14" width="128" height="38" rx="6" fill="#065f46"/>
+    <text x="76" y="38" font-family="'JetBrains Mono', Consolas, monospace" font-size="13" font-weight="700" fill="#d1fae5" text-anchor="middle">output</text>
+
+    <text x="160" y="28" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="700" fill="#34d399">Subroutine Local ──(copy on return)──▶ Caller</text>
+    <text x="160" y="48" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#cbd5e1">Starts uninitialized/default inside callee; final value is copied out to caller only when routine returns.</text>
+  </g>
+
+  <!-- 3. inout -->
+  <g transform="translate(24, 234)">
+    <rect width="872" height="66" rx="8" fill="#0f172a" stroke="#f59e0b" stroke-width="1.5" filter="url(#shadowCh11D)"/>
+    <rect x="12" y="14" width="128" height="38" rx="6" fill="#78350f"/>
+    <text x="76" y="38" font-family="'JetBrains Mono', Consolas, monospace" font-size="13" font-weight="700" fill="#fef3c7" text-anchor="middle">inout</text>
+
+    <text x="160" y="28" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="700" fill="#fbbf24">Caller ◀──(copy at entry &amp; copy on return)──▶ Subroutine</text>
+    <text x="160" y="48" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#cbd5e1">Copies value in at call entry, works on local copy, and copies result back to caller when returning.</text>
+  </g>
+
+  <!-- 4. ref / const ref -->
+  <g transform="translate(24, 312)">
+    <rect width="872" height="72" rx="8" fill="#0f172a" stroke="#a855f7" stroke-width="1.8" filter="url(#shadowCh11D)"/>
+    <rect x="12" y="14" width="128" height="44" rx="6" fill="#581c87"/>
+    <text x="76" y="33" font-family="'JetBrains Mono', Consolas, monospace" font-size="12.5" font-weight="700" fill="#f3e8ff" text-anchor="middle">ref /</text>
+    <text x="76" y="49" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" font-weight="700" fill="#d8b4fe" text-anchor="middle">const ref</text>
+
+    <text x="160" y="28" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="700" fill="#d8b4fe">Direct Alias to Caller Storage (Zero Copy • Requires 'automatic')</text>
+    <text x="160" y="48" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#e2e8f0">Reads/writes affect caller memory immediately (even mid-task!); use <tspan font-family="'JetBrains Mono', Consolas, monospace" fill="#c084fc">const ref</tspan> for read-only large arrays.</text>
+  </g>
+</svg>

@@ -26,6 +26,8 @@ Packages are defined using the `package` keyword, followed by the package name a
 
 Package source must be compiled before modules or other packages that use its declarations. A package may import another package only after that dependency is available, so organize compilation order explicitly and avoid circular package dependencies. Packages contain declarations; modules, interfaces, and programs remain separate design-unit scopes and are not declared inside a package.
 
+![SystemVerilog Package Anatomy and Compilation Dependency Order](images/ch17_sv_package_anatomy_and_compilation_order.svg)
+
 **Elements that can be declared within a SystemVerilog Package:**
 
 - **`typedef` Definitions**: User-defined data types, such as custom structs, enums, and arrays, created using the `typedef` keyword. Packages are ideal for defining and sharing common data types used across the verification environment.
@@ -68,7 +70,9 @@ In this `math_utils_pkg` example:
 
 ## Importing Packages: Controlling Namespace Visibility
 
-To use the declarations defined within a package, you need to _import_ the package into the scope where you want to use them (e.g., within a module, interface, or another package). SystemVerilog offers different import styles, providing flexibility in controlling namespace visibility.
+To use the declarations defined within a package, you need to _import_ the package into the scope where you want to use them (e.g., within a module header, module body, interface, or another package). When module ports or parameters themselves use package `typedef`s, place the `import` statement directly in the ANSI module header (`module my_mod import type_pkg::*; #(parameter ...) (input byte_t data_in, ...);`) so those types are visible before parameter and port elaboration. SystemVerilog offers different import styles, providing flexibility in controlling namespace visibility.
+
+![Controlling Namespace Visibility Explicit Import Wildcard Import and Scope Resolution](images/ch17_sv_import_styles_and_header_import.svg)
 
 | Import Style                                | Description                                                                                                                                                                                                             | When to Use                                                                                                                                                                                                                                             | Considerations                                                                                                                                                                                                                                       |
 | ------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -164,6 +168,8 @@ Explicit scope resolution is useful when:
 ## Package Export System: Creating Abstraction Layers and Hierarchical Packages
 
 The `export` mechanism in SystemVerilog packages allows you to re-export items that have been imported into a package. This is a powerful feature for creating hierarchical package organizations and abstraction layers. When a package re-exports items from other packages, modules or other packages that import the re-exporting package will also have access to the re-exported items as if they were directly declared in the re-exporting package.
+
+![Hierarchical Package Chaining Why import Alone Does Not Re Export](images/ch17_sv_package_export_chain.svg)
 
 ### Example: Building Hierarchical Packages with Export
 
@@ -273,9 +279,12 @@ To leverage the full benefits of SystemVerilog packages and maintain a clean and
       - `protocol_name_pkg` (e.g., `usb_pkg`, `ethernet_pkg`, `axi_pkg`): For protocol-specific definitions, classes, functions, and tasks related to a particular interface or protocol.
       - `model_name_pkg` (e.g., `memory_model_pkg`, `cache_model_pkg`): For models of specific design components or sub-systems.
 
-4.  **Combine Packages with `\`include` for Large Packages**:
-    - **Splitting Large Packages**: For very large packages that contain many declarations, consider splitting the package definition into multiple files using the `\`include` directive. This improves file organization, makes it easier to navigate and edit the package code, but textual inclusion does not inherently make compilation faster: changes generally require recompiling the package and its dependents.
-    - **File Organization within a Package**: Create separate `\`include` files for different categories of declarations within the package (e.g., types, functions, tasks, classes, constants).
+4.  **Combine Packages with `` `include `` for Large Packages**:
+    - **Splitting Large Packages**: For very large packages that contain many declarations, consider splitting the package definition into multiple files using the `` `include `` directive. This improves file organization, makes it easier to navigate and edit the package code, but textual inclusion does not inherently make compilation faster: changes generally require recompiling the package and its dependents.
+    - **File Organization within a Package**: Create separate `` `include `` files for different categories of declarations within the package (e.g., types, functions, tasks, classes, constants).
+
+    ![Modular Package File Organization with Included Header Files](images/ch17_sv_package_include_organization.svg)
+
     - **Example Package File Structure**:
 
     ```systemverilog
@@ -315,46 +324,124 @@ To leverage the full benefits of SystemVerilog packages and maintain a clean and
 ## Exercises to Practice SystemVerilog Packages
 
 1.  **Create a Basic `geometry_pkg`**:
-    - Create a SystemVerilog package named `geometry_pkg`.
-    - Inside `geometry_pkg`, define:
-      - A `typedef` named `point_t` that is a `struct` containing two `real` members: `x` and `y` (representing x and y coordinates of a point).
-      - A `function` named `distance` that takes two inputs of type `point_t` and returns a `real` value representing the Euclidean distance between the two points. (Use the distance formula: `sqrt((x2-x1)^2 + (y2-y1)^2)`)
-      - A `const real` named `AREA_CONST` and assign it a value of `10.5`.
+    - Create `geometry_pkg` defining `point_t` (`struct { real x; real y; }`), `function automatic real distance(point_t a, point_t b)`, and `const real AREA_CONST = 10.5;`.
+
+    ```systemverilog
+    package geometry_pkg;
+      typedef struct {
+        real x;
+        real y;
+      } point_t;
+
+      const real AREA_CONST = 10.5;
+
+      function automatic real distance(input point_t a, input point_t b);
+        real dx = b.x - a.x;
+        real dy = b.y - a.y;
+        return $sqrt((dx * dx) + (dy * dy));
+      endfunction : distance
+    endpackage : geometry_pkg
+    ```
 
 2.  **Import and Use `geometry_pkg` (Wildcard Import)**:
-    - Create a SystemVerilog module.
-    - In this module, use a **wildcard import** to import all items from `geometry_pkg`.
-    - Declare two variables of type `point_t` (e.g., `p1`, `p2`).
-    - Initialize the `x` and `y` members of `p1` and `p2` with some `real` values.
-    - Call the `distance` function (from `geometry_pkg`) to calculate the distance between `p1` and `p2`.
-    - Display the calculated distance and the value of `AREA_CONST` (from `geometry_pkg`).
+    - Create a module that imports `geometry_pkg::*`, initializes `p1 = '{x: 0.0, y: 0.0}` and `p2 = '{x: 3.0, y: 4.0}`, calls `distance(p1, p2)`, and displays `AREA_CONST`.
+
+    ```systemverilog
+    module ex2_wildcard_import;
+      import geometry_pkg::*;
+
+      initial begin
+        point_t p1 = '{x: 0.0, y: 0.0};
+        point_t p2 = '{x: 3.0, y: 4.0};
+        $display("Distance = %0.2f, AREA_CONST = %0.2f",
+                 distance(p1, p2), AREA_CONST); // 5.00, 10.50
+      end
+    endmodule : ex2_wildcard_import
+    ```
 
 3.  **Use Explicit Scope Resolution (No Imports)**:
-    - Create a new SystemVerilog module (or modify the module from Exercise 2).
-    - **Remove the `import` statement** from the module.
-    - Rewrite the module to access all items from `geometry_pkg` (the `point_t` type, `distance` function, and `AREA_CONST` constant) using **explicit scope resolution** (e.g., `geometry_pkg::point_t`, `geometry_pkg::distance`, `geometry_pkg::AREA_CONST`).
-    - Verify that the module still works correctly and produces the same output as in Exercise 2.
+    - Rewrite Exercise 2 with no `import` statement using `geometry_pkg::` scope qualification everywhere.
+
+    ```systemverilog
+    module ex3_explicit_scope;
+      initial begin
+        geometry_pkg::point_t p1 = '{x: 1.0, y: 2.0};
+        geometry_pkg::point_t p2 = '{x: 4.0, y: 6.0};
+        $display("Distance = %0.2f, AREA_CONST = %0.2f",
+                 geometry_pkg::distance(p1, p2),
+                 geometry_pkg::AREA_CONST); // 5.00, 10.50
+      end
+    endmodule : ex3_explicit_scope
+    ```
 
 4.  **Package Export: `base_pkg` and `graphics_pkg`**:
-    - Create a package named `base_pkg`. Inside `base_pkg`, define an `enum` type named `color_t` with members `RED`, `GREEN`, and `BLUE`.
-    - Create another package named `graphics_pkg`. Inside `graphics_pkg`:
-      - **Import all items** from `base_pkg` using `import base_pkg::*;`.
-      - **Re-export all items** from `base_pkg` using `export base_pkg::*;`.
-      - Define a `function` named `mix_colors` that takes two inputs of type `base_pkg::color_t` and returns a `string` describing the color mix (e.g., if inputs are `RED` and `BLUE`, return "Mixed color: PURPLE"). You can use a `case` statement or `if-else` logic to implement the color mixing logic.
-    - Create a top-level module. In this module:
-      - **Import all items** from `graphics_pkg` using `import graphics_pkg::*;`.
-      - Declare two variables of type `color_t` (you should be able to use `color_t` directly because it's re-exported by `graphics_pkg`).
-      - Call the `mix_colors` function (from `graphics_pkg`) with the two `color_t` variables as arguments.
-      - Display the string returned by `mix_colors`.
-      - Also, directly use a member of `color_t` (e.g., `RED`) in a `$display` statement to verify that `color_t` is accessible through `graphics_pkg` due to re-export.
+    - Define `color_t` (`RED`, `GREEN`, `BLUE`) in `base_pkg`; in `graphics_pkg`, import and re-export `base_pkg::*` and define `mix_colors()`; import `graphics_pkg::*` in a module and access both `mix_colors()` and `color_t` directly.
+
+    ```systemverilog
+    package base_pkg;
+      typedef enum {RED, GREEN, BLUE} color_t;
+    endpackage : base_pkg
+
+    package graphics_pkg;
+      import base_pkg::*;
+      export base_pkg::*; // Forward color_t and enum literals to importers
+
+      function automatic string mix_colors(input color_t c1, input color_t c2);
+        if ((c1 == RED && c2 == BLUE) || (c1 == BLUE && c2 == RED))
+          return "Mixed color: PURPLE";
+        else if ((c1 == RED && c2 == GREEN) || (c1 == GREEN && c2 == RED))
+          return "Mixed color: YELLOW";
+        else if ((c1 == GREEN && c2 == BLUE) || (c1 == BLUE && c2 == GREEN))
+          return "Mixed color: CYAN";
+        else
+          return {"Mixed color: ", c1.name()};
+      endfunction : mix_colors
+    endpackage : graphics_pkg
+
+    module ex4_export_chain;
+      import graphics_pkg::*; // Receives mix_colors AND re-exported color_t/RED/BLUE
+
+      initial begin
+        color_t a = RED;
+        color_t b = BLUE;
+        $display("%s (primary sample = %s)", mix_colors(a, b), RED.name());
+      end
+    endmodule : ex4_export_chain
+    ```
 
 5.  **Package Name Conflict Resolution**:
-    - Create two packages: `package_A_pkg` and `package_B_pkg`.
-    - In both `package_A_pkg` and `package_B_pkg`, define a function with the **same name**, for example, `function void print_message();`. Make each `print_message()` function display a different message (e.g., "Message from Package A" vs. "Message from Package B").
-    - Create a top-level module. In this module:
-      - Attempt to **import all items** from **both** `package_A_pkg` and `package_B_pkg` using wildcard imports (`import package_A_pkg::*`, `import package_B_pkg::*`). Try to call `print_message()` directly; the ambiguity is typically diagnosed when the name is referenced, not necessarily when the imports are written.
-      - **Resolve the name conflict using explicit scope resolution**. Modify the module to call `package_A_pkg::print_message()` and `package_B_pkg::print_message()` explicitly to differentiate between the two functions with the same name.
-      - **Resolve the name conflict using a portable wrapper or a simulator extension**. Standard SystemVerilog does not define `import package_A_pkg::print_message as print_message_A;`; some tools may accept a non-portable alias extension. A portable alternative is to define a local wrapper such as `function void print_message_A(); package_A_pkg::print_message(); endfunction`, then call `print_message_A()` and `package_B_pkg::print_message()` explicitly.
+    - Create `package_A_pkg` and `package_B_pkg`, each declaring `print_message()`. Show wildcard ambiguity prevention and disambiguation via explicit `::` resolution and a portable wrapper function.
+
+    ```systemverilog
+    package package_A_pkg;
+      function void print_message();
+        $display("Message from Package A");
+      endfunction
+    endpackage : package_A_pkg
+
+    package package_B_pkg;
+      function void print_message();
+        $display("Message from Package B");
+      endfunction
+    endpackage : package_B_pkg
+
+    module ex5_conflict_resolution;
+      import package_A_pkg::*;
+      import package_B_pkg::*;
+
+      // Portable wrapper alternative for frequently called colliding symbol:
+      function void print_message_A();
+        package_A_pkg::print_message();
+      endfunction
+
+      initial begin
+        // print_message(); // Compile-time ambiguity error when referenced unqualified!
+        package_A_pkg::print_message(); // Explicit scope resolution
+        package_B_pkg::print_message();
+        print_message_A();              // Portable wrapper call
+      end
+    endmodule : ex5_conflict_resolution
+    ```
 
 These exercises will provide practical experience in defining, importing, using, and organizing SystemVerilog packages, as well as handling namespace management and conflict resolution, which are crucial skills for developing robust and maintainable verification environments.
 

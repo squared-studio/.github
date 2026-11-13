@@ -1,0 +1,117 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 410" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGradCh14D" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#080c14" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <filter id="shadowCh14D" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+    <marker id="arrowCyan14D" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8"/>
+    </marker>
+    <marker id="arrowGreen14D" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#34d399"/>
+    </marker>
+  </defs>
+
+  <rect width="920" height="410" rx="14" fill="url(#bgGradCh14D)"/>
+
+  <!-- Title -->
+  <text x="460" y="32" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="20" font-weight="700" fill="#f8fafc" text-anchor="middle">Parameterized 5-Channel AXI-Lite Interface Architecture (axi_lite_if)</text>
+  <text x="460" y="54" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13" fill="#94a3b8" text-anchor="middle">axi_lite_if #(.ADDR_WIDTH(32), .DATA_WIDTH(64)) decouples bus scaling from master_port / slave_port logic</text>
+
+  <!-- Left: Master Unit -->
+  <g transform="translate(24, 78)">
+    <rect width="194" height="304" rx="10" fill="#0f172a" stroke="#38bdf8" stroke-width="1.8" filter="url(#shadowCh14D)"/>
+    <rect width="194" height="40" rx="10" fill="#075985"/>
+    <rect x="0" y="26" width="194" height="14" fill="#075985"/>
+    <text x="97" y="19" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" font-weight="700" fill="#ffffff" text-anchor="middle">axi_lite_master_unit</text>
+    <text x="97" y="34" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#bae6fd" text-anchor="middle">axi_lite_if.master_port</text>
+
+    <text x="97" y="88" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="700" fill="#38bdf8" text-anchor="middle">Drives Requests:</text>
+    <text x="97" y="108" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#e2e8f0" text-anchor="middle">awaddr, awvalid</text>
+    <text x="97" y="126" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#e2e8f0" text-anchor="middle">wdata, wvalid</text>
+    <text x="97" y="144" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#e2e8f0" text-anchor="middle">bready, araddr, arvalid</text>
+    <text x="97" y="162" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#e2e8f0" text-anchor="middle">rready</text>
+
+    <line x1="16" y1="186" x2="178" y2="186" stroke="#1e3a5f"/>
+    <text x="97" y="210" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="700" fill="#34d399" text-anchor="middle">Receives Responses:</text>
+    <text x="97" y="230" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#a7f3d0" text-anchor="middle">awready, wready</text>
+    <text x="97" y="248" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#a7f3d0" text-anchor="middle">bresp[1:0], bvalid</text>
+    <text x="97" y="266" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#a7f3d0" text-anchor="middle">arready, rdata, rvalid</text>
+    <text x="97" y="284" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#94a3b8" text-anchor="middle">aclk, aresetn</text>
+  </g>
+
+  <!-- Center: 5 AXI-Lite Channels -->
+  <g transform="translate(244, 78)">
+    <rect width="432" height="304" rx="10" fill="#181208" stroke="#f59e0b" stroke-width="1.8" filter="url(#shadowCh14D)"/>
+    <rect width="432" height="34" rx="10" fill="#78350f"/>
+    <rect x="0" y="22" width="432" height="12" fill="#78350f"/>
+    <text x="216" y="22" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" font-weight="700" fill="#fef3c7" text-anchor="middle">axi_lite_if #(.ADDR_WIDTH(32), .DATA_WIDTH(64))</text>
+
+    <!-- Channel 1: AW -->
+    <g transform="translate(16, 46)">
+      <rect width="400" height="42" rx="6" fill="#0c1c2e" stroke="#0284c7"/>
+      <text x="12" y="17" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="700" fill="#38bdf8">1. Write Address (AW)</text>
+      <text x="12" y="34" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#e2e8f0">awaddr[ADDR_WIDTH-1:0], awvalid  --&gt;  |  &lt;-- awready</text>
+    </g>
+
+    <!-- Channel 2: W -->
+    <g transform="translate(16, 96)">
+      <rect width="400" height="42" rx="6" fill="#0c1c2e" stroke="#0284c7"/>
+      <text x="12" y="17" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="700" fill="#38bdf8">2. Write Data (W)</text>
+      <text x="12" y="34" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#e2e8f0">wdata[DATA_WIDTH-1:0], wvalid    --&gt;  |  &lt;-- wready</text>
+    </g>
+
+    <!-- Channel 3: B -->
+    <g transform="translate(16, 146)">
+      <rect width="400" height="42" rx="6" fill="#072c22" stroke="#10b981"/>
+      <text x="12" y="17" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="700" fill="#34d399">3. Write Response (B)</text>
+      <text x="12" y="34" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#d1fae5">bready --&gt;  |  &lt;-- bresp[1:0], bvalid (OKAY/SLVERR)</text>
+    </g>
+
+    <!-- Channel 4: AR -->
+    <g transform="translate(16, 196)">
+      <rect width="400" height="42" rx="6" fill="#1e1035" stroke="#a855f7"/>
+      <text x="12" y="17" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="700" fill="#d8b4fe">4. Read Address (AR)</text>
+      <text x="12" y="34" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#f3e8ff">araddr[ADDR_WIDTH-1:0], arvalid  --&gt;  |  &lt;-- arready</text>
+    </g>
+
+    <!-- Channel 5: R -->
+    <g transform="translate(16, 246)">
+      <rect width="400" height="44" rx="6" fill="#072c22" stroke="#10b981"/>
+      <text x="12" y="17" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="700" fill="#34d399">5. Read Data &amp; Response (R)</text>
+      <text x="12" y="35" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#d1fae5">rready --&gt;  |  &lt;-- rdata[DATA_WIDTH-1:0], rresp, rvalid</text>
+    </g>
+  </g>
+
+  <!-- Connecting arrows Master <-> Bus <-> Slave -->
+  <line x1="220" y1="168" x2="240" y2="168" stroke="#38bdf8" stroke-width="2.5" marker-end="url(#arrowCyan14D)"/>
+  <line x1="242" y1="268" x2="222" y2="268" stroke="#34d399" stroke-width="2.5" marker-end="url(#arrowGreen14D)"/>
+
+  <line x1="678" y1="168" x2="698" y2="168" stroke="#38bdf8" stroke-width="2.5" marker-end="url(#arrowCyan14D)"/>
+  <line x1="700" y1="268" x2="680" y2="268" stroke="#34d399" stroke-width="2.5" marker-end="url(#arrowGreen14D)"/>
+
+  <!-- Right: Slave Unit -->
+  <g transform="translate(702, 78)">
+    <rect width="194" height="304" rx="10" fill="#0f172a" stroke="#10b981" stroke-width="1.8" filter="url(#shadowCh14D)"/>
+    <rect width="194" height="40" rx="10" fill="#065f46"/>
+    <rect x="0" y="26" width="194" height="14" fill="#065f46"/>
+    <text x="97" y="19" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" font-weight="700" fill="#ffffff" text-anchor="middle">axi_lite_slave_unit</text>
+    <text x="97" y="34" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#d1fae5" text-anchor="middle">axi_lite_if.slave_port</text>
+
+    <text x="97" y="88" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="700" fill="#38bdf8" text-anchor="middle">Receives Requests:</text>
+    <text x="97" y="108" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#e2e8f0" text-anchor="middle">awaddr, awvalid</text>
+    <text x="97" y="126" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#e2e8f0" text-anchor="middle">wdata, wvalid</text>
+    <text x="97" y="144" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#e2e8f0" text-anchor="middle">bready, araddr, arvalid</text>
+    <text x="97" y="162" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#e2e8f0" text-anchor="middle">rready, aclk, aresetn</text>
+
+    <line x1="16" y1="186" x2="178" y2="186" stroke="#065f46"/>
+    <text x="97" y="210" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="700" fill="#34d399" text-anchor="middle">Drives Responses:</text>
+    <text x="97" y="230" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#a7f3d0" text-anchor="middle">awready, wready</text>
+    <text x="97" y="248" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#a7f3d0" text-anchor="middle">bresp[1:0], bvalid</text>
+    <text x="97" y="266" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#a7f3d0" text-anchor="middle">arready, rdata, rvalid</text>
+    <text x="97" y="284" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#94a3b8" text-anchor="middle">Memory / Reg Map</text>
+  </g>
+</svg>

@@ -1,0 +1,106 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 430" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGradCh5A" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#080c14" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <filter id="shadowCh5A" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+  </defs>
+
+  <rect width="920" height="430" rx="14" fill="url(#bgGradCh5A)"/>
+
+  <!-- Title -->
+  <text x="460" y="34" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="20" font-weight="700" fill="#f8fafc" text-anchor="middle">SystemVerilog Array Taxonomy: Packed vs. Unpacked Collection Families</text>
+  <text x="460" y="56" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13" fill="#94a3b8" text-anchor="middle">Dimension placement determines whether memory is a contiguous bit vector or discrete element collection</text>
+
+  <!-- Left Column: Packed Arrays -->
+  <g transform="translate(24, 78)">
+    <rect width="380" height="328" rx="10" fill="#0f172a" stroke="#38bdf8" stroke-width="1.8" filter="url(#shadowCh5A)"/>
+    <rect width="380" height="40" rx="10" fill="#075985"/>
+    <rect x="0" y="28" width="380" height="12" fill="#075985"/>
+    <text x="190" y="25" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="14" font-weight="700" fill="#e0f2fe" text-anchor="middle">Packed Arrays (Before Identifier)</text>
+
+    <!-- Declaration Pill -->
+    <g transform="translate(16, 54)">
+      <rect width="348" height="46" rx="6" fill="#0c1e35" stroke="#0284c7" stroke-width="1.2"/>
+      <text x="174" y="19" font-family="'JetBrains Mono', Consolas, monospace" font-size="12.5" font-weight="700" fill="#38bdf8" text-anchor="middle">logic [2:0][15:0] reg_file;</text>
+      <text x="174" y="37" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#bae6fd" text-anchor="middle">48-bit contiguous hardware vector (compile-time fixed)</text>
+    </g>
+
+    <!-- Contiguous Bit Vector Graphic -->
+    <g transform="translate(16, 114)">
+      <text x="0" y="12" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11.5" font-weight="600" fill="#cbd5e1">Contiguous Bit Storage (MSB ──▶ LSB):</text>
+      <rect x="0" y="22" width="116" height="42" rx="4" fill="#082f49" stroke="#38bdf8" stroke-width="1.4"/>
+      <text x="58" y="40" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" font-weight="700" fill="#7dd3fc" text-anchor="middle">[2][15:0]</text>
+      <text x="58" y="56" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#94a3b8" text-anchor="middle">bits 47:32</text>
+
+      <rect x="116" y="22" width="116" height="42" rx="4" fill="#082f49" stroke="#38bdf8" stroke-width="1.4"/>
+      <text x="174" y="40" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" font-weight="700" fill="#7dd3fc" text-anchor="middle">[1][15:0]</text>
+      <text x="174" y="56" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#94a3b8" text-anchor="middle">bits 31:16</text>
+
+      <rect x="232" y="22" width="116" height="42" rx="4" fill="#082f49" stroke="#38bdf8" stroke-width="1.4"/>
+      <text x="290" y="40" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" font-weight="700" fill="#7dd3fc" text-anchor="middle">[0][15:0]</text>
+      <text x="290" y="56" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#94a3b8" text-anchor="middle">bits 15:0</text>
+    </g>
+
+    <!-- Capabilities -->
+    <g transform="translate(16, 194)">
+      <rect width="348" height="118" rx="6" fill="#091526" stroke="#1e3a5f"/>
+      <text x="14" y="22" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="700" fill="#38bdf8">Key Capabilities &amp; Domain</text>
+      <text x="14" y="44" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11.5" fill="#e2e8f0">• Whole-vector bitwise &amp; arithmetic operations</text>
+      <text x="14" y="64" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11.5" fill="#e2e8f0">• Multi-dim bit/part slicing: <tspan font-family="'JetBrains Mono', Consolas, monospace" fill="#7dd3fc">reg_file[1][15:8]</tspan></text>
+      <text x="14" y="84" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11.5" fill="#e2e8f0">• Single scalar-like value assignment (48'h...)</text>
+      <text x="14" y="104" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11.5" fill="#34d399" font-weight="600">✓ Fully synthesizable RTL registers &amp; buses</text>
+    </g>
+  </g>
+
+  <!-- Right Column: Unpacked Arrays -->
+  <g transform="translate(422, 78)">
+    <rect width="474" height="328" rx="10" fill="#0f172a" stroke="#10b981" stroke-width="1.8" filter="url(#shadowCh5A)"/>
+    <rect width="474" height="40" rx="10" fill="#065f46"/>
+    <rect x="0" y="28" width="474" height="12" fill="#065f46"/>
+    <text x="237" y="25" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="14" font-weight="700" fill="#d1fae5" text-anchor="middle">Unpacked Arrays (After Identifier — 4 Families)</text>
+
+    <!-- 1. Fixed-Size -->
+    <g transform="translate(14, 52)">
+      <rect width="446" height="60" rx="6" fill="#072c22" stroke="#10b981" stroke-width="1.2"/>
+      <text x="12" y="21" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="700" fill="#34d399">1. Fixed-Size</text>
+      <rect x="115" y="7" width="128" height="20" rx="4" fill="#064e3b"/>
+      <text x="179" y="21" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" font-weight="700" fill="#a7f3d0" text-anchor="middle">int arr [5];</text>
+      <text x="434" y="21" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" font-weight="600" fill="#6ee7b7" text-anchor="end">Compile-Time Fixed</text>
+      <text x="12" y="45" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#e2e8f0">Shorthand [5] = [0:4]; fast contiguous slots, LUT/RAM synthesis &amp; methods</text>
+    </g>
+
+    <!-- 2. Dynamic -->
+    <g transform="translate(14, 120)">
+      <rect width="446" height="60" rx="6" fill="#1e1b4b" stroke="#818cf8" stroke-width="1.2"/>
+      <text x="12" y="21" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="700" fill="#a5b4fc">2. Dynamic</text>
+      <rect x="115" y="7" width="128" height="20" rx="4" fill="#312e81"/>
+      <text x="179" y="21" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" font-weight="700" fill="#c7d2fe" text-anchor="middle">int dyn [];</text>
+      <text x="434" y="21" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" font-weight="600" fill="#a5b4fc" text-anchor="end">Runtime Allocated</text>
+      <text x="12" y="45" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#e2e8f0">Allocated via new[N]; copy-resize new[M](dyn), .size(), .delete()</text>
+    </g>
+
+    <!-- 3. Associative -->
+    <g transform="translate(14, 188)">
+      <rect width="446" height="60" rx="6" fill="#2a1c08" stroke="#f59e0b" stroke-width="1.2"/>
+      <text x="12" y="21" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="700" fill="#fbbf24">3. Associative</text>
+      <rect x="115" y="7" width="166" height="20" rx="4" fill="#451a03"/>
+      <text x="198" y="21" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" font-weight="700" fill="#fde68a" text-anchor="middle">int map [string];</text>
+      <text x="434" y="21" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" font-weight="600" fill="#fbbf24" text-anchor="end">Sparse Key-Value</text>
+      <text x="12" y="45" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#e2e8f0">Arbitrary key type ([string], [bit [63:0]]); .exists(), .first(), .next()</text>
+    </g>
+
+    <!-- 4. Queue -->
+    <g transform="translate(14, 256)">
+      <rect width="446" height="60" rx="6" fill="#2e1065" stroke="#c084fc" stroke-width="1.2"/>
+      <text x="12" y="21" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="700" fill="#d8b4fe">4. Queue</text>
+      <rect x="115" y="7" width="166" height="20" rx="4" fill="#4c1d95"/>
+      <text x="198" y="21" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" font-weight="700" fill="#ede9fe" text-anchor="middle">int q [$] / [$:N];</text>
+      <text x="434" y="21" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" font-weight="600" fill="#e9d5ff" text-anchor="end">Auto-Sizing FIFO</text>
+      <text x="12" y="45" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#e2e8f0">Double-ended .push_front/back(), .pop_front/back(), .insert(), .delete()</text>
+    </g>
+  </g>
+</svg>

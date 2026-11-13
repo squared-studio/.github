@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 390" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGradCh22D" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#080c14" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <filter id="shadowCh22D" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+  </defs>
+
+  <rect width="920" height="390" rx="14" fill="url(#bgGradCh22D)"/>
+
+  <!-- Title -->
+  <text x="460" y="30" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="20" font-weight="700" fill="#f8fafc" text-anchor="middle">Decision Guide: Textual Macros vs. Native SystemVerilog Constructs</text>
+  <text x="460" y="50" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13" fill="#94a3b8" text-anchor="middle">Reserve `define for preprocessing needs; prefer typed, scoped SystemVerilog constructs everywhere else</text>
+
+  <!-- Left Panel: When `define Macros Excel -->
+  <g transform="translate(24, 72)">
+    <rect width="424" height="294" rx="10" fill="#0f172a" stroke="#f59e0b" stroke-width="1.8" filter="url(#shadowCh22D)"/>
+    <rect width="424" height="36" rx="10" fill="#78350f"/>
+    <rect x="0" y="24" width="424" height="12" fill="#78350f"/>
+    <text x="212" y="23" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13" font-weight="700" fill="#fef3c7" text-anchor="middle">Use `define Macros For Preprocessor Tasks</text>
+
+    <rect x="14" y="48" width="396" height="52" rx="6" fill="#1e1b18" stroke="#d97706"/>
+    <text x="24" y="68" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11.5" font-weight="700" fill="#fbbf24">Conditional Compilation (`ifdef / `ifndef)</text>
+    <text x="24" y="86" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#fde68a">Synthesis vs. simulation, tool workarounds, header guards.</text>
+
+    <rect x="14" y="110" width="396" height="52" rx="6" fill="#1e1b18" stroke="#d97706"/>
+    <text x="24" y="130" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11.5" font-weight="700" fill="#fbbf24">Caller File &amp; Line Capture (`__FILE__, `__LINE__)</text>
+    <text x="24" y="148" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#fde68a">Functions only see their own line; macros capture call site!</text>
+
+    <rect x="14" y="172" width="396" height="52" rx="6" fill="#1e1b18" stroke="#d97706"/>
+    <text x="24" y="192" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11.5" font-weight="700" fill="#fbbf24">Identifier Generation &amp; UVM Registration</text>
+    <text x="24" y="210" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#fde68a">`uvm_info, `uvm_component_utils, token-pasted boilerplate.</text>
+
+    <rect x="14" y="234" width="396" height="48" rx="6" fill="#1e1b18" stroke="#d97706"/>
+    <text x="24" y="254" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11.5" font-weight="700" fill="#fbbf24">Code-Snippet / Assertion Templates</text>
+    <text x="24" y="272" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#fde68a">SVA sequence/property factories where functions cannot expand.</text>
+  </g>
+
+  <!-- Right Panel: When Native SV Constructs Are Better -->
+  <g transform="translate(472, 72)">
+    <rect width="424" height="294" rx="10" fill="#0f172a" stroke="#10b981" stroke-width="1.8" filter="url(#shadowCh22D)"/>
+    <rect width="424" height="36" rx="10" fill="#065f46"/>
+    <rect x="0" y="24" width="424" height="12" fill="#065f46"/>
+    <text x="212" y="23" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13" font-weight="700" fill="#d1fae5" text-anchor="middle">Prefer Native SV Constructs Over Macros</text>
+
+    <rect x="14" y="48" width="396" height="52" rx="6" fill="#072c22" stroke="#10b981"/>
+    <text x="24" y="68" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" font-weight="700" fill="#34d399">parameter / localparam  (not `define WIDTH)</text>
+    <text x="24" y="86" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#d1fae5">Scoped per-instance! Avoids global collisions across IPs.</text>
+
+    <rect x="14" y="110" width="396" height="52" rx="6" fill="#072c22" stroke="#10b981"/>
+    <text x="24" y="130" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" font-weight="700" fill="#34d399">package + import  (not global shared defines)</text>
+    <text x="24" y="148" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#d1fae5">Explicit namespace control (`pkg::const`) and compile order.</text>
+
+    <rect x="14" y="172" width="396" height="52" rx="6" fill="#072c22" stroke="#10b981"/>
+    <text x="24" y="192" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" font-weight="700" fill="#34d399">function automatic / task  (not expr macros)</text>
+    <text x="24" y="210" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#d1fae5">Type safety, single arg evaluation, clean debugger call stacks.</text>
+
+    <rect x="14" y="234" width="396" height="48" rx="6" fill="#072c22" stroke="#10b981"/>
+    <text x="24" y="254" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" font-weight="700" fill="#34d399">generate if / for  (when config via param)</text>
+    <text x="24" y="272" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#d1fae5">Both branches remain syntax-checked and per-instance selectable.</text>
+  </g>
+</svg>

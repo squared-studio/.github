@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 410" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGradCh3C" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#080c14" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <filter id="shadowCh3C" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+  </defs>
+
+  <rect width="920" height="410" rx="14" fill="url(#bgGradCh3C)"/>
+
+  <!-- Title -->
+  <text x="460" y="34" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="20" font-weight="700" fill="#f8fafc" text-anchor="middle">Simulation Time Functions: $time, $stime &amp; $realtime</text>
+  <text x="460" y="56" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13" fill="#94a3b8" text-anchor="middle">How timeunit and timeprecision quantize fractional delays (#3.75ns, #7.5ns)</text>
+
+  <!-- Top Context Bar -->
+  <rect x="24" y="74" width="872" height="36" rx="8" fill="#131d33" stroke="#a855f7" stroke-width="1.3"/>
+  <text x="460" y="97" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" font-weight="700" fill="#e9d5ff" text-anchor="middle">timeunit 1ns;  timeprecision 10ps;   // Delay #3.75ns = 375 internal ticks (10 ps each)</text>
+
+  <!-- Card 1: $time -->
+  <g transform="translate(24, 126)">
+    <rect width="276" height="262" rx="10" fill="#0f172a" stroke="#38bdf8" stroke-width="1.8" filter="url(#shadowCh3C)"/>
+    <rect width="276" height="40" rx="10" fill="#075985"/>
+    <rect x="0" y="28" width="276" height="12" fill="#075985"/>
+    <text x="138" y="26" font-family="'JetBrains Mono', Consolas, monospace" font-size="15" font-weight="700" fill="#e0f2fe" text-anchor="middle">$time</text>
+
+    <rect x="14" y="52" width="248" height="46" rx="6" fill="#080d18" stroke="#1e3a5f"/>
+    <text x="138" y="71" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#94a3b8" text-anchor="middle">Return Type</text>
+    <text x="138" y="89" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" font-weight="700" fill="#38bdf8" text-anchor="middle">64-bit unsigned integer (time)</text>
+
+    <rect x="14" y="108" width="248" height="72" rx="6" fill="#0c1e35" stroke="#1e3a5f"/>
+    <text x="24" y="128" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11.5" font-weight="700" fill="#7dd3fc">Scaling &amp; Rounding</text>
+    <text x="24" y="147" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#e2e8f0">#3.75ns  ──▶  $time = 4</text>
+    <text x="24" y="166" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#e2e8f0">#7.50ns  ──▶  $time = 8</text>
+
+    <g transform="translate(16, 194)">
+      <text x="0" y="14" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#cbd5e1">• Rounded to nearest whole timeunit</text>
+      <text x="0" y="34" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#cbd5e1">• Safe for multi-billion-cycle runs</text>
+      <text x="0" y="54" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="600" fill="#7dd3fc">• Recommended default for %0t</text>
+    </g>
+  </g>
+
+  <!-- Card 2: $stime -->
+  <g transform="translate(322, 126)">
+    <rect width="276" height="262" rx="10" fill="#0f172a" stroke="#f59e0b" stroke-width="1.8" filter="url(#shadowCh3C)"/>
+    <rect width="276" height="40" rx="10" fill="#78350f"/>
+    <rect x="0" y="28" width="276" height="12" fill="#78350f"/>
+    <text x="138" y="26" font-family="'JetBrains Mono', Consolas, monospace" font-size="15" font-weight="700" fill="#fef3c7" text-anchor="middle">$stime</text>
+
+    <rect x="14" y="52" width="248" height="46" rx="6" fill="#080d18" stroke="#78350f"/>
+    <text x="138" y="71" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#94a3b8" text-anchor="middle">Return Type</text>
+    <text x="138" y="89" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" font-weight="700" fill="#fbbf24" text-anchor="middle">32-bit unsigned (int unsigned)</text>
+
+    <rect x="14" y="108" width="248" height="72" rx="6" fill="#1c1917" stroke="#78350f"/>
+    <text x="24" y="128" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11.5" font-weight="700" fill="#fbbf24">32-Bit Range Limit</text>
+    <text x="24" y="147" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#e2e8f0">Max = 2^32 - 1 (~4.29e9 units)</text>
+    <text x="24" y="166" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#fca5a5">Wraps/truncates in long runs!</text>
+
+    <g transform="translate(16, 194)">
+      <text x="0" y="14" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#cbd5e1">• Returns low 32 bits of scaled time</text>
+      <text x="0" y="34" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#cbd5e1">• Also rounds fractional timeunits</text>
+      <text x="0" y="54" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="600" fill="#fbbf24">• Prefer $time unless 32-bit needed</text>
+    </g>
+  </g>
+
+  <!-- Card 3: $realtime -->
+  <g transform="translate(620, 126)">
+    <rect width="276" height="262" rx="10" fill="#0f172a" stroke="#34d399" stroke-width="1.8" filter="url(#shadowCh3C)"/>
+    <rect width="276" height="40" rx="10" fill="#065f46"/>
+    <rect x="0" y="28" width="276" height="12" fill="#065f46"/>
+    <text x="138" y="26" font-family="'JetBrains Mono', Consolas, monospace" font-size="15" font-weight="700" fill="#d1fae5" text-anchor="middle">$realtime</text>
+
+    <rect x="14" y="52" width="248" height="46" rx="6" fill="#080d18" stroke="#065f46"/>
+    <text x="138" y="71" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#94a3b8" text-anchor="middle">Return Type</text>
+    <text x="138" y="89" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" font-weight="700" fill="#34d399" text-anchor="middle">Floating-point (real)</text>
+
+    <rect x="14" y="108" width="248" height="72" rx="6" fill="#072c22" stroke="#065f46"/>
+    <text x="24" y="128" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11.5" font-weight="700" fill="#6ee7b7">Preserves Fractional Precision</text>
+    <text x="24" y="147" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#e2e8f0">#3.75ns  ──▶  3.75</text>
+    <text x="24" y="166" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#e2e8f0">#7.50ns  ──▶  7.50</text>
+
+    <g transform="translate(16, 194)">
+      <text x="0" y="14" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#cbd5e1">• Retains precision down to timeprecision</text>
+      <text x="0" y="34" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#cbd5e1">• Format with %0.2f or %0t</text>
+      <text x="0" y="54" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="600" fill="#6ee7b7">• Best for mixed clocks / PLL jitter</text>
+    </g>
+  </g>
+</svg>

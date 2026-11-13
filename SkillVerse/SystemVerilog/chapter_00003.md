@@ -99,6 +99,17 @@ endmodule
 
 **Explanation**: At the same simulation time step, `a` is first set to `42` via a blocking assignment, then scheduled to update to `65` via a non-blocking assignment (`<=`). `$display` executes immediately and captures the current value `42`, before the non-blocking assignment settles. `$strobe`, however, reports in the postponed region after that nonblocking update, and prints `65` for this example.
 
+![Display Tasks in a Simulation Time Slot](images/ch3_sv_display_monitor_strobe_regions.svg)
+
+### **Display Tasks Comparison**
+
+| System Task | Scheduling Region | Newline? | Primary Use Case |
+| :--- | :--- | :---: | :--- |
+| **`$display`** | Active (immediate) | Yes | Point-in-time logging and immediate debug checkpoints |
+| **`$write`** | Active (immediate) | No | Building multi-part formatted lines on one console row |
+| **`$strobe`** | Postponed (end of slot) | Yes | Sampling settled register/comb values after `<=` commits |
+| **`$monitor`** | Postponed (on change) | Yes | Continuous watch on signals (`$monitoron` / `$monitoroff` to toggle) |
+
 **Choosing the Right Display Task**:
 
 - Use **`$display`** for immediate, point-in-time value checks and general logging.
@@ -151,11 +162,25 @@ endmodule
 
 **Explanation**: `$dumpvars(0, dumpvars_example)` ensures that all signals (`clk`, `enable`, `out`) within `dumpvars_example` module will be recorded in `waveform.vcd`.
 
+![Waveform Recording Pipeline and Hierarchy Levels](images/ch3_sv_vcd_wavedump_hierarchy.svg)
+
+### **Wavedump System Tasks Reference**
+
+| System Task | Purpose | Usage Notes |
+| :--- | :--- | :--- |
+| **`$dumpfile("file.vcd")`** | Opens/names the output VCD file | Must be invoked **before** `$dumpvars` |
+| **`$dumpvars(0, scope)`** | Dumps `scope` and **all** nested sub-modules | Level `0` means unlimited hierarchical depth |
+| **`$dumpvars(N, scope)`** | Dumps `N` hierarchy levels starting at `scope` | `N = 1` dumps only `scope`; also accepts individual signals |
+| **`$dumpoff` / `$dumpon`** | Pauses / resumes VCD recording | Reduces disk usage during long reset or memory-init phases |
+| **`$dumpflush`** | Flushes buffered VCD data to disk | Ensures waveform data is written before `$stop` or long waits |
+
 **Using Waveform Viewers**: After simulation, open the generated VCD file (e.g., `signals.vcd`, `waveform.vcd`) with a waveform viewer (like GTKWave, Verdi, or ModelSim's waveform viewer). You'll see a graphical representation of how your signals change over time, which is invaluable for debugging and understanding design behavior.
 
 ## **Time-Related Functions: Measuring Simulation Progress**
 
 SystemVerilog provides functions to access the current simulation time in different formats and precisions.
+
+![Simulation Time Functions and Precision](images/ch3_sv_time_functions_precision.svg)
 
 ### **`$time`**: High-Precision 64-bit Time
 
@@ -205,9 +230,34 @@ endmodule
 
 **Explanation**: With a sufficiently fine time precision, `$realtime` displays the fractional time step `3.75`, making it suitable for simulations where fractional delays are important. No time query can recover precision that was discarded when the delay was scheduled.
 
+### **Comparing `$time`, `$stime`, and `$realtime`**
+
+| Function | Return Type | Fractional Handling | Risk / Best Use Case |
+| :--- | :--- | :--- | :--- |
+| **`$time`** | 64-bit unsigned integer (`time`) | Rounded to nearest `timeunit` | Default choice for integer timestamps and `%0t` |
+| **`$stime`** | 32-bit unsigned integer (`int unsigned`) | Rounded to nearest `timeunit` | Can overflow/wrap after $\approx 4.29 \times 10^9$ time units |
+| **`$realtime`** | Floating-point (`real`) | Preserved down to `timeprecision` | Essential for fractional delays, mixed clocks, and jitter |
+
+```systemverilog
+module compare_time_functions;
+  timeunit 1ns;
+  timeprecision 1ps;
+
+  initial begin
+    #3.75ns;
+    $display("$time=%0d  $stime=%0d  $realtime=%0.2f",
+             $time, $stime, $realtime);
+    // Representative output: $time=4  $stime=4  $realtime=3.75
+    $finish;
+  end
+endmodule
+```
+
 ## **Simulation Control Tasks: Guiding Simulation Flow**
 
 Simulation control tasks allow you to manage the execution of your simulation, providing commands to stop, pause, or terminate the process.
+
+![Simulation Control Tasks Lifecycle](images/ch3_sv_simulation_control_lifecycle.svg)
 
 ### **`$finish`**: Ending the Simulation Gracefully
 
@@ -265,6 +315,12 @@ endmodule
 - Use **`$finish`** to signal the normal end of a simulation or to gracefully terminate upon encountering a fatal error.
 - Use **`$stop`** for pausing the simulation to interactively debug and examine the design state.
 - Use **`$exit`** only when its program-block or tool-specific behavior is understood; do not assume it forcefully terminates the simulator.
+
+| System Task | Action | Diagnostic Level `n` (Optional) |
+| :--- | :--- | :--- |
+| **`$finish` / `$finish(n)`** | Ends simulation cleanly and runs `final` blocks | `0`: silent, `1` (default): time &amp; location, `2`: +CPU/memory stats |
+| **`$stop` / `$stop(n)`** | Pauses simulation in interactive debug mode | Same `0` / `1` / `2` diagnostic verbosity options as `$finish` |
+| **`$exit`** | Exits an enclosing `program` block | None; behavior outside `program` blocks is simulator-dependent |
 
 ## **Hands-on Exercises with Solutions**
 

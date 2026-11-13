@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 390" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGradCh18C" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#080c14" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <filter id="shadowCh18C" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+  </defs>
+
+  <rect width="920" height="390" rx="14" fill="url(#bgGradCh18C)"/>
+
+  <!-- Title -->
+  <text x="460" y="30" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="20" font-weight="700" fill="#f8fafc" text-anchor="middle">$value$plusargs Conversion Specifiers &amp; Variable Types</text>
+  <text x="460" y="50" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13" fill="#94a3b8" text-anchor="middle">Match each format specifier in $value$plusargs("KEY=%&lt;fmt&gt;", var) to the target variable type</text>
+
+  <!-- Main Table Card -->
+  <g transform="translate(24, 68)">
+    <rect width="872" height="298" rx="10" fill="#0f172a" stroke="#334155" stroke-width="1.8" filter="url(#shadowCh18C)"/>
+
+    <!-- Header Row -->
+    <rect width="872" height="38" rx="10" fill="#1e293b"/>
+    <rect x="0" y="24" width="872" height="14" fill="#1e293b"/>
+    <text x="72" y="24" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="700" fill="#f8fafc" text-anchor="middle">Specifier</text>
+    <text x="240" y="24" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="700" fill="#f8fafc" text-anchor="middle">CLI Plusarg Example</text>
+    <text x="470" y="24" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="700" fill="#f8fafc" text-anchor="middle">Recommended SV Type</text>
+    <text x="706" y="24" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="700" fill="#f8fafc" text-anchor="middle">Decoded Variable Value</text>
+
+    <!-- Row 1: %d -->
+    <rect x="12" y="46" width="848" height="36" rx="6" fill="#0c1c2e" stroke="#1e3a5f"/>
+    <text x="72" y="69" font-family="'JetBrains Mono', Consolas, monospace" font-size="12.5" font-weight="700" fill="#38bdf8" text-anchor="middle">%d</text>
+    <text x="240" y="69" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" fill="#e2e8f0" text-anchor="middle">+ITERATIONS=250</text>
+    <text x="470" y="69" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" fill="#7dd3fc" text-anchor="middle">int / integer</text>
+    <text x="706" y="69" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" fill="#34d399" text-anchor="middle">250 (signed decimal)</text>
+
+    <!-- Row 2: %h / %x -->
+    <rect x="12" y="88" width="848" height="36" rx="6" fill="#131c31" stroke="#312e81"/>
+    <text x="72" y="111" font-family="'JetBrains Mono', Consolas, monospace" font-size="12.5" font-weight="700" fill="#a78bfa" text-anchor="middle">%h / %x</text>
+    <text x="240" y="111" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" fill="#e2e8f0" text-anchor="middle">+BASE_ADDR=dead_beef</text>
+    <text x="470" y="111" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" fill="#c4b5fd" text-anchor="middle">bit [31:0] / logic [31:0]</text>
+    <text x="706" y="111" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" fill="#34d399" text-anchor="middle">32'hDEAD_BEEF (hexadecimal)</text>
+
+    <!-- Row 3: %b -->
+    <rect x="12" y="130" width="848" height="36" rx="6" fill="#072c22" stroke="#065f46"/>
+    <text x="72" y="153" font-family="'JetBrains Mono', Consolas, monospace" font-size="12.5" font-weight="700" fill="#34d399" text-anchor="middle">%b</text>
+    <text x="240" y="153" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" fill="#e2e8f0" text-anchor="middle">+LANE_MASK=1010_0101</text>
+    <text x="470" y="153" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" fill="#6ee7b7" text-anchor="middle">logic [7:0] / bit [7:0]</text>
+    <text x="706" y="153" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" fill="#34d399" text-anchor="middle">8'b1010_0101 (binary)</text>
+
+    <!-- Row 4: %o -->
+    <rect x="12" y="172" width="848" height="36" rx="6" fill="#1e1b18" stroke="#78350f"/>
+    <text x="72" y="195" font-family="'JetBrains Mono', Consolas, monospace" font-size="12.5" font-weight="700" fill="#fbbf24" text-anchor="middle">%o</text>
+    <text x="240" y="195" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" fill="#e2e8f0" text-anchor="middle">+MODE_BITS=755</text>
+    <text x="470" y="195" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" fill="#fde68a" text-anchor="middle">bit [11:0] / int unsigned</text>
+    <text x="706" y="195" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" fill="#34d399" text-anchor="middle">12'o755 (octal)</text>
+
+    <!-- Row 5: %s -->
+    <rect x="12" y="214" width="848" height="36" rx="6" fill="#0c1c2e" stroke="#0284c7"/>
+    <text x="72" y="237" font-family="'JetBrains Mono', Consolas, monospace" font-size="12.5" font-weight="700" fill="#38bdf8" text-anchor="middle">%s</text>
+    <text x="240" y="237" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" fill="#e2e8f0" text-anchor="middle">+CFG=env/axi_cfg.txt</text>
+    <text x="470" y="237" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" fill="#7dd3fc" text-anchor="middle">string</text>
+    <text x="706" y="237" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" fill="#34d399" text-anchor="middle">"env/axi_cfg.txt" (string)</text>
+
+    <!-- Row 6: %f / %e / %g -->
+    <rect x="12" y="256" width="848" height="34" rx="6" fill="#27172b" stroke="#be185d"/>
+    <text x="72" y="277" font-family="'JetBrains Mono', Consolas, monospace" font-size="12" font-weight="700" fill="#f472b6" text-anchor="middle">%f / %e / %g</text>
+    <text x="240" y="277" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" fill="#e2e8f0" text-anchor="middle">+CLK_NS=2.5</text>
+    <text x="470" y="277" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" fill="#fbcfe8" text-anchor="middle">real / shortreal</text>
+    <text x="706" y="277" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" fill="#34d399" text-anchor="middle">2.5 (floating-point)</text>
+  </g>
+</svg>

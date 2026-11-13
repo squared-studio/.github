@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 400" width="920" height="400">
+  <defs>
+    <style>
+      .bg { fill: #0f172a; }
+      .panel { fill: #1e293b; stroke-width: 1.5; rx: 10; ry: 10; }
+      .subbox { fill: #0f172a; stroke: #334155; stroke-width: 1.2; rx: 6; ry: 6; }
+      .title { font-family: 'Segoe UI', Arial, sans-serif; font-size: 18px; font-weight: 700; fill: #f8fafc; text-anchor: middle; }
+      .subtitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; fill: #94a3b8; text-anchor: middle; }
+      .ptitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 14px; font-weight: 700; }
+      .mono { font-family: Consolas, 'Courier New', monospace; font-size: 11.5px; fill: #e2e8f0; }
+      .note { font-family: 'Segoe UI', Arial, sans-serif; font-size: 11px; fill: #94a3b8; }
+      .badge { font-family: Consolas, 'Courier New', monospace; font-size: 11px; font-weight: 700; }
+    </style>
+    <marker id="arrowCyan" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#38bdf8" />
+    </marker>
+    <marker id="arrowViolet" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#a78bfa" />
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="920" height="400" />
+  <text class="title" x="460" y="28">Simulation Time Scaling ($time, $stime, $realtime) &amp; Type Conversion Pipeline</text>
+  <text class="subtitle" x="460" y="48">Comparing Unit Rounding, Time Formatting, Lossless Bit Reinterpretation, and Value Casts</text>
+
+  <!-- Left Panel: Simulation Time Functions -->
+  <rect class="panel" x="20" y="64" width="430" height="316" stroke="#38bdf8" />
+  <text class="ptitle" x="36" y="88" fill="#38bdf8">Simulation Time Functions &amp; $timeformat</text>
+
+  <!-- Scope banner -->
+  <rect class="subbox" x="36" y="100" width="398" height="36" stroke="#0284c7" />
+  <text class="mono" x="48" y="122" fill="#7dd3fc">`timescale 1ns / 1ps   |   Kernel time = 10.625 ns</text>
+
+  <!-- $realtime -->
+  <rect class="subbox" x="36" y="148" width="128" height="40" />
+  <text class="badge" x="100" y="172" text-anchor="middle" fill="#34d399">$realtime</text>
+  <line x1="164" y1="168" x2="190" y2="168" stroke="#38bdf8" stroke-width="1.8" marker-end="url(#arrowCyan)" />
+  <rect class="subbox" x="194" y="148" width="240" height="40" />
+  <text class="mono" x="204" y="165" fill="#f8fafc">real (64b):  10.625</text>
+  <text class="note" x="204" y="181">Preserves fractional time precision</text>
+
+  <!-- $time -->
+  <rect class="subbox" x="36" y="198" width="128" height="40" />
+  <text class="badge" x="100" y="222" text-anchor="middle" fill="#38bdf8">$time</text>
+  <line x1="164" y1="218" x2="190" y2="218" stroke="#38bdf8" stroke-width="1.8" marker-end="url(#arrowCyan)" />
+  <rect class="subbox" x="194" y="198" width="240" height="40" />
+  <text class="mono" x="204" y="215" fill="#f8fafc">time (64b):  11</text>
+  <text class="note" x="204" y="231">Rounded to nearest scope time unit</text>
+
+  <!-- $stime -->
+  <rect class="subbox" x="36" y="248" width="128" height="40" />
+  <text class="badge" x="100" y="272" text-anchor="middle" fill="#f59e0b">$stime</text>
+  <line x1="164" y1="268" x2="190" y2="268" stroke="#38bdf8" stroke-width="1.8" marker-end="url(#arrowCyan)" />
+  <rect class="subbox" x="194" y="248" width="240" height="40" />
+  <text class="mono" x="204" y="265" fill="#f8fafc">int unsigned (32b):  11</text>
+  <text class="note" x="204" y="281">Wraps modulo 2^32 on long runs</text>
+
+  <!-- $timeformat -->
+  <rect class="subbox" x="36" y="300" width="398" height="66" stroke="#38bdf8" />
+  <text class="mono" x="48" y="320" fill="#7dd3fc">$timeformat(-9, 3, " ns", 10);</text>
+  <text class="note" x="48" y="338">Args: (units_power, precision, suffix, min_width)</text>
+  <text class="mono" x="48" y="356" fill="#34d399">$display("%0t", $realtime);  --&gt;  "10.625 ns"</text>
+
+  <!-- Right Panel: Type Conversion Functions -->
+  <rect class="panel" x="470" y="64" width="430" height="316" stroke="#a78bfa" />
+  <text class="ptitle" x="486" y="88" fill="#a78bfa">Bit-Pattern Reinterpretation vs. Numeric Casts</text>
+
+  <!-- IEEE 754 Bit-level Box -->
+  <rect class="subbox" x="486" y="100" width="398" height="106" stroke="#7c3aed" />
+  <text class="badge" x="498" y="120" fill="#c4b5fd">Lossless Bit Reinterpretation (No Value Rounding)</text>
+  <text class="mono" x="498" y="144" fill="#e2e8f0">real (64b)       &lt;==&gt;  bit [63:0]</text>
+  <text class="note" x="498" y="160">  $realtobits(r)  /  $bitstoreal(bits64)</text>
+  <text class="mono" x="498" y="182" fill="#e2e8f0">shortreal (32b)  &lt;==&gt;  bit [31:0]</text>
+  <text class="note" x="498" y="198">  $shortrealtobits(sr)  /  $bitstoshortreal(bits32)</text>
+
+  <!-- Numeric Value Conversion Box -->
+  <rect class="subbox" x="486" y="216" width="398" height="74" />
+  <text class="badge" x="498" y="236" fill="#34d399">Real &lt;--&gt; Integral Numeric Conversion</text>
+  <text class="mono" x="498" y="258">$rtoi(3.9) == 3   (truncates toward 0)</text>
+  <text class="mono" x="498" y="278">int'(3.9)  == 4   (rounds)  |  $itor(3) == 3.0</text>
+
+  <!-- Signedness & $cast Box -->
+  <rect class="subbox" x="486" y="300" width="398" height="66" />
+  <text class="badge" x="498" y="320" fill="#fbbf24">Signedness &amp; Dynamic Type Checking</text>
+  <text class="mono" x="498" y="340">$signed(v) / $unsigned(v)  (MSB sign vs magnitude)</text>
+  <text class="mono" x="498" y="358">ok = $cast(dst, src);      (returns 1=pass, 0=fail)</text>
+</svg>

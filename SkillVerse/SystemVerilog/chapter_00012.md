@@ -15,20 +15,23 @@ By the end of this chapter, you should be able to:
 
 ## Mailboxes: Message Passing for Data Exchange
 
-A mailbox in SystemVerilog acts as a message queue, providing a channel for processes to exchange data. A parameterized mailbox such as `mailbox #(packet_type)` provides compile-time type checking; an unparameterized `mailbox` is a general, less type-safe mailbox. Mailboxes can be **bounded** (with a fixed capacity) or **unbounded** (dynamically sized), and they are commonly used for testbench communication rather than synthesizable RTL.
+A mailbox in SystemVerilog acts as a message queue, providing a channel for processes to exchange data. A parameterized mailbox such as `mailbox #(packet_type)` provides compile-time type checking; an unparameterized `mailbox` is a general, less type-safe mailbox. Mailboxes can be **bounded** (with a fixed capacity `new(N)`) or **unbounded** (`new()`, dynamically sized), and they are commonly used for testbench communication rather than synthesizable RTL.
+
+![SystemVerilog Parameterized Mailbox Producer Consumer FIFO Channel](images/ch12_sv_mailbox_producer_consumer.svg)
 
 ### Mailbox Methods: Sending and Receiving Messages
 
-SystemVerilog mailboxes offer a set of methods for sending and receiving messages, with both blocking and non-blocking options to suit different synchronization needs.
+SystemVerilog mailboxes offer a set of methods for sending and receiving messages, with both blocking and non-blocking options to suit different synchronization needs. Notice the distinction between **blocking** `peek()` (which waits when empty) and **non-blocking** `try_peek()` (which returns `0` immediately when empty).
 
-| Method             | Description                                                                     | Blocking Behavior                                           | Return Value        | Example                                    |
-| ------------------ | ------------------------------------------------------------------------------- | ----------------------------------------------------------- | ------------------- | ------------------------------------------ |
-| `put(message)`     | **Blocking Send**: Sends a `message` to the mailbox.                            | **Blocks** if the mailbox is full until space is available. | `void`              | `data_mbox.put(transaction_pkt);`          |
-| `get(message)`     | **Blocking Receive**: Receives a `message` from the mailbox.                    | **Blocks** if the mailbox is empty until a message arrives. | `void`              | `data_mbox.get(received_pkt);`             |
-| `try_put(message)` | **Non-blocking Send**: Attempts to send a `message`.                            | **Non-blocking**: Returns immediately.                      | `1` (success) / `0` | `if (data_mbox.try_put(new_packet)) ...`   |
-| `try_get(message)` | **Non-blocking Receive**: Attempts to receive a `message`.                      | **Non-blocking**: Returns immediately.                      | `1` (success) / `0` | `if (data_mbox.try_get(received_pkt)) ...` |
-| `peek(message)`    | **Non-blocking Peek**: Retrieves the next message without removing it.          | **Non-blocking**: Returns immediately.                      | `1` (success) / `0` | `if (data_mbox.peek(next_pkt)) ...`        |
-| `num()`            | **Query Message Count**: Returns the current number of messages in the mailbox. | **Non-blocking**: Returns immediately.                      | `integer`           | `integer msg_count = data_mbox.num();`     |
+| Method                | Description                                                                       | Blocking Behavior                                                      | Return Value        | Example                                    |
+| --------------------- | --------------------------------------------------------------------------------- | ---------------------------------------------------------------------- | ------------------- | ------------------------------------------ |
+| `put(message)`        | **Blocking Send**: Appends a `message` to the mailbox.                            | **Blocks** if the mailbox is full until space is available.            | `void`              | `data_mbox.put(transaction_pkt);`          |
+| `get(message)`        | **Blocking Receive**: Reads and removes the head `message` from the mailbox.      | **Blocks** if the mailbox is empty until a message arrives.            | `void`              | `data_mbox.get(received_pkt);`             |
+| `peek(message)`       | **Blocking Peek**: Copies the head `message` without removing it.                 | **Blocks** if the mailbox is empty until a message arrives.            | `void`              | `data_mbox.peek(next_pkt);`                |
+| `try_put(message)`    | **Non-blocking Send**: Attempts to send a `message`.                              | **Non-blocking**: Returns immediately.                                 | `> 0` (ok) / `0`    | `if (data_mbox.try_put(new_packet)) ...`   |
+| `try_get(message)`    | **Non-blocking Receive**: Attempts to receive and remove a `message`.             | **Non-blocking**: Returns immediately.                                 | `> 0` (ok) / `0`    | `if (data_mbox.try_get(received_pkt)) ...` |
+| `try_peek(message)`   | **Non-blocking Peek**: Copies the next message without removing it if available.  | **Non-blocking**: Returns immediately.                                 | `> 0` (ok) / `0`    | `if (data_mbox.try_peek(next_pkt)) ...`    |
+| `num()`               | **Query Message Count**: Returns the current number of messages in the mailbox.   | **Non-blocking**: Returns immediately.                                 | `int`               | `int msg_count = data_mbox.num();`         |
 
 ### Creating Mailbox Instances: Bounded and Unbounded
 
@@ -109,22 +112,24 @@ endmodule
 - **Blocking (`put()`, `get()`) vs. Non-blocking (`try_put()`, `try_get()`) Methods**:
   - **Blocking Methods**: Guarantee message delivery and reception. `put()` blocks the sender until space is available; `get()` blocks the receiver until a message arrives. Ideal for reliable communication where synchronization is critical.
   - **Non-blocking Methods**: Provide flexibility to avoid process stalls. `try_put()` and `try_get()` return immediately, indicating success or failure. Useful for scenarios where processes need to check for mailbox status without blocking, allowing for alternative actions if the mailbox is not ready.
-- **`peek()` Method**: Allows inspection of the next message in the mailbox without removing it, useful for lookahead operations or conditional reception logic.
+- **`peek()` vs. `try_peek()` Methods**: Both inspect the next message without removing it from the mailbox (`peek()` blocks if empty, whereas `try_peek()` returns `0` immediately), useful for lookahead operations or conditional dispatch logic.
 - **`num()` Method**: Provides the current message count in the mailbox, enabling processes to check mailbox occupancy and make decisions based on message queue depth.
 
 ## Semaphores: Controlling Access to Shared Resources
 
-A semaphore is a synchronization primitive that controls access to shared resources by managing a pool of "keys" or permits. It acts like a gatekeeper, ensuring that only a limited number of processes can access a critical resource at any given time, preventing data corruption and race conditions. Semaphores are initialized with a count representing the number of available keys.
+A semaphore is a synchronization primitive that controls access to shared resources by managing a pool of "keys" or permits. It acts like a gatekeeper, ensuring that only a limited number of processes can access a critical resource at any given time, preventing data corruption and race conditions. Semaphores are initialized with a count representing the number of available keys (`new(keyCount = 0)`).
+
+![SystemVerilog Semaphore Key Pool and Mutual Exclusion Timeline](images/ch12_sv_semaphore_mutex_arbitration.svg)
 
 ### Semaphore Methods: Acquiring and Releasing Keys
 
-| Method             | Description                                                                                                                                      | Blocking Behavior                                                    | Parameters    | Example                                        |
-| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------- | ------------- | ---------------------------------------------- |
-| `get([count])`     | **Acquire Keys**: Attempts to acquire `count` keys (default `count` is 1).                                                                       | **Blocks** if not enough keys are available until they are released. | `count` (int) | `resource_sem.get(2);`                         |
-| `put([count])`     | **Release Keys**: Releases `count` keys back to the semaphore (default `count` is 1).                                                            | **Non-blocking**: Always returns immediately.                        | `count` (int) | `resource_sem.put(1);`                         |
-| `try_get([count])` | **Non-blocking Acquire**: Attempts to acquire `count` keys.                                                                                      | **Non-blocking**: Returns immediately.                               | `count` (int) | `if (resource_sem.try_get(1)) ...`             |
-| `try_put([count])` | **Not a standard semaphore method**: Use `put([count])` to release keys. A caller that needs conditional behavior must implement its own policy. | `put()` returns immediately.                                         | `count` (int) | `resource_sem.put(1);`                         |
-| `num()`            | **Query Available Keys**: Returns the current number of available keys.                                                                          | **Non-blocking**: Returns immediately.                               | None          | `integer keys_available = resource_sem.num();` |
+> **IEEE 1800 Note**: Unlike `mailbox`, the built-in `semaphore` class provides **only** `new()`, `get()`, `try_get()`, and `put()`. It does **not** have a `.num()` or `.try_put()` method.
+
+| Method             | Description                                                                             | Blocking Behavior                                                    | Parameters    | Example                                   |
+| ------------------ | --------------------------------------------------------------------------------------- | -------------------------------------------------------------------- | ------------- | ----------------------------------------- |
+| `get([count])`     | **Acquire Keys**: Attempts to acquire `count` keys (default `count` is `1`).            | **Blocks** if not enough keys are available until they are released. | `count` (int) | `resource_sem.get(2);`                    |
+| `try_get([count])` | **Non-blocking Acquire**: Attempts to acquire `count` keys (default `count` is `1`).    | **Non-blocking**: Returns `> 0` (`1`) if acquired, `0` otherwise.    | `count` (int) | `if (resource_sem.try_get(1)) ...`        |
+| `put([count])`     | **Release Keys**: Returns `count` keys back to the semaphore (default `count` is `1`).  | **Non-blocking**: Always returns immediately (`void`).               | `count` (int) | `resource_sem.put(1);`                    |
 
 ### Example: Protecting a Shared Resource with a Semaphore
 
@@ -185,21 +190,23 @@ endmodule
 - **Blocking (`get()`) vs. Non-blocking (`try_get()`) Acquisition**:
   - **Blocking `get()`**: Guarantees exclusive access but can lead to process blocking if the resource is unavailable. Suitable for critical sections where exclusive access is mandatory.
   - **Non-blocking `try_get()`**: Allows processes to attempt to acquire the semaphore without blocking. Useful for implementing non-blocking algorithms, priority-based resource access, or deadlock avoidance strategies. Processes can check the return value of `try_get()` to determine if the acquisition was successful and take alternative actions if needed.
-- **`put()` for Releasing Keys**: Processes **must** release the semaphore keys using `put()` after they are finished accessing the shared resource. Failing to release semaphores can lead to resource starvation and deadlocks, where processes are blocked indefinitely waiting for keys that will never be released.
-- **`num()` for Monitoring**: The `num()` method allows processes to check the number of available keys, useful for resource monitoring and dynamic resource allocation decisions.
+- **`put()` for Releasing Keys**: Processes **must** release the semaphore keys using `put()` after they are finished accessing the shared resource. Failing to release semaphores can lead to resource starvation and deadlocks, where processes are blocked indefinitely waiting for keys that will never be released. If your testbench needs to track occupancy metrics, maintain an explicit counter or wrap the `semaphore` inside a helper class, since built-in `semaphore` intentionally omits a `.num()` query.
 
 ## Events: Process Synchronization without Data Transfer
 
-Events in SystemVerilog are lightweight synchronization objects used to signal occurrences or trigger actions between processes. Unlike mailboxes, events do not carry data; they simply act as flags to indicate that something has happened. Processes can trigger events and wait for events to be triggered, enabling synchronization of execution flow.
+Events in SystemVerilog are lightweight synchronization objects used to signal occurrences or trigger actions between processes. Unlike mailboxes, events do not carry data; they simply act as transient timing signals to indicate that something has happened. Processes can trigger events (`->` or `->>`) and wait for events (`@(ev)` or `wait(ev.triggered)`), enabling synchronization of execution flow.
+
+![SystemVerilog Events Edge Wait vs Triggered Property Race Protection](images/ch12_sv_event_triggered_vs_at_race.svg)
 
 ### Event Operations: Triggering and Waiting
 
 | Operation                     | Description                                                                                                                                                                 | Blocking Behavior                                                                          | Example                                |
 | ----------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ | -------------------------------------- |
-| `-> event_name;`              | **Trigger Event**: Signals the occurrence of the event.                                                                                                                     | **Non-blocking**: Returns immediately.                                                     | `-> data_available_event;`             |
-| `@(event_name);`              | **Wait for Event**: Process suspends execution until `event_name` is triggered.                                                                                             | **Blocking**: Process blocks until event is triggered.                                     | `@(data_ready_event);`                 |
-| `wait(event_name.triggered);` | **Wait for the Current-Time Trigger**: Waits until the event is triggered in the current simulation time slot, including a trigger that occurred earlier in that same slot. | **Blocking**: Process blocks if the event has not been triggered in the current time slot. | `wait(start_event.triggered);`         |
-| `event_name.triggered`        | **Query Triggered Status**: Returns true only during the simulation time slot in which the event was triggered. It is not persistent history.                               | **Non-blocking**: Returns immediately.                                                     | `if (config_done_event.triggered) ...` |
+| `-> event_name;`              | **Blocking/Immediate Event Trigger**: Unblocks any processes currently suspended on `@(event_name)` in the active/reactive delta cycle.                                      | **Non-blocking**: Returns immediately.                                                     | `-> data_available_event;`             |
+| `->> event_name;`             | **Non-blocking Event Trigger (NBA)**: Schedules the event trigger in the Non-Blocking Assignment (NBA) region of the current simulation time slot.                          | **Non-blocking**: Returns immediately.                                                     | `->> data_available_event;`            |
+| `@(event_name);`              | **Edge-Sensitive Wait**: Process suspends execution until `event_name` transitions (triggered after waiting begins).                                                        | **Blocking**: Blocks until the next trigger occurs.                                        | `@(data_ready_event);`                 |
+| `wait(event_name.triggered);` | **Level-Sensitive Current-Time Wait**: Waits until the event is triggered in the current simulation time slot, catching triggers that fired earlier in that same timestamp. | **Blocking**: Passes immediately if already triggered in the current slot; blocks otherwise. | `wait(start_event.triggered);`         |
+| `event_name.triggered`        | **Query Triggered Status**: Returns `1'b1` only during the simulation time slot in which the event was triggered (resets to `1'b0` when time advances).                   | **Non-blocking**: Returns immediately.                                                     | `if (config_done_event.triggered) ...` |
 
 ### Example: Event-Based Process Synchronization
 
@@ -256,24 +263,198 @@ endmodule
 
 ## Comparison: Choosing the Right IPC Mechanism
 
+![Choosing the Right SystemVerilog IPC Primitive Mailbox vs Semaphore vs Event](images/ch12_sv_ipc_mechanisms_comparison.svg)
+
 | Feature                  | Mailbox                                                                             | Semaphore                                                                                    | Event                                                                                            |
 | ------------------------ | ----------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
 | **Primary Purpose**      | **Data exchange** between processes                                                 | **Resource access control**, mutual exclusion                                                | **Process synchronization**, signaling events                                                    |
 | **Data Transfer**        | **Yes**, carries messages (type-parameterized)                                      | **No**, manages keys (permits), no data transfer                                             | **No**, just signals occurrence of an event                                                      |
-| **Blocking Methods**     | `put()`, `get()`                                                                    | `get()`                                                                                      | `@(event)`, `wait(event.triggered)`                                                              |
-| **Non-blocking Methods** | `try_put()`, `try_get()`, `peek()`, `num()`                                         | `try_get()`, `num()`                                                                         | `event.triggered`                                                                                |
+| **Blocking Methods**     | `put()`, `get()`, `peek()`                                                          | `get()`                                                                                      | `@(event)`, `wait(event.triggered)`                                                              |
+| **Non-blocking Methods** | `try_put()`, `try_get()`, `try_peek()`, `num()`                                     | `try_get()`, `put()`                                                                         | `-> event`, `->> event`, `event.triggered`                                                       |
 | **Type Safety**          | **Yes**, parameterized for data type                                                | **No**, typeless, manages integer keys                                                       | **No**, typeless, just a signal                                                                  |
 | **Synthesizable?**       | **No**, primarily for verification                                                  | **No**, primarily for verification                                                           | **No**, primarily for verification                                                               |
 | **Typical Use Cases**    | Producer-consumer patterns, message queues, data streaming, testbench communication | Protecting shared resources, critical sections, mutual exclusion, limiting concurrent access | Testbench phase synchronization, event-driven stimulus, signaling completion, triggering actions |
 
 ## Exercises: Practical IPC Implementation
 
-1.  **String Mailbox**: Create a mailbox parameterized to carry `string` messages. Implement two processes: one process sends a series of string messages (e.g., "Hello", "World", "SystemVerilog") into the mailbox, and another process receives and displays these string messages.
-2.  **Shared Counter with Semaphore Protection**: Design a module with a shared integer counter variable. Create two concurrent processes that both increment this counter multiple times. Use a binary semaphore (mutex) to protect the counter and ensure that increments from both processes are atomic and do not lead to race conditions. Display the final counter value.
-3.  **Bounded Mailbox Overflow Handling**: Create a bounded mailbox with a small capacity (e.g., size 2) for integers. Implement a sender process that attempts to send more messages than the mailbox capacity. Use `try_put()` in the sender and demonstrate how it handles mailbox full conditions and reports failures. Implement a receiver process to consume messages.
-4.  **Semaphore for Limited Resource Access**: Simulate a system with a limited resource (e.g., 2 processing units) using a semaphore initialized with 2 keys. Create 4 concurrent processes that each need to acquire the resource (semaphore) to perform some operation. Show how only 2 processes can proceed at a time, while the others wait for a resource to become available.
-5.  **Event-Driven Testbench Phase Synchronization**: Design a testbench with two initial blocks representing different test phases (e.g., "Configuration Phase" and "Verification Phase"). Use an event (`config_phase_done`) to synchronize these phases. The "Configuration Phase" process should simulate configuration tasks and then trigger the `config_phase_done` event. The "Verification Phase" process should wait for `config_phase_done` before starting its verification activities. Display messages to indicate the start and end of each phase and the synchronization point.
-6.  **Event with `wait(event.triggered)` Robustness**: Create a scenario where an event (`early_event`) might be triggered before a process starts waiting for it. Process 1 should trigger `early_event` after a short delay. Process 2 should start at the same simulation time or in a later delta cycle and use `wait(early_event.triggered)` to demonstrate same-time race protection. Then repeat the experiment with Process 2 starting at a later simulation time and show that an event is not persistent; use a separate flag or mailbox if the notification must be remembered.
+1. **String Mailbox**: Create a mailbox parameterized to carry `string` messages. Implement two processes: one process sends a series of string messages (`"Hello"`, `"World"`, `"SystemVerilog"`) into the mailbox, and another process receives and displays these string messages.
+
+   ```systemverilog
+   module ex1_string_mailbox;
+     mailbox #(string) str_mbx = new();
+
+     initial begin : producer
+       string words[3] = '{"Hello", "World", "SystemVerilog"};
+       foreach (words[i]) begin
+         #5;
+         str_mbx.put(words[i]);
+         $display("[%0t] TX: %s", $time, words[i]);
+       end
+     end
+
+     initial begin : consumer
+       string msg;
+       repeat (3) begin
+         str_mbx.get(msg);
+         $display("[%0t] RX: %s", $time, msg);
+       end
+       $finish;
+     end
+   endmodule
+   ```
+
+2. **Shared Counter with Semaphore Protection**: Design a module with a shared integer counter variable. Create two concurrent processes that both increment this counter multiple times. Use a binary semaphore (mutex) to protect the counter and ensure that increments from both processes are atomic and do not lead to race conditions. Display the final counter value.
+
+   ```systemverilog
+   module ex2_shared_counter_mutex;
+     semaphore counter_mutex = new(1);
+     int shared_counter = 0;
+
+     task automatic increment_worker(string name, int count, int step_delay);
+       for (int i = 0; i < count; i++) begin
+         counter_mutex.get(1);
+         begin
+           int temp = shared_counter;
+           #step_delay; // Simulate non-atomic read-modify-write latency
+           shared_counter = temp + 1;
+           $display("[%0t] %s -> shared_counter = %0d", $time, name, shared_counter);
+         end
+         counter_mutex.put(1);
+         #1;
+       end
+     endtask
+
+     initial begin
+       fork
+         increment_worker("Worker_A", 5, 2);
+         increment_worker("Worker_B", 5, 3);
+       join
+       $display("[%0t] Final shared_counter = %0d (expected 10)", $time, shared_counter);
+       $finish;
+     end
+   endmodule
+   ```
+
+3. **Bounded Mailbox Overflow Handling**: Create a bounded mailbox with a small capacity (size `2`) for integers. Implement a sender process that attempts to send more messages than the mailbox capacity. Use `try_put()` in the sender and demonstrate how it handles mailbox full conditions and reports failures. Implement a receiver process to consume messages.
+
+   ```systemverilog
+   module ex3_bounded_mailbox_overflow;
+     mailbox #(int) bound_mbx = new(2);
+
+     initial begin : sender
+       for (int i = 1; i <= 5; i++) begin
+         if (bound_mbx.try_put(i * 10)) begin
+           $display("[%0t] Sender: try_put(%0d) succeeded (num=%0d)", $time, i * 10, bound_mbx.num());
+         end else begin
+           $display("[%0t] Sender: mailbox FULL! Waiting to put %0d...", $time, i * 10);
+           bound_mbx.put(i * 10);
+           $display("[%0t] Sender: blocking put(%0d) succeeded", $time, i * 10);
+         end
+         #2;
+       end
+     end
+
+     initial begin : receiver
+       int val;
+       #10; // Let bounded mailbox fill first
+       repeat (5) begin
+         bound_mbx.get(val);
+         $display("[%0t] Receiver: consumed %0d (num=%0d)", $time, val, bound_mbx.num());
+         #6;
+       end
+       $finish;
+     end
+   endmodule
+   ```
+
+4. **Semaphore for Limited Resource Access**: Simulate a system with a limited resource (`2` processing units) using a semaphore initialized with `2` keys. Create `4` concurrent processes that each need to acquire the resource (semaphore) to perform some operation. Show how only `2` processes can proceed at a time, while the others wait for a resource to become available.
+
+   ```systemverilog
+   module ex4_counting_semaphore_pool;
+     semaphore alu_pool = new(2); // 2 processing units available
+
+     task automatic run_job(int id);
+       $display("[%0t] Job %0d: requesting processing unit...", $time, id);
+       alu_pool.get(1);
+       $display("[%0t] Job %0d: ACQUIRED unit (running)", $time, id);
+       #15;
+       $display("[%0t] Job %0d: RELEASING unit", $time, id);
+       alu_pool.put(1);
+     endtask
+
+     initial begin
+       for (int i = 0; i < 4; i++) begin
+         automatic int job_id = i;
+         fork
+           run_job(job_id);
+         join_none
+       end
+       wait fork;
+       $display("[%0t] All 4 jobs completed.", $time);
+       $finish;
+     end
+   endmodule
+   ```
+
+5. **Event-Driven Testbench Phase Synchronization**: Design a testbench with two `initial` blocks representing different test phases (`"Configuration Phase"` and `"Verification Phase"`). Use an event (`config_phase_done`) to synchronize these phases. The `"Configuration Phase"` process should simulate configuration tasks and then trigger `config_phase_done`. The `"Verification Phase"` process should wait for `config_phase_done` before starting its verification activities.
+
+   ```systemverilog
+   module ex5_event_phase_sync;
+     event config_phase_done;
+
+     initial begin : config_phase
+       $display("[%0t] [Configuration Phase] Starting register initialization...", $time);
+       #20;
+       $display("[%0t] [Configuration Phase] Done. Triggering config_phase_done.", $time);
+       -> config_phase_done;
+     end
+
+     initial begin : verification_phase
+       $display("[%0t] [Verification Phase] Waiting for configuration completion...", $time);
+       wait(config_phase_done.triggered);
+       $display("[%0t] [Verification Phase] Synchronized! Driving stimulus...", $time);
+       #25;
+       $display("[%0t] [Verification Phase] Complete.", $time);
+       $finish;
+     end
+   endmodule
+   ```
+
+6. **Event with `wait(event.triggered)` Robustness**: Create a scenario where an event (`early_event`) is triggered before a process starts waiting for it. Process 1 triggers `early_event` at `t = 10`. Process 2 starts at `t = 10` in a later delta cycle and uses `wait(early_event.triggered)` to demonstrate same-time race protection. Then show a late consumer starting at `t = 20` paired with a persistent `bit early_done` flag so late processes never hang after the trigger time slot closes.
+
+   ```systemverilog
+   module ex6_event_triggered_vs_persistent_flag;
+     event early_event;
+     bit   early_done = 1'b0;
+
+     // Process 1: Triggers at t = 10
+     initial begin
+       #10;
+       $display("[%0t] Process 1: Triggering early_event (delta 0)", $time);
+       early_done = 1'b1;
+       -> early_event;
+     end
+
+     // Process 2: Same timestamp (t = 10), later delta cycle (delta 1)
+     initial begin
+       #10;
+       #0; // Force execution into a subsequent delta cycle within t = 10
+       wait(early_event.triggered);
+       $display("[%0t] Process 2 (same slot delta 1): Caught early_event.triggered!", $time);
+     end
+
+     // Process 3: Strictly later simulation time (t = 20)
+     initial begin
+       #20;
+       $display("[%0t] Process 3 (late t=20): early_event.triggered is %0b, early_done is %0b",
+                $time, early_event.triggered, early_done);
+       // Checking wait(early_event.triggered) alone here would hang forever because t > 10!
+       wait(early_done || early_event.triggered);
+       $display("[%0t] Process 3: Proceeded safely using persistent early_done flag!", $time);
+       $finish;
+     end
+   endmodule
+   ```
 
 ## Best Practices for Effective IPC
 

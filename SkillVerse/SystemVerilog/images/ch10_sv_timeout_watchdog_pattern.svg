@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 390" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGradCh10C" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#080c14" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <filter id="shadowCh10C" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+    <marker id="arrowCh10C" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 8 5 L 0 9 z" fill="#34d399" />
+    </marker>
+    <marker id="arrowRoseC" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 8 5 L 0 9 z" fill="#f43f5e" />
+    </marker>
+  </defs>
+
+  <rect width="920" height="390" rx="14" fill="url(#bgGradCh10C)"/>
+
+  <!-- Title -->
+  <text x="460" y="34" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="20" font-weight="700" fill="#f8fafc" text-anchor="middle">The Timeout Watchdog Pattern: Racing Completion Against a Deadline</text>
+  <text x="460" y="56" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13" fill="#94a3b8" text-anchor="middle">Using named fork ... join_any with disable to cancel a losing timeout branch cleanly</text>
+
+  <!-- Main Race Diagram -->
+  <g transform="translate(24, 78)">
+    <rect width="872" height="288" rx="10" fill="#0f172a" stroke="#f59e0b" stroke-width="1.8" filter="url(#shadowCh10C)"/>
+
+    <!-- Header bar -->
+    <rect width="872" height="38" rx="10" fill="#78350f"/>
+    <rect x="0" y="26" width="872" height="12" fill="#78350f"/>
+    <text x="436" y="24" font-family="'JetBrains Mono', Consolas, monospace" font-size="13.5" font-weight="700" fill="#fef3c7" text-anchor="middle">fork : completion_race  ...  join_any  ──▶  disable completion_race;</text>
+
+    <!-- Timeline labels -->
+    <text x="210" y="64" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#94a3b8">t = 0</text>
+    <text x="430" y="64" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" font-weight="700" fill="#34d399" text-anchor="middle">t = 30 (Done!)</text>
+    <text x="790" y="64" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#94a3b8" text-anchor="middle">t = 100 (Deadline)</text>
+
+    <!-- Branch 1: Completion -->
+    <rect x="20" y="78" width="174" height="44" rx="6" fill="#072c22" stroke="#10b981"/>
+    <text x="107" y="96" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11.5" font-weight="700" fill="#34d399" text-anchor="middle">Branch 1: Completion</text>
+    <text x="107" y="113" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#a7f3d0" text-anchor="middle">wait (transaction_done);</text>
+
+    <rect x="210" y="84" width="220" height="32" rx="5" fill="#064e3b" stroke="#34d399" stroke-width="1.6"/>
+    <text x="320" y="104" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="700" fill="#d1fae5" text-anchor="middle">Waiting... Finished @ t=30 ✓</text>
+
+    <!-- Branch 2: Timeout -->
+    <rect x="20" y="138" width="174" height="44" rx="6" fill="#2a0a14" stroke="#f43f5e"/>
+    <text x="107" y="156" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11.5" font-weight="700" fill="#fb7185" text-anchor="middle">Branch 2: Watchdog</text>
+    <text x="107" y="173" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#fda4af" text-anchor="middle">#100 $error("Timeout!");</text>
+
+    <rect x="210" y="144" width="220" height="32" rx="5" fill="#451a03" stroke="#f59e0b"/>
+    <text x="320" y="164" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" fill="#fde68a" text-anchor="middle">Sleeping toward t=100...</text>
+
+    <!-- Cancelled part of Branch 2 -->
+    <rect x="434" y="144" width="356" height="32" rx="5" fill="#1e293b" stroke="#f43f5e" stroke-dasharray="5,3"/>
+    <text x="612" y="164" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="700" fill="#fda4af" text-anchor="middle">KILLED by disable completion_race; (No false $error at t=100!)</text>
+
+    <!-- Vertical t=30 line -->
+    <line x1="430" y1="70" x2="430" y2="214" stroke="#34d399" stroke-width="2" stroke-dasharray="4,2"/>
+
+    <!-- Parent action box at bottom -->
+    <g transform="translate(20, 206)">
+      <rect width="832" height="66" rx="8" fill="#091526" stroke="#38bdf8" stroke-width="1.3"/>
+      <text x="16" y="24" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="700" fill="#38bdf8">Parent Resumes at t = 30 via join_any:</text>
+      <text x="16" y="45" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" fill="#e2e8f0">1. <tspan fill="#34d399">join_any</tspan> unblocks immediately when Branch 1 wins at t = 30.</text>
+      <text x="456" y="45" font-family="'JetBrains Mono', Consolas, monospace" font-size="11.5" fill="#e2e8f0">2. <tspan fill="#fb7185">disable completion_race;</tspan> terminates Branch 2 cleanly.</text>
+    </g>
+  </g>
+</svg>

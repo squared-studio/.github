@@ -1,0 +1,84 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 400" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGradCh18B" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#080c14" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <filter id="shadowCh18B" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+    <marker id="arrowAmber18B" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#f59e0b"/>
+    </marker>
+    <marker id="arrowCyan18B" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8"/>
+    </marker>
+  </defs>
+
+  <rect width="920" height="400" rx="14" fill="url(#bgGradCh18B)"/>
+
+  <!-- Title -->
+  <text x="460" y="30" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="20" font-weight="700" fill="#f8fafc" text-anchor="middle">Elaboration-Time Parameter Overrides vs. Runtime Simulation Plusargs</text>
+  <text x="460" y="50" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13" fill="#94a3b8" text-anchor="middle">Structural parameters freeze before simulation starts; runtime plusargs configure compiled snapshots cleanly</text>
+
+  <!-- Left Panel: Elaboration Phase -->
+  <g transform="translate(24, 72)">
+    <rect width="414" height="304" rx="10" fill="#0f172a" stroke="#f59e0b" stroke-width="1.8" filter="url(#shadowCh18B)"/>
+    <rect width="414" height="36" rx="10" fill="#78350f"/>
+    <rect x="0" y="24" width="414" height="12" fill="#78350f"/>
+    <text x="207" y="23" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13" font-weight="700" fill="#fef3c7" text-anchor="middle">1. Elaboration Time (Tool-Specific Flags)</text>
+
+    <text x="16" y="56" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11.5" font-weight="700" fill="#fbbf24">Resolves structural constants &amp; hierarchy:</text>
+
+    <!-- Simulator flags -->
+    <rect x="14" y="66" width="386" height="92" rx="7" fill="#1e1b18" stroke="#d97706"/>
+    <text x="24" y="84" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#fde68a">VCS:          -pvalue+top.u_dut.DATA_WIDTH=32</text>
+    <text x="24" y="102" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#fde68a">Questa/MSim:  -GDATA_WIDTH=32  or  -gtop/u_dut/W=32</text>
+    <text x="24" y="120" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#fde68a">Xcelium:      -defparam top.u_dut.DATA_WIDTH=32</text>
+    <text x="24" y="138" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#fde68a">Verilator:    -GDATA_WIDTH=32</text>
+    <text x="24" y="153" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#94a3b8">Icarus (iverilog): -P top.u_dut.DATA_WIDTH=32</text>
+
+    <!-- What it controls -->
+    <rect x="14" y="170" width="386" height="68" rx="7" fill="#0f172a" stroke="#475569"/>
+    <text x="24" y="188" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="700" fill="#e2e8f0">What can ONLY change at elaboration?</text>
+    <text x="24" y="206" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#cbd5e1">- Bus &amp; port widths: logic [DATA_WIDTH-1:0]</text>
+    <text x="24" y="224" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#cbd5e1">- Memory depths &amp; generate-for / generate-if blocks</text>
+
+    <!-- Cost note -->
+    <rect x="14" y="248" width="386" height="42" rx="6" fill="#451a03" stroke="#f59e0b"/>
+    <text x="207" y="266" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="700" fill="#fcd34d" text-anchor="middle">Rebuild Cost: Requires re-elaboration</text>
+    <text x="207" y="282" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#fde68a" text-anchor="middle">Standard +PARAM=value plusargs do NOT override parameters.</text>
+  </g>
+
+  <!-- Center Transition Arrow -->
+  <path d="M 442 224 L 478 224" stroke="#38bdf8" stroke-width="2.5" marker-end="url(#arrowCyan18B)"/>
+  <text x="460" y="212" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="9.5" font-weight="700" fill="#7dd3fc" text-anchor="middle">simv</text>
+
+  <!-- Right Panel: Runtime Phase -->
+  <g transform="translate(482, 72)">
+    <rect width="414" height="304" rx="10" fill="#0f172a" stroke="#38bdf8" stroke-width="1.8" filter="url(#shadowCh18B)"/>
+    <rect width="414" height="36" rx="10" fill="#075985"/>
+    <rect x="0" y="24" width="414" height="12" fill="#075985"/>
+    <text x="207" y="23" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13" font-weight="700" fill="#e0f2fe" text-anchor="middle">2. Runtime Execution (IEEE 1800 Plusargs)</text>
+
+    <text x="16" y="56" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11.5" font-weight="700" fill="#7dd3fc">Read dynamically inside initial / class methods:</text>
+
+    <!-- Single compiled snapshot fanning out -->
+    <rect x="14" y="66" width="386" height="92" rx="7" fill="#0c1c2e" stroke="#38bdf8"/>
+    <text x="24" y="85" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#bae6fd">Run 1: ./simv +TESTCASE=smoke  +ITERATIONS=20</text>
+    <text x="24" y="105" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#bae6fd">Run 2: ./simv +TESTCASE=stress +ITERATIONS=500 +VERBOSE</text>
+    <text x="24" y="125" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#bae6fd">Run 3: ./simv +TESTCASE=err_inj +CONFIG=cfg/axi.txt</text>
+    <text x="24" y="146" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#34d399">One elaborated executable serves an entire regression suite!</text>
+
+    <!-- What it controls -->
+    <rect x="14" y="170" width="386" height="68" rx="7" fill="#0f172a" stroke="#475569"/>
+    <text x="24" y="188" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="700" fill="#e2e8f0">Best suited for runtime testbench control:</text>
+    <text x="24" y="206" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#cbd5e1">- Test selection, transaction counts, timeouts, seeds</text>
+    <text x="24" y="224" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#cbd5e1">- Verbosity levels, wave dump switches, config file paths</text>
+
+    <!-- Cost note -->
+    <rect x="14" y="248" width="386" height="42" rx="6" fill="#072c22" stroke="#10b981"/>
+    <text x="207" y="266" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="700" fill="#34d399" text-anchor="middle">Rebuild Cost: Zero recompilation or re-elaboration</text>
+    <text x="207" y="282" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#d1fae5" text-anchor="middle">Portable across VCS, Questa, Xcelium, Verilator, and Icarus.</text>
+  </g>
+</svg>

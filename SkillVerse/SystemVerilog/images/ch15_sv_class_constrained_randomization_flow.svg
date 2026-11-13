@@ -1,0 +1,96 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 390" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGradCh15D" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#080c14" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <filter id="shadowCh15D" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+    <marker id="arrowCyan15D" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8"/>
+    </marker>
+    <marker id="arrowGreen15D" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#34d399"/>
+    </marker>
+    <marker id="arrowRed15D" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#f43f5e"/>
+    </marker>
+  </defs>
+
+  <rect width="920" height="390" rx="14" fill="url(#bgGradCh15D)"/>
+
+  <!-- Title -->
+  <text x="460" y="32" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="20" font-weight="700" fill="#f8fafc" text-anchor="middle">Class-Based Constrained-Random Generation Flow (rand, constraint, randomize)</text>
+  <text x="460" y="54" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13" fill="#94a3b8" text-anchor="middle">pkt.randomize() invokes built-in hooks and the constraint solver simultaneously across all active rand variables</text>
+
+  <!-- Left Panel: Class Blueprint -->
+  <g transform="translate(24, 78)">
+    <rect width="276" height="286" rx="10" fill="#0f172a" stroke="#38bdf8" stroke-width="1.8" filter="url(#shadowCh15D)"/>
+    <rect width="276" height="36" rx="10" fill="#075985"/>
+    <rect x="0" y="24" width="276" height="12" fill="#075985"/>
+    <text x="138" y="23" font-family="'JetBrains Mono', Consolas, monospace" font-size="13" font-weight="700" fill="#e0f2fe" text-anchor="middle">class Packet</text>
+
+    <rect x="14" y="50" width="248" height="92" rx="7" fill="#0c1c2e" stroke="#0284c7"/>
+    <text x="24" y="70" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="700" fill="#38bdf8">Randomizable Properties:</text>
+    <text x="24" y="92" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#e2e8f0">rand bit [7:0] address;</text>
+    <text x="24" y="110" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#e2e8f0">rand bit [7:0] data_byte;</text>
+    <text x="24" y="128" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#7dd3fc">rand bit [3:0] size;</text>
+
+    <rect x="14" y="154" width="248" height="118" rx="7" fill="#181208" stroke="#f59e0b"/>
+    <text x="24" y="174" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="700" fill="#fbbf24">Active constraint Blocks:</text>
+    <text x="24" y="196" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#fde68a">address inside {[8'h00:8'hFF]};</text>
+    <text x="24" y="216" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#fde68a">(address % 2) == 0;  // Even</text>
+    <text x="24" y="236" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#fde68a">size inside {[1:8]};</text>
+    <text x="24" y="258" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="9.5" fill="#94a3b8">(randc cycles all values before repeat)</text>
+  </g>
+
+  <line x1="302" y1="220" x2="342" y2="220" stroke="#38bdf8" stroke-width="2.5" marker-end="url(#arrowCyan15D)"/>
+
+  <!-- Center Panel: randomize() Execution Lifecycle -->
+  <g transform="translate(346, 78)">
+    <rect width="268" height="286" rx="10" fill="#1e1035" stroke="#a855f7" stroke-width="1.8" filter="url(#shadowCh15D)"/>
+    <rect width="268" height="36" rx="10" fill="#581c87"/>
+    <rect x="0" y="24" width="268" height="12" fill="#581c87"/>
+    <text x="134" y="23" font-family="'JetBrains Mono', Consolas, monospace" font-size="13" font-weight="700" fill="#f3e8ff" text-anchor="middle">pkt.randomize()</text>
+
+    <rect x="18" y="54" width="232" height="52" rx="7" fill="#091526" stroke="#9333ea"/>
+    <text x="134" y="75" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" font-weight="700" fill="#d8b4fe" text-anchor="middle">1. pre_randomize()</text>
+    <text x="134" y="94" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#cbd5e1" text-anchor="middle">Optional setup before solving</text>
+
+    <line x1="134" y1="106" x2="134" y2="124" stroke="#c084fc" stroke-width="2"/>
+
+    <rect x="18" y="126" width="232" height="72" rx="7" fill="#3b0764" stroke="#c084fc" stroke-width="1.6"/>
+    <text x="134" y="148" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11.5" font-weight="700" fill="#ffffff" text-anchor="middle">2. Constraint Solver Engine</text>
+    <text x="134" y="168" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#e9d5ff" text-anchor="middle">Solves all enabled constraints</text>
+    <text x="134" y="185" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#e9d5ff" text-anchor="middle">jointly + assigns rand fields</text>
+
+    <line x1="134" y1="198" x2="134" y2="216" stroke="#c084fc" stroke-width="2"/>
+
+    <rect x="18" y="218" width="232" height="52" rx="7" fill="#091526" stroke="#9333ea"/>
+    <text x="134" y="239" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" font-weight="700" fill="#d8b4fe" text-anchor="middle">3. post_randomize()</text>
+    <text x="134" y="258" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#cbd5e1" text-anchor="middle">Derive CRC/parity (runs if solved)</text>
+  </g>
+
+  <!-- Branches to Success / Conflict -->
+  <line x1="616" y1="168" x2="660" y2="148" stroke="#34d399" stroke-width="2.4" marker-end="url(#arrowGreen15D)"/>
+  <line x1="616" y1="274" x2="660" y2="294" stroke="#f43f5e" stroke-width="2.4" marker-end="url(#arrowRed15D)"/>
+
+  <!-- Right Panel: Outcomes -->
+  <g transform="translate(664, 78)">
+    <!-- Success Card -->
+    <rect width="232" height="142" rx="10" fill="#072c22" stroke="#10b981" stroke-width="1.8" filter="url(#shadowCh15D)"/>
+    <text x="116" y="26" font-family="'JetBrains Mono', Consolas, monospace" font-size="12.5" font-weight="700" fill="#34d399" text-anchor="middle">Returns 1 (Solved)</text>
+    <text x="16" y="54" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#d1fae5">address   = 8'h3A (even)</text>
+    <text x="16" y="74" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#d1fae5">data_byte = 8'h9C</text>
+    <text x="16" y="94" font-family="'JetBrains Mono', Consolas, monospace" font-size="10.5" fill="#d1fae5">size      = 4'd5  (1..8)</text>
+    <text x="116" y="124" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#6ee7b7" text-anchor="middle">Valid stimulus sent to driver</text>
+
+    <!-- Failure Card -->
+    <rect y="160" width="232" height="126" rx="10" fill="#4c0519" stroke="#f43f5e" stroke-width="1.8" filter="url(#shadowCh15D)"/>
+    <text x="116" y="186" font-family="'JetBrains Mono', Consolas, monospace" font-size="12.5" font-weight="700" fill="#fecdd3" text-anchor="middle">Returns 0 (Conflict)</text>
+    <text x="116" y="214" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10.5" fill="#fda4af" text-anchor="middle">Unsatisfiable constraints</text>
+    <text x="116" y="236" font-family="'JetBrains Mono', Consolas, monospace" font-size="10" fill="#ffe4e6" text-anchor="middle">if (!pkt.randomize()) $fatal;</text>
+    <text x="116" y="262" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" fill="#fda4af" text-anchor="middle">Variables stay unchanged; check!</text>
+  </g>
+</svg>
