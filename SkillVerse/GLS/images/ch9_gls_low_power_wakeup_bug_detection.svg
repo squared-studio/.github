@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 380" width="920" height="380">
+  <defs>
+    <style>
+      .bg { fill: #0f172a; }
+      .panel { fill: #1e293b; stroke-width: 1.5; rx: 10; ry: 10; }
+      .box { fill: #0f172a; stroke: #334155; stroke-width: 1.2; rx: 6; ry: 6; }
+      .title { font-family: 'Segoe UI', Arial, sans-serif; font-size: 18px; font-weight: 700; fill: #f8fafc; text-anchor: middle; }
+      .subtitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; fill: #94a3b8; text-anchor: middle; }
+      .ptitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 14px; font-weight: 700; }
+      .mono { font-family: Consolas, 'Courier New', monospace; font-size: 10.6px; fill: #e2e8f0; }
+      .note { font-family: 'Segoe UI', Arial, sans-serif; font-size: 10.3px; fill: #94a3b8; }
+      .badge { font-family: Consolas, 'Courier New', monospace; font-size: 11px; font-weight: 700; text-anchor: middle; }
+    </style>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="920" height="380" />
+  <text class="title" x="460" y="28">Catching Real Low-Power P&amp;R Timing Races in PG+SDF Gate Simulation</text>
+  <text class="subtitle" x="460" y="48">Exposing Physical Daisy-Chain Lag, SAVE/RESTORE Hold Skew, and AON Buffer Corruption Missed by Ideal RTL</text>
+
+  <!-- 3 Horizontal Case Panels -->
+  <rect class="panel" x="20" y="64" width="280" height="300" stroke="#f87171" />
+  <text class="ptitle" x="34" y="88" fill="#f87171">Bug 1: Daisy-Chain Ack Skew</text>
+  <rect class="box" x="34" y="102" width="252" height="108" />
+  <text class="note" x="44" y="122">RTL PA-Sim assumed `pwr_ack`</text>
+  <text class="note" x="44" y="138">completes in 1 fixed delay.</text>
+  <text class="note" x="44" y="158" fill="#fca5a5">In P&amp;R PG+SDF GLS:</text>
+  <text class="note" x="44" y="174">350 serially chained switch</text>
+  <text class="note" x="44" y="190">cells take 45 ns to return `ack`!</text>
+  <rect class="box" x="34" y="220" width="252" height="130" stroke="#f59e0b" />
+  <text class="badge" x="160" y="240" fill="#fcd34d">Caught by PG+SDF GLS:</text>
+  <text class="note" x="44" y="260">Reveals whether PMC wakes</text>
+  <text class="note" x="44" y="276">early (corrupting rails) OR</text>
+  <text class="note" x="44" y="292">hits watchdog timeout during</text>
+  <text class="note" x="44" y="308">worst-case SS cold corner!</text>
+
+  <rect class="panel" x="320" y="64" width="280" height="300" stroke="#a78bfa" />
+  <text class="ptitle" x="334" y="88" fill="#a78bfa">Bug 2: SAVE/CLK Tree Skew</text>
+  <rect class="box" x="334" y="102" width="252" height="108" />
+  <text class="note" x="344" y="122">Ideal RTL connects `dom_save`</text>
+  <text class="note" x="344" y="138">to 1,000 SRFFs instantaneously.</text>
+  <text class="note" x="344" y="158" fill="#c4b5fd">In P&amp;R PG+SDF GLS:</text>
+  <text class="note" x="344" y="174">High-fanout HFNS delay on</text>
+  <text class="note" x="344" y="190">`SAVE` is 2.8 ns vs `CLK` 1.1 ns!</text>
+  <rect class="box" x="334" y="220" width="252" height="130" stroke="#34d399" />
+  <text class="badge" x="460" y="240" fill="#6ee7b7">Caught by PG+SDF GLS:</text>
+  <text class="note" x="344" y="260">If PMC drops `pwr_sw_en` just</text>
+  <text class="note" x="344" y="276">1 cycle after `SAVE` leaves PMC,</text>
+  <text class="note" x="344" y="292">far-corner SRFFs still hold `SAVE=1`</text>
+  <text class="note" x="344" y="308">when `VDD_SW` drops -&gt; CORRUPT!</text>
+
+  <rect class="panel" x="620" y="64" width="280" height="300" stroke="#38bdf8" />
+  <text class="ptitle" x="634" y="88" fill="#38bdf8">Bug 3: ISO Enable Glitch</text>
+  <rect class="box" x="634" y="102" width="252" height="108" />
+  <text class="note" x="644" y="122">Suppose `iso_en` passes via</text>
+  <text class="note" x="644" y="138">an AON inverter/mux tree or</text>
+  <text class="note" x="644" y="154">feeds boundary `ISOLO` cells</text>
+  <text class="note" x="644" y="170">whose `.lib` uses `PATHPULSE$`.</text>
+  <rect class="box" x="634" y="220" width="252" height="130" stroke="#38bdf8" />
+  <text class="badge" x="760" y="240" fill="#7dd3fc">Caught by PG+SDF GLS:</text>
+  <text class="note" x="644" y="260">Any 1-cycle overlap gap between</text>
+  <text class="note" x="644" y="276">`iso_en` falling edge and `Q`</text>
+  <text class="note" x="644" y="292">settling leaks a transient `'X'`</text>
+  <text class="note" x="644" y="308">burst out to Always-On NoC!</text>
+</svg>

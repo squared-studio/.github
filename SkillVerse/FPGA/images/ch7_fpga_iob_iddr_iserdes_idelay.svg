@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 400" width="920" height="400">
+  <defs>
+    <style>
+      .bg { fill: #0f172a; }
+      .panel { fill: #1e293b; stroke: #334155; stroke-width: 1.5; rx: 10; ry: 10; }
+      .box { fill: #0f172a; stroke: #334155; stroke-width: 1.2; rx: 6; ry: 6; }
+      .title { font-family: 'Segoe UI', Arial, sans-serif; font-size: 18px; font-weight: 700; fill: #f8fafc; text-anchor: middle; }
+      .sub { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; fill: #94a3b8; text-anchor: middle; }
+      .hdr { font-family: 'Segoe UI', Arial, sans-serif; font-size: 13.5px; font-weight: 700; }
+      .mono { font-family: Consolas, 'Courier New', monospace; font-size: 10.5px; fill: #e2e8f0; }
+      .note { font-family: 'Segoe UI', Arial, sans-serif; font-size: 11px; fill: #cbd5e1; }
+    </style>
+    <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8" />
+    </marker>
+    <marker id="arr-g" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#34d399" />
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="920" height="400" />
+  <text class="title" x="460" y="28">FPGA I/O Tile Anatomy: LVDS IBUFDS, IDELAY3, and ISERDES3 / IOB Packing</text>
+  <text class="sub" x="460" y="48">Zero-Fabric-Jitter Source-Synchronous Interface Capture Using Calibrated Delay Taps and Hard SerDes Registers</text>
+
+  <!-- Main Hardware Flow Panel -->
+  <rect class="panel" x="20" y="64" width="880" height="222" stroke="#38bdf8" />
+  <text class="hdr" x="38" y="88" fill="#38bdf8">1. RX Source-Synchronous Capture Tile Inside Hard I/O Bank</text>
+
+  <!-- Differential Pads -->
+  <rect class="box" x="34" y="114" width="84" height="72" stroke="#f59e0b" />
+  <text class="mono" x="76" y="138" fill="#fcd34d" text-anchor="middle">LVDS Pads</text>
+  <text class="mono" x="76" y="156" fill="#e2e8f0" text-anchor="middle">D_P / D_N</text>
+  <text class="mono" x="76" y="174" fill="#94a3b8" text-anchor="middle">100-ohm</text>
+
+  <line x1="118" y1="150" x2="148" y2="150" stroke="#38bdf8" stroke-width="2" marker-end="url(#arr)" />
+
+  <!-- IBUFDS + DIFF_TERM -->
+  <rect class="box" x="150" y="110" width="136" height="82" stroke="#38bdf8" />
+  <text class="mono" x="218" y="132" fill="#7dd3fc" text-anchor="middle">IBUFDS_DIFF_OUT</text>
+  <text class="mono" x="218" y="152" fill="#6ee7b7" text-anchor="middle">DIFF_TERM = TRUE</text>
+  <text class="note" x="218" y="174" text-anchor="middle">100-ohm on-die term</text>
+
+  <line x1="286" y1="150" x2="318" y2="150" stroke="#38bdf8" stroke-width="2" marker-end="url(#arr)" />
+
+  <!-- IDELAY3 -->
+  <rect class="box" x="320" y="106" width="166" height="90" stroke="#a78bfa" />
+  <text class="mono" x="403" y="128" fill="#c4b5fd" text-anchor="middle">IDELAYE3 (512 Taps)</text>
+  <text class="mono" x="403" y="148" fill="#e2e8f0" text-anchor="middle">~2-5 ps/tap + PVT Cal</text>
+  <text class="mono" x="403" y="168" fill="#fcd34d" text-anchor="middle">Bitslip / Dynamic Eye</text>
+  <text class="note" x="403" y="185" text-anchor="middle">(Needs IDELAYCTRL!)</text>
+
+  <line x1="486" y1="150" x2="518" y2="150" stroke="#34d399" stroke-width="2" marker-end="url(#arr-g)" />
+
+  <!-- ISERDES3 / IDDR -->
+  <rect class="box" x="520" y="106" width="176" height="90" stroke="#34d399" />
+  <text class="mono" x="608" y="128" fill="#6ee7b7" text-anchor="middle">ISERDESE3 / IDDRE1</text>
+  <text class="mono" x="608" y="148" fill="#e2e8f0" text-anchor="middle">1:4 or 1:8 Deserializer</text>
+  <text class="mono" x="608" y="168" fill="#7dd3fc" text-anchor="middle">CLK (High) + CLKDIV (/4)</text>
+  <text class="note" x="608" y="185" text-anchor="middle">Hard IOB Reg (Zero skew)</text>
+
+  <line x1="696" y1="150" x2="730" y2="150" stroke="#34d399" stroke-width="2" marker-end="url(#arr-g)" />
+
+  <!-- Fabric Registers -->
+  <rect class="box" x="732" y="110" width="150" height="82" stroke="#38bdf8" />
+  <text class="mono" x="807" y="134" fill="#7dd3fc" text-anchor="middle">Fabric Core</text>
+  <text class="mono" x="807" y="154" fill="#e2e8f0" text-anchor="middle">Q[7:0] @ 150-300 MHz</text>
+  <text class="note" x="807" y="174" text-anchor="middle">(1.2 Gbps/pin -&gt; 8b!)</text>
+
+  <!-- Clock forwarding path below -->
+  <rect class="box" x="150" y="210" width="546" height="58" stroke="#f59e0b" />
+  <text class="mono" x="166" y="232" fill="#fcd34d">IOB Register Packing Rule (`IOB = TRUE`):</text>
+  <text class="note" x="166" y="252">For standard SDR/DDR GPIOs without ISERDES, set `set_property IOB TRUE [get_ports ...]` so FFs sit</text>
+
+  <!-- Bottom Left & Right -->
+  <rect class="panel" x="20" y="298" width="430" height="90" stroke="#34d399" />
+  <text class="hdr" x="38" y="320" fill="#34d399">2. Bidirectional HP vs. HR I/O Banks</text>
+  <text class="note" x="38" y="340">- HP (High-Performance, 1.0-1.8 V): Max speed, DCI impedance, LVDS</text>
+  <text class="note" x="38" y="358">- HD / HR (High-Density/Range, 1.2-3.3 V): Slower I2C/SPI/UART/GPIO</text>
+  <text class="mono" x="38" y="376" fill="#fca5a5">- NEVER drive 3.3 V into an HP 1.8 V pin! (Permanent oxide blow!)</text>
+
+  <rect class="panel" x="466" y="298" width="434" height="90" stroke="#f59e0b" />
+  <text class="hdr" x="484" y="320" fill="#f59e0b">3. TX Pre-Emphasis &amp; ODDR Clock Forwarding</text>
+  <text class="note" x="484" y="340">- Always forward output clocks via hard `ODDR` (`D1=1, D2=0`),</text>
+  <text class="note" x="484" y="358">  NEVER route raw `clk` wire straight to `OBUF` pad (adds huge skew!)</text>
+  <text class="mono" x="484" y="376" fill="#7dd3fc">- Match `SLEW FAST` &amp; `DRIVE` to board PCB impedance (50 ohm).</text>
+</svg>

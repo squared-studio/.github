@@ -1,0 +1,570 @@
+# SystemVerilog Classes: Object-Oriented Programming for Advanced Verification
+
+## Introduction: Building Scalable and Reusable Testbenches with OOP
+
+SystemVerilog classes bring the power of **object-oriented programming (OOP)** to hardware verification, enabling the creation of modular, reusable, and highly scalable testbenches. Classes serve as blueprints for creating objects, which encapsulate both **data (properties)** and **behavior (methods)**. This object-oriented approach is fundamental to advanced verification methodologies like the Universal Verification Methodology (UVM) and significantly enhances the efficiency and maintainability of verification environments.
+
+**Core OOP Principles and Their Benefits in Verification:**
+
+- **Encapsulation**: Bundling data (properties) and methods that operate on that data within a single unit (the class). This hides internal implementation details and protects data integrity, promoting modularity and reducing unintended side effects. In verification, encapsulation helps create self-contained, reusable components like transaction objects, monitors, and drivers.
+- **Inheritance**: Creating new classes (derived classes) that inherit properties and methods from existing classes (base classes). Inheritance fosters code reuse, reduces redundancy, and establishes a clear hierarchy of components. In verification, inheritance is used to extend and specialize base classes to create variations of components, like different types of transactions or agents, while sharing common functionalities.
+- **Polymorphism**: The ability of objects of different classes to respond to the same method call in their own specific way. Polymorphism, particularly through **virtual methods**, enables dynamic method dispatch, where the method executed is determined at runtime based on the actual object type. In verification, polymorphism allows for flexible and adaptable testbenches that can handle different types of components or scenarios through a common interface.
+
+By leveraging these OOP principles, SystemVerilog classes empower verification engineers to build sophisticated testbenches that are:
+
+- **Modular**: Composed of independent, self-contained objects, making it easier to design, implement, and debug individual components.
+- **Reusable**: Classes and objects can be reused across different parts of a project or in multiple projects, saving development time and promoting consistency.
+- **Scalable**: OOP principles facilitate the creation of large and complex verification environments that can be efficiently managed and extended as design complexity grows.
+- **Maintainable**: Well-structured, object-oriented code is generally easier to understand, modify, and maintain compared to procedural or flat code.
+- **Extensible**: Inheritance and polymorphism make it straightforward to extend and adapt existing verification components to new requirements or design changes.
+
+Classes are primarily used in simulation and verification; they are not synthesizable RTL hardware structures. A class variable is an object handle, and it must refer to an object created with `new()` before the object's members can be accessed.
+
+### Learning Goals
+
+By the end of this chapter, you should be able to:
+
+- Define classes with properties, methods, constructors, and controlled visibility.
+- Create and use object handles safely, including recognizing a `null` handle.
+- Apply inheritance and virtual methods for runtime polymorphism.
+- Use class-based randomization while distinguishing object lifetime from hardware storage.
+
+## Defining Classes: Blueprints for Objects
+
+Classes are defined using the `class` keyword, followed by the class name and the class body enclosed within `endclass`. By default, class members (properties and methods) have **public** access, meaning they can be accessed from anywhere. To control access and implement encapsulation, SystemVerilog provides the `local` and `protected` keywords.
+
+### Example: A Simple Class Definition
+
+```systemverilog
+// Define a class named 'SimpleClass'
+class SimpleClass;
+  int data;         // Public property (integer data) - accessible from anywhere
+
+  // Method to display the value of 'data'
+  function void display_data();
+    $display("Data value is: %0d", data);
+  endfunction : display_data // Named function end for clarity (optional but recommended)
+
+endclass : SimpleClass // Named class end for clarity (optional but recommended)
+```
+
+In this `SimpleClass` example:
+
+- `class SimpleClass; ... endclass : SimpleClass` declares a class named `SimpleClass`. The `: SimpleClass` after `endclass` is optional but improves readability, especially for longer classes.
+- `int data;` declares a public property named `data` of type `int`. Since no access modifier (`local` or `protected`) is specified, it defaults to `public` access. `automatic` and `static` describe lifetime/storage behavior, not visibility.
+- `function void display_data(); ... endfunction : display_data` defines a public method named `display_data`. It's a `function` that returns `void` (no return value) and uses `$display` to print the value of the `data` property. The `: display_data` after `endfunction` is also optional but enhances readability.
+
+## Creating Objects: Instances of Classes
+
+Objects are concrete instances of classes. Think of a class as a cookie cutter and objects as the cookies created using that cutter. Objects are dynamically created at runtime using the `new()` constructor. Objects are accessed and manipulated through object handles, which are references to class objects rather than synthesizable hardware pointers. A handle may be `null`; dereferencing a null handle is a runtime error.
+
+![SystemVerilog Class Handles vs Heap Objects null new and Handle Aliasing](images/ch15_sv_object_handles_and_memory.svg)
+
+### Example: Instantiating and Using a Class Object
+
+```systemverilog
+module class_example_module;
+
+  initial begin
+    SimpleClass my_object;          // Declare an object handle 'my_object' of type 'SimpleClass'
+    my_object = new();            // Instantiate an object of 'SimpleClass' using new() and assign its handle to 'my_object'
+
+    my_object.data = 42;          // Access the 'data' property of the object using the handle and assign the value 42
+    my_object.display_data();    // Call the 'display_data()' method of the object using the handle
+
+    $display("Value of my_object.data: %0d", my_object.data); // Access and display the 'data' property again
+
+  end
+
+endmodule : class_example_module
+```
+
+In this example:
+
+- `SimpleClass my_object;` declares a variable `my_object` that can hold a handle to an object of type `SimpleClass`. At this point, `my_object` is just a handle and does not yet point to an actual object (it's initially `null`).
+- `my_object = new();` This is the crucial step of object instantiation. `new()` is the constructor for the `SimpleClass`. It dynamically creates an object of type `SimpleClass` and returns a handle (a reference) to it. This handle is then assigned to the `my_object` variable.
+- `my_object.data = 42;` uses the object handle `my_object` and the dot operator (`.`) to access the `public` property `data` of the object and assign the value `42` to it.
+- `my_object.display_data();` similarly uses the handle to call the `public` method `display_data()` on the object. This method then executes, printing the value of `data` to the simulation console.
+- `$display(...)` demonstrates accessing and displaying the `data` property directly after it has been set and displayed by the method.
+
+Assigning one class handle to another copies the handle, not the object. For example, `SimpleClass second_handle = my_object;` makes both handles refer to the same object, so a change through either handle is visible through the other. Use `new()` and copy the properties explicitly when an independent object is required.
+
+## Inheritance: Creating Class Hierarchies for Code Reusability
+
+Inheritance is a fundamental OOP principle that allows you to create new classes (derived or child classes) based on existing classes (base or parent classes). The derived class automatically inherits all the _accessible_ properties and methods of the base class. SystemVerilog uses the `extends` keyword to establish inheritance. The `super` keyword allows a derived class to explicitly access members of its parent class, particularly when overriding methods.
+
+### Example: Base Class `Animal` and Derived Class `Dog`
+
+```systemverilog
+// Base class: Animal
+class Animal;
+  string name; // Public property: animal's name
+
+  // Method: generic animal sound
+  virtual function void speak(); // 'virtual' keyword enables polymorphism
+    $display("%0s makes a generic animal sound", name);
+  endfunction : speak
+
+endclass : Animal
+
+// Derived class: Dog, inheriting from Animal
+class Dog extends Animal;
+  // Inherits 'name' property and 'speak()' method from Animal
+
+  // Override the 'speak()' method to provide Dog-specific behavior
+  virtual function void speak(); // Override base class method; repeating 'virtual' is optional
+    super.speak();          // Optional: Call the base class's speak() method first
+    $display("%0s barks: Woof!", name); // Then add Dog-specific barking behavior
+  endfunction : speak
+
+  function void wag_tail(); // Method specific to Dog class
+    $display("%0s is wagging its tail", name);
+  endfunction : wag_tail
+
+endclass : Dog
+
+module inheritance_example_module;
+  initial begin
+    Dog my_dog = new(); // Create an object of the derived class 'Dog'
+    my_dog.name = "Buddy"; // Set the 'name' property (inherited from 'Animal')
+
+    my_dog.speak();       // Call the 'speak()' method - dynamically dispatched to Dog's implementation
+    // Output will be:
+    // Buddy makes a generic animal sound
+    // Buddy barks: Woof!
+
+    my_dog.wag_tail();    // Call the Dog-specific 'wag_tail()' method
+
+    Animal my_animal;      // Declare a handle of the base class type 'Animal'
+    my_animal = my_dog;    // Assign the 'Dog' object handle to the 'Animal' handle (upcasting - always allowed)
+
+    my_animal.speak();     // Call 'speak()' method using the 'Animal' handle - still dynamically dispatched to Dog's implementation!
+    // Output will be the same as my_dog.speak():
+    // Buddy makes a generic animal sound
+    // Buddy barks: Woof!
+
+    // my_animal.wag_tail(); // Error! 'wag_tail()' is not a member of the 'Animal' class, even though 'my_animal' is pointing to a 'Dog' object.
+                               // Base class handles can only access members defined in the base class (or overridden in derived classes).
+  end
+endmodule : inheritance_example_module
+```
+
+Key points in the inheritance example:
+
+- `class Dog extends Animal;` declares `Dog` as a derived class of `Animal`, inheriting properties and methods from `Animal`.
+- `super.speak();` inside `Dog::speak()` calls the `speak()` method of the parent class (`Animal`). `super` is used to explicitly access parent class members.
+- `my_animal.speak();` demonstrates polymorphism. Even though `my_animal` is an `Animal` handle, because it points to a `Dog` object and `speak()` is `virtual`, the `Dog`'s `speak()` method is executed at runtime (dynamic dispatch).
+- `my_animal.wag_tail();` results in an error because `wag_tail()` is specific to `Dog` and not defined in the `Animal` class. Base class handles can only access members defined in the base class or overridden in derived classes.
+
+## Polymorphism: Dynamic Method Dispatch for Flexible Behavior
+
+Polymorphism, specifically through **virtual methods**, is a powerful OOP feature that allows objects of different classes to be treated through a common base class interface. The key mechanism for polymorphism in SystemVerilog is the `virtual` keyword used in method declarations. When a method is declared `virtual` in a base class, derived classes can override it with their own implementations. When you call a virtual method through a base class handle that actually points to a derived class object, SystemVerilog dynamically determines and executes the _overridden method in the derived class_, not the base class method. This is known as **dynamic method dispatch** or runtime polymorphism.
+
+![Inheritance Hierarchy and Virtual Method Dynamic Dispatch](images/ch15_sv_inheritance_and_polymorphism_dispatch.svg)
+
+### Example: Polymorphism with `Shape`, `Circle`, and `Square` Classes
+
+```systemverilog
+// Base class: Shape
+class Shape;
+  // Virtual function: to be overridden by derived classes
+  virtual function void draw();
+    $display("Drawing an unknown shape"); // Default implementation for generic shapes
+  endfunction : draw
+endclass : Shape
+
+// Derived class: Circle, inheriting from Shape
+class Circle extends Shape;
+  // Override the 'draw()' method for circles
+  virtual function void draw(); // 'virtual' is still needed in derived class for further polymorphism
+    $display("Drawing a circle");
+  endfunction : draw
+endclass : Circle
+
+// Derived class: Square, inheriting from Shape
+class Square extends Shape;
+  // Override the 'draw()' method for squares
+  virtual function void draw();
+    $display("Drawing a square");
+  endfunction : draw
+endclass : Square
+
+module polymorphism_example_module;
+  initial begin
+    Shape shape_obj;       // Declare a handle of the base class 'Shape'
+
+    Circle circle_obj = new(); // Create a Circle object
+    Square square_obj = new(); // Create a Square object
+
+    shape_obj = circle_obj;  // Assign Circle object handle to Shape handle (upcasting)
+    shape_obj.draw();       // Call 'draw()' using Shape handle - dynamically dispatches to Circle::draw()
+    // Output: Drawing a circle
+
+    shape_obj = square_obj;  // Assign Square object handle to Shape handle (upcasting)
+    shape_obj.draw();       // Call 'draw()' using Shape handle - dynamically dispatches to Square::draw()
+    // Output: Drawing a square
+
+    Shape shape_array[2];   // Declare an array of Shape handles
+    shape_array[0] = circle_obj; // Store Circle object handle in the array
+    shape_array[1] = square_obj; // Store Square object handle in the array
+
+    foreach (shape_array[i]) begin // Iterate through the array of Shape handles
+      shape_array[i].draw();    // Call 'draw()' on each element - dynamic dispatch based on actual object type
+    end
+    // Output:
+    // Drawing a circle
+    // Drawing a square
+  end
+endmodule : polymorphism_example_module
+```
+
+In this polymorphism example:
+
+- `virtual function void draw();` in the `Shape` class declares `draw()` as a virtual method. This makes it eligible for overriding and dynamic dispatch in derived classes. An override remains virtual even if the derived declaration omits the keyword.
+- `Circle` and `Square` classes `extends Shape` and override the `draw()` method with their specific implementations.
+- `Shape shape_obj;` declares a handle of the base class type `Shape`. This handle can point to objects of `Shape`, `Circle`, or `Square` types (or any other class derived from `Shape`).
+- `shape_obj = circle_obj;` and `shape_obj = square_obj;` demonstrate **upcasting**, where handles of derived classes (`Circle`, `Square`) are assigned to a handle of the base class (`Shape`). Upcasting is always safe and allowed in OOP.
+- `shape_obj.draw();` calls demonstrate dynamic dispatch. The actual method that gets executed (`Circle::draw()` or `Square::draw()`) is determined at _runtime_ based on the _actual object type_ that `shape_obj` is currently pointing to, not just the handle type (`Shape`).
+- The `shape_array` example further illustrates polymorphism by showing how an array of base class handles can hold objects of different derived classes, and calling a virtual method on each element will result in the correct derived class method being invoked.
+- **Safe Downcasting with `$cast(dest, src)`**: While upcasting (`shape_obj = circle_obj;`) is always implicit, converting a base handle back to a derived handle requires `$cast(circle_obj, shape_obj)`. Calling `$cast` as a function returns `1` on success (when the runtime object is compatible) and `0` on failure.
+
+## Encapsulation: Data Hiding and Controlled Access
+
+Encapsulation is the principle of bundling data (properties) and methods that operate on that data within a class, and controlling access to the internal data to protect it from direct, unauthorized modification. SystemVerilog provides access modifiers (`local` and `protected`) to implement encapsulation.
+
+![SystemVerilog Class Encapsulation local protected and public Visibility Scopes](images/ch15_sv_encapsulation_access_levels.svg)
+
+- **`local`**: Declares a member (property or method) as _private_ to the class in which it is declared. `local` members can only be accessed from within the class itself. They are not accessible from derived classes or from outside the class.
+- **`protected`**: Declares a member as accessible within the class in which it's declared and in any classes derived from that class (subclasses). `protected` members are not accessible from outside the class hierarchy.
+- **`public` (default)**: Members declared without an explicit access modifier are public. They are accessible from anywhere: within the class, from derived classes, and from outside the class through object handles.
+
+Encapsulation is crucial for:
+
+- **Data Hiding**: Preventing direct access and modification of internal data, protecting data integrity and preventing accidental corruption.
+- **Abstraction**: Hiding complex implementation details and exposing only a well-defined public interface to interact with objects. This simplifies the use of classes and reduces dependencies on internal implementation.
+- **Modularity**: Making classes more self-contained and independent, improving modularity and reusability.
+
+### Example: Encapsulation with `BankAccount` Class
+
+```systemverilog
+class BankAccount;
+  local int balance; // Private property: 'balance' - only accessible within BankAccount class
+
+  function new();
+    balance = 0;
+  endfunction : new
+
+  // Public method: to deposit money into the account
+  function void deposit(int amount);
+    if (amount > 0) begin
+      balance += amount; // Access and modify the private 'balance' property from within the class
+      $display("Deposit of $%0d successful. New balance: $%0d", amount, balance);
+    end else begin
+      $display("Invalid deposit amount. Amount must be positive.");
+    end
+  endfunction : deposit
+
+  // Public method: to withdraw money from the account
+  function bit withdraw(int amount);
+    if (amount > 0 && amount <= balance) begin
+      balance -= amount; // Access and modify 'balance'
+      $display("Withdrawal of $%0d successful. New balance: $%0d", amount, balance);
+      return 1'b1; // Indicate successful withdrawal
+    end else begin
+      $display("Withdrawal failed. Insufficient funds or invalid amount.");
+      return 1'b0; // Indicate failed withdrawal
+    end
+  endfunction : withdraw
+
+  // Public method: to get the current balance (read-only access)
+  function int getBalance();
+    return balance; // Return the value of the private 'balance' property
+  endfunction : getBalance
+
+endclass : BankAccount
+
+module encapsulation_example_module;
+  initial begin
+    BankAccount account = new(); // Create a BankAccount object
+
+    account.deposit(100);       // Deposit $100 using the public 'deposit()' method
+    account.deposit(50);        // Deposit another $50
+
+    $display("Current Balance: $%0d", account.getBalance()); // Get and display balance using public 'getBalance()' method
+    // Output: Current Balance: $150
+
+    if (account.withdraw(200)) begin // Attempt to withdraw $200 - should fail due to insufficient funds
+      $display("Withdrawal successful (unexpected!)"); // This line should NOT be reached
+    end else begin
+      $display("Withdrawal failed as expected."); // This line WILL be reached
+    end
+
+    if (account.withdraw(75)) begin  // Attempt to withdraw $75 - should succeed
+      $display("Withdrawal of $75 successful."); // This line WILL be reached
+    end
+
+    $display("Final Balance: $%0d", account.getBalance()); // Get and display final balance
+    // Output: Final Balance: $75
+
+    // account.balance = 5000; // Error! Illegal access - 'balance' is declared 'local' (private)
+                               // Cannot directly access or modify 'local' members from outside the class.
+  end
+endmodule : encapsulation_example_module
+```
+
+In this encapsulation example:
+
+- `local int balance;` declares `balance` as a `local` property, making it private to the `BankAccount` class. Direct access to `balance` from outside the class (e.g., `account.balance = 5000;`) is illegal and will result in a compilation error.
+- `deposit()`, `withdraw()`, and `getBalance()` are public methods that provide _controlled access_ to the `balance` property. These methods define the _public interface_ of the `BankAccount` class.
+- `deposit()` and `withdraw()` methods encapsulate the logic for modifying the balance, including validation (e.g., positive deposit amount, sufficient funds for withdrawal). This ensures that the balance is always modified in a controlled and valid way, protecting data integrity.
+- `getBalance()` provides read-only access to the `balance`, allowing external code to query the balance without being able to directly change it.
+
+## Randomization within Classes: Constrained Random Stimulus Generation
+
+Classes are the foundation for randomization in SystemVerilog verification. You can declare properties within a class as `rand` or `randc` to make them randomizable. Constraints, defined using `constraint` blocks within the class, are used to specify the rules and restrictions for the random values generated for these `rand` variables.
+
+![Class Based Constrained Random Generation Flow rand constraint randomize](images/ch15_sv_class_constrained_randomization_flow.svg)
+
+### Example: Random Packet Generation with Constraints
+
+```systemverilog
+class Packet;
+  rand bit [7:0] address;   // Randomizable address property
+  rand bit [7:0] data_byte; // Randomizable data byte property
+  rand bit [3:0] size;      // Randomizable size property
+
+  // Constraint block: 'address_range_constraint'
+  constraint address_range_constraint {
+    address inside {[8'h00 : 8'hFF]}; // 'address' must be within the range 0x00 to 0xFF (inclusive)
+  }
+
+  // Constraint block: 'valid_size_constraint'
+  constraint valid_size_constraint {
+    size inside {[1:8]}; // 'size' must be between 1 and 8 (inclusive)
+  }
+
+  // Constraint block: 'even_address_constraint'
+  constraint even_address_constraint {
+    (address % 2) == 0;  // 'address' must be an even number (divisible by 2)
+  }
+
+  function void display_packet();
+    $display("Randomized Packet - Address: %h, Data: %h, Size: %0d", address, data_byte, size);
+  endfunction : display_packet
+
+endclass : Packet
+
+module randomization_example_module;
+  initial begin
+    Packet packet_obj = new(); // Create a Packet object
+
+    repeat (10) begin // Generate and randomize 10 packets
+      if (packet_obj.randomize()) begin // Call randomize() method and check for success
+        packet_obj.display_packet(); // Display the randomized packet properties
+      end else begin
+        $display("Randomization failed for Packet object!"); // Error message if randomization fails (constraints unsatisfiable)
+      end
+    end
+  end
+endmodule : randomization_example_module
+```
+
+In this randomization example:
+
+- `rand bit [7:0] address;`, `rand bit [7:0] data_byte;`, and `rand bit [3:0] size;` declare these properties as `rand`, making them randomizable.
+- `constraint address_range_constraint { ... }`, `constraint valid_size_constraint { ... }`, and `constraint even_address_constraint { ... }` define three constraint blocks that specify rules for the random values.
+  - `address inside {[8'h00 : 8'hFF]};` is a _range constraint_, limiting `address` to be between 0x00 and 0xFF.
+  - `size inside {[1:8]};` is another range constraint, limiting `size` to be between 1 and 8.
+  - `(address % 2) == 0;` is a _relational constraint_, ensuring that `address` is always an even number.
+- `if (packet_obj.randomize()) ... else ...` calls the `randomize()` method on the `packet_obj`. The `randomize()` method attempts to find random values for `address`, `data_byte`, and `size` that satisfy all the defined constraints. It returns 1 if successful and 0 if it fails (constraints are conflicting or unsatisfiable).
+- `packet_obj.display_packet();` displays the randomized values if randomization is successful.
+
+## Exercises to Practice SystemVerilog Classes and OOP
+
+1.  **Basic `Car` Class**:
+    - Create a SystemVerilog class named `Car`.
+    - Add the following _public_ properties:
+      - `string model;` (to store the car model name)
+      - `int speed;` (to store the current speed of the car, initially `0`)
+    - Implement a _public virtual_ method `virtual function void accelerate();` that increases `speed` by `10`.
+    - Instantiate a `Car` object, set `model = "Sedan"`, call `accelerate()` twice, and display the final speed (`20`).
+
+    ```systemverilog
+    module ex1_car_class;
+      class Car;
+        string model;
+        int    speed = 0;
+
+        virtual function void accelerate();
+          speed += 10;
+        endfunction
+      endclass
+
+      initial begin
+        Car my_car = new();
+        my_car.model = "Sedan";
+        my_car.accelerate();
+        my_car.accelerate();
+        $display("Model: %s, Speed: %0d", my_car.model, my_car.speed); // 20
+      end
+    endmodule
+    ```
+
+2.  **Object Usage and Interaction**:
+    - Extend `Car` with `function void brake(int decrement);` that decreases `speed` clamped at `0`.
+    - Create two independent `Car` objects, accelerate both, brake only one, and display both speeds.
+
+    ```systemverilog
+    module ex2_car_interaction;
+      class Car;
+        string model;
+        int    speed = 0;
+
+        virtual function void accelerate();
+          speed += 10;
+        endfunction
+
+        function void brake(int decrement);
+          if (decrement >= speed) speed = 0;
+          else if (decrement > 0) speed -= decrement;
+        endfunction
+      endclass
+
+      initial begin
+        Car car_a = new();
+        Car car_b = new();
+        car_a.model = "Sedan";
+        car_b.model = "Coupe";
+
+        car_a.accelerate(); car_a.accelerate();
+        car_b.accelerate(); car_b.accelerate();
+        car_a.brake(15);
+
+        $display("%s speed = %0d, %s speed = %0d",
+                 car_a.model, car_a.speed, car_b.model, car_b.speed); // 5, 20
+      end
+    endmodule
+    ```
+
+3.  **Inheritance: `ElectricCar` Derived Class**:
+    - Create `ElectricCar extends Car` overriding `accelerate()` to increment speed by `20` instead of `10`.
+
+    ```systemverilog
+    module ex3_electric_car;
+      class Car;
+        string model;
+        int    speed = 0;
+
+        virtual function void accelerate();
+          speed += 10;
+        endfunction
+      endclass
+
+      class ElectricCar extends Car;
+        virtual function void accelerate();
+          super.accelerate(); // +10
+          speed += 10;        // total +20
+        endfunction
+      endclass
+
+      initial begin
+        Car         gas_car = new();
+        ElectricCar ev_car  = new();
+        gas_car.accelerate();
+        ev_car.accelerate();
+        $display("Car speed = %0d, ElectricCar speed = %0d",
+                 gas_car.speed, ev_car.speed); // 10, 20
+      end
+    endmodule
+    ```
+
+4.  **Polymorphism: Virtual `start_engine()` Method**:
+    - Add `virtual function void start_engine();` to `Car` and override it in `ElectricCar`; call `start_engine()` via a base `Car` handle pointing to an `ElectricCar` object.
+
+    ```systemverilog
+    module ex4_car_polymorphism;
+      class Car;
+        virtual function void start_engine();
+          $display("Generic engine started");
+        endfunction
+      endclass
+
+      class ElectricCar extends Car;
+        virtual function void start_engine();
+          $display("Electric engine started silently");
+        endfunction
+      endclass
+
+      initial begin
+        Car         car_h;
+        Car         base_car = new();
+        ElectricCar ev_car   = new();
+
+        base_car.start_engine(); // Generic engine started
+        car_h = ev_car;          // Upcast ElectricCar -> Car handle
+        car_h.start_engine();    // Dynamic dispatch -> Electric engine started silently
+      end
+    endmodule
+    ```
+
+5.  **Encapsulation: Private `speed` and Access Methods**:
+    - Make `speed` `local` and provide `getSpeed()` and validated `setSpeed(int new_speed)` methods rejecting negative values.
+
+    ```systemverilog
+    module ex5_car_encapsulation;
+      class Car;
+        local int speed = 0;
+
+        function int getSpeed();
+          return speed;
+        endfunction
+
+        function void setSpeed(int new_speed);
+          if (new_speed < 0) begin
+            $error("Invalid speed %0d: speed cannot be negative.", new_speed);
+          end else begin
+            speed = new_speed;
+          end
+        endfunction
+      endclass
+
+      initial begin
+        Car c = new();
+        // c.speed = 50; // Compile error: 'speed' is local
+        c.setSpeed(65);
+        $display("Current speed = %0d", c.getSpeed()); // 65
+        c.setSpeed(-10); // Logs error, keeps speed = 65
+        $display("Speed after invalid set = %0d", c.getSpeed());
+      end
+    endmodule
+    ```
+
+6.  **Randomization: `Transaction` Class with Constraints**:
+    - Create `Transaction` with `rand bit [31:0] address;` (`32'h1000..32'h8000`) and `rand bit [7:0] data;` (even and `0..254`), randomize 10 times, and check results.
+
+    ```systemverilog
+    module ex6_transaction_randomization;
+      class Transaction;
+        rand bit [31:0] address;
+        rand bit [7:0]  data;
+
+        constraint c_addr { address inside {[32'h1000 : 32'h8000]}; }
+        constraint c_data {
+          data inside {[0 : 254]};
+          (data % 2) == 0;
+        }
+      endclass
+
+      initial begin
+        Transaction tx = new();
+        repeat (10) begin
+          if (!tx.randomize()) $fatal(1, "Transaction randomization failed!");
+          $display("TX addr=0x%04h, data=%0d (0x%02h)", tx.address, tx.data, tx.data);
+        end
+      end
+    endmodule
+    ```
+
+These exercises will provide a solid foundation in SystemVerilog classes and object-oriented programming concepts, essential for building advanced verification environments. They cover class definition, object instantiation, inheritance, polymorphism, encapsulation, and randomization, all within the context of SystemVerilog for hardware verification.
+
+##### Copyright (c) 2026 squared-studio

@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 380" width="920" height="380">
+  <defs>
+    <style>
+      .bg { fill: #0f172a; }
+      .panel { fill: #1e293b; stroke-width: 1.5; rx: 10; ry: 10; }
+      .box { fill: #0f172a; stroke: #334155; stroke-width: 1.2; rx: 6; ry: 6; }
+      .title { font-family: 'Segoe UI', Arial, sans-serif; font-size: 18px; font-weight: 700; fill: #f8fafc; text-anchor: middle; }
+      .subtitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; fill: #94a3b8; text-anchor: middle; }
+      .ptitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 14px; font-weight: 700; }
+      .mono { font-family: Consolas, 'Courier New', monospace; font-size: 10.8px; fill: #e2e8f0; }
+      .note { font-family: 'Segoe UI', Arial, sans-serif; font-size: 10.5px; fill: #94a3b8; }
+    </style>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="920" height="380" />
+  <text class="title" x="460" y="28">Inertial Delay vs. Transport Delay Pulse Behavior in Verilog</text>
+  <text class="subtitle" x="460" y="48">Comparing Standard Gate RC Pulse Swallowing (Inertial) Against Pure Wire Propagation Delay (Transport)</text>
+
+  <!-- Input Waveform Banner -->
+  <rect class="panel" x="20" y="64" width="880" height="80" stroke="#38bdf8" />
+  <text class="ptitle" x="36" y="88" fill="#38bdf8">Input Signal Stimuli (Buffer with T_prop = 200 ps)</text>
+  <text class="mono" x="36" y="122" fill="#7dd3fc">IN_pin   :</text>
+  <!-- Wide pulse (400ps) + Narrow glitch (80ps) -->
+  <path d="M130,126 L180,126 L180,104 L300,104 L300,126 L480,126 L480,104 L510,104 L510,126 L860,126" fill="none" stroke="#38bdf8" stroke-width="2.2" />
+  <text class="note" x="240" y="99" text-anchor="middle" fill="#6ee7b7">Wide Valid Pulse (400ps &gt; 200ps)</text>
+  <text class="note" x="495" y="99" text-anchor="middle" fill="#fca5a5">Narrow Glitch (80ps &lt; 200ps)</text>
+
+  <!-- Left: Inertial Delay -->
+  <rect class="panel" x="20" y="158" width="430" height="206" stroke="#34d399" />
+  <text class="ptitle" x="36" y="182" fill="#34d399">Inertial Delay (Default Gate `IOPATH` / `#200`)</text>
+
+  <rect class="box" x="36" y="196" width="398" height="62" />
+  <text class="mono" x="48" y="218" fill="#6ee7b7">OUT_iner :</text>
+  <path d="M130,242 L220,242 L220,218 L340,218 L340,242 L420,242" fill="none" stroke="#34d399" stroke-width="2.2" />
+  <text class="note" x="380" y="236" text-anchor="middle" fill="#6ee7b7">(Glitch SWALLOWED!)</text>
+
+  <text class="note" x="36" y="280">- Standard Verilog `assign #200 out = in;` &amp; specify `IOPATH`</text>
+  <text class="note" x="36" y="296">  model physical gate capacitance inertia: any pulse narrower</text>
+  <text class="note" x="36" y="312">  than T_prop lacks energy to switch the output node and vanishes.</text>
+  <text class="note" x="36" y="334" fill="#fcd34d">Trade-off: Default `r = e = T_prop` can hide borderline runt glitches!</text>
+
+  <!-- Right: Transport Delay -->
+  <rect class="panel" x="470" y="158" width="430" height="206" stroke="#f59e0b" />
+  <text class="ptitle" x="486" y="182" fill="#f59e0b">Transport Delay (`+transport_path_delays` / NBA `#200`)</text>
+
+  <rect class="box" x="486" y="196" width="398" height="62" />
+  <text class="mono" x="498" y="218" fill="#fcd34d">OUT_trns :</text>
+  <path d="M580,242 L610,242 L610,218 L700,218 L700,242 L770,242 L770,218 L795,218 L795,242 L860,242" fill="none" stroke="#f59e0b" stroke-width="2.2" />
+  <text class="note" x="782" y="212" text-anchor="middle" fill="#fca5a5">Glitch Passes!</text>
+
+  <text class="note" x="486" y="280">- Shifts ALL input pulses intact by T_prop regardless of width</text>
+  <text class="note" x="486" y="296">  (models transmission-line PCB traces or `INTERCONNECT` wires).</text>
+  <text class="note" x="486" y="312" fill="#fca5a5">- Over-pessimistic across deep combinational gates: wires pass</text>
+  <text class="note" x="486" y="334" fill="#fca5a5">  impossible 1ps simulation pulses straight into clock trees!</text>
+</svg>

@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 390" width="920" height="390">
+  <defs>
+    <style>
+      .bg { fill: #0f172a; }
+      .panel { fill: #1e293b; stroke-width: 1.5; rx: 10; ry: 10; }
+      .box { fill: #0f172a; stroke: #334155; stroke-width: 1.2; rx: 6; ry: 6; }
+      .ff { fill: #172554; stroke: #38bdf8; stroke-width: 1.5; rx: 6; ry: 6; }
+      .title { font-family: 'Segoe UI', Arial, sans-serif; font-size: 18px; font-weight: 700; fill: #f8fafc; text-anchor: middle; }
+      .subtitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; fill: #94a3b8; text-anchor: middle; }
+      .ptitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 14px; font-weight: 700; }
+      .mono { font-family: Consolas, 'Courier New', monospace; font-size: 10.6px; fill: #e2e8f0; }
+      .note { font-family: 'Segoe UI', Arial, sans-serif; font-size: 10.3px; fill: #94a3b8; }
+      .badge { font-family: Consolas, 'Courier New', monospace; font-size: 11px; font-weight: 700; text-anchor: middle; }
+    </style>
+    <marker id="arrAmb" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#f59e0b" />
+    </marker>
+    <marker id="arrSky" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#38bdf8" />
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="920" height="390" />
+  <text class="title" x="460" y="28">Scan Shift Lockup Latches &amp; On-Chip Clock Controller (OCC) At-Speed GLS</text>
+  <text class="subtitle" x="460" y="48">Verifying Cross-Clock Scan-Shift Hold Under MIN SDF and 2-Pulse At-Speed Capture Sequences Under MAX SDF</text>
+
+  <!-- Left Panel: Lockup Latch Across Clock Domains -->
+  <rect class="panel" x="20" y="64" width="445" height="308" stroke="#f59e0b" />
+  <text class="ptitle" x="36" y="88" fill="#f59e0b">1. Cross-Domain Scan Shift Lockup Latch (MIN SDF)</text>
+
+  <rect class="ff" x="36" y="106" width="110" height="58" stroke="#38bdf8" />
+  <text class="badge" x="91" y="128" fill="#7dd3fc">SDFF_CLK1</text>
+  <text class="note" x="91" y="146" text-anchor="middle">Clock: scan_clk1</text>
+
+  <line x1="146" y1="135" x2="184" y2="135" stroke="#f59e0b" stroke-width="1.8" marker-end="url(#arrAmb)" />
+
+  <rect class="ff" x="188" y="106" width="122" height="58" stroke="#34d399" />
+  <text class="badge" x="249" y="128" fill="#6ee7b7">Lockup Latch</text>
+  <text class="note" x="249" y="146" text-anchor="middle">Active-LOW clk1!</text>
+
+  <line x1="310" y1="135" x2="342" y2="135" stroke="#38bdf8" stroke-width="1.8" marker-end="url(#arrSky)" />
+
+  <rect class="ff" x="346" y="106" width="104" height="58" stroke="#a78bfa" />
+  <text class="badge" x="398" y="128" fill="#c4b5fd">SDFF_CLK2</text>
+  <text class="note" x="398" y="146" text-anchor="middle">Clock: scan_clk2</text>
+
+  <rect class="box" x="36" y="180" width="414" height="176" />
+  <text class="mono" x="48" y="200" fill="#fcd34d">Why Serial MIN-SDF GLS Is Critical for Lockups:</text>
+  <text class="note" x="48" y="220">In DFT shift (`SE=1`), `scan_clk1` and `scan_clk2` can differ in CTS</text>
+  <text class="note" x="48" y="236">insertion delay by &gt;1.5 ns! Without a negative-level lockup latch</text>
+  <text class="note" x="48" y="252">holding the crossing data by half a clock cycle, MIN SDF reveals</text>
+  <text class="note" x="48" y="268" fill="#fca5a5">massive `$hold` violations &amp; `'X'` shift corruption down the chain!</text>
+  <text class="note" x="48" y="292" fill="#6ee7b7">- Also checks multi-bit shift hold across short `Q -&gt; SI` P&amp;R wires</text>
+  <text class="note" x="48" y="308" fill="#6ee7b7">  (proving P&amp;R hold buffers along scan routes work cleanly).</text>
+
+  <!-- Right Panel: OCC At-Speed Launch & Capture -->
+  <rect class="panel" x="482" y="64" width="418" height="308" stroke="#38bdf8" />
+  <text class="ptitle" x="498" y="88" fill="#38bdf8">2. At-Speed OCC Capture Verification (MAX SDF)</text>
+
+  <rect class="box" x="498" y="104" width="386" height="106" />
+  <text class="mono" x="510" y="124" fill="#7dd3fc">SE (Scan En) : ---------\_________________/--------</text>
+  <text class="mono" x="510" y="148" fill="#6ee7b7">OCC clk_out  : _/-\_/-\____/--\_/--\______/-\_/-\__</text>
+  <text class="note" x="510" y="172" fill="#cbd5e1">               Slow Shift   Fast Launch+Cap  Unload</text>
+  <text class="note" x="510" y="192" fill="#fcd34d">               (20 MHz)     (1.0 GHz PLL!)   (20 MHz)</text>
+
+  <rect class="box" x="498" y="222" width="386" height="134" stroke="#a78bfa" />
+  <text class="mono" x="510" y="242" fill="#c4b5fd">Key At-Speed GLS Failure Signatures:</text>
+  <text class="note" x="510" y="262">1. Slow `SE` Return Path: If `scan_enable` fails pipelined recovery</text>
+  <text class="note" x="510" y="278">   during dead-time before Launch pulse -&gt; `$setup` explodes!</text>
+  <text class="note" x="510" y="296">2. Multi-Cycle / False-Path Leak During `SE=0` Capture: OCC runs</text>
+  <text class="note" x="510" y="312">   at 1 GHz across paths ATPG forgot to mask -&gt; mismatch at SO!</text>
+  <text class="note" x="510" y="330">3. MBIST BIRA Timing: Verifies built-in SRAM test FSMs at full speed.</text>
+</svg>

@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 400" width="920" height="400">
+  <defs>
+    <style>
+      .bg { fill: #0f172a; }
+      .panel { fill: #1e293b; stroke: #334155; stroke-width: 1.5; rx: 10; ry: 10; }
+      .box { fill: #0f172a; stroke: #334155; stroke-width: 1.2; rx: 6; ry: 6; }
+      .title { font-family: 'Segoe UI', Arial, sans-serif; font-size: 18px; font-weight: 700; fill: #f8fafc; text-anchor: middle; }
+      .sub { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; fill: #94a3b8; text-anchor: middle; }
+      .hdr { font-family: 'Segoe UI', Arial, sans-serif; font-size: 13.5px; font-weight: 700; }
+      .mono { font-family: Consolas, 'Courier New', monospace; font-size: 10.5px; fill: #e2e8f0; }
+      .note { font-family: 'Segoe UI', Arial, sans-serif; font-size: 11px; fill: #cbd5e1; }
+    </style>
+    <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8" />
+    </marker>
+    <marker id="arr-g" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#34d399" />
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="920" height="400" />
+  <text class="title" x="460" y="28">Bitstream Cryptographic Security &amp; CRAM Radiation / SEU Resilience</text>
+  <text class="sub" x="460" y="48">AES-GCM Encryption + RSA-4096 Authentication with eFuse Keys Alongside SEM Scrubbing and Triple Modular Redundancy</text>
+
+  <!-- Left Panel: Authenticated & Encrypted Boot -->
+  <rect class="panel" x="20" y="64" width="440" height="318" stroke="#38bdf8" />
+  <text class="hdr" x="38" y="88" fill="#38bdf8">1. Encrypted &amp; Signed Bitstream Verification</text>
+
+  <rect class="box" x="34" y="104" width="412" height="58" stroke="#a78bfa" />
+  <text class="mono" x="240" y="126" fill="#c4b5fd" text-anchor="middle">1. External QSPI Bitstream (.bit / .bin)</text>
+  <text class="note" x="240" y="146" text-anchor="middle">Signed RSA-4096 / ECDSA + Encrypted AES-256-GCM</text>
+
+  <line x1="240" y1="162" x2="240" y2="180" stroke="#38bdf8" stroke-width="1.8" marker-end="url(#arr)" />
+
+  <rect class="box" x="34" y="182" width="412" height="114" stroke="#34d399" />
+  <text class="mono" x="240" y="204" fill="#6ee7b7" text-anchor="middle">2. On-Die Crypto Config Engine</text>
+  <rect x="48" y="216" width="184" height="66" fill="#1e293b" stroke="#f59e0b" rx="4" />
+  <text class="mono" x="140" y="236" fill="#fcd34d" text-anchor="middle">eFuse / BBRAM Keys</text>
+  <text class="note" x="140" y="254" text-anchor="middle">PPK Hash + AES Key</text>
+  <text class="note" x="140" y="270" text-anchor="middle">(Never leaves silicon!)</text>
+  <rect x="248" y="216" width="184" height="66" fill="#1e293b" stroke="#34d399" rx="4" />
+  <text class="mono" x="340" y="236" fill="#6ee7b7" text-anchor="middle">Auth + Decrypt Check</text>
+  <text class="note" x="340" y="254" text-anchor="middle">Anti-tamper SHA-3 hash</text>
+  <text class="note" x="340" y="270" text-anchor="middle">Rollback counter verify</text>
+
+  <rect class="box" x="34" y="306" width="412" height="62" stroke="#f87171" />
+  <text class="mono" x="46" y="326" fill="#fca5a5">Critical Security Pitfall:</text>
+  <text class="note" x="46" y="346">AES encryption ALONE allows attacker bit-flipping/tampering!</text>
+  <text class="note" x="46" y="361">Always enable RSA/HMAC Authentication + Disable JTAG via eFuse!</text>
+
+  <!-- Right Panel: SEU & TMR Reliability -->
+  <rect class="panel" x="476" y="64" width="424" height="318" stroke="#f59e0b" />
+  <text class="hdr" x="494" y="88" fill="#f59e0b">2. Single-Event Upset (SEU) &amp; CRAM Scrubbing</text>
+
+  <rect class="box" x="490" y="104" width="396" height="104" stroke="#f87171" />
+  <text class="mono" x="502" y="124" fill="#fca5a5">Why CRAM SEU Hits FPGAs Harder Than ASICs:</text>
+  <text class="note" x="502" y="144">An ionizing alpha/neutron particle strike flips a single SRAM</text>
+  <text class="note" x="502" y="160">bit inside LUT truth-tables or Routing Muxes — causing a</text>
+  <text class="mono" x="502" y="178" fill="#fcd34d">PERMANENT logic/wire corruption until re-configured!</text>
+  <text class="note" x="502" y="196">Cure A: Hard `SEM IP` continuously reads CRAM ECC &amp; repairs!</text>
+
+  <rect class="box" x="490" y="218" width="396" height="150" stroke="#34d399" />
+  <text class="mono" x="502" y="238" fill="#6ee7b7">Cure B: Triple Modular Redundancy (TMR) Voter</text>
+  <!-- 3 redundant blocks + majority voter -->
+  <rect x="510" y="252" width="110" height="24" fill="#1e293b" stroke="#38bdf8" rx="3" /><text class="mono" x="565" y="268" text-anchor="middle" font-size="9.5">Logic Copy A</text>
+  <rect x="510" y="284" width="110" height="24" fill="#1e293b" stroke="#f87171" rx="3" /><text class="mono" x="565" y="300" fill="#fca5a5" text-anchor="middle" font-size="9.5">Copy B (SEU!)</text>
+  <rect x="510" y="316" width="110" height="24" fill="#1e293b" stroke="#38bdf8" rx="3" /><text class="mono" x="565" y="332" text-anchor="middle" font-size="9.5">Logic Copy C</text>
+
+  <line x1="620" y1="264" x2="682" y2="292" stroke="#38bdf8" stroke-width="1.5" />
+  <line x1="620" y1="296" x2="682" y2="296" stroke="#f87171" stroke-width="1.5" />
+  <line x1="620" y1="328" x2="682" y2="300" stroke="#38bdf8" stroke-width="1.5" />
+
+  <rect x="684" y="274" width="114" height="44" fill="#064e3b" stroke="#34d399" rx="5" />
+  <text class="mono" x="741" y="294" fill="#6ee7b7" text-anchor="middle">Majority Voter</text>
+  <text class="mono" x="741" y="310" fill="#e2e8f0" text-anchor="middle">(A&amp;B)|(B&amp;C)|(A&amp;C)</text>
+  <line x1="798" y1="296" x2="866" y2="296" stroke="#34d399" stroke-width="2" marker-end="url(#arr-g)" />
+  <text class="mono" x="845" y="286" fill="#6ee7b7" font-size="9">Valid</text>
+  <text class="note" x="502" y="358">Tip: Prevent synthesis from merging identical TMR copies via `DONT_TOUCH`!</text>
+</svg>

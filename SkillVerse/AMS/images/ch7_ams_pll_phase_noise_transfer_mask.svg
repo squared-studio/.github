@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 400" width="920" height="400">
+  <defs>
+    <style>
+      .bg { fill: #0f172a; }
+      .panel { fill: #1e293b; stroke: #334155; stroke-width: 1.5; rx: 10; ry: 10; }
+      .box { fill: #0f172a; stroke: #334155; stroke-width: 1.2; rx: 6; ry: 6; }
+      .title { font-family: 'Segoe UI', Arial, sans-serif; font-size: 18px; font-weight: 700; fill: #f8fafc; text-anchor: middle; }
+      .sub { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; fill: #94a3b8; text-anchor: middle; }
+      .hdr { font-family: 'Segoe UI', Arial, sans-serif; font-size: 13.5px; font-weight: 700; }
+      .mono { font-family: Consolas, 'Courier New', monospace; font-size: 10.5px; fill: #e2e8f0; }
+      .note { font-family: 'Segoe UI', Arial, sans-serif; font-size: 11px; fill: #cbd5e1; }
+      .grid { stroke: #334155; stroke-width: 0.7; stroke-dasharray: 3,3; }
+    </style>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="920" height="400" />
+  <text class="title" x="460" y="28">PLL Phase Noise Transfer Shaping &amp; Integrated RMS Jitter Budget</text>
+  <text class="sub" x="460" y="48">Low-Pass Shaping of Reference/CP Noise vs. High-Pass Shaping of VCO Noise Across Loop Bandwidth f_BW</text>
+
+  <!-- Left Panel: Phase Noise PSD -->
+  <rect class="panel" x="20" y="64" width="540" height="318" />
+  <text class="hdr" x="38" y="88" fill="#38bdf8">1. Closed-Loop Phase Noise PSD L(f) [dBc/Hz]</text>
+  <rect class="box" x="34" y="100" width="512" height="266" />
+
+  <!-- Axes & Grid -->
+  <line class="grid" x1="82" y1="136" x2="526" y2="136" />
+  <line class="grid" x1="82" y1="186" x2="526" y2="186" />
+  <line class="grid" x1="82" y1="236" x2="526" y2="236" />
+  <line class="grid" x1="82" y1="286" x2="526" y2="286" />
+  <line x1="82" y1="116" x2="82" y2="332" stroke="#64748b" stroke-width="1.4" />
+  <line x1="82" y1="332" x2="526" y2="332" stroke="#64748b" stroke-width="1.4" />
+
+  <text class="mono" x="42" y="139" font-size="9.5">-80</text>
+  <text class="mono" x="42" y="189" font-size="9.5">-100</text>
+  <text class="mono" x="42" y="239" font-size="9.5">-120</text>
+  <text class="mono" x="42" y="289" font-size="9.5">-140</text>
+  <text class="mono" x="304" y="352" text-anchor="middle">Offset Frequency f (1 kHz -&gt; 100 MHz Log Scale)</text>
+
+  <!-- Loop Bandwidth vertical marker -->
+  <line x1="280" y1="116" x2="280" y2="332" stroke="#f59e0b" stroke-width="1.4" stroke-dasharray="4,3" />
+  <text class="mono" x="280" y="324" fill="#fcd34d" text-anchor="middle">Loop BW (f_BW ~ f_ref/15)</text>
+
+  <!-- Free-running VCO noise (1/f^3 + 1/f^2) -->
+  <polyline points="90,118 280,224 460,308 520,320" fill="none" stroke="#a78bfa" stroke-width="1.8" stroke-dasharray="5,3" />
+  <text class="mono" x="115" y="132" fill="#c4b5fd" font-size="9.5">Open-Loop VCO</text>
+
+  <!-- In-band Ref + PFD/CP noise (flat then LPF drop) -->
+  <polyline points="90,188 280,188 420,276 520,322" fill="none" stroke="#38bdf8" stroke-width="1.8" stroke-dasharray="3,2" />
+  <text class="mono" x="102" y="180" fill="#7dd3fc" font-size="9.5">Ref + CP (x N^2)</text>
+
+  <!-- Total Closed-Loop Output Envelope -->
+  <path d="M 90 185 L 250 185 Q 282 182 315 206 L 460 302 L 520 318" fill="none" stroke="#34d399" stroke-width="3" />
+  <!-- Small peaking around f_BW note & DSM bump -->
+  <text class="mono" x="315" y="196" fill="#6ee7b7" font-weight="bold">Total Closed-Loop L(f)</text>
+
+  <!-- DSM Quantization hump -->
+  <path d="M 330 232 Q 395 210 445 274" fill="none" stroke="#f87171" stroke-width="1.8" stroke-dasharray="3,2" />
+  <text class="mono" x="405" y="216" fill="#fca5a5" font-size="9.5">MASH DSM Noise</text>
+
+  <!-- Right Panel: Equations & Design Trade-offs -->
+  <rect class="panel" x="576" y="64" width="324" height="318" />
+  <text class="hdr" x="592" y="88" fill="#34d399">2. Bandwidth &amp; Jitter Equations</text>
+
+  <rect class="box" x="590" y="102" width="296" height="90" stroke="#38bdf8" />
+  <text class="mono" x="602" y="122" fill="#7dd3fc">Closed-Loop Transfer Rules</text>
+  <text class="note" x="602" y="142">- Ref / CP / Div -&gt; Low-Pass H_LP(s) * N</text>
+  <text class="note" x="602" y="160">- VCO Noise -&gt; High-Pass (1 - H_LP(s))</text>
+  <text class="note" x="602" y="178">- Optimal f_BW = crosspoint of CP &amp; VCO</text>
+
+  <rect class="box" x="590" y="200" width="296" height="94" stroke="#f59e0b" />
+  <text class="mono" x="602" y="220" fill="#fcd34d">Integrated RMS Jitter Formula</text>
+  <text class="mono" x="602" y="242">sigma_t = sqrt(2 * Integral L(f) df)</text>
+  <text class="mono" x="602" y="260">           / (2 * pi * f_out)</text>
+  <text class="note" x="602" y="280">Standard integration: [12 kHz .. 20 MHz]</text>
+
+  <rect class="box" x="590" y="302" width="296" height="64" stroke="#a78bfa" />
+  <text class="mono" x="602" y="322" fill="#c4b5fd">Gardner Stability Limit</text>
+  <text class="note" x="602" y="341">Keep f_BW &lt;= f_ref / 10 (continuous-time</text>
+  <text class="note" x="602" y="356">approximation breaks above f_ref/10).</text>
+</svg>

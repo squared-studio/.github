@@ -1,0 +1,98 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 400" width="920" height="400">
+  <defs>
+    <style>
+      .bg { fill: #0f172a; }
+      .panel { fill: #1e293b; stroke: #334155; stroke-width: 1.5; rx: 10; ry: 10; }
+      .box { fill: #0f172a; stroke: #334155; stroke-width: 1.2; rx: 6; ry: 6; }
+      .title { font-family: 'Segoe UI', Arial, sans-serif; font-size: 18px; font-weight: 700; fill: #f8fafc; text-anchor: middle; }
+      .sub { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; fill: #94a3b8; text-anchor: middle; }
+      .hdr { font-family: 'Segoe UI', Arial, sans-serif; font-size: 13.5px; font-weight: 700; }
+      .mono { font-family: Consolas, 'Courier New', monospace; font-size: 10.5px; fill: #e2e8f0; }
+      .note { font-family: 'Segoe UI', Arial, sans-serif; font-size: 11px; fill: #cbd5e1; }
+    </style>
+    <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8" />
+    </marker>
+    <marker id="arr-g" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#34d399" />
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="920" height="400" />
+  <text class="title" x="460" y="28">True Dual-Port Block RAM (BRAM) Anatomy, ECC, and DOA_REG Pipelining</text>
+  <text class="sub" x="460" y="48">Two Independent Clocked Ports, Read-First/Write-First Modes, Built-In 64/72 SECDED ECC, and Clock-to-Out Speedup</text>
+
+  <!-- Left Panel: TDP BRAM Diagram -->
+  <rect class="panel" x="20" y="64" width="526" height="318" stroke="#38bdf8" />
+  <text class="hdr" x="38" y="88" fill="#38bdf8">1. Hard 36Kb True Dual-Port RAM (RAMB36E2)</text>
+
+  <!-- Port A Inputs -->
+  <rect class="box" x="36" y="106" width="110" height="84" stroke="#38bdf8" />
+  <text class="mono" x="91" y="126" fill="#7dd3fc" text-anchor="middle">Port A Inputs</text>
+  <text class="mono" x="46" y="145" font-size="9.5">CLKA, ENA, WEA</text>
+  <text class="mono" x="46" y="161" font-size="9.5">ADDRA, DIA</text>
+  <text class="mono" x="46" y="177" fill="#6ee7b7" font-size="9.5">(Sync Reg Latch)</text>
+
+  <!-- Port B Inputs -->
+  <rect class="box" x="36" y="204" width="110" height="84" stroke="#a78bfa" />
+  <text class="mono" x="91" y="224" fill="#c4b5fd" text-anchor="middle">Port B Inputs</text>
+  <text class="mono" x="46" y="243" font-size="9.5">CLKB, ENB, WEB</text>
+  <text class="mono" x="46" y="259" font-size="9.5">ADDRB, DIB</text>
+  <text class="mono" x="46" y="275" fill="#c4b5fd" font-size="9.5">(Indep. Clock!)</text>
+
+  <line x1="146" y1="148" x2="180" y2="148" stroke="#38bdf8" stroke-width="1.8" marker-end="url(#arr)" />
+  <line x1="146" y1="246" x2="180" y2="246" stroke="#a78bfa" stroke-width="1.8" marker-end="url(#arr)" />
+
+  <!-- Core 36Kb Array + ECC -->
+  <rect class="box" x="182" y="106" width="154" height="182" stroke="#f59e0b" />
+  <text class="mono" x="259" y="132" fill="#fcd34d" text-anchor="middle">36Kb Bitcell Core</text>
+  <text class="note" x="259" y="152" text-anchor="middle">Configurable Width:</text>
+  <text class="mono" x="259" y="169" fill="#e2e8f0" text-anchor="middle">32Kx1 .. 512x72</text>
+  <rect x="196" y="186" width="126" height="44" fill="#1e293b" stroke="#34d399" rx="4" />
+  <text class="mono" x="259" y="205" fill="#6ee7b7" text-anchor="middle">Hard SECDED ECC</text>
+  <text class="mono" x="259" y="221" fill="#94a3b8" text-anchor="middle">64b Data + 8b Parity</text>
+  <text class="mono" x="259" y="252" fill="#fca5a5" text-anchor="middle">1-bit Fix / 2-bit Det</text>
+  <text class="note" x="259" y="274" text-anchor="middle">(Zero extra LUTs!)</text>
+
+  <!-- Internal Sense-Amp Latch & Optional DOA_REG / DOB_REG -->
+  <line x1="336" y1="148" x2="366" y2="148" stroke="#38bdf8" stroke-width="1.8" marker-end="url(#arr)" />
+  <line x1="336" y1="246" x2="366" y2="246" stroke="#a78bfa" stroke-width="1.8" marker-end="url(#arr)" />
+
+  <rect class="box" x="368" y="106" width="160" height="84" stroke="#34d399" />
+  <text class="mono" x="448" y="126" fill="#6ee7b7" text-anchor="middle">Output Stage A</text>
+  <text class="mono" x="448" y="145" fill="#fcd34d" text-anchor="middle">DOA_REG = 1 Reg</text>
+  <text class="note" x="448" y="164" text-anchor="middle">2 cyc latency; slashes</text>
+  <text class="note" x="448" y="180" text-anchor="middle">t_CO ~1.9ns -&gt; ~0.5ns!</text>
+
+  <rect class="box" x="368" y="204" width="160" height="84" stroke="#34d399" />
+  <text class="mono" x="448" y="224" fill="#6ee7b7" text-anchor="middle">Output Stage B</text>
+  <text class="mono" x="448" y="243" fill="#fcd34d" text-anchor="middle">DOB_REG = 1 Reg</text>
+  <text class="note" x="448" y="262" text-anchor="middle">Critical for &gt;300 MHz</text>
+  <text class="note" x="448" y="278" text-anchor="middle">BRAM timing closure!</text>
+
+  <rect class="box" x="36" y="298" width="492" height="70" />
+  <text class="mono" x="48" y="318" fill="#6ee7b7">Why DOA_REG=1 Matters:</text>
+  <text class="note" x="48" y="337">Without `DOA_REG`, the BRAM clock-to-out (`t_RCKO ~ 1.8-2.2 ns`) consumes 70% of a `3.0 ns` period!</text>
+  <text class="note" x="48" y="354">Adding 1 extra pipeline cycle in RTL lets Vivado pack the output register inside the hard BRAM tile!</text>
+
+  <!-- Right Panel: Collision & Write Modes -->
+  <rect class="panel" x="562" y="64" width="338" height="318" stroke="#f59e0b" />
+  <text class="hdr" x="578" y="88" fill="#f59e0b">2. Write Modes &amp; Collision Rules</text>
+
+  <rect class="box" x="576" y="104" width="310" height="72" stroke="#34d399" />
+  <text class="mono" x="588" y="124" fill="#6ee7b7">READ_FIRST (Read-Before-Write)</text>
+  <text class="note" x="588" y="142">Outputs OLD data while writing NEW data.</text>
+  <text class="note" x="588" y="160">Safest against TDP cross-port collisions!</text>
+
+  <rect class="box" x="576" y="184" width="310" height="72" stroke="#38bdf8" />
+  <text class="mono" x="588" y="204" fill="#7dd3fc">WRITE_FIRST (Transparent Write)</text>
+  <text class="note" x="588" y="222">Forwards NEW DIN onto DOUT on same port.</text>
+  <text class="note" x="588" y="240">Higher clock-to-out load; conflict if TDP writes!</text>
+
+  <rect class="box" x="576" y="264" width="310" height="104" stroke="#f87171" />
+  <text class="mono" x="588" y="284" fill="#fca5a5">Async TDP Address Collision Hazard!</text>
+  <text class="note" x="588" y="304">If CLKA != CLKB and Port A writes same addr</text>
+  <text class="note" x="588" y="320">within setup/hold window of Port B read/write:</text>
+  <text class="mono" x="588" y="339" fill="#fca5a5">Memory cell corrupts to UNKNOWN (`X`)!</text>
+  <text class="note" x="588" y="357">Use `NO_CHANGE` / Simple Dual Port to guard!</text>
+</svg>

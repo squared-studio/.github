@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 390" width="920" height="390">
+  <defs>
+    <style>
+      .bg { fill: #0f172a; }
+      .panel { fill: #1e293b; stroke-width: 1.5; rx: 10; ry: 10; }
+      .box { fill: #0f172a; stroke: #334155; stroke-width: 1.2; rx: 6; ry: 6; }
+      .grid { stroke: #334155; stroke-width: 1; stroke-dasharray: 4,4; }
+      .title { font-family: 'Segoe UI', Arial, sans-serif; font-size: 18px; font-weight: 700; fill: #f8fafc; text-anchor: middle; }
+      .subtitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; fill: #94a3b8; text-anchor: middle; }
+      .ptitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 14px; font-weight: 700; }
+      .mono { font-family: Consolas, 'Courier New', monospace; font-size: 10.8px; fill: #e2e8f0; }
+      .note { font-family: 'Segoe UI', Arial, sans-serif; font-size: 10.5px; fill: #94a3b8; }
+    </style>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="920" height="390" />
+  <text class="title" x="460" y="28">Closed-Loop Multi-Cycle Path (MCP) Bus Bridge &amp; Handshake Timing</text>
+  <text class="subtitle" x="460" y="48">Locking Wide Command/Data Payloads Across Unknown Clock Ratios via Feedback Acknowledge Synchronization</text>
+
+  <!-- Waveform Timeline Panel -->
+  <rect class="panel" x="20" y="64" width="880" height="196" stroke="#38bdf8" />
+  <text class="ptitle" x="36" y="88" fill="#38bdf8">Closed-Loop 2-Phase MCP Handshake Sequence</text>
+
+  <line class="grid" x1="210" y1="98" x2="210" y2="246" />
+  <line class="grid" x1="395" y1="98" x2="395" y2="246" />
+  <line class="grid" x1="590" y1="98" x2="590" y2="246" />
+  <line class="grid" x1="755" y1="98" x2="755" y2="246" />
+
+  <!-- Labels -->
+  <text class="mono" x="36" y="122" fill="#7dd3fc">src_data[31:0]</text>
+  <path d="M160,126 L205,126 L215,108 L745,108 L755,126 L880,126" fill="none" stroke="#38bdf8" stroke-width="2" />
+  <text class="mono" x="480" y="122" text-anchor="middle" fill="#7dd3fc">VALID PAYLOAD HELD STABLE (Wait ACK!)</text>
+
+  <text class="mono" x="36" y="156" fill="#fcd34d">src_req_tgl</text>
+  <path d="M160,162 L210,162 L210,142 L880,142" fill="none" stroke="#f59e0b" stroke-width="2" />
+
+  <text class="mono" x="36" y="190" fill="#6ee7b7">dst_load_pulse</text>
+  <path d="M160,196 L395,196 L395,176 L435,176 L435,196 L880,196" fill="none" stroke="#34d399" stroke-width="2" />
+  <text class="note" x="445" y="191" fill="#6ee7b7">Captures src_data cleanly into dst_reg!</text>
+
+  <text class="mono" x="36" y="224" fill="#c4b5fd">src_ack_sync</text>
+  <path d="M160,230 L755,230 L755,210 L880,210" fill="none" stroke="#a78bfa" stroke-width="2" />
+  <text class="note" x="765" y="225" fill="#c4b5fd">src_ready=1 (Next word allowed)</text>
+
+  <text class="note" x="210" y="248" text-anchor="middle" fill="#fcd34d">T1: Launch Req</text>
+  <text class="note" x="395" y="248" text-anchor="middle" fill="#6ee7b7">T2: DST Captures Data</text>
+  <text class="note" x="590" y="248" text-anchor="middle" fill="#c4b5fd">T3: ACK Crosses Back</text>
+  <text class="note" x="755" y="248" text-anchor="middle" fill="#7dd3fc">T4: Unlock SRC</text>
+
+  <!-- Bottom Two Cards -->
+  <rect class="panel" x="20" y="274" width="430" height="100" stroke="#34d399" />
+  <text class="ptitle" x="36" y="298" fill="#34d399">Why Use MCP Instead of Async FIFO?</text>
+  <text class="note" x="36" y="318">For wide CSR configs, interrupt descriptors, or low-rate AXI-Lite</text>
+  <text class="note" x="36" y="334">writes (64–256 bits) where 1 transfer every 8–10 cycles is plenty:</text>
+  <text class="note" x="36" y="352" fill="#6ee7b7">Zero SRAM/regfile depth overhead, 100% backpressured safety.</text>
+
+  <rect class="panel" x="470" y="274" width="430" height="100" stroke="#f59e0b" />
+  <text class="ptitle" x="486" y="298" fill="#f59e0b">MCP Data Path Skew Margin</text>
+  <text class="note" x="486" y="318">src_data travels synchronously to dst_reg well before dst_load_pulse</text>
+  <text class="note" x="486" y="334">fires (~2 dst_clk periods after src_req launches).</text>
+  <text class="mono" x="486" y="355" fill="#7dd3fc">Constrain src_data &lt;= dst_req sync latency via set_max_delay!</text>
+</svg>

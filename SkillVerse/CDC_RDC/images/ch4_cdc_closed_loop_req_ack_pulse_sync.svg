@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 390" width="920" height="390">
+  <defs>
+    <style>
+      .bg { fill: #0f172a; }
+      .panel { fill: #1e293b; stroke-width: 1.5; rx: 10; ry: 10; }
+      .box { fill: #0f172a; stroke: #334155; stroke-width: 1.2; rx: 6; ry: 6; }
+      .ff { fill: #172554; stroke: #38bdf8; stroke-width: 1.5; rx: 6; ry: 6; }
+      .title { font-family: 'Segoe UI', Arial, sans-serif; font-size: 18px; font-weight: 700; fill: #f8fafc; text-anchor: middle; }
+      .subtitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; fill: #94a3b8; text-anchor: middle; }
+      .ptitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 14px; font-weight: 700; }
+      .mono { font-family: Consolas, 'Courier New', monospace; font-size: 10.8px; fill: #e2e8f0; }
+      .note { font-family: 'Segoe UI', Arial, sans-serif; font-size: 10.5px; fill: #94a3b8; }
+      .badge { font-family: Consolas, 'Courier New', monospace; font-size: 11px; font-weight: 700; text-anchor: middle; }
+    </style>
+    <marker id="arrSky" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#38bdf8" />
+    </marker>
+    <marker id="arrGreen" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#34d399" />
+    </marker>
+    <marker id="arrAmb" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#f59e0b" />
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="920" height="390" />
+  <text class="title" x="460" y="28">Closed-Loop REQ-ACK Pulse Synchronizer with Busy Backpressure</text>
+  <text class="subtitle" x="460" y="48">Return 2-FF Feedback Handshake Guaranteeing Zero Pulse Loss Across Unknown or Changing Clock Ratios</text>
+
+  <!-- Main Handshake Loop Panel -->
+  <rect class="panel" x="20" y="64" width="880" height="206" stroke="#34d399" />
+  <text class="ptitle" x="36" y="88" fill="#34d399">Dual-Path Forward Request + Return Acknowledge Loop</text>
+
+  <!-- Source Side Box -->
+  <rect class="box" x="36" y="102" width="212" height="152" stroke="#f59e0b" />
+  <text class="badge" x="142" y="122" fill="#fcd34d">SRC Domain (src_clk)</text>
+  <text class="mono" x="48" y="144">if (src_pulse &amp;&amp; !src_busy)</text>
+  <text class="mono" x="48" y="160">  src_req &lt;= ~src_req;</text>
+  <text class="mono" x="48" y="184" fill="#fca5a5">src_busy = src_req ^ ack_sync2;</text>
+  <text class="note" x="48" y="208">Backpressures source until</text>
+  <text class="note" x="48" y="224">destination confirms receipt!</text>
+  <text class="note" x="48" y="242" fill="#fcd34d">(2-phase XOR toggle protocol)</text>
+
+  <!-- Forward Path Top -->
+  <line x1="248" y1="142" x2="352" y2="142" stroke="#38bdf8" stroke-width="2" marker-end="url(#arrSky)" />
+  <text class="mono" x="300" y="132" text-anchor="middle" fill="#7dd3fc">src_req</text>
+
+  <rect class="ff" x="356" y="114" width="188" height="52" stroke="#34d399" />
+  <text class="badge" x="450" y="136" fill="#6ee7b7">Forward 2-FF Sync</text>
+  <text class="note" x="450" y="154" text-anchor="middle">req_s1 -&gt; req_s2 (dst_clk)</text>
+
+  <line x1="544" y1="142" x2="646" y2="142" stroke="#34d399" stroke-width="2" marker-end="url(#arrGreen)" />
+
+  <!-- Destination Side Box -->
+  <rect class="box" x="650" y="102" width="234" height="152" stroke="#38bdf8" />
+  <text class="badge" x="767" y="122" fill="#7dd3fc">DST Domain (dst_clk)</text>
+  <text class="mono" x="662" y="146">req_d1 &lt;= req_s2;</text>
+  <text class="mono" x="662" y="166" fill="#6ee7b7">dst_pulse = req_s2 ^ req_d1;</text>
+  <text class="mono" x="662" y="190" fill="#c4b5fd">dst_ack   &lt;= req_s2;</text>
+  <text class="note" x="662" y="214">Outputs crisp 1-cycle dst_pulse</text>
+  <text class="note" x="662" y="232">and mirrors toggle back as ACK.</text>
+
+  <!-- Return Path Bottom -->
+  <line x1="650" y1="214" x2="548" y2="214" stroke="#a78bfa" stroke-width="2" marker-end="url(#arrAmb)" />
+  <text class="mono" x="598" y="204" text-anchor="middle" fill="#c4b5fd">dst_ack</text>
+
+  <rect class="ff" x="356" y="188" width="188" height="52" stroke="#a78bfa" />
+  <text class="badge" x="450" y="210" fill="#c4b5fd">Return 2-FF Sync</text>
+  <text class="note" x="450" y="228" text-anchor="middle">ack_s1 -&gt; ack_s2 (src_clk)</text>
+
+  <line x1="356" y1="214" x2="252" y2="214" stroke="#a78bfa" stroke-width="2" marker-end="url(#arrAmb)" />
+  <text class="mono" x="300" y="204" text-anchor="middle" fill="#c4b5fd">ack_sync2</text>
+
+  <!-- Vertical CDC dashed divider -->
+  <line x1="300" y1="96" x2="300" y2="262" stroke="#f87171" stroke-width="1.4" stroke-dasharray="5,4" />
+  <line x1="598" y1="96" x2="598" y2="262" stroke="#f87171" stroke-width="1.4" stroke-dasharray="5,4" />
+
+  <!-- Bottom Comparison Cards -->
+  <rect class="panel" x="20" y="284" width="430" height="90" stroke="#38bdf8" />
+  <text class="ptitle" x="36" y="308" fill="#38bdf8">Performance &amp; Throughput</text>
+  <text class="note" x="36" y="328">Max pulse rate = 1 / (~2.5 * T_src + 2.5 * T_dst).</text>
+  <text class="note" x="36" y="346">Works cleanly even if dst_clk temporarily stops or scales DVFS,</text>
+  <text class="note" x="36" y="362">because src_busy holds off new launches automatically!</text>
+
+  <rect class="panel" x="470" y="284" width="430" height="90" stroke="#f59e0b" />
+  <text class="ptitle" x="486" y="308" fill="#f59e0b">4-Phase vs. 2-Phase Toggle Efficiency</text>
+  <text class="note" x="486" y="328">4-Phase (REQ up -&gt; ACK up -&gt; REQ dn -&gt; ACK dn): ~4 round-trips.</text>
+  <text class="note" x="486" y="346" fill="#6ee7b7">2-Phase (REQ toggle -&gt; ACK toggle): 2x faster (1 round-trip!)</text>
+  <text class="note" x="486" y="362">Requires symmetrical toggle reset to 0 on both sides.</text>
+</svg>

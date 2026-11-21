@@ -1,0 +1,88 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 420" width="920" height="420">
+  <defs>
+    <style>
+      .bg { fill: #0f172a; }
+      .soc { fill: #172554; stroke: #38bdf8; stroke-width: 2; rx: 12; ry: 12; }
+      .cpu { fill: #1e293b; stroke: #34d399; stroke-width: 2; rx: 10; ry: 10; }
+      .gpu { fill: #1e293b; stroke: #f59e0b; stroke-width: 2; rx: 10; ry: 10; }
+      .l2 { fill: #0f172a; stroke: #a78bfa; stroke-width: 1.8; stroke-dasharray: 5,3; rx: 8; ry: 8; }
+      .card { fill: #0f172a; stroke: #334155; stroke-width: 1.2; rx: 6; ry: 6; }
+      .title { font-family: 'Segoe UI', Arial, sans-serif; font-size: 18px; font-weight: 700; fill: #f8fafc; text-anchor: middle; }
+      .subtitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; fill: #94a3b8; text-anchor: middle; }
+      .dtitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 13.5px; font-weight: 700; }
+      .mono { font-family: Consolas, 'Courier New', monospace; font-size: 11px; fill: #e2e8f0; }
+      .note { font-family: 'Segoe UI', Arial, sans-serif; font-size: 10.8px; fill: #cbd5e1; }
+    </style>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="920" height="420" />
+  <text class="title" x="460" y="28">Hierarchical Power Domains &amp; Scoping in an SoC Architecture</text>
+  <text class="subtitle" x="460" y="48">Mapping Logical RTL Module Hierarchy to Physical Voltage Islands via set_scope, -include_scope, and -elements</text>
+
+  <!-- PD_TOP outer island -->
+  <rect class="soc" x="20" y="64" width="600" height="336" />
+  <text class="dtitle" x="38" y="88" fill="#38bdf8">PD_TOP (Default Top Domain | Always-On | VDD_SOC = 0.80V)</text>
+  <text class="mono" x="38" y="106" fill="#7dd3fc">set_scope / ; create_power_domain PD_TOP -include_scope</text>
+
+  <!-- Always-On Submodules inside PD_TOP -->
+  <rect class="card" x="38" y="120" width="170" height="72" stroke="#38bdf8" />
+  <text class="dtitle" x="48" y="140" fill="#e2e8f0">u_pmc (AON)</text>
+  <text class="note" x="48" y="158">Power Mgmt Controller</text>
+  <text class="note" x="48" y="175" fill="#7dd3fc">Inherits PD_TOP</text>
+
+  <rect class="card" x="220" y="120" width="175" height="72" stroke="#38bdf8" />
+  <text class="dtitle" x="230" y="140" fill="#e2e8f0">u_bus_noc</text>
+  <text class="note" x="230" y="158">AXI Coherent NoC Fabric</text>
+  <text class="note" x="230" y="175" fill="#7dd3fc">Inherits PD_TOP</text>
+
+  <rect class="card" x="408" y="120" width="194" height="72" stroke="#38bdf8" />
+  <text class="dtitle" x="418" y="140" fill="#e2e8f0">u_aon_periph</text>
+  <text class="note" x="418" y="158">RTC, GPIO Wakeup, Reset</text>
+  <text class="note" x="418" y="175" fill="#7dd3fc">Never power-gated</text>
+
+  <!-- PD_CPU -->
+  <rect class="cpu" x="38" y="206" width="286" height="178" />
+  <text class="dtitle" x="52" y="228" fill="#34d399">PD_CPU (Switchable | 0.80V)</text>
+  <text class="mono" x="52" y="246" fill="#6ee7b7">-elements {u_cpu_subsys}</text>
+  <text class="note" x="52" y="264">Includes CPU core + decode logic</text>
+
+  <!-- Nested PD_L2 inside PD_CPU -->
+  <rect class="l2" x="54" y="278" width="254" height="92" />
+  <text class="dtitle" x="66" y="298" fill="#c4b5fd">PD_L2_MEM (Nested Sub-Domain)</text>
+  <text class="mono" x="66" y="316" fill="#ddd6fe">-elements {u_cpu_subsys/u_l2}</text>
+  <text class="note" x="66" y="335">Independent SRAM Retention Rail</text>
+  <text class="note" x="66" y="352" fill="#a78bfa">Overrides parent PD_CPU assignment</text>
+
+  <!-- PD_GPU -->
+  <rect class="gpu" x="338" y="206" width="264" height="178" />
+  <text class="dtitle" x="352" y="228" fill="#f59e0b">PD_GPU (DVFS + Switchable)</text>
+  <text class="mono" x="352" y="246" fill="#fcd34d">-elements {u_gpu_top}</text>
+  <text class="note" x="352" y="266">Voltage states: 0.95V / 0.70V / OFF</text>
+  <rect class="card" x="352" y="280" width="236" height="88" />
+  <text class="note" x="364" y="302" fill="#f8fafc">u_gpu_top/u_shader_array</text>
+  <text class="note" x="364" y="320" fill="#f8fafc">u_gpu_top/u_tmu</text>
+  <text class="note" x="364" y="340" fill="#fcd34d">All sub-instances automatically</text>
+  <text class="note" x="364" y="355" fill="#fcd34d">inherit PD_GPU unless overridden</text>
+
+  <!-- Right Legend / Rules Box -->
+  <rect class="cpu" x="636" y="64" width="264" height="336" stroke="#475569" />
+  <text class="dtitle" x="652" y="90" fill="#f8fafc">Scoping &amp; Rules Summary</text>
+
+  <rect class="card" x="650" y="104" width="236" height="82" />
+  <text class="mono" x="660" y="124" fill="#38bdf8">1. set_scope &lt;inst_path&gt;</text>
+  <text class="note" x="660" y="143">Changes current working hierarchy.</text>
+  <text class="note" x="660" y="159">Relative paths inside commands</text>
+  <text class="note" x="660" y="175">resolve from this instance.</text>
+
+  <rect class="card" x="650" y="198" width="236" height="90" />
+  <text class="mono" x="660" y="218" fill="#34d399">2. -include_scope</text>
+  <text class="note" x="660" y="237">Includes the current scope module</text>
+  <text class="note" x="660" y="253">and its descendant hierarchy</text>
+  <text class="note" x="660" y="269">into the power domain.</text>
+
+  <rect class="card" x="650" y="300" width="236" height="86" />
+  <text class="mono" x="660" y="320" fill="#a78bfa">3. Transitive Extent</text>
+  <text class="note" x="660" y="339">Assigning u_gpu_top places all</text>
+  <text class="note" x="660" y="355">descendant cells under PD_GPU</text>
+  <text class="note" x="660" y="371">until a child domain overrides.</text>
+</svg>

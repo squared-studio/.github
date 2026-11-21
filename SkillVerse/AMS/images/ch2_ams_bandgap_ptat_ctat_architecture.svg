@@ -1,0 +1,125 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 410" width="920" height="410">
+  <defs>
+    <style>
+      .bg { fill: #0f172a; }
+      .panel { fill: #1e293b; stroke: #334155; stroke-width: 1.5; rx: 10; ry: 10; }
+      .box { fill: #0f172a; stroke: #334155; stroke-width: 1.2; rx: 6; ry: 6; }
+      .title { font-family: 'Segoe UI', Arial, sans-serif; font-size: 18px; font-weight: 700; fill: #f8fafc; text-anchor: middle; }
+      .sub { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; fill: #94a3b8; text-anchor: middle; }
+      .hdr { font-family: 'Segoe UI', Arial, sans-serif; font-size: 13.5px; font-weight: 700; }
+      .mono { font-family: Consolas, 'Courier New', monospace; font-size: 10.5px; fill: #e2e8f0; }
+      .note { font-family: 'Segoe UI', Arial, sans-serif; font-size: 11px; fill: #cbd5e1; }
+      .wire { stroke: #94a3b8; stroke-width: 1.5; fill: none; }
+    </style>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="920" height="410" />
+  <text class="title" x="460" y="28">Brokaw / CMOS Bandgap Voltage Reference Architecture &amp; Zero-TC Curve</text>
+  <text class="sub" x="460" y="48">Canceling Negative BJT V_BE Temperature Slope (-2 mV/K) with Scaled Delta-V_BE PTAT Current</text>
+
+  <!-- Left Panel: Bandgap Circuit Topology -->
+  <rect class="panel" x="20" y="64" width="466" height="328" />
+  <text class="hdr" x="38" y="88" fill="#f59e0b">1. CMOS Bandgap Core + Op-Amp Loop + Startup</text>
+
+  <rect class="box" x="34" y="100" width="438" height="278" />
+  <!-- VDD rail -->
+  <line x1="60" y1="120" x2="450" y2="120" stroke="#f87171" stroke-width="2.2" />
+  <text class="mono" x="70" y="114" fill="#fca5a5">VDD</text>
+
+  <!-- 3 Equal PMOS current sources M1, M2, M3 -->
+  <rect x="112" y="132" width="44" height="28" fill="#1e293b" stroke="#38bdf8" rx="4" />
+  <text class="mono" x="134" y="150" text-anchor="middle">MP1</text>
+  <rect x="242" y="132" width="44" height="28" fill="#1e293b" stroke="#38bdf8" rx="4" />
+  <text class="mono" x="264" y="150" text-anchor="middle">MP2</text>
+  <rect x="372" y="132" width="44" height="28" fill="#1e293b" stroke="#34d399" rx="4" />
+  <text class="mono" x="394" y="150" text-anchor="middle">MP3</text>
+
+  <line class="wire" x1="134" y1="120" x2="134" y2="132" />
+  <line class="wire" x1="264" y1="120" x2="264" y2="132" />
+  <line class="wire" x1="394" y1="120" x2="394" y2="132" />
+  <!-- Common gate line -->
+  <line x1="156" y1="146" x2="372" y2="146" stroke="#a78bfa" stroke-width="1.5" />
+
+  <!-- Op-Amp triangle -->
+  <polygon points="184,174 226,192 184,210" fill="#1e293b" stroke="#f59e0b" stroke-width="1.8" />
+  <text class="mono" x="189" y="189" fill="#fcd34d" font-size="9">+</text>
+  <text class="mono" x="189" y="205" fill="#fcd34d" font-size="9">-</text>
+  <polyline points="226,192 232,192 232,146" fill="none" stroke="#a78bfa" stroke-width="1.5" />
+  <circle cx="232" cy="146" r="3" fill="#a78bfa" />
+
+  <!-- Nodes X and Y -->
+  <line class="wire" x1="134" y1="160" x2="134" y2="255" />
+  <line class="wire" x1="264" y1="160" x2="264" y2="225" />
+  <line class="wire" x1="394" y1="160" x2="394" y2="210" />
+  <circle cx="134" cy="184" r="3" fill="#38bdf8" /><text class="mono" x="116" y="182" fill="#7dd3fc">VX</text>
+  <circle cx="264" cy="184" r="3" fill="#38bdf8" /><text class="mono" x="273" y="182" fill="#7dd3fc">VY</text>
+  <polyline points="134,184 184,184" fill="none" stroke="#38bdf8" stroke-width="1.3" />
+  <polyline points="264,184 238,184 238,220 172,220 172,202 184,202" fill="none" stroke="#38bdf8" stroke-width="1.3" />
+
+  <!-- Resistor R1 under MP2 -->
+  <rect x="252" y="225" width="24" height="36" fill="#0f172a" stroke="#f59e0b" rx="3" />
+  <text class="mono" x="284" y="247" fill="#fcd34d">R1</text>
+  <line class="wire" x1="264" y1="261" x2="264" y2="274" />
+
+  <!-- PNP BJT Q1 (1x) and Q2 (N x) and Output branch R2 + Q3 -->
+  <rect x="112" y="274" width="44" height="34" fill="#1e293b" stroke="#34d399" rx="4" />
+  <text class="mono" x="134" y="295" text-anchor="middle">Q1 (1x)</text>
+  <line class="wire" x1="134" y1="255" x2="134" y2="274" />
+
+  <rect x="242" y="274" width="44" height="34" fill="#1e293b" stroke="#34d399" rx="4" />
+  <text class="mono" x="264" y="295" text-anchor="middle">Q2 (8x)</text>
+
+  <!-- Right Output Branch: VBG = I_PTAT*R2 + VBE3 -->
+  <circle cx="394" cy="188" r="3.5" fill="#34d399" />
+  <line x1="394" y1="188" x2="432" y2="188" stroke="#34d399" stroke-width="2" />
+  <text class="mono" x="436" y="192" fill="#6ee7b7" font-weight="bold">V_BG</text>
+  <rect x="382" y="210" width="24" height="44" fill="#0f172a" stroke="#f59e0b" rx="3" />
+  <text class="mono" x="412" y="236" fill="#fcd34d">R2</text>
+  <line class="wire" x1="394" y1="254" x2="394" y2="274" />
+  <rect x="372" y="274" width="44" height="34" fill="#1e293b" stroke="#34d399" rx="4" />
+  <text class="mono" x="394" y="295" text-anchor="middle">Q3 (1x)</text>
+
+  <!-- GND rail -->
+  <line x1="60" y1="322" x2="450" y2="322" stroke="#64748b" stroke-width="2.2" />
+  <line class="wire" x1="134" y1="308" x2="134" y2="322" />
+  <line class="wire" x1="264" y1="308" x2="264" y2="322" />
+  <line class="wire" x1="394" y1="308" x2="394" y2="322" />
+  <text class="mono" x="70" y="338" fill="#94a3b8">VSS (GND)</text>
+
+  <!-- Startup block badge -->
+  <rect x="46" y="192" width="76" height="44" fill="#1e293b" stroke="#f87171" rx="5" />
+  <text class="mono" x="84" y="211" fill="#fca5a5" text-anchor="middle" font-size="9.5">Startup</text>
+  <text class="mono" x="84" y="226" fill="#fca5a5" text-anchor="middle" font-size="9">Anti-Zero</text>
+  <text class="mono" x="155" y="362" fill="#fcd34d">I_PTAT = (V_T * ln(N)) / R1</text>
+
+  <!-- Right Panel: PTAT + CTAT Compensation Plot -->
+  <rect class="panel" x="502" y="64" width="398" height="328" />
+  <text class="hdr" x="520" y="88" fill="#34d399">2. Temperature Compensation Plot</text>
+  <rect class="box" x="516" y="100" width="370" height="205" />
+
+  <!-- Plot axes -->
+  <line x1="564" y1="118" x2="564" y2="276" stroke="#64748b" stroke-width="1.3" />
+  <line x1="564" y1="276" x2="866" y2="276" stroke="#64748b" stroke-width="1.3" />
+  <text class="mono" x="715" y="294" text-anchor="middle">Temperature (-40 C to +125 C)</text>
+  <text class="mono" x="526" y="140" font-size="9.5">1.2V</text>
+  <text class="mono" x="526" y="196" font-size="9.5">0.7V</text>
+  <text class="mono" x="526" y="250" font-size="9.5">0.5V</text>
+
+  <!-- CTAT V_BE line (slopes down) -->
+  <line x1="572" y1="184" x2="854" y2="226" stroke="#38bdf8" stroke-width="2.2" />
+  <text class="mono" x="780" y="239" fill="#38bdf8" font-size="9.5">CTAT: V_BE (~ -2 mV/K)</text>
+
+  <!-- PTAT K*DeltaV_BE line (slopes up) -->
+  <line x1="572" y1="242" x2="854" y2="200" stroke="#f59e0b" stroke-width="2.2" />
+  <text class="mono" x="774" y="195" fill="#f59e0b" font-size="9.5">PTAT: (R2/R1)*V_T*ln(N)</text>
+
+  <!-- Flat + slight curvature V_BG ~ 1.2V -->
+  <path d="M 572 142 Q 715 134 854 143" fill="none" stroke="#34d399" stroke-width="2.6" />
+  <text class="mono" x="715" y="128" fill="#6ee7b7" text-anchor="middle" font-weight="bold">V_BG ~ 1.20 V (2nd-Order Bow ~ 1-2 mV)</text>
+
+  <!-- Equations Box -->
+  <rect class="box" x="516" y="314" width="370" height="64" />
+  <text class="mono" x="528" y="334" fill="#6ee7b7">V_BG = V_BE3 + (R2/R1) * (kT/q) * ln(N)</text>
+  <text class="mono" x="528" y="352" fill="#fcd34d">dV_BG/dT = 0  when  (R2/R1)*ln(N) ~ 23</text>
+  <text class="note" x="528" y="370">Sub-1V Bandgap sums I_PTAT + I_CTAT in parallel R_out</text>
+</svg>

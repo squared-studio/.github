@@ -1,0 +1,133 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 540" width="960" height="540">
+  <defs>
+    <style>
+      .bg { fill: #080c14; }
+      .title { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 20px; fill: #f8fafc; }
+      .subtitle { font-family: 'Inter', system-ui, sans-serif; font-size: 13px; fill: #94a3b8; }
+      .phase { fill: #0f172a; stroke-width: 1.8; rx: 10px; }
+      .inner { fill: #0b1120; stroke-width: 1.3; rx: 6px; }
+      .txt-hdr { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 13px; fill: #f8fafc; }
+      .txt-sub { font-family: 'Inter', system-ui, sans-serif; font-size: 11px; fill: #94a3b8; }
+      .mono { font-family: 'JetBrains Mono', Consolas, monospace; font-size: 10px; font-weight: 600; }
+      .edge { stroke-width: 2; fill: none; }
+    </style>
+    <marker id="arr-cyan" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8" />
+    </marker>
+    <marker id="arr-green" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#34d399" />
+    </marker>
+    <marker id="arr-amber" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#f59e0b" />
+    </marker>
+  </defs>
+
+  <rect width="960" height="540" class="bg" rx="14"/>
+  <text x="480" y="32" text-anchor="middle" class="title">Design Verification (DV) Engineer 4-Phase Learning Roadmap</text>
+  <text x="480" y="52" text-anchor="middle" class="subtitle">From SystemVerilog event-queue mastery to UVM testbenches, constrained random, and full sign-off closure</text>
+
+  <!-- Phase 1 -->
+  <g transform="translate(24, 82)">
+    <rect x="0" y="0" width="214" height="320" class="phase" stroke="#38bdf8"/>
+    <text x="14" y="24" class="mono" fill="#38bdf8">PHASE 1 (WEEKS 1–4)</text>
+    <text x="14" y="44" class="txt-hdr">SV Language &amp; Concurrency</text>
+
+    <rect x="12" y="58" width="190" height="86" class="inner" stroke="#38bdf8"/>
+    <text x="20" y="76" class="mono" fill="#7dd3fc">SkillVerse Courses:</text>
+    <text x="20" y="94" class="mono" fill="#cbd5e1">• SystemVerilog Ch 1–14</text>
+    <text x="20" y="110" class="mono" fill="#cbd5e1">• RTL_Design Ch 1–4, 8</text>
+    <text x="20" y="126" class="mono" fill="#cbd5e1">• Python Ch 1–4, 7</text>
+
+    <rect x="12" y="156" width="190" height="90" class="inner" stroke="#334155"/>
+    <text x="20" y="176" class="txt-sub" fill="#cbd5e1">Core Skills:</text>
+    <text x="20" y="194" class="txt-sub">• Stratified event queue</text>
+    <text x="20" y="210" class="txt-sub">• Dynamic/assoc/queue arrays</text>
+    <text x="20" y="226" class="txt-sub">• fork-join, mailboxes, modports</text>
+
+    <rect x="12" y="256" width="190" height="50" class="inner" stroke="#34d399" fill="#0d221c"/>
+    <text x="107" y="276" text-anchor="middle" class="mono" fill="#6ee7b7">Build: Layered SV TB</text>
+    <text x="107" y="294" text-anchor="middle" class="txt-sub">Generator/Driver/Scoreboard</text>
+  </g>
+  <path d="M 238 242 L 254 242" class="edge" stroke="#38bdf8" marker-end="url(#arr-cyan)"/>
+
+  <!-- Phase 2 -->
+  <g transform="translate(256, 82)">
+    <rect x="0" y="0" width="214" height="320" class="phase" stroke="#34d399"/>
+    <text x="14" y="24" class="mono" fill="#34d399">PHASE 2 (WEEKS 5–9)</text>
+    <text x="14" y="44" class="txt-hdr">OOP, Random &amp; Assertions</text>
+
+    <rect x="12" y="58" width="190" height="86" class="inner" stroke="#34d399"/>
+    <text x="20" y="76" class="mono" fill="#6ee7b7">SkillVerse Courses:</text>
+    <text x="20" y="94" class="mono" fill="#cbd5e1">• SystemVerilog Ch 15–22</text>
+    <text x="20" y="110" class="mono" fill="#cbd5e1">• RTL_Design_Verif Ch 1–3</text>
+    <text x="20" y="126" class="mono" fill="#cbd5e1">• RTL_Design_Verif Ch 6</text>
+
+    <rect x="12" y="156" width="190" height="90" class="inner" stroke="#334155"/>
+    <text x="20" y="176" class="txt-sub" fill="#cbd5e1">Core Skills:</text>
+    <text x="20" y="194" class="txt-sub">• Polymorphism &amp; virtual</text>
+    <text x="20" y="210" class="txt-sub">• Constraints &amp; covergroups</text>
+    <text x="20" y="226" class="txt-sub">• Concurrent SVA properties</text>
+
+    <rect x="12" y="256" width="190" height="50" class="inner" stroke="#34d399" fill="#0d221c"/>
+    <text x="107" y="276" text-anchor="middle" class="mono" fill="#6ee7b7">Build: CRV + SVA Checker</text>
+    <text x="107" y="294" text-anchor="middle" class="txt-sub">100% functional coverage</text>
+  </g>
+  <path d="M 470 242 L 486 242" class="edge" stroke="#34d399" marker-end="url(#arr-green)"/>
+
+  <!-- Phase 3 -->
+  <g transform="translate(488, 82)">
+    <rect x="0" y="0" width="214" height="320" class="phase" stroke="#f59e0b"/>
+    <text x="14" y="24" class="mono" fill="#fcd34d">PHASE 3 (WEEKS 10–15)</text>
+    <text x="14" y="44" class="txt-hdr">UVM &amp; Protocol VIPs</text>
+
+    <rect x="12" y="58" width="190" height="86" class="inner" stroke="#f59e0b"/>
+    <text x="20" y="76" class="mono" fill="#fcd34d">SkillVerse Courses:</text>
+    <text x="20" y="94" class="mono" fill="#cbd5e1">• uvm (Ch 1–6)</text>
+    <text x="20" y="110" class="mono" fill="#cbd5e1">• RTL_Design_Verif Ch 4–5</text>
+    <text x="20" y="126" class="mono" fill="#cbd5e1">• APB, UART, OBI &amp; AXI4</text>
+
+    <rect x="12" y="156" width="190" height="90" class="inner" stroke="#334155"/>
+    <text x="20" y="176" class="txt-sub" fill="#cbd5e1">Core Skills:</text>
+    <text x="20" y="194" class="txt-sub">• Factory, phases, config_db</text>
+    <text x="20" y="210" class="txt-sub">• Agents, sequencers, TLM</text>
+    <text x="20" y="226" class="txt-sub">• RAL &amp; scoreboard checks</text>
+
+    <rect x="12" y="256" width="190" height="50" class="inner" stroke="#f59e0b" fill="#1b150b"/>
+    <text x="107" y="276" text-anchor="middle" class="mono" fill="#fcd34d">Build: UVM APB-UART VIP</text>
+    <text x="107" y="294" text-anchor="middle" class="txt-sub">Multi-agent virtual sequence</text>
+  </g>
+  <path d="M 702 242 L 718 242" class="edge" stroke="#f59e0b" marker-end="url(#arr-amber)"/>
+
+  <!-- Phase 4 -->
+  <g transform="translate(720, 82)">
+    <rect x="0" y="0" width="216" height="320" class="phase" stroke="#a855f7"/>
+    <text x="14" y="24" class="mono" fill="#d8b4fe">PHASE 4 (WEEKS 16–22)</text>
+    <text x="14" y="44" class="txt-hdr">Closure, GLS &amp; Regressions</text>
+
+    <rect x="12" y="58" width="192" height="86" class="inner" stroke="#a855f7"/>
+    <text x="20" y="76" class="mono" fill="#d8b4fe">SkillVerse Courses:</text>
+    <text x="20" y="94" class="mono" fill="#cbd5e1">• RTL_Design_Verif Ch 7–8</text>
+    <text x="20" y="110" class="mono" fill="#cbd5e1">• GLS Ch 1–9, 11–12</text>
+    <text x="20" y="126" class="mono" fill="#cbd5e1">• UPF Ch 9 &amp; CDC Ch 11</text>
+
+    <rect x="12" y="156" width="192" height="90" class="inner" stroke="#334155"/>
+    <text x="20" y="176" class="txt-sub" fill="#cbd5e1">Core Skills:</text>
+    <text x="20" y="194" class="txt-sub">• Coverage closure &amp; waivers</text>
+    <text x="20" y="210" class="txt-sub">• Timing GLS &amp; PG UPF sim</text>
+    <text x="20" y="226" class="txt-sub">• Python/CI seed regressions</text>
+
+    <rect x="12" y="256" width="192" height="50" class="inner" stroke="#a855f7" fill="#1b1029"/>
+    <text x="108" y="276" text-anchor="middle" class="mono" fill="#d8b4fe">Capstone: AXI4 VIP + CI</text>
+    <text x="108" y="294" text-anchor="middle" class="txt-sub">cocotb or UVM + GitHub CI</text>
+  </g>
+
+  <!-- Bottom Career Readiness Summary -->
+  <g transform="translate(24, 420)">
+    <rect x="0" y="0" width="912" height="96" class="phase" stroke="#34d399" fill="#0b1f1a"/>
+    <text x="18" y="24" class="txt-hdr" fill="#34d399">What Separates Strong DV Candidates in Silicon Interviews</text>
+    <text x="18" y="48" class="mono" fill="#cbd5e1">✓ Bug-Hunting Mindset:</text>
+    <text x="204" y="48" class="txt-sub">Prove edge cases fail (backpressure, out-of-order IDs, wrap bursts, reset mid-flight) instead of happy-path smoke tests.</text>
+    <text x="18" y="68" class="mono" fill="#cbd5e1">✓ Dual Tool Fluency:</text>
+    <text x="204" y="68" class="txt-sub">Pair UVM/SV OOP mastery (used at ASIC majors) with Python cocotb + Verilator + GitHub CI for open-source portfolios.</text>
+  </g>
+</svg>

@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 410" width="920" height="410">
+  <defs>
+    <style>
+      .bg { fill: #0f172a; }
+      .card { fill: #1e293b; stroke-width: 1.5; rx: 10; ry: 10; }
+      .box { fill: #0f172a; stroke: #334155; stroke-width: 1.2; rx: 6; ry: 6; }
+      .title { font-family: 'Segoe UI', Arial, sans-serif; font-size: 18px; font-weight: 700; fill: #f8fafc; text-anchor: middle; }
+      .subtitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; fill: #94a3b8; text-anchor: middle; }
+      .ctitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 13.5px; font-weight: 700; }
+      .mono { font-family: Consolas, 'Courier New', monospace; font-size: 10.8px; fill: #e2e8f0; }
+      .note { font-family: 'Segoe UI', Arial, sans-serif; font-size: 10.5px; fill: #94a3b8; }
+    </style>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="920" height="410" />
+  <text class="title" x="460" y="28">Taxonomy of Clock Relationships Across Chip Boundaries</text>
+  <text class="subtitle" x="460" y="48">Distinguishing Synchronous, Mesochronous, Plesiochronous, and Asynchronous Clock Pairs for CDC Strategy Selection</text>
+
+  <!-- Q1: Synchronous -->
+  <rect class="card" x="20" y="64" width="430" height="160" stroke="#34d399" />
+  <text class="ctitle" x="36" y="88" fill="#34d399">1. Synchronous Clocks (Fixed Freq &amp; Known Phase)</text>
+  <rect class="box" x="36" y="100" width="398" height="58" />
+  <path d="M50,124 L80,124 L80,108 L110,108 L110,124 L140,124 L140,108 L170,108 L170,124 L200,124" fill="none" stroke="#34d399" stroke-width="1.8" />
+  <path d="M50,148 L110,148 L110,132 L170,132 L170,148 L200,148" fill="none" stroke="#38bdf8" stroke-width="1.8" />
+  <text class="mono" x="220" y="122" fill="#6ee7b7">CLK1 = 200 MHz (PLL OUT0)</text>
+  <text class="mono" x="220" y="145" fill="#7dd3fc">CLK2 = 100 MHz (Div-by-2)</text>
+  <text class="note" x="36" y="178">Common PLL root; integer freq ratio or fixed phase skew.</text>
+  <text class="note" x="36" y="195" fill="#6ee7b7">Verification: Standard STA checks setup/hold; NO CDC sync needed</text>
+  <text class="note" x="36" y="211">(or use integer-cycle enable strobes for divided clocks).</text>
+
+  <!-- Q2: Mesochronous -->
+  <rect class="card" x="470" y="64" width="430" height="160" stroke="#38bdf8" />
+  <text class="ctitle" x="486" y="88" fill="#38bdf8">2. Mesochronous Clocks (Identical Freq, Arbitrary Phase)</text>
+  <rect class="box" x="486" y="100" width="398" height="58" />
+  <path d="M500,124 L530,124 L530,108 L560,108 L560,124 L590,124 L590,108 L620,108 L620,124 L650,124" fill="none" stroke="#38bdf8" stroke-width="1.8" />
+  <path d="M500,148 L545,148 L545,132 L575,132 L575,148 L605,148 L605,132 L635,132 L635,148 L650,148" fill="none" stroke="#a78bfa" stroke-width="1.8" />
+  <text class="mono" x="668" y="122" fill="#7dd3fc">CLK1 = 500 MHz (phi_1)</text>
+  <text class="mono" x="668" y="145" fill="#c4b5fd">CLK2 = 500 MHz (phi_2 unknown)</text>
+  <text class="note" x="486" y="178">Same oscillator, different PCB/cable or PVT trace delay.</text>
+  <text class="note" x="486" y="195" fill="#7dd3fc">Phase offset phi_2 - phi_1 drifts with temp/voltage; cannot close</text>
+  <text class="note" x="486" y="211">STA! Solve with shallow elastic FIFO or calibrated phase aligner.</text>
+
+  <!-- Q3: Plesiochronous -->
+  <rect class="card" x="20" y="238" width="430" height="156" stroke="#f59e0b" />
+  <text class="ctitle" x="36" y="262" fill="#f59e0b">3. Plesiochronous Clocks (Nominal Equal, +/- PPM Drift)</text>
+  <rect class="box" x="36" y="274" width="398" height="44" />
+  <text class="mono" x="48" y="293" fill="#fcd34d">XTAL_A: 156.25 MHz +50ppm   vs   XTAL_B: 156.25 MHz -50ppm</text>
+  <text class="note" x="48" y="310">Phase slips slowly by 1 full cycle every ~10,000 cycles (beat!)</text>
+  <text class="note" x="36" y="338">Example: Ethernet / PCIe / SerDes RX CDR clock vs local SysClk.</text>
+  <text class="note" x="36" y="356" fill="#fcd34d">Must treat as Asynchronous + handle slip via SKP ordered sets</text>
+  <text class="note" x="36" y="372">or elasticity FIFO with idle insertion / deletion.</text>
+
+  <!-- Q4: Asynchronous -->
+  <rect class="card" x="470" y="238" width="430" height="156" stroke="#f87171" />
+  <text class="ctitle" x="486" y="262" fill="#f87171">4. Asynchronous Clocks (Independent Frequencies &amp; Phase)</text>
+  <rect class="box" x="486" y="274" width="398" height="44" />
+  <text class="mono" x="498" y="293" fill="#fca5a5">CLK_A = 333 MHz (Audio PLL)   vs   CLK_B = 1.2 GHz (CPU PLL)</text>
+  <text class="note" x="498" y="310">Edges collide at every phase offset continuously over time.</text>
+  <text class="note" x="486" y="338">Zero predictable setup/hold phase relationship exists.</text>
+  <text class="note" x="486" y="356" fill="#fca5a5">SDC: set_clock_groups -asynchronous (NOT blind false_path!)</text>
+  <text class="note" x="486" y="372">Mandatory: 2-FF / Pulse / MCP / Async FIFO synchronization.</text>
+</svg>

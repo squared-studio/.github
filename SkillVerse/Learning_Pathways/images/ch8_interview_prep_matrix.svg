@@ -1,0 +1,100 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 520" width="960" height="520">
+  <defs>
+    <style>
+      .bg { fill: #080c14; }
+      .title { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 20px; fill: #f8fafc; }
+      .subtitle { font-family: 'Inter', system-ui, sans-serif; font-size: 13px; fill: #94a3b8; }
+      .panel { fill: #0f172a; stroke-width: 1.6; rx: 10px; }
+      .row-even { fill: #0b1120; }
+      .row-odd { fill: #11192c; }
+      .txt-hdr { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 12px; fill: #f8fafc; }
+      .txt-sub { font-family: 'Inter', system-ui, sans-serif; font-size: 11px; fill: #cbd5e1; }
+      .mono { font-family: 'JetBrains Mono', Consolas, monospace; font-size: 10.5px; font-weight: 700; }
+    </style>
+  </defs>
+
+  <rect width="960" height="520" class="bg" rx="14"/>
+  <text x="480" y="32" text-anchor="middle" class="title">Semiconductor Technical Interview Competency Matrix</text>
+  <text x="480" y="52" text-anchor="middle" class="subtitle">How interview weight shifts across core hardware, verification, protocol, and tooling rounds by role</text>
+
+  <!-- Matrix Table Panel -->
+  <g transform="translate(32, 78)">
+    <rect x="0" y="0" width="896" height="332" class="panel" stroke="#38bdf8"/>
+
+    <!-- Header Row -->
+    <rect x="2" y="2" width="892" height="40" rx="8" fill="#131f36"/>
+    <text x="20" y="27" class="txt-hdr" fill="#38bdf8">Interview Round / Topic</text>
+    <text x="335" y="27" text-anchor="middle" class="txt-hdr" fill="#38bdf8">RTL Design</text>
+    <text x="465" y="27" text-anchor="middle" class="txt-hdr" fill="#34d399">Design Verif</text>
+    <text x="595" y="27" text-anchor="middle" class="txt-hdr" fill="#d8b4fe">Formal</text>
+    <text x="725" y="27" text-anchor="middle" class="txt-hdr" fill="#fcd34d">FPGA</text>
+    <text x="840" y="27" text-anchor="middle" class="txt-hdr" fill="#fda4af">DFT</text>
+
+    <!-- Row 1 -->
+    <rect x="2" y="44" width="892" height="44" class="row-even"/>
+    <text x="20" y="71" class="txt-sub">Digital Logic, Setup/Hold &amp; STA Basics</text>
+    <text x="335" y="71" text-anchor="middle" class="mono" fill="#34d399">CRITICAL</text>
+    <text x="465" y="71" text-anchor="middle" class="mono" fill="#7dd3fc">HIGH</text>
+    <text x="595" y="71" text-anchor="middle" class="mono" fill="#7dd3fc">HIGH</text>
+    <text x="725" y="71" text-anchor="middle" class="mono" fill="#34d399">CRITICAL</text>
+    <text x="840" y="71" text-anchor="middle" class="mono" fill="#34d399">CRITICAL</text>
+
+    <!-- Row 2 -->
+    <rect x="2" y="88" width="892" height="44" class="row-odd"/>
+    <text x="20" y="115" class="txt-sub">Synthesizable SV, FSMs, FIFOs &amp; Pipelines</text>
+    <text x="335" y="115" text-anchor="middle" class="mono" fill="#34d399">CRITICAL</text>
+    <text x="465" y="115" text-anchor="middle" class="mono" fill="#f59e0b">MEDIUM</text>
+    <text x="595" y="115" text-anchor="middle" class="mono" fill="#7dd3fc">HIGH</text>
+    <text x="725" y="115" text-anchor="middle" class="mono" fill="#34d399">CRITICAL</text>
+    <text x="840" y="115" text-anchor="middle" class="mono" fill="#f59e0b">MEDIUM</text>
+
+    <!-- Row 3 -->
+    <rect x="2" y="132" width="892" height="44" class="row-even"/>
+    <text x="20" y="159" class="txt-sub">CDC / RDC, Synchronizers &amp; Async FIFO</text>
+    <text x="335" y="159" text-anchor="middle" class="mono" fill="#34d399">CRITICAL</text>
+    <text x="465" y="159" text-anchor="middle" class="mono" fill="#7dd3fc">HIGH</text>
+    <text x="595" y="159" text-anchor="middle" class="mono" fill="#7dd3fc">HIGH</text>
+    <text x="725" y="159" text-anchor="middle" class="mono" fill="#34d399">CRITICAL</text>
+    <text x="840" y="159" text-anchor="middle" class="mono" fill="#7dd3fc">HIGH</text>
+
+    <!-- Row 4 -->
+    <rect x="2" y="176" width="892" height="44" class="row-odd"/>
+    <text x="20" y="203" class="txt-sub">SV OOP, Randomization, UVM &amp; Coverage</text>
+    <text x="335" y="203" text-anchor="middle" class="mono" fill="#94a3b8">BASICS</text>
+    <text x="465" y="203" text-anchor="middle" class="mono" fill="#34d399">CRITICAL</text>
+    <text x="595" y="203" text-anchor="middle" class="mono" fill="#94a3b8">BASICS</text>
+    <text x="725" y="203" text-anchor="middle" class="mono" fill="#f59e0b">MEDIUM</text>
+    <text x="840" y="203" text-anchor="middle" class="mono" fill="#f59e0b">MEDIUM</text>
+
+    <!-- Row 5 -->
+    <rect x="2" y="220" width="892" height="44" class="row-even"/>
+    <text x="20" y="247" class="txt-sub">SVA Assertions, Model Checking &amp; Proofs</text>
+    <text x="335" y="247" text-anchor="middle" class="mono" fill="#f59e0b">MEDIUM</text>
+    <text x="465" y="247" text-anchor="middle" class="mono" fill="#7dd3fc">HIGH</text>
+    <text x="595" y="247" text-anchor="middle" class="mono" fill="#34d399">CRITICAL</text>
+    <text x="725" y="247" text-anchor="middle" class="mono" fill="#94a3b8">BASICS</text>
+    <text x="840" y="247" text-anchor="middle" class="mono" fill="#94a3b8">BASICS</text>
+
+    <!-- Row 6 -->
+    <rect x="2" y="264" width="892" height="66" class="row-odd"/>
+    <text x="20" y="288" class="txt-sub">Role Specialist Round</text>
+    <text x="20" y="308" class="txt-sub" fill="#94a3b8">(Protocols / Scan / Vivado / Debug)</text>
+    <text x="335" y="294" text-anchor="middle" class="mono" fill="#7dd3fc">AXI / UPF /</text>
+    <text x="335" y="310" class="mono" fill="#7dd3fc">Arbiters</text>
+    <text x="465" y="294" text-anchor="middle" class="mono" fill="#6ee7b7">AXI / Score-</text>
+    <text x="465" y="310" text-anchor="middle" class="mono" fill="#6ee7b7">board / GLS</text>
+    <text x="595" y="294" text-anchor="middle" class="mono" fill="#d8b4fe">Liveness /</text>
+    <text x="595" y="310" text-anchor="middle" class="mono" fill="#d8b4fe">Abstractions</text>
+    <text x="725" y="294" text-anchor="middle" class="mono" fill="#fcd34d">XDC / BRAM /</text>
+    <text x="725" y="310" text-anchor="middle" class="mono" fill="#fcd34d">ILA Bring-Up</text>
+    <text x="840" y="294" text-anchor="middle" class="mono" fill="#fda4af">Scan / ATPG /</text>
+    <text x="840" y="310" text-anchor="middle" class="mono" fill="#fda4af">MBIST / JTAG</text>
+  </g>
+
+  <!-- Bottom Advice Banner -->
+  <g transform="translate(32, 426)">
+    <rect x="0" y="0" width="896" height="72" class="panel" stroke="#34d399" fill="#0b1f1a"/>
+    <text x="18" y="26" class="txt-hdr" fill="#34d399">Universal Round Across ALL Roles: Linux CLI + Python/Bash Automation + Waveform Triage</text>
+    <text x="18" y="48" class="txt-sub">Expect live debugging questions: reading log failures, tracing an X or CDC violation on a waveform, or parsing regression output in Python/Bash.</text>
+  </g>
+</svg>

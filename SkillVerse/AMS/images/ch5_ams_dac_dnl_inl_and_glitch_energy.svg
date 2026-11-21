@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 410" width="920" height="410">
+  <defs>
+    <style>
+      .bg { fill: #0f172a; }
+      .panel { fill: #1e293b; stroke: #334155; stroke-width: 1.5; rx: 10; ry: 10; }
+      .box { fill: #0f172a; stroke: #334155; stroke-width: 1.2; rx: 6; ry: 6; }
+      .title { font-family: 'Segoe UI', Arial, sans-serif; font-size: 18px; font-weight: 700; fill: #f8fafc; text-anchor: middle; }
+      .sub { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; fill: #94a3b8; text-anchor: middle; }
+      .hdr { font-family: 'Segoe UI', Arial, sans-serif; font-size: 13.5px; font-weight: 700; }
+      .mono { font-family: Consolas, 'Courier New', monospace; font-size: 10.5px; fill: #e2e8f0; }
+      .note { font-family: 'Segoe UI', Arial, sans-serif; font-size: 11px; fill: #cbd5e1; }
+      .grid { stroke: #334155; stroke-width: 0.8; stroke-dasharray: 3,3; }
+    </style>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="920" height="410" />
+  <text class="title" x="460" y="28">DAC Static Linearity (DNL &amp; INL) and Dynamic Major-Carry Glitch Energy</text>
+  <text class="sub" x="460" y="48">End-Point Linearity Errors vs. Binary Transition Skew Spikes Resolved by Thermometer Decoding</text>
+
+  <!-- Left Panel: Transfer Curve (DNL/INL) -->
+  <rect class="panel" x="20" y="64" width="440" height="328" />
+  <text class="hdr" x="38" y="88" fill="#38bdf8">1. Static Linearity: DNL, INL &amp; Non-Monotonicity</text>
+  <rect class="box" x="34" y="100" width="412" height="214" />
+
+  <!-- Axes + ideal line -->
+  <line x1="74" y1="116" x2="74" y2="286" stroke="#64748b" stroke-width="1.3" />
+  <line x1="74" y1="286" x2="424" y2="286" stroke="#64748b" stroke-width="1.3" />
+  <line x1="74" y1="286" x2="404" y2="128" stroke="#475569" stroke-width="1.4" stroke-dasharray="4,3" />
+  <text class="mono" x="248" y="302" text-anchor="middle">Input Code (000 ... 111)</text>
+
+  <!-- Real staircase with DNL error & non-monotonic dip -->
+  <circle cx="80" cy="278" r="3.5" fill="#34d399" />
+  <circle cx="126" cy="256" r="3.5" fill="#34d399" />
+  <circle cx="172" cy="222" r="3.5" fill="#f59e0b" />
+  <circle cx="218" cy="232" r="3.5" fill="#f87171" />
+  <circle cx="264" cy="190" r="3.5" fill="#38bdf8" />
+  <circle cx="310" cy="172" r="3.5" fill="#38bdf8" />
+  <circle cx="356" cy="150" r="3.5" fill="#34d399" />
+  <circle cx="402" cy="130" r="3.5" fill="#34d399" />
+  <polyline points="80,278 126,256 172,222 218,232 264,190 310,172 356,150 402,130" fill="none" stroke="#38bdf8" stroke-width="2" />
+
+  <!-- Annotations -->
+  <line x1="218" y1="232" x2="218" y2="217" stroke="#f87171" stroke-width="1.6" />
+  <text class="mono" x="194" y="252" fill="#fca5a5" font-size="9.5">DNL &lt; -1 LSB</text>
+  <text class="mono" x="194" y="264" fill="#fca5a5" font-size="9.5">(Non-monotonic!)</text>
+  <text class="mono" x="148" y="198" fill="#fcd34d" font-size="9.5">INL = Max Dev.</text>
+  <line x1="172" y1="222" x2="172" y2="239" stroke="#f59e0b" stroke-width="1.4" />
+
+  <rect class="box" x="34" y="322" width="412" height="56" />
+  <text class="mono" x="46" y="342" fill="#7dd3fc">DNL[k] = (V[k] - V[k-1] - 1 LSB) / 1 LSB</text>
+  <text class="mono" x="46" y="361" fill="#6ee7b7">INL[k] = Sum(DNL[1..k])  |  Monotonic if DNL &gt; -1 LSB</text>
+
+  <!-- Right Panel: Major Carry Glitch -->
+  <rect class="panel" x="476" y="64" width="424" height="328" />
+  <text class="hdr" x="494" y="88" fill="#f87171">2. Dynamic Major-Carry Glitch (0111 -&gt; 1000)</text>
+
+  <!-- Binary Weighted DAC Glitch -->
+  <rect class="box" x="490" y="100" width="396" height="106" stroke="#f87171" />
+  <text class="mono" x="502" y="120" fill="#fca5a5">Binary DAC: MSB turns ON slower than LSBs turn OFF</text>
+  <polyline points="514,174 600,174 614,192 642,192 652,158 840,158" fill="none" stroke="#f87171" stroke-width="2.4" />
+  <rect x="606" y="174" width="42" height="18" fill="rgba(248,113,113,0.22)" />
+  <text class="mono" x="628" y="148" fill="#fca5a5" text-anchor="middle" font-size="9.5">Code 0000 Spike! (Q_glitch = V*dt)</text>
+
+  <!-- Thermometer Coded DAC Smooth -->
+  <rect class="box" x="490" y="216" width="396" height="98" stroke="#34d399" />
+  <text class="mono" x="502" y="236" fill="#6ee7b7">Thermometer DAC: One additional unit cell turns ON (0 turn-OFF)</text>
+  <polyline points="514,288 616,288 632,270 840,270" fill="none" stroke="#34d399" stroke-width="2.4" />
+  <text class="mono" x="740" y="256" fill="#6ee7b7" text-anchor="middle" font-size="9.5">10x Lower Glitch &amp; Intrinsic Monotonicity!</text>
+
+  <!-- SFDR formula -->
+  <rect class="box" x="490" y="322" width="396" height="56" />
+  <text class="mono" x="502" y="342" fill="#fcd34d">Timing Skew + Glitch Energy -&gt; Even/Odd Spurs</text>
+  <text class="note" x="502" y="361">Use latched switch drivers + Thermometer MSBs for high SFDR.</text>
+</svg>

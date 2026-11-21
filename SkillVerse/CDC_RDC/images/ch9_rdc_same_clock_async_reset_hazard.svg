@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 390" width="920" height="390">
+  <defs>
+    <style>
+      .bg { fill: #0f172a; }
+      .panel { fill: #1e293b; stroke-width: 1.5; rx: 10; ry: 10; }
+      .box { fill: #0f172a; stroke: #334155; stroke-width: 1.2; rx: 6; ry: 6; }
+      .ff { fill: #172554; stroke: #f87171; stroke-width: 1.8; rx: 6; ry: 6; }
+      .title { font-family: 'Segoe UI', Arial, sans-serif; font-size: 18px; font-weight: 700; fill: #f8fafc; text-anchor: middle; }
+      .subtitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; fill: #94a3b8; text-anchor: middle; }
+      .ptitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 14px; font-weight: 700; }
+      .mono { font-family: Consolas, 'Courier New', monospace; font-size: 10.8px; fill: #e2e8f0; }
+      .note { font-family: 'Segoe UI', Arial, sans-serif; font-size: 10.5px; fill: #94a3b8; }
+      .badge { font-family: Consolas, 'Courier New', monospace; font-size: 11px; font-weight: 700; text-anchor: middle; }
+    </style>
+    <marker id="arrRed" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#f87171" />
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="920" height="390" />
+  <text class="title" x="460" y="28">Reset Domain Crossing (RDC) Hazard on a Single Synchronous Clock</text>
+  <text class="subtitle" x="460" y="48">Why Two Flip-Flops Sharing the Exact Same Clock Still Go Metastable Under Asynchronous Reset Assertion</text>
+
+  <!-- Schematic Banner -->
+  <rect class="panel" x="20" y="64" width="880" height="156" stroke="#f87171" />
+  <text class="ptitle" x="36" y="88" fill="#f87171">The Hidden Single-Clock RDC Trap (STA Passes Cleanly, Silicon Fails!)</text>
+
+  <rect class="ff" x="62" y="106" width="166" height="66" stroke="#f59e0b" />
+  <text class="badge" x="145" y="128" fill="#fcd34d">FF_SRC (rst_a_n)</text>
+  <text class="note" x="145" y="145" text-anchor="middle">Async Reset: rst_a_n</text>
+  <text class="mono" x="145" y="161" text-anchor="middle" fill="#38bdf8">CLK: sys_clk</text>
+
+  <line x1="228" y1="139" x2="366" y2="139" stroke="#f87171" stroke-width="2.2" marker-end="url(#arrRed)" />
+  <text class="mono" x="297" y="128" text-anchor="middle" fill="#fca5a5">D = FF_SRC.Q</text>
+  <line x1="297" y1="98" x2="297" y2="180" stroke="#f87171" stroke-width="1.5" stroke-dasharray="5,4" />
+  <text class="mono" x="297" y="196" text-anchor="middle" fill="#f87171">RDC Boundary!</text>
+
+  <rect class="ff" x="370" y="106" width="184" height="66" stroke="#34d399" />
+  <text class="badge" x="462" y="128" fill="#6ee7b7">FF_DST (rst_b_n)</text>
+  <text class="note" x="462" y="145" text-anchor="middle">Reset: rst_b_n = 1 (ACTIVE!)</text>
+  <text class="mono" x="462" y="161" text-anchor="middle" fill="#38bdf8">CLK: sys_clk (SAME CLK!)</text>
+
+  <rect class="box" x="582" y="104" width="300" height="96" stroke="#a78bfa" />
+  <text class="mono" x="594" y="124" fill="#c4b5fd">Why Traditional CDC Misses This:</text>
+  <text class="note" x="594" y="143">- Both flops share identical sys_clk!</text>
+  <text class="note" x="594" y="159">- CDC tools see 0 clock crossings.</text>
+  <text class="note" x="594" y="175">- STA assumes FF_SRC updates ONLY on</text>
+  <text class="note" x="594" y="191">  sys_clk edges—ignoring async rst_a_n!</text>
+
+  <!-- Bottom Waveform -->
+  <rect class="panel" x="20" y="234" width="880" height="140" stroke="#f59e0b" />
+  <text class="ptitle" x="36" y="258" fill="#f59e0b">How Asynchronous Reset Assertion Creates a Setup/Hold Violation at FF_DST</text>
+
+  <rect class="box" x="36" y="270" width="848" height="92" />
+  <text class="mono" x="48" y="290" fill="#38bdf8">sys_clk      : ______|_____________________|___________________</text>
+  <text class="mono" x="48" y="310" fill="#fcd34d">rst_a_n      : ----------------------------\___________________  &lt;-- Async Assert (Module SW Reset!)</text>
+  <text class="mono" x="48" y="330" fill="#fca5a5">FF_SRC.Q (D) : =====================1======\0000000000000000000  &lt;-- Drops straight inside FF_DST [t_su, t_h]!</text>
+  <text class="mono" x="48" y="350" fill="#f87171">FF_DST.Q     : ============================XXXXXXXXXXX===&gt; META! (Even synchronous rst_a_n? No, only ASYNC!)</text>
+</svg>

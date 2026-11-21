@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 400" width="920" height="400">
+  <defs>
+    <style>
+      .bg { fill: #0f172a; }
+      .panel { fill: #1e293b; stroke-width: 1.5; rx: 10; ry: 10; }
+      .box { fill: #0f172a; stroke: #334155; stroke-width: 1.2; rx: 6; ry: 6; }
+      .title { font-family: 'Segoe UI', Arial, sans-serif; font-size: 18px; font-weight: 700; fill: #f8fafc; text-anchor: middle; }
+      .subtitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; fill: #94a3b8; text-anchor: middle; }
+      .ptitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 14px; font-weight: 700; }
+      .mono { font-family: Consolas, 'Courier New', monospace; font-size: 10.6px; fill: #e2e8f0; }
+      .note { font-family: 'Segoe UI', Arial, sans-serif; font-size: 10.3px; fill: #94a3b8; }
+      .badge { font-family: Consolas, 'Courier New', monospace; font-size: 11px; font-weight: 700; text-anchor: middle; }
+    </style>
+    <marker id="arrSky" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#38bdf8" />
+    </marker>
+    <marker id="arrRed" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#f87171" />
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="920" height="400" />
+  <text class="title" x="460" y="28">Root-Cause Triage Decision Tree for GLS Timing Violations</text>
+  <text class="subtitle" x="460" y="48">Systematically Classifying $setuphold, $recrem, and $width Failures into CDC Syncs, Testbench, or Real SDC Bugs</text>
+
+  <!-- Root Alert -->
+  <rect class="box" x="275" y="64" width="370" height="42" stroke="#f87171" />
+  <text class="badge" x="460" y="83" fill="#fca5a5">Timing Violation Reported at Instance U_FF</text>
+  <text class="note" x="460" y="99" text-anchor="middle">(Inspect FIRST violation timestamp in `gls.log`)</text>
+
+  <!-- Branches -->
+  <line x1="350" y1="106" x2="135" y2="136" stroke="#38bdf8" stroke-width="1.8" marker-end="url(#arrSky)" />
+  <line x1="460" y1="106" x2="460" y2="136" stroke="#38bdf8" stroke-width="1.8" marker-end="url(#arrSky)" />
+  <line x1="570" y1="106" x2="785" y2="136" stroke="#f87171" stroke-width="1.8" marker-end="url(#arrRed)" />
+
+  <!-- Column 1: CDC / Reset Sync Flop -->
+  <rect class="panel" x="20" y="140" width="276" height="240" stroke="#34d399" />
+  <text class="ptitle" x="36" y="164" fill="#34d399">Case A: Stage-1 Sync Flop?</text>
+  <rect class="box" x="34" y="176" width="248" height="72" />
+  <text class="note" x="44" y="196">Is `U_FF` an intentional CDC</text>
+  <text class="note" x="44" y="212">`FF_SYNC_1` or `reset_sync_bridge`</text>
+  <text class="note" x="44" y="228">Stage-1 cell (`async_rst_n` CLR)?</text>
+
+  <rect class="box" x="34" y="258" width="248" height="108" stroke="#34d399" />
+  <text class="badge" x="158" y="278" fill="#6ee7b7">Expected Async Crossing</text>
+  <text class="note" x="44" y="298">Disable notifier X-gen ONLY on</text>
+  <text class="note" x="44" y="314">this instance via explicit `tfile`!</text>
+  <text class="mono" x="44" y="336" fill="#7dd3fc">Verify Stage-2 FF_SYNC_2 keeps</text>
+  <text class="mono" x="44" y="352" fill="#7dd3fc">timing checks 100% ENABLED!</text>
+
+  <!-- Column 2: Testbench Drive Timing -->
+  <rect class="panel" x="322" y="140" width="276" height="240" stroke="#f59e0b" />
+  <text class="ptitle" x="338" y="164" fill="#f59e0b">Case B: Primary Input Pin?</text>
+  <rect class="box" x="336" y="176" width="248" height="72" />
+  <text class="note" x="346" y="196">Does the violating wire come</text>
+  <text class="note" x="346" y="212">from chip I/O pads (`in_data`,</text>
+  <text class="note" x="346" y="228">`ext_rst_n`) driven by UVM driver?</text>
+
+  <rect class="box" x="336" y="258" width="248" height="108" stroke="#f59e0b" />
+  <text class="badge" x="460" y="278" fill="#fcd34d">Testbench Timing Skew</text>
+  <text class="note" x="346" y="298">RTL drivers toggle at `@(posedge clk)`</text>
+  <text class="note" x="346" y="314">with 0ps hold margin vs CTS delay!</text>
+  <text class="mono" x="346" y="336" fill="#fcd34d">Fix: Skew TB driving via clocking</text>
+  <text class="mono" x="346" y="352" fill="#fcd34d">block `output #1ns;` matching SDC!</text>
+
+  <!-- Column 3: Real Design / SDC Timing Bug -->
+  <rect class="panel" x="624" y="140" width="276" height="240" stroke="#f87171" />
+  <text class="ptitle" x="640" y="164" fill="#f87171">Case C: Internal Sync Path!</text>
+  <rect class="box" x="638" y="176" width="248" height="72" />
+  <text class="note" x="648" y="196">Both `FF_LAUNCH` &amp; `U_FF` sit in</text>
+  <text class="note" x="648" y="212">the SAME clock or supposed to be</text>
+  <text class="note" x="648" y="228">closed cleanly in STA!</text>
+
+  <rect class="box" x="638" y="258" width="248" height="108" stroke="#f87171" />
+  <text class="badge" x="762" y="278" fill="#fca5a5">TRUE SILICON / SDC BUG!</text>
+  <text class="note" x="648" y="298">1. Broken `set_false_path` / MCP!</text>
+  <text class="note" x="648" y="314">2. Missing generated clock in SDC</text>
+  <text class="note" x="648" y="330">3. Corrupted DFT / CTS clock skew</text>
+  <text class="note" x="648" y="352" fill="#fca5a5">HALT TAPE-OUT -&gt; Fix RTL or SDC!</text>
+</svg>

@@ -1,0 +1,95 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 410" width="920" height="410">
+  <defs>
+    <style>
+      .bg { fill: #0f172a; }
+      .panel { fill: #1e293b; stroke: #334155; stroke-width: 1.5; rx: 10; ry: 10; }
+      .box { fill: #0f172a; stroke: #334155; stroke-width: 1.2; rx: 6; ry: 6; }
+      .title { font-family: 'Segoe UI', Arial, sans-serif; font-size: 18px; font-weight: 700; fill: #f8fafc; text-anchor: middle; }
+      .sub { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; fill: #94a3b8; text-anchor: middle; }
+      .hdr { font-family: 'Segoe UI', Arial, sans-serif; font-size: 13.5px; font-weight: 700; }
+      .mono { font-family: Consolas, 'Courier New', monospace; font-size: 10.5px; fill: #e2e8f0; }
+      .note { font-family: 'Segoe UI', Arial, sans-serif; font-size: 11px; fill: #cbd5e1; }
+    </style>
+    <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8" />
+    </marker>
+    <marker id="arr-g" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#34d399" />
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="920" height="410" />
+  <text class="title" x="460" y="28">Systematic FPGA Timing Closure Triage &amp; Root-Cause Decision Tree</text>
+  <text class="sub" x="460" y="48">Diagnosing `report_timing_summary` Before Touching Directives or Changing Tool Effort Blindly</text>
+
+  <!-- Step 1 Root Box -->
+  <rect class="panel" x="280" y="64" width="360" height="54" stroke="#f87171" />
+  <text class="hdr" x="460" y="88" fill="#fca5a5" text-anchor="middle">Setup Violation (`WNS &lt; 0` in Implemented Design)</text>
+  <text class="note" x="460" y="106" text-anchor="middle">Inspect `report_timing -max_paths 20`: What Dominates Data Path?</text>
+
+  <!-- 4 Branches -->
+  <line x1="340" y1="118" x2="115" y2="148" stroke="#38bdf8" stroke-width="1.6" marker-end="url(#arr)" />
+  <line x1="415" y1="118" x2="345" y2="148" stroke="#38bdf8" stroke-width="1.6" marker-end="url(#arr)" />
+  <line x1="505" y1="118" x2="575" y2="148" stroke="#38bdf8" stroke-width="1.6" marker-end="url(#arr)" />
+  <line x1="580" y1="118" x2="805" y2="148" stroke="#38bdf8" stroke-width="1.6" marker-end="url(#arr)" />
+
+  <!-- Column 1: High Logic Levels -->
+  <rect class="panel" x="20" y="150" width="206" height="240" stroke="#38bdf8" />
+  <text class="mono" x="123" y="172" fill="#7dd3fc" text-anchor="middle" font-weight="bold">Case A: Too Many Levels</text>
+  <text class="note" x="123" y="190" text-anchor="middle">(Logic Levels &gt; 8-12)</text>
+  <rect class="box" x="32" y="204" width="182" height="172" />
+  <text class="mono" x="42" y="224" fill="#6ee7b7">RTL / Synth Fixes:</text>
+  <text class="note" x="42" y="244">- Pipeline deep cones!</text>
+  <text class="note" x="42" y="261">- Pack DSP48 `MREG`/`PREG`</text>
+  <text class="note" x="42" y="278">  &amp; BRAM `DOA_REG=1`</text>
+  <text class="note" x="42" y="295">- Replace `case` priority</text>
+  <text class="note" x="42" y="311">  trees with parallel MUX</text>
+  <text class="note" x="42" y="328">- Add Multi-Cycle Path</text>
+  <text class="note" x="42" y="344">  (`MCP`) ONLY if valid!</text>
+  <text class="mono" x="42" y="365" fill="#fcd34d">- Retiming (`-retiming`)</text>
+
+  <!-- Column 2: High Fanout / Net Delay -->
+  <rect class="panel" x="240" y="150" width="212" height="240" stroke="#f59e0b" />
+  <text class="mono" x="346" y="172" fill="#fcd34d" text-anchor="middle" font-weight="bold">Case B: High Net Delay</text>
+  <text class="note" x="346" y="190" text-anchor="middle">(Net &gt; 65% of Path Delay)</text>
+  <rect class="box" x="252" y="204" width="188" height="172" />
+  <text class="mono" x="262" y="224" fill="#fcd34d">Fanout &amp; Pblock Fixes:</text>
+  <text class="note" x="262" y="244">- Check Fanout &gt; 500!</text>
+  <text class="note" x="262" y="261">  (Sync `rst`, `valid`, `state`)</text>
+  <text class="note" x="262" y="278">- Replicate registers via</text>
+  <text class="mono" x="262" y="295" fill="#7dd3fc">  MAX_FANOUT = 32-64</text>
+  <text class="note" x="262" y="314">  or `phys_opt_design`</text>
+  <text class="note" x="262" y="331">- Floorplan SLR / Block</text>
+  <text class="note" x="262" y="347">  via Pblock constraints</text>
+  <text class="mono" x="262" y="365" fill="#6ee7b7">- Add SLL crossing regs</text>
+
+  <!-- Column 3: Clock Skew / False Crossing -->
+  <rect class="panel" x="466" y="150" width="212" height="240" stroke="#a78bfa" />
+  <text class="mono" x="572" y="172" fill="#c4b5fd" text-anchor="middle" font-weight="bold">Case C: Inter-Clock Path</text>
+  <text class="note" x="572" y="190" text-anchor="middle">(Different Launch/Cap Clks)</text>
+  <rect class="box" x="478" y="204" width="188" height="172" />
+  <text class="mono" x="488" y="224" fill="#c4b5fd">Constraint &amp; CDC Check:</text>
+  <text class="note" x="488" y="244">- Are clocks genuinely</text>
+  <text class="note" x="488" y="261">  asynchronous (2 PLLs)?</text>
+  <text class="note" x="488" y="278">- Verify proper 2-FF/FIFO</text>
+  <text class="note" x="488" y="295">  synchronizer exists first!</text>
+  <text class="note" x="488" y="314">- Constrain CDC via</text>
+  <text class="mono" x="488" y="331" fill="#6ee7b7">  -datapath_only (NOT</text>
+  <text class="mono" x="488" y="347" fill="#fca5a5">  blind set_false_path!)</text>
+  <text class="note" x="488" y="365">- Match `CLOCK_DELAY_GROUP`</text>
+
+  <!-- Column 4: Congestion / Over-Utilization -->
+  <rect class="panel" x="692" y="150" width="208" height="240" stroke="#34d399" />
+  <text class="mono" x="796" y="172" fill="#6ee7b7" text-anchor="middle" font-weight="bold">Case D: Congestion (&gt;85%)</text>
+  <text class="note" x="796" y="190" text-anchor="middle">(Detours &amp; High SLR Load)</text>
+  <rect class="box" x="704" y="204" width="184" height="172" />
+  <text class="mono" x="714" y="224" fill="#6ee7b7">Architectural Fixes:</text>
+  <text class="note" x="714" y="244">- Shrink Crossbars (use</text>
+  <text class="note" x="714" y="261">  AXI-Stream / NoC ring)</text>
+  <text class="note" x="714" y="278">- Run `report_design_analysis`</text>
+  <text class="note" x="714" y="295">  &amp; `report_qor_suggestions`</text>
+  <text class="note" x="714" y="314">- Try `Congestion` /</text>
+  <text class="note" x="714" y="331">  `Explore` directive ONLY</text>
+  <text class="note" x="714" y="347">  for minor &lt;0.3ns miss!</text>
+  <text class="mono" x="714" y="365" fill="#fcd34d">- Move large LUTRAM-&gt;BRAM</text>
+</svg>

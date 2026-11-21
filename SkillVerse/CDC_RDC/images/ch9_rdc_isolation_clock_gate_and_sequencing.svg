@@ -1,0 +1,107 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 400" width="920" height="400">
+  <defs>
+    <style>
+      .bg { fill: #0f172a; }
+      .panel { fill: #1e293b; stroke-width: 1.5; rx: 10; ry: 10; }
+      .box { fill: #0f172a; stroke: #334155; stroke-width: 1.2; rx: 6; ry: 6; }
+      .ff { fill: #172554; stroke: #38bdf8; stroke-width: 1.5; rx: 5; ry: 5; }
+      .title { font-family: 'Segoe UI', Arial, sans-serif; font-size: 18px; font-weight: 700; fill: #f8fafc; text-anchor: middle; }
+      .subtitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; fill: #94a3b8; text-anchor: middle; }
+      .ptitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 13.5px; font-weight: 700; }
+      .mono { font-family: Consolas, 'Courier New', monospace; font-size: 10.6px; fill: #e2e8f0; }
+      .note { font-family: 'Segoe UI', Arial, sans-serif; font-size: 10.2px; fill: #94a3b8; }
+      .badge { font-family: Consolas, 'Courier New', monospace; font-size: 10.5px; font-weight: 700; text-anchor: middle; }
+    </style>
+    <marker id="arrGreen" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L6,3 L0,6 Z" fill="#34d399" />
+    </marker>
+    <marker id="arrSky" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L6,3 L0,6 Z" fill="#38bdf8" />
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="920" height="400" />
+  <text class="title" x="460" y="28">Three Proven Hardware Techniques to Resolve Reset Domain Crossings</text>
+  <text class="subtitle" x="460" y="48">Eliminating Asynchronous Reset Metastability via RDC Isolation, Destination Clock Gating, and Synchronous Resets</text>
+
+  <!-- Column 1: RDC Isolation / Clamping -->
+  <rect class="panel" x="20" y="64" width="280" height="316" stroke="#34d399" />
+  <text class="ptitle" x="34" y="88" fill="#34d399">1. RDC Isolation (Qualifier)</text>
+
+  <rect class="ff" x="34" y="106" width="84" height="50" stroke="#f59e0b" />
+  <text class="badge" x="76" y="126" fill="#fcd34d">FF_SRC</text>
+  <text class="note" x="76" y="143" text-anchor="middle">rst_a_n</text>
+
+  <line x1="118" y1="131" x2="142" y2="131" stroke="#f87171" stroke-width="1.6" />
+
+  <rect class="box" x="146" y="108" width="56" height="46" stroke="#34d399" />
+  <text class="badge" x="174" y="128" fill="#6ee7b7">CLAMP</text>
+  <text class="note" x="174" y="144" text-anchor="middle">&amp; ~iso</text>
+
+  <line x1="202" y1="131" x2="218" y2="131" stroke="#34d399" stroke-width="1.6" marker-end="url(#arrGreen)" />
+
+  <rect class="ff" x="222" y="106" width="64" height="50" stroke="#34d399" />
+  <text class="badge" x="254" y="126" fill="#6ee7b7">DST</text>
+  <text class="note" x="254" y="143" text-anchor="middle">rst_b_n</text>
+
+  <rect class="box" x="34" y="172" width="252" height="192" />
+  <text class="mono" x="44" y="192" fill="#6ee7b7">How It Works:</text>
+  <text class="note" x="44" y="210">Assert rdc_iso_en=1 cleanly ON</text>
+  <text class="note" x="44" y="226">AON/sync clk BEFORE asserting</text>
+  <text class="note" x="44" y="242">async rst_a_n!</text>
+  <text class="note" x="44" y="264" fill="#e2e8f0">While rst_a_n resets FF_SRC,</text>
+  <text class="note" x="44" y="280" fill="#e2e8f0">the clamp freezes DST's D pin</text>
+  <text class="note" x="44" y="296" fill="#e2e8f0">at safe 0/1 with zero edges.</text>
+  <text class="mono" x="44" y="324" fill="#7dd3fc">Best for: Subsystem soft-resets</text>
+  <text class="mono" x="44" y="341" fill="#7dd3fc">over AXI/APB bridges.</text>
+
+  <!-- Column 2: Clock Gating / Capture Disable -->
+  <rect class="panel" x="320" y="64" width="280" height="316" stroke="#38bdf8" />
+  <text class="ptitle" x="334" y="88" fill="#38bdf8">2. Disable Capture / Gate CLK</text>
+
+  <rect class="ff" x="334" y="106" width="88" height="50" stroke="#f59e0b" />
+  <text class="badge" x="378" y="126" fill="#fcd34d">FF_SRC</text>
+  <text class="note" x="378" y="143" text-anchor="middle">rst_a_n</text>
+
+  <line x1="422" y1="131" x2="490" y2="131" stroke="#38bdf8" stroke-width="1.6" marker-end="url(#arrSky)" />
+
+  <rect class="ff" x="494" y="106" width="90" height="50" stroke="#38bdf8" />
+  <text class="badge" x="539" y="126" fill="#7dd3fc">FF_DST</text>
+  <text class="note" x="539" y="143" text-anchor="middle">ICG stops clk</text>
+
+  <rect class="box" x="334" y="172" width="252" height="192" />
+  <text class="mono" x="344" y="192" fill="#7dd3fc">How It Works:</text>
+  <text class="note" x="344" y="210">Either gate DST's clock via ICG</text>
+  <text class="note" x="344" y="226">(`clk_en=0`) OR hold DST flop</text>
+  <text class="note" x="344" y="242">enable (`en=0`) across rst_a_n.</text>
+  <text class="note" x="344" y="264" fill="#e2e8f0">Because FF_DST never clocks</text>
+  <text class="note" x="344" y="280" fill="#e2e8f0">while FF_SRC resets, zero</text>
+  <text class="note" x="344" y="296" fill="#e2e8f0">metastability can enter!</text>
+  <text class="mono" x="344" y="324" fill="#fcd34d">Warning: Only blocks DST! Ensure</text>
+  <text class="mono" x="344" y="341" fill="#fcd34d">combo fanout doesn't glitch ICG!</text>
+
+  <!-- Column 3: Reset Sequencing OR Sync Reset -->
+  <rect class="panel" x="620" y="64" width="280" height="316" stroke="#a78bfa" />
+  <text class="ptitle" x="634" y="88" fill="#a78bfa">3. Sync Reset / 2-FF Sync</text>
+
+  <rect class="ff" x="634" y="106" width="84" height="50" stroke="#a78bfa" />
+  <text class="badge" x="676" y="126" fill="#c4b5fd">SRC (Sync)</text>
+  <text class="note" x="676" y="143" text-anchor="middle">No async CLR</text>
+
+  <line x1="718" y1="131" x2="778" y2="131" stroke="#a78bfa" stroke-width="1.6" marker-end="url(#arrSky)" />
+
+  <rect class="ff" x="782" y="106" width="102" height="50" stroke="#34d399" />
+  <text class="badge" x="833" y="126" fill="#6ee7b7">DST (or 2FF)</text>
+  <text class="note" x="833" y="143" text-anchor="middle">Zero RDC!</text>
+
+  <rect class="box" x="634" y="172" width="252" height="192" />
+  <text class="mono" x="644" y="192" fill="#c4b5fd">Two Structural Alternatives:</text>
+  <text class="note" x="644" y="210">A. Use **Synchronous Reset** on</text>
+  <text class="note" x="644" y="226">   FF_SRC: Q only updates on clk!</text>
+  <text class="note" x="644" y="242">   (STA checks timing normally).</text>
+  <text class="note" x="644" y="264">B. **Reset Ordering**: Guarantee</text>
+  <text class="note" x="644" y="280">   rst_b_n asserts BEFORE rst_a_n</text>
+  <text class="note" x="644" y="296">   &amp; declare ordering in SGDC.</text>
+  <text class="note" x="644" y="324" fill="#6ee7b7">C. Or treat unknown cross like a</text>
+  <text class="note" x="644" y="341" fill="#6ee7b7">   true 2-FF CDC synchronizer.</text>
+</svg>

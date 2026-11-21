@@ -1,0 +1,119 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 540" width="960" height="540">
+  <defs>
+    <style>
+      .bg { fill: #080c14; }
+      .title { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 20px; fill: #f8fafc; }
+      .subtitle { font-family: 'Inter', system-ui, sans-serif; font-size: 13px; fill: #94a3b8; }
+      .panel { fill: #0f172a; stroke-width: 1.6; rx: 10px; }
+      .card { fill: #0b1120; stroke-width: 1.4; rx: 7px; }
+      .txt-hdr { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 13px; fill: #f8fafc; }
+      .txt-sub { font-family: 'Inter', system-ui, sans-serif; font-size: 11px; fill: #94a3b8; }
+      .mono { font-family: 'JetBrains Mono', Consolas, monospace; font-size: 10.5px; font-weight: 600; }
+      .edge { stroke-width: 2; fill: none; }
+    </style>
+    <marker id="arr-cyan" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8" />
+    </marker>
+    <marker id="arr-green" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#34d399" />
+    </marker>
+    <marker id="arr-amber" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#f59e0b" />
+    </marker>
+  </defs>
+
+  <rect width="960" height="540" class="bg" rx="14"/>
+  <text x="480" y="32" text-anchor="middle" class="title">Workflow Event Triggers &amp; Filtering Funnel</text>
+  <text x="480" y="52" text-anchor="middle" class="subtitle">How GitHub matches incoming repository events against branch, path, activity, and concurrency rules</text>
+
+  <!-- Column 1: Trigger Categories (x=32, y=80, w=275, h=430) -->
+  <g transform="translate(32, 80)">
+    <rect x="0" y="0" width="275" height="430" class="panel" stroke="#38bdf8"/>
+    <text x="16" y="26" class="mono" fill="#38bdf8">1. EVENT SOURCES</text>
+
+    <rect x="14" y="42" width="247" height="82" class="card" stroke="#38bdf8"/>
+    <text x="26" y="62" class="txt-hdr" fill="#38bdf8">Code &amp; PR Events</text>
+    <text x="26" y="80" class="mono" fill="#cbd5e1">push  |  pull_request</text>
+    <text x="26" y="96" class="mono" fill="#f43f5e">pull_request_target (careful!)</text>
+    <text x="26" y="112" class="txt-sub">PR types: opened, synchronize</text>
+
+    <rect x="14" y="136" width="247" height="82" class="card" stroke="#34d399"/>
+    <text x="26" y="156" class="txt-hdr" fill="#34d399">Manual &amp; Scheduled</text>
+    <text x="26" y="174" class="mono" fill="#cbd5e1">workflow_dispatch (UI/CLI)</text>
+    <text x="26" y="190" class="mono" fill="#cbd5e1">schedule: cron: "0 2 * * *"</text>
+    <text x="26" y="206" class="txt-sub">UTC cron; pauses after 60d idle</text>
+
+    <rect x="14" y="230" width="247" height="86" class="card" stroke="#a855f7"/>
+    <text x="26" y="250" class="txt-hdr" fill="#d8b4fe">Workflow &amp; Release Chaining</text>
+    <text x="26" y="268" class="mono" fill="#cbd5e1">workflow_call  (reusable)</text>
+    <text x="26" y="284" class="mono" fill="#cbd5e1">workflow_run   (post-CI)</text>
+    <text x="26" y="300" class="mono" fill="#cbd5e1">release: [published]</text>
+
+    <rect x="14" y="328" width="247" height="86" class="card" stroke="#f59e0b"/>
+    <text x="26" y="348" class="txt-hdr" fill="#fcd34d">External Webhooks &amp; Queue</text>
+    <text x="26" y="366" class="mono" fill="#cbd5e1">repository_dispatch</text>
+    <text x="26" y="382" class="mono" fill="#cbd5e1">merge_group (Merge Queue)</text>
+    <text x="26" y="398" class="txt-sub">Triggered via REST API or queue</text>
+  </g>
+
+  <path d="M 307 295 L 343 295" class="edge" stroke="#38bdf8" marker-end="url(#arr-cyan)"/>
+
+  <!-- Column 2: Filter Funnel (x=347, y=80, w=275, h=430) -->
+  <g transform="translate(347, 80)">
+    <rect x="0" y="0" width="275" height="430" class="panel" stroke="#f59e0b"/>
+    <text x="16" y="26" class="mono" fill="#f59e0b">2. FILTER &amp; GUARD FUNNEL</text>
+
+    <rect x="14" y="42" width="247" height="90" class="card" stroke="#f59e0b"/>
+    <text x="26" y="62" class="txt-hdr" fill="#fcd34d">Branch &amp; Tag Filters</text>
+    <text x="26" y="80" class="mono" fill="#cbd5e1">branches: [main, "release/*"]</text>
+    <text x="26" y="96" class="mono" fill="#cbd5e1">tags: ["v[0-9]+.[0-9]+.*"]</text>
+    <text x="26" y="114" class="txt-sub">Use branches-ignore OR branches</text>
+
+    <rect x="14" y="144" width="247" height="90" class="card" stroke="#f59e0b"/>
+    <text x="26" y="164" class="txt-hdr" fill="#fcd34d">Path Filters</text>
+    <text x="26" y="182" class="mono" fill="#cbd5e1">paths: ["rtl/**", "tb/**"]</text>
+    <text x="26" y="198" class="mono" fill="#cbd5e1">paths-ignore: ["**/*.md"]</text>
+    <text x="26" y="216" class="txt-sub">Skips CI on docs-only commits</text>
+
+    <rect x="14" y="246" width="247" height="84" class="card" stroke="#34d399"/>
+    <text x="26" y="266" class="txt-hdr" fill="#6ee7b7">Activity Types &amp; Commit Msg</text>
+    <text x="26" y="284" class="mono" fill="#cbd5e1">types: [opened, synchronize]</text>
+    <text x="26" y="300" class="mono" fill="#cbd5e1">[skip ci] in commit message</text>
+    <text x="26" y="316" class="txt-sub">Prevents redundant job runs</text>
+
+    <rect x="14" y="342" width="247" height="72" class="card" stroke="#a855f7"/>
+    <text x="26" y="362" class="txt-hdr" fill="#d8b4fe">Job-Level if: Conditions</text>
+    <text x="26" y="380" class="mono" fill="#cbd5e1">if: github.event_name == 'push'</text>
+    <text x="26" y="398" class="txt-sub">Evaluated before runner allocation</text>
+  </g>
+
+  <path d="M 622 295 L 658 295" class="edge" stroke="#34d399" marker-end="url(#arr-green)"/>
+
+  <!-- Column 3: Concurrency & Dispatch (x=662, y=80, w=266, h=430) -->
+  <g transform="translate(662, 80)">
+    <rect x="0" y="0" width="266" height="430" class="panel" stroke="#34d399"/>
+    <text x="16" y="26" class="mono" fill="#34d399">3. CONCURRENCY &amp; RUN</text>
+
+    <rect x="14" y="42" width="238" height="145" class="card" stroke="#38bdf8"/>
+    <text x="24" y="64" class="txt-hdr" fill="#38bdf8">PR Runs: Cancel Stale</text>
+    <text x="24" y="84" class="mono" fill="#7dd3fc">concurrency:</text>
+    <text x="24" y="100" class="mono" fill="#cbd5e1">  group: ci-${{ github.ref }}</text>
+    <text x="24" y="116" class="mono" fill="#34d399">  cancel-in-progress: true</text>
+    <text x="24" y="142" class="txt-sub">New push to same PR cancels</text>
+    <text x="24" y="158" class="txt-sub">obsolete in-flight simulation</text>
+    <text x="24" y="174" class="txt-sub">runs to save runner minutes.</text>
+
+    <rect x="14" y="200" width="238" height="145" class="card" stroke="#a855f7"/>
+    <text x="24" y="222" class="txt-hdr" fill="#d8b4fe">Prod Deploys: Queue FIFO</text>
+    <text x="24" y="242" class="mono" fill="#d8b4fe">concurrency:</text>
+    <text x="24" y="258" class="mono" fill="#cbd5e1">  group: deploy-prod</text>
+    <text x="24" y="274" class="mono" fill="#f43f5e">  cancel-in-progress: false</text>
+    <text x="24" y="300" class="txt-sub">Never kill a running prod</text>
+    <text x="24" y="316" class="txt-sub">deploy mid-flight; queue 1</text>
+    <text x="24" y="332" class="txt-sub">pending run safely instead.</text>
+
+    <rect x="14" y="358" width="238" height="56" class="card" stroke="#84cc16" fill="#121e14"/>
+    <text x="133" y="382" text-anchor="middle" class="txt-hdr" fill="#bef264">Run Dispatched</text>
+    <text x="133" y="400" text-anchor="middle" class="txt-sub">Runners allocated &amp; DAG starts</text>
+  </g>
+</svg>

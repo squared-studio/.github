@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 390" width="920" height="390">
+  <defs>
+    <style>
+      .bg { fill: #0f172a; }
+      .panel { fill: #1e293b; stroke-width: 1.5; rx: 10; ry: 10; }
+      .box { fill: #0f172a; stroke: #334155; stroke-width: 1.2; rx: 6; ry: 6; }
+      .title { font-family: 'Segoe UI', Arial, sans-serif; font-size: 18px; font-weight: 700; fill: #f8fafc; text-anchor: middle; }
+      .subtitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; fill: #94a3b8; text-anchor: middle; }
+      .ptitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 14px; font-weight: 700; }
+      .mono { font-family: Consolas, 'Courier New', monospace; font-size: 10.8px; fill: #e2e8f0; }
+      .note { font-family: 'Segoe UI', Arial, sans-serif; font-size: 10.3px; fill: #94a3b8; }
+      .badge { font-family: Consolas, 'Courier New', monospace; font-size: 11px; font-weight: 700; text-anchor: middle; }
+    </style>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="920" height="390" />
+  <text class="title" x="460" y="28">High-ROI GLS Regression Test Selection Strategy</text>
+  <text class="subtitle" x="460" y="48">Focusing Compute Budgets on Gate-Specific Timing, Initialization, Power, and DFT Risk Vectors Instead of Brute-Force UVM</text>
+
+  <!-- Left: Prioritized Tiers -->
+  <rect class="panel" x="20" y="64" width="520" height="308" stroke="#34d399" />
+  <text class="ptitle" x="36" y="88" fill="#34d399">Recommended 3-Tier GLS Regression Portfolio</text>
+
+  <rect class="box" x="36" y="102" width="488" height="72" stroke="#f87171" />
+  <text class="mono" x="48" y="121" fill="#fca5a5">Tier 1 (Mandatory Sign-Off - Zero-Delay + Max/Min SDF):</text>
+  <text class="note" x="48" y="139">- Cold POR Boot + Warm SW Resets (no blanket `initreg`, checks X-clean boot!)</text>
+  <text class="note" x="48" y="155">- PLL Lock, Dynamic Clock Mux Switching, and UPF Sleep/Wakeup Cycles</text>
+
+  <rect class="box" x="36" y="184" width="488" height="72" stroke="#f59e0b" />
+  <text class="mono" x="48" y="203" fill="#fcd34d">Tier 2 (SDC Exception &amp; Boundary Stress - Max + Min SDF):</text>
+  <text class="note" x="48" y="221">- Async FIFO / MCP Stress (validates `set_max_delay` &amp; `tfile` masking)</text>
+  <text class="note" x="48" y="237">- Targeted Multi-Cycle &amp; False-Path Boundary Exercisers (catches bad SDC!)</text>
+
+  <rect class="box" x="36" y="266" width="488" height="92" stroke="#38bdf8" />
+  <text class="mono" x="48" y="285" fill="#7dd3fc">Tier 3 (DFT, I/O &amp; Critical Performance Smoke):</text>
+  <text class="note" x="48" y="303">- Serial Chain Test + Sample Stuck-At &amp; At-Speed OCC ATPG + MBIST</text>
+  <text class="note" x="48" y="319">- High-Speed PHY Interfaces (DDR/PCIe/USB) at Max Target Frequency</text>
+  <text class="note" x="48" y="339" fill="#6ee7b7">Skip: 1,000+ redundant UVM constrained-random datapath seeds (use RTL!)</text>
+
+  <!-- Right: Speedup Checklist -->
+  <rect class="panel" x="556" y="64" width="344" height="308" stroke="#a78bfa" />
+  <text class="ptitle" x="572" y="88" fill="#a78bfa">Runtime Speedup Techniques</text>
+
+  <rect class="box" x="572" y="104" width="312" height="58" />
+  <text class="mono" x="582" y="123" fill="#c4b5fd">1. Multi-Core / Partitioned Sim</text>
+  <text class="note" x="582" y="141">Xcelium/VCS multi-core (`-j4`) cuts</text>
+  <text class="note" x="582" y="155">SDF runtime by 2x–3x cleanly.</text>
+
+  <rect class="box" x="572" y="170" width="312" height="60" />
+  <text class="mono" x="582" y="189" fill="#6ee7b7">2. Hybrid RTL + Gate Mix</text>
+  <text class="note" x="582" y="207">Keep large verified CPU/DRAM BFMs</text>
+  <text class="note" x="582" y="221">as RTL; run target subsystem in SDF!</text>
+
+  <rect class="box" x="572" y="238" width="312" height="58" />
+  <text class="mono" x="582" y="257" fill="#fcd34d">3. Minimize Wave Dumping!</text>
+  <text class="note" x="582" y="275">Dump only on failure OR trigger FSDB</text>
+  <text class="note" x="582" y="289">around failing window (cuts I/O 50%!)</text>
+
+  <rect class="box" x="572" y="304" width="312" height="54" stroke="#38bdf8" />
+  <text class="mono" x="582" y="323" fill="#7dd3fc">4. Compiled Cell Cache &amp; Fast Mem</text>
+  <text class="note" x="582" y="341">Use Behavioral SRAM + SDF vs flat array!</text>
+</svg>

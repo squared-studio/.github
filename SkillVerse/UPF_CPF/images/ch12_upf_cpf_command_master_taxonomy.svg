@@ -1,0 +1,94 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 460" width="1000" height="460">
+  <defs>
+    <style>
+      .bg { fill: #0f172a; }
+      .card { fill: #1e293b; stroke-width: 1.5; rx: 10; ry: 10; }
+      .pill { fill: #0f172a; stroke: #334155; stroke-width: 1; rx: 6; ry: 6; }
+      .title { font-family: 'Segoe UI', Arial, sans-serif; font-size: 19px; font-weight: 700; fill: #f8fafc; text-anchor: middle; }
+      .subtitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; fill: #94a3b8; text-anchor: middle; }
+      .qtitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 14px; font-weight: 700; }
+      .label { font-family: 'Segoe UI', Arial, sans-serif; font-size: 11px; font-weight: 700; }
+      .mono { font-family: Consolas, 'Courier New', monospace; font-size: 10.2px; fill: #e2e8f0; }
+    </style>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="1000" height="460" />
+  <text class="title" x="500" y="30">IEEE 1801 UPF Master Command Taxonomy</text>
+  <text class="subtitle" x="500" y="50">Complete Reference Across Hierarchy Domains, Supply Networks, State Modeling, Strategies, and Implementation</text>
+
+  <!-- Quadrant 1: Hierarchy & Domains -->
+  <rect class="card" x="20" y="68" width="470" height="182" stroke="#38bdf8" />
+  <text class="qtitle" x="36" y="91" fill="#38bdf8">1. Hierarchy, Domains &amp; Supply Network</text>
+
+  <rect class="pill" x="34" y="102" width="442" height="42" />
+  <text class="label" x="44" y="120" fill="#7dd3fc">Domains</text>
+  <text class="mono" x="116" y="120">set_scope  create_power_domain  -include_scope</text>
+  <text class="mono" x="116" y="136">-elements  -exclude_elements  -supply  -update</text>
+
+  <rect class="pill" x="34" y="150" width="442" height="42" />
+  <text class="label" x="44" y="168" fill="#7dd3fc">Supply Sets</text>
+  <text class="mono" x="116" y="168">create_supply_set   associate_supply_set</text>
+  <text class="mono" x="116" y="184">create_supply_port / _net   connect_supply_net</text>
+
+  <rect class="pill" x="34" y="198" width="442" height="42" />
+  <text class="label" x="44" y="216" fill="#7dd3fc">Switches</text>
+  <text class="mono" x="116" y="216">create_power_switch   -on_state   -off_state</text>
+  <text class="mono" x="116" y="232">create_composite_domain  set_domain_supply_net</text>
+
+  <!-- Quadrant 2: Power States & Boundary Attributes -->
+  <rect class="card" x="510" y="68" width="470" height="182" stroke="#a78bfa" />
+  <text class="qtitle" x="526" y="91" fill="#a78bfa">2. Power State Tables, Models &amp; Attributes</text>
+
+  <rect class="pill" x="524" y="102" width="442" height="42" />
+  <text class="label" x="534" y="120" fill="#c4b5fd">UPF 1.0 PST</text>
+  <text class="mono" x="612" y="120">add_port_state   create_pst   add_pst_state</text>
+  <text class="mono" x="612" y="136">set_port_attributes (-driver / -receiver_supply)</text>
+
+  <rect class="pill" x="524" y="150" width="442" height="42" />
+  <text class="label" x="534" y="168" fill="#c4b5fd">UPF 2.1+</text>
+  <text class="mono" x="612" y="168">add_power_state   -supply_expr   -logic_expr</text>
+  <text class="mono" x="612" y="184">-simstate (NORMAL | CORRUPT | CORRUPT_ON_ACT.)</text>
+
+  <rect class="pill" x="524" y="198" width="442" height="42" />
+  <text class="label" x="534" y="216" fill="#c4b5fd">Constraints</text>
+  <text class="mono" x="612" y="216">-legal   -illegal_state   describe_state_trans.</text>
+  <text class="mono" x="612" y="232">set_design_attributes   set_equivalent   set_var.</text>
+
+  <!-- Quadrant 3: Low-Power Boundary & Retention Strategies -->
+  <rect class="card" x="20" y="264" width="470" height="182" stroke="#34d399" />
+  <text class="qtitle" x="36" y="287" fill="#34d399">3. Isolation, Level Shifter, Retention &amp; Repeaters</text>
+
+  <rect class="pill" x="34" y="298" width="442" height="42" />
+  <text class="label" x="44" y="316" fill="#6ee7b7">Isolation</text>
+  <text class="mono" x="116" y="316">set_isolation   -clamp_value (0 | 1 | latch)</text>
+  <text class="mono" x="116" y="332">-isolation_signal   -location (self | parent)</text>
+
+  <rect class="pill" x="34" y="346" width="442" height="42" />
+  <text class="label" x="44" y="364" fill="#6ee7b7">Level Shift</text>
+  <text class="mono" x="116" y="364">set_level_shifter -rule (low_to_high|high_to_low)</text>
+  <text class="mono" x="116" y="380">-threshold   -applies_to (inputs | outputs | both)</text>
+
+  <rect class="pill" x="34" y="394" width="442" height="42" />
+  <text class="label" x="44" y="412" fill="#6ee7b7">Retention</text>
+  <text class="mono" x="116" y="412">set_retention   -save_signal   -restore_signal</text>
+  <text class="mono" x="116" y="428">set_retention_elements   set_repeater   -no_save</text>
+
+  <!-- Quadrant 4: Cell Mapping, Hierarchical & Simulation Control -->
+  <rect class="card" x="510" y="264" width="470" height="182" stroke="#f59e0b" />
+  <text class="qtitle" x="526" y="287" fill="#f59e0b">4. Implementation Mapping, Hierarchy &amp; Simulation</text>
+
+  <rect class="pill" x="524" y="298" width="442" height="42" />
+  <text class="label" x="534" y="316" fill="#fcd34d">Cell Map</text>
+  <text class="mono" x="612" y="316">map_power_switch   map_isolation_cell</text>
+  <text class="mono" x="612" y="332">map_level_shifter_cell  map_retention_cell  use_if</text>
+
+  <rect class="pill" x="524" y="346" width="442" height="42" />
+  <text class="label" x="534" y="364" fill="#fcd34d">Hierarchy</text>
+  <text class="mono" x="612" y="364">load_upf   save_upf   upf_version   find_objects</text>
+  <text class="mono" x="612" y="380">set_design_top   create_hdl2upf_vct   query_upf</text>
+
+  <rect class="pill" x="524" y="394" width="442" height="42" />
+  <text class="label" x="534" y="412" fill="#fcd34d">Sim Pkg</text>
+  <text class="mono" x="612" y="412">import UPF::*;   supply_on()   supply_off()</text>
+  <text class="mono" x="612" y="428">supply_partial_on()  get_supply_value()  replay</text>
+</svg>

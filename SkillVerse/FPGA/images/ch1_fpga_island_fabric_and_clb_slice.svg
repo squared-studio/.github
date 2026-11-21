@@ -1,0 +1,117 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 420" width="920" height="420">
+  <defs>
+    <style>
+      .bg { fill: #0f172a; }
+      .panel { fill: #1e293b; stroke: #334155; stroke-width: 1.5; rx: 10; ry: 10; }
+      .box { fill: #0f172a; stroke: #334155; stroke-width: 1.2; rx: 6; ry: 6; }
+      .title { font-family: 'Segoe UI', Arial, sans-serif; font-size: 18px; font-weight: 700; fill: #f8fafc; text-anchor: middle; }
+      .sub { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; fill: #94a3b8; text-anchor: middle; }
+      .hdr { font-family: 'Segoe UI', Arial, sans-serif; font-size: 13.5px; font-weight: 700; }
+      .mono { font-family: Consolas, 'Courier New', monospace; font-size: 10.5px; fill: #e2e8f0; }
+      .note { font-family: 'Segoe UI', Arial, sans-serif; font-size: 11px; fill: #cbd5e1; }
+    </style>
+    <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8" />
+    </marker>
+    <marker id="arr-g" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#34d399" />
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="920" height="420" />
+  <text class="title" x="460" y="28">Heterogeneous FPGA Die Columns &amp; Inside an UltraScale+ CLB Slice</text>
+  <text class="sub" x="460" y="48">Columnar Floorplan (CLB, BRAM, DSP48, URAM, MGT) Zoomed Into LUT6 + CARRY8 + FDRE Logic Fabric</text>
+
+  <!-- Left Panel: Heterogeneous Columnar Floorplan -->
+  <rect class="panel" x="20" y="64" width="416" height="338" stroke="#38bdf8" />
+  <text class="hdr" x="38" y="88" fill="#38bdf8">1. Heterogeneous Columnar FPGA Floorplan</text>
+  <rect class="box" x="34" y="100" width="388" height="222" />
+
+  <!-- Outer IO / MGT Strips -->
+  <rect x="44" y="110" width="32" height="202" fill="#1e293b" stroke="#f87171" rx="4" />
+  <text class="mono" x="60" y="212" fill="#fca5a5" text-anchor="middle" transform="rotate(-90 60 212)">GTY SERDES / MGTs</text>
+
+  <rect x="380" y="110" width="32" height="202" fill="#1e293b" stroke="#f59e0b" rx="4" />
+  <text class="mono" x="396" y="212" fill="#fcd34d" text-anchor="middle" transform="rotate(-90 396 212)">HP I/O &amp; DDR4 PHY</text>
+
+  <!-- Fabric Columns inside -->
+  <rect x="86" y="110" width="44" height="202" fill="#0c4a6e" stroke="#38bdf8" rx="4" />
+  <text class="mono" x="108" y="212" fill="#7dd3fc" text-anchor="middle" transform="rotate(-90 108 212)">CLB Array</text>
+
+  <rect x="138" y="110" width="40" height="202" fill="#064e3b" stroke="#34d399" rx="4" />
+  <text class="mono" x="158" y="212" fill="#6ee7b7" text-anchor="middle" transform="rotate(-90 158 212)">36Kb BRAM</text>
+
+  <rect x="186" y="110" width="44" height="202" fill="#0c4a6e" stroke="#38bdf8" rx="4" />
+  <text class="mono" x="208" y="212" fill="#7dd3fc" text-anchor="middle" transform="rotate(-90 208 212)">CLB + LUTRAM</text>
+
+  <rect x="238" y="110" width="36" height="202" fill="#451a03" stroke="#f59e0b" rx="4" />
+  <text class="mono" x="256" y="212" fill="#fcd34d" text-anchor="middle" transform="rotate(-90 256 212)">DSP48E2</text>
+
+  <rect x="282" y="110" width="40" height="202" fill="#2e1065" stroke="#a78bfa" rx="4" />
+  <text class="mono" x="302" y="212" fill="#c4b5fd" text-anchor="middle" transform="rotate(-90 302 212)">288Kb URAM</text>
+
+  <rect x="330" y="110" width="42" height="202" fill="#0c4a6e" stroke="#38bdf8" rx="4" />
+  <text class="mono" x="351" y="212" fill="#7dd3fc" text-anchor="middle" transform="rotate(-90 351 212)">CLB + Routing</text>
+
+  <!-- Clock Region Horizontal Dashed Divider -->
+  <line x1="80" y1="210" x2="376" y2="210" stroke="#f8fafc" stroke-width="1.2" stroke-dasharray="4,3" />
+  <rect x="176" y="198" width="110" height="22" fill="#0f172a" stroke="#64748b" rx="3" />
+  <text class="mono" x="231" y="213" fill="#e2e8f0" text-anchor="middle" font-size="9.5">Clock Region Split</text>
+
+  <rect class="box" x="34" y="330" width="388" height="60" />
+  <text class="mono" x="46" y="349" fill="#7dd3fc">Modern FPGAs organize resources in vertical columns.</text>
+  <text class="note" x="46" y="367">Dataflows crossing between distant BRAM -&gt; CLB -&gt; DSP</text>
+  <text class="note" x="46" y="382">columns rely on predictable Switch-Box (SB) routing!</text>
+
+  <!-- Right Panel: Inside One CLB Logic Slice -->
+  <rect class="panel" x="452" y="64" width="448" height="338" stroke="#34d399" />
+  <text class="hdr" x="470" y="88" fill="#34d399">2. Inside One CLB Slice (8x LUT6 + CARRY8 + 16x FDRE)</text>
+  <rect class="box" x="466" y="100" width="420" height="222" />
+
+  <!-- LUT6 Fracturable Block -->
+  <rect x="480" y="118" width="128" height="96" fill="#1e293b" stroke="#38bdf8" rx="6" />
+  <text class="mono" x="544" y="138" fill="#7dd3fc" text-anchor="middle">Fracturable LUT6</text>
+  <text class="note" x="544" y="156" text-anchor="middle">64-bit SRAM Truth Table</text>
+  <text class="mono" x="544" y="176" fill="#6ee7b7" text-anchor="middle">1x 6-in O6</text>
+  <text class="mono" x="544" y="194" fill="#fcd34d" text-anchor="middle">OR 2x 5-in (O6, O5)</text>
+
+  <!-- CARRY8 Vertical Chain -->
+  <rect x="634" y="114" width="76" height="196" fill="#1e293b" stroke="#f59e0b" rx="6" />
+  <text class="mono" x="672" y="136" fill="#fcd34d" text-anchor="middle">CARRY8</text>
+  <text class="note" x="672" y="156" text-anchor="middle">Hard Lookahead</text>
+  <text class="note" x="672" y="172" text-anchor="middle">Adder Chain</text>
+  <text class="mono" x="672" y="204" fill="#6ee7b7" text-anchor="middle">CI -&gt; CO</text>
+  <text class="note" x="672" y="232" text-anchor="middle">Fast ~20 ps/bit</text>
+  <text class="note" x="672" y="248" text-anchor="middle">dedicated vertical</text>
+  <text class="note" x="672" y="264" text-anchor="middle">cascade up to</text>
+  <text class="note" x="672" y="280" text-anchor="middle">next CLB!</text>
+
+  <!-- MUXF7/MUXF8 Wide MUX -->
+  <rect x="480" y="226" width="128" height="84" fill="#1e293b" stroke="#a78bfa" rx="6" />
+  <text class="mono" x="544" y="248" fill="#c4b5fd" text-anchor="middle">MUXF7 / MUXF8</text>
+  <text class="note" x="544" y="268" text-anchor="middle">Combines 2/4 LUT6</text>
+  <text class="note" x="544" y="284" text-anchor="middle">into 16:1 MUX</text>
+  <text class="mono" x="544" y="301" fill="#6ee7b7" text-anchor="middle">in 1 CLB slice</text>
+
+  <!-- Two Flip-Flops per LUT (FF1 / FF2) -->
+  <rect x="738" y="118" width="134" height="86" fill="#1e293b" stroke="#34d399" rx="6" />
+  <text class="mono" x="805" y="138" fill="#6ee7b7" text-anchor="middle">FF1 (FDRE)</text>
+  <text class="mono" x="805" y="158" fill="#e2e8f0" text-anchor="middle">D, CE, SR, Q</text>
+  <text class="note" x="805" y="178" text-anchor="middle">Shared Control Set</text>
+  <text class="mono" x="805" y="194" fill="#fca5a5" text-anchor="middle">(CLK, CE, SR)</text>
+
+  <rect x="738" y="218" width="134" height="92" fill="#1e293b" stroke="#34d399" rx="6" />
+  <text class="mono" x="805" y="240" fill="#6ee7b7" text-anchor="middle">FF2 (FDRE)</text>
+  <text class="mono" x="805" y="260" fill="#e2e8f0" text-anchor="middle">Optional Sync Reset</text>
+  <text class="note" x="805" y="278" text-anchor="middle">Can also bypass LUT</text>
+  <text class="note" x="805" y="294" text-anchor="middle">for pipeline FF!</text>
+
+  <!-- Inter-slice wires -->
+  <line x1="608" y1="162" x2="632" y2="162" stroke="#38bdf8" stroke-width="1.6" marker-end="url(#arr)" />
+  <line x1="710" y1="162" x2="736" y2="162" stroke="#34d399" stroke-width="1.6" marker-end="url(#arr-g)" />
+  <line x1="608" y1="268" x2="736" y2="268" stroke="#34d399" stroke-width="1.6" marker-end="url(#arr-g)" />
+
+  <rect class="box" x="466" y="330" width="420" height="60" />
+  <text class="mono" x="478" y="349" fill="#fcd34d">SLICEM Extra Modes: Half of CLBs allow LUT6 as 64-bit LUTRAM</text>
+  <text class="mono" x="478" y="368" fill="#6ee7b7">or 32-bit Shift Register (SRL32E) without consuming flip-flops!</text>
+</svg>

@@ -1,0 +1,334 @@
+{
+  "site": {
+    "title": "SkillVerse",
+    "brand": "Squared Studio",
+    "copyright_owner": "squared-studio",
+    "eyebrow": "Open-Source Engineering Curriculum",
+    "tagline": "Structured, chapter-based guides on RTL Design, SystemVerilog, UVM, Formal Verification, DFT, AMBA & OBI protocols, RISC-V, and everyday engineering tooling.",
+    "meta_description": "SkillVerse by Squared Studio - a structured, open-source knowledge base covering RTL Design, SystemVerilog, UVM, Formal Verification, DFT, AMBA protocols, RISC-V, and tooling.",
+    "og_title": "SkillVerse - Squared Studio Open-Source Learning Hub",
+    "og_description_template": "%s structured courses and %s chapters on RTL Design, SystemVerilog, UVM, AXI/ACE/CHI, Formal Verification, DFT, and engineering toolchains.",
+    "base_url": "https://squared-studio.cc",
+    "skillverse_path": "/SkillVerse/",
+    "logo": "logo.png",
+    "github_url": "https://github.com/squared-studio/SkillVerse",
+    "draft_prefix": "___",
+    "default_category": "other",
+    "sitemap_root_pages": [
+      "about.html",
+      "contact.html",
+      "people.html"
+    ]
+  },
+  "categories": [
+    {
+      "id": "pathways",
+      "title": "Start Here · Learning Pathways",
+      "keywords": [
+        "pathway",
+        "pathways",
+        "roadmap",
+        "career",
+        "guide",
+        "track"
+      ]
+    },
+    {
+      "id": "rtl",
+      "title": "RTL Design & Verification",
+      "keywords": [
+        "rtl",
+        "verilog",
+        "systemverilog",
+        "uvm",
+        "formal",
+        "dft",
+        "verification",
+        "sva",
+        "testbench",
+        "assertion",
+        "coverage",
+        "cdc",
+        "rdc",
+        "upf",
+        "cpf",
+        "gls",
+        "sdf",
+        "synthesis"
+      ]
+    },
+    {
+      "id": "protocols",
+      "title": "Bus & Interconnect Protocols",
+      "keywords": [
+        "protocol",
+        "axi",
+        "ace",
+        "chi",
+        "apb",
+        "ahb",
+        "obi",
+        "uart",
+        "spi",
+        "i2c",
+        "pcie",
+        "ddr",
+        "usb",
+        "amba",
+        "wishbone",
+        "tilelink",
+        "ethernet"
+      ]
+    },
+    {
+      "id": "arch",
+      "title": "Architecture, Silicon & EDA",
+      "keywords": [
+        "arch",
+        "architecture",
+        "circuit",
+        "electronics",
+        "mosfet",
+        "bjt",
+        "analog",
+        "silicon",
+        "eda",
+        "asic",
+        "cmos",
+        "transistor",
+        "microarch",
+        "risc",
+        "cache",
+        "soc",
+        "vlsi",
+        "sta",
+        "ams",
+        "mixed-signal",
+        "adc",
+        "dac",
+        "pll",
+        "spice",
+        "serdes",
+        "bandgap",
+        "ldo",
+        "wreal",
+        "fpga",
+        "lut",
+        "bram",
+        "uram",
+        "dsp48",
+        "bitstream",
+        "xdc",
+        "hls",
+        "yosys",
+        "nextpnr"
+      ]
+    },
+    {
+      "id": "tooling",
+      "title": "Software & Engineering Tooling",
+      "keywords": [
+        "bash",
+        "shell",
+        "terminal",
+        "linux",
+        "unix",
+        "git",
+        "make",
+        "cmake",
+        "vim",
+        "python",
+        "perl",
+        "tcl",
+        "script",
+        "vivado",
+        "quartus",
+        "verilator",
+        "gcc",
+        "gdb",
+        "docker",
+        "tool",
+        "cpp",
+        "rust",
+        "assembly"
+      ]
+    },
+    {
+      "id": "other",
+      "title": "Additional Courses",
+      "keywords": []
+    }
+  ],
+  "courses": {
+    "Learning_Pathways": {
+      "cat": "pathways",
+      "title": "Learning Pathways & Career Roadmaps",
+      "desc": "Role-by-role roadmaps for RTL Design, Design Verification, Formal, FPGA, DFT, and SoC Architects — wired directly to SkillVerse courses."
+    },
+    "SystemVerilog": {
+      "cat": "rtl",
+      "title": "SystemVerilog",
+      "desc": "Hardware modeling, interfaces, OOP testbenches, randomization, and assertions."
+    },
+    "RTL_Design": {
+      "cat": "rtl",
+      "title": "RTL Design",
+      "desc": "Synchronous digital design, microarchitecture, FSMs, pipelining, CDC, and synthesis."
+    },
+    "RTL_Design_Verification": {
+      "cat": "rtl",
+      "title": "RTL Design Verification",
+      "desc": "Simulation methodologies, layered testbenches, coverage, and verification closure."
+    },
+    "uvm": {
+      "cat": "rtl",
+      "title": "UVM",
+      "desc": "Universal Verification Methodology phases, agents, sequences, scoreboards, and RAL."
+    },
+    "UPF_CPF": {
+      "cat": "rtl",
+      "title": "UPF / CPF Low-Power Design",
+      "desc": "IEEE 1801 UPF and Si2 CPF power domains, isolation, retention, level shifters, PSTs, and power-aware verification."
+    },
+    "CDC_RDC": {
+      "cat": "rtl",
+      "title": "CDC / RDC (Clock & Reset Crossings)",
+      "desc": "Metastability, MTBF, 2-FF and pulse synchronizers, MCP/DMUX, Gray-code async FIFOs, reset trees, RDC isolation, and static/formal sign-off."
+    },
+    "GLS": {
+      "cat": "rtl",
+      "title": "GLS (Gate-Level Simulation)",
+      "desc": "Standard-cell models, SDF back-annotation, zero-delay vs timing GLS, pulse filtering, X-propagation, timing debug, PG UPF, DFT/MBIST, and sign-off."
+    },
+    "Formal_Verification": {
+      "cat": "rtl",
+      "title": "Formal Verification",
+      "desc": "SVA properties, bounded model checking, induction, and formal sign-off."
+    },
+    "DFT": {
+      "cat": "rtl",
+      "title": "Design for Testability (DFT)",
+      "desc": "Scan chains, ATPG, BIST, boundary scan, and silicon test readiness."
+    },
+    "APB_Protocol": {
+      "cat": "protocols",
+      "title": "APB Protocol",
+      "desc": "Advanced Peripheral Bus register access, transfers, and low-power interfaces."
+    },
+    "UART_Protocol": {
+      "cat": "protocols",
+      "title": "UART Protocol",
+      "desc": "Asynchronous serial framing, baud generation, FIFO buffering, and verification."
+    },
+    "OBI": {
+      "cat": "protocols",
+      "title": "OBI Protocol",
+      "desc": "Open Bus Interface handshake protocol used in open-source RISC-V cores."
+    },
+    "AXI_Protocol": {
+      "cat": "protocols",
+      "title": "AXI Protocol",
+      "desc": "AMBA AXI4 burst transactions, channel handshakes, ordering, and VIP design."
+    },
+    "ACE_Protocol": {
+      "cat": "protocols",
+      "title": "ACE Protocol",
+      "desc": "AXI Coherency Extensions, snoop channels, cache states, and barrier transactions."
+    },
+    "CHI_Protocol": {
+      "cat": "protocols",
+      "title": "CHI Protocol",
+      "desc": "Coherent Hub Interface packetized fabric, RN/HN/SN nodes, and flit flows."
+    },
+    "RISC_V_Assembly": {
+      "cat": "tooling",
+      "title": "RISC-V Assembly",
+      "desc": "RV32I/RV64I instruction formats, calling conventions, CSRs, and bare-metal code."
+    },
+    "Electronics": {
+      "cat": "arch",
+      "title": "Electronics",
+      "desc": "Semiconductor physics, diodes, MOSFETs, BJTs, op-amps, and logic families."
+    },
+    "AMS": {
+      "cat": "arch",
+      "title": "AMS (Analog & Mixed-Signal)",
+      "desc": "CMOS biasing, OTAs, comparators, DAC/ADC converters, PLLs, PMIC/LDOs, SerDes, SPICE, Verilog-A/SV-RNM, co-simulation, and analog layout sign-off."
+    },
+    "FPGA": {
+      "cat": "arch",
+      "title": "FPGA Engineering & Architecture",
+      "desc": "CLB/LUT fabric, FPGA-friendly RTL, BRAM/URAM/DSP48, MMCM clocking, XDC timing closure, high-speed IO/transceivers, SoC FPGAs, DFX, prototyping, HLS, and ILA debug."
+    },
+    "Vivado": {
+      "cat": "tooling",
+      "title": "Vivado",
+      "desc": "AMD/Xilinx FPGA synthesis, XDC constraints, simulation, ILA debug, and bitstreams."
+    },
+    "C": {
+      "cat": "tooling",
+      "title": "C Programming",
+      "desc": "Pointers, memory layout, structs, bitwise operations, and systems-level C."
+    },
+    "Python": {
+      "cat": "tooling",
+      "title": "Python",
+      "desc": "Scripting, automation, verification helpers, data structures, and tooling workflows."
+    },
+    "bash": {
+      "cat": "tooling",
+      "title": "Bash",
+      "desc": "Shell scripting, text pipelines, job control, and regression automation."
+    },
+    "Unix_Terminal": {
+      "cat": "tooling",
+      "title": "Unix Terminal",
+      "desc": "Filesystem navigation, permissions, processes, SSH, and CLI productivity."
+    },
+    "git": {
+      "cat": "tooling",
+      "title": "Git & GitHub CI/CD",
+      "desc": "Branching, rebasing, conflict resolution, bisect, collaborative workflows, and GitHub Actions CI/CD pipelines."
+    },
+    "Makefile": {
+      "cat": "tooling",
+      "title": "Makefile",
+      "desc": "Dependency graphs, pattern rules, variables, and simulation build automation."
+    },
+    "VIM": {
+      "cat": "tooling",
+      "title": "VIM",
+      "desc": "Modal editing, motions, visual block macros, buffers, and HDL productivity."
+    },
+    "Circuits": {
+      "cat": "arch",
+      "title": "Circuits",
+      "desc": "Foundational analog and digital circuit analysis, RLC networks, amplifiers, and switching circuits."
+    },
+    "DDR_Protocol": {
+      "cat": "protocols",
+      "title": "DDR Protocol",
+      "desc": "JEDEC DDR4/DDR5 timing fundamentals, controller scheduling, DFI interfaces, and PHY initialization."
+    },
+    "I2C_Protocol": {
+      "cat": "protocols",
+      "title": "I2C Protocol",
+      "desc": "Two-wire serial bus arbitration, clock stretching, multi-master addressing, and controller RTL."
+    },
+    "PCIe_Protocol": {
+      "cat": "protocols",
+      "title": "PCIe Protocol",
+      "desc": "Physical layer signaling, TLP/DLLP transaction routing, LTSSM link training, and Gen5/Gen6 verification."
+    },
+    "SPI_Protocol": {
+      "cat": "protocols",
+      "title": "SPI Protocol",
+      "desc": "Serial Peripheral Interface clocking modes, full-duplex framing, QSPI extensions, and controller design."
+    },
+    "USB_Protocol": {
+      "cat": "protocols",
+      "title": "USB Protocol",
+      "desc": "Universal Serial Bus packet framing, enumeration, endpoints, and high-speed host/device architecture."
+    }
+  }
+}

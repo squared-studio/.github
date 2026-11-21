@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 390" width="920" height="390">
+  <defs>
+    <style>
+      .bg { fill: #0f172a; }
+      .panel { fill: #1e293b; stroke-width: 1.5; rx: 10; ry: 10; }
+      .box { fill: #0f172a; stroke: #334155; stroke-width: 1.2; rx: 6; ry: 6; }
+      .title { font-family: 'Segoe UI', Arial, sans-serif; font-size: 18px; font-weight: 700; fill: #f8fafc; text-anchor: middle; }
+      .subtitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; fill: #94a3b8; text-anchor: middle; }
+      .ptitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 14px; font-weight: 700; }
+      .mono { font-family: Consolas, 'Courier New', monospace; font-size: 10.8px; fill: #e2e8f0; }
+      .note { font-family: 'Segoe UI', Arial, sans-serif; font-size: 10.5px; fill: #94a3b8; }
+      .badge { font-family: Consolas, 'Courier New', monospace; font-size: 11px; font-weight: 700; text-anchor: middle; }
+    </style>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="920" height="390" />
+  <text class="title" x="460" y="28">IEEE 1364 Pulse Filtering: PATHPULSE$ Rejection &amp; Error Regions</text>
+  <text class="subtitle" x="460" y="48">Tuning r-limit and e-limit Thresholds (+pulse_r/e) to Expose Dangerous Runt Glitches Without False Noise</text>
+
+  <!-- Top Spectrum Diagram -->
+  <rect class="panel" x="20" y="64" width="880" height="170" stroke="#a78bfa" />
+  <text class="ptitle" x="36" y="88" fill="#a78bfa">Pulse Width Response Regimes (Assuming IOPATH Delay T_prop = 200 ps)</text>
+
+  <!-- 3 Horizontal Zones -->
+  <rect class="box" x="36" y="108" width="260" height="92" stroke="#34d399" />
+  <text class="badge" x="166" y="130" fill="#34d399">Zone 1: Reject (0 &lt;= W &lt; r-limit)</text>
+  <text class="mono" x="166" y="152" text-anchor="middle">Example: r = 30% = 60 ps</text>
+  <text class="note" x="166" y="172" text-anchor="middle">Pulse safely swallowed by RC load;</text>
+  <text class="note" x="166" y="188" text-anchor="middle">output remains clean steady state.</text>
+
+  <rect class="box" x="310" y="108" width="290" height="92" stroke="#f87171" />
+  <text class="badge" x="455" y="130" fill="#fca5a5">Zone 2: Uncertainty [r-limit, e-limit)</text>
+  <text class="mono" x="455" y="152" text-anchor="middle">Example: e = 70% = 140 ps</text>
+  <text class="note" x="455" y="172" text-anchor="middle" fill="#fca5a5">Output goes 'X' during marginal pulse +</text>
+  <text class="note" x="455" y="188" text-anchor="middle" fill="#fca5a5">simulator prints Warning if +pulse_on_event!</text>
+
+  <rect class="box" x="614" y="108" width="270" height="92" stroke="#38bdf8" />
+  <text class="badge" x="749" y="130" fill="#7dd3fc">Zone 3: Pass (W &gt;= e-limit)</text>
+  <text class="mono" x="749" y="152" text-anchor="middle">Width &gt;= 140 ps</text>
+  <text class="note" x="749" y="172" text-anchor="middle">Pulse propagates cleanly through gate</text>
+  <text class="note" x="749" y="188" text-anchor="middle">delayed by exact SDF T_prop = 200 ps.</text>
+
+  <text class="note" x="36" y="222" fill="#fcd34d">Default Simulator Rule: Without explicit flags, Verilog sets r-limit = e-limit = 100% of T_prop (Zone 2 disappears completely!).</text>
+
+  <!-- Bottom Two Cards -->
+  <rect class="panel" x="20" y="248" width="430" height="126" stroke="#38bdf8" />
+  <text class="ptitle" x="36" y="272" fill="#38bdf8">Simulator Global +pulse Flags</text>
+  <rect class="box" x="36" y="284" width="398" height="76" />
+  <text class="mono" x="48" y="303" fill="#7dd3fc">+pulse_r/30 +pulse_e/70 +pulse_int_r/30 +pulse_int_e/70</text>
+  <text class="note" x="48" y="324">- Rejects &lt;30% pulses, flags 'X' on 30–70% marginal glitches,</text>
+  <text class="note" x="48" y="340">  and applies equally to cell IOPATH + `INTERCONNECT` wires!</text>
+
+  <rect class="panel" x="470" y="248" width="430" height="126" stroke="#f59e0b" />
+  <text class="ptitle" x="486" y="272" fill="#f59e0b">Where Pulse Errors Matter Most</text>
+  <text class="note" x="486" y="292">- Combinational Clock Muxes / Gated Reset Combiners: A 50% runt</text>
+  <text class="note" x="486" y="308">  glitch on a clock/reset wire wipes out downstream chip state!</text>
+  <text class="note" x="486" y="328">- Async IO Pads / High-Speed Clocks: Default 100% inertial delay</text>
+  <text class="note" x="486" y="344" fill="#fca5a5">  can silently drop real 250 MHz clocks on slow 3ns buffers!</text>
+</svg>

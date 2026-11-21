@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 400" width="920" height="400">
+  <defs>
+    <style>
+      .bg { fill: #0f172a; }
+      .panel { fill: #1e293b; stroke-width: 1.5; rx: 10; ry: 10; }
+      .box { fill: #0f172a; stroke: #334155; stroke-width: 1.2; rx: 6; ry: 6; }
+      .hdr { fill: #172554; stroke: #38bdf8; stroke-width: 1; }
+      .row { fill: #0f172a; stroke: #334155; stroke-width: 1; }
+      .title { font-family: 'Segoe UI', Arial, sans-serif; font-size: 18px; font-weight: 700; fill: #f8fafc; text-anchor: middle; }
+      .subtitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; fill: #94a3b8; text-anchor: middle; }
+      .ptitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 14px; font-weight: 700; }
+      .mono { font-family: Consolas, 'Courier New', monospace; font-size: 10.8px; fill: #e2e8f0; }
+      .cell { font-family: Consolas, 'Courier New', monospace; font-size: 11px; text-anchor: middle; fill: #e2e8f0; }
+      .note { font-family: 'Segoe UI', Arial, sans-serif; font-size: 10.5px; fill: #94a3b8; }
+    </style>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="920" height="400" />
+  <text class="title" x="460" y="28">Binary vs. Gray Code Transitions &amp; Hardware Conversion Equations</text>
+  <text class="subtitle" x="460" y="48">Unit Hamming Distance Guarantees Only Zero or One Bit Flips Across Consecutive Asynchronous Samples</text>
+
+  <!-- Left Panel: Binary vs Gray Table -->
+  <rect class="panel" x="20" y="64" width="430" height="316" stroke="#34d399" />
+  <text class="ptitle" x="36" y="88" fill="#34d399">4-Bit Transition Comparison (Dec 0 to 8)</text>
+
+  <rect class="hdr" x="36" y="102" width="398" height="28" rx="4" />
+  <text class="cell" x="72" y="120" fill="#7dd3fc" font-weight="700">Dec</text>
+  <text class="cell" x="155" y="120" fill="#fca5a5" font-weight="700">Binary</text>
+  <text class="cell" x="235" y="120" fill="#fca5a5" font-weight="700">Bits Flip</text>
+  <text class="cell" x="320" y="120" fill="#6ee7b7" font-weight="700">Gray</text>
+  <text class="cell" x="398" y="120" fill="#6ee7b7" font-weight="700">Flip</text>
+
+  <!-- Rows (y step 25) -->
+  <rect class="row" x="36" y="132" width="398" height="24" /><text class="cell" x="72" y="148">0</text><text class="cell" x="155" y="148">0000</text><text class="cell" x="235" y="148">-</text><text class="cell" x="320" y="148" fill="#34d399">0000</text><text class="cell" x="398" y="148" fill="#34d399">-</text>
+  <rect class="row" x="36" y="156" width="398" height="24" /><text class="cell" x="72" y="172">1</text><text class="cell" x="155" y="172">0001</text><text class="cell" x="235" y="172">1</text><text class="cell" x="320" y="172" fill="#34d399">0001</text><text class="cell" x="398" y="172" fill="#34d399">1</text>
+  <rect class="row" x="36" y="180" width="398" height="24" /><text class="cell" x="72" y="196">2</text><text class="cell" x="155" y="196">0010</text><text class="cell" x="235" y="196" fill="#fcd34d">2</text><text class="cell" x="320" y="196" fill="#34d399">0011</text><text class="cell" x="398" y="196" fill="#34d399">1</text>
+  <rect class="row" x="36" y="204" width="398" height="24" /><text class="cell" x="72" y="220">3</text><text class="cell" x="155" y="220">0011</text><text class="cell" x="235" y="220">1</text><text class="cell" x="320" y="220" fill="#34d399">0010</text><text class="cell" x="398" y="220" fill="#34d399">1</text>
+  <rect class="row" x="36" y="228" width="398" height="24" /><text class="cell" x="72" y="244">4</text><text class="cell" x="155" y="244">0100</text><text class="cell" x="235" y="244" fill="#f87171">3</text><text class="cell" x="320" y="244" fill="#34d399">0110</text><text class="cell" x="398" y="244" fill="#34d399">1</text>
+  <rect class="row" x="36" y="252" width="398" height="24" /><text class="cell" x="72" y="268">7</text><text class="cell" x="155" y="268">0111</text><text class="cell" x="235" y="268">-</text><text class="cell" x="320" y="268" fill="#34d399">0100</text><text class="cell" x="398" y="268" fill="#34d399">-</text>
+  <rect class="row" x="36" y="276" width="398" height="24" stroke="#f87171" /><text class="cell" x="72" y="292">8</text><text class="cell" x="155" y="292" fill="#fca5a5">1000</text><text class="cell" x="235" y="292" fill="#f87171" font-weight="700">4 !!</text><text class="cell" x="320" y="292" fill="#34d399">1100</text><text class="cell" x="398" y="292" fill="#34d399">1</text>
+
+  <text class="note" x="36" y="324" fill="#6ee7b7">Gray Wraparound Rule (Power-of-2 Depth ONLY!):</text>
+  <text class="note" x="36" y="342">15 (1000) -&gt; 0 (0000) flips ONLY the MSB (Hamming distance = 1).</text>
+  <text class="note" x="36" y="360" fill="#fca5a5">Non-power-of-2 reset/wrap (e.g. 9-&gt;0) violates Gray unit distance!</text>
+
+  <!-- Right Panel: Equations & Register-Before-Cross Rule -->
+  <rect class="panel" x="470" y="64" width="430" height="316" stroke="#38bdf8" />
+  <text class="ptitle" x="486" y="88" fill="#38bdf8">RTL Conversion &amp; Boundary Register Rule</text>
+
+  <rect class="box" x="486" y="102" width="398" height="86" />
+  <text class="mono" x="498" y="122" fill="#7dd3fc">Binary --&gt; Gray (Combinational XOR Shift):</text>
+  <text class="mono" x="498" y="142" fill="#6ee7b7">assign gray_next = bin_next ^ (bin_next &gt;&gt; 1);</text>
+  <text class="note" x="498" y="164">MSB passes straight through: gray[N-1] = bin[N-1];</text>
+  <text class="note" x="498" y="180">MUST be registered in src_clk BEFORE crossing to dst_clk!</text>
+
+  <rect class="box" x="486" y="198" width="398" height="84" />
+  <text class="mono" x="498" y="218" fill="#c4b5fd">Gray --&gt; Binary (In DST Domain After Sync):</text>
+  <text class="mono" x="498" y="238">for (int i = N-1; i &gt;= 0; i--)</text>
+  <text class="mono" x="498" y="255">  bin[i] = ^(gray &gt;&gt; i);  // Prefix XOR cascade</text>
+  <text class="note" x="498" y="274">Never use combinational Gray-to-Bin BEFORE synchronization.</text>
+
+  <rect class="box" x="486" y="292" width="398" height="74" stroke="#f59e0b" />
+  <text class="mono" x="498" y="311" fill="#fcd34d">Mandatory Physical SDC Skew Constraint:</text>
+  <text class="note" x="498" y="329">Ensure end-to-end wire skew across all Gray bits is &lt; 1 src_clk</text>
+  <text class="note" x="498" y="345">period via set_max_delay -datapath_only &amp; set_bus_skew!</text>
+</svg>

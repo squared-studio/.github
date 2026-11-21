@@ -1,0 +1,131 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 540" width="960" height="540">
+  <defs>
+    <style>
+      .bg { fill: #080c14; }
+      .title { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 20px; fill: #f8fafc; }
+      .subtitle { font-family: 'Inter', system-ui, sans-serif; font-size: 13px; fill: #94a3b8; }
+      .phase { fill: #0f172a; stroke-width: 1.8; rx: 10px; }
+      .inner { fill: #0b1120; stroke-width: 1.3; rx: 6px; }
+      .txt-hdr { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 13px; fill: #f8fafc; }
+      .txt-sub { font-family: 'Inter', system-ui, sans-serif; font-size: 11px; fill: #94a3b8; }
+      .mono { font-family: 'JetBrains Mono', Consolas, monospace; font-size: 10px; font-weight: 600; }
+      .edge { stroke-width: 2; fill: none; }
+    </style>
+    <marker id="arr-rose" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#f43f5e" />
+    </marker>
+    <marker id="arr-cyan" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8" />
+    </marker>
+    <marker id="arr-green" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#34d399" />
+    </marker>
+  </defs>
+
+  <rect width="960" height="540" class="bg" rx="14"/>
+  <text x="480" y="32" text-anchor="middle" class="title">DFT &amp; Silicon Test Engineer 4-Phase Learning Roadmap</text>
+  <text x="480" y="52" text-anchor="middle" class="subtitle">From manufacturing fault models and scan chains to ATPG compression, MBIST, IJTAG, and ATE bring-up</text>
+
+  <!-- Phase 1 -->
+  <g transform="translate(24, 82)">
+    <rect x="0" y="0" width="214" height="320" class="phase" stroke="#38bdf8"/>
+    <text x="14" y="24" class="mono" fill="#38bdf8">PHASE 1 (WEEKS 1–3)</text>
+    <text x="14" y="44" class="txt-hdr">Logic &amp; Fault Models</text>
+
+    <rect x="12" y="58" width="190" height="86" class="inner" stroke="#38bdf8"/>
+    <text x="20" y="76" class="mono" fill="#7dd3fc">SkillVerse Courses:</text>
+    <text x="20" y="94" class="mono" fill="#cbd5e1">• RTL_Design Ch 1–4</text>
+    <text x="20" y="110" class="mono" fill="#cbd5e1">• Electronics Ch 8</text>
+    <text x="20" y="126" class="mono" fill="#cbd5e1">• DFT Ch 1</text>
+
+    <rect x="12" y="156" width="190" height="90" class="inner" stroke="#334155"/>
+    <text x="20" y="176" class="txt-sub" fill="#cbd5e1">Core Skills:</text>
+    <text x="20" y="194" class="txt-sub">• Stuck-at, Transition &amp; IDDQ</text>
+    <text x="20" y="210" class="txt-sub">• Controllability/Observability</text>
+    <text x="20" y="226" class="txt-sub">• Yield, DPPM &amp; test cost</text>
+
+    <rect x="12" y="256" width="190" height="50" class="inner" stroke="#38bdf8" fill="#0d1e33"/>
+    <text x="107" y="276" text-anchor="middle" class="mono" fill="#7dd3fc">Goal: Fault Intuition</text>
+    <text x="107" y="294" text-anchor="middle" class="txt-sub">Why functional tests miss defects</text>
+  </g>
+  <path d="M 238 242 L 254 242" class="edge" stroke="#38bdf8" marker-end="url(#arr-cyan)"/>
+
+  <!-- Phase 2 -->
+  <g transform="translate(256, 82)">
+    <rect x="0" y="0" width="214" height="320" class="phase" stroke="#f43f5e"/>
+    <text x="14" y="24" class="mono" fill="#fda4af">PHASE 2 (WEEKS 4–8)</text>
+    <text x="14" y="44" class="txt-hdr">Scan Chains &amp; ATPG</text>
+
+    <rect x="12" y="58" width="190" height="86" class="inner" stroke="#f43f5e"/>
+    <text x="20" y="76" class="mono" fill="#fda4af">SkillVerse Courses:</text>
+    <text x="20" y="94" class="mono" fill="#cbd5e1">• DFT Ch 2–3</text>
+    <text x="20" y="110" class="mono" fill="#cbd5e1">• CDC_RDC Ch 8–9</text>
+    <text x="20" y="126" class="mono" fill="#cbd5e1">• RTL_Design Ch 9</text>
+
+    <rect x="12" y="156" width="190" height="90" class="inner" stroke="#334155"/>
+    <text x="20" y="176" class="txt-sub" fill="#cbd5e1">Core Skills:</text>
+    <text x="20" y="194" class="txt-sub">• Mux-D scan flop stitching</text>
+    <text x="20" y="210" class="txt-sub">• DFT DRC (clocks/resets/X)</text>
+    <text x="20" y="226" class="txt-sub">• EDT/XOR compression &amp; LOS/LOC</text>
+
+    <rect x="12" y="256" width="190" height="50" class="inner" stroke="#f43f5e" fill="#211018"/>
+    <text x="107" y="276" text-anchor="middle" class="mono" fill="#fda4af">Milestone: 99%+ Stuck-At</text>
+    <text x="107" y="294" text-anchor="middle" class="txt-sub">Clean DRC + OCC capture</text>
+  </g>
+  <path d="M 470 242 L 486 242" class="edge" stroke="#f43f5e" marker-end="url(#arr-rose)"/>
+
+  <!-- Phase 3 -->
+  <g transform="translate(488, 82)">
+    <rect x="0" y="0" width="214" height="320" class="phase" stroke="#34d399"/>
+    <text x="14" y="24" class="mono" fill="#34d399">PHASE 3 (WEEKS 9–13)</text>
+    <text x="14" y="44" class="txt-hdr">MBIST, LBIST &amp; IJTAG</text>
+
+    <rect x="12" y="58" width="190" height="86" class="inner" stroke="#34d399"/>
+    <text x="20" y="76" class="mono" fill="#6ee7b7">SkillVerse Courses:</text>
+    <text x="20" y="94" class="mono" fill="#cbd5e1">• DFT Ch 4–7</text>
+    <text x="20" y="110" class="mono" fill="#cbd5e1">• RTL_Design Ch 5</text>
+    <text x="20" y="126" class="mono" fill="#cbd5e1">• IEEE 1149.1 / 1500 / 1687</text>
+
+    <rect x="12" y="156" width="190" height="90" class="inner" stroke="#334155"/>
+    <text x="20" y="176" class="txt-sub" fill="#cbd5e1">Core Skills:</text>
+    <text x="20" y="194" class="txt-sub">• March-C / BISR SRAM repair</text>
+    <text x="20" y="210" class="txt-sub">• PRPG + MISR LBIST loops</text>
+    <text x="20" y="226" class="txt-sub">• Boundary scan &amp; SerDes BIST</text>
+
+    <rect x="12" y="256" width="190" height="50" class="inner" stroke="#34d399" fill="#0d221c"/>
+    <text x="107" y="276" text-anchor="middle" class="mono" fill="#6ee7b7">Milestone: SoC Test Fabric</text>
+    <text x="107" y="294" text-anchor="middle" class="txt-sub">ICL/PDL + TAP integration</text>
+  </g>
+  <path d="M 702 242 L 718 242" class="edge" stroke="#34d399" marker-end="url(#arr-green)"/>
+
+  <!-- Phase 4 -->
+  <g transform="translate(720, 82)">
+    <rect x="0" y="0" width="216" height="320" class="phase" stroke="#f59e0b"/>
+    <text x="14" y="24" class="mono" fill="#fcd34d">PHASE 4 (WEEKS 14–18)</text>
+    <text x="14" y="44" class="txt-hdr">Low-Power DFT &amp; GLS</text>
+
+    <rect x="12" y="58" width="192" height="86" class="inner" stroke="#f59e0b"/>
+    <text x="20" y="76" class="mono" fill="#fcd34d">SkillVerse Courses:</text>
+    <text x="20" y="94" class="mono" fill="#cbd5e1">• DFT Ch 8</text>
+    <text x="20" y="110" class="mono" fill="#cbd5e1">• GLS Ch 10 &amp; UPF_CPF</text>
+    <text x="20" y="126" class="mono" fill="#cbd5e1">• Python &amp; bash (STIL/WGL)</text>
+
+    <rect x="12" y="156" width="192" height="90" class="inner" stroke="#334155"/>
+    <text x="20" y="176" class="txt-sub" fill="#cbd5e1">Core Skills:</text>
+    <text x="20" y="194" class="txt-sub">• Serial vs parallel scan GLS</text>
+    <text x="20" y="210" class="txt-sub">• Shift IR-drop power budgeting</text>
+    <text x="20" y="226" class="txt-sub">• ATE STIL failure diagnosis</text>
+
+    <rect x="12" y="256" width="192" height="50" class="inner" stroke="#f59e0b" fill="#1b150b"/>
+    <text x="108" y="276" text-anchor="middle" class="mono" fill="#fcd34d">Capstone: Tape-Out DFT</text>
+    <text x="108" y="294" text-anchor="middle" class="txt-sub">Timing scan sim + MBIST pass</text>
+  </g>
+
+  <!-- Bottom Note -->
+  <g transform="translate(24, 420)">
+    <rect x="0" y="0" width="912" height="96" class="phase" stroke="#f43f5e" fill="#1f1018"/>
+    <text x="18" y="24" class="txt-hdr" fill="#fda4af">Why DFT Engineers Are Always in High Demand</text>
+    <text x="18" y="48" class="txt-sub">Every sub-7nm / multi-die SoC ships millions of gates and thousands of SRAMs where a single bad wafer defect causes DPPM escapes.</text>
+    <text x="18" y="68" class="txt-sub">Engineers fluent in BOTH RTL/CDC/UPF constraints AND Scan/MBIST/IJTAG/GLS bridge design, physical, and silicon test teams.</text>
+  </g>
+</svg>

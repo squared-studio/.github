@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 400" width="920" height="400">
+  <defs>
+    <style>
+      .bg { fill: #0f172a; }
+      .card { fill: #1e293b; stroke-width: 1.5; rx: 10; ry: 10; }
+      .box { fill: #0f172a; stroke: #334155; stroke-width: 1.2; rx: 6; ry: 6; }
+      .title { font-family: 'Segoe UI', Arial, sans-serif; font-size: 18px; font-weight: 700; fill: #f8fafc; text-anchor: middle; }
+      .subtitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; fill: #94a3b8; text-anchor: middle; }
+      .ctitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 13.5px; font-weight: 700; }
+      .mono { font-family: Consolas, 'Courier New', monospace; font-size: 10.6px; fill: #7dd3fc; }
+      .note { font-family: 'Segoe UI', Arial, sans-serif; font-size: 10.3px; fill: #cbd5e1; }
+    </style>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="920" height="400" />
+  <text class="title" x="460" y="28">Verilog Gate-Level Delay Modes Comparison</text>
+  <text class="subtitle" x="460" y="48">Contrasting Zero, Unit, Specify Path, and Distributed Structural Delay Modes Across Compilation Runs</text>
+
+  <!-- Q1: Zero Delay -->
+  <rect class="card" x="20" y="64" width="430" height="156" stroke="#f87171" />
+  <text class="ctitle" x="36" y="88" fill="#f87171">1. Zero-Delay (+delay_mode_zero)</text>
+  <rect class="box" x="36" y="100" width="398" height="40" />
+  <text class="mono" x="48" y="124">Forces all specify &amp; structural delays = 0; skips checks</text>
+  <text class="note" x="36" y="158">+ Fastest gate simulation runtime (2x–5x faster than SDF).</text>
+  <text class="note" x="36" y="176" fill="#fca5a5">- Zero timing checks ($setuphold disabled completely!).</text>
+  <text class="note" x="36" y="194" fill="#fca5a5">- Suffers CTS clock-tree delta-cycle races on P&amp;R netlists.</text>
+
+  <!-- Q2: Unit Delay -->
+  <rect class="card" x="470" y="64" width="430" height="156" stroke="#f59e0b" />
+  <text class="ctitle" x="486" y="88" fill="#f59e0b">2. Unit-Delay (+delay_mode_unit)</text>
+  <rect class="box" x="486" y="100" width="398" height="40" />
+  <text class="mono" x="498" y="124" fill="#fcd34d">Assigns 1 precision tick per module IOPATH (e.g. 1ps)</text>
+  <text class="note" x="486" y="158">+ Breaks simple 0-delay combinational feedback loops.</text>
+  <text class="note" x="486" y="176">- Still risky on unequal CTS buffer depths unless flop CK-&gt;Q</text>
+  <text class="note" x="486" y="194">  uses `#delay` / UDP delay &gt;= max CTS depth!</text>
+
+  <!-- Q3: Path Delay (Normal Timing GLS) -->
+  <rect class="card" x="20" y="234" width="430" height="150" stroke="#34d399" />
+  <text class="ctitle" x="36" y="258" fill="#34d399">3. Specify Path Mode (+delay_mode_path)</text>
+  <rect class="box" x="36" y="270" width="398" height="40" stroke="#34d399" />
+  <text class="mono" x="48" y="294" fill="#6ee7b7">Uses specify block IOPATH + INTERCONNECT + SDF values</text>
+  <text class="note" x="36" y="328">+ Standard IEEE mode for ALL Full-Timing SDF runs!</text>
+  <text class="note" x="36" y="346">+ Enables full `$setuphold`, `$recrem`, `$width`, &amp; glitches.</text>
+  <text class="note" x="36" y="364" fill="#6ee7b7">+ Default mode when SDF back-annotation is present.</text>
+
+  <!-- Q4: Distributed Delay -->
+  <rect class="card" x="470" y="234" width="430" height="150" stroke="#a78bfa" />
+  <text class="ctitle" x="486" y="258" fill="#a78bfa">4. Distributed Mode (+delay_mode_distributed)</text>
+  <rect class="box" x="486" y="270" width="398" height="40" />
+  <text class="mono" x="498" y="294" fill="#c4b5fd">Ignores specify block; uses primitive `#delay` statements</text>
+  <text class="note" x="486" y="328">- Rare in modern ASIC stdcell libs (which specify `IOPATH`).</text>
+  <text class="note" x="486" y="346">- Mainly seen in legacy behavioral memory/PHY models with</text>
+  <text class="note" x="486" y="364">  inline `assign #1` or gate-level primitive delays.</text>
+</svg>

@@ -1,0 +1,95 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 420" width="920" height="420">
+  <defs>
+    <style>
+      .bg { fill: #0f172a; }
+      .panel { fill: #1e293b; stroke-width: 1.5; rx: 10; ry: 10; }
+      .node { fill: #0f172a; stroke-width: 1.8; rx: 8; ry: 8; }
+      .title { font-family: 'Segoe UI', Arial, sans-serif; font-size: 18px; font-weight: 700; fill: #f8fafc; text-anchor: middle; }
+      .subtitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; fill: #94a3b8; text-anchor: middle; }
+      .st { font-family: Consolas, 'Courier New', monospace; font-size: 11px; font-weight: 700; text-anchor: middle; }
+      .sub { font-family: 'Segoe UI', Arial, sans-serif; font-size: 10px; fill: #94a3b8; text-anchor: middle; }
+      .note { font-family: 'Segoe UI', Arial, sans-serif; font-size: 11px; fill: #e2e8f0; }
+    </style>
+    <marker id="arrDown" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#f87171" />
+    </marker>
+    <marker id="arrUp" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#34d399" />
+    </marker>
+    <marker id="arrSky" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#38bdf8" />
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="920" height="420" />
+  <text class="title" x="460" y="28">Always-On Power Management Controller (PMC) FSM Architecture</text>
+  <text class="subtitle" x="460" y="48">Deterministic Hardware Sequencing Machine Governing Graceful Shutdown Entry and Glitch-Free Wakeup Exit</text>
+
+  <!-- Main FSM Container -->
+  <rect class="panel" x="20" y="64" width="880" height="292" stroke="#38bdf8" />
+
+  <!-- Top Center: RUN STATE -->
+  <rect class="node" x="345" y="78" width="230" height="42" stroke="#34d399" />
+  <text class="st" x="460" y="97" fill="#34d399">ACTIVE / RUN</text>
+  <text class="sub" x="460" y="112">Wait for Sleep Request (WFI / FW)</text>
+
+  <!-- Power Down Path (Left Column, going top to bottom) -->
+  <line x1="345" y1="99" x2="170" y2="99" stroke="#f87171" stroke-width="1.8" />
+  <line x1="170" y1="99" x2="170" y2="124" stroke="#f87171" stroke-width="1.8" marker-end="url(#arrDown)" />
+
+  <rect class="node" x="45" y="128" width="250" height="36" stroke="#f87171" />
+  <text class="st" x="170" y="145" fill="#fca5a5">D1. BUS_QUIESCE &amp; CLK_GATE</text>
+  <text class="sub" x="170" y="158">Drain AXI inflight txns, gate domain clk</text>
+  <line x1="170" y1="164" x2="170" y2="178" stroke="#f87171" stroke-width="1.6" marker-end="url(#arrDown)" />
+
+  <rect class="node" x="45" y="182" width="250" height="36" stroke="#a78bfa" />
+  <text class="st" x="170" y="199" fill="#c4b5fd">D2. SAVE_RET &amp; ISOLATE</text>
+  <text class="sub" x="170" y="212">Pulse SAVE; assert ISO_EN before reset</text>
+  <line x1="170" y1="218" x2="170" y2="232" stroke="#f87171" stroke-width="1.6" marker-end="url(#arrDown)" />
+
+  <rect class="node" x="45" y="236" width="250" height="36" stroke="#f59e0b" />
+  <text class="st" x="170" y="253" fill="#fcd34d">D3. ASSERT_RST &amp; PWR_OFF</text>
+  <text class="sub" x="170" y="266">Hold domain reset, deassert pwr_sw_en</text>
+  <line x1="170" y1="272" x2="170" y2="286" stroke="#f87171" stroke-width="1.6" marker-end="url(#arrDown)" />
+
+  <rect class="node" x="45" y="290" width="250" height="36" stroke="#f87171" />
+  <text class="st" x="170" y="307" fill="#f87171">D4. WAIT_PWR_ACK_LOW</text>
+  <text class="sub" x="170" y="320">Confirm daisy-chain switch off</text>
+
+  <!-- Bottom Center: SLEEP STATE -->
+  <line x1="295" y1="308" x2="341" y2="308" stroke="#f87171" stroke-width="1.8" marker-end="url(#arrDown)" />
+
+  <rect class="node" x="345" y="290" width="230" height="48" stroke="#f59e0b" />
+  <text class="st" x="460" y="310" fill="#f59e0b">SLEEP / POWER GATED</text>
+  <text class="sub" x="460" y="326">Wait for IRQ / Wakeup Timer Event</text>
+
+  <!-- Power Up Path (Right Column, going bottom to top) -->
+  <line x1="575" y1="308" x2="621" y2="308" stroke="#34d399" stroke-width="1.8" marker-end="url(#arrUp)" />
+
+  <rect class="node" x="625" y="290" width="250" height="36" stroke="#34d399" />
+  <text class="st" x="750" y="307" fill="#6ee7b7">U1. PWR_ON &amp; WAIT_ACK_HI</text>
+  <text class="sub" x="750" y="320">Drive pwr_sw_en=1, wait pwr_ack==1</text>
+  <line x1="750" y1="290" x2="750" y2="276" stroke="#34d399" stroke-width="1.6" marker-end="url(#arrUp)" />
+
+  <rect class="node" x="625" y="236" width="250" height="36" stroke="#a78bfa" />
+  <text class="st" x="750" y="253" fill="#c4b5fd">U2. RESTORE_RET</text>
+  <text class="sub" x="750" y="266">Pulse RESTORE while clk gated &amp; ISO held</text>
+  <line x1="750" y1="236" x2="750" y2="222" stroke="#34d399" stroke-width="1.6" marker-end="url(#arrUp)" />
+
+  <rect class="node" x="625" y="182" width="250" height="36" stroke="#38bdf8" />
+  <text class="st" x="750" y="199" fill="#7dd3fc">U3. DEASSERT_RST &amp; DE-ISO</text>
+  <text class="sub" x="750" y="212">Release domain reset, lower ISO_EN</text>
+  <line x1="750" y1="182" x2="750" y2="168" stroke="#34d399" stroke-width="1.6" marker-end="url(#arrUp)" />
+
+  <rect class="node" x="625" y="128" width="250" height="36" stroke="#34d399" />
+  <text class="st" x="750" y="145" fill="#6ee7b7">U4. ENABLE_CLK &amp; UNQUIESCE</text>
+  <text class="sub" x="750" y="158">Un-gate clock tree, re-enable bus port</text>
+
+  <!-- Arrow back to RUN -->
+  <line x1="750" y1="128" x2="750" y2="99" stroke="#34d399" stroke-width="1.8" />
+  <line x1="750" y1="99" x2="579" y2="99" stroke="#34d399" stroke-width="1.8" marker-end="url(#arrUp)" />
+
+  <!-- Bottom note -->
+  <text class="note" x="34" y="380" fill="#7dd3fc">Design Mandate: The PMC FSM and its wakeup/reset/isolation outputs MUST reside in an Always-On (AON) domain (PD_TOP).</text>
+  <text class="note" x="34" y="400" fill="#fcd34d">Safety Tip: Program timer delays between each state so power rail ramp and RESTORE setup/hold margins are met across PVT.</text>
+</svg>

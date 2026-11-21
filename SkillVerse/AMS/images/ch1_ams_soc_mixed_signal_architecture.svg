@@ -1,0 +1,105 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 420" width="920" height="420">
+  <defs>
+    <style>
+      .bg { fill: #0f172a; }
+      .chip { fill: #111827; stroke: #475569; stroke-width: 2; rx: 14; ry: 14; }
+      .core { fill: #1e293b; stroke: #38bdf8; stroke-width: 2; rx: 10; ry: 10; }
+      .ams { fill: #1e293b; stroke-width: 1.6; rx: 8; ry: 8; }
+      .box { fill: #0f172a; stroke: #334155; stroke-width: 1.2; rx: 6; ry: 6; }
+      .title { font-family: 'Segoe UI', Arial, sans-serif; font-size: 18px; font-weight: 700; fill: #f8fafc; text-anchor: middle; }
+      .sub { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; fill: #94a3b8; text-anchor: middle; }
+      .hdr { font-family: 'Segoe UI', Arial, sans-serif; font-size: 13px; font-weight: 700; }
+      .txt { font-family: 'Segoe UI', Arial, sans-serif; font-size: 11px; fill: #cbd5e1; }
+      .mono { font-family: Consolas, 'Courier New', monospace; font-size: 10.5px; fill: #e2e8f0; }
+      .pad { fill: #334155; stroke: #94a3b8; stroke-width: 1; rx: 3; ry: 3; }
+    </style>
+    <marker id="arr-c" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8" />
+    </marker>
+    <marker id="arr-g" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#34d399" />
+    </marker>
+    <marker id="arr-a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#f59e0b" />
+    </marker>
+    <marker id="arr-p" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#a78bfa" />
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="920" height="420" />
+  <text class="title" x="460" y="28">Mixed-Signal SoC Floorplan: Digital Core Surrounded by AMS Subsystems</text>
+  <text class="sub" x="460" y="48">Real-World Chips Depend on Analog Power, Clocking, Data Conversion, and High-Speed PHY Rings</text>
+
+  <!-- Die Boundary -->
+  <rect class="chip" x="30" y="64" width="860" height="336" />
+  <text class="mono" x="48" y="84" fill="#64748b">SILICON DIE + ESD PAD RING (VDD_IO / VSS / AVDD / DVDD)</text>
+
+  <!-- ESD / IO Ring strips -->
+  <rect class="pad" x="50" y="92" width="120" height="20" /><text class="mono" x="110" y="106" text-anchor="middle">AVDD_PMIC / XTAL</text>
+  <rect class="pad" x="380" y="92" width="160" height="20" /><text class="mono" x="460" y="106" text-anchor="middle">GPIO / ESD CLAMPS</text>
+  <rect class="pad" x="720" y="92" width="150" height="20" /><text class="mono" x="795" y="106" text-anchor="middle">AIN / VREF / RF PADS</text>
+  <rect class="pad" x="360" y="372" width="200" height="20" /><text class="mono" x="460" y="386" text-anchor="middle">HIGH-SPEED CML / PCIe / DDR PINS</text>
+
+  <!-- Left Top: PMIC / BGR / LDO -->
+  <rect class="ams" x="48" y="122" width="210" height="114" stroke="#f59e0b" />
+  <text class="hdr" x="62" y="143" fill="#f59e0b">1. Power &amp; Reference (PMIC)</text>
+  <rect class="box" x="60" y="152" width="186" height="72" />
+  <text class="mono" x="70" y="170" fill="#fcd34d">Bandgap Ref (1.20 V PTAT+CTAT)</text>
+  <text class="txt" x="70" y="187">- Bias Gen &amp; I_REF distribution</text>
+  <text class="txt" x="70" y="203">- Core Buck + Analog LDOs</text>
+  <text class="txt" x="70" y="219">- POR, Brownout &amp; Temp Sensor</text>
+
+  <!-- Left Bottom: Fractional-N PLL -->
+  <rect class="ams" x="48" y="250" width="210" height="112" stroke="#a78bfa" />
+  <text class="hdr" x="62" y="271" fill="#a78bfa">2. Clocking (Frac-N PLL)</text>
+  <rect class="box" x="60" y="280" width="186" height="70" />
+  <text class="mono" x="70" y="298" fill="#c4b5fd">XTAL Osc -&gt; PFD/CP -&gt; VCO</text>
+  <text class="txt" x="70" y="315">- MASH Delta-Sigma divider</text>
+  <text class="txt" x="70" y="331">- Low RMS jitter (&lt; 150 fs)</text>
+  <text class="txt" x="70" y="347">- SSCG &amp; multi-phase clock gen</text>
+
+  <!-- Center: Digital SoC Core -->
+  <rect class="core" x="296" y="128" width="328" height="196" />
+  <text class="hdr" x="460" y="152" fill="#38bdf8" text-anchor="middle">DIGITAL SOC COMPUTE &amp; CONTROL CORE</text>
+  <rect class="box" x="314" y="166" width="142" height="62" />
+  <text class="mono" x="385" y="186" fill="#7dd3fc" text-anchor="middle">CPU / DSP / NPU</text>
+  <text class="txt" x="385" y="203" text-anchor="middle">RTL Standard Cells</text>
+  <text class="txt" x="385" y="218" text-anchor="middle">DVFS + Scan + SRAM</text>
+
+  <rect class="box" x="466" y="166" width="140" height="62" />
+  <text class="mono" x="536" y="186" fill="#7dd3fc" text-anchor="middle">AMS Trim &amp; FSM</text>
+  <text class="txt" x="536" y="203" text-anchor="middle">APB/SPI Register Map</text>
+  <text class="txt" x="536" y="218" text-anchor="middle">Calib / DEM / BIST</text>
+
+  <rect class="box" x="314" y="240" width="292" height="70" stroke="#38bdf8" />
+  <text class="mono" x="460" y="259" fill="#38bdf8" text-anchor="middle">Mixed-Signal Boundary Interfaces</text>
+  <text class="txt" x="326" y="277">- Digital-to-Analog: trim[N:0], dac_code, pll_ctrl, ld_en</text>
+  <text class="txt" x="326" y="293">- Analog-to-Digital: sar_out, lock_det, por_n, comp_q</text>
+  <text class="txt" x="326" y="307">- Substrate guard rings + Deep N-Well isolation</text>
+
+  <!-- Right Top: Data Converters -->
+  <rect class="ams" x="662" y="122" width="210" height="114" stroke="#34d399" />
+  <text class="hdr" x="676" y="143" fill="#34d399">3. Data Converters (A/D)</text>
+  <rect class="box" x="674" y="152" width="186" height="72" />
+  <text class="mono" x="684" y="170" fill="#6ee7b7">SAR / Pipeline / SD ADC</text>
+  <text class="txt" x="684" y="187">- Bottom-plate S/H + DAC</text>
+  <text class="txt" x="684" y="203">- Current-steering TX DAC</text>
+  <text class="txt" x="684" y="219">- On-die foreground calibration</text>
+
+  <!-- Right Bottom: High-Speed SerDes -->
+  <rect class="ams" x="662" y="250" width="210" height="112" stroke="#f87171" />
+  <text class="hdr" x="676" y="271" fill="#f87171">4. High-Speed SerDes PHY</text>
+  <rect class="box" x="674" y="280" width="186" height="70" />
+  <text class="mono" x="684" y="298" fill="#fca5a5">TX FFE + RX CTLE/DFE + CDR</text>
+  <text class="txt" x="684" y="315">- NRZ / PAM4 (28G–112G+)</text>
+  <text class="txt" x="684" y="331">- Slicer offset &amp; eye monitor</text>
+  <text class="txt" x="684" y="347">- 50-ohm termination + ESD</text>
+
+  <!-- Arrows -->
+  <line x1="258" y1="178" x2="294" y2="178" stroke="#f59e0b" stroke-width="1.8" marker-end="url(#arr-a)" />
+  <line x1="258" y1="300" x2="294" y2="300" stroke="#a78bfa" stroke-width="1.8" marker-end="url(#arr-p)" />
+  <line x1="624" y1="178" x2="660" y2="178" stroke="#34d399" stroke-width="1.8" marker-end="url(#arr-g)" marker-start="url(#arr-c)" />
+  <line x1="624" y1="300" x2="660" y2="300" stroke="#38bdf8" stroke-width="1.8" marker-end="url(#arr-c)" marker-start="url(#arr-g)" />
+  <path d="M 460 324 L 460 370" fill="none" stroke="#38bdf8" stroke-width="1.6" stroke-dasharray="4,3" marker-end="url(#arr-c)" />
+</svg>

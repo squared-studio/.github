@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 200" width="720" height="200" style="background-color: #ffffff; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+  <defs>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="1" dy="2" stdDeviation="2" flood-color="#0f172a" flood-opacity="0.08" />
+    </filter>
+    <marker id="arr-blue" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#2563eb" />
+    </marker>
+    <marker id="arr-green" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#10b981" />
+    </marker>
+    <marker id="arr-red" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#ef4444" />
+    </marker>
+    <marker id="arr-purple" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#8b5cf6" />
+    </marker>
+    <marker id="arr-amber" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#f59e0b" />
+    </marker>
+    <marker id="arr-slate" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#64748b" />
+    </marker>
+  </defs>
+
+  <rect x="15" y="15" width="690" height="170" rx="12" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2"/>
+  <text x="35" y="40" font-size="14" font-weight="700" fill="#0f172a">APB4 Protection Unit Signals (PPROT[2:0])</text>
+
+  <rect x="35" y="65" width="205" height="95" rx="8" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="137" y="88" font-size="12" font-weight="700" fill="#1e3a8a" text-anchor="middle">PPROT[0]: Privilege</text>
+  <text x="137" y="110" font-size="10" fill="#1e40af" text-anchor="middle">0 = Normal (User mode)</text>
+  <text x="137" y="128" font-size="10" fill="#1e40af" text-anchor="middle">1 = Privileged (OS/Kernel)</text>
+  <text x="137" y="145" font-size="9.5" font-weight="700" fill="#2563eb" text-anchor="middle">Protects system registers</text>
+
+  <rect x="255" y="65" width="205" height="95" rx="8" fill="#fef2f2" stroke="#ef4444" stroke-width="2" filter="url(#shadow)"/>
+  <text x="357" y="88" font-size="12" font-weight="700" fill="#991b1b" text-anchor="middle">PPROT[1]: Security</text>
+  <text x="357" y="110" font-size="10" fill="#b91c1c" text-anchor="middle">0 = Secure (TrustZone Secure)</text>
+  <text x="357" y="128" font-size="10" fill="#b91c1c" text-anchor="middle">1 = Non-Secure (Normal World)</text>
+  <text x="357" y="145" font-size="9.5" font-weight="700" fill="#dc2626" text-anchor="middle">Cryptographic isolation</text>
+
+  <rect x="475" y="65" width="205" height="95" rx="8" fill="#f0fdf4" stroke="#10b981" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="577" y="88" font-size="12" font-weight="700" fill="#065f46" text-anchor="middle">PPROT[2]: Access Type</text>
+  <text x="577" y="110" font-size="10" fill="#047857" text-anchor="middle">0 = Data Access</text>
+  <text x="577" y="128" font-size="10" fill="#047857" text-anchor="middle">1 = Instruction Fetch</text>
+  <text x="577" y="145" font-size="9.5" font-weight="700" fill="#059669" text-anchor="middle">Security execution checks</text>
+
+</svg>

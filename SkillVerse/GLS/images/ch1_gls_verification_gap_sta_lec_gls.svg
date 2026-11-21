@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 400" width="920" height="400">
+  <defs>
+    <style>
+      .bg { fill: #0f172a; }
+      .panel { fill: #1e293b; stroke-width: 1.5; rx: 10; ry: 10; }
+      .box { fill: #0f172a; stroke: #334155; stroke-width: 1.2; rx: 6; ry: 6; }
+      .title { font-family: 'Segoe UI', Arial, sans-serif; font-size: 18px; font-weight: 700; fill: #f8fafc; text-anchor: middle; }
+      .subtitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; fill: #94a3b8; text-anchor: middle; }
+      .ptitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 14px; font-weight: 700; }
+      .mono { font-family: Consolas, 'Courier New', monospace; font-size: 10.6px; fill: #e2e8f0; }
+      .note { font-family: 'Segoe UI', Arial, sans-serif; font-size: 10.5px; fill: #94a3b8; }
+      .badge { font-family: Consolas, 'Courier New', monospace; font-size: 11px; font-weight: 700; text-anchor: middle; }
+    </style>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="920" height="400" />
+  <text class="title" x="460" y="28">Why STA and LEC Alone Leave Blind Spots Closed Only by GLS</text>
+  <text class="subtitle" x="460" y="48">Comparing Static Structural/Timing Tools Against Dynamic SDF-Annotated Gate-Level Simulation</text>
+
+  <!-- Card 1: STA -->
+  <rect class="panel" x="20" y="64" width="280" height="316" stroke="#38bdf8" />
+  <text class="ptitle" x="36" y="88" fill="#38bdf8">1. Static Timing (STA)</text>
+  <rect class="box" x="34" y="102" width="252" height="106" />
+  <text class="badge" x="160" y="122" fill="#7dd3fc">What STA Proves 100%</text>
+  <text class="note" x="44" y="142">- Exhaustive synchronous setup,</text>
+  <text class="note" x="44" y="158">  hold, recovery, removal checks</text>
+  <text class="note" x="44" y="174">- All PVT corners &amp; OCV/POCV</text>
+  <text class="note" x="44" y="190">- Zero vector dependency</text>
+
+  <rect class="box" x="34" y="218" width="252" height="148" stroke="#f87171" />
+  <text class="badge" x="160" y="238" fill="#fca5a5">Critical STA Blind Spots</text>
+  <text class="note" x="44" y="258">- Trusts human SDC exceptions!</text>
+  <text class="note" x="44" y="274">  (Wrong false/multicycle = SILENT!)</text>
+  <text class="note" x="44" y="292">- Ignores actual reset X values</text>
+  <text class="note" x="44" y="308">- Blind to functional glitches &amp;</text>
+  <text class="note" x="44" y="324">  async clock-mux runt pulses</text>
+  <text class="note" x="44" y="340">- Doesn't run power-up software</text>
+
+  <!-- Card 2: LEC -->
+  <rect class="panel" x="320" y="64" width="280" height="316" stroke="#a78bfa" />
+  <text class="ptitle" x="336" y="88" fill="#a78bfa">2. Logic Equiv (LEC)</text>
+  <rect class="box" x="334" y="102" width="252" height="106" />
+  <text class="badge" x="460" y="122" fill="#c4b5fd">What LEC Proves 100%</text>
+  <text class="note" x="344" y="142">- Static Boolean equivalence of</text>
+  <text class="note" x="344" y="158">  RTL vs Gate combinational cones</text>
+  <text class="note" x="344" y="174">- 100% compare-point mapping</text>
+  <text class="note" x="344" y="190">- PA-LEC isolation/SRFF syntax</text>
+
+  <rect class="box" x="334" y="218" width="252" height="148" stroke="#f87171" />
+  <text class="badge" x="460" y="238" fill="#fca5a5">Critical LEC Blind Spots</text>
+  <text class="note" x="344" y="258">- Ignores ALL physical timing &amp;</text>
+  <text class="note" x="344" y="274">  SDF wire/gate propagation delays</text>
+  <text class="note" x="344" y="292">- Treats `X` states optimistically</text>
+  <text class="note" x="344" y="308">  or ignores un-reset boot FFs</text>
+  <text class="note" x="344" y="324">- Usually masks DFT scan-enable</text>
+  <text class="note" x="344" y="340">  with constraints (`scan_en == 0`)</text>
+
+  <!-- Card 3: GLS -->
+  <rect class="panel" x="620" y="64" width="280" height="316" stroke="#34d399" />
+  <text class="ptitle" x="636" y="88" fill="#34d399">3. Gate-Level Sim (GLS)</text>
+  <rect class="box" x="634" y="102" width="252" height="106" stroke="#34d399" />
+  <text class="badge" x="760" y="122" fill="#6ee7b7">Bugs ONLY GLS Catches</text>
+  <text class="note" x="644" y="142">- Bad SDC `false_path` / `MCP`</text>
+  <text class="note" x="644" y="158">- Uninitialized FF &amp; Gate X-pess</text>
+  <text class="note" x="644" y="174">- Async reset release &amp; boot seq</text>
+  <text class="note" x="644" y="190">- Real ATPG/MBIST patterns w/ SDF</text>
+
+  <rect class="box" x="634" y="218" width="252" height="148" />
+  <text class="badge" x="760" y="238" fill="#fcd34d">GLS Trade-Offs &amp; Scope</text>
+  <text class="note" x="644" y="258">- 10x–100x slower than RTL sim</text>
+  <text class="note" x="644" y="274">- Vector-dependent (only checks</text>
+  <text class="note" x="644" y="290">  exercised paths!)</text>
+  <text class="note" x="644" y="310" fill="#6ee7b7">- Not a replacement for STA/LEC:</text>
+  <text class="note" x="644" y="326" fill="#6ee7b7">  it validates dynamic behavior</text>
+  <text class="note" x="644" y="342" fill="#6ee7b7">  across STA/LEC assumptions!</text>
+</svg>

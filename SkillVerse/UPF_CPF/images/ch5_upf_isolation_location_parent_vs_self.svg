@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 400" width="920" height="400">
+  <defs>
+    <style>
+      .bg { fill: #0f172a; }
+      .panel { fill: #1e293b; stroke-width: 1.5; rx: 10; ry: 10; }
+      .box { fill: #0f172a; stroke: #334155; stroke-width: 1.2; rx: 6; ry: 6; }
+      .iso { fill: #172554; stroke: #f59e0b; stroke-width: 1.8; rx: 6; ry: 6; }
+      .title { font-family: 'Segoe UI', Arial, sans-serif; font-size: 18px; font-weight: 700; fill: #f8fafc; text-anchor: middle; }
+      .subtitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; fill: #94a3b8; text-anchor: middle; }
+      .ptitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 14px; font-weight: 700; }
+      .mono { font-family: Consolas, 'Courier New', monospace; font-size: 10.8px; fill: #e2e8f0; }
+      .note { font-family: 'Segoe UI', Arial, sans-serif; font-size: 10.5px; fill: #94a3b8; }
+      .badge { font-family: Consolas, 'Courier New', monospace; font-size: 10.5px; font-weight: 700; text-anchor: middle; }
+    </style>
+    <marker id="arrSky" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#38bdf8" />
+    </marker>
+    <marker id="arrRed" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#f87171" />
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="920" height="400" />
+  <text class="title" x="460" y="28">Isolation Cell Placement: -location self vs. -location parent / fanout</text>
+  <text class="subtitle" x="460" y="48">Comparing Backup Supply Routing, Physical Floorplan Placement, and Multi-Fanout Overhead</text>
+
+  <!-- Left Panel: -location self -->
+  <rect class="panel" x="20" y="64" width="430" height="316" stroke="#f59e0b" />
+  <text class="ptitle" x="36" y="88" fill="#f59e0b">Option A: -location self (Inside Source Domain)</text>
+
+  <rect class="box" x="36" y="102" width="230" height="128" stroke="#f87171" />
+  <text class="mono" x="46" y="122" fill="#fca5a5">PD_SRC (Switchable)</text>
+  <text class="note" x="46" y="140">Primary Rail: VDD_SW (OFF)</text>
+  <rect class="iso" x="150" y="152" width="102" height="52" />
+  <text class="badge" x="201" y="174" fill="#fcd34d">ISO Cell</text>
+  <text class="note" x="201" y="191" text-anchor="middle">Uses VDD_AON!</text>
+
+  <line x1="252" y1="178" x2="292" y2="178" stroke="#38bdf8" stroke-width="2" marker-end="url(#arrSky)" />
+
+  <rect class="box" x="296" y="102" width="138" height="128" stroke="#34d399" />
+  <text class="mono" x="306" y="122" fill="#6ee7b7">PD_PARENT</text>
+  <text class="note" x="306" y="140">(Always-On)</text>
+  <text class="note" x="306" y="174">Single clamped</text>
+  <text class="note" x="306" y="190">output fans out</text>
+  <text class="note" x="306" y="206">cleanly to loads</text>
+
+  <rect class="box" x="36" y="244" width="398" height="122" />
+  <text class="mono" x="48" y="264" fill="#fcd34d">Trade-Offs (-location self):</text>
+  <text class="note" x="48" y="283">+ Only 1 ISO cell per source port even for 10+ receivers.</text>
+  <text class="note" x="48" y="300" fill="#fca5a5">- Requires Secondary Always-On Power Pin (-isolation_supply_set)</text>
+  <text class="note" x="48" y="317" fill="#fca5a5">  to route VDD_AON inside switchable PD_SRC floorplan.</text>
+  <text class="note" x="48" y="335">- Also needs -isolation_signal iso_en routed into island.</text>
+  <text class="mono" x="48" y="355" fill="#7dd3fc">Best for: Macro outputs, high-fanout buses (AXI/Interrupts).</text>
+
+  <!-- Right Panel: -location parent / fanout -->
+  <rect class="panel" x="470" y="64" width="430" height="316" stroke="#34d399" />
+  <text class="ptitle" x="486" y="88" fill="#34d399">Option B: -location parent / fanout (Recommended Default)</text>
+
+  <rect class="box" x="486" y="102" width="144" height="128" stroke="#f87171" />
+  <text class="mono" x="496" y="122" fill="#fca5a5">PD_SRC</text>
+  <text class="note" x="496" y="140">(Switchable)</text>
+  <text class="note" x="496" y="174">Pure VDD_SW;</text>
+  <text class="note" x="496" y="190">zero AON wires</text>
+  <text class="note" x="496" y="206">inside core!</text>
+
+  <line x1="630" y1="166" x2="672" y2="166" stroke="#f87171" stroke-width="2" marker-end="url(#arrRed)" />
+
+  <rect class="box" x="676" y="102" width="208" height="128" stroke="#34d399" />
+  <text class="mono" x="686" y="122" fill="#6ee7b7">PD_PARENT (Always-On)</text>
+  <text class="note" x="686" y="140">Primary Rail: VDD_AON</text>
+  <rect class="iso" x="692" y="152" width="112" height="52" stroke="#34d399" />
+  <text class="badge" x="748" y="174" fill="#6ee7b7">ISO Cell</text>
+  <text class="note" x="748" y="191" text-anchor="middle">Single-Rail Cell!</text>
+
+  <rect class="box" x="486" y="244" width="398" height="122" />
+  <text class="mono" x="498" y="264" fill="#6ee7b7">Trade-Offs (-location parent / fanout):</text>
+  <text class="note" x="498" y="283">+ Standard single-rail ISO cell shares PD_PARENT VDD_AON.</text>
+  <text class="note" x="498" y="300">+ Clean power grid: no secondary AON routing inside PD_SRC.</text>
+  <text class="note" x="498" y="317" fill="#fcd34d">Note: -location parent places ISO in top/parent domain;</text>
+  <text class="note" x="498" y="334" fill="#fcd34d">  -location fanout places one ISO inside each receiver domain.</text>
+  <text class="mono" x="498" y="355" fill="#7dd3fc">Industry default unless receiver itself is another switchable island.</text>
+</svg>

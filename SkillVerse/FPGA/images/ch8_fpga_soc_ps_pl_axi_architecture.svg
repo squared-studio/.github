@@ -1,0 +1,99 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 400" width="920" height="400">
+  <defs>
+    <style>
+      .bg { fill: #0f172a; }
+      .panel { fill: #1e293b; stroke: #334155; stroke-width: 1.5; rx: 10; ry: 10; }
+      .box { fill: #0f172a; stroke: #334155; stroke-width: 1.2; rx: 6; ry: 6; }
+      .title { font-family: 'Segoe UI', Arial, sans-serif; font-size: 18px; font-weight: 700; fill: #f8fafc; text-anchor: middle; }
+      .sub { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; fill: #94a3b8; text-anchor: middle; }
+      .hdr { font-family: 'Segoe UI', Arial, sans-serif; font-size: 13.5px; font-weight: 700; }
+      .mono { font-family: Consolas, 'Courier New', monospace; font-size: 10.5px; fill: #e2e8f0; }
+      .note { font-family: 'Segoe UI', Arial, sans-serif; font-size: 11px; fill: #cbd5e1; }
+    </style>
+    <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8" />
+    </marker>
+    <marker id="arr-g" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#34d399" />
+    </marker>
+    <marker id="arr-a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#f59e0b" />
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="920" height="400" />
+  <text class="title" x="460" y="28">SoC FPGA Architecture: Bridging ARM Processing System (PS) &amp; FPGA Fabric (PL)</text>
+  <text class="sub" x="460" y="48">Partitioning Linux Control, Cache-Coherent AXI-ACP/ACE, High-Bandwidth AXI-HP DDR Ports, and Real-Time PL Logic</text>
+
+  <!-- Left: Processing System (PS) -->
+  <rect class="panel" x="20" y="64" width="320" height="318" stroke="#f59e0b" />
+  <text class="hdr" x="180" y="88" fill="#f59e0b" text-anchor="middle">1. Hard Processing System (PS)</text>
+
+  <rect class="box" x="34" y="104" width="292" height="72" stroke="#f59e0b" />
+  <text class="mono" x="180" y="126" fill="#fcd34d" text-anchor="middle">Quad ARM Cortex-A + R5F Cores</text>
+  <text class="note" x="180" y="144" text-anchor="middle">Runs Linux / RTOS / Bare-Metal</text>
+  <text class="mono" x="180" y="162" fill="#e2e8f0" text-anchor="middle">1.2-2.2 GHz | L1/L2 Cache</text>
+
+  <rect class="box" x="34" y="188" width="292" height="58" stroke="#a78bfa" />
+  <text class="mono" x="180" y="210" fill="#c4b5fd" text-anchor="middle">Snoop Control Unit (SCU / CCI)</text>
+  <text class="note" x="180" y="229" text-anchor="middle">Hardware Cache Coherency Hub</text>
+
+  <rect class="box" x="34" y="258" width="138" height="108" stroke="#38bdf8" />
+  <text class="mono" x="103" y="282" fill="#7dd3fc" text-anchor="middle">DDR4/5</text>
+  <text class="mono" x="103" y="300" fill="#7dd3fc" text-anchor="middle">Controller</text>
+  <text class="note" x="103" y="324" text-anchor="middle">Shared Main</text>
+  <text class="note" x="103" y="340" text-anchor="middle">Memory Pool</text>
+
+  <rect class="box" x="184" y="258" width="142" height="108" stroke="#94a3b8" />
+  <text class="mono" x="255" y="282" fill="#cbd5e1" text-anchor="middle">Hard I/O Periph</text>
+  <text class="note" x="255" y="304" text-anchor="middle">GbE MAC, USB,</text>
+  <text class="note" x="255" y="322" text-anchor="middle">QSPI, SD, UART,</text>
+  <text class="note" x="255" y="340" text-anchor="middle">GIC Interrupts</text>
+
+  <!-- Center: AXI Bridge Ports -->
+  <rect class="panel" x="356" y="64" width="224" height="318" stroke="#38bdf8" />
+  <text class="hdr" x="468" y="88" fill="#38bdf8" text-anchor="middle">2. PS &lt;-&gt; PL AXI Ports</text>
+
+  <!-- GP AXI (Control) -->
+  <rect class="box" x="370" y="106" width="196" height="66" stroke="#38bdf8" />
+  <text class="mono" x="468" y="126" fill="#7dd3fc" text-anchor="middle">M_AXI_GP (32/64-bit)</text>
+  <text class="note" x="468" y="146" text-anchor="middle">PS Master -&gt; PL Registers</text>
+  <text class="mono" x="468" y="162" fill="#94a3b8" text-anchor="middle">(MMIO CSR Config)</text>
+  <line x1="340" y1="138" x2="366" y2="138" stroke="#38bdf8" stroke-width="2" marker-end="url(#arr)" />
+  <line x1="566" y1="138" x2="594" y2="138" stroke="#38bdf8" stroke-width="2" marker-end="url(#arr)" />
+
+  <!-- ACP / ACE Coherent Port -->
+  <rect class="box" x="370" y="186" width="196" height="72" stroke="#a78bfa" />
+  <text class="mono" x="468" y="206" fill="#c4b5fd" text-anchor="middle">S_AXI_ACP / ACE (Coherent)</text>
+  <text class="note" x="468" y="226" text-anchor="middle">Snoops ARM L1/L2 Caches!</text>
+  <text class="mono" x="468" y="244" fill="#6ee7b7" text-anchor="middle">(Zero CPU Cache Flush!)</text>
+  <line x1="366" y1="216" x2="342" y2="216" stroke="#a78bfa" stroke-width="2" marker-end="url(#arr)" />
+  <line x1="594" y1="216" x2="568" y2="216" stroke="#a78bfa" stroke-width="2" marker-end="url(#arr)" />
+
+  <!-- HP / HPC High-Performance Ports -->
+  <rect class="box" x="370" y="272" width="196" height="94" stroke="#34d399" />
+  <text class="mono" x="468" y="294" fill="#6ee7b7" text-anchor="middle">4x-6x S_AXI_HP (128-bit)</text>
+  <text class="note" x="468" y="314" text-anchor="middle">PL DMA -&gt; PS DDR Direct</text>
+  <text class="note" x="468" y="332" text-anchor="middle">(Highest GB/s, Non-Coherent</text>
+  <text class="note" x="468" y="348" text-anchor="middle">unless HPC + CCI enabled)</text>
+  <line x1="366" y1="312" x2="342" y2="312" stroke="#34d399" stroke-width="2.2" marker-end="url(#arr-g)" />
+  <line x1="594" y1="312" x2="568" y2="312" stroke="#34d399" stroke-width="2.2" marker-end="url(#arr-g)" />
+
+  <!-- Right: Programmable Logic (PL) -->
+  <rect class="panel" x="596" y="64" width="304" height="318" stroke="#34d399" />
+  <text class="hdr" x="748" y="88" fill="#34d399" text-anchor="middle">3. Programmable Logic (PL)</text>
+
+  <rect class="box" x="610" y="106" width="276" height="66" stroke="#38bdf8" />
+  <text class="mono" x="748" y="128" fill="#7dd3fc" text-anchor="middle">AXI-Lite CSR Bank + IRQ Gen</text>
+  <text class="note" x="748" y="148" text-anchor="middle">Start, Stride, Ring Base, Status IRQ</text>
+
+  <rect class="box" x="610" y="186" width="276" height="84" stroke="#34d399" />
+  <text class="mono" x="748" y="208" fill="#6ee7b7" text-anchor="middle">Custom Streaming Accelerators</text>
+  <text class="note" x="748" y="228" text-anchor="middle">DSP / AI Systolic / Vision / Packet</text>
+  <text class="note" x="748" y="246" text-anchor="middle">Deterministic ns Latency</text>
+
+  <rect class="box" x="610" y="284" width="276" height="82" stroke="#f59e0b" />
+  <text class="mono" x="748" y="306" fill="#fcd34d" text-anchor="middle">AXI Scatter-Gather DMA Engine</text>
+  <text class="note" x="748" y="326" text-anchor="middle">Sustains 10-50 GB/s Burst Streaming</text>
+  <text class="note" x="748" y="344" text-anchor="middle">(Needs `dma_sync_*` if Non-Coherent!)</text>
+</svg>

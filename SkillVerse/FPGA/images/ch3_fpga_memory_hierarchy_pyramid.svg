@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 410" width="920" height="410">
+  <defs>
+    <style>
+      .bg { fill: #0f172a; }
+      .panel { fill: #1e293b; stroke: #334155; stroke-width: 1.5; rx: 10; ry: 10; }
+      .box { fill: #0f172a; stroke: #334155; stroke-width: 1.2; rx: 6; ry: 6; }
+      .title { font-family: 'Segoe UI', Arial, sans-serif; font-size: 18px; font-weight: 700; fill: #f8fafc; text-anchor: middle; }
+      .sub { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; fill: #94a3b8; text-anchor: middle; }
+      .hdr { font-family: 'Segoe UI', Arial, sans-serif; font-size: 13.5px; font-weight: 700; }
+      .mono { font-family: Consolas, 'Courier New', monospace; font-size: 10.5px; fill: #e2e8f0; }
+      .note { font-family: 'Segoe UI', Arial, sans-serif; font-size: 11px; fill: #cbd5e1; }
+    </style>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="920" height="410" />
+  <text class="title" x="460" y="28">FPGA Memory Hierarchy Pyramid: Capacity, Bandwidth, and Latency</text>
+  <text class="sub" x="460" y="48">Choosing Between Flip-Flops, Distributed LUTRAM, 36Kb BRAM, 288Kb UltraRAM, and External HBM/DDR</text>
+
+  <!-- Left Pyramid -->
+  <rect class="panel" x="20" y="64" width="520" height="328" stroke="#38bdf8" />
+  <text class="hdr" x="38" y="88" fill="#38bdf8">1. Five-Tier FPGA Memory Storage Hierarchy</text>
+
+  <!-- Tier 1: Registers / FFs -->
+  <polygon points="220,104 340,104 366,148 194,148" fill="rgba(52,211,153,0.22)" stroke="#34d399" stroke-width="1.6" />
+  <text class="mono" x="280" y="123" fill="#6ee7b7" text-anchor="middle" font-weight="bold">Slice Registers (FDRE)</text>
+  <text class="mono" x="280" y="139" fill="#cbd5e1" text-anchor="middle" font-size="9.5">~KB | Async Reset | TB/s Parallel</text>
+
+  <!-- Tier 2: Distributed LUTRAM -->
+  <polygon points="194,154 366,154 394,198 166,198" fill="rgba(56,189,248,0.20)" stroke="#38bdf8" stroke-width="1.6" />
+  <text class="mono" x="280" y="173" fill="#7dd3fc" text-anchor="middle" font-weight="bold">Distributed LUTRAM (SLICEM)</text>
+  <text class="mono" x="280" y="189" fill="#cbd5e1" text-anchor="middle" font-size="9.5">64x1 / 32x2 | Async Read (0-cycle)</text>
+
+  <!-- Tier 3: Block RAM (36Kb) -->
+  <polygon points="166,204 394,204 424,252 136,252" fill="rgba(245,158,11,0.18)" stroke="#f59e0b" stroke-width="1.6" />
+  <text class="mono" x="280" y="224" fill="#fcd34d" text-anchor="middle" font-weight="bold">Block RAM (18Kb / 36Kb BRAM)</text>
+  <text class="mono" x="280" y="241" fill="#cbd5e1" text-anchor="middle" font-size="9.5">5-40 MB | True Dual-Port | Sync 1-2 cyc</text>
+
+  <!-- Tier 4: UltraRAM (288Kb) -->
+  <polygon points="136,258 424,258 456,306 104,306" fill="rgba(167,139,250,0.20)" stroke="#a78bfa" stroke-width="1.6" />
+  <text class="mono" x="280" y="278" fill="#c4b5fd" text-anchor="middle" font-weight="bold">UltraRAM (288Kb URAM Fixed 4Kx72)</text>
+  <text class="mono" x="280" y="295" fill="#cbd5e1" text-anchor="middle" font-size="9.5">30-90+ MB | Single-Clk 2-Port | Hard Cascade</text>
+
+  <!-- Tier 5: External HBM2E / DDR4/5 -->
+  <polygon points="104,312 456,312 496,368 64,368" fill="rgba(248,113,113,0.18)" stroke="#f87171" stroke-width="1.8" />
+  <text class="mono" x="280" y="334" fill="#fca5a5" text-anchor="middle" font-weight="bold">Off-Die / Stacked HBM2E &amp; DDR4 / DDR5</text>
+  <text class="mono" x="280" y="353" fill="#cbd5e1" text-anchor="middle" font-size="9.5">8-64 GB | 20-100+ ns Latency | 20-800 GB/s AXI</text>
+
+  <!-- Right Panel: Selection Rules -->
+  <rect class="panel" x="556" y="64" width="344" height="328" stroke="#34d399" />
+  <text class="hdr" x="572" y="88" fill="#34d399">2. Synthesis &amp; Inference Guide</text>
+
+  <rect class="box" x="570" y="102" width="316" height="68" stroke="#38bdf8" />
+  <text class="mono" x="582" y="121" fill="#7dd3fc">When to Pick LUTRAM (`ram_style="distributed"`):</text>
+  <text class="note" x="582" y="139">- Shallow FIFOs (&lt;= 64 entries) or register files</text>
+  <text class="note" x="582" y="156">- Need combinational/async read on same cycle</text>
+
+  <rect class="box" x="570" y="178" width="316" height="68" stroke="#f59e0b" />
+  <text class="mono" x="582" y="197" fill="#fcd34d">When to Pick BRAM (`ram_style="block"`):</text>
+  <text class="note" x="582" y="215">- Async CDC FIFOs (Dual Independent Clocks!)</text>
+  <text class="note" x="582" y="232">- Built-in hard FIFO logic + flexible widths (x1..x72)</text>
+
+  <rect class="box" x="570" y="254" width="316" height="66" stroke="#a78bfa" />
+  <text class="mono" x="582" y="273" fill="#c4b5fd">When to Pick URAM (`ram_style="ultra"`):</text>
+  <text class="note" x="582" y="291">- Giant AI weights / packet buffers (288Kb/block)</text>
+  <text class="note" x="582" y="308">- Single shared clock + NO bitstream initial data!</text>
+
+  <rect class="box" x="570" y="328" width="316" height="50" stroke="#f87171" />
+  <text class="mono" x="582" y="347" fill="#fca5a5">Hard Gotcha: Neither BRAM nor URAM has async read!</text>
+  <text class="note" x="582" y="365">Async read `assign rd = mem[addr];` forces LUTs!</text>
+</svg>

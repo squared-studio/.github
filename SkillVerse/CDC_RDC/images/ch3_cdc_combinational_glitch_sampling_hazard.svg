@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 400" width="920" height="400">
+  <defs>
+    <style>
+      .bg { fill: #0f172a; }
+      .panel { fill: #1e293b; stroke-width: 1.5; rx: 10; ry: 10; }
+      .box { fill: #0f172a; stroke: #334155; stroke-width: 1.2; rx: 6; ry: 6; }
+      .ff { fill: #172554; stroke: #38bdf8; stroke-width: 1.5; rx: 5; ry: 5; }
+      .title { font-family: 'Segoe UI', Arial, sans-serif; font-size: 18px; font-weight: 700; fill: #f8fafc; text-anchor: middle; }
+      .subtitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; fill: #94a3b8; text-anchor: middle; }
+      .ptitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 14px; font-weight: 700; }
+      .mono { font-family: Consolas, 'Courier New', monospace; font-size: 10.8px; fill: #e2e8f0; }
+      .note { font-family: 'Segoe UI', Arial, sans-serif; font-size: 10.5px; fill: #94a3b8; }
+      .badge { font-family: Consolas, 'Courier New', monospace; font-size: 11px; font-weight: 700; text-anchor: middle; }
+    </style>
+    <marker id="arrRed" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#f87171" />
+    </marker>
+    <marker id="arrGreen" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#34d399" />
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="920" height="400" />
+  <text class="title" x="460" y="28">Structural Glitch Hazard: Combinational Logic Before a Synchronizer</text>
+  <text class="subtitle" x="460" y="48">Why Unregistered Source Logic Creates False Runt Pulses Caught by Asynchronous Clocks—and How Launch Registering Fixes It</text>
+
+  <!-- Left Panel: BUG Circuit + Waveform -->
+  <rect class="panel" x="20" y="64" width="430" height="316" stroke="#f87171" />
+  <text class="ptitle" x="36" y="88" fill="#f87171">BUG: Combinational Gate Feeding 2-FF Sync</text>
+
+  <rect class="ff" x="36" y="106" width="66" height="38" stroke="#f59e0b" />
+  <text class="badge" x="69" y="129" fill="#fcd34d">A (0-&gt;1)</text>
+  <rect class="ff" x="36" y="152" width="66" height="38" stroke="#f59e0b" />
+  <text class="badge" x="69" y="175" fill="#fcd34d">B (1-&gt;0)</text>
+
+  <line x1="102" y1="125" x2="144" y2="140" stroke="#f87171" stroke-width="1.6" />
+  <line x1="102" y1="171" x2="144" y2="156" stroke="#f87171" stroke-width="1.6" />
+
+  <rect class="box" x="148" y="122" width="90" height="52" stroke="#f87171" />
+  <text class="badge" x="193" y="145" fill="#fca5a5">AND Gate</text>
+  <text class="note" x="193" y="162" text-anchor="middle">y = A &amp; B</text>
+
+  <line x1="238" y1="148" x2="294" y2="148" stroke="#f87171" stroke-width="2" marker-end="url(#arrRed)" />
+  <rect class="ff" x="298" y="124" width="134" height="48" stroke="#f87171" />
+  <text class="badge" x="365" y="146" fill="#fca5a5">2-FF Sync</text>
+  <text class="note" x="365" y="162" text-anchor="middle">dst_clk samples!</text>
+
+  <!-- Glitch Waveform Box -->
+  <rect class="box" x="36" y="206" width="398" height="158" />
+  <text class="mono" x="48" y="226" fill="#fca5a5">Waveform (Path A faster than B -&gt; Runt Glitch):</text>
+  <text class="mono" x="48" y="252">A (0-&gt;1)  : _____/------------------</text>
+  <text class="mono" x="48" y="274">B (1-&gt;0)  : -----------\____________</text>
+  <text class="mono" x="48" y="296" fill="#f87171">y = A &amp; B : _____/-----\____________  &lt;-- GLITCH!</text>
+  <text class="mono" x="48" y="318" fill="#38bdf8">dst_clk   : ___|___|___|___|___|____      Samples '1'!</text>
+  <text class="note" x="48" y="346" fill="#fca5a5">y should stay 0 forever, yet dst_clk falsely latches a spurious '1'!</text>
+
+  <!-- Right Panel: FIX Circuit + Waveform -->
+  <rect class="panel" x="470" y="64" width="430" height="316" stroke="#34d399" />
+  <text class="ptitle" x="486" y="88" fill="#34d399">FIX: Register Source Output Before Crossing</text>
+
+  <rect class="box" x="486" y="122" width="84" height="52" stroke="#38bdf8" />
+  <text class="badge" x="528" y="145" fill="#7dd3fc">A &amp; B</text>
+  <text class="note" x="528" y="162" text-anchor="middle">Comb Logic</text>
+
+  <line x1="570" y1="148" x2="594" y2="148" stroke="#38bdf8" stroke-width="1.8" />
+
+  <rect class="ff" x="598" y="118" width="96" height="60" stroke="#34d399" />
+  <text class="badge" x="646" y="142" fill="#6ee7b7">FF_LAUNCH</text>
+  <text class="note" x="646" y="160" text-anchor="middle">(src_clk)</text>
+
+  <line x1="694" y1="148" x2="740" y2="148" stroke="#34d399" stroke-width="2" marker-end="url(#arrGreen)" />
+
+  <rect class="ff" x="744" y="124" width="138" height="48" stroke="#34d399" />
+  <text class="badge" x="813" y="146" fill="#6ee7b7">2-FF Sync</text>
+  <text class="note" x="813" y="162" text-anchor="middle">Glitch-Free!</text>
+
+  <rect class="box" x="486" y="206" width="398" height="158" />
+  <text class="mono" x="498" y="226" fill="#6ee7b7">Why Launch Flop Filters 100% of Glitches:</text>
+  <text class="note" x="498" y="248">1. The glitch on A &amp; B occurs mid-cycle after src_clk edge and</text>
+  <text class="note" x="498" y="264">   settles cleanly back to '0' long before FF_LAUNCH's next setup.</text>
+  <text class="note" x="498" y="284">2. FF_LAUNCH.Q transitions at most ONCE per src_clk period—</text>
+  <text class="note" x="498" y="300">   completely free of multi-path combinational race hazards.</text>
+  <text class="mono" x="498" y="324" fill="#fcd34d">Static CDC Rule: ZERO combinational cells permitted on</text>
+  <text class="mono" x="498" y="341" fill="#fcd34d">crossing path between FF_LAUNCH.Q and FF_SYNC_1.D!</text>
+</svg>

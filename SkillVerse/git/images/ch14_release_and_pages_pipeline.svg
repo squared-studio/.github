@@ -1,0 +1,127 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 540" width="960" height="540">
+  <defs>
+    <style>
+      .bg { fill: #080c14; }
+      .title { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 20px; fill: #f8fafc; }
+      .subtitle { font-family: 'Inter', system-ui, sans-serif; font-size: 13px; fill: #94a3b8; }
+      .panel { fill: #0f172a; stroke-width: 1.8; rx: 10px; }
+      .inner { fill: #0b1120; stroke-width: 1.3; rx: 6px; }
+      .txt-hdr { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 13px; fill: #f8fafc; }
+      .txt-sub { font-family: 'Inter', system-ui, sans-serif; font-size: 10.5px; fill: #94a3b8; }
+      .mono { font-family: 'JetBrains Mono', Consolas, monospace; font-size: 10px; font-weight: 600; }
+      .edge { stroke-width: 2; fill: none; }
+    </style>
+    <marker id="arr-cyan" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8" />
+    </marker>
+    <marker id="arr-amber" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#f59e0b" />
+    </marker>
+    <marker id="arr-green" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#34d399" />
+    </marker>
+  </defs>
+
+  <rect width="960" height="540" class="bg" rx="14"/>
+  <text x="480" y="32" text-anchor="middle" class="title">Automated Releases, Container Registries, and GitHub Pages</text>
+  <text x="480" y="52" text-anchor="middle" class="subtitle">Three production delivery pipelines driven by SemVer tags and main-branch merges</text>
+
+  <!-- Track A: Signed GitHub Release -->
+  <g transform="translate(32, 78)">
+    <rect x="0" y="0" width="896" height="132" class="panel" stroke="#f59e0b"/>
+    <text x="18" y="24" class="txt-hdr" fill="#fcd34d">Pipeline A: Automated SemVer Release &amp; SLSA Provenance</text>
+    <text x="878" y="24" text-anchor="end" class="mono" fill="#f59e0b">on: push: tags: ['v[0-9]+.[0-9]+.[0-9]+']</text>
+
+    <rect x="18" y="42" width="180" height="72" class="inner" stroke="#f59e0b"/>
+    <text x="108" y="64" text-anchor="middle" class="mono" fill="#fcd34d">1. Tag v1.4.0</text>
+    <text x="108" y="84" text-anchor="middle" class="txt-sub">Tag matches SemVer</text>
+    <text x="108" y="100" text-anchor="middle" class="txt-sub">Protected tag ruleset</text>
+
+    <path d="M 198 78 L 228 78" class="edge" stroke="#f59e0b" marker-end="url(#arr-amber)"/>
+
+    <rect x="232" y="42" width="210" height="72" class="inner" stroke="#38bdf8"/>
+    <text x="337" y="64" text-anchor="middle" class="mono" fill="#38bdf8">2. Cross-Compile &amp; Hash</text>
+    <text x="337" y="84" text-anchor="middle" class="mono" fill="#cbd5e1">tar.gz + sha256sum</text>
+    <text x="337" y="100" text-anchor="middle" class="txt-sub">Generates SHA256SUMS</text>
+
+    <path d="M 442 78 L 472 78" class="edge" stroke="#38bdf8" marker-end="url(#arr-cyan)"/>
+
+    <rect x="476" y="42" width="194" height="72" class="inner" stroke="#a855f7"/>
+    <text x="573" y="64" text-anchor="middle" class="mono" fill="#d8b4fe">3. Attest Provenance</text>
+    <text x="573" y="84" text-anchor="middle" class="mono" fill="#cbd5e1">attest-build-provenance</text>
+    <text x="573" y="100" text-anchor="middle" class="txt-sub">id-token + attestations: write</text>
+
+    <path d="M 670 78 L 700 78" class="edge" stroke="#34d399" marker-end="url(#arr-green)"/>
+
+    <rect x="704" y="42" width="174" height="72" class="inner" stroke="#34d399"/>
+    <text x="791" y="64" text-anchor="middle" class="mono" fill="#34d399">4. GitHub Release</text>
+    <text x="791" y="84" text-anchor="middle" class="mono" fill="#6ee7b7">gh release create</text>
+    <text x="791" y="100" text-anchor="middle" class="txt-sub">--generate-notes + assets</text>
+  </g>
+
+  <!-- Track B: Container Publishing to GHCR -->
+  <g transform="translate(32, 228)">
+    <rect x="0" y="0" width="896" height="132" class="panel" stroke="#38bdf8"/>
+    <text x="18" y="24" class="txt-hdr" fill="#38bdf8">Pipeline B: Multi-Arch Container Publishing to GitHub Container Registry (ghcr.io)</text>
+    <text x="878" y="24" text-anchor="end" class="mono" fill="#7dd3fc">permissions: packages: write</text>
+
+    <rect x="18" y="42" width="180" height="72" class="inner" stroke="#38bdf8"/>
+    <text x="108" y="64" text-anchor="middle" class="mono" fill="#7dd3fc">1. Login GHCR</text>
+    <text x="108" y="84" text-anchor="middle" class="mono" fill="#cbd5e1">docker/login-action</text>
+    <text x="108" y="100" text-anchor="middle" class="txt-sub">Token: GITHUB_TOKEN</text>
+
+    <path d="M 198 78 L 228 78" class="edge" stroke="#38bdf8" marker-end="url(#arr-cyan)"/>
+
+    <rect x="232" y="42" width="210" height="72" class="inner" stroke="#38bdf8"/>
+    <text x="337" y="64" text-anchor="middle" class="mono" fill="#7dd3fc">2. Metadata &amp; Labels</text>
+    <text x="337" y="84" text-anchor="middle" class="mono" fill="#cbd5e1">docker/metadata-action</text>
+    <text x="337" y="100" text-anchor="middle" class="txt-sub">Tags: sha, v1.4, latest + OCI</text>
+
+    <path d="M 442 78 L 472 78" class="edge" stroke="#38bdf8" marker-end="url(#arr-cyan)"/>
+
+    <rect x="476" y="42" width="194" height="72" class="inner" stroke="#34d399"/>
+    <text x="573" y="64" text-anchor="middle" class="mono" fill="#34d399">3. Buildx Multi-Arch</text>
+    <text x="573" y="84" text-anchor="middle" class="mono" fill="#cbd5e1">linux/amd64, linux/arm64</text>
+    <text x="573" y="100" text-anchor="middle" class="txt-sub">cache-from/to: type=gha</text>
+
+    <path d="M 670 78 L 700 78" class="edge" stroke="#34d399" marker-end="url(#arr-green)"/>
+
+    <rect x="704" y="42" width="174" height="72" class="inner" stroke="#a855f7"/>
+    <text x="791" y="64" text-anchor="middle" class="mono" fill="#d8b4fe">4. Sign &amp; Publish</text>
+    <text x="791" y="84" text-anchor="middle" class="mono" fill="#cbd5e1">ghcr.io/org/app</text>
+    <text x="791" y="100" text-anchor="middle" class="txt-sub">Cosign / Attest digest</text>
+  </g>
+
+  <!-- Track C: GitHub Pages Static Site Deployment -->
+  <g transform="translate(32, 378)">
+    <rect x="0" y="0" width="896" height="132" class="panel" stroke="#34d399"/>
+    <text x="18" y="24" class="txt-hdr" fill="#34d399">Pipeline C: Artifact-Based Static Site &amp; Docs Delivery (GitHub Pages)</text>
+    <text x="878" y="24" text-anchor="end" class="mono" fill="#6ee7b7">permissions: pages: write, id-token: write</text>
+
+    <rect x="18" y="42" width="180" height="72" class="inner" stroke="#34d399"/>
+    <text x="108" y="64" text-anchor="middle" class="mono" fill="#6ee7b7">1. Build Static Site</text>
+    <text x="108" y="84" text-anchor="middle" class="mono" fill="#cbd5e1">bash SkillVerse/update.sh</text>
+    <text x="108" y="100" text-anchor="middle" class="txt-sub">Or Sphinx / Vite / Hugo</text>
+
+    <path d="M 198 78 L 228 78" class="edge" stroke="#34d399" marker-end="url(#arr-green)"/>
+
+    <rect x="232" y="42" width="210" height="72" class="inner" stroke="#34d399"/>
+    <text x="337" y="64" text-anchor="middle" class="mono" fill="#6ee7b7">2. Configure &amp; Pack</text>
+    <text x="337" y="84" text-anchor="middle" class="mono" fill="#cbd5e1">configure-pages@v5</text>
+    <text x="337" y="100" text-anchor="middle" class="mono" fill="#cbd5e1">upload-pages-artifact@v3</text>
+
+    <path d="M 442 78 L 472 78" class="edge" stroke="#34d399" marker-end="url(#arr-green)"/>
+
+    <rect x="476" y="42" width="194" height="72" class="inner" stroke="#a855f7"/>
+    <text x="573" y="64" text-anchor="middle" class="mono" fill="#d8b4fe">3. Deploy Pages Job</text>
+    <text x="573" y="84" text-anchor="middle" class="mono" fill="#cbd5e1">environment: github-pages</text>
+    <text x="573" y="100" text-anchor="middle" class="mono" fill="#cbd5e1">deploy-pages@v4 (OIDC)</text>
+
+    <path d="M 670 78 L 700 78" class="edge" stroke="#34d399" marker-end="url(#arr-green)"/>
+
+    <rect x="704" y="42" width="174" height="72" class="inner" stroke="#38bdf8"/>
+    <text x="791" y="64" text-anchor="middle" class="mono" fill="#38bdf8">4. Live HTTPS Edge</text>
+    <text x="791" y="84" text-anchor="middle" class="mono" fill="#7dd3fc">CNAME + TLS verified</text>
+    <text x="791" y="100" text-anchor="middle" class="txt-sub">Zero gh-pages branch bloat</text>
+  </g>
+</svg>

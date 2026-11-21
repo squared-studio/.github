@@ -1,0 +1,138 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 520" width="960" height="520">
+  <defs>
+    <style>
+      .bg { fill: #080c14; }
+      .title { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 20px; fill: #f8fafc; }
+      .subtitle { font-family: 'Inter', system-ui, sans-serif; font-size: 13px; fill: #94a3b8; }
+      .panel { fill: #0f172a; stroke-width: 1.8; rx: 10px; }
+      .card { fill: #0b1120; stroke-width: 1.4; rx: 7px; }
+      .txt-hdr { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 13px; fill: #f8fafc; }
+      .txt-sub { font-family: 'Inter', system-ui, sans-serif; font-size: 11px; fill: #94a3b8; }
+      .mono { font-family: 'JetBrains Mono', Consolas, monospace; font-size: 10.5px; font-weight: 600; }
+      .edge { stroke-width: 2; fill: none; }
+    </style>
+    <marker id="arr-cyan" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8" />
+    </marker>
+    <marker id="arr-green" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#34d399" />
+    </marker>
+  </defs>
+
+  <rect width="960" height="520" class="bg" rx="14"/>
+  <text x="480" y="32" text-anchor="middle" class="title">Phase 0: Universal Engineering Foundations Tree</text>
+  <text x="480" y="52" text-anchor="middle" class="subtitle">Core software, Linux, electronics, and automation tooling shared by every silicon career track</text>
+
+  <!-- Base Layer: Phase 0 -->
+  <g transform="translate(32, 78)">
+    <rect x="0" y="0" width="896" height="196" class="panel" stroke="#38bdf8"/>
+    <text x="20" y="26" class="mono" fill="#38bdf8">PHASE 0 — UNIVERSAL FOUNDATIONS (Weeks 1–3 Before Picking a Track)</text>
+
+    <g transform="translate(18, 42)">
+      <rect x="0" y="0" width="206" height="136" class="card" stroke="#38bdf8"/>
+      <text x="14" y="24" class="txt-hdr" fill="#38bdf8">1. EDA Linux Workspace</text>
+      <text x="14" y="48" class="mono" fill="#7dd3fc">• Unix_Terminal (Ch 1–5)</text>
+      <text x="14" y="68" class="mono" fill="#7dd3fc">• bash (Ch 1–4, 6)</text>
+      <text x="14" y="88" class="mono" fill="#7dd3fc">• VIM (Ch 1–4)</text>
+      <text x="14" y="116" class="txt-sub">SSH, grep/awk, log triage</text>
+    </g>
+
+    <g transform="translate(236, 42)">
+      <rect x="0" y="0" width="206" height="136" class="card" stroke="#34d399"/>
+      <text x="14" y="24" class="txt-hdr" fill="#34d399">2. Build &amp; Version Control</text>
+      <text x="14" y="48" class="mono" fill="#6ee7b7">• git (Ch 1–6, 8–13)</text>
+      <text x="14" y="68" class="mono" fill="#6ee7b7">• Makefile (Ch 1–4)</text>
+      <text x="14" y="88" class="mono" fill="#6ee7b7">• GitHub Actions RTL CI</text>
+      <text x="14" y="116" class="txt-sub">Reproducible sim targets</text>
+    </g>
+
+    <g transform="translate(454, 42)">
+      <rect x="0" y="0" width="206" height="136" class="card" stroke="#f59e0b"/>
+      <text x="14" y="24" class="txt-hdr" fill="#fcd34d">3. Scripting &amp; Systems</text>
+      <text x="14" y="48" class="mono" fill="#fcd34d">• Python (Ch 1–4, 7)</text>
+      <text x="14" y="68" class="mono" fill="#fcd34d">• C (Ch 1–4, 7)</text>
+      <text x="14" y="88" class="mono" fill="#fcd34d">• cocotb / DPI / MMIO</text>
+      <text x="14" y="116" class="txt-sub">Regression &amp; golden models</text>
+    </g>
+
+    <g transform="translate(672, 42)">
+      <rect x="0" y="0" width="206" height="136" class="card" stroke="#a855f7"/>
+      <text x="14" y="24" class="txt-hdr" fill="#d8b4fe">4. Silicon &amp; Circuit Physics</text>
+      <text x="14" y="48" class="mono" fill="#d8b4fe">• Electronics (Ch 1–4, 8–9)</text>
+      <text x="14" y="68" class="mono" fill="#d8b4fe">• MOSFETs &amp; CMOS delay</text>
+      <text x="14" y="88" class="mono" fill="#d8b4fe">• Crystals &amp; RC loading</text>
+      <text x="14" y="116" class="txt-sub">Intuition for STA &amp; clocks</text>
+    </g>
+  </g>
+
+  <!-- Branching Arrows -->
+  <path d="M 480 274 L 480 302" class="edge" stroke="#34d399"/>
+  <path d="M 104 302 L 856 302" class="edge" stroke="#34d399"/>
+  <path d="M 104 302 L 104 328" class="edge" stroke="#38bdf8" marker-end="url(#arr-cyan)"/>
+  <path d="M 254 302 L 254 328" class="edge" stroke="#34d399" marker-end="url(#arr-green)"/>
+  <path d="M 404 302 L 404 328" class="edge" stroke="#38bdf8" marker-end="url(#arr-cyan)"/>
+  <path d="M 556 302 L 556 328" class="edge" stroke="#34d399" marker-end="url(#arr-green)"/>
+  <path d="M 706 302 L 706 328" class="edge" stroke="#38bdf8" marker-end="url(#arr-cyan)"/>
+  <path d="M 856 302 L 856 328" class="edge" stroke="#34d399" marker-end="url(#arr-green)"/>
+
+  <!-- 6 Specialist Branches -->
+  <g transform="translate(32, 332)">
+    <rect x="0" y="0" width="144" height="162" class="card" stroke="#38bdf8"/>
+    <text x="72" y="26" text-anchor="middle" class="txt-hdr" fill="#38bdf8">RTL Design</text>
+    <text x="72" y="44" text-anchor="middle" class="mono" fill="#7dd3fc">Chapter 2</text>
+    <text x="12" y="72" class="txt-sub">• RTL_Design</text>
+    <text x="12" y="90" class="txt-sub">• SystemVerilog</text>
+    <text x="12" y="108" class="txt-sub">• CDC_RDC / UPF</text>
+    <text x="12" y="126" class="txt-sub">• AXI / OBI</text>
+  </g>
+
+  <g transform="translate(182, 332)">
+    <rect x="0" y="0" width="144" height="162" class="card" stroke="#34d399"/>
+    <text x="72" y="26" text-anchor="middle" class="txt-hdr" fill="#34d399">Design Verif</text>
+    <text x="72" y="44" text-anchor="middle" class="mono" fill="#6ee7b7">Chapter 3</text>
+    <text x="12" y="72" class="txt-sub">• SV OOP / Rand</text>
+    <text x="12" y="90" class="txt-sub">• RTL_Design_Verif</text>
+    <text x="12" y="108" class="txt-sub">• uvm (Ch 1–6)</text>
+    <text x="12" y="126" class="txt-sub">• GLS &amp; Coverage</text>
+  </g>
+
+  <g transform="translate(332, 332)">
+    <rect x="0" y="0" width="144" height="162" class="card" stroke="#a855f7"/>
+    <text x="72" y="26" text-anchor="middle" class="txt-hdr" fill="#d8b4fe">Formal Verif</text>
+    <text x="72" y="44" text-anchor="middle" class="mono" fill="#d8b4fe">Chapter 4</text>
+    <text x="12" y="72" class="txt-sub">• LTL / CTL Logic</text>
+    <text x="12" y="90" class="txt-sub">• SVA Assertions</text>
+    <text x="12" y="108" class="txt-sub">• Formal_Verif</text>
+    <text x="12" y="126" class="txt-sub">• BMC &amp; IC3/PDR</text>
+  </g>
+
+  <g transform="translate(484, 332)">
+    <rect x="0" y="0" width="144" height="162" class="card" stroke="#f59e0b"/>
+    <text x="72" y="26" text-anchor="middle" class="txt-hdr" fill="#fcd34d">FPGA Eng</text>
+    <text x="72" y="44" text-anchor="middle" class="mono" fill="#fcd34d">Chapter 5</text>
+    <text x="12" y="72" class="txt-sub">• Vivado (Ch 1–9)</text>
+    <text x="12" y="90" class="txt-sub">• XDC Timing</text>
+    <text x="12" y="108" class="txt-sub">• ILA / VIO Debug</text>
+    <text x="12" y="126" class="txt-sub">• Bitstream &amp; SoC</text>
+  </g>
+
+  <g transform="translate(634, 332)">
+    <rect x="0" y="0" width="144" height="162" class="card" stroke="#f43f5e"/>
+    <text x="72" y="26" text-anchor="middle" class="txt-hdr" fill="#fda4af">DFT Engineer</text>
+    <text x="72" y="44" text-anchor="middle" class="mono" fill="#fda4af">Chapter 6</text>
+    <text x="12" y="72" class="txt-sub">• DFT (Ch 1–8)</text>
+    <text x="12" y="90" class="txt-sub">• Scan &amp; ATPG</text>
+    <text x="12" y="108" class="txt-sub">• MBIST / IJTAG</text>
+    <text x="12" y="126" class="txt-sub">• GLS Scan Sim</text>
+  </g>
+
+  <g transform="translate(784, 332)">
+    <rect x="0" y="0" width="144" height="162" class="card" stroke="#84cc16"/>
+    <text x="72" y="26" text-anchor="middle" class="txt-hdr" fill="#bef264">SoC Architect</text>
+    <text x="72" y="44" text-anchor="middle" class="mono" fill="#bef264">Chapter 7</text>
+    <text x="12" y="72" class="txt-sub">• RISC_V_Assembly</text>
+    <text x="12" y="90" class="txt-sub">• APB → AXI → CHI</text>
+    <text x="12" y="108" class="txt-sub">• UPF / CDC / GLS</text>
+    <text x="12" y="126" class="txt-sub">• Coherent Fabrics</text>
+  </g>
+</svg>

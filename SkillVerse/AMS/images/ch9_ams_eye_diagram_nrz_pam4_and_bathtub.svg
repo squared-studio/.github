@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 410" width="920" height="410">
+  <defs>
+    <style>
+      .bg { fill: #0f172a; }
+      .panel { fill: #1e293b; stroke: #334155; stroke-width: 1.5; rx: 10; ry: 10; }
+      .box { fill: #0f172a; stroke: #334155; stroke-width: 1.2; rx: 6; ry: 6; }
+      .title { font-family: 'Segoe UI', Arial, sans-serif; font-size: 18px; font-weight: 700; fill: #f8fafc; text-anchor: middle; }
+      .sub { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; fill: #94a3b8; text-anchor: middle; }
+      .hdr { font-family: 'Segoe UI', Arial, sans-serif; font-size: 13.5px; font-weight: 700; }
+      .mono { font-family: Consolas, 'Courier New', monospace; font-size: 10.5px; fill: #e2e8f0; }
+      .note { font-family: 'Segoe UI', Arial, sans-serif; font-size: 11px; fill: #cbd5e1; }
+    </style>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="920" height="410" />
+  <text class="title" x="460" y="28">NRZ vs. PAM4 Eye Diagrams &amp; Statistical BER Bathtub Curve</text>
+  <text class="sub" x="460" y="48">Visualizing ISI Closure, 9.5 dB PAM4 SNR Penalty, Deterministic Jitter (DJ), and Random Jitter (RJ)</text>
+
+  <!-- Left Panel: NRZ & PAM4 Eyes -->
+  <rect class="panel" x="20" y="64" width="446" height="328" />
+  <text class="hdr" x="38" y="88" fill="#38bdf8">1. Equalized NRZ Eye vs. 4-Level PAM4 Eyes</text>
+
+  <!-- NRZ Eye -->
+  <rect class="box" x="34" y="100" width="418" height="130" />
+  <text class="mono" x="48" y="120" fill="#34d399">NRZ (1 bit / UI): Single Open Eye</text>
+  <path d="M 60 140 Q 160 140 200 172 T 340 204 L 420 204" fill="none" stroke="#38bdf8" stroke-width="2" />
+  <path d="M 60 204 Q 160 204 200 172 T 340 140 L 420 140" fill="none" stroke="#38bdf8" stroke-width="2" />
+  <line x1="60" y1="140" x2="420" y2="140" stroke="#7dd3fc" stroke-width="1.6" />
+  <line x1="60" y1="204" x2="420" y2="204" stroke="#7dd3fc" stroke-width="1.6" />
+  <!-- Eye Height & Width Cross -->
+  <line x1="270" y1="144" x2="270" y2="200" stroke="#34d399" stroke-width="1.6" />
+  <text class="mono" x="278" y="176" fill="#6ee7b7" font-size="9.5">Eye Height (V_eye)</text>
+  <text class="mono" x="200" y="221" fill="#fcd34d" text-anchor="middle" font-size="9.5">1 UI Eye Width</text>
+
+  <!-- PAM4 Eyes -->
+  <rect class="box" x="34" y="238" width="418" height="140" />
+  <text class="mono" x="48" y="256" fill="#f59e0b">PAM4 (2 bits / UI): Three Stacked Eyes (-9.54 dB vs NRZ)</text>
+  <!-- 4 voltage levels -->
+  <line x1="60" y1="274" x2="420" y2="274" stroke="#f59e0b" stroke-width="1.5" />
+  <line x1="60" y1="302" x2="420" y2="302" stroke="#f59e0b" stroke-width="1.5" />
+  <line x1="60" y1="330" x2="420" y2="330" stroke="#f59e0b" stroke-width="1.5" />
+  <line x1="60" y1="358" x2="420" y2="358" stroke="#f59e0b" stroke-width="1.5" />
+  <!-- Crossings showing 3 stacked eyes -->
+  <path d="M 100 274 C 130 274 140 302 170 302 C 200 302 210 274 240 274 C 270 274 280 358 310 358" fill="none" stroke="#a78bfa" stroke-width="1.8" />
+  <path d="M 100 302 C 130 302 140 274 170 274 C 200 274 210 330 240 330 C 270 330 280 302 310 302" fill="none" stroke="#a78bfa" stroke-width="1.8" />
+  <path d="M 100 330 C 130 330 140 358 170 358 C 200 358 210 302 240 302 C 270 302 280 330 310 330" fill="none" stroke="#38bdf8" stroke-width="1.8" />
+  <path d="M 100 358 C 130 358 140 330 170 330 C 200 330 210 358 240 358" fill="none" stroke="#38bdf8" stroke-width="1.8" />
+  <text class="mono" x="340" y="292" fill="#6ee7b7" font-size="9.5">Upper Eye (11/10)</text>
+  <text class="mono" x="340" y="320" fill="#6ee7b7" font-size="9.5">Mid Eye (10/01)</text>
+  <text class="mono" x="340" y="348" fill="#6ee7b7" font-size="9.5">Lower Eye (01/00)</text>
+
+  <!-- Right Panel: Bathtub Curve -->
+  <rect class="panel" x="480" y="64" width="420" height="328" />
+  <text class="hdr" x="498" y="88" fill="#34d399">2. BER Bathtub Curve: TJ = DJ + 14.07 * sigma_RJ</text>
+  <rect class="box" x="494" y="100" width="392" height="206" />
+
+  <!-- Axes -->
+  <line x1="534" y1="116" x2="534" y2="278" stroke="#64748b" stroke-width="1.3" />
+  <line x1="534" y1="278" x2="866" y2="278" stroke="#64748b" stroke-width="1.3" />
+  <line x1="534" y1="252" x2="866" y2="252" stroke="#34d399" stroke-width="1.1" stroke-dasharray="4,3" />
+  <text class="mono" x="498" y="132" font-size="9">1e-2</text>
+  <text class="mono" x="498" y="192" font-size="9">1e-7</text>
+  <text class="mono" x="498" y="255" font-size="9" fill="#6ee7b7">1e-12</text>
+  <text class="mono" x="700" y="296" text-anchor="middle">Sampling Phase Offset (0 UI -&gt; 1.0 UI)</text>
+
+  <!-- Bathtub Curves -->
+  <path d="M 542 124 L 580 128 Q 610 154 646 274" fill="none" stroke="#38bdf8" stroke-width="2.6" />
+  <path d="M 858 124 L 820 128 Q 790 154 754 274" fill="none" stroke="#38bdf8" stroke-width="2.6" />
+
+  <!-- DJ / RJ / Eye Opening annotations -->
+  <line x1="636" y1="252" x2="764" y2="252" stroke="#34d399" stroke-width="2.5" />
+  <text class="mono" x="700" y="242" fill="#6ee7b7" text-anchor="middle">Open UI Margin</text>
+  <text class="mono" x="576" y="148" fill="#fcd34d" font-size="9.5">DJ (Bounded)</text>
+  <text class="mono" x="626" y="210" fill="#fca5a5" font-size="9.5">RJ Tail Slope</text>
+
+  <rect class="box" x="494" y="314" width="392" height="64" />
+  <text class="mono" x="506" y="334" fill="#fcd34d">Total Jitter @ BER=1e-12: TJ = DJ + 14.07 * sigma_RJ</text>
+  <text class="note" x="506" y="354">Simulate long PRBS31 or Statistical Eye / COM (Channel</text>
+  <text class="note" x="506" y="370">Operating Margin) because SPICE cannot run 10^12 bits!</text>
+</svg>

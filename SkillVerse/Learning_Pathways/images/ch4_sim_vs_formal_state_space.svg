@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 520" width="960" height="520">
+  <defs>
+    <style>
+      .bg { fill: #080c14; }
+      .title { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 20px; fill: #f8fafc; }
+      .subtitle { font-family: 'Inter', system-ui, sans-serif; font-size: 13px; fill: #94a3b8; }
+      .panel { fill: #0f172a; stroke-width: 1.8; rx: 10px; }
+      .inner { fill: #0b1120; stroke-width: 1.3; rx: 6px; }
+      .txt-hdr { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 13px; fill: #f8fafc; }
+      .txt-sub { font-family: 'Inter', system-ui, sans-serif; font-size: 11px; fill: #94a3b8; }
+      .mono { font-family: 'JetBrains Mono', Consolas, monospace; font-size: 10.5px; font-weight: 600; }
+      .trace { stroke-width: 2.2; fill: none; }
+    </style>
+  </defs>
+
+  <rect width="960" height="520" class="bg" rx="14"/>
+  <text x="480" y="32" text-anchor="middle" class="title">Simulation vs. Formal State-Space Exploration</text>
+  <text x="480" y="52" text-anchor="middle" class="subtitle">Why random simulation misses rare corner-case bugs and how formal proofs cover every legal state</text>
+
+  <!-- Left: Simulation -->
+  <g transform="translate(32, 82)">
+    <rect x="0" y="0" width="436" height="316" class="panel" stroke="#38bdf8"/>
+    <text x="20" y="26" class="txt-hdr" fill="#38bdf8">Dynamic Simulation (UVM / Directed)</text>
+    <text x="20" y="44" class="txt-sub">Explores individual stimulus traces inside a vast state space</text>
+
+    <!-- State Space Box -->
+    <rect x="20" y="60" width="396" height="170" rx="8" fill="#080c14" stroke="#334155" stroke-width="1.5"/>
+    <text x="34" y="80" class="mono" fill="#64748b">Total Reachable State Space (2^N states)</text>
+
+    <!-- Random traces -->
+    <path d="M 48 190 Q 120 110, 210 150 T 360 120" class="trace" stroke="#38bdf8"/>
+    <path d="M 48 190 Q 140 215, 250 185 T 380 198" class="trace" stroke="#34d399"/>
+    <path d="M 48 190 Q 110 140, 175 165 T 310 155" class="trace" stroke="#7dd3fc" stroke-dasharray="4,3"/>
+
+    <!-- Missed Bug Star -->
+    <circle cx="348" cy="86" r="14" fill="#2b1019" stroke="#f43f5e" stroke-width="2"/>
+    <text x="348" y="90" text-anchor="middle" class="mono" fill="#fda4af">BUG</text>
+    <text x="242" y="90" class="txt-sub" fill="#fda4af">Rare 12-cycle corner case missed!</text>
+
+    <circle cx="48" cy="190" r="7" fill="#38bdf8"/>
+    <text x="48" y="212" class="mono" fill="#7dd3fc">Reset</text>
+
+    <text x="20" y="256" class="txt-sub" fill="#cbd5e1">• Scales well to huge SoCs (millions of cycles)</text>
+    <text x="20" y="274" class="txt-sub" fill="#cbd5e1">• Cannot mathematically prove the absence of bugs</text>
+    <text x="20" y="292" class="txt-sub" fill="#cbd5e1">• Depends on stimulus quality &amp; seed budget</text>
+  </g>
+
+  <!-- Right: Formal Model Checking -->
+  <g transform="translate(492, 82)">
+    <rect x="0" y="0" width="436" height="316" class="panel" stroke="#a855f7"/>
+    <text x="20" y="26" class="txt-hdr" fill="#d8b4fe">Formal Verification (Exhaustive Proof)</text>
+    <text x="20" y="44" class="txt-sub">Evaluates ALL legal input combinations simultaneously</text>
+
+    <!-- State Space Box -->
+    <rect x="20" y="60" width="396" height="170" rx="8" fill="#080c14" stroke="#a855f7" stroke-width="1.5"/>
+    <!-- Concentric BFS / BMC rings -->
+    <ellipse cx="145" cy="152" rx="115" ry="74" fill="#18102a" stroke="#a855f7" stroke-width="1.5" stroke-dasharray="4,3"/>
+    <ellipse cx="120" cy="158" rx="74" ry="48" fill="#22153d" stroke="#d8b4fe" stroke-width="1.5"/>
+    <ellipse cx="95" cy="164" rx="38" ry="26" fill="#2e1d52" stroke="#38bdf8" stroke-width="1.5"/>
+    <circle cx="76" cy="168" r="6" fill="#34d399"/>
+    <text x="76" y="186" class="mono" fill="#6ee7b7" font-size="9">Init</text>
+    <text x="148" y="156" class="mono" fill="#d8b4fe" font-size="9.5">BMC k-steps</text>
+    <text x="266" y="102" class="mono" fill="#34d399" font-size="10">IC3 / PDR</text>
+    <text x="266" y="118" class="txt-sub">Unbounded Invariant</text>
+
+    <!-- Bug Caught -->
+    <circle cx="240" cy="96" r="14" fill="#2b1019" stroke="#f43f5e" stroke-width="2"/>
+    <text x="240" y="100" text-anchor="middle" class="mono" fill="#fda4af">CEX</text>
+    <text x="266" y="160" class="txt-sub" fill="#6ee7b7">Either PROVEN for all</text>
+    <text x="266" y="176" class="txt-sub" fill="#6ee7b7">cycles OR returns exact</text>
+    <text x="266" y="192" class="txt-sub" fill="#fda4af">shortest CEX waveform!</text>
+
+    <text x="20" y="256" class="txt-sub" fill="#cbd5e1">• Proves every legal path within cone of influence</text>
+    <text x="20" y="274" class="txt-sub" fill="#cbd5e1">• Finds shortest counterexample (no testbench needed)</text>
+    <text x="20" y="292" class="txt-sub" fill="#f59e0b">• Must audit assume: blocks with cover: witnesses!</text>
+  </g>
+
+  <!-- Bottom Rule Banner -->
+  <g transform="translate(32, 416)">
+    <rect x="0" y="0" width="896" height="84" class="panel" stroke="#f59e0b" fill="#17140d"/>
+    <text x="20" y="26" class="txt-hdr" fill="#fcd34d">Golden Formal Rule: Guard Against Vacuous Proofs &amp; Over-Constraint</text>
+    <text x="20" y="48" class="mono" fill="#cbd5e1">assert (property)</text>
+    <text x="160" y="48" class="txt-sub">Checks nothing fails — BUT a contradictory assume can make every assert pass vacuously!</text>
+    <text x="20" y="68" class="mono" fill="#34d399">cover  (witness)</text>
+    <text x="160" y="68" class="txt-sub">Proves non-trivial transactions (full FIFO, back-to-back burst, deadlock recovery) remain reachable.</text>
+  </g>
+</svg>

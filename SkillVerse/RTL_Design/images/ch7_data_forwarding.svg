@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 650 190" width="650" height="190" style="background-color: #ffffff; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+  <defs>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="1" dy="2" stdDeviation="2" flood-color="#0f172a" flood-opacity="0.08" />
+    </filter>
+    <marker id="arr-blue" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#2563eb" />
+    </marker>
+    <marker id="arr-green" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#10b981" />
+    </marker>
+    <marker id="arr-red" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#ef4444" />
+    </marker>
+    <marker id="arr-purple" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#8b5cf6" />
+    </marker>
+    <marker id="arr-amber" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#f59e0b" />
+    </marker>
+  </defs>
+
+  <rect x="15" y="15" width="620" height="160" rx="12" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2"/>
+  <text x="35" y="40" font-size="14" font-weight="700" fill="#0f172a">Data Forwarding (Bypassing) Mechanism</text>
+
+  <rect x="40" y="60" width="140" height="80" rx="6" fill="#eff6ff" stroke="#3b82f6" stroke-width="2" filter="url(#shadow)"/>
+  <text x="110" y="88" font-size="11" font-weight="700" fill="#1e3a8a" text-anchor="middle">EX Stage (ALU)</text>
+  <text x="110" y="108" font-size="9" fill="#2563eb" text-anchor="middle">Result calculated</text>
+
+  <line x1="180" y1="100" x2="234" y2="100" stroke="#2563eb" stroke-width="2" marker-end="url(#arr-blue)"/>
+
+  <rect x="240" y="60" width="140" height="80" rx="6" fill="#f0fdf4" stroke="#10b981" stroke-width="2" filter="url(#shadow)"/>
+  <text x="310" y="88" font-size="11" font-weight="700" fill="#065f46" text-anchor="middle">EX/MEM Register</text>
+  <text x="310" y="108" font-size="9" fill="#047857" text-anchor="middle">Result available!</text>
+
+  <line x1="380" y1="100" x2="434" y2="100" stroke="#10b981" stroke-width="2" marker-end="url(#arr-green)"/>
+
+  <rect x="440" y="60" width="140" height="80" rx="6" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.5"/>
+  <text x="510" y="88" font-size="11" font-weight="700" fill="#475569" text-anchor="middle">WB Stage</text>
+  <text x="510" y="108" font-size="9" fill="#64748b" text-anchor="middle">Writes to RegFile</text>
+
+  <!-- Forwarding Path -->
+  <polyline points="310,140 310,170 110,170 110,144" fill="none" stroke="#f59e0b" stroke-width="2.5" marker-end="url(#arr-amber)"/>
+  <text x="210" y="165" font-size="10" font-weight="700" fill="#b45309" text-anchor="middle">Bypass Path (Zero Stall Cycles!)</text>
+
+</svg>

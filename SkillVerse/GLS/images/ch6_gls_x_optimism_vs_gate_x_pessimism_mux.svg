@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 400" width="920" height="400">
+  <defs>
+    <style>
+      .bg { fill: #0f172a; }
+      .panel { fill: #1e293b; stroke-width: 1.5; rx: 10; ry: 10; }
+      .box { fill: #0f172a; stroke: #334155; stroke-width: 1.2; rx: 6; ry: 6; }
+      .title { font-family: 'Segoe UI', Arial, sans-serif; font-size: 18px; font-weight: 700; fill: #f8fafc; text-anchor: middle; }
+      .subtitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; fill: #94a3b8; text-anchor: middle; }
+      .ptitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 14px; font-weight: 700; }
+      .mono { font-family: Consolas, 'Courier New', monospace; font-size: 10.8px; fill: #e2e8f0; }
+      .note { font-family: 'Segoe UI', Arial, sans-serif; font-size: 10.5px; fill: #94a3b8; }
+      .badge { font-family: Consolas, 'Courier New', monospace; font-size: 11px; font-weight: 700; text-anchor: middle; }
+    </style>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="920" height="400" />
+  <text class="title" x="460" y="28">RTL X-Optimism vs. Gate-Level X-Pessimism on Identical Logic</text>
+  <text class="subtitle" x="460" y="48">Why RTL Simulation Masks Uninitialized Control Bugs While Synthesized Gate Netlists Propagate Unknown 'X's</text>
+
+  <!-- Left Panel: RTL X-Optimism -->
+  <rect class="panel" x="20" y="64" width="430" height="316" stroke="#f87171" />
+  <text class="ptitle" x="36" y="88" fill="#f87171">1. RTL Behavioral X-Optimism (False Pass!)</text>
+
+  <rect class="box" x="36" y="102" width="398" height="122" />
+  <text class="mono" x="48" y="122" fill="#fcd34d">// Suppose uninitialized `sel = 1'bx` at boot!</text>
+  <text class="mono" x="48" y="142">always_comb begin</text>
+  <text class="mono" x="48" y="160">  if (sel) out = a;   // sel == 1'bx evaluates FALSE!</text>
+  <text class="mono" x="48" y="178" fill="#f87171">  else     out = b;   // RTL picks `else` silently!</text>
+  <text class="mono" x="48" y="196">end</text>
+  <text class="note" x="48" y="216" fill="#fca5a5">Verilog `if (x)` ignores true branch &amp; executes `else` branch!</text>
+
+  <rect class="box" x="36" y="236" width="398" height="130" stroke="#f59e0b" />
+  <text class="mono" x="48" y="256" fill="#fcd34d">Same Hazard in `case (state)` Without `default: 'x`:</text>
+  <text class="note" x="48" y="276">RTL hides un-reset `sel` or corrupt `case` indices cleanly, giving</text>
+  <text class="note" x="48" y="292">verification teams false confidence before synthesis.</text>
+  <text class="note" x="48" y="314" fill="#6ee7b7">Early Cure: Turn on VCS `-xprop=tmerge` or Xcelium `-xprop` in RTL</text>
+  <text class="note" x="48" y="330" fill="#6ee7b7">regressions BEFORE even waiting for GLS netlists!</text>
+
+  <!-- Right Panel: Gate-Level X-Pessimism -->
+  <rect class="panel" x="470" y="64" width="430" height="316" stroke="#a78bfa" />
+  <text class="ptitle" x="486" y="88" fill="#a78bfa">2. Gate-Level Boolean X-Pessimism (False Fail!)</text>
+
+  <rect class="box" x="486" y="102" width="398" height="130" stroke="#a78bfa" />
+  <text class="mono" x="498" y="122" fill="#c4b5fd">// Suppose A = 1, B = 1, and S = 1'bx (both data = 1!):</text>
+  <text class="mono" x="498" y="142">Synthesized 2:1 MUX = (A &amp; ~S) | (B &amp; S);</text>
+  <text class="mono" x="498" y="162">1. Gate 1: (1 &amp; ~x) = x   |   Gate 2: (1 &amp; x) = x</text>
+  <text class="mono" x="498" y="182" fill="#f87171">2. OR Gate: (x | x) = 1'bx   &lt;-- FALSE 'X' IN SILICON!</text>
+  <text class="note" x="498" y="206">In real CMOS, whether S resolves 0 or 1, output is ALWAYS 1!</text>
+  <text class="note" x="498" y="221">Boolean AOI22 gates lose correlation (`~S` vs `S` cancellation).</text>
+
+  <rect class="box" x="486" y="244" width="398" height="122" stroke="#34d399" />
+  <text class="mono" x="498" y="264" fill="#6ee7b7">Foundry Fix: X-Aware MUX UDP Truth Tables</text>
+  <text class="mono" x="498" y="284">// A  B  S : Y  (Matched in foundry MX2 cell UDP!)</text>
+  <text class="mono" x="498" y="302">   1  1  ? : 1;  // Passes 1 even when S == 1'bx!</text>
+  <text class="mono" x="498" y="319">   0  0  ? : 0;  // Passes 0 even when S == 1'bx!</text>
+  <text class="note" x="498" y="344" fill="#7dd3fc">And for custom RTL-like flops (`D ^ ~D`), keep muxes in UDP!</text>
+</svg>

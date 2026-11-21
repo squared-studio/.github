@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 400" width="920" height="400">
+  <defs>
+    <style>
+      .bg { fill: #0f172a; }
+      .panel { fill: #1e293b; stroke-width: 1.5; rx: 10; ry: 10; }
+      .box { fill: #0f172a; stroke: #334155; stroke-width: 1.2; rx: 6; ry: 6; }
+      .ff { fill: #172554; stroke: #34d399; stroke-width: 1.6; rx: 6; ry: 6; }
+      .title { font-family: 'Segoe UI', Arial, sans-serif; font-size: 18px; font-weight: 700; fill: #f8fafc; text-anchor: middle; }
+      .subtitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; fill: #94a3b8; text-anchor: middle; }
+      .ptitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 14px; font-weight: 700; }
+      .mono { font-family: Consolas, 'Courier New', monospace; font-size: 10.8px; fill: #e2e8f0; }
+      .note { font-family: 'Segoe UI', Arial, sans-serif; font-size: 10.5px; fill: #94a3b8; }
+      .badge { font-family: Consolas, 'Courier New', monospace; font-size: 11px; font-weight: 700; text-anchor: middle; }
+    </style>
+    <marker id="arrGreen" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#34d399" />
+    </marker>
+    <marker id="arrSky" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#38bdf8" />
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="920" height="400" />
+  <text class="title" x="460" y="28">Reset Recovery/Removal Violations &amp; 2-FF Reset Synchronizer Bridge</text>
+  <text class="subtitle" x="460" y="48">Combining Instant Asynchronous Reset Assertion with Glitch-Free Synchronous Reset Deassertion + DFT Bypass</text>
+
+  <!-- Top Panel: 2-FF Reset Synchronizer Circuit -->
+  <rect class="panel" x="20" y="64" width="880" height="172" stroke="#34d399" />
+  <text class="ptitle" x="36" y="88" fill="#34d399">Canonical Reset Synchronizer Bridge (Async Assert, Sync Deassert + DFT Test Mux)</text>
+
+  <!-- 1'b1 tied into D -->
+  <text class="mono" x="42" y="138" fill="#7dd3fc">1'b1</text>
+  <line x1="78" y1="134" x2="122" y2="134" stroke="#38bdf8" stroke-width="2" marker-end="url(#arrSky)" />
+
+  <!-- FF1 -->
+  <rect class="ff" x="126" y="106" width="126" height="58" />
+  <text class="badge" x="189" y="128" fill="#6ee7b7">RST_FF1</text>
+  <text class="note" x="189" y="145" text-anchor="middle">D=1'b1  CLR=async_rst_n</text>
+
+  <line x1="252" y1="135" x2="310" y2="135" stroke="#34d399" stroke-width="2" marker-end="url(#arrGreen)" />
+
+  <!-- FF2 -->
+  <rect class="ff" x="314" y="106" width="126" height="58" />
+  <text class="badge" x="377" y="128" fill="#6ee7b7">RST_FF2</text>
+  <text class="note" x="377" y="145" text-anchor="middle">D=Q1   CLR=async_rst_n</text>
+
+  <!-- Common async_rst_n rail -->
+  <path d="M56,192 L189,192 L189,164 M189,192 L377,192 L377,164" fill="none" stroke="#f87171" stroke-width="1.8" />
+  <text class="mono" x="42" y="212" fill="#fca5a5">async_rst_n (external pin / POR / SW)</text>
+
+  <line x1="440" y1="135" x2="520" y2="135" stroke="#34d399" stroke-width="2" marker-end="url(#arrGreen)" />
+
+  <!-- DFT Scan Bypass Mux -->
+  <rect class="box" x="524" y="104" width="144" height="62" stroke="#f59e0b" />
+  <text class="badge" x="596" y="124" fill="#fcd34d">DFT Scan Mux</text>
+  <text class="mono" x="596" y="142" text-anchor="middle">scan_mode ? scan_rst</text>
+  <text class="mono" x="596" y="158" text-anchor="middle">          : sync_rst_n</text>
+
+  <line x1="668" y1="135" x2="736" y2="135" stroke="#38bdf8" stroke-width="2" marker-end="url(#arrSky)" />
+
+  <!-- Domain Reset Fanout Tree -->
+  <rect class="box" x="740" y="106" width="144" height="58" stroke="#38bdf8" />
+  <text class="badge" x="812" y="128" fill="#7dd3fc">dom_rst_n</text>
+  <text class="note" x="812" y="146" text-anchor="middle">Drives domain FFs</text>
+
+  <text class="note" x="524" y="196" fill="#fcd34d">scan_mode=1 bypasses async CLR for ATPG test control!</text>
+  <text class="note" x="36" y="226" fill="#6ee7b7">Assertion: instant via CLR pin (works even without clock!). Deassertion: waits 2 clean clk edges via D=1'b1 -&gt; Q1 -&gt; Q2.</text>
+
+  <!-- Bottom Left: Recovery & Removal Aperture -->
+  <rect class="panel" x="20" y="250" width="430" height="130" stroke="#f87171" />
+  <text class="ptitle" x="36" y="274" fill="#f87171">Reset Recovery (t_rec) vs. Removal (t_rem)</text>
+  <rect class="box" x="36" y="286" width="398" height="82" />
+  <text class="mono" x="48" y="305" fill="#7dd3fc">Recovery (Setup-like): min time rst_n rises BEFORE clk edge</text>
+  <text class="mono" x="48" y="324" fill="#fcd34d">Removal  (Hold-like):  min time rst_n holds  AFTER  clk edge</text>
+  <text class="note" x="48" y="344">If raw async rst_n deasserts inside [t_rec, t_rem], FFs turn</text>
+  <text class="note" x="48" y="359" fill="#fca5a5">metastable OR release on staggered cycles (broken FSM wake!).</text>
+
+  <!-- Bottom Right: SDC / Placement Rules -->
+  <rect class="panel" x="470" y="250" width="430" height="130" stroke="#a78bfa" />
+  <text class="ptitle" x="486" y="274" fill="#a78bfa">Implementation &amp; Timing Rules</text>
+  <rect class="box" x="486" y="286" width="398" height="82" />
+  <text class="note" x="498" y="305">1. Place (* ASYNC_REG = "TRUE" *) on RST_FF1 &amp; RST_FF2.</text>
+  <text class="note" x="498" y="323">2. Buffer dom_rst_n as a high-fanout synchronous tree inside</text>
+  <text class="note" x="498" y="339">   dom_clk so STA proves full single-cycle recovery timing!</text>
+  <text class="note" x="498" y="357" fill="#6ee7b7">3. Keep RST_FF2 outputs clean—never gate dom_rst_n post-mux.</text>
+</svg>

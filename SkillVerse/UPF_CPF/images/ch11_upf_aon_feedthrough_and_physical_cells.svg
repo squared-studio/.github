@@ -1,0 +1,95 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 390" width="920" height="390">
+  <defs>
+    <style>
+      .bg { fill: #0f172a; }
+      .panel { fill: #1e293b; stroke-width: 1.5; rx: 10; ry: 10; }
+      .box { fill: #0f172a; stroke: #334155; stroke-width: 1.2; rx: 6; ry: 6; }
+      .island { fill: #172554; stroke: #f59e0b; stroke-width: 2; stroke-dasharray: 6,3; rx: 10; ry: 10; }
+      .aonbuf { fill: #064e3b; stroke: #34d399; stroke-width: 1.5; rx: 5; ry: 5; }
+      .title { font-family: 'Segoe UI', Arial, sans-serif; font-size: 18px; font-weight: 700; fill: #f8fafc; text-anchor: middle; }
+      .subtitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; fill: #94a3b8; text-anchor: middle; }
+      .ptitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 14px; font-weight: 700; }
+      .mono { font-family: Consolas, 'Courier New', monospace; font-size: 10.6px; fill: #e2e8f0; }
+      .note { font-family: 'Segoe UI', Arial, sans-serif; font-size: 10.5px; fill: #94a3b8; }
+      .badge { font-family: Consolas, 'Courier New', monospace; font-size: 10.5px; font-weight: 700; text-anchor: middle; }
+    </style>
+    <marker id="arrGreen" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#34d399" />
+    </marker>
+    <marker id="arrRed" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#f87171" />
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="920" height="390" />
+  <text class="title" x="460" y="28">Physical Floorplan Voltage Area, Switch Cells &amp; Always-On Feedthrough Repeaters</text>
+  <text class="subtitle" x="460" y="48">Solving Long-Route Timing Across Shutdown Islands Without Dropping AON Control or Feedthrough Signals</text>
+
+  <!-- Main Die Floorplan Panel -->
+  <rect class="panel" x="20" y="64" width="560" height="308" stroke="#38bdf8" />
+  <text class="ptitle" x="36" y="88" fill="#38bdf8">Top-Level Die (PD_TOP Always-On VDD_AON)</text>
+
+  <!-- Transmitter AON block -->
+  <rect class="box" x="36" y="138" width="94" height="110" stroke="#34d399" />
+  <text class="badge" x="83" y="162" fill="#6ee7b7">AON Block A</text>
+  <text class="note" x="83" y="182" text-anchor="middle">Drives AON</text>
+  <text class="note" x="83" y="198" text-anchor="middle">feedthrough</text>
+  <text class="note" x="83" y="214" text-anchor="middle">&amp; iso_en</text>
+
+  <!-- Switchable Voltage Area Island -->
+  <rect class="island" x="158" y="106" width="286" height="218" />
+  <text class="mono" x="172" y="126" fill="#fcd34d">Voltage Area: PD_CPU (VVDD_SW)</text>
+
+  <!-- MTCMOS Switch Cells Row inside island -->
+  <rect class="box" x="172" y="136" width="258" height="32" stroke="#f87171" />
+  <text class="badge" x="301" y="156" fill="#fca5a5">MTCMOS Switch Array (map_power_switch)</text>
+
+  <!-- Feedthrough net buffered by AON Repeaters -->
+  <line x1="130" y1="194" x2="184" y2="194" stroke="#34d399" stroke-width="2" marker-end="url(#arrGreen)" />
+  <rect class="aonbuf" x="188" y="180" width="90" height="28" />
+  <text class="badge" x="233" y="198" fill="#6ee7b7">AON Buf 1</text>
+
+  <line x1="278" y1="194" x2="322" y2="194" stroke="#34d399" stroke-width="2" marker-end="url(#arrGreen)" />
+  <rect class="aonbuf" x="326" y="180" width="90" height="28" />
+  <text class="badge" x="371" y="198" fill="#6ee7b7">AON Buf 2</text>
+
+  <line x1="416" y1="194" x2="466" y2="194" stroke="#34d399" stroke-width="2" marker-end="url(#arrGreen)" />
+
+  <!-- Normal buffer mistake warning box inside island -->
+  <rect class="box" x="172" y="224" width="258" height="44" stroke="#f87171" />
+  <text class="mono" x="182" y="242" fill="#fca5a5">BUG if normal buffer used inside island:</text>
+  <text class="note" x="182" y="258">Buffer loses VVDD_SW &amp; breaks AON net!</text>
+
+  <!-- Boundary ISO / ELS Cell -->
+  <rect class="box" x="280" y="278" width="150" height="36" stroke="#a78bfa" />
+  <text class="badge" x="355" y="300" fill="#c4b5fd">Boundary ELS / ISO</text>
+
+  <!-- Receiver AON block -->
+  <rect class="box" x="470" y="138" width="94" height="110" stroke="#34d399" />
+  <text class="badge" x="517" y="162" fill="#6ee7b7">AON Block B</text>
+  <text class="note" x="517" y="182" text-anchor="middle">Clean intact</text>
+  <text class="note" x="517" y="198" text-anchor="middle">AON signal</text>
+  <text class="note" x="517" y="214" text-anchor="middle">during sleep</text>
+
+  <text class="note" x="36" y="352" fill="#7dd3fc">Physical Floorplan Guard Rings (N-Well / Deep N-Well spacing) isolate VVDD_SW wells from VDD_AON wells.</text>
+
+  <!-- Right Panel: Repeater & Physical Cell Mapping -->
+  <rect class="panel" x="598" y="64" width="302" height="308" stroke="#34d399" />
+  <text class="ptitle" x="614" y="88" fill="#34d399">Physical Implementation Cells</text>
+
+  <rect class="box" x="614" y="104" width="270" height="118" />
+  <text class="mono" x="624" y="123" fill="#6ee7b7">AON Feedthrough Strategy:</text>
+  <text class="mono" x="624" y="142">set_repeater REP_AON \</text>
+  <text class="mono" x="624" y="159">  -domain PD_CPU \</text>
+  <text class="mono" x="624" y="176">  -repeater_supply SS_AON \</text>
+  <text class="mono" x="624" y="193">  -applies_to_boundary \</text>
+  <text class="mono" x="624" y="210">    lower_domain_boundary</text>
+
+  <rect class="box" x="614" y="232" width="270" height="126" stroke="#f59e0b" />
+  <text class="mono" x="624" y="252" fill="#fcd34d">Special P&amp;R LP Cell Types:</text>
+  <text class="note" x="624" y="272">1. Dual-Rail vs Single-Rail AON</text>
+  <text class="note" x="624" y="288">   (Single-rail routes second VDD stripe)</text>
+  <text class="note" x="624" y="306">2. MTCMOS Switch Grid + Tie Cells</text>
+  <text class="note" x="624" y="324">3. Decap / Well-Tap cells bound per</text>
+  <text class="note" x="624" y="340">   voltage area power net.</text>
+</svg>

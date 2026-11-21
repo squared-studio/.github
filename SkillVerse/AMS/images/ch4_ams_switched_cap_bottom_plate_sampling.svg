@@ -1,0 +1,98 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 410" width="920" height="410">
+  <defs>
+    <style>
+      .bg { fill: #0f172a; }
+      .panel { fill: #1e293b; stroke: #334155; stroke-width: 1.5; rx: 10; ry: 10; }
+      .box { fill: #0f172a; stroke: #334155; stroke-width: 1.2; rx: 6; ry: 6; }
+      .title { font-family: 'Segoe UI', Arial, sans-serif; font-size: 18px; font-weight: 700; fill: #f8fafc; text-anchor: middle; }
+      .sub { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; fill: #94a3b8; text-anchor: middle; }
+      .hdr { font-family: 'Segoe UI', Arial, sans-serif; font-size: 13.5px; font-weight: 700; }
+      .mono { font-family: Consolas, 'Courier New', monospace; font-size: 10.5px; fill: #e2e8f0; }
+      .note { font-family: 'Segoe UI', Arial, sans-serif; font-size: 11px; fill: #cbd5e1; }
+      .wire { stroke: #94a3b8; stroke-width: 1.6; fill: none; }
+    </style>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="920" height="410" />
+  <text class="title" x="460" y="28">Switched-Capacitor Bottom-Plate Sampling &amp; Non-Overlapping Clock Phases</text>
+  <text class="sub" x="460" y="48">Eliminating Signal-Dependent Charge Injection with Early-Falling Bottom-Plate Switch phi1e</text>
+
+  <!-- Left Panel: Circuit Diagram -->
+  <rect class="panel" x="20" y="64" width="470" height="328" />
+  <text class="hdr" x="38" y="88" fill="#38bdf8">1. Bottom-Plate SC Integrator / S/H Stage</text>
+  <rect class="box" x="34" y="100" width="442" height="206" />
+
+  <!-- VIN -> Switch S1(phi1) -> Node A (Left plate of Cs) -> Switch S2(phi2 to VREF) -->
+  <text class="mono" x="46" y="168" fill="#38bdf8">VIN</text>
+  <line class="wire" x1="72" y1="164" x2="108" y2="164" />
+  <rect x="108" y="148" width="52" height="32" fill="#1e293b" stroke="#38bdf8" rx="4" />
+  <text class="mono" x="134" y="168" fill="#7dd3fc" text-anchor="middle">S1 phi1</text>
+  <line class="wire" x1="160" y1="164" x2="210" y2="164" />
+  <circle cx="185" cy="164" r="3.5" fill="#38bdf8" />
+  <line class="wire" x1="185" y1="164" x2="185" y2="230" />
+  <rect x="150" y="230" width="70" height="30" fill="#1e293b" stroke="#a78bfa" rx="4" />
+  <text class="mono" x="185" y="249" fill="#c4b5fd" text-anchor="middle">phi2 VCM</text>
+
+  <!-- Sampling Capacitor Cs -->
+  <line x1="210" y1="146" x2="210" y2="182" stroke="#f59e0b" stroke-width="3" />
+  <line x1="224" y1="146" x2="224" y2="182" stroke="#f59e0b" stroke-width="3" />
+  <text class="mono" x="217" y="138" fill="#fcd34d" text-anchor="middle">Cs</text>
+
+  <!-- Node B (Bottom plate / virtual ground X) -->
+  <line class="wire" x1="224" y1="164" x2="310" y2="164" />
+  <circle cx="258" cy="164" r="3.5" fill="#34d399" />
+  <text class="mono" x="258" y="152" fill="#6ee7b7" text-anchor="middle">Node X</text>
+  <!-- Bottom plate switch S3 (phi1e!) to VCM -->
+  <line class="wire" x1="258" y1="164" x2="258" y2="230" />
+  <rect x="226" y="230" width="66" height="30" fill="#1e293b" stroke="#34d399" rx="4" />
+  <text class="mono" x="259" y="249" fill="#6ee7b7" text-anchor="middle">S3 phi1e</text>
+  <text class="mono" x="259" y="280" fill="#94a3b8" text-anchor="middle" font-size="9.5">VCM_const</text>
+
+  <!-- Op-Amp + Feedback Cf -->
+  <polygon points="310,146 370,174 310,202" fill="#1e293b" stroke="#38bdf8" stroke-width="1.8" />
+  <text class="mono" x="316" y="169" fill="#7dd3fc">-</text>
+  <text class="mono" x="316" y="191" fill="#7dd3fc">+</text>
+  <line class="wire" x1="296" y1="186" x2="310" y2="186" />
+  <text class="mono" x="292" y="204" fill="#94a3b8" font-size="9">VCM</text>
+  <line class="wire" x1="370" y1="174" x2="430" y2="174" />
+  <text class="mono" x="436" y="178" fill="#6ee7b7">VOUT</text>
+  <!-- Feedback Cf -->
+  <polyline points="296,164 296,118 332,118" fill="none" stroke="#94a3b8" stroke-width="1.4" />
+  <line x1="332" y1="106" x2="332" y2="130" stroke="#38bdf8" stroke-width="2.5" />
+  <line x1="342" y1="106" x2="342" y2="130" stroke="#38bdf8" stroke-width="2.5" />
+  <text class="mono" x="337" y="144" fill="#7dd3fc" text-anchor="middle">Cf</text>
+  <polyline points="342,118 400,118 400,174" fill="none" stroke="#94a3b8" stroke-width="1.4" />
+
+  <rect class="box" x="34" y="314" width="442" height="64" />
+  <text class="mono" x="46" y="334" fill="#6ee7b7">Key Insight: S3 (phi1e) opens BEFORE S1 (phi1)!</text>
+  <text class="note" x="46" y="352">When S3 opens at fixed VCM, Q_inj(S3) is a constant offset (common-mode canceled).</text>
+  <text class="note" x="46" y="368">When S1 opens later, Node X is floating so S1 charge injection CANNOT alter Q(Cs)!</text>
+
+  <!-- Right Panel: Non-Overlapping Clock & Limits -->
+  <rect class="panel" x="506" y="64" width="394" height="328" />
+  <text class="hdr" x="524" y="88" fill="#34d399">2. Non-Overlapping Clocks &amp; Noise Limits</text>
+
+  <rect class="box" x="520" y="100" width="366" height="168" />
+  <!-- phi1e (early falling) -->
+  <text class="mono" x="532" y="136" fill="#34d399">phi1e</text>
+  <polyline points="576,144 592,144 592,118 696,118 696,144 866,144" fill="none" stroke="#34d399" stroke-width="2.2" />
+  <!-- phi1 (delayed falling) -->
+  <text class="mono" x="532" y="182" fill="#38bdf8">phi1</text>
+  <polyline points="576,190 592,190 592,164 720,164 720,190 866,190" fill="none" stroke="#38bdf8" stroke-width="2.2" />
+  <!-- delta t_early highlight -->
+  <line x1="696" y1="118" x2="696" y2="196" stroke="#f59e0b" stroke-width="1.2" stroke-dasharray="3,2" />
+  <line x1="720" y1="164" x2="720" y2="196" stroke="#f59e0b" stroke-width="1.2" stroke-dasharray="3,2" />
+  <text class="mono" x="708" y="156" fill="#fcd34d" text-anchor="middle" font-size="9">dt</text>
+
+  <!-- phi2 (non-overlapping transfer phase) -->
+  <text class="mono" x="532" y="232" fill="#a78bfa">phi2</text>
+  <polyline points="576,240 744,240 744,214 850,214 850,240 866,240" fill="none" stroke="#a78bfa" stroke-width="2.2" />
+  <text class="mono" x="732" y="256" fill="#fca5a5" text-anchor="middle" font-size="9.5">t_non_overlap &gt; 0</text>
+
+  <!-- Noise & Bootstrapped switch limits -->
+  <rect class="box" x="520" y="278" width="366" height="100" />
+  <text class="mono" x="532" y="298" fill="#7dd3fc">Thermal Sampling Floor: v_n^2 = kT / C_s</text>
+  <text class="mono" x="532" y="317" fill="#fcd34d">SNR_jitter = -20*log10(2*pi*f_in*t_j,rms)</text>
+  <text class="note" x="532" y="338">Bootstrapped Switch keeps V_GS = VDD constant</text>
+  <text class="note" x="532" y="356">across VIN swing -&gt; constant Ron -&gt; high SFDR!</text>
+</svg>

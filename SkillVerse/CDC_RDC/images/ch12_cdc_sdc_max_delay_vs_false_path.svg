@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 400" width="920" height="400">
+  <defs>
+    <style>
+      .bg { fill: #0f172a; }
+      .panel { fill: #1e293b; stroke-width: 1.5; rx: 10; ry: 10; }
+      .box { fill: #0f172a; stroke: #334155; stroke-width: 1.2; rx: 6; ry: 6; }
+      .title { font-family: 'Segoe UI', Arial, sans-serif; font-size: 18px; font-weight: 700; fill: #f8fafc; text-anchor: middle; }
+      .subtitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; fill: #94a3b8; text-anchor: middle; }
+      .ptitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 14px; font-weight: 700; }
+      .mono { font-family: Consolas, 'Courier New', monospace; font-size: 10.5px; fill: #e2e8f0; }
+      .note { font-family: 'Segoe UI', Arial, sans-serif; font-size: 10.5px; fill: #94a3b8; }
+      .badge { font-family: Consolas, 'Courier New', monospace; font-size: 11px; font-weight: 700; text-anchor: middle; }
+    </style>
+    <marker id="arrRed" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#f87171" />
+    </marker>
+    <marker id="arrGreen" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#34d399" />
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="920" height="400" />
+  <text class="title" x="460" y="28">SDC Timing Constraints: Why set_false_path Breaks Multi-Bit CDC</text>
+  <text class="subtitle" x="460" y="48">Replacing Unbounded False Paths with set_max_delay -datapath_only and set_bus_skew in Synthesis &amp; P&amp;R</text>
+
+  <!-- Left Panel: Danger of set_false_path -->
+  <rect class="panel" x="20" y="64" width="430" height="316" stroke="#f87171" />
+  <text class="ptitle" x="36" y="88" fill="#f87171">TRAP: Blanket set_false_path / async Clock Groups</text>
+
+  <rect class="box" x="36" y="104" width="398" height="106" stroke="#f87171" />
+  <text class="mono" x="48" y="124" fill="#fca5a5"># Unconstrained P&amp;R Routing on 4-bit Gray Ptr</text>
+  <text class="mono" x="48" y="144">wgray[0] route = 0.2 ns  (fast straight wire)</text>
+  <text class="mono" x="48" y="162" fill="#f87171">wgray[3] route = 8.5 ns  (detoured across die!)</text>
+  <text class="note" x="48" y="184" fill="#fca5a5">Skew = 8.3 ns &gt; multiple wclk cycles (T_wclk = 2ns)!</text>
+  <text class="note" x="48" y="199" fill="#fca5a5">Two pointer changes overlap on wire -&gt; CORRUPT FIFO!</text>
+
+  <rect class="box" x="36" y="222" width="398" height="142" />
+  <text class="mono" x="48" y="242" fill="#fcd34d">Same Failure Destroys DMUX &amp; MCP Buses:</text>
+  <text class="note" x="48" y="261">With blanket set_false_path, the 2-ns sync pulse `req` can take</text>
+  <text class="note" x="48" y="277">1 ns to cross while `src_data[31:0]` detours 15 ns around a macro.</text>
+  <text class="note" x="48" y="294">Destination `dst_load_en` fires while old/skewed data is on wire!</text>
+  <text class="note" x="48" y="318" fill="#fca5a5">Rule: set_false_path only stops STA errors—it tells the router</text>
+  <text class="note" x="48" y="334" fill="#fca5a5">wire delay does NOT matter at all!</text>
+
+  <!-- Right Panel: Bounded Datapath Delay + Bus Skew -->
+  <rect class="panel" x="470" y="64" width="430" height="316" stroke="#34d399" />
+  <text class="ptitle" x="486" y="88" fill="#34d399">FIX: set_max_delay -datapath_only &amp; set_bus_skew</text>
+
+  <rect class="box" x="486" y="104" width="398" height="154" stroke="#34d399" />
+  <text class="mono" x="498" y="123" fill="#6ee7b7"># 1. Bound Gray Pointer / Sync Input Delay (&lt; T_src)</text>
+  <text class="mono" x="498" y="142">set_max_delay -datapath_only \</text>
+  <text class="mono" x="498" y="158">  -from [get_cells wptr_reg*] \</text>
+  <text class="mono" x="498" y="174">  -to   [get_cells sync_w2r/s1_reg*] 1.5</text>
+  <line x1="498" y1="188" x2="870" y2="188" stroke="#334155" stroke-width="1" />
+  <text class="mono" x="498" y="206" fill="#7dd3fc"># 2. Tightly Cap Bit-to-Bit Skew (Innovus/ICC2/Vivado)</text>
+  <text class="mono" x="498" y="224">set_bus_skew -from [get_cells wptr_reg*] \</text>
+  <text class="mono" x="498" y="240">             -to   [get_cells sync_w2r/s1_reg*] 0.8</text>
+
+  <rect class="box" x="486" y="270" width="398" height="94" stroke="#38bdf8" />
+  <text class="mono" x="498" y="290" fill="#7dd3fc">Why -datapath_only Beats Plain set_max_delay:</text>
+  <text class="note" x="498" y="309">- Ignores meaningless async clock insertion phase offsets,</text>
+  <text class="note" x="498" y="325">  checking ONLY true physical cell + net wire delay (D_launch-&gt;D_sync).</text>
+  <text class="note" x="498" y="343" fill="#6ee7b7">- Takes priority over set_clock_groups -asynchronous cleanly!</text>
+</svg>

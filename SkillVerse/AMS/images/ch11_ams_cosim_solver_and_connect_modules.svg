@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 400" width="920" height="400">
+  <defs>
+    <style>
+      .bg { fill: #0f172a; }
+      .panel { fill: #1e293b; stroke: #334155; stroke-width: 1.5; rx: 10; ry: 10; }
+      .box { fill: #0f172a; stroke: #334155; stroke-width: 1.2; rx: 6; ry: 6; }
+      .title { font-family: 'Segoe UI', Arial, sans-serif; font-size: 18px; font-weight: 700; fill: #f8fafc; text-anchor: middle; }
+      .sub { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; fill: #94a3b8; text-anchor: middle; }
+      .hdr { font-family: 'Segoe UI', Arial, sans-serif; font-size: 13.5px; font-weight: 700; }
+      .mono { font-family: Consolas, 'Courier New', monospace; font-size: 10.5px; fill: #e2e8f0; }
+      .note { font-family: 'Segoe UI', Arial, sans-serif; font-size: 11px; fill: #cbd5e1; }
+    </style>
+    <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8" />
+    </marker>
+    <marker id="arr-g" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#34d399" />
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="920" height="400" />
+  <text class="title" x="460" y="28">Mixed-Signal Co-Simulation Kernel &amp; Connect Module Boundary Translation</text>
+  <text class="sub" x="460" y="48">Synchronizing the Discrete Event Digital Kernel with the Continuous Analog Differential Equation Solver</text>
+
+  <!-- Left: Digital Kernel -->
+  <rect class="panel" x="20" y="66" width="256" height="236" stroke="#38bdf8" />
+  <text class="hdr" x="148" y="90" fill="#38bdf8" text-anchor="middle">Digital Event Kernel</text>
+  <rect class="box" x="34" y="106" width="228" height="84" />
+  <text class="mono" x="148" y="128" fill="#7dd3fc" text-anchor="middle">Verilog / SV / UVM / VHDL</text>
+  <text class="note" x="148" y="148" text-anchor="middle">States: 0, 1, X, Z</text>
+  <text class="note" x="148" y="166" text-anchor="middle">Strengths: supply, strong, pull</text>
+  <rect class="box" x="34" y="200" width="228" height="88" />
+  <text class="mono" x="148" y="222" fill="#e2e8f0" text-anchor="middle">Event Time Wheel</text>
+  <text class="note" x="148" y="242" text-anchor="middle">Jumps discretely to next</text>
+  <text class="note" x="148" y="258" text-anchor="middle">clock edge / net change</text>
+  <text class="mono" x="148" y="276" fill="#fcd34d" text-anchor="middle">(Zero work during idle!)</text>
+
+  <!-- Center: Connect Modules / Discipline Resolution -->
+  <rect class="panel" x="306" y="66" width="308" height="236" stroke="#f59e0b" />
+  <text class="hdr" x="460" y="90" fill="#f59e0b" text-anchor="middle">AMS Boundary: Connect Modules</text>
+
+  <!-- L2E Box -->
+  <rect class="box" x="322" y="106" width="276" height="86" stroke="#34d399" />
+  <text class="mono" x="460" y="126" fill="#6ee7b7" text-anchor="middle">L2E (Logic -&gt; Electrical)</text>
+  <text class="note" x="460" y="145" text-anchor="middle">Maps `1`-&gt;vsup (via Rout), `0`-&gt;0V (via Rout)</text>
+  <text class="note" x="460" y="163" text-anchor="middle">Applies rise/fall ramp (`tr`/`tf`)</text>
+  <text class="mono" x="460" y="180" fill="#fca5a5" text-anchor="middle">Handles `X` -&gt; Mid-Rail (vsup/2) &amp; `Z` -&gt; High-Z!</text>
+
+  <!-- E2L Box -->
+  <rect class="box" x="322" y="202" width="276" height="86" stroke="#a78bfa" />
+  <text class="mono" x="460" y="222" fill="#c4b5fd" text-anchor="middle">E2L (Electrical -&gt; Logic)</text>
+  <text class="note" x="460" y="241" text-anchor="middle">Schmitt thresholds: V_high=70%, V_low=30%</text>
+  <text class="note" x="460" y="259" text-anchor="middle">Unknown `X` band between V_low &amp; V_high</text>
+  <text class="mono" x="460" y="276" fill="#fcd34d" text-anchor="middle">Uses `tx` filter before driving `1'bx`!</text>
+
+  <!-- Arrows -->
+  <line x1="276" y1="148" x2="318" y2="148" stroke="#34d399" stroke-width="2" marker-end="url(#arr-g)" />
+  <line x1="320" y1="245" x2="278" y2="245" stroke="#38bdf8" stroke-width="2" marker-end="url(#arr)" />
+  <line x1="598" y1="148" x2="640" y2="148" stroke="#34d399" stroke-width="2" marker-end="url(#arr-g)" />
+  <line x1="642" y1="245" x2="600" y2="245" stroke="#38bdf8" stroke-width="2" marker-end="url(#arr)" />
+
+  <!-- Right: Analog Continuous Solver -->
+  <rect class="panel" x="644" y="66" width="256" height="236" stroke="#34d399" />
+  <text class="hdr" x="772" y="90" fill="#34d399" text-anchor="middle">Analog Continuous Solver</text>
+  <rect class="box" x="658" y="106" width="228" height="84" />
+  <text class="mono" x="772" y="128" fill="#6ee7b7" text-anchor="middle">Spectre / SPICE / Verilog-A</text>
+  <text class="note" x="772" y="148" text-anchor="middle">Continuous V(n), I(b)</text>
+  <text class="note" x="772" y="166" text-anchor="middle">Newton-Raphson + KCL/KVL</text>
+  <rect class="box" x="658" y="200" width="228" height="88" />
+  <text class="mono" x="772" y="222" fill="#e2e8f0" text-anchor="middle">Adaptive Timestepping</text>
+  <text class="note" x="772" y="242" text-anchor="middle">Shrinks dt at digital edges</text>
+  <text class="note" x="772" y="258" text-anchor="middle">and non-linear switchings;</text>
+  <text class="mono" x="772" y="276" fill="#fca5a5" text-anchor="middle">Rollbacks on threshold cross!</text>
+
+  <!-- Bottom Synchronization Bar -->
+  <rect class="panel" x="20" y="314" width="880" height="72" />
+  <text class="mono" x="38" y="338" fill="#fcd34d">Supply-Sensitive Connect Rules (IE Cards):</text>
+  <text class="note" x="348" y="338">Must bind `vsup` dynamically to the UPF/PG power supply net (e.g. 0.75 V core vs 1.8 V IO)!</text>
+  <text class="mono" x="38" y="362" fill="#6ee7b7">Co-Sim Sync Trap:</text>
+  <text class="note" x="174" y="362">Hardcoding `vsup=1.8 V` globally breaks low-voltage 0.75 V core inputs (triggers permanent E2L `X`-propagation)!</text>
+</svg>

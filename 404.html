@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Page not found on Squared Studio. Return to the homepage or explore SkillVerse courses." />
+  <meta name="robots" content="noindex" />
+  <title>404 — Page Not Found · Squared Studio</title>
+  <link rel="icon" type="image/png" href="/SkillVerse/logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/styles.css" />
+  <style>
+    .not-found {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 80px 24px;
+      max-width: 680px;
+      margin: 0 auto;
+    }
+    .not-found-code {
+      font-family: var(--font-mono);
+      font-size: clamp(3.5rem, 10vw, 5.5rem);
+      font-weight: 800;
+      line-height: 1;
+      margin-bottom: 16px;
+      background: linear-gradient(135deg, #fff 0%, var(--accent1) 55%, var(--accent2) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .not-found h1 {
+      font-size: clamp(1.5rem, 4vw, 2.1rem);
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 12px;
+    }
+    .not-found p {
+      font-size: .96rem;
+      color: var(--muted);
+      margin-bottom: 32px;
+      max-width: 480px;
+    }
+    .not-found-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+  </style>
+</head>
+<body>
+<div class="shell">
+  <nav></nav>
+
+  <main class="not-found">
+    <p class="eyebrow">Signal Lost · 404</p>
+    <div class="not-found-code">404</div>
+    <h1>Page Not Found</h1>
+    <p>The page or resource you requested does not exist or may have moved. Jump back home or browse the SkillVerse curriculum.</p>
+    <div class="not-found-actions">
+      <a class="btn btn-primary" href="/index.html">Back to Home</a>
+      <a class="btn btn-outline" href="/SkillVerse/index.html">Explore SkillVerse</a>
+      <a class="btn btn-outline" href="/contact.html">Contact Us</a>
+    </div>
+  </main>
+
+  <footer></footer>
+</div>
+<script src="/common.js"></script>
+</body>
+</html>

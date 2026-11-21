@@ -1,0 +1,102 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 400" width="920" height="400">
+  <defs>
+    <style>
+      .bg { fill: #0f172a; }
+      .panel { fill: #1e293b; stroke: #334155; stroke-width: 1.5; rx: 10; ry: 10; }
+      .box { fill: #0f172a; stroke: #334155; stroke-width: 1.2; rx: 6; ry: 6; }
+      .title { font-family: 'Segoe UI', Arial, sans-serif; font-size: 18px; font-weight: 700; fill: #f8fafc; text-anchor: middle; }
+      .sub { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; fill: #94a3b8; text-anchor: middle; }
+      .hdr { font-family: 'Segoe UI', Arial, sans-serif; font-size: 13.5px; font-weight: 700; }
+      .mono { font-family: Consolas, 'Courier New', monospace; font-size: 10.5px; fill: #e2e8f0; }
+      .note { font-family: 'Segoe UI', Arial, sans-serif; font-size: 11px; fill: #cbd5e1; }
+    </style>
+    <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8" />
+    </marker>
+    <marker id="arr-g" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#34d399" />
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="920" height="400" />
+  <text class="title" x="460" y="28">Analog ESD Protection Topology &amp; Pre-Tapeout AMS Sign-Off Pipeline</text>
+  <text class="sub" x="460" y="48">Two-Stage HBM/CDM Clamp Networks and Mandatory Extraction, PVT, Monte Carlo, Aging &amp; MVS Gates</text>
+
+  <!-- Left Panel: Two-Stage ESD Network -->
+  <rect class="panel" x="20" y="64" width="440" height="318" stroke="#f59e0b" />
+  <text class="hdr" x="38" y="88" fill="#f59e0b">1. Two-Stage Pad-to-Core ESD Clamp (HBM / CDM)</text>
+  <rect class="box" x="34" y="100" width="412" height="206" />
+
+  <!-- Rails -->
+  <line x1="52" y1="126" x2="430" y2="126" stroke="#f87171" stroke-width="2.2" />
+  <text class="mono" x="60" y="119" fill="#fca5a5">VDD_IO / AVDD</text>
+  <line x1="52" y1="286" x2="430" y2="286" stroke="#64748b" stroke-width="2.2" />
+  <text class="mono" x="60" y="298" fill="#94a3b8">VSS_IO / AVSS</text>
+
+  <!-- Bond Pad + Primary Diodes -->
+  <rect x="44" y="182" width="52" height="46" fill="#334155" stroke="#f59e0b" rx="4" />
+  <text class="mono" x="70" y="209" fill="#fcd34d" text-anchor="middle">PAD</text>
+  <line x1="96" y1="205" x2="210" y2="205" stroke="#38bdf8" stroke-width="2" />
+  <circle cx="136" cy="205" r="3.5" fill="#f59e0b" />
+
+  <rect x="116" y="144" width="40" height="32" fill="#1e293b" stroke="#f87171" rx="3" />
+  <text class="mono" x="136" y="164" fill="#fca5a5" text-anchor="middle" font-size="9.5">D_up</text>
+  <line x1="136" y1="126" x2="136" y2="144" stroke="#f87171" stroke-width="1.6" />
+  <line x1="136" y1="176" x2="136" y2="205" stroke="#f87171" stroke-width="1.6" />
+
+  <rect x="116" y="232" width="40" height="32" fill="#1e293b" stroke="#34d399" rx="3" />
+  <text class="mono" x="136" y="252" fill="#6ee7b7" text-anchor="middle" font-size="9.5">D_dn</text>
+  <line x1="136" y1="205" x2="136" y2="232" stroke="#34d399" stroke-width="1.6" />
+  <line x1="136" y1="264" x2="136" y2="286" stroke="#34d399" stroke-width="1.6" />
+
+  <!-- Isolation Resistor + Secondary CDM clamp -->
+  <rect x="200" y="191" width="60" height="28" fill="#0f172a" stroke="#f59e0b" rx="3" />
+  <text class="mono" x="230" y="209" fill="#fcd34d" text-anchor="middle">R_esd</text>
+  <line x1="260" y1="205" x2="360" y2="205" stroke="#38bdf8" stroke-width="2" />
+
+  <rect x="278" y="232" width="54" height="32" fill="#1e293b" stroke="#a78bfa" rx="3" />
+  <text class="mono" x="305" y="252" fill="#c4b5fd" text-anchor="middle" font-size="9.5">CDM Clmp</text>
+  <line x1="305" y1="205" x2="305" y2="232" stroke="#a78bfa" stroke-width="1.5" />
+  <line x1="305" y1="264" x2="305" y2="286" stroke="#a78bfa" stroke-width="1.5" />
+
+  <!-- BigFET Power Clamp -->
+  <rect x="352" y="150" width="76" height="106" fill="#1e293b" stroke="#f87171" rx="5" />
+  <text class="mono" x="390" y="180" fill="#fca5a5" text-anchor="middle">RC-Trig</text>
+  <text class="mono" x="390" y="198" fill="#fca5a5" text-anchor="middle">BigFET</text>
+  <text class="mono" x="390" y="216" fill="#fca5a5" text-anchor="middle">Power</text>
+  <text class="mono" x="390" y="234" fill="#fca5a5" text-anchor="middle">Clamp</text>
+  <line x1="390" y1="126" x2="390" y2="150" stroke="#f87171" stroke-width="1.6" />
+  <line x1="390" y1="256" x2="390" y2="286" stroke="#f87171" stroke-width="1.6" />
+
+  <rect class="box" x="34" y="314" width="412" height="54" />
+  <text class="mono" x="46" y="334" fill="#fcd34d">RF / SerDes Trade-Off: Primary diode adds C_pad (~200-500 fF)!</text>
+  <text class="note" x="46" y="352">Co-design T-coil inductive peaking with low-C ESD diodes for 28G-112G.</text>
+
+  <!-- Right Panel: Sign-Off Pipeline -->
+  <rect class="panel" x="476" y="64" width="424" height="318" stroke="#34d399" />
+  <text class="hdr" x="494" y="88" fill="#34d399">2. Six-Gate AMS Tape-Out Sign-Off Flow</text>
+
+  <rect class="box" x="494" y="104" width="388" height="36" stroke="#38bdf8" />
+  <text class="mono" x="688" y="126" fill="#7dd3fc" text-anchor="middle">1. DRC / LVS / ERC / Antenna + Soft-Check Clean</text>
+  <line x1="688" y1="140" x2="688" y2="148" stroke="#38bdf8" stroke-width="1.6" />
+
+  <rect class="box" x="494" y="150" width="388" height="36" stroke="#38bdf8" />
+  <text class="mono" x="688" y="172" fill="#7dd3fc" text-anchor="middle">2. Post-Layout R+C+CC PEX Extraction (Calibre xRC/Quantus)</text>
+  <line x1="688" y1="186" x2="688" y2="194" stroke="#38bdf8" stroke-width="1.6" />
+
+  <rect class="box" x="494" y="196" width="388" height="42" stroke="#f59e0b" />
+  <text class="mono" x="688" y="214" fill="#fcd34d" text-anchor="middle">3. Full PVT Corners + 3-6 Sigma Monte Carlo Mismatch</text>
+  <text class="note" x="688" y="230" text-anchor="middle">Includes Startup, Brownout, Noise (.pnoise/.tran) &amp; Margin</text>
+  <line x1="688" y1="238" x2="688" y2="246" stroke="#38bdf8" stroke-width="1.6" />
+
+  <rect class="box" x="494" y="248" width="388" height="36" stroke="#a78bfa" />
+  <text class="mono" x="688" y="270" fill="#c4b5fd" text-anchor="middle">4. Reliability: EM / IR-Drop + NBTI / HCI Aging + ESD</text>
+  <line x1="688" y1="284" x2="688" y2="292" stroke="#34d399" stroke-width="1.6" />
+
+  <rect class="box" x="494" y="294" width="388" height="36" stroke="#34d399" />
+  <text class="mono" x="688" y="316" fill="#6ee7b7" text-anchor="middle">5. MVS Correlation (SV-RNM == PEX) &amp; Top Co-Sim Pass</text>
+  <line x1="688" y1="330" x2="688" y2="338" stroke="#34d399" stroke-width="1.6" />
+
+  <rect class="box" x="494" y="340" width="388" height="30" stroke="#34d399" />
+  <text class="mono" x="688" y="359" fill="#6ee7b7" text-anchor="middle">6. Sign-Off Audit -&gt; GDSII Release to Foundry</text>
+</svg>

@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 400" width="920" height="400">
+  <defs>
+    <style>
+      .bg { fill: #0f172a; }
+      .panel { fill: #1e293b; stroke: #334155; stroke-width: 1.5; rx: 10; ry: 10; }
+      .box { fill: #0f172a; stroke: #334155; stroke-width: 1.2; rx: 6; ry: 6; }
+      .title { font-family: 'Segoe UI', Arial, sans-serif; font-size: 18px; font-weight: 700; fill: #f8fafc; text-anchor: middle; }
+      .sub { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; fill: #94a3b8; text-anchor: middle; }
+      .hdr { font-family: 'Segoe UI', Arial, sans-serif; font-size: 13.5px; font-weight: 700; }
+      .mono { font-family: Consolas, 'Courier New', monospace; font-size: 10.5px; fill: #e2e8f0; }
+      .note { font-family: 'Segoe UI', Arial, sans-serif; font-size: 11px; fill: #cbd5e1; }
+    </style>
+    <marker id="arr-g" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#34d399" />
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="920" height="400" />
+  <text class="title" x="460" y="28">ASIC-to-FPGA RTL Adaptation: Gated Clock Conversion &amp; SRAM Black-Box Wrapping</text>
+  <text class="sub" x="460" y="48">Converting Hundreds of ASIC ICG Leaves Into Clean Global Clocks (`CE`) and Wrapping Foundry SRAMs Into FPGA BRAMs</text>
+
+  <!-- Left Panel: ASIC ICG -> FPGA CE Conversion -->
+  <rect class="panel" x="20" y="64" width="440" height="318" stroke="#38bdf8" />
+  <text class="hdr" x="38" y="88" fill="#38bdf8">1. ASIC Clock Gating (`ICG`) -&gt; FPGA `CE` Transformation</text>
+
+  <rect class="box" x="34" y="104" width="412" height="114" stroke="#f87171" />
+  <text class="mono" x="46" y="124" fill="#fca5a5">Original ASIC RTL (500 Leaf `clk_gate` Cells!):</text>
+  <text class="mono" x="46" y="144" fill="#cbd5e1">ICG u_icg_alu (.CLK(sys_clk), .EN(alu_en), .GCLK(gclk_alu));</text>
+  <text class="mono" x="46" y="162" fill="#cbd5e1">always @(posedge gclk_alu) reg_a &lt;= d;</text>
+  <text class="note" x="46" y="186">On FPGA: Exceeds 24 global BUFG clocks/region immediately!</text>
+  <text class="note" x="46" y="203">Turns `ICG` latches into fabric LUT clock trees -&gt; HUGE Hold bugs!</text>
+
+  <line x1="240" y1="218" x2="240" y2="238" stroke="#34d399" stroke-width="2" marker-end="url(#arr-g)" />
+
+  <rect class="box" x="34" y="242" width="412" height="126" stroke="#34d399" />
+  <text class="mono" x="46" y="262" fill="#6ee7b7">Converted FPGA Equivalent (`-gated_clock_conversion`):</text>
+  <text class="mono" x="46" y="282" fill="#7dd3fc">always @(posedge sys_clk) if (alu_en) reg_a &lt;= d;</text>
+  <text class="note" x="46" y="304">- Tool traces `ICG` latch + AND back to parent `sys_clk` (BUFG)</text>
+  <text class="note" x="46" y="322">- Maps `alu_en` straight onto flip-flop hard `CE` pin</text>
+  <text class="mono" x="46" y="344" fill="#fcd34d">- Zero clock skew &amp; preserves 100% functional equivalence!</text>
+
+  <!-- Right Panel: ASIC Memory & Hard Macro Mapping -->
+  <rect class="panel" x="476" y="64" width="424" height="318" stroke="#a78bfa" />
+  <text class="hdr" x="494" y="88" fill="#a78bfa">2. Foundry SRAM, Analog IP &amp; Multi-Bit Port Wrappers</text>
+
+  <rect class="box" x="490" y="104" width="396" height="114" stroke="#a78bfa" />
+  <text class="mono" x="502" y="124" fill="#c4b5fd">A. Foundry Compiled SRAM (`TSMC_SPRAM_4Kx64`):</text>
+  <text class="note" x="502" y="144">- Strip foundry cell; wrap `mem_wrap` mapping onto `BRAM` / `URAM`</text>
+  <text class="note" x="502" y="162">- Map bit-write masks (`BWEB`) -&gt; BRAM `WE[7:0]` byte-enables</text>
+  <text class="note" x="502" y="180">- Tie off ASIC DFT / MBIST / EMA pins cleanly via `ifdef FPGA_PROTO`</text>
+  <text class="mono" x="502" y="200" fill="#6ee7b7">- Caution: Watch multi-port RF arrays (&gt;2R+2W -&gt; LVT/XOR BRAM!)</text>
+
+  <rect class="box" x="490" y="228" width="396" height="140" stroke="#f59e0b" />
+  <text class="mono" x="502" y="248" fill="#fcd34d">B. Analog / PLL / Fuse / Latch Cleanups:</text>
+  <text class="note" x="502" y="268">- **ASIC PLL**: Swap behavioral model for FPGA `MMCM` (scaled freq!)</text>
+  <text class="note" x="502" y="286">- **Async Latches**: Recode or isolate cleanly (latches hurt FPGA timing)</text>
+  <text class="note" x="502" y="304">- **Tri-State Buses**: Convert internal `inout` buses to OR/MUX trees</text>
+  <text class="note" x="502" y="322">- **Multi-Cycle / Fast Clocks**: Scale 2 GHz CPU -&gt; 40 MHz (`50x`),</text>
+  <text class="note" x="502" y="340">  keep UART/Timer baud prescalers runtime-adjustable for fast boot!</text>
+</svg>

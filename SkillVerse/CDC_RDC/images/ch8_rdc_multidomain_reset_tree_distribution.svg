@@ -1,0 +1,93 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 390" width="920" height="390">
+  <defs>
+    <style>
+      .bg { fill: #0f172a; }
+      .panel { fill: #1e293b; stroke-width: 1.5; rx: 10; ry: 10; }
+      .box { fill: #0f172a; stroke: #334155; stroke-width: 1.2; rx: 6; ry: 6; }
+      .bridge { fill: #172554; stroke: #34d399; stroke-width: 1.5; rx: 6; ry: 6; }
+      .title { font-family: 'Segoe UI', Arial, sans-serif; font-size: 18px; font-weight: 700; fill: #f8fafc; text-anchor: middle; }
+      .subtitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; fill: #94a3b8; text-anchor: middle; }
+      .ptitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 14px; font-weight: 700; }
+      .mono { font-family: Consolas, 'Courier New', monospace; font-size: 10.6px; fill: #e2e8f0; }
+      .note { font-family: 'Segoe UI', Arial, sans-serif; font-size: 10.3px; fill: #94a3b8; }
+      .badge { font-family: Consolas, 'Courier New', monospace; font-size: 10.8px; font-weight: 700; text-anchor: middle; }
+    </style>
+    <marker id="arrSky" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#38bdf8" />
+    </marker>
+    <marker id="arrGreen" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#34d399" />
+    </marker>
+    <marker id="arrRed" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#f87171" />
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="920" height="390" />
+  <text class="title" x="460" y="28">SoC Multi-Clock Reset Tree Distribution &amp; Staged Sequencer</text>
+  <text class="subtitle" x="460" y="48">Qualifying Global Power-On Reset with PLL Lock Stability and Synchronizing Per-Clock Sub-Trees</text>
+
+  <!-- Main Flow Panel -->
+  <rect class="panel" x="20" y="64" width="880" height="206" stroke="#38bdf8" />
+  <text class="ptitle" x="36" y="88" fill="#38bdf8">Hierarchical Reset Generation Unit (RGU) Topology</text>
+
+  <!-- Step 1: POR & PLL -->
+  <rect class="box" x="36" y="106" width="136" height="58" stroke="#f87171" />
+  <text class="badge" x="104" y="128" fill="#fca5a5">Ext POR / Pad</text>
+  <text class="note" x="104" y="146" text-anchor="middle">Filtered async_por_n</text>
+
+  <rect class="box" x="36" y="180" width="136" height="58" stroke="#f59e0b" />
+  <text class="badge" x="104" y="202" fill="#fcd34d">PLL Lock Detect</text>
+  <text class="note" x="104" y="220" text-anchor="middle">pll_locked == 1</text>
+
+  <line x1="172" y1="135" x2="212" y2="156" stroke="#f87171" stroke-width="1.8" marker-end="url(#arrRed)" />
+  <line x1="172" y1="209" x2="212" y2="184" stroke="#38bdf8" stroke-width="1.8" marker-end="url(#arrSky)" />
+
+  <!-- Step 2: RGU Master Qualifier (Always-On Clk) -->
+  <rect class="box" x="216" y="114" width="210" height="114" stroke="#a78bfa" />
+  <text class="badge" x="321" y="136" fill="#c4b5fd">Master RGU Sequencer</text>
+  <text class="note" x="321" y="155" text-anchor="middle">(Runs on AON XTAL / clk_ref)</text>
+  <text class="mono" x="228" y="176">1. Holds sys_rst_n = 0 until</text>
+  <text class="mono" x="228" y="192">   POR==1 &amp;&amp; pll_locked==1</text>
+  <text class="mono" x="228" y="208">2. Orders release: NoC -&gt; CPU</text>
+
+  <!-- Branch Arrows to 3 Domain Bridges -->
+  <line x1="426" y1="132" x2="500" y2="112" stroke="#34d399" stroke-width="1.8" marker-end="url(#arrGreen)" />
+  <line x1="426" y1="170" x2="500" y2="170" stroke="#34d399" stroke-width="1.8" marker-end="url(#arrGreen)" />
+  <line x1="426" y1="208" x2="500" y2="228" stroke="#34d399" stroke-width="1.8" marker-end="url(#arrGreen)" />
+
+  <!-- 3 Independent Per-Clock Reset Bridges -->
+  <rect class="bridge" x="504" y="92" width="194" height="44" />
+  <text class="badge" x="601" y="110" fill="#6ee7b7">Bridge A (clk_noc)</text>
+  <text class="note" x="601" y="126" text-anchor="middle">Glitch-free sync deassert</text>
+
+  <rect class="bridge" x="504" y="148" width="194" height="44" />
+  <text class="badge" x="601" y="166" fill="#6ee7b7">Bridge B (clk_cpu)</text>
+  <text class="note" x="601" y="182" text-anchor="middle">SW soft-reset OR gate inside!</text>
+
+  <rect class="bridge" x="504" y="204" width="194" height="44" />
+  <text class="badge" x="601" y="222" fill="#6ee7b7">Bridge C (clk_periph)</text>
+  <text class="note" x="601" y="238" text-anchor="middle">Async FIFO domain sync</text>
+
+  <!-- Outputs -->
+  <line x1="698" y1="114" x2="736" y2="114" stroke="#38bdf8" stroke-width="1.8" marker-end="url(#arrSky)" />
+  <line x1="698" y1="170" x2="736" y2="170" stroke="#38bdf8" stroke-width="1.8" marker-end="url(#arrSky)" />
+  <line x1="698" y1="226" x2="736" y2="226" stroke="#38bdf8" stroke-width="1.8" marker-end="url(#arrSky)" />
+
+  <rect class="box" x="740" y="92" width="144" height="44" /><text class="mono" x="812" y="118" text-anchor="middle">rst_noc_n</text>
+  <rect class="box" x="740" y="148" width="144" height="44" /><text class="mono" x="812" y="174" text-anchor="middle">rst_cpu_n</text>
+  <rect class="box" x="740" y="204" width="144" height="44" /><text class="mono" x="812" y="230" text-anchor="middle">rst_periph_n</text>
+
+  <!-- Bottom 2 Warning Cards -->
+  <rect class="panel" x="20" y="284" width="430" height="90" stroke="#f87171" />
+  <text class="ptitle" x="36" y="308" fill="#f87171">Never Share One Reset Bridge Across Two Clocks</text>
+  <text class="note" x="36" y="328">Sharing clk_noc's rst_noc_n directly with clk_cpu causes clk_cpu</text>
+  <text class="note" x="36" y="344">registers to violate recovery/removal (since clk_noc and clk_cpu</text>
+  <text class="note" x="36" y="360">are asynchronous!). Every independent clock NEEDS its own bridge!</text>
+
+  <rect class="panel" x="470" y="284" width="430" height="90" stroke="#f59e0b" />
+  <text class="ptitle" x="486" y="308" fill="#f59e0b">SW Soft-Reset Glitch Prevention Rule</text>
+  <text class="note" x="486" y="328">Always register any SW reset CSR bit before feeding it into a bridge</text>
+  <text class="note" x="486" y="344">CLR tree—and remember any OR/AND gate combining POR + SW reset</text>
+  <text class="note" x="486" y="360">must stay glitch-free (set_dont_touch on reset combiners)!</text>
+</svg>

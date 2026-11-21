@@ -1,0 +1,103 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 520" width="960" height="520">
+  <defs>
+    <style>
+      .bg { fill: #080c14; }
+      .title { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 20px; fill: #f8fafc; }
+      .subtitle { font-family: 'Inter', system-ui, sans-serif; font-size: 13px; fill: #94a3b8; }
+      .panel { fill: #0f172a; stroke-width: 1.8; rx: 10px; }
+      .inner { fill: #0b1120; stroke-width: 1.3; rx: 6px; }
+      .txt-hdr { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 13px; fill: #f8fafc; }
+      .txt-sub { font-family: 'Inter', system-ui, sans-serif; font-size: 11px; fill: #94a3b8; }
+      .mono { font-family: 'JetBrains Mono', Consolas, monospace; font-size: 10.5px; font-weight: 600; }
+      .edge { stroke-width: 2; fill: none; }
+    </style>
+    <marker id="arr-cyan" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8" />
+    </marker>
+    <marker id="arr-green" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#34d399" />
+    </marker>
+    <marker id="arr-amber" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#f59e0b" />
+    </marker>
+  </defs>
+
+  <rect width="960" height="520" class="bg" rx="14"/>
+  <text x="480" y="32" text-anchor="middle" class="title">UVM Constrained-Random &amp; Coverage Closure Loop</text>
+  <text x="480" y="52" text-anchor="middle" class="subtitle">Systematic DV architecture connecting Verification Plan, UVM sequences, self-checking scoreboards, and sign-off</text>
+
+  <!-- Step 1: Testplan -->
+  <g transform="translate(32, 92)">
+    <rect x="0" y="0" width="184" height="128" class="panel" stroke="#38bdf8"/>
+    <text x="92" y="26" text-anchor="middle" class="mono" fill="#38bdf8">1. VERIFICATION PLAN</text>
+    <text x="14" y="50" class="txt-sub">• Extract spec features</text>
+    <text x="14" y="68" class="txt-sub">• Define corner scenarios</text>
+    <text x="14" y="86" class="txt-sub">• Map each feature to</text>
+    <text x="14" y="102" class="mono" fill="#7dd3fc">  covergroups &amp; SVA</text>
+  </g>
+  <path d="M 216 156 L 246 156" class="edge" stroke="#38bdf8" marker-end="url(#arr-cyan)"/>
+
+  <!-- Step 2: Stimulus -->
+  <g transform="translate(250, 92)">
+    <rect x="0" y="0" width="214" height="128" class="panel" stroke="#34d399"/>
+    <text x="107" y="26" text-anchor="middle" class="mono" fill="#34d399">2. CONSTRAINED RANDOM</text>
+    <text x="14" y="50" class="txt-sub">• uvm_sequence + constraints</text>
+    <text x="14" y="68" class="txt-sub">• Virtual sequences across</text>
+    <text x="14" y="86" class="txt-sub">  multiple agents/interfaces</text>
+    <text x="14" y="104" class="mono" fill="#6ee7b7">  + randomized error inj</text>
+  </g>
+  <path d="M 464 156 L 494 156" class="edge" stroke="#34d399" marker-end="url(#arr-green)"/>
+
+  <!-- Step 3: DUT & Checks -->
+  <g transform="translate(498, 92)">
+    <rect x="0" y="0" width="214" height="128" class="panel" stroke="#a855f7"/>
+    <text x="107" y="26" text-anchor="middle" class="mono" fill="#d8b4fe">3. DUT + CHECKERS</text>
+    <text x="14" y="50" class="txt-sub">• Driver → DUT pins</text>
+    <text x="14" y="68" class="txt-sub">• Passive Monitors → TLM</text>
+    <text x="14" y="86" class="txt-sub">• Predictor + Scoreboard</text>
+    <text x="14" y="104" class="mono" fill="#d8b4fe">• Protocol SVA monitors</text>
+  </g>
+  <path d="M 712 156 L 742 156" class="edge" stroke="#f59e0b" marker-end="url(#arr-amber)"/>
+
+  <!-- Step 4: Coverage DB -->
+  <g transform="translate(746, 92)">
+    <rect x="0" y="0" width="182" height="128" class="panel" stroke="#f59e0b"/>
+    <text x="91" y="26" text-anchor="middle" class="mono" fill="#fcd34d">4. COVERAGE MERGE</text>
+    <text x="14" y="50" class="txt-sub">• Code: Line, Cond,</text>
+    <text x="14" y="68" class="txt-sub">  Toggle, Branch, FSM</text>
+    <text x="14" y="86" class="txt-sub">• Functional: coverpoints</text>
+    <text x="14" y="104" class="mono" fill="#fcd34d">  &amp; cross coverage</text>
+  </g>
+
+  <!-- Feedback Loop Down & Left -->
+  <path d="M 837 220 L 837 282 L 357 282 L 357 224" class="edge" stroke="#f59e0b" stroke-dasharray="5,4" marker-end="url(#arr-amber)"/>
+  <rect x="440" y="268" width="290" height="26" rx="5" fill="#1d160b" stroke="#f59e0b"/>
+  <text x="585" y="285" text-anchor="middle" class="mono" fill="#fcd34d">5. Gap Analysis → Tune Constraints / Directed Tests</text>
+
+  <!-- Sign-Off Exit Arrow -->
+  <path d="M 837 282 L 837 334" class="edge" stroke="#34d399" marker-end="url(#arr-green)"/>
+
+  <!-- Bottom Panel: Verification Sign-Off Metrics -->
+  <g transform="translate(32, 338)">
+    <rect x="0" y="0" width="896" height="156" class="panel" stroke="#34d399"/>
+    <text x="18" y="26" class="txt-hdr" fill="#34d399">Tape-Out Verification Closure Criteria (vPlan Sign-Off)</text>
+
+    <rect x="18" y="42" width="276" height="96" class="inner" stroke="#38bdf8"/>
+    <text x="30" y="62" class="mono" fill="#38bdf8">1. Zero Open Critical Bugs</text>
+    <text x="30" y="82" class="txt-sub">• 100% nightly regressions pass</text>
+    <text x="30" y="100" class="txt-sub">• Zero SVA / X-prop failures</text>
+    <text x="30" y="118" class="txt-sub">• Fixed-seed repros archived</text>
+
+    <rect x="310" y="42" width="276" height="96" class="inner" stroke="#f59e0b"/>
+    <text x="322" y="62" class="mono" fill="#fcd34d">2. Coverage Closure + Waivers</text>
+    <text x="322" y="82" class="txt-sub">• Code coverage &gt;= 98–100%</text>
+    <text x="322" y="100" class="txt-sub">• Functional coverage == 100%</text>
+    <text x="322" y="118" class="txt-sub">• Peer-reviewed waivers only</text>
+
+    <rect x="602" y="42" width="276" height="96" class="inner" stroke="#a855f7"/>
+    <text x="614" y="62" class="mono" fill="#d8b4fe">3. Gate &amp; Low-Power Sign-Off</text>
+    <text x="614" y="82" class="txt-sub">• Timing GLS (min/max SDF)</text>
+    <text x="614" y="100" class="txt-sub">• Power-aware UPF retention</text>
+    <text x="614" y="118" class="txt-sub">• Formal + CDC + DFT clean</text>
+  </g>
+</svg>

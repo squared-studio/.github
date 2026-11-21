@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 380" width="920" height="380">
+  <defs>
+    <style>
+      .bg { fill: #0f172a; }
+      .panel { fill: #1e293b; stroke-width: 1.5; rx: 10; ry: 10; }
+      .box { fill: #0f172a; stroke: #334155; stroke-width: 1.2; rx: 6; ry: 6; }
+      .title { font-family: 'Segoe UI', Arial, sans-serif; font-size: 18px; font-weight: 700; fill: #f8fafc; text-anchor: middle; }
+      .subtitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; fill: #94a3b8; text-anchor: middle; }
+      .ptitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 14px; font-weight: 700; }
+      .mono { font-family: Consolas, 'Courier New', monospace; font-size: 10.6px; fill: #e2e8f0; }
+      .note { font-family: 'Segoe UI', Arial, sans-serif; font-size: 10.3px; fill: #94a3b8; }
+      .badge { font-family: Consolas, 'Courier New', monospace; font-size: 11px; font-weight: 700; text-anchor: middle; }
+    </style>
+    <marker id="arrSky" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#38bdf8" />
+    </marker>
+    <marker id="arrGreen" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#34d399" />
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="920" height="380" />
+  <text class="title" x="460" y="28">Hybrid RTL + Gate Co-Simulation &amp; Hardware Emulation Acceleration</text>
+  <text class="subtitle" x="460" y="48">Achieving 5x–10x Faster SDF Throughput Using Hierarchical `config` Blocks While Preserving Boundary Timing</text>
+
+  <!-- Left Panel: Hybrid RTL + Gate Architecture -->
+  <rect class="panel" x="20" y="64" width="540" height="298" stroke="#38bdf8" />
+  <text class="ptitle" x="36" y="88" fill="#38bdf8">SystemVerilog `config` Partitioned SoC Simulation</text>
+
+  <rect class="box" x="36" y="104" width="160" height="90" stroke="#34d399" />
+  <text class="badge" x="116" y="126" fill="#6ee7b7">CPU + DRAM (RTL)</text>
+  <text class="note" x="46" y="146">Runs C firmware &amp;</text>
+  <text class="note" x="46" y="162">AXI stimulus at</text>
+  <text class="note" x="46" y="178" fill="#6ee7b7">10x faster RTL speed</text>
+
+  <line x1="196" y1="149" x2="236" y2="149" stroke="#34d399" stroke-width="2" marker-end="url(#arrGreen)" />
+
+  <rect class="box" x="240" y="104" width="144" height="90" stroke="#a78bfa" />
+  <text class="badge" x="312" y="126" fill="#c4b5fd">NoC Fabric (RTL)</text>
+  <text class="note" x="250" y="146">Zero-delay bus routing</text>
+  <text class="note" x="250" y="162">+ I/O skew wrapper</text>
+
+  <line x1="384" y1="149" x2="412" y2="149" stroke="#38bdf8" stroke-width="2" marker-end="url(#arrSky)" />
+
+  <rect class="box" x="416" y="100" width="130" height="98" stroke="#f59e0b" />
+  <text class="badge" x="481" y="122" fill="#fcd34d">u_pcie (GATE+SDF)</text>
+  <text class="note" x="424" y="142">Full Stdcells +</text>
+  <text class="note" x="424" y="158">`$sdf_annotate` on</text>
+  <text class="note" x="424" y="174">`tb.dut.u_pcie`!</text>
+
+  <rect class="box" x="36" y="210" width="510" height="136" />
+  <text class="mono" x="48" y="230" fill="#7dd3fc">config cfg_pcie_hybrid;</text>
+  <text class="mono" x="48" y="247">  design work.tb_soc;</text>
+  <text class="mono" x="48" y="264">  default liblist rtl_lib stdcell_lib;</text>
+  <text class="mono" x="48" y="281" fill="#fcd34d">  instance tb_soc.dut.u_pcie use gate_lib.pcie_top;</text>
+  <text class="mono" x="48" y="298">endconfig</text>
+  <text class="note" x="48" y="324" fill="#fca5a5">Watch Out: Synchronize RTL-to-Gate port boundary skew &amp; preserve</text>
+  <text class="note" x="48" y="339" fill="#fca5a5">module port widths (`vector` vs `bit-blasted` wrappers)!</text>
+
+  <!-- Right Panel: Zero-Delay Emulation -->
+  <rect class="panel" x="576" y="64" width="324" height="298" stroke="#a78bfa" />
+  <text class="ptitle" x="592" y="88" fill="#a78bfa">Hardware Emulation Roles</text>
+
+  <rect class="box" x="592" y="104" width="292" height="114" />
+  <text class="mono" x="602" y="123" fill="#c4b5fd">Palladium / Veloce / ZeBu</text>
+  <text class="note" x="602" y="142">+ Compiles full-chip synthesized netlist</text>
+  <text class="note" x="602" y="158">  to boot Linux &amp; run billions of cycles</text>
+  <text class="note" x="602" y="174">  of gate-level functionality in minutes!</text>
+  <text class="note" x="602" y="194" fill="#fcd34d">+ Supports X-init randomization on netlist.</text>
+
+  <rect class="box" x="592" y="230" width="292" height="116" stroke="#f87171" />
+  <text class="mono" x="602" y="249" fill="#fca5a5">What Emulators CANNOT Do:</text>
+  <text class="note" x="602" y="268">Emulators flatten designs into unit-delay</text>
+  <text class="note" x="602" y="284">clock schedules—they do NOT back-annotate</text>
+  <text class="note" x="602" y="300">continuous picosecond SDF `$setuphold`!</text>
+  <text class="note" x="602" y="320" fill="#6ee7b7">Full-Timing SDF GLS remains mandatory.</text>
+</svg>

@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 220" width="720" height="220" style="background-color: #ffffff; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+  <defs>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="1" dy="2" stdDeviation="2" flood-color="#0f172a" flood-opacity="0.08" />
+    </filter>
+    <marker id="arr-blue" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#2563eb" />
+    </marker>
+    <marker id="arr-green" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#10b981" />
+    </marker>
+    <marker id="arr-red" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#ef4444" />
+    </marker>
+    <marker id="arr-purple" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#8b5cf6" />
+    </marker>
+    <marker id="arr-amber" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#f59e0b" />
+    </marker>
+    <marker id="arr-slate" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#64748b" />
+    </marker>
+  </defs>
+
+  <rect x="15" y="15" width="690" height="190" rx="12" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2"/>
+  <text x="35" y="40" font-size="14" font-weight="700" fill="#0f172a">APB Address Decoding &amp; Slave Select Generation</text>
+
+  <rect x="40" y="65" width="130" height="110" rx="8" fill="#eff6ff" stroke="#3b82f6" stroke-width="2" filter="url(#shadow)"/>
+  <text x="105" y="95" font-size="12" font-weight="700" fill="#1e3a8a" text-anchor="middle">APB Master</text>
+  <text x="105" y="115" font-size="10" fill="#2563eb" text-anchor="middle">Drives PADDR</text>
+
+  <line x1="170" y1="120" x2="224" y2="120" stroke="#2563eb" stroke-width="2.5" marker-end="url(#arr-blue)"/>
+  <text x="197" y="112" font-size="9" font-weight="700" fill="#2563eb" text-anchor="middle">PADDR</text>
+
+  <!-- Address Decoder -->
+  <rect x="230" y="60" width="150" height="120" rx="8" fill="#fef3c7" stroke="#f59e0b" stroke-width="2" filter="url(#shadow)"/>
+  <text x="305" y="90" font-size="12" font-weight="700" fill="#92400e" text-anchor="middle">Address Decoder</text>
+  <text x="305" y="110" font-size="9.5" fill="#78350f" text-anchor="middle">Decodes Base Addr</text>
+  <text x="305" y="130" font-size="9.5" fill="#78350f" text-anchor="middle">0x4000_0000: Slave 0</text>
+  <text x="305" y="145" font-size="9.5" fill="#78350f" text-anchor="middle">0x4000_1000: Slave 1</text>
+  <text x="305" y="160" font-size="9.5" fill="#78350f" text-anchor="middle">0x4000_2000: Slave 2</text>
+
+  <!-- Slaves -->
+  <rect x="520" y="60" width="160" height="34" rx="6" fill="#f0fdf4" stroke="#10b981" stroke-width="1.5"/>
+  <text x="600" y="82" font-size="11" font-weight="600" fill="#065f46" text-anchor="middle">Slave 0 (UART)</text>
+  <line x1="380" y1="77" x2="514" y2="77" stroke="#f59e0b" stroke-width="2" marker-end="url(#arr-amber)"/>
+  <text x="445" y="70" font-size="9.5" font-weight="700" fill="#b45309" text-anchor="middle">PSEL0</text>
+
+  <rect x="520" y="103" width="160" height="34" rx="6" fill="#f0fdf4" stroke="#10b981" stroke-width="1.5"/>
+  <text x="600" y="125" font-size="11" font-weight="600" fill="#065f46" text-anchor="middle">Slave 1 (SPI)</text>
+  <line x1="380" y1="120" x2="514" y2="120" stroke="#f59e0b" stroke-width="2" marker-end="url(#arr-amber)"/>
+  <text x="445" y="113" font-size="9.5" font-weight="700" fill="#b45309" text-anchor="middle">PSEL1</text>
+
+  <rect x="520" y="146" width="160" height="34" rx="6" fill="#f0fdf4" stroke="#10b981" stroke-width="1.5"/>
+  <text x="600" y="168" font-size="11" font-weight="600" fill="#065f46" text-anchor="middle">Slave 2 (Timer)</text>
+  <line x1="380" y1="163" x2="514" y2="163" stroke="#f59e0b" stroke-width="2" marker-end="url(#arr-amber)"/>
+  <text x="445" y="156" font-size="9.5" font-weight="700" fill="#b45309" text-anchor="middle">PSEL2</text>
+
+</svg>

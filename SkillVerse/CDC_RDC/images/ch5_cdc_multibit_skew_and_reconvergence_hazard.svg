@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 400" width="920" height="400">
+  <defs>
+    <style>
+      .bg { fill: #0f172a; }
+      .panel { fill: #1e293b; stroke-width: 1.5; rx: 10; ry: 10; }
+      .box { fill: #0f172a; stroke: #334155; stroke-width: 1.2; rx: 6; ry: 6; }
+      .ff { fill: #172554; stroke: #f87171; stroke-width: 1.5; rx: 5; ry: 5; }
+      .title { font-family: 'Segoe UI', Arial, sans-serif; font-size: 18px; font-weight: 700; fill: #f8fafc; text-anchor: middle; }
+      .subtitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; fill: #94a3b8; text-anchor: middle; }
+      .ptitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 14px; font-weight: 700; }
+      .mono { font-family: Consolas, 'Courier New', monospace; font-size: 10.8px; fill: #e2e8f0; }
+      .note { font-family: 'Segoe UI', Arial, sans-serif; font-size: 10.5px; fill: #94a3b8; }
+      .badge { font-family: Consolas, 'Courier New', monospace; font-size: 11px; font-weight: 700; text-anchor: middle; }
+    </style>
+    <marker id="arrRed" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#f87171" />
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="920" height="400" />
+  <text class="title" x="460" y="28">Multi-Bit CDC Coherency Loss &amp; Fanout Reconvergence Hazards</text>
+  <text class="subtitle" x="460" y="48">Why Independent Per-Bit 2-FF Synchronizers Corrupt Binary Vectors and Reconvergent Fanout Cones</text>
+
+  <!-- Left Panel: Multi-Bit Skew -->
+  <rect class="panel" x="20" y="64" width="430" height="316" stroke="#f87171" />
+  <text class="ptitle" x="36" y="88" fill="#f87171">Hazard 1: Per-Bit 2-FF Sync on Binary Bus</text>
+
+  <rect class="box" x="36" y="102" width="110" height="90" stroke="#f59e0b" />
+  <text class="badge" x="91" y="122" fill="#fcd34d">SRC (src_clk)</text>
+  <text class="mono" x="91" y="144" text-anchor="middle">cnt = 2'b01</text>
+  <text class="mono" x="91" y="162" text-anchor="middle">-&gt; 2'b10</text>
+  <text class="note" x="91" y="182" text-anchor="middle">(Both bits flip!)</text>
+
+  <line x1="146" y1="130" x2="206" y2="122" stroke="#f87171" stroke-width="1.8" marker-end="url(#arrRed)" />
+  <line x1="146" y1="168" x2="206" y2="176" stroke="#f87171" stroke-width="1.8" marker-end="url(#arrRed)" />
+
+  <rect class="ff" x="210" y="102" width="108" height="38" />
+  <text class="badge" x="264" y="125" fill="#fca5a5">2-FF Bit[1]</text>
+  <rect class="ff" x="210" y="156" width="108" height="38" />
+  <text class="badge" x="264" y="179" fill="#fca5a5">2-FF Bit[0]</text>
+
+  <line x1="318" y1="122" x2="342" y2="136" stroke="#f87171" stroke-width="1.6" />
+  <line x1="318" y1="176" x2="342" y2="160" stroke="#f87171" stroke-width="1.6" />
+
+  <rect class="box" x="346" y="108" width="88" height="80" stroke="#f87171" />
+  <text class="badge" x="390" y="130" fill="#fca5a5">DST Bus</text>
+  <text class="mono" x="390" y="152" text-anchor="middle" fill="#f87171">2'b00 or</text>
+  <text class="mono" x="390" y="170" text-anchor="middle" fill="#f87171">2'b11 !</text>
+
+  <rect class="box" x="36" y="206" width="398" height="160" />
+  <text class="mono" x="48" y="226" fill="#fca5a5">Two Separate Skew Causes Corrupt Multi-Bit Words:</text>
+  <text class="note" x="48" y="246">1. Physical Routing Skew: wire delay to Bit[1] != Bit[0]; one bit</text>
+  <text class="note" x="48" y="262">   beats the dst_clk edge while the other arrives slightly after.</text>
+  <text class="note" x="48" y="280">2. Metastable Resolution Divergence: EVEN WITH ZERO SKEW, FF[1]</text>
+  <text class="note" x="48" y="296">   resolves to NEW '1' (2 cycles) while FF[0] resolves to OLD '1'</text>
+  <text class="note" x="48" y="312">   (3 cycles) -> destination latches phantom 2'b11!</text>
+  <text class="mono" x="48" y="346" fill="#6ee7b7">Fix: Gray Code (single-bit deltas) OR DMUX / MCP / Async FIFO.</text>
+
+  <!-- Right Panel: Fanout Reconvergence -->
+  <rect class="panel" x="470" y="64" width="430" height="316" stroke="#f59e0b" />
+  <text class="ptitle" x="486" y="88" fill="#f59e0b">Hazard 2: Synchronized Fanout Reconvergence</text>
+
+  <rect class="box" x="486" y="114" width="94" height="66" stroke="#38bdf8" />
+  <text class="badge" x="533" y="138" fill="#7dd3fc">1-Bit SRC</text>
+  <text class="mono" x="533" y="158" text-anchor="middle">en_q (0-&gt;1)</text>
+
+  <line x1="580" y1="136" x2="626" y2="122" stroke="#f59e0b" stroke-width="1.8" />
+  <line x1="580" y1="158" x2="626" y2="176" stroke="#f59e0b" stroke-width="1.8" />
+
+  <rect class="ff" x="630" y="102" width="116" height="38" stroke="#f59e0b" />
+  <text class="badge" x="688" y="125" fill="#fcd34d">2-FF Path A</text>
+  <rect class="ff" x="630" y="156" width="116" height="38" stroke="#f59e0b" />
+  <text class="badge" x="688" y="179" fill="#fcd34d">2-FF Path B</text>
+
+  <line x1="746" y1="122" x2="780" y2="138" stroke="#f87171" stroke-width="1.8" />
+  <line x1="746" y1="176" x2="780" y2="158" stroke="#f87171" stroke-width="1.8" />
+
+  <rect class="box" x="784" y="122" width="100" height="52" stroke="#f87171" />
+  <text class="badge" x="834" y="144" fill="#fca5a5">XOR / Compare</text>
+  <text class="mono" x="834" y="162" text-anchor="middle">A ^ B == 1!</text>
+
+  <rect class="box" x="486" y="206" width="398" height="160" />
+  <text class="mono" x="498" y="226" fill="#fcd34d">Silent Divergence Bug Even on 1-Bit Signals:</text>
+  <text class="note" x="498" y="246">Two separate 2-FF synchronizers sample the SAME source net en_q</text>
+  <text class="note" x="498" y="262">into two sub-modules, which later combine at downstream logic.</text>
+  <text class="note" x="498" y="280" fill="#fca5a5">Random +/-1 cycle jitter puts Path A one cycle ahead of Path B,</text>
+  <text class="note" x="498" y="296" fill="#fca5a5">breaking mutual exclusion, FSM decoding, or handshake parity!</text>
+  <text class="mono" x="498" y="330" fill="#6ee7b7">Fix: Synchronize ONCE at the destination entry boundary, then</text>
+  <text class="mono" x="498" y="348" fill="#6ee7b7">fan out the synchronized dst_en inside the destination clock!</text>
+</svg>

@@ -1,0 +1,23 @@
+* **UPF / CPF** (Unified Power Format / Common Power Format — power domains, isolation, retention, level shifters, power-aware sim)
+* **CDC** (Clock Domain Crossing — metastability, MTBF, synchronizers, async FIFOs, structural & functional sign-off)
+* **RDC** (Reset Domain Crossing — asynchronous reset release, reset sequencing, metastability on reset de-assertion)
+* **Linting** (RTL static rule checking — SpyGlass, Ascent Lint, Hal — catching latch inference, width mismatches, combo loops)
+* **LEC** (Logic Equivalence Checking — Conformal, Formality — RTL-to-Gate and Gate-to-Gate functional equivalence)
+* **X-Propagation (X-Prop)** (Gate-level and RTL pessimism/optimism handling for uninitialized or power-gated states)
+
+### Verification Methodologies & Languages
+
+* **UVM** (Universal Verification Methodology — factory, phases, sequences, virtual sequencers, TLM, RAL)
+* **RAL** (Register Abstraction Layer — automated register testing, frontdoor/backdoor access, mirror/desired state tracking)
+* **SVA** (SystemVerilog Assertions — concurrent assertions, sequences, properties, bind files)
+* **Formal Verification (FV)** (Model checking, FPV, connectivity checking, dead-code/unreachability analysis via JasperGold/VC Formal)
+* **Coverage Closure** (Code coverage: line, cond, toggle, FSM, branch; Functional coverage: covergroups, cross-coverage, waiver management)
+* **GLS** (Gate-Level Simulation — zero-delay and SDF-annotated timing simulations, setup/hold violation debugging)
+* **PSS** (Portable Stimulus Standard — graph-based scenario generation across block, SoC, and post-silicon)
+
+### Synthesis, Timing & Physical Awareness
+
+* **SDC** (Synopsys Design Constraints — generated clocks, false paths, multicycle paths, I/O delays, clock groups)
+* **STA** (Static Timing Analysis — setup/hold analysis, OCV/AOCV/POCV, clock skew, jitter, path grouping)
+* **Logic Synthesis** (Design Compiler, Genus — PPA trade-offs, retiming, datapath optimization, area/power recovery)
+* **DFT** (Design for Test — Scan insertion, ATPG, MBIST, LBIST, JTAG / IEEE 1149.1 / IEEE 1687 IJTAG)

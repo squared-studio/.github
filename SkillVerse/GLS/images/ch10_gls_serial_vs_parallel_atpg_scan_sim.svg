@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 390" width="920" height="390">
+  <defs>
+    <style>
+      .bg { fill: #0f172a; }
+      .panel { fill: #1e293b; stroke-width: 1.5; rx: 10; ry: 10; }
+      .box { fill: #0f172a; stroke: #334155; stroke-width: 1.2; rx: 6; ry: 6; }
+      .title { font-family: 'Segoe UI', Arial, sans-serif; font-size: 18px; font-weight: 700; fill: #f8fafc; text-anchor: middle; }
+      .subtitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; fill: #94a3b8; text-anchor: middle; }
+      .ptitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 14px; font-weight: 700; }
+      .mono { font-family: Consolas, 'Courier New', monospace; font-size: 10.6px; fill: #e2e8f0; }
+      .note { font-family: 'Segoe UI', Arial, sans-serif; font-size: 10.3px; fill: #94a3b8; }
+      .badge { font-family: Consolas, 'Courier New', monospace; font-size: 11px; font-weight: 700; text-anchor: middle; }
+    </style>
+    <marker id="arrSky" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#38bdf8" />
+    </marker>
+    <marker id="arrGreen" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#34d399" />
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="920" height="390" />
+  <text class="title" x="460" y="28">Serial vs. Parallel ATPG Scan Pattern Simulation in GLS</text>
+  <text class="subtitle" x="460" y="48">Balancing Full Chain-Shift Hold Verification (Serial) Against High-Speed Pattern Regression (Parallel Backdoor Deposit)</text>
+
+  <!-- Left Panel: Serial ATPG Sim -->
+  <rect class="panel" x="20" y="64" width="430" height="308" stroke="#f59e0b" />
+  <text class="ptitle" x="36" y="88" fill="#f59e0b">1. Full Serial Scan Simulation (Must Run!)</text>
+
+  <rect class="box" x="36" y="104" width="398" height="106" stroke="#f59e0b" />
+  <text class="mono" x="48" y="124" fill="#fcd34d">SI -&gt; [SDFF 1] -&gt; [SDFF 2] -&gt; ... -&gt; [SDFF 5000] -&gt; SO</text>
+  <text class="note" x="48" y="146">- Requires 5,000+ slow `scan_clk` shift cycles per pattern to load</text>
+  <text class="note" x="48" y="162">  stimulus serially via primary Scan-In pins and unload via Scan-Out.</text>
+  <text class="note" x="48" y="182" fill="#fca5a5">Runtime Cost: 100x slower! Cannot run 10,000 patterns serially.</text>
+
+  <rect class="box" x="36" y="222" width="398" height="136" stroke="#34d399" />
+  <text class="badge" x="235" y="242" fill="#6ee7b7">What ONLY Serial GLS Catches</text>
+  <text class="note" x="48" y="262">1. Actual Scan Chain Connection Integrity (`SI -&gt; Q -&gt; SO` broken</text>
+  <text class="note" x="48" y="278">   wires, accidental inversion inside P&amp;R scan-reordering!).</text>
+  <text class="note" x="48" y="296">2. Scan Shift Hold Violations (Short wire `Q -&gt; SI` under MIN SDF!).</text>
+  <text class="note" x="48" y="314">3. Lockup Latch Polarity &amp; EDT Decompressor / MISR Compression!</text>
+  <text class="mono" x="48" y="340" fill="#7dd3fc">Rule: Run 5–10 Chain Test + Stuck-At + At-Speed patterns SERIALLY!</text>
+
+  <!-- Right Panel: Parallel ATPG Sim -->
+  <rect class="panel" x="470" y="64" width="430" height="308" stroke="#38bdf8" />
+  <text class="ptitle" x="486" y="88" fill="#38bdf8">2. Fast Parallel ATPG Simulation (High Volume)</text>
+
+  <rect class="box" x="486" y="104" width="398" height="106" stroke="#38bdf8" />
+  <text class="mono" x="498" y="124" fill="#7dd3fc">$deposit / force all 5,000 SDFFs in 0 ns (1 step!)</text>
+  <text class="note" x="498" y="146">- Writes scan load bits straight into every internal FF `.Q` via</text>
+  <text class="note" x="498" y="162">  PLI/force, toggles 1–2 capture clocks, and checks FF values out!</text>
+  <text class="note" x="498" y="182" fill="#6ee7b7">Runtime Speed: 50x–200x faster! Runs thousands of ATPG patterns!</text>
+
+  <rect class="box" x="486" y="222" width="398" height="136" />
+  <text class="badge" x="685" y="242" fill="#c4b5fd">What Parallel GLS Catches (With Blind Spots)</text>
+  <text class="note" x="498" y="262">+ Validates Stuck-At &amp; At-Speed Launch-Capture (`SE=0`) timing.</text>
+  <text class="note" x="498" y="278">+ Verifies X-Masking (`X-source` traps inside combinational clouds).</text>
+  <text class="note" x="498" y="296" fill="#fca5a5">- BLIND to broken physical `SI -&gt; SO` chain routing, scan-shift hold</text>
+  <text class="note" x="498" y="312" fill="#fca5a5">  races (`SE=1`), and OCC/PLL preamble sequences before capture!</text>
+  <text class="mono" x="498" y="340" fill="#fcd34d">Rule: Combine Serial (sanity/shift) + Parallel (bulk patterns)!</text>
+</svg>

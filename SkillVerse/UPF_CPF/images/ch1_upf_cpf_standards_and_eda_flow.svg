@@ -1,0 +1,123 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 420" width="920" height="420">
+  <defs>
+    <style>
+      .bg { fill: #0f172a; }
+      .panel { fill: #1e293b; stroke-width: 1.5; rx: 10; ry: 10; }
+      .box { fill: #0f172a; stroke: #334155; stroke-width: 1.2; rx: 6; ry: 6; }
+      .title { font-family: 'Segoe UI', Arial, sans-serif; font-size: 18px; font-weight: 700; fill: #f8fafc; text-anchor: middle; }
+      .subtitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; fill: #94a3b8; text-anchor: middle; }
+      .ptitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 14px; font-weight: 700; }
+      .mono { font-family: Consolas, 'Courier New', monospace; font-size: 10.8px; fill: #e2e8f0; }
+      .note { font-family: 'Segoe UI', Arial, sans-serif; font-size: 10.5px; fill: #94a3b8; }
+      .step { font-family: 'Segoe UI', Arial, sans-serif; font-size: 11.5px; font-weight: 700; fill: #f8fafc; text-anchor: middle; }
+    </style>
+    <marker id="arrBlue" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#38bdf8" />
+    </marker>
+    <marker id="arrEmerald" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#34d399" />
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="920" height="420" />
+  <text class="title" x="460" y="28">Evolution of UPF / CPF Standards &amp; Power-Aware EDA Reference Flow</text>
+  <text class="subtitle" x="460" y="48">How Sidecar Tcl Power Intent Complements RTL Across Simulation, Synthesis, Physical P&amp;R, and Sign-Off</text>
+
+  <!-- Top Panel: Standards Timeline -->
+  <rect class="panel" x="20" y="64" width="880" height="162" stroke="#a78bfa" />
+  <text class="ptitle" x="36" y="88" fill="#a78bfa">Standards Evolution Timeline (Accellera / IEEE 1801 UPF vs. Si2 CPF)</text>
+
+  <!-- UPF Row -->
+  <text class="mono" x="36" y="122" fill="#38bdf8">UPF:</text>
+  <rect class="box" x="80" y="102" width="122" height="40" stroke="#38bdf8" />
+  <text class="step" x="141" y="119">UPF 1.0 (2007)</text>
+  <text class="note" x="141" y="135" text-anchor="middle">Accellera / 1801-2009</text>
+  <line x1="202" y1="122" x2="222" y2="122" stroke="#38bdf8" stroke-width="1.5" marker-end="url(#arrBlue)" />
+
+  <rect class="box" x="226" y="102" width="128" height="40" stroke="#38bdf8" />
+  <text class="step" x="290" y="119">UPF 2.0/2.1</text>
+  <text class="note" x="290" y="135" text-anchor="middle">1801-2013 Supply Sets</text>
+  <line x1="354" y1="122" x2="374" y2="122" stroke="#38bdf8" stroke-width="1.5" marker-end="url(#arrBlue)" />
+
+  <rect class="box" x="378" y="102" width="146" height="40" stroke="#38bdf8" />
+  <text class="step" x="451" y="119">UPF 3.0 (2015)</text>
+  <text class="note" x="451" y="135" text-anchor="middle">1801-2015 System-Level</text>
+  <line x1="524" y1="122" x2="544" y2="122" stroke="#38bdf8" stroke-width="1.5" marker-end="url(#arrBlue)" />
+
+  <rect class="box" x="548" y="102" width="160" height="40" stroke="#38bdf8" />
+  <text class="step" x="628" y="119">UPF 3.1 (2018)</text>
+  <text class="note" x="628" y="135" text-anchor="middle">1801-2018 Clarity + CPF</text>
+  <line x1="708" y1="122" x2="728" y2="122" stroke="#38bdf8" stroke-width="1.5" marker-end="url(#arrBlue)" />
+
+  <rect class="box" x="732" y="102" width="152" height="40" stroke="#34d399" />
+  <text class="step" x="808" y="119">UPF 4.0 (2024)</text>
+  <text class="note" x="808" y="135" text-anchor="middle">IEEE 1801-2024 Latest</text>
+
+  <!-- CPF Row -->
+  <text class="mono" x="36" y="182" fill="#f59e0b">CPF:</text>
+  <rect class="box" x="80" y="160" width="150" height="44" stroke="#f59e0b" />
+  <text class="step" x="155" y="178">CPF 1.0 (2006)</text>
+  <text class="note" x="155" y="194" text-anchor="middle">Cadence / Si2 Early</text>
+  <line x1="230" y1="182" x2="256" y2="182" stroke="#38bdf8" stroke-width="1.5" marker-end="url(#arrBlue)" />
+
+  <rect class="box" x="260" y="160" width="165" height="44" stroke="#f59e0b" />
+  <text class="step" x="342" y="178">CPF 1.1 (2008)</text>
+  <text class="note" x="342" y="194" text-anchor="middle">Power Modes + Macros</text>
+  <line x1="425" y1="182" x2="451" y2="182" stroke="#38bdf8" stroke-width="1.5" marker-end="url(#arrBlue)" />
+
+  <rect class="box" x="455" y="160" width="210" height="44" stroke="#f59e0b" />
+  <text class="step" x="560" y="178">CPF 2.0 (2011+)</text>
+  <text class="note" x="560" y="194" text-anchor="middle">Dynamic Power + Hierarchical</text>
+
+  <rect class="box" x="680" y="160" width="204" height="44" stroke="#475569" />
+  <text class="note" x="782" y="178" text-anchor="middle" fill="#e2e8f0">Si2 &amp; IEEE Convergence</text>
+  <text class="note" x="782" y="195" text-anchor="middle">IEEE 1801 UPF dominates new SoCs</text>
+
+  <!-- Bottom Panel: EDA Low-Power Flow -->
+  <rect class="panel" x="20" y="242" width="880" height="162" stroke="#34d399" />
+  <text class="ptitle" x="36" y="266" fill="#34d399">End-to-End Power-Aware EDA Flow (Pure Functional RTL + Golden Sidecar UPF/CPF)</text>
+
+  <!-- Left Inputs -->
+  <rect class="box" x="36" y="282" width="136" height="46" stroke="#38bdf8" />
+  <text class="step" x="104" y="301">Functional RTL</text>
+  <text class="note" x="104" y="317" text-anchor="middle">Pure SystemVerilog</text>
+
+  <rect class="box" x="36" y="338" width="136" height="46" stroke="#f59e0b" />
+  <text class="step" x="104" y="357">Power Intent</text>
+  <text class="note" x="104" y="373" text-anchor="middle">golden.upf / .cpf</text>
+
+  <!-- Merge arrows -->
+  <line x1="172" y1="305" x2="206" y2="330" stroke="#34d399" stroke-width="1.6" marker-end="url(#arrEmerald)" />
+  <line x1="172" y1="361" x2="206" y2="338" stroke="#34d399" stroke-width="1.6" marker-end="url(#arrEmerald)" />
+
+  <!-- Stage 1 -->
+  <rect class="box" x="210" y="294" width="142" height="78" stroke="#34d399" />
+  <text class="step" x="281" y="315">1. PA Simulation</text>
+  <text class="note" x="281" y="333" text-anchor="middle">VCS-NLP / Xcelium</text>
+  <text class="note" x="281" y="349" text-anchor="middle">Corrupts off blocks</text>
+  <text class="note" x="281" y="364" text-anchor="middle">Checks ISO/RET seq</text>
+  <line x1="352" y1="333" x2="374" y2="333" stroke="#34d399" stroke-width="1.8" marker-end="url(#arrEmerald)" />
+
+  <!-- Stage 2 -->
+  <rect class="box" x="378" y="294" width="146" height="78" stroke="#34d399" />
+  <text class="step" x="451" y="315">2. Synthesis + LP</text>
+  <text class="note" x="451" y="333" text-anchor="middle">DC / Genus + MV</text>
+  <text class="note" x="451" y="349" text-anchor="middle">Inserts ISO, LS, SRFF</text>
+  <text class="note" x="451" y="364" text-anchor="middle">Emits UPF' / CPF'</text>
+  <line x1="524" y1="333" x2="546" y2="333" stroke="#34d399" stroke-width="1.8" marker-end="url(#arrEmerald)" />
+
+  <!-- Stage 3 -->
+  <rect class="box" x="550" y="294" width="150" height="78" stroke="#34d399" />
+  <text class="step" x="625" y="315">3. Physical P&amp;R</text>
+  <text class="note" x="625" y="333" text-anchor="middle">ICC2 / Innovus</text>
+  <text class="note" x="625" y="349" text-anchor="middle">Voltage areas &amp; rings</text>
+  <text class="note" x="625" y="364" text-anchor="middle">PG netlist + AON buf</text>
+  <line x1="700" y1="333" x2="722" y2="333" stroke="#34d399" stroke-width="1.8" marker-end="url(#arrEmerald)" />
+
+  <!-- Stage 4 -->
+  <rect class="box" x="726" y="294" width="158" height="78" stroke="#f87171" />
+  <text class="step" x="805" y="315" fill="#fca5a5">4. LP Sign-Off</text>
+  <text class="note" x="805" y="333" text-anchor="middle">VC LP / Conformal LP</text>
+  <text class="note" x="805" y="349" text-anchor="middle">Static rule check</text>
+  <text class="note" x="805" y="364" text-anchor="middle">PA-LEC (PG vs RTL)</text>
+</svg>

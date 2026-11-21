@@ -1,0 +1,93 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 400" width="920" height="400">
+  <defs>
+    <style>
+      .bg { fill: #0f172a; }
+      .panel { fill: #1e293b; stroke: #334155; stroke-width: 1.5; rx: 10; ry: 10; }
+      .box { fill: #0f172a; stroke: #334155; stroke-width: 1.2; rx: 6; ry: 6; }
+      .title { font-family: 'Segoe UI', Arial, sans-serif; font-size: 18px; font-weight: 700; fill: #f8fafc; text-anchor: middle; }
+      .sub { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; fill: #94a3b8; text-anchor: middle; }
+      .hdr { font-family: 'Segoe UI', Arial, sans-serif; font-size: 13.5px; font-weight: 700; }
+      .mono { font-family: Consolas, 'Courier New', monospace; font-size: 10.5px; fill: #e2e8f0; }
+      .note { font-family: 'Segoe UI', Arial, sans-serif; font-size: 11px; fill: #cbd5e1; }
+    </style>
+    <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8" />
+    </marker>
+    <marker id="arr-g" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#34d399" />
+    </marker>
+    <marker id="arr-a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#f59e0b" />
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="920" height="400" />
+  <text class="title" x="460" y="28">Hard DSP48E2 Slice Internal Datapath &amp; Four-Stage Pipeline</text>
+  <text class="sub" x="460" y="48">Pre-Adder (D + A), 27x18 Signed Multiplier, MREG, 48-Bit ALU/Accumulator, PREG, and Hard Dedicated Cascades</text>
+
+  <!-- Main DSP48 Datapath -->
+  <rect class="panel" x="20" y="64" width="880" height="244" stroke="#f59e0b" />
+
+  <!-- Stage 1: Input Regs A, B, D, C -->
+  <rect class="box" x="36" y="84" width="118" height="48" stroke="#38bdf8" />
+  <text class="mono" x="95" y="104" fill="#7dd3fc" text-anchor="middle">D / A Regs (30b)</text>
+  <text class="mono" x="95" y="121" fill="#94a3b8" text-anchor="middle">A1, A2, DREG</text>
+
+  <rect class="box" x="36" y="144" width="118" height="48" stroke="#38bdf8" />
+  <text class="mono" x="95" y="164" fill="#7dd3fc" text-anchor="middle">B Regs (18b)</text>
+  <text class="mono" x="95" y="181" fill="#94a3b8" text-anchor="middle">B1, B2 (2-deep)</text>
+
+  <rect class="box" x="36" y="206" width="118" height="48" stroke="#a78bfa" />
+  <text class="mono" x="95" y="226" fill="#c4b5fd" text-anchor="middle">C Reg (48b)</text>
+  <text class="mono" x="95" y="243" fill="#94a3b8" text-anchor="middle">Add / Bias Const</text>
+
+  <text class="mono" x="95" y="278" fill="#fcd34d" text-anchor="middle">ACIN / BCIN In -&gt;</text>
+
+  <!-- Stage 2: 27-bit Pre-Adder -->
+  <line x1="154" y1="108" x2="188" y2="108" stroke="#38bdf8" stroke-width="1.8" marker-end="url(#arr)" />
+  <rect class="box" x="190" y="84" width="112" height="58" stroke="#34d399" />
+  <text class="mono" x="246" y="106" fill="#6ee7b7" text-anchor="middle">27-bit Pre-Add</text>
+  <text class="mono" x="246" y="124" fill="#e2e8f0" text-anchor="middle">(D +/- A) + ADREG</text>
+
+  <!-- Stage 3: 27x18 Multiplier + MREG -->
+  <line x1="302" y1="113" x2="338" y2="128" stroke="#34d399" stroke-width="1.8" marker-end="url(#arr-g)" />
+  <line x1="154" y1="168" x2="338" y2="152" stroke="#38bdf8" stroke-width="1.8" marker-end="url(#arr)" />
+
+  <rect class="box" x="340" y="96" width="134" height="84" stroke="#f59e0b" />
+  <text class="mono" x="407" y="120" fill="#fcd34d" text-anchor="middle">27 x 18 Signed</text>
+  <text class="mono" x="407" y="138" fill="#fcd34d" text-anchor="middle">Multiplier</text>
+  <rect x="356" y="148" width="102" height="24" fill="#1e293b" stroke="#f59e0b" rx="3" />
+  <text class="mono" x="407" y="164" fill="#fcd34d" text-anchor="middle">MREG (45b Pipe)</text>
+
+  <!-- Stage 4: X/Y/Z Mux + 48-Bit ALU + PREG -->
+  <line x1="474" y1="140" x2="514" y2="140" stroke="#f59e0b" stroke-width="1.8" marker-end="url(#arr-a)" />
+  <polyline points="154,230 492,230 492,162 514,162" fill="none" stroke="#a78bfa" stroke-width="1.6" marker-end="url(#arr)" />
+
+  <rect class="box" x="516" y="88" width="174" height="122" stroke="#38bdf8" />
+  <text class="mono" x="603" y="110" fill="#7dd3fc" text-anchor="middle">X/Y/Z MUX + 48b ALU</text>
+  <text class="mono" x="603" y="130" fill="#e2e8f0" text-anchor="middle">P = Z +/- (X + Y)</text>
+  <text class="note" x="603" y="150" text-anchor="middle">- Dynamic OPMODE/ALUMODE</text>
+  <text class="note" x="603" y="166" text-anchor="middle">- Accumulator (P -&gt; Z)</text>
+  <text class="note" x="603" y="182" text-anchor="middle">- 4x 12b SIMD Vector Mode</text>
+  <text class="note" x="603" y="198" text-anchor="middle">- Pattern Detect / Round</text>
+
+  <line x1="690" y1="148" x2="726" y2="148" stroke="#34d399" stroke-width="1.8" marker-end="url(#arr-g)" />
+  <rect class="box" x="728" y="100" width="152" height="96" stroke="#34d399" />
+  <text class="mono" x="804" y="124" fill="#6ee7b7" text-anchor="middle">PREG (48-bit)</text>
+  <text class="mono" x="804" y="144" fill="#e2e8f0" text-anchor="middle">P[47:0] Output</text>
+  <text class="mono" x="804" y="164" fill="#fcd34d" text-anchor="middle">PCOUT (17b rshift!)</text>
+  <text class="note" x="804" y="184" text-anchor="middle">Zero fabric routing!</text>
+
+  <!-- PCIN / PCOUT Vertical Hard Cascade Arrows -->
+  <text class="mono" x="603" y="250" fill="#34d399" text-anchor="middle">PCIN (48-bit hard track from DSP[i-1])</text>
+  <line x1="603" y1="234" x2="603" y2="212" stroke="#34d399" stroke-width="2" marker-end="url(#arr-g)" />
+  <text class="mono" x="804" y="250" fill="#fcd34d" text-anchor="middle">Dedicated PCOUT -&gt; Next DSP</text>
+  <line x1="804" y1="196" x2="804" y2="232" stroke="#f59e0b" stroke-width="2" marker-end="url(#arr-a)" />
+
+  <!-- Bottom Notes Bar -->
+  <rect class="panel" x="20" y="320" width="880" height="66" />
+  <text class="mono" x="38" y="344" fill="#fcd34d">Timing Closure Rule:</text>
+  <text class="note" x="188" y="344">Always enable ALL 3-4 internal DSP registers (AREG/BREG + MREG + PREG) with Active-High SYNC Reset (`if (rst)`)!</text>
+  <text class="mono" x="38" y="366" fill="#6ee7b7">Performance:</text>
+  <text class="note" x="136" y="366">Achieves 650-891 MHz Fmax cleanly in UltraScale+; skipping `MREG` slashes Fmax nearly in HALF (~320 MHz)!</text>
+</svg>

@@ -1,0 +1,104 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 540" width="960" height="540">
+  <defs>
+    <style>
+      .bg { fill: #080c14; }
+      .title { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 20px; fill: #f8fafc; }
+      .subtitle { font-family: 'Inter', system-ui, sans-serif; font-size: 13px; fill: #94a3b8; }
+      .panel { fill: #0f172a; stroke-width: 1.8; rx: 10px; }
+      .inner { fill: #0b1120; stroke-width: 1.4; rx: 6px; }
+      .txt-hdr { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 13px; fill: #f8fafc; }
+      .txt-sub { font-family: 'Inter', system-ui, sans-serif; font-size: 11px; fill: #94a3b8; }
+      .mono { font-family: 'JetBrains Mono', Consolas, monospace; font-size: 10.5px; font-weight: 600; }
+      .edge { stroke-width: 2; fill: none; }
+    </style>
+    <marker id="arr-cyan" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8" />
+    </marker>
+    <marker id="arr-purple" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#a855f7" />
+    </marker>
+    <marker id="arr-green" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#34d399" />
+    </marker>
+  </defs>
+
+  <rect width="960" height="540" class="bg" rx="14"/>
+  <text x="480" y="32" text-anchor="middle" class="title">Reusable Workflows vs. Composite Actions Architecture</text>
+  <text x="480" y="52" text-anchor="middle" class="subtitle">Job-level orchestration (on: workflow_call) contrasted with inline step-level packaging (action.yml)</text>
+
+  <!-- Top Section: Reusable Workflow (Caller -> Called) -->
+  <g transform="translate(32, 76)">
+    <rect x="0" y="0" width="896" height="250" class="panel" stroke="#38bdf8"/>
+    <text x="18" y="26" class="txt-hdr" fill="#38bdf8">Pattern A: Reusable Workflow (Job-Level Reuse)</text>
+    <text x="878" y="26" text-anchor="end" class="txt-sub">Owns entire jobs, runners, matrices, environments, and secrets</text>
+
+    <!-- Caller Workflow -->
+    <g transform="translate(18, 44)">
+      <rect x="0" y="0" width="334" height="186" class="inner" stroke="#38bdf8"/>
+      <text x="14" y="22" class="mono" fill="#7dd3fc">Caller: app-repo/.github/workflows/ci.yml</text>
+      <text x="14" y="46" class="mono" fill="#cbd5e1">jobs:</text>
+      <text x="14" y="64" class="mono" fill="#cbd5e1">  release:</text>
+      <text x="14" y="82" class="mono" fill="#38bdf8">    uses: org/.github/.github/workflows/</text>
+      <text x="14" y="98" class="mono" fill="#38bdf8">          build-and-sign.yml@v2</text>
+      <text x="14" y="118" class="mono" fill="#34d399">    with: { target: "linux-x64" }</text>
+      <text x="14" y="136" class="mono" fill="#f59e0b">    secrets: { SIGN_KEY: ${{ secrets.K }} }</text>
+      <text x="14" y="164" class="txt-sub">Calls at job level (no runs-on: on caller job)</text>
+    </g>
+
+    <!-- Arrows -->
+    <path d="M 352 110 L 420 110" class="edge" stroke="#38bdf8" marker-end="url(#arr-cyan)"/>
+    <text x="386" y="102" text-anchor="middle" class="mono" fill="#7dd3fc" font-size="9.5">inputs +</text>
+    <text x="386" y="126" text-anchor="middle" class="mono" fill="#fcd34d" font-size="9.5">secrets</text>
+
+    <path d="M 420 172 L 352 172" class="edge" stroke="#34d399" stroke-dasharray="4,3" marker-end="url(#arr-green)"/>
+    <text x="386" y="164" text-anchor="middle" class="mono" fill="#6ee7b7" font-size="9.5">outputs</text>
+
+    <!-- Called Workflow -->
+    <g transform="translate(424, 44)">
+      <rect x="0" y="0" width="454" height="186" class="inner" stroke="#a855f7"/>
+      <text x="14" y="22" class="mono" fill="#d8b4fe">Callee: org/.github/.../build-and-sign.yml</text>
+      <text x="14" y="44" class="mono" fill="#d8b4fe">on: workflow_call  # typed inputs, secrets, outputs</text>
+
+      <rect x="14" y="58" width="204" height="72" rx="5" fill="#131d33" stroke="#34d399"/>
+      <text x="116" y="80" text-anchor="middle" class="mono" fill="#34d399">Job 1: compile</text>
+      <text x="116" y="98" text-anchor="middle" class="txt-sub">runs-on: ubuntu-latest</text>
+      <text x="116" y="114" text-anchor="middle" class="txt-sub">Own isolated runner VM</text>
+
+      <path d="M 218 94 L 238 94" class="edge" stroke="#a855f7" marker-end="url(#arr-purple)"/>
+
+      <rect x="242" y="58" width="198" height="72" rx="5" fill="#131d33" stroke="#a855f7"/>
+      <text x="341" y="80" text-anchor="middle" class="mono" fill="#d8b4fe">Job 2: sign-release</text>
+      <text x="341" y="98" text-anchor="middle" class="txt-sub">needs: compile</text>
+      <text x="341" y="114" text-anchor="middle" class="txt-sub">environment: prod-sign</text>
+
+      <text x="14" y="156" class="mono" fill="#6ee7b7">outputs.digest -&gt; caller needs.release.outputs.digest</text>
+      <text x="14" y="174" class="txt-sub">Nestable up to 10 levels (max 50 workflow calls per run)</text>
+    </g>
+  </g>
+
+  <!-- Bottom Section: Composite Action (Step-Level Reuse) -->
+  <g transform="translate(32, 344)">
+    <rect x="0" y="0" width="896" height="172" class="panel" stroke="#34d399"/>
+    <text x="18" y="26" class="txt-hdr" fill="#34d399">Pattern B: Composite Action (Step-Level Reuse Inside Caller's Runner)</text>
+    <text x="878" y="26" text-anchor="end" class="txt-sub">Runs in the same VM workspace &amp; shares filesystem with caller steps</text>
+
+    <g transform="translate(18, 44)">
+      <rect x="0" y="0" width="276" height="110" class="inner" stroke="#34d399"/>
+      <text x="12" y="22" class="mono" fill="#6ee7b7">Caller Step (in existing Job)</text>
+      <text x="12" y="46" class="mono" fill="#cbd5e1">- name: Setup EDA Tools</text>
+      <text x="12" y="64" class="mono" fill="#34d399">  uses: org/setup-verilator@v1</text>
+      <text x="12" y="82" class="mono" fill="#cbd5e1">  with: { version: "5.028" }</text>
+    </g>
+
+    <path d="M 294 99 L 336 99" class="edge" stroke="#34d399" marker-end="url(#arr-green)"/>
+
+    <g transform="translate(340, 44)">
+      <rect x="0" y="0" width="538" height="110" class="inner" stroke="#334155"/>
+      <text x="14" y="22" class="mono" fill="#34d399">action.yml — runs.using: "composite"</text>
+      <text x="14" y="44" class="mono" fill="#cbd5e1">steps: [1. Cache binary] -&gt; [2. run: install.sh (shell: bash)] -&gt; [3. $GITHUB_PATH]</text>
+      <text x="14" y="68" class="txt-sub">• Executes directly on the caller's runner VM (zero VM startup overhead)</text>
+      <text x="14" y="86" class="txt-sub">• Uses ${{ github.action_path }} to invoke bundled scripts cleanly</text>
+      <text x="14" y="102" class="txt-sub">• Every run: step inside composite actions MUST specify shell: explicitly</text>
+    </g>
+  </g>
+</svg>

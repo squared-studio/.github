@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 400" width="920" height="400">
+  <defs>
+    <style>
+      .bg { fill: #0f172a; }
+      .panel { fill: #1e293b; stroke: #334155; stroke-width: 1.5; rx: 10; ry: 10; }
+      .box { fill: #0f172a; stroke: #334155; stroke-width: 1.2; rx: 6; ry: 6; }
+      .title { font-family: 'Segoe UI', Arial, sans-serif; font-size: 18px; font-weight: 700; fill: #f8fafc; text-anchor: middle; }
+      .sub { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; fill: #94a3b8; text-anchor: middle; }
+      .hdr { font-family: 'Segoe UI', Arial, sans-serif; font-size: 13.5px; font-weight: 700; }
+      .mono { font-family: Consolas, 'Courier New', monospace; font-size: 10.5px; fill: #e2e8f0; }
+      .note { font-family: 'Segoe UI', Arial, sans-serif; font-size: 11px; fill: #cbd5e1; }
+    </style>
+    <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8" />
+    </marker>
+    <marker id="arr-g" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#34d399" />
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="920" height="400" />
+  <text class="title" x="460" y="28">On-Chip JTAG Debug Ecosystem: ILA, VIO, JTAG-to-AXI &amp; IBERT</text>
+  <text class="sub" x="460" y="48">Observing Real-Time Internal Signals in BRAM, Injecting Live Controls, and Scanning Transceiver Eyes via BSCAN</text>
+
+  <!-- Left: Host PC & JTAG Hub -->
+  <rect class="panel" x="20" y="64" width="276" height="318" stroke="#38bdf8" />
+  <text class="hdr" x="158" y="88" fill="#38bdf8" text-anchor="middle">1. Host &amp; Hard BSCAN Hub</text>
+
+  <rect class="box" x="34" y="104" width="248" height="72" stroke="#38bdf8" />
+  <text class="mono" x="158" y="126" fill="#7dd3fc" text-anchor="middle">Vivado Hardware Manager / Tcl</text>
+  <text class="note" x="158" y="146" text-anchor="middle">Reads `.ltx` Probe Map</text>
+  <text class="note" x="158" y="162" text-anchor="middle">USB-JTAG (`hw_server`) @ 30 MHz</text>
+
+  <line x1="158" y1="176" x2="158" y2="202" stroke="#38bdf8" stroke-width="2" marker-end="url(#arr)" />
+
+  <rect class="box" x="34" y="204" width="248" height="102" stroke="#a78bfa" />
+  <text class="mono" x="158" y="226" fill="#c4b5fd" text-anchor="middle">Hard BSCAN TAP + Debug Hub</text>
+  <text class="note" x="158" y="246" text-anchor="middle">Multiplexes up to 16 soft debug</text>
+  <text class="note" x="158" y="262" text-anchor="middle">cores onto single 4-pin JTAG!</text>
+  <text class="mono" x="158" y="284" fill="#fca5a5" text-anchor="middle">Needs active free-running clk!</text>
+
+  <rect class="box" x="34" y="316" width="248" height="54" />
+  <text class="mono" x="158" y="337" fill="#fcd34d" text-anchor="middle">No Extra PCB Pins Needed!</text>
+  <text class="note" x="158" y="355" text-anchor="middle">Shares standard JTAG TMS/TDO</text>
+
+  <!-- Hub Branches to 4 Debug Engines -->
+  <line x1="282" y1="255" x2="334" y2="128" stroke="#34d399" stroke-width="1.8" marker-end="url(#arr-g)" />
+  <line x1="282" y1="255" x2="334" y2="206" stroke="#38bdf8" stroke-width="1.8" marker-end="url(#arr)" />
+  <line x1="282" y1="255" x2="334" y2="284" stroke="#f59e0b" stroke-width="1.8" marker-end="url(#arr)" />
+  <line x1="282" y1="255" x2="334" y2="352" stroke="#a78bfa" stroke-width="1.8" marker-end="url(#arr)" />
+
+  <!-- Right Panel: 4 On-Chip Debug Instruments -->
+  <rect class="panel" x="336" y="64" width="564" height="318" stroke="#34d399" />
+  <text class="hdr" x="354" y="88" fill="#34d399">2. Embedded Soft Debug Instruments Inside FPGA Fabric</text>
+
+  <!-- ILA -->
+  <rect class="box" x="352" y="102" width="532" height="66" stroke="#34d399" />
+  <text class="mono" x="366" y="122" fill="#6ee7b7">A. Integrated Logic Analyzer (`ILA` + `MARK_DEBUG="TRUE"`)</text>
+  <text class="note" x="366" y="140">Circular BRAM buffer captures 1024-65536 real-speed cycles around complex FSM/AXI triggers.</text>
+  <text class="note" x="366" y="156">Supports **Cross-Triggering** (CPU breakpoint &lt;-&gt; Fabric ILA) &amp; Window Capture!</text>
+
+  <!-- VIO -->
+  <rect class="box" x="352" y="176" width="532" height="60" stroke="#38bdf8" />
+  <text class="mono" x="366" y="196" fill="#7dd3fc">B. Virtual I/O (`VIO` Core)</text>
+  <text class="note" x="366" y="214">Provides live virtual LEDs (status inputs) &amp; pushbuttons/MUX selects (override resets, enable bits,</text>
+  <text class="note" x="366" y="229">loopback flags, or frequency trims over JTAG at runtime without re-synthesizing!)</text>
+
+  <!-- JTAG-to-AXI -->
+  <rect class="box" x="352" y="244" width="532" height="60" stroke="#f59e0b" />
+  <text class="mono" x="366" y="264" fill="#fcd34d">C. JTAG-to-AXI Master Bridge</text>
+  <text class="note" x="366" y="282">Allows Python/Tcl host scripts (`create_hw_axi_txn`) to read/write ANY DDR4, BRAM, or AXI-Lite</text>
+  <text class="note" x="366" y="297">register inside FPGA fabric directly from laptop — even BEFORE bringing up CPU software!</text>
+
+  <!-- IBERT -->
+  <rect class="box" x="352" y="312" width="532" height="58" stroke="#a78bfa" />
+  <text class="mono" x="366" y="332" fill="#c4b5fd">D. IBERT (Integrated Bit Error Ratio Tester) &amp; System Monitor (SYSMON)</text>
+  <text class="note" x="366" y="350">Sweeps TX FFE taps &amp; plots real **2D Bathtub Eye Diagrams** directly on board + reads live Tj / VCCINT!</text>
+</svg>

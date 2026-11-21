@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 520" width="960" height="520">
+  <defs>
+    <style>
+      .bg { fill: #080c14; }
+      .title { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 20px; fill: #f8fafc; }
+      .subtitle { font-family: 'Inter', system-ui, sans-serif; font-size: 13px; fill: #94a3b8; }
+      .panel { fill: #0f172a; stroke-width: 1.8; rx: 10px; }
+      .inner { fill: #0b1120; stroke-width: 1.3; rx: 6px; }
+      .txt-hdr { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 14px; fill: #f8fafc; }
+      .txt-sub { font-family: 'Inter', system-ui, sans-serif; font-size: 11px; fill: #94a3b8; }
+      .mono { font-family: 'JetBrains Mono', Consolas, monospace; font-size: 10.5px; font-weight: 600; }
+    </style>
+  </defs>
+
+  <rect width="960" height="520" class="bg" rx="14"/>
+  <text x="480" y="32" text-anchor="middle" class="title">ASIC Standard-Cell Design vs. FPGA Fabric Architecture</text>
+  <text x="480" y="52" text-anchor="middle" class="subtitle">How hardware primitives, resets, memories, clocking, and iteration cycles shift between ASIC and FPGA</text>
+
+  <!-- Left: ASIC -->
+  <g transform="translate(32, 82)">
+    <rect x="0" y="0" width="438" height="408" class="panel" stroke="#38bdf8"/>
+    <text x="20" y="28" class="txt-hdr" fill="#38bdf8">ASIC Standard-Cell Mindset</text>
+    <text x="20" y="46" class="txt-sub">Custom silicon masks; zero post-tape-out hardware fixes</text>
+
+    <rect x="18" y="64" width="402" height="56" class="inner" stroke="#38bdf8"/>
+    <text x="30" y="84" class="mono" fill="#7dd3fc">Logic Gates &amp; Area</text>
+    <text x="30" y="104" class="txt-sub">Maps directly to NAND/NOR/AOI/OAI standard cells; area = die cost</text>
+
+    <rect x="18" y="130" width="402" height="56" class="inner" stroke="#38bdf8"/>
+    <text x="30" y="150" class="mono" fill="#7dd3fc">Memory Macros (SRAM)</text>
+    <text x="30" y="170" class="txt-sub">Memory compiler macros + MBIST + BISR redundancy; no free init</text>
+
+    <rect x="18" y="196" width="402" height="56" class="inner" stroke="#38bdf8"/>
+    <text x="30" y="216" class="mono" fill="#7dd3fc">Resets &amp; Clocking</text>
+    <text x="30" y="236" class="txt-sub">Async assert / sync de-assert reset; arbitrary clock gating + OCC</text>
+
+    <rect x="18" y="262" width="402" height="56" class="inner" stroke="#38bdf8"/>
+    <text x="30" y="282" class="mono" fill="#7dd3fc">Power &amp; Testability</text>
+    <text x="30" y="302" class="txt-sub">UPF power switches, isolation, scan chains &amp; ATPG mandatory</text>
+
+    <rect x="18" y="328" width="402" height="62" class="inner" stroke="#f43f5e" fill="#1e1018"/>
+    <text x="30" y="350" class="mono" fill="#fda4af">Iteration Cost: Months &amp; Millions ($NRE)</text>
+    <text x="30" y="370" class="txt-sub">Simulation, Formal, CDC, STA, and GLS sign-off must be 100% airtight</text>
+  </g>
+
+  <!-- Right: FPGA -->
+  <g transform="translate(490, 82)">
+    <rect x="0" y="0" width="438" height="408" class="panel" stroke="#f59e0b"/>
+    <text x="20" y="28" class="txt-hdr" fill="#fcd34d">FPGA Programmable Fabric Mindset</text>
+    <text x="20" y="46" class="txt-sub">Pre-built LUT, BRAM, and DSP resources; reprogrammable in seconds</text>
+
+    <rect x="18" y="64" width="402" height="56" class="inner" stroke="#f59e0b"/>
+    <text x="30" y="84" class="mono" fill="#fcd34d">Logic Fabric (LUT6 + FDRE + Carry8)</text>
+    <text x="30" y="104" class="txt-sub">6-input LUTs + abundant flip-flops; routing delay often dominates logic</text>
+
+    <rect x="18" y="130" width="402" height="56" class="inner" stroke="#f59e0b"/>
+    <text x="30" y="150" class="mono" fill="#fcd34d">Hard Macros: BRAM / URAM &amp; DSP48</text>
+    <text x="30" y="170" class="txt-sub">Inference templates matter! Async reset on BRAM output breaks mapping</text>
+
+    <rect x="18" y="196" width="402" height="56" class="inner" stroke="#f59e0b"/>
+    <text x="30" y="216" class="mono" fill="#fcd34d">Resets &amp; Clocking (BUFG / MMCM)</text>
+    <text x="30" y="236" class="txt-sub">Prefer active-high sync reset; use BUFGCE for gating, never gated LUTs</text>
+
+    <rect x="18" y="262" width="402" height="56" class="inner" stroke="#f59e0b"/>
+    <text x="30" y="282" class="mono" fill="#fcd34d">On-Chip Hardware Debug (ILA / VIO)</text>
+    <text x="30" y="302" class="txt-sub">Capture real multi-MHz waveforms inside silicon over JTAG via Vivado</text>
+
+    <rect x="18" y="328" width="402" height="62" class="inner" stroke="#34d399" fill="#0d221c"/>
+    <text x="30" y="350" class="mono" fill="#6ee7b7">Iteration Cost: Minutes (Bitstream Reload)</text>
+    <text x="30" y="370" class="txt-sub">Ideal for rapid prototyping, HFT, edge AI, aerospace, and ASIC emulation</text>
+  </g>
+</svg>

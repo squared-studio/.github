@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 390" width="920" height="390">
+  <defs>
+    <style>
+      .bg { fill: #0f172a; }
+      .panel { fill: #1e293b; stroke-width: 1.5; rx: 10; ry: 10; }
+      .box { fill: #0f172a; stroke: #334155; stroke-width: 1.2; rx: 6; ry: 6; }
+      .cell { fill: #172554; stroke: #38bdf8; stroke-width: 1.5; rx: 6; ry: 6; }
+      .title { font-family: 'Segoe UI', Arial, sans-serif; font-size: 18px; font-weight: 700; fill: #f8fafc; text-anchor: middle; }
+      .subtitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; fill: #94a3b8; text-anchor: middle; }
+      .ptitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 14px; font-weight: 700; }
+      .mono { font-family: Consolas, 'Courier New', monospace; font-size: 10.6px; fill: #e2e8f0; }
+      .note { font-family: 'Segoe UI', Arial, sans-serif; font-size: 10.3px; fill: #94a3b8; }
+      .badge { font-family: Consolas, 'Courier New', monospace; font-size: 10.8px; font-weight: 700; text-anchor: middle; }
+    </style>
+    <marker id="arrSky" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#38bdf8" />
+    </marker>
+    <marker id="arrAmb" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#f59e0b" />
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="920" height="390" />
+  <text class="title" x="460" y="28">Mapping SDF Constructs (INTERCONNECT, IOPATH, TIMINGCHECK) to Netlist Pins</text>
+  <text class="subtitle" x="460" y="48">How Standard Delay Format Triplets (min:typ:max) Back-Annotate Both Gate Switching Arcs and Wire Delays</text>
+
+  <!-- Top Diagram: Physical Wire vs Cell Mapping -->
+  <rect class="panel" x="20" y="64" width="880" height="156" stroke="#38bdf8" />
+  <text class="ptitle" x="36" y="88" fill="#38bdf8">Physical Path Anatomy Mapped to SDF File Statements</text>
+
+  <rect class="cell" x="44" y="112" width="160" height="68" stroke="#34d399" />
+  <text class="badge" x="124" y="134" fill="#6ee7b7">U1 (AND2_X2)</text>
+  <text class="mono" x="124" y="152" text-anchor="middle">A -&gt; Y (IOPATH)</text>
+  <text class="note" x="124" y="168" text-anchor="middle">Cell propagation</text>
+
+  <!-- INTERCONNECT wire -->
+  <line x1="204" y1="146" x2="386" y2="146" stroke="#f59e0b" stroke-width="2.4" marker-end="url(#arrAmb)" />
+  <text class="mono" x="295" y="135" text-anchor="middle" fill="#fcd34d">INTERCONNECT U1/Y U2/D</text>
+  <text class="note" x="295" y="162" text-anchor="middle" fill="#fcd34d">Pin-to-Pin RC Wire Delay!</text>
+
+  <rect class="cell" x="390" y="106" width="210" height="82" stroke="#38bdf8" />
+  <text class="badge" x="495" y="128" fill="#7dd3fc">U2 (DFFQ_X1)</text>
+  <text class="mono" x="495" y="148" text-anchor="middle">TIMINGCHECK: $setuphold</text>
+  <text class="mono" x="495" y="165" text-anchor="middle">IOPATH: CK -&gt; Q</text>
+  <text class="note" x="495" y="180" text-anchor="middle">(or PORT / COND delays)</text>
+
+  <rect class="box" x="626" y="106" width="256" height="82" stroke="#a78bfa" />
+  <text class="badge" x="754" y="126" fill="#c4b5fd">Triplet Format: (min:typ:max)</text>
+  <text class="mono" x="638" y="148">(0.042:0.055:0.078)</text>
+  <text class="mono" x="638" y="166" fill="#7dd3fc">Rise :: Fall  -&gt;  (r) (f)</text>
+  <text class="note" x="638" y="181">mtm_spec picks 1 value per run</text>
+
+  <!-- Bottom Left: Sample SDF Block -->
+  <rect class="panel" x="20" y="234" width="465" height="140" stroke="#f59e0b" />
+  <text class="ptitle" x="36" y="258" fill="#f59e0b">SDF 3.0 Snippet Inside `soc_max.sdf`</text>
+  <rect class="box" x="36" y="270" width="434" height="92" />
+  <text class="mono" x="48" y="288" fill="#fcd34d">(CELL (CELLTYPE "DFFQ_X1") (INSTANCE U2)</text>
+  <text class="mono" x="48" y="305">  (DELAY (ABSOLUTE</text>
+  <text class="mono" x="48" y="321">    (IOPATH (posedge CK) Q (0.070::0.095) (0.068::0.092))))</text>
+  <text class="mono" x="48" y="338" fill="#fca5a5">  (TIMINGCHECK (SETUPHOLD (posedge D) (posedge CK)</text>
+  <text class="mono" x="48" y="354" fill="#fca5a5">    (0.032::0.048) (-0.010::-0.005))))</text>
+
+  <!-- Bottom Right: Mismatch Traps -->
+  <rect class="panel" x="502" y="234" width="398" height="140" stroke="#34d399" />
+  <text class="ptitle" x="518" y="258" fill="#34d399">Common SDF Annotation Traps to Audit</text>
+  <text class="note" x="518" y="278">1. TIMESCALE Mismatch: SDF `(TIMESCALE 1ps)` overrides</text>
+  <text class="note" x="518" y="294">   correctly only if simulator precision handles sub-ps rounding!</text>
+  <text class="note" x="518" y="314">2. Bus Delimiters / Escaped Names: Check `DIVIDER /` vs `.` and</text>
+  <text class="note" x="518" y="330">   escaped `[0]` brackets between STA `write_sdf` &amp; Verilog netlist.</text>
+  <text class="note" x="518" y="350" fill="#fca5a5">3. IOPATH Overrides Zero-Delays: Missing arc =&gt; 0ps default!</text>
+</svg>

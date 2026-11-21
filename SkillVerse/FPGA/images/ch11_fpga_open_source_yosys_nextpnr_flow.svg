@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 400" width="920" height="400">
+  <defs>
+    <style>
+      .bg { fill: #0f172a; }
+      .panel { fill: #1e293b; stroke: #334155; stroke-width: 1.5; rx: 10; ry: 10; }
+      .box { fill: #0f172a; stroke: #334155; stroke-width: 1.2; rx: 6; ry: 6; }
+      .title { font-family: 'Segoe UI', Arial, sans-serif; font-size: 18px; font-weight: 700; fill: #f8fafc; text-anchor: middle; }
+      .sub { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; fill: #94a3b8; text-anchor: middle; }
+      .hdr { font-family: 'Segoe UI', Arial, sans-serif; font-size: 13.5px; font-weight: 700; }
+      .mono { font-family: Consolas, 'Courier New', monospace; font-size: 10.5px; fill: #e2e8f0; }
+      .note { font-family: 'Segoe UI', Arial, sans-serif; font-size: 11px; fill: #cbd5e1; }
+    </style>
+    <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8" />
+    </marker>
+    <marker id="arr-g" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#34d399" />
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="920" height="400" />
+  <text class="title" x="460" y="28">Open-Source FPGA Toolchain (Yosys + nextpnr) &amp; Automated CI/CD Pipeline</text>
+  <text class="sub" x="460" y="48">End-to-End Reproducible Flows from SV/Verilator Simulation Through Yosys/nextpnr or Non-Project Tcl Timing Gates</text>
+
+  <!-- Top Pipeline: Open-Source FPGA Flow -->
+  <rect class="panel" x="20" y="64" width="880" height="156" stroke="#34d399" />
+  <text class="hdr" x="38" y="88" fill="#34d399">1. Fully Open-Source Lattice / ECP5 / Gowin / Artix-7 Flow (F4PGA / OSS CAD Suite)</text>
+
+  <rect class="box" x="34" y="106" width="144" height="86" stroke="#38bdf8" />
+  <text class="mono" x="106" y="128" fill="#7dd3fc" text-anchor="middle">1. RTL + Verilator</text>
+  <text class="note" x="106" y="148" text-anchor="middle">SystemVerilog / SV2V</text>
+  <text class="note" x="106" y="165" text-anchor="middle">+ `--lint-only` + Sim</text>
+  <text class="mono" x="106" y="182" fill="#6ee7b7" text-anchor="middle">(&lt; 2s per check!)</text>
+
+  <line x1="178" y1="149" x2="206" y2="149" stroke="#38bdf8" stroke-width="1.8" marker-end="url(#arr)" />
+
+  <rect class="box" x="208" y="106" width="158" height="86" stroke="#a78bfa" />
+  <text class="mono" x="287" y="128" fill="#c4b5fd" text-anchor="middle">2. Yosys Synthesis</text>
+  <text class="note" x="287" y="148" text-anchor="middle">`synth_ecp5` / `synth_ice40`</text>
+  <text class="note" x="287" y="165" text-anchor="middle">Techmaps LUTs + BRAM</text>
+  <text class="mono" x="287" y="182" fill="#fcd34d" text-anchor="middle">Emits `design.json`</text>
+
+  <line x1="366" y1="149" x2="394" y2="149" stroke="#38bdf8" stroke-width="1.8" marker-end="url(#arr)" />
+
+  <rect class="box" x="396" y="106" width="168" height="86" stroke="#f59e0b" />
+  <text class="mono" x="480" y="128" fill="#fcd34d" text-anchor="middle">3. nextpnr Place/Route</text>
+  <text class="note" x="480" y="148" text-anchor="middle">Timing-driven HeAP + SA</text>
+  <text class="note" x="480" y="165" text-anchor="middle">Python SDC/LPF checks</text>
+  <text class="mono" x="480" y="182" fill="#6ee7b7" text-anchor="middle">Emits `chip.config`</text>
+
+  <line x1="564" y1="149" x2="592" y2="149" stroke="#34d399" stroke-width="1.8" marker-end="url(#arr-g)" />
+
+  <rect class="box" x="594" y="106" width="144" height="86" stroke="#34d399" />
+  <text class="mono" x="666" y="128" fill="#6ee7b7" text-anchor="middle">4. Pack Bitstream</text>
+  <text class="note" x="666" y="148" text-anchor="middle">`ecppack` / `icepack`</text>
+  <text class="note" x="666" y="165" text-anchor="middle">Project X-Ray (`fasm`)</text>
+  <text class="mono" x="666" y="182" fill="#e2e8f0" text-anchor="middle">Emits `top.bit`</text>
+
+  <line x1="738" y1="149" x2="766" y2="149" stroke="#34d399" stroke-width="1.8" marker-end="url(#arr-g)" />
+
+  <rect class="box" x="768" y="106" width="116" height="86" stroke="#34d399" />
+  <text class="mono" x="826" y="128" fill="#6ee7b7" text-anchor="middle">5. Flash</text>
+  <text class="note" x="826" y="148" text-anchor="middle">openFPGALoader</text>
+  <text class="note" x="826" y="165" text-anchor="middle">JTAG / SPI</text>
+  <text class="mono" x="826" y="182" fill="#7dd3fc" text-anchor="middle">Live Board!</text>
+
+  <!-- Bottom: Production FPGA CI/CD & Non-Project Tcl Mode -->
+  <rect class="panel" x="20" y="232" width="430" height="154" stroke="#38bdf8" />
+  <text class="hdr" x="38" y="254" fill="#38bdf8">2. Vendor Non-Project Tcl CI Mode (No `.xpr` Bloat!)</text>
+  <rect class="box" x="34" y="266" width="402" height="108" />
+  <text class="mono" x="46" y="286" fill="#7dd3fc">1. read_verilog / read_xdc / synth_design -part ...</text>
+  <text class="mono" x="46" y="304" fill="#7dd3fc">2. opt_design -&gt; place_design -&gt; phys_opt -&gt; route</text>
+  <text class="mono" x="46" y="322" fill="#fcd34d">3. Assert `[get_property SLACK [get_timing_paths]] &gt;= 0`</text>
+  <text class="mono" x="46" y="340" fill="#6ee7b7">4. write_checkpoint + write_bitstream + write_debug_probes</text>
+  <text class="note" x="46" y="362">Fail CI job immediately if WNS &lt; 0 or WHS &lt; 0!</text>
+
+  <rect class="panel" x="466" y="232" width="434" height="154" stroke="#a78bfa" />
+  <text class="hdr" x="484" y="254" fill="#a78bfa">3. Clean Git Hygiene for Hardware Teams</text>
+  <rect class="box" x="480" y="266" width="406" height="108" />
+  <text class="mono" x="492" y="286" fill="#6ee7b7">Commit ONLY Source-of-Truth Text Files:</text>
+  <text class="note" x="492" y="305">- `rtl/*.sv`, `constraints/*.xdc`, `scripts/build.tcl`, `Makefile`</text>
+  <text class="note" x="492" y="323">- IP `.xci` (or Tcl `create_ip` script) &amp; BD `.tcl` (`write_bd_tcl`)</text>
+  <text class="mono" x="492" y="343" fill="#fca5a5">Add to `.gitignore`: `build/`, `.runs/`, `.cache/`, `.gen/`, `*.bit`, `*.dcp`</text>
+  <text class="note" x="492" y="362">Embed Git SHA-1 hash inside an AXI `VERSION_REG` (`USR_ACCESSE2`)!</text>
+</svg>

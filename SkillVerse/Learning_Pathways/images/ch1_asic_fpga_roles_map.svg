@@ -1,0 +1,145 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 540" width="960" height="540">
+  <defs>
+    <style>
+      .bg { fill: #080c14; }
+      .title { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 20px; fill: #f8fafc; }
+      .subtitle { font-family: 'Inter', system-ui, sans-serif; font-size: 13px; fill: #94a3b8; }
+      .stage { fill: #0f172a; stroke-width: 1.8; rx: 8px; }
+      .role-box { fill: #0b1120; stroke-width: 1.4; rx: 8px; }
+      .txt-hdr { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 12.5px; fill: #f8fafc; }
+      .txt-sub { font-family: 'Inter', system-ui, sans-serif; font-size: 10.5px; fill: #94a3b8; }
+      .mono { font-family: 'JetBrains Mono', Consolas, monospace; font-size: 10px; font-weight: 600; }
+      .edge { stroke-width: 2; fill: none; }
+    </style>
+    <marker id="arr-cyan" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8" />
+    </marker>
+    <marker id="arr-green" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#34d399" />
+    </marker>
+    <marker id="arr-amber" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#f59e0b" />
+    </marker>
+  </defs>
+
+  <rect width="960" height="540" class="bg" rx="14"/>
+  <text x="480" y="32" text-anchor="middle" class="title">Semiconductor Engineering Lifecycle &amp; Role Ownership Map</text>
+  <text x="480" y="52" text-anchor="middle" class="subtitle">How specialized ASIC and FPGA engineering roles collaborate from architectural spec to silicon tape-out</text>
+
+  <!-- Top Flow: 7 Lifecycle Stages -->
+  <g transform="translate(24, 82)">
+    <rect x="0" y="0" width="114" height="82" class="stage" stroke="#a855f7"/>
+    <text x="57" y="22" text-anchor="middle" class="mono" fill="#d8b4fe">1. ARCH SPEC</text>
+    <text x="57" y="44" text-anchor="middle" class="txt-sub">ISA, Memory Map,</text>
+    <text x="57" y="60" text-anchor="middle" class="txt-sub">PPA &amp; Power Spec</text>
+  </g>
+  <path d="M 138 123 L 154 123" class="edge" stroke="#38bdf8" marker-end="url(#arr-cyan)"/>
+
+  <g transform="translate(156, 82)">
+    <rect x="0" y="0" width="114" height="82" class="stage" stroke="#38bdf8"/>
+    <text x="57" y="22" text-anchor="middle" class="mono" fill="#38bdf8">2. RTL DESIGN</text>
+    <text x="57" y="44" text-anchor="middle" class="txt-sub">SystemVerilog,</text>
+    <text x="57" y="60" text-anchor="middle" class="txt-sub">FSM, CDC, Bus IP</text>
+  </g>
+  <path d="M 270 123 L 286 123" class="edge" stroke="#38bdf8" marker-end="url(#arr-cyan)"/>
+
+  <g transform="translate(288, 82)">
+    <rect x="0" y="0" width="122" height="82" class="stage" stroke="#34d399"/>
+    <text x="61" y="22" text-anchor="middle" class="mono" fill="#34d399">3. DV &amp; FORMAL</text>
+    <text x="61" y="44" text-anchor="middle" class="txt-sub">UVM, SVA, FV,</text>
+    <text x="61" y="60" text-anchor="middle" class="txt-sub">Coverage Closure</text>
+  </g>
+  <path d="M 410 123 L 426 123" class="edge" stroke="#34d399" marker-end="url(#arr-green)"/>
+
+  <g transform="translate(428, 82)">
+    <rect x="0" y="0" width="122" height="82" class="stage" stroke="#f59e0b"/>
+    <text x="61" y="22" text-anchor="middle" class="mono" fill="#fcd34d">4. SYNTH &amp; DFT</text>
+    <text x="61" y="44" text-anchor="middle" class="txt-sub">SDC, UPF, Scan,</text>
+    <text x="61" y="60" text-anchor="middle" class="txt-sub">ATPG &amp; MBIST</text>
+  </g>
+  <path d="M 550 123 L 566 123" class="edge" stroke="#f59e0b" marker-end="url(#arr-amber)"/>
+
+  <g transform="translate(568, 82)">
+    <rect x="0" y="0" width="114" height="82" class="stage" stroke="#f59e0b"/>
+    <text x="57" y="22" text-anchor="middle" class="mono" fill="#fcd34d">5. PD &amp; STA</text>
+    <text x="57" y="44" text-anchor="middle" class="txt-sub">Floorplan, P&amp;R,</text>
+    <text x="57" y="60" text-anchor="middle" class="txt-sub">Timing Sign-Off</text>
+  </g>
+  <path d="M 682 123 L 698 123" class="edge" stroke="#f59e0b" marker-end="url(#arr-amber)"/>
+
+  <g transform="translate(700, 82)">
+    <rect x="0" y="0" width="114" height="82" class="stage" stroke="#f43f5e"/>
+    <text x="57" y="22" text-anchor="middle" class="mono" fill="#fda4af">6. GLS &amp; LEC</text>
+    <text x="57" y="44" text-anchor="middle" class="txt-sub">SDF Timing, X-Prop,</text>
+    <text x="57" y="60" text-anchor="middle" class="txt-sub">Scan Gate Sim</text>
+  </g>
+  <path d="M 814 123 L 830 123" class="edge" stroke="#34d399" marker-end="url(#arr-green)"/>
+
+  <g transform="translate(832, 82)">
+    <rect x="0" y="0" width="104" height="82" class="stage" stroke="#84cc16"/>
+    <text x="52" y="22" text-anchor="middle" class="mono" fill="#bef264">7. SILICON</text>
+    <text x="52" y="44" text-anchor="middle" class="txt-sub">Tape-Out / ATE /</text>
+    <text x="52" y="60" text-anchor="middle" class="txt-sub">FPGA Bring-Up</text>
+  </g>
+
+  <!-- Role Ownership Matrix (2 rows x 3 cols) -->
+  <g transform="translate(24, 190)">
+    <rect x="0" y="0" width="292" height="152" class="role-box" stroke="#38bdf8"/>
+    <text x="16" y="26" class="txt-hdr" fill="#38bdf8">RTL Design Engineer (Ch 2)</text>
+    <text x="16" y="46" class="mono" fill="#7dd3fc">Owns: Stages 2, 4 (UPF/SDC), 6 debug</text>
+    <text x="16" y="70" class="txt-sub">• Microarchitecture, FSMs, pipelines, FIFOs</text>
+    <text x="16" y="88" class="txt-sub">• Synthesizable SystemVerilog &amp; bus IP</text>
+    <text x="16" y="106" class="txt-sub">• Lint, CDC/RDC sign-off &amp; timing fixes</text>
+    <text x="16" y="132" class="mono" fill="#cbd5e1">Courses: RTL_Design, SystemVerilog, CDC</text>
+  </g>
+
+  <g transform="translate(334, 190)">
+    <rect x="0" y="0" width="292" height="152" class="role-box" stroke="#34d399"/>
+    <text x="16" y="26" class="txt-hdr" fill="#34d399">Design Verification Engineer (Ch 3)</text>
+    <text x="16" y="46" class="mono" fill="#6ee7b7">Owns: Stages 3, 6 (GLS &amp; PG UPF)</text>
+    <text x="16" y="70" class="txt-sub">• Verification plans &amp; UVM testbenches</text>
+    <text x="16" y="88" class="txt-sub">• Constrained random, VIPs &amp; scoreboards</text>
+    <text x="16" y="106" class="txt-sub">• Code/functional coverage &amp; GLS closure</text>
+    <text x="16" y="132" class="mono" fill="#cbd5e1">Courses: SystemVerilog, uvm, GLS, AXI</text>
+  </g>
+
+  <g transform="translate(644, 190)">
+    <rect x="0" y="0" width="292" height="152" class="role-box" stroke="#a855f7"/>
+    <text x="16" y="26" class="txt-hdr" fill="#d8b4fe">Formal Verification Engineer (Ch 4)</text>
+    <text x="16" y="46" class="mono" fill="#d8b4fe">Owns: Stage 3 (FPV, SEC, Deadlock)</text>
+    <text x="16" y="70" class="txt-sub">• SVA temporal properties &amp; bind modules</text>
+    <text x="16" y="88" class="txt-sub">• Exhaustive proofs (BMC, k-ind, IC3)</text>
+    <text x="16" y="106" class="txt-sub">• Arbiter fairness, CDC &amp; bus compliance</text>
+    <text x="16" y="132" class="mono" fill="#cbd5e1">Courses: Formal_Verification, SVA, OBI</text>
+  </g>
+
+  <g transform="translate(24, 360)">
+    <rect x="0" y="0" width="292" height="152" class="role-box" stroke="#f59e0b"/>
+    <text x="16" y="26" class="txt-hdr" fill="#fcd34d">FPGA &amp; Prototyping Engineer (Ch 5)</text>
+    <text x="16" y="46" class="mono" fill="#fcd34d">Owns: Stages 2, 4, 5, 7 (Board Bring-Up)</text>
+    <text x="16" y="70" class="txt-sub">• LUT/BRAM/DSP architecture &amp; Vivado</text>
+    <text x="16" y="88" class="txt-sub">• XDC timing closure &amp; clock wizards</text>
+    <text x="16" y="106" class="txt-sub">• ILA hardware debug &amp; SoC emulation</text>
+    <text x="16" y="132" class="mono" fill="#cbd5e1">Courses: Vivado, RTL_Design, UART, C</text>
+  </g>
+
+  <g transform="translate(334, 360)">
+    <rect x="0" y="0" width="292" height="152" class="role-box" stroke="#f43f5e"/>
+    <text x="16" y="26" class="txt-hdr" fill="#fda4af">DFT &amp; Silicon Test Engineer (Ch 6)</text>
+    <text x="16" y="46" class="mono" fill="#fda4af">Owns: Stages 4, 6 (Scan GLS), 7 (ATE)</text>
+    <text x="16" y="70" class="txt-sub">• Scan chains, compression &amp; ATPG patterns</text>
+    <text x="16" y="88" class="txt-sub">• MBIST / LBIST &amp; OCC clocking</text>
+    <text x="16" y="106" class="txt-sub">• IEEE 1149.1 JTAG &amp; 1687 IJTAG networks</text>
+    <text x="16" y="132" class="mono" fill="#cbd5e1">Courses: DFT, GLS, UPF_CPF, Python</text>
+  </g>
+
+  <g transform="translate(644, 360)">
+    <rect x="0" y="0" width="292" height="152" class="role-box" stroke="#84cc16"/>
+    <text x="16" y="26" class="txt-hdr" fill="#bef264">SoC &amp; Interconnect Architect (Ch 7)</text>
+    <text x="16" y="46" class="mono" fill="#bef264">Owns: Stages 1, 2, 7 (HW/SW Bring-Up)</text>
+    <text x="16" y="70" class="txt-sub">• RISC-V / CPU fabric, memory &amp; caches</text>
+    <text x="16" y="88" class="txt-sub">• AXI4, ACE &amp; CHI coherent fabrics</text>
+    <text x="16" y="106" class="txt-sub">• System power intent (UPF) &amp; CDC/RDC</text>
+    <text x="16" y="132" class="mono" fill="#cbd5e1">Courses: AXI, ACE, CHI, UPF, RISC_V</text>
+  </g>
+</svg>

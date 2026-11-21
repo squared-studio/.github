@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 400" width="920" height="400">
+  <defs>
+    <style>
+      .bg { fill: #0f172a; }
+      .panel { fill: #1e293b; stroke: #334155; stroke-width: 1.5; rx: 10; ry: 10; }
+      .box { fill: #0f172a; stroke: #334155; stroke-width: 1.2; rx: 6; ry: 6; }
+      .title { font-family: 'Segoe UI', Arial, sans-serif; font-size: 18px; font-weight: 700; fill: #f8fafc; text-anchor: middle; }
+      .sub { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; fill: #94a3b8; text-anchor: middle; }
+      .hdr { font-family: 'Segoe UI', Arial, sans-serif; font-size: 13.5px; font-weight: 700; }
+      .mono { font-family: Consolas, 'Courier New', monospace; font-size: 10.5px; fill: #e2e8f0; }
+      .note { font-family: 'Segoe UI', Arial, sans-serif; font-size: 11px; fill: #cbd5e1; }
+    </style>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="920" height="400" />
+  <text class="title" x="460" y="28">High-Level Synthesis (HLS) Loop Scheduling: PIPELINE, UNROLL &amp; DATAFLOW</text>
+  <text class="sub" x="460" y="48">Trading Area (DSP/BRAM Ports) for Initiation Interval (II=1) Throughput and Task-Level FIFO Streaming</text>
+
+  <!-- Mode 1: Sequential -->
+  <rect class="panel" x="20" y="64" width="430" height="148" stroke="#94a3b8" />
+  <text class="hdr" x="36" y="86" fill="#cbd5e1">1. Default C Loop (Sequential, II = 3 Cycles/Iter)</text>
+  <rect class="box" x="34" y="96" width="402" height="104" />
+  <text class="mono" x="48" y="114" fill="#94a3b8">Iter 0:</text>
+  <rect x="108" y="100" width="48" height="20" fill="#1e293b" stroke="#38bdf8" rx="3" /><text class="mono" x="132" y="114" text-anchor="middle" font-size="9">RD</text>
+  <rect x="160" y="100" width="48" height="20" fill="#1e293b" stroke="#f59e0b" rx="3" /><text class="mono" x="184" y="114" text-anchor="middle" font-size="9">MAC</text>
+  <rect x="212" y="100" width="48" height="20" fill="#1e293b" stroke="#34d399" rx="3" /><text class="mono" x="236" y="114" text-anchor="middle" font-size="9">WR</text>
+  <text class="mono" x="48" y="142" fill="#94a3b8">Iter 1:</text>
+  <rect x="264" y="128" width="48" height="20" fill="#1e293b" stroke="#38bdf8" rx="3" /><text class="mono" x="288" y="142" text-anchor="middle" font-size="9">RD</text>
+  <rect x="316" y="128" width="48" height="20" fill="#1e293b" stroke="#f59e0b" rx="3" /><text class="mono" x="340" y="142" text-anchor="middle" font-size="9">MAC</text>
+  <rect x="368" y="128" width="48" height="20" fill="#1e293b" stroke="#34d399" rx="3" /><text class="mono" x="392" y="142" text-anchor="middle" font-size="9">WR</text>
+  <text class="note" x="48" y="182">Smallest area (1 MAC shared), lowest throughput: N * 3 cycles!</text>
+
+  <!-- Mode 2: PIPELINE II=1 -->
+  <rect class="panel" x="470" y="64" width="430" height="148" stroke="#38bdf8" />
+  <text class="hdr" x="486" y="86" fill="#38bdf8">2. `#pragma HLS PIPELINE II=1` (Overlapped, 3x Faster!)</text>
+  <rect class="box" x="484" y="96" width="402" height="104" />
+  <text class="mono" x="498" y="114" fill="#7dd3fc">Iter 0:</text>
+  <rect x="558" y="100" width="46" height="18" fill="#0c4a6e" stroke="#38bdf8" rx="3" /><text class="mono" x="581" y="113" text-anchor="middle" font-size="9">RD0</text>
+  <rect x="608" y="100" width="46" height="18" fill="#451a03" stroke="#f59e0b" rx="3" /><text class="mono" x="631" y="113" text-anchor="middle" font-size="9">MAC0</text>
+  <rect x="658" y="100" width="46" height="18" fill="#064e3b" stroke="#34d399" rx="3" /><text class="mono" x="681" y="113" text-anchor="middle" font-size="9">WR0</text>
+  <text class="mono" x="498" y="138" fill="#7dd3fc">Iter 1:</text>
+  <rect x="608" y="124" width="46" height="18" fill="#0c4a6e" stroke="#38bdf8" rx="3" /><text class="mono" x="631" y="137" text-anchor="middle" font-size="9">RD1</text>
+  <rect x="658" y="124" width="46" height="18" fill="#451a03" stroke="#f59e0b" rx="3" /><text class="mono" x="681" y="137" text-anchor="middle" font-size="9">MAC1</text>
+  <rect x="708" y="124" width="46" height="18" fill="#064e3b" stroke="#34d399" rx="3" /><text class="mono" x="731" y="137" text-anchor="middle" font-size="9">WR1</text>
+  <text class="mono" x="498" y="162" fill="#7dd3fc">Iter 2:</text>
+  <rect x="658" y="148" width="46" height="18" fill="#0c4a6e" stroke="#38bdf8" rx="3" /><text class="mono" x="681" y="161" text-anchor="middle" font-size="9">RD2</text>
+  <rect x="708" y="148" width="46" height="18" fill="#451a03" stroke="#f59e0b" rx="3" /><text class="mono" x="731" y="161" text-anchor="middle" font-size="9">MAC2</text>
+  <rect x="758" y="148" width="46" height="18" fill="#064e3b" stroke="#34d399" rx="3" /><text class="mono" x="781" y="161" text-anchor="middle" font-size="9">WR2</text>
+  <text class="note" x="498" y="186">Launches 1 new iteration EVERY clock cycle! Watch loop-carried dep!</text>
+
+  <!-- Mode 3: UNROLL + ARRAY_PARTITION -->
+  <rect class="panel" x="20" y="226" width="430" height="158" stroke="#f59e0b" />
+  <text class="hdr" x="36" y="248" fill="#f59e0b">3. `UNROLL` + `ARRAY_PARTITION` (Spatial Parallelism)</text>
+  <rect class="box" x="34" y="258" width="402" height="114" />
+  <rect x="50" y="270" width="90" height="32" fill="#1e293b" stroke="#34d399" rx="4" /><text class="mono" x="95" y="290" text-anchor="middle" font-size="9.5">Bank 0 (BRAM)</text>
+  <rect x="148" y="270" width="90" height="32" fill="#1e293b" stroke="#34d399" rx="4" /><text class="mono" x="193" y="290" text-anchor="middle" font-size="9.5">Bank 1 (BRAM)</text>
+  <rect x="246" y="270" width="90" height="32" fill="#1e293b" stroke="#34d399" rx="4" /><text class="mono" x="291" y="290" text-anchor="middle" font-size="9.5">Bank 2 (BRAM)</text>
+  <rect x="344" y="270" width="80" height="32" fill="#1e293b" stroke="#f59e0b" rx="4" /><text class="mono" x="384" y="290" text-anchor="middle" font-size="9.5">4x DSPs</text>
+  <text class="mono" x="48" y="324" fill="#fca5a5">Critical HLS Law:</text>
+  <text class="note" x="48" y="342">Unrolling `4x` FAILS (`II=4`!) unless arrays are ALSO partitioned</text>
+  <text class="note" x="48" y="358">(`ARRAY_PARTITION cyclic factor=4`) because 1 BRAM only has 2 ports!</text>
+
+  <!-- Mode 4: DATAFLOW -->
+  <rect class="panel" x="470" y="226" width="430" height="158" stroke="#34d399" />
+  <text class="hdr" x="486" y="248" fill="#34d399">4. `#pragma HLS DATAFLOW` (Coarse Task Streaming)</text>
+  <rect class="box" x="484" y="258" width="402" height="114" />
+  <rect x="498" y="274" width="92" height="44" fill="#0c4a6e" stroke="#38bdf8" rx="4" />
+  <text class="mono" x="544" y="296" fill="#7dd3fc" text-anchor="middle">LoadDMA()</text>
+  <text class="mono" x="544" y="310" font-size="9" text-anchor="middle">hls::stream</text>
+  <line x1="590" y1="296" x2="626" y2="296" stroke="#34d399" stroke-width="2" />
+  <rect x="626" y="274" width="110" height="44" fill="#451a03" stroke="#f59e0b" rx="4" />
+  <text class="mono" x="681" y="296" fill="#fcd34d" text-anchor="middle">ComputeConv()</text>
+  <text class="mono" x="681" y="310" font-size="9" text-anchor="middle">Runs Concurrently!</text>
+  <line x1="736" y1="296" x2="772" y2="296" stroke="#34d399" stroke-width="2" />
+  <rect x="772" y="274" width="98" height="44" fill="#064e3b" stroke="#34d399" rx="4" />
+  <text class="mono" x="821" y="296" fill="#6ee7b7" text-anchor="middle">StoreDMA()</text>
+  <text class="mono" x="821" y="310" font-size="9" text-anchor="middle">FIFO / PIPO</text>
+  <text class="note" x="498" y="344">All 3 functions execute simultaneously via FIFO channels (ap_fifo / AXIS),</text>
+  <text class="note" x="498" y="360">turning multi-pass C algorithms into non-stop streaming hardware!</text>
+</svg>

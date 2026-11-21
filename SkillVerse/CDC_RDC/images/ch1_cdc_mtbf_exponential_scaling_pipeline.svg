@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 390" width="920" height="390">
+  <defs>
+    <style>
+      .bg { fill: #0f172a; }
+      .panel { fill: #1e293b; stroke-width: 1.5; rx: 10; ry: 10; }
+      .box { fill: #0f172a; stroke: #334155; stroke-width: 1.2; rx: 6; ry: 6; }
+      .ff { fill: #172554; stroke: #38bdf8; stroke-width: 1.6; rx: 6; ry: 6; }
+      .title { font-family: 'Segoe UI', Arial, sans-serif; font-size: 18px; font-weight: 700; fill: #f8fafc; text-anchor: middle; }
+      .subtitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; fill: #94a3b8; text-anchor: middle; }
+      .ptitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 14px; font-weight: 700; }
+      .mono { font-family: Consolas, 'Courier New', monospace; font-size: 10.8px; fill: #e2e8f0; }
+      .note { font-family: 'Segoe UI', Arial, sans-serif; font-size: 10.5px; fill: #94a3b8; }
+      .badge { font-family: Consolas, 'Courier New', monospace; font-size: 11px; font-weight: 700; text-anchor: middle; }
+    </style>
+    <marker id="arrSky" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#38bdf8" />
+    </marker>
+    <marker id="arrGreen" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#34d399" />
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="920" height="390" />
+  <text class="title" x="460" y="28">MTBF Equation &amp; Exponential Reliability Gain Across Synchronizer Stages</text>
+  <text class="subtitle" x="460" y="48">How Each Extra Resolution Period (t_met) Multiplies Mean Time Between Failures by e^(t_met / tau)</text>
+
+  <!-- Formula Banner -->
+  <rect class="box" x="20" y="64" width="880" height="58" stroke="#38bdf8" />
+  <text class="mono" x="460" y="88" text-anchor="middle" fill="#f8fafc">MTBF = exp( t_met / tau )  /  ( T_0 * f_clk * f_data )</text>
+  <text class="note" x="460" y="109" text-anchor="middle">t_met = T_clk - t_su - t_c2q - t_route   |   tau = Latch regen time constant (~15-30ps)   |   T_0 = Aperture constant (~10-50ps)</text>
+
+  <!-- Bottom Left: Stage Budget Visualization -->
+  <rect class="panel" x="20" y="136" width="465" height="236" stroke="#34d399" />
+  <text class="ptitle" x="36" y="160" fill="#34d399">Why Dedicated Synchronizer Flip-Flops Maximize t_met</text>
+
+  <!-- 1-FF diagram vs 2-FF diagram -->
+  <rect class="box" x="36" y="174" width="434" height="86" stroke="#f87171" />
+  <text class="mono" x="48" y="193" fill="#fca5a5">No Sync Stage (Single Flop + Combinational Cloud):</text>
+  <rect class="ff" x="50" y="204" width="70" height="36" stroke="#f87171" />
+  <text class="badge" x="85" y="226" fill="#fca5a5">FF1</text>
+  <line x1="120" y1="222" x2="152" y2="222" stroke="#f87171" stroke-width="1.6" />
+  <rect class="box" x="156" y="204" width="160" height="36" stroke="#f59e0b" />
+  <text class="badge" x="236" y="226" fill="#fcd34d">Heavy Logic (t_comb)</text>
+  <line x1="316" y1="222" x2="348" y2="222" stroke="#f87171" stroke-width="1.6" />
+  <rect class="ff" x="352" y="204" width="70" height="36" />
+  <text class="badge" x="387" y="226" fill="#7dd3fc">FF_DST</text>
+  <text class="note" x="48" y="253" fill="#fca5a5">t_comb eats up almost the whole clock period -&gt; t_met ~ 0 -&gt; Fails in hours!</text>
+
+  <rect class="box" x="36" y="270" width="434" height="88" stroke="#34d399" />
+  <text class="mono" x="48" y="289" fill="#6ee7b7">2-FF Sync (Zero Logic + Short Adjacent Route = Max t_met):</text>
+  <rect class="ff" x="50" y="300" width="84" height="36" stroke="#34d399" />
+  <text class="badge" x="92" y="322" fill="#6ee7b7">FF_S1</text>
+  <line x1="134" y1="318" x2="210" y2="318" stroke="#34d399" stroke-width="2" marker-end="url(#arrGreen)" />
+  <text class="mono" x="172" y="311" text-anchor="middle" fill="#6ee7b7">t_route~0</text>
+  <rect class="ff" x="214" y="300" width="84" height="36" stroke="#34d399" />
+  <text class="badge" x="256" y="322" fill="#6ee7b7">FF_S2</text>
+  <line x1="298" y1="318" x2="348" y2="318" stroke="#38bdf8" stroke-width="1.8" marker-end="url(#arrSky)" />
+  <rect class="ff" x="352" y="300" width="70" height="36" />
+  <text class="badge" x="387" y="322" fill="#7dd3fc">Logic</text>
+  <text class="note" x="48" y="349" fill="#6ee7b7">Full T_clk minus ~50ps goes into t_met -&gt; exp(+40) scaling!</text>
+
+  <!-- Bottom Right: Exponential Table -->
+  <rect class="panel" x="502" y="136" width="398" height="236" stroke="#a78bfa" />
+  <text class="ptitle" x="518" y="160" fill="#a78bfa">MTBF Scaling Example (f_clk=1GHz, tau=20ps)</text>
+
+  <rect class="box" x="518" y="174" width="366" height="44" />
+  <text class="mono" x="530" y="193" fill="#fca5a5">t_met = 200 ps (10 * tau)  --&gt; MTBF ~ 0.004 sec</text>
+  <text class="note" x="530" y="210">Guaranteed failure during lab bring-up</text>
+
+  <rect class="box" x="518" y="226" width="366" height="44" />
+  <text class="mono" x="530" y="245" fill="#fcd34d">t_met = 600 ps (30 * tau)  --&gt; MTBF ~ 2.1 years</text>
+  <text class="note" x="530" y="262">Unacceptable in fleet of 1,000,000 devices (~500 fails/day!)</text>
+
+  <rect class="box" x="518" y="278" width="366" height="44" stroke="#34d399" />
+  <text class="mono" x="530" y="297" fill="#34d399">t_met = 900 ps (45 * tau)  --&gt; MTBF ~ 7.0M years</text>
+  <text class="note" x="530" y="314">2-FF Sync safe for consumer/server chips (3-FF for &gt;2GHz!)</text>
+
+  <text class="note" x="518" y="352" fill="#7dd3fc">Rule of Thumb: Target per-device MTBF &gt; 10^4 x fleet size x lifetime.</text>
+</svg>

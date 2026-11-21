@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 400" width="920" height="400">
+  <defs>
+    <style>
+      .bg { fill: #0f172a; }
+      .panel { fill: #1e293b; stroke: #334155; stroke-width: 1.5; rx: 10; ry: 10; }
+      .box { fill: #0f172a; stroke: #334155; stroke-width: 1.2; rx: 6; ry: 6; }
+      .title { font-family: 'Segoe UI', Arial, sans-serif; font-size: 18px; font-weight: 700; fill: #f8fafc; text-anchor: middle; }
+      .sub { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; fill: #94a3b8; text-anchor: middle; }
+      .hdr { font-family: 'Segoe UI', Arial, sans-serif; font-size: 13.5px; font-weight: 700; }
+      .mono { font-family: Consolas, 'Courier New', monospace; font-size: 10.5px; fill: #e2e8f0; }
+      .note { font-family: 'Segoe UI', Arial, sans-serif; font-size: 11px; fill: #cbd5e1; }
+    </style>
+    <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8" />
+    </marker>
+    <marker id="arr-g" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#34d399" />
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="920" height="400" />
+  <text class="title" x="460" y="28">SystemVerilog Real Number Modeling: User-Defined EEnet Resolution</text>
+  <text class="sub" x="460" y="48">Replacing Single-Driver wreal Wires with Bidirectional Thevenin/Norton Multi-Driver SV nettype Nodes</text>
+
+  <!-- Left Panel: Multi-Driver Node Schematic -->
+  <rect class="panel" x="20" y="64" width="460" height="318" />
+  <text class="hdr" x="38" y="88" fill="#38bdf8">1. Multi-Driver EEnet Node (`{V, I, R}` Struct)</text>
+
+  <rect class="box" x="34" y="102" width="160" height="78" stroke="#34d399" />
+  <text class="mono" x="114" y="122" fill="#6ee7b7" text-anchor="middle">Driver 1 (LDO)</text>
+  <text class="mono" x="114" y="142" fill="#e2e8f0" text-anchor="middle">V1 = 1.20 V</text>
+  <text class="mono" x="114" y="159" fill="#94a3b8" text-anchor="middle">R1 = 0.2 ohm</text>
+
+  <rect class="box" x="34" y="192" width="160" height="78" stroke="#f59e0b" />
+  <text class="mono" x="114" y="212" fill="#fcd34d" text-anchor="middle">Driver 2 (Load Sink)</text>
+  <text class="mono" x="114" y="232" fill="#e2e8f0" text-anchor="middle">V2 = 0.00 V</text>
+  <text class="mono" x="114" y="249" fill="#94a3b8" text-anchor="middle">R2 = 24.0 ohm</text>
+
+  <rect class="box" x="34" y="282" width="160" height="82" stroke="#a78bfa" />
+  <text class="mono" x="114" y="302" fill="#c4b5fd" text-anchor="middle">Driver 3 (Cap/Leak)</text>
+  <text class="mono" x="114" y="322" fill="#e2e8f0" text-anchor="middle">I3 = -2.0 mA</text>
+  <text class="mono" x="114" y="339" fill="#94a3b8" text-anchor="middle">R3 = 1e9 (High-Z)</text>
+
+  <!-- Arrows merging into Resolution Node -->
+  <line x1="194" y1="141" x2="256" y2="220" stroke="#34d399" stroke-width="1.8" marker-end="url(#arr-g)" />
+  <line x1="194" y1="231" x2="254" y2="231" stroke="#f59e0b" stroke-width="1.8" marker-end="url(#arr)" />
+  <line x1="194" y1="322" x2="256" y2="244" stroke="#a78bfa" stroke-width="1.8" marker-end="url(#arr)" />
+
+  <rect class="box" x="260" y="148" width="204" height="164" stroke="#38bdf8" />
+  <text class="hdr" x="362" y="174" fill="#38bdf8" text-anchor="middle">EEnet Resolver Function</text>
+  <text class="mono" x="362" y="198" fill="#7dd3fc" text-anchor="middle">Norton Summation:</text>
+  <text class="mono" x="362" y="220" fill="#e2e8f0" text-anchor="middle">G_tot = Sum( 1 / R_k )</text>
+  <text class="mono" x="362" y="240" fill="#e2e8f0" text-anchor="middle">I_sc  = Sum( V_k/R_k + I_k )</text>
+  <line x1="280" y1="254" x2="444" y2="254" stroke="#334155" stroke-width="1" />
+  <text class="mono" x="362" y="274" fill="#6ee7b7" text-anchor="middle">V_net = I_sc / G_tot</text>
+  <text class="mono" x="362" y="294" fill="#fcd34d" text-anchor="middle">R_eq  = 1 / G_tot</text>
+
+  <!-- Right Panel: SV Syntax & Comparison -->
+  <rect class="panel" x="496" y="64" width="404" height="318" />
+  <text class="hdr" x="514" y="88" fill="#34d399">2. IEEE 1800 SystemVerilog nettype Advantage</text>
+
+  <rect class="box" x="510" y="102" width="376" height="150" />
+  <text class="mono" x="522" y="122" fill="#7dd3fc">typedef struct { real V; real I; real R; } EE_s;</text>
+  <text class="mono" x="522" y="140" fill="#6ee7b7">nettype EE_s EEnet with EE_resolve;</text>
+  <text class="mono" x="522" y="162" fill="#cbd5e1">- Evaluates inside PURE digital SV simulator</text>
+  <text class="mono" x="522" y="180" fill="#cbd5e1">- Automatically handles PG switches (R_on/R_off)</text>
+  <text class="mono" x="522" y="198" fill="#cbd5e1">- Propagates current loading &amp; IR drop!</text>
+  <text class="mono" x="522" y="216" fill="#cbd5e1">- Detects bidirectional contention cleanly</text>
+  <text class="mono" x="522" y="236" fill="#fcd34d">- Discrete Δt solver update via event queue</text>
+
+  <rect class="box" x="510" y="262" width="376" height="106" stroke="#f87171" />
+  <text class="mono" x="522" y="282" fill="#fca5a5">Legacy `wreal` Limitations Solved:</text>
+  <text class="note" x="522" y="302">- Single-driver wreal throws error on two pass-gates</text>
+  <text class="note" x="522" y="320">- Cannot model input/output impedance loading (V=I*R)</text>
+  <text class="note" x="522" y="338">- Cannot model bidirectional analog MUXes or power rails</text>
+  <text class="note" x="522" y="356">- Legacy `wreal` averages lack Norton physics accuracy</text>
+</svg>

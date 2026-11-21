@@ -1,0 +1,97 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 400" width="920" height="400">
+  <defs>
+    <style>
+      .bg { fill: #0f172a; }
+      .panel { fill: #1e293b; stroke: #334155; stroke-width: 1.5; rx: 10; ry: 10; }
+      .box { fill: #0f172a; stroke: #334155; stroke-width: 1.2; rx: 6; ry: 6; }
+      .title { font-family: 'Segoe UI', Arial, sans-serif; font-size: 18px; font-weight: 700; fill: #f8fafc; text-anchor: middle; }
+      .sub { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; fill: #94a3b8; text-anchor: middle; }
+      .hdr { font-family: 'Segoe UI', Arial, sans-serif; font-size: 13.5px; font-weight: 700; }
+      .mono { font-family: Consolas, 'Courier New', monospace; font-size: 10.5px; fill: #e2e8f0; }
+      .note { font-family: 'Segoe UI', Arial, sans-serif; font-size: 11px; fill: #cbd5e1; }
+    </style>
+    <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8" />
+    </marker>
+    <marker id="arr-g" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#34d399" />
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="920" height="400" />
+  <text class="title" x="460" y="28">End-to-End High-Speed SerDes Transceiver Link Architecture</text>
+  <text class="sub" x="460" y="48">Pre-Emphasis TX FFE, Lossy PCB Channel, RX CTLE, Multi-Tap DFE, and Bang-Bang CDR Recovery</text>
+
+  <!-- Transmitter Block -->
+  <rect class="panel" x="20" y="68" width="236" height="236" stroke="#38bdf8" />
+  <text class="hdr" x="138" y="92" fill="#38bdf8" text-anchor="middle">1. Transmitter (TX)</text>
+  <rect class="box" x="34" y="106" width="208" height="58" />
+  <text class="mono" x="138" y="128" fill="#7dd3fc" text-anchor="middle">Serializer (16:1 MUX)</text>
+  <text class="note" x="138" y="148" text-anchor="middle">Parallel Digital -&gt; Serial</text>
+  <rect class="box" x="34" y="176" width="208" height="62" stroke="#38bdf8" />
+  <text class="mono" x="138" y="198" fill="#7dd3fc" text-anchor="middle">3-Tap TX FFE</text>
+  <text class="mono" x="138" y="216" fill="#94a3b8" text-anchor="middle">c[-1], c[0], c[+1]</text>
+  <rect class="box" x="34" y="248" width="208" height="44" />
+  <text class="mono" x="138" y="274" fill="#cbd5e1" text-anchor="middle">50-ohm Diff Driver</text>
+
+  <!-- Channel -->
+  <line x1="256" y1="196" x2="294" y2="196" stroke="#38bdf8" stroke-width="2.2" marker-end="url(#arr)" />
+  <rect class="panel" x="296" y="108" width="150" height="176" stroke="#f87171" />
+  <text class="hdr" x="371" y="132" fill="#f87171" text-anchor="middle">2. Channel</text>
+  <rect class="box" x="308" y="144" width="126" height="128" />
+  <text class="mono" x="371" y="166" fill="#fca5a5" text-anchor="middle">S-Params (S4P)</text>
+  <text class="note" x="371" y="186" text-anchor="middle">Skin Effect +</text>
+  <text class="note" x="371" y="202" text-anchor="middle">Dielectric Loss</text>
+  <text class="mono" x="371" y="224" fill="#fcd34d" text-anchor="middle">20-35 dB @ f_Nyq</text>
+  <text class="note" x="371" y="244" text-anchor="middle">Vias + Reflections</text>
+  <text class="note" x="371" y="260" text-anchor="middle">+ XTALK</text>
+
+  <line x1="446" y1="196" x2="484" y2="196" stroke="#34d399" stroke-width="2.2" marker-end="url(#arr-g)" />
+
+  <!-- Receiver Block -->
+  <rect class="panel" x="486" y="68" width="414" height="236" stroke="#34d399" />
+  <text class="hdr" x="693" y="92" fill="#34d399" text-anchor="middle">3. Receiver Analog Front-End (AFE) + CDR</text>
+
+  <rect class="box" x="502" y="108" width="112" height="72" stroke="#34d399" />
+  <text class="mono" x="558" y="132" fill="#6ee7b7" text-anchor="middle">CTLE</text>
+  <text class="note" x="558" y="150" text-anchor="middle">HF Peaking</text>
+  <text class="note" x="558" y="166" text-anchor="middle">Boosts f_Nyq</text>
+
+  <line x1="614" y1="144" x2="644" y2="144" stroke="#34d399" stroke-width="1.8" marker-end="url(#arr-g)" />
+
+  <!-- Summer + Slicer + DFE loop -->
+  <rect class="box" x="646" y="108" width="124" height="72" stroke="#a78bfa" />
+  <text class="mono" x="708" y="130" fill="#c4b5fd" text-anchor="middle">Summer + DFE</text>
+  <text class="note" x="708" y="148" text-anchor="middle">Cancels Post-</text>
+  <text class="note" x="708" y="164" text-anchor="middle">Cursor ISI (h1..hk)</text>
+
+  <line x1="770" y1="144" x2="796" y2="144" stroke="#34d399" stroke-width="1.8" marker-end="url(#arr-g)" />
+
+  <rect class="box" x="798" y="108" width="88" height="72" stroke="#f59e0b" />
+  <text class="mono" x="842" y="132" fill="#fcd34d" text-anchor="middle">Data/Edge</text>
+  <text class="mono" x="842" y="148" fill="#fcd34d" text-anchor="middle">Slicers</text>
+  <text class="mono" x="842" y="166" fill="#94a3b8" text-anchor="middle">Data Out</text>
+
+  <!-- Feedback taps from slicer back to DFE summer & CDR -->
+  <rect class="box" x="502" y="202" width="160" height="86" stroke="#f59e0b" />
+  <text class="mono" x="582" y="224" fill="#fcd34d" text-anchor="middle">Bang-Bang CDR</text>
+  <text class="mono" x="582" y="242" fill="#94a3b8" text-anchor="middle">2x Alexander PD</text>
+  <text class="note" x="582" y="262" text-anchor="middle">PI / PLL Phase Adjust</text>
+  <text class="note" x="582" y="278" text-anchor="middle">Tracks SSC + Drift</text>
+
+  <rect class="box" x="684" y="202" width="202" height="86" stroke="#a78bfa" />
+  <text class="mono" x="785" y="224" fill="#c4b5fd" text-anchor="middle">DFE Tap Weights h1..hN</text>
+  <text class="note" x="785" y="244" text-anchor="middle">LMS Adaptive Engine</text>
+  <text class="note" x="785" y="262" text-anchor="middle">Non-linear cancellation (0 noise amp!)</text>
+  <text class="note" x="785" y="278" text-anchor="middle">Critical path: 1 UI feedback!</text>
+
+  <polyline points="842,180 842,196 582,196 582,202" fill="none" stroke="#f59e0b" stroke-width="1.4" />
+  <polyline points="684,244 662,244" fill="none" stroke="#f59e0b" stroke-width="1.4" />
+
+  <!-- Bottom Summary Bar -->
+  <rect class="panel" x="20" y="318" width="880" height="66" />
+  <text class="mono" x="38" y="342" fill="#7dd3fc">Equalization Synergy:</text>
+  <text class="note" x="196" y="342">TX FFE handles pre-cursor ISI without RX noise | CTLE flattens mid-band channel loss | DFE cancels post-cursor ISI without noise amplification!</text>
+  <text class="mono" x="38" y="366" fill="#6ee7b7">Target BER:</text>
+  <text class="note" x="130" y="366">1e-12 to 1e-15 (Pre-FEC NRZ) or ~1e-4 to 1e-6 (Pre-FEC 112G PAM4 with KP4 RS-FEC).</text>
+</svg>

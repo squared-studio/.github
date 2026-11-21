@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 410" width="920" height="410">
+  <defs>
+    <style>
+      .bg { fill: #0f172a; }
+      .panel { fill: #1e293b; stroke: #334155; stroke-width: 1.5; rx: 10; ry: 10; }
+      .box { fill: #0f172a; stroke: #334155; stroke-width: 1.2; rx: 6; ry: 6; }
+      .title { font-family: 'Segoe UI', Arial, sans-serif; font-size: 18px; font-weight: 700; fill: #f8fafc; text-anchor: middle; }
+      .sub { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; fill: #94a3b8; text-anchor: middle; }
+      .hdr { font-family: 'Segoe UI', Arial, sans-serif; font-size: 13.5px; font-weight: 700; }
+      .mono { font-family: Consolas, 'Courier New', monospace; font-size: 10.5px; fill: #e2e8f0; }
+      .note { font-family: 'Segoe UI', Arial, sans-serif; font-size: 11px; fill: #cbd5e1; }
+      .grid { stroke: #334155; stroke-width: 0.7; stroke-dasharray: 3,3; }
+    </style>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="920" height="410" />
+  <text class="title" x="460" y="28">Bode Stability Analysis: Pole Splitting, RHP Zero Hazard, and Phase Margin</text>
+  <text class="sub" x="460" y="48">Loop Gain Magnitude |L(jw)|, Phase Response, and Nulling Resistor Rz Pole-Zero Compensation</text>
+
+  <!-- Left Panel: Magnitude + Phase Bode Plot -->
+  <rect class="panel" x="20" y="64" width="540" height="328" />
+  <text class="hdr" x="38" y="88" fill="#38bdf8">1. Open-Loop Loop-Gain Bode Plot L(s) = A(s) * beta</text>
+
+  <!-- Top Subplot: Magnitude (dB) -->
+  <rect class="box" x="36" y="100" width="508" height="134" />
+  <line class="grid" x1="80" y1="122" x2="526" y2="122" />
+  <line x1="80" y1="186" x2="526" y2="186" stroke="#f8fafc" stroke-width="1" stroke-dasharray="4,3" />
+  <line x1="80" y1="112" x2="80" y2="224" stroke="#64748b" stroke-width="1.3" />
+  <text class="mono" x="44" y="125" font-size="9.5">80dB</text>
+  <text class="mono" x="44" y="189" font-size="9.5" fill="#f8fafc">0 dB</text>
+
+  <!-- Mag curve: flat -> fp1 (-20dB/dec) -> UGF -> fp2 (-40dB/dec) -->
+  <polyline points="80,122 150,122 365,186 450,211 520,225" fill="none" stroke="#38bdf8" stroke-width="2.4" />
+  <circle cx="150" cy="122" r="3.5" fill="#34d399" />
+  <text class="mono" x="150" y="114" fill="#6ee7b7" text-anchor="middle" font-size="9.5">fp1</text>
+  <circle cx="365" cy="186" r="4" fill="#f59e0b" />
+  <text class="mono" x="365" y="176" fill="#fcd34d" text-anchor="middle">UGF (fu)</text>
+  <circle cx="450" cy="211" r="3.5" fill="#a78bfa" />
+  <text class="mono" x="456" y="203" fill="#c4b5fd" font-size="9.5">fp2</text>
+  <text class="mono" x="235" y="144" fill="#7dd3fc" font-size="10">-20 dB/dec (Dominant Pole)</text>
+  <!-- Phase-crossover reference vertical line -->
+  <line x1="365" y1="186" x2="365" y2="368" stroke="#f59e0b" stroke-width="1" stroke-dasharray="3,3" />
+  <line x1="485" y1="112" x2="485" y2="368" stroke="#f87171" stroke-width="1" stroke-dasharray="3,3" />
+
+  <!-- Bottom Subplot: Phase (deg) -->
+  <rect class="box" x="36" y="242" width="508" height="136" />
+  <line class="grid" x1="80" y1="264" x2="526" y2="264" />
+  <line class="grid" x1="80" y1="306" x2="526" y2="306" />
+  <line x1="80" y1="348" x2="526" y2="348" stroke="#f87171" stroke-width="1.1" stroke-dasharray="4,3" />
+  <line x1="80" y1="252" x2="80" y2="366" stroke="#64748b" stroke-width="1.3" />
+  <text class="mono" x="48" y="267" font-size="9.5">0°</text>
+  <text class="mono" x="42" y="309" font-size="9.5">-90°</text>
+  <text class="mono" x="38" y="351" font-size="9.5" fill="#fca5a5">-180°</text>
+
+  <!-- Phase compensated (LHP zero) -->
+  <path d="M 80 264 Q 150 266 190 306 L 340 306 Q 400 308 485 348 L 520 356" fill="none" stroke="#34d399" stroke-width="2.4" />
+  <!-- Phase uncompensated with RHP zero (drops faster!) -->
+  <path d="M 280 306 Q 350 322 415 358 L 520 368" fill="none" stroke="#f87171" stroke-width="2" stroke-dasharray="5,3" />
+
+  <!-- Phase Margin Arrow at UGF (x=365) -->
+  <line x1="365" y1="312" x2="365" y2="348" stroke="#34d399" stroke-width="2" />
+  <text class="mono" x="355" y="335" fill="#6ee7b7" text-anchor="end">PM &gt;= 60°</text>
+  <text class="mono" x="458" y="335" fill="#fca5a5" font-size="9.5">RHP Zero! (Bad)</text>
+  <text class="mono" x="492" y="220" fill="#fca5a5" font-size="9.5">GM</text>
+
+  <!-- Right Panel: Compensation & Stability Criteria -->
+  <rect class="panel" x="576" y="64" width="324" height="328" />
+  <text class="hdr" x="592" y="88" fill="#34d399">2. Stability Targets &amp; Fixes</text>
+
+  <rect class="box" x="590" y="102" width="296" height="90" stroke="#38bdf8" />
+  <text class="mono" x="602" y="122" fill="#7dd3fc">Phase &amp; Gain Margin Criteria</text>
+  <text class="note" x="602" y="142">- Target PM = 60° - 75° (critically damped)</text>
+  <text class="note" x="602" y="160">- PM &lt; 45° causes step ringing; PM &lt;= 0 oscillates</text>
+  <text class="note" x="602" y="178">- Keep Gain Margin (GM) &gt;= 10 dB across PVT</text>
+
+  <rect class="box" x="590" y="202" width="296" height="90" stroke="#f59e0b" />
+  <text class="mono" x="602" y="222" fill="#fcd34d">Fixing the Miller RHP Zero</text>
+  <text class="mono" x="602" y="241">fz = 1 / (2*pi*Cc*(1/gm6 - Rz))</text>
+  <text class="note" x="602" y="260">- Rz = 0: RHP zero at +gm6/(2*pi*Cc)</text>
+  <text class="note" x="602" y="278">- Rz = 1/gm6 + CL/(gm6*Cc): cancels p2!</text>
+
+  <rect class="box" x="590" y="302" width="296" height="76" stroke="#a78bfa" />
+  <text class="mono" x="602" y="322" fill="#c4b5fd">SPICE Stability (.stb) Check</text>
+  <text class="note" x="602" y="341">Use Middlebrook probe (`iprobe`) at loop</text>
+  <text class="note" x="602" y="359">break without altering DC operating point!</text>
+</svg>

@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 380" width="920" height="380">
+  <defs>
+    <style>
+      .bg { fill: #0f172a; }
+      .panel { fill: #1e293b; stroke-width: 1.5; rx: 10; ry: 10; }
+      .box { fill: #0f172a; stroke: #334155; stroke-width: 1.2; rx: 6; ry: 6; }
+      .ff { fill: #172554; stroke: #38bdf8; stroke-width: 1.6; rx: 6; ry: 6; }
+      .title { font-family: 'Segoe UI', Arial, sans-serif; font-size: 18px; font-weight: 700; fill: #f8fafc; text-anchor: middle; }
+      .subtitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; fill: #94a3b8; text-anchor: middle; }
+      .ptitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 14px; font-weight: 700; }
+      .mono { font-family: Consolas, 'Courier New', monospace; font-size: 10.6px; fill: #e2e8f0; }
+      .note { font-family: 'Segoe UI', Arial, sans-serif; font-size: 10.3px; fill: #94a3b8; }
+      .badge { font-family: Consolas, 'Courier New', monospace; font-size: 11px; font-weight: 700; text-anchor: middle; }
+    </style>
+    <marker id="arrSky" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#38bdf8" />
+    </marker>
+    <marker id="arrGreen" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#34d399" />
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="920" height="380" />
+  <text class="title" x="460" y="28">Selective CDC Synchronizer Notifier Masking (`tfile` Configuration)</text>
+  <text class="subtitle" x="460" y="48">Suppressing False X-Injection Strictly on Stage-1 Sync Cells While Keeping All Other Timing Checks Active</text>
+
+  <!-- Schematic Banner -->
+  <rect class="panel" x="20" y="64" width="880" height="148" stroke="#34d399" />
+  <text class="ptitle" x="36" y="88" fill="#34d399">Precision Instance Masking Across a 2-FF CDC Synchronizer</text>
+
+  <rect class="ff" x="44" y="108" width="142" height="58" stroke="#f59e0b" />
+  <text class="badge" x="115" y="130" fill="#fcd34d">FF_LAUNCH</text>
+  <text class="note" x="115" y="148" text-anchor="middle">src_clk (Active TCHK)</text>
+
+  <line x1="186" y1="137" x2="296" y2="137" stroke="#f87171" stroke-width="2" marker-end="url(#arrSky)" />
+  <text class="mono" x="241" y="126" text-anchor="middle" fill="#fca5a5">Async Crossing</text>
+
+  <!-- FF_SYNC_1 with Notifier Disabled -->
+  <rect class="ff" x="300" y="102" width="214" height="72" stroke="#f59e0b" />
+  <text class="badge" x="407" y="122" fill="#fcd34d">FF_SYNC_1 (`sync_pipe_reg[0]`)</text>
+  <text class="mono" x="407" y="141" text-anchor="middle" fill="#6ee7b7">NO_NOTIFIER via tfile!</text>
+  <text class="note" x="407" y="158" text-anchor="middle">Resolves clean 0/1 instead of 'X'</text>
+
+  <line x1="514" y1="137" x2="588" y2="137" stroke="#34d399" stroke-width="2" marker-end="url(#arrGreen)" />
+
+  <!-- FF_SYNC_2 Timing Check Enabled -->
+  <rect class="ff" x="592" y="108" width="286" height="58" stroke="#34d399" />
+  <text class="badge" x="735" y="130" fill="#6ee7b7">FF_SYNC_2 (`sync_pipe_reg[1]`)</text>
+  <text class="note" x="735" y="148" text-anchor="middle">Timing Checks ENABLED! (Verifies t_met margin!)</text>
+
+  <text class="note" x="36" y="196" fill="#6ee7b7">Crucial Distinction: Never disable timing on FF_SYNC_2! If routing delay between FF1 and FF2 exceeds T_dst, FF2 MUST still report setup error!</text>
+
+  <!-- Bottom Code Comparison -->
+  <rect class="panel" x="20" y="226" width="430" height="140" stroke="#38bdf8" />
+  <text class="ptitle" x="36" y="250" fill="#38bdf8">Simulator Specific Masking (`tfile` / Tcl)</text>
+  <rect class="box" x="36" y="262" width="398" height="90" />
+  <text class="mono" x="48" y="281" fill="#7dd3fc">// VCS Timing File (+optconfigfile+cdc.tfile):</text>
+  <text class="mono" x="48" y="299">instance {tb.dut.*.u_bit_sync.sync_pipe_q_reg[0]}</text>
+  <text class="mono" x="48" y="315">  { noTiming; }</text>
+  <text class="mono" x="48" y="335" fill="#fcd34d">// Xcelium (-tfile cdc.tfile):</text>
+  <text class="mono" x="48" y="349">PATH tb.dut.*.u_bit_sync.sync_pipe_q_reg[0] -tcheck</text>
+
+  <rect class="panel" x="470" y="226" width="430" height="140" stroke="#f87171" />
+  <text class="ptitle" x="486" y="250" fill="#f87171">Automated Sync List Generation + Pitfall</text>
+  <text class="note" x="486" y="272">- Generate `cdc.tfile` automatically from your Static CDC sign-off</text>
+  <text class="note" x="486" y="288">  database (VC SpyGlass / Questa exports verified Stage-1 list!).</text>
+  <text class="note" x="486" y="310" fill="#fca5a5">- Pitfall: Never pass global `+notimingchecks` or `+no_notifier`</text>
+  <text class="note" x="486" y="326" fill="#fca5a5">  chip-wide—it disables 100% of setup/hold detection everywhere!</text>
+  <text class="note" x="486" y="346" fill="#6ee7b7">- Also force `+0/+1` random delay on Stage-1 if modeling jitter!</text>
+</svg>

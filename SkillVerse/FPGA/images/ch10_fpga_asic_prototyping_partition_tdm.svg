@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 400" width="920" height="400">
+  <defs>
+    <style>
+      .bg { fill: #0f172a; }
+      .panel { fill: #1e293b; stroke: #334155; stroke-width: 1.5; rx: 10; ry: 10; }
+      .box { fill: #0f172a; stroke: #334155; stroke-width: 1.2; rx: 6; ry: 6; }
+      .title { font-family: 'Segoe UI', Arial, sans-serif; font-size: 18px; font-weight: 700; fill: #f8fafc; text-anchor: middle; }
+      .sub { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; fill: #94a3b8; text-anchor: middle; }
+      .hdr { font-family: 'Segoe UI', Arial, sans-serif; font-size: 13.5px; font-weight: 700; }
+      .mono { font-family: Consolas, 'Courier New', monospace; font-size: 10.5px; fill: #e2e8f0; }
+      .note { font-family: 'Segoe UI', Arial, sans-serif; font-size: 11px; fill: #cbd5e1; }
+    </style>
+    <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8" />
+    </marker>
+    <marker id="arr-a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#f59e0b" />
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="920" height="400" />
+  <text class="title" x="460" y="28">Multi-FPGA ASIC Prototyping Platform &amp; High-Speed TDM Pin Multiplexing</text>
+  <text class="sub" x="460" y="48">Partitioning Massive Billion-Gate SoCs Across Quad FPGAs with LVDS/SerDes TDM Compression Ratios</text>
+
+  <!-- Left: 4-FPGA Partitioned Board -->
+  <rect class="panel" x="20" y="64" width="480" height="318" stroke="#38bdf8" />
+  <text class="hdr" x="38" y="88" fill="#38bdf8">1. Quad-FPGA Prototyping Board Topology</text>
+
+  <!-- FPGA 0 (CPU Cluster) -->
+  <rect class="box" x="38" y="106" width="186" height="92" stroke="#38bdf8" />
+  <text class="mono" x="131" y="128" fill="#7dd3fc" text-anchor="middle" font-weight="bold">FPGA 0: CPU Cluster</text>
+  <text class="note" x="131" y="148" text-anchor="middle">RISC-V / ARM Cores + L2</text>
+  <text class="mono" x="131" y="168" fill="#fcd34d" text-anchor="middle">8:1 LVDS TDM TX/RX</text>
+  <text class="note" x="131" y="186" text-anchor="middle">12,000 ASIC nets -&gt; 1500 pins</text>
+
+  <!-- FPGA 1 (NoC & DDR) -->
+  <rect class="box" x="296" y="106" width="186" height="92" stroke="#34d399" />
+  <text class="mono" x="389" y="128" fill="#6ee7b7" text-anchor="middle" font-weight="bold">FPGA 1: Coherent NoC</text>
+  <text class="note" x="389" y="148" text-anchor="middle">CHI / AXI Interconnect</text>
+  <text class="mono" x="389" y="168" fill="#6ee7b7" text-anchor="middle">+ External DDR5 DIMM</text>
+  <text class="note" x="389" y="186" text-anchor="middle">Sync Global System Clk</text>
+
+  <!-- FPGA 2 (AI NPU Tiles) -->
+  <rect class="box" x="38" y="232" width="186" height="92" stroke="#a78bfa" />
+  <text class="mono" x="131" y="254" fill="#c4b5fd" text-anchor="middle" font-weight="bold">FPGA 2: AI NPU Tiles</text>
+  <text class="note" x="131" y="274" text-anchor="middle">MAC Systolic Arrays</text>
+  <text class="note" x="131" y="292" text-anchor="middle">(BRAM + DSP48 Heavy)</text>
+
+  <!-- FPGA 3 (PCIe / USB Periph) -->
+  <rect class="box" x="296" y="232" width="186" height="92" stroke="#f59e0b" />
+  <text class="mono" x="389" y="254" fill="#fcd34d" text-anchor="middle" font-weight="bold">FPGA 3: High-Speed IO</text>
+  <text class="note" x="389" y="274" text-anchor="middle">PCIe Root/EP + GbE + UART</text>
+  <text class="note" x="389" y="292" text-anchor="middle">Real-World Cable Loopback</text>
+
+  <!-- TDM Mesh Links -->
+  <line x1="224" y1="152" x2="294" y2="152" stroke="#f59e0b" stroke-width="2.4" marker-end="url(#arr-a)" marker-start="url(#arr)" />
+  <text class="mono" x="260" y="142" fill="#fcd34d" text-anchor="middle" font-size="9">8:1 TDM</text>
+  <line x1="131" y1="198" x2="131" y2="230" stroke="#38bdf8" stroke-width="2.2" marker-end="url(#arr)" />
+  <line x1="389" y1="198" x2="389" y2="230" stroke="#38bdf8" stroke-width="2.2" marker-end="url(#arr)" />
+  <line x1="224" y1="278" x2="294" y2="278" stroke="#f59e0b" stroke-width="2.4" marker-end="url(#arr-a)" marker-start="url(#arr)" />
+
+  <rect class="box" x="38" y="334" width="444" height="36" />
+  <text class="mono" x="260" y="356" fill="#6ee7b7" text-anchor="middle">Runs Linux + Firmware Boot @ 20-80 MHz (1,000,000x faster than RTL sim!)</text>
+
+  <!-- Right Panel: How TDM Affects System Frequency -->
+  <rect class="panel" x="516" y="64" width="384" height="318" stroke="#f59e0b" />
+  <text class="hdr" x="534" y="88" fill="#f59e0b">2. TDM Serialization vs. System Clock Speed</text>
+
+  <rect class="box" x="530" y="104" width="356" height="142" stroke="#f59e0b" />
+  <text class="mono" x="542" y="124" fill="#fcd34d">Pin Bottleneck Math (TDM Factor K):</text>
+  <text class="mono" x="542" y="144" fill="#e2e8f0">8,000 cut nets / 1,000 phys LVDS pins -&gt; K = 8x</text>
+  <text class="note" x="542" y="164">Inside 1 SoC Clock Cycle (T_sys):</text>
+  <text class="note" x="542" y="182">- Must serialize all 8 bits across PCB at 800 MHz</text>
+  <text class="note" x="542" y="198">  (10 ns) + PCB trace flight time (~2 ns) + RX hold!</text>
+  <text class="mono" x="542" y="218" fill="#fca5a5">- Max SoC Freq F_sys &lt;= F_TDM / (K + margin) ~ 40 MHz!</text>
+
+  <rect class="box" x="530" y="256" width="356" height="114" stroke="#34d399" />
+  <text class="mono" x="542" y="276" fill="#6ee7b7">Partitioning Gold Rules (HAPS / ProtoCompiler):</text>
+  <text class="note" x="542" y="296">1. NEVER cut inside combinational loops across FPGAs!</text>
+  <text class="note" x="542" y="314">2. Cut ONLY cleanly along registered module outputs.</text>
+  <text class="note" x="542" y="332">3. Zero-cycle async buses -&gt; lower TDM speed; pipeline!</text>
+  <text class="note" x="542" y="350">4. Keep global system clock skew board-matched &lt; 100 ps.</text>
+</svg>

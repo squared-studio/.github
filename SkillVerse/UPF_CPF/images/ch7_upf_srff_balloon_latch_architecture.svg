@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 400" width="920" height="400">
+  <defs>
+    <style>
+      .bg { fill: #0f172a; }
+      .panel { fill: #1e293b; stroke-width: 1.5; rx: 10; ry: 10; }
+      .box { fill: #0f172a; stroke: #334155; stroke-width: 1.2; rx: 6; ry: 6; }
+      .latch { fill: #172554; stroke: #a78bfa; stroke-width: 1.8; rx: 8; ry: 8; }
+      .title { font-family: 'Segoe UI', Arial, sans-serif; font-size: 18px; font-weight: 700; fill: #f8fafc; text-anchor: middle; }
+      .subtitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; fill: #94a3b8; text-anchor: middle; }
+      .ptitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 14px; font-weight: 700; }
+      .mono { font-family: Consolas, 'Courier New', monospace; font-size: 10.8px; fill: #e2e8f0; }
+      .note { font-family: 'Segoe UI', Arial, sans-serif; font-size: 10.5px; fill: #94a3b8; }
+      .badge { font-family: Consolas, 'Courier New', monospace; font-size: 11px; font-weight: 700; text-anchor: middle; }
+    </style>
+    <marker id="arrSky" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#38bdf8" />
+    </marker>
+    <marker id="arrViolet" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#a78bfa" />
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="920" height="400" />
+  <text class="title" x="460" y="28">State Retention Flip-Flop (SRFF) Balloon Architecture &amp; Zero-Pin Retention</text>
+  <text class="subtitle" x="460" y="48">Preserving Architectural State Across Domain Power-Off Using Dual-Rail Always-On High-V_th Shadow Latches</text>
+
+  <!-- Left Panel: Balloon SRFF Internal Structure -->
+  <rect class="panel" x="20" y="64" width="510" height="316" stroke="#a78bfa" />
+  <text class="ptitle" x="36" y="88" fill="#a78bfa">Balloon-Latch State Retention Flip-Flop (Dual-Rail)</text>
+
+  <!-- Switchable section -->
+  <rect class="box" x="36" y="102" width="478" height="96" stroke="#f87171" />
+  <text class="mono" x="48" y="121" fill="#fca5a5">Primary Datapath (Switchable Rail VDD_SW - Powered OFF in Sleep)</text>
+
+  <rect class="latch" x="62" y="134" width="142" height="50" stroke="#38bdf8" />
+  <text class="badge" x="133" y="154" fill="#7dd3fc">Master Latch</text>
+  <text class="note" x="133" y="172" text-anchor="middle">High-speed SVT/LVT</text>
+
+  <line x1="204" y1="159" x2="254" y2="159" stroke="#38bdf8" stroke-width="1.8" marker-end="url(#arrSky)" />
+
+  <rect class="latch" x="258" y="134" width="142" height="50" stroke="#38bdf8" />
+  <text class="badge" x="329" y="154" fill="#7dd3fc">Slave Latch</text>
+  <text class="note" x="329" y="172" text-anchor="middle">Drives Q while Active</text>
+
+  <line x1="400" y1="159" x2="486" y2="159" stroke="#38bdf8" stroke-width="1.8" marker-end="url(#arrSky)" />
+  <text class="mono" x="462" y="149" fill="#7dd3fc">Q</text>
+
+  <!-- Bidirectional Save / Restore arrows -->
+  <line x1="306" y1="184" x2="306" y2="236" stroke="#a78bfa" stroke-width="2" marker-end="url(#arrViolet)" />
+  <text class="mono" x="254" y="218" fill="#c4b5fd">SAVE=1</text>
+
+  <line x1="354" y1="236" x2="354" y2="184" stroke="#34d399" stroke-width="2" marker-end="url(#arrSky)" />
+  <text class="mono" x="364" y="218" fill="#6ee7b7">RESTORE=1</text>
+
+  <!-- Always-On Balloon Latch section -->
+  <rect class="box" x="36" y="240" width="478" height="126" stroke="#34d399" />
+  <text class="mono" x="48" y="259" fill="#6ee7b7">Shadow / Balloon Latch (Always-On Rail VDD_AON - Ultra-Low Leakage)</text>
+
+  <rect class="latch" x="208" y="272" width="242" height="56" stroke="#a78bfa" />
+  <text class="badge" x="329" y="294" fill="#c4b5fd">High-V_th Balloon Latch</text>
+  <text class="note" x="329" y="313" text-anchor="middle">Retains bit when VDD_SW = 0V</text>
+
+  <rect class="box" x="48" y="272" width="144" height="56" />
+  <text class="mono" x="58" y="292" fill="#fcd34d">CLK Rule:</text>
+  <text class="note" x="58" y="308">CLK must be gated</text>
+  <text class="note" x="58" y="322">stable before SAVE!</text>
+
+  <text class="note" x="48" y="352">Overhead vs. regular FF: ~20% extra area; zero critical-path D-to-Q penalty.</text>
+
+  <!-- Right Panel: Zero-Pin vs Control Retention Comparison -->
+  <rect class="panel" x="548" y="64" width="352" height="316" stroke="#38bdf8" />
+  <text class="ptitle" x="564" y="88" fill="#38bdf8">Retention Flavors &amp; UPF Strategy</text>
+
+  <rect class="box" x="564" y="102" width="320" height="92" />
+  <text class="mono" x="576" y="122" fill="#7dd3fc">1. Explicit SAVE / RESTORE SRFF</text>
+  <text class="note" x="576" y="140">Uses dedicated SAVE &amp; RESTORE pins driven</text>
+  <text class="note" x="576" y="156">by PMC. Explicit control prevents glitches</text>
+  <text class="note" x="576" y="172">and works seamlessly in fast standby cycles.</text>
+
+  <rect class="box" x="564" y="204" width="320" height="82" stroke="#f59e0b" />
+  <text class="mono" x="576" y="224" fill="#fcd34d">2. Zero-Pin (Self-Contained) Retention</text>
+  <text class="note" x="576" y="242">No SAVE/RESTORE pins; detects local</text>
+  <text class="note" x="576" y="258">VDD_SW drop &amp; keeps slave latch powered by</text>
+  <text class="note" x="576" y="274">VDD_AON via -no_save / -no_restore.</text>
+
+  <rect class="box" x="564" y="296" width="320" height="70" />
+  <text class="mono" x="576" y="314" fill="#6ee7b7">set_retention RET_CPU -domain PD_CPU \</text>
+  <text class="mono" x="576" y="331">  -retention_supply_set SS_AON \</text>
+  <text class="mono" x="576" y="348">  -save_signal {save_en high} ...</text>
+</svg>

@@ -1,0 +1,1507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="SkillVerse by Squared Studio - a structured, open-source knowledge base covering RTL Design, SystemVerilog, UVM, Formal Verification, DFT, AMBA protocols, RISC-V, and tooling." />
+  <meta property="og:title" content="SkillVerse - Squared Studio Open-Source Learning Hub" />
+  <meta property="og:description" content="28 structured courses and 272 chapters on RTL Design, SystemVerilog, UVM, AXI/ACE/CHI, Formal Verification, DFT, and engineering toolchains." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://squared-studio.cc/SkillVerse/" />
+  <meta property="og:image" content="https://squared-studio.cc/SkillVerse/logo.png" />
+  <meta name="twitter:card" content="summary" />
+  <title>SkillVerse — Squared Studio</title>
+  <link rel="icon" type="image/png" href="logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;family=Roboto+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet" />
+  <link id="hljs-theme" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/github-dark.min.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/languages/verilog.min.js"></script>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      color-scheme:dark;
+      --bg:#080808;--surface:#0f0f0f;--card:#111418;--border:#1e2d4a;
+      --text:#cdd9f0;--muted:#7890b2;--accent1:#00ccff;--accent2:#00ffcc;
+      --accent1-soft:rgba(0,204,255,.08);--accent1-border:rgba(0,204,255,.25);
+      --accent2-soft:rgba(0,255,204,.07);--accent2-border:rgba(0,255,204,.25);
+      --nav-bg:rgba(8,12,24,.88);
+      --hero-bg:linear-gradient(135deg,rgba(17,20,24,.95) 0%,rgba(12,18,28,.9) 100%);
+      --hero-heading-start:#ffffff;
+      --table-stripe:rgba(255,255,255,.02);
+      --modal-backdrop:rgba(4,6,10,.78);
+      --font-body:"Inter",sans-serif;--font-mono:"Consolas","Roboto Mono","SFMono-Regular","Menlo","Liberation Mono",monospace;
+    }
+    [data-theme="light"]{
+      color-scheme:light;
+      --bg:#f8fafc;--surface:#f1f5f9;--card:#ffffff;--border:#cbd5e1;
+      --text:#0f172a;--muted:#475569;--accent1:#0284c7;--accent2:#0d9488;
+      --accent1-soft:rgba(2,132,199,.08);--accent1-border:rgba(2,132,199,.28);
+      --accent2-soft:rgba(13,148,136,.08);--accent2-border:rgba(13,148,136,.28);
+      --nav-bg:rgba(248,250,252,.9);
+      --hero-bg:linear-gradient(135deg,rgba(255,255,255,.98) 0%,rgba(241,245,249,.95) 100%);
+      --hero-heading-start:#0f172a;
+      --table-stripe:rgba(15,23,42,.03);
+      --modal-backdrop:rgba(15,23,42,.45);
+    }
+    [data-theme="reading"]{
+      color-scheme:light;
+      --bg:#f4ecd8;--surface:#ebe0c5;--card:#faf4e6;--border:#d6c5a3;
+      --text:#2c2216;--muted:#6e5a44;--accent1:#9a4b16;--accent2:#1e6091;
+      --accent1-soft:rgba(154,75,22,.1);--accent1-border:rgba(154,75,22,.28);
+      --accent2-soft:rgba(30,96,145,.09);--accent2-border:rgba(30,96,145,.28);
+      --nav-bg:rgba(244,236,216,.92);
+      --hero-bg:linear-gradient(135deg,rgba(250,244,230,.98) 0%,rgba(235,224,197,.95) 100%);
+      --hero-heading-start:#2c2216;
+      --table-stripe:rgba(44,34,22,.035);
+      --modal-backdrop:rgba(44,34,22,.5);
+    }
+    html{scroll-behavior:smooth}
+    body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:16px;line-height:1.7;min-height:100vh}
+    body::before{content:"";position:fixed;inset:0;background:radial-gradient(ellipse 60% 40% at 15% 10%,var(--accent1-soft) 0%,transparent 70%),radial-gradient(ellipse 50% 35% at 85% 85%,var(--accent2-soft) 0%,transparent 70%);pointer-events:none;z-index:0}
+    [data-theme="reading"] body::before{opacity:0}
+    a:focus-visible,button:focus-visible,summary:focus-visible,input:focus-visible{outline:2px solid var(--accent1);outline-offset:2px}
+    .shell{position:relative;z-index:1;display:flex;flex-direction:column;min-height:100vh}
+
+    /* ── NAV ── */
+    nav{display:flex;align-items:center;gap:12px;min-height:61px;padding:12px 28px;border-bottom:1px solid var(--border);background:var(--nav-bg);backdrop-filter:blur(12px);position:sticky;top:0;z-index:100;flex-wrap:wrap}
+    .nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;flex-shrink:0}
+    .nav-icon{width:32px;height:32px;border-radius:8px;object-fit:contain;flex-shrink:0}
+    .nav-shell{display:flex;align-items:center;gap:8px;flex:1;min-width:0;flex-wrap:wrap}
+    .nav-title{font-size:1.08rem;font-weight:700;letter-spacing:-.01em;background:linear-gradient(90deg,var(--accent1),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-decoration:none}
+    .nav-bc{display:flex;align-items:center;gap:6px;font-size:.78rem;color:var(--muted);min-width:0;flex-wrap:wrap}
+    .nav-bc .sep{opacity:.5}
+    .nav-bc .crumb{color:var(--accent2);font-family:var(--font-mono);font-size:.72rem}
+    .nav-bc a.bc-link{color:var(--accent1);text-decoration:underline;text-underline-offset:2px}
+    .nav-bc a.bc-link:hover{color:var(--accent2)}
+    .nav-toggle{display:none;align-items:center;justify-content:center;flex-direction:column;gap:4px;width:40px;height:40px;margin-left:auto;border:1px solid var(--border);border-radius:10px;background:var(--surface);color:var(--text);cursor:pointer;transition:border-color .15s,background .15s;flex-shrink:0}
+    .nav-toggle:hover{border-color:var(--accent1);background:var(--accent1-soft)}
+    .nav-toggle-bar{display:block;width:18px;height:2px;border-radius:999px;background:currentColor;transition:transform .2s,opacity .2s}
+    .nav-utils{display:flex;align-items:center;gap:10px;margin-left:auto;flex-shrink:0}
+    .nav-search-btn{display:inline-flex;align-items:center;gap:8px;padding:6px 12px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--muted);font-family:var(--font-body);font-size:.8rem;cursor:pointer;transition:border-color .15s,color .15s,background .15s}
+    .nav-search-btn:hover{border-color:var(--accent1);color:var(--text);background:var(--accent1-soft)}
+    .nav-search-btn kbd{font-family:var(--font-mono);font-size:.66rem;padding:1px 5px;border-radius:4px;border:1px solid var(--border);background:var(--card);color:var(--muted)}
+    .nav-theme-btn{display:inline-flex;align-items:center;gap:6px;padding:6px 11px;border-radius:8px;border:1px solid var(--border);background:var(--accent1-soft);color:var(--text);font-family:var(--font-body);font-size:.8rem;font-weight:500;cursor:pointer;transition:border-color .15s,color .15s,background .15s;white-space:nowrap}
+    .nav-theme-btn:hover{border-color:var(--accent1);color:var(--accent1)}
+    .nav-theme-btn .theme-icon{font-size:.88rem;line-height:1}
+    .nav-site-link{font-size:.8rem;font-weight:500;color:var(--muted);text-decoration:none;padding:6px 10px;border-radius:6px;transition:color .15s,background .15s;white-space:nowrap}
+    .nav-site-link:hover{color:var(--accent1);background:var(--accent1-soft)}
+    .nav-drawer{display:none}
+    .nav-drawer-home{display:flex;align-items:center;justify-content:space-between;padding:9px 12px;border-radius:10px;border:1px solid var(--border);background:var(--surface);color:var(--text);text-decoration:none;font-size:.86rem;font-weight:600;transition:border-color .15s,background .15s,color .15s}
+    .nav-drawer-home:hover,.nav-drawer-home.active{border-color:var(--accent1);background:var(--accent1-soft);color:var(--accent1)}
+    .nav-cat-group{display:flex;flex-direction:column;gap:6px}
+    .nav-cat-title{font-family:var(--font-mono);font-size:.66rem;letter-spacing:.12em;text-transform:uppercase;color:var(--accent2);padding:2px 2px 0}
+    .nav-course{border:1px solid var(--border);border-radius:10px;background:var(--surface);overflow:hidden}
+    .nav-course.active{border-color:var(--accent1-border)}
+    .nav-course>summary{list-style:none;display:flex;align-items:center;gap:8px;padding:9px 12px;cursor:pointer;font-size:.85rem;font-weight:600;color:var(--text);user-select:none}
+    .nav-course>summary::-webkit-details-marker{display:none}
+    .nav-course.active>summary{color:var(--accent1);background:var(--accent1-soft)}
+    .nav-course-name{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .nav-course-count{font-family:var(--font-mono);font-size:.66rem;padding:2px 7px;border-radius:999px;background:var(--accent1-soft);color:var(--accent1);border:1px solid var(--accent1-border);white-space:nowrap;flex-shrink:0}
+    .nav-course>summary::after{content:"\25B8";font-size:.72rem;color:var(--muted);transition:transform .15s;flex-shrink:0}
+    .nav-course[open]>summary::after{transform:rotate(90deg);color:var(--accent1)}
+    .nav-chap-list{display:flex;flex-direction:column;gap:2px;padding:6px 8px 8px;border-top:1px solid var(--border);background:var(--card)}
+    .nav-chap-link{display:block;padding:7px 10px;border-radius:6px;font-size:.8rem;color:var(--muted);text-decoration:none;transition:background .15s,color .15s}
+    .nav-chap-link:hover{background:var(--accent1-soft);color:var(--text)}
+    .nav-chap-link.active{background:var(--accent1-soft);color:var(--accent1);font-weight:600}
+    .nav-chap-status{padding:6px 10px;font-size:.76rem;color:var(--muted)}
+
+    main{flex:1;max-width:920px;width:100%;margin:0 auto;padding:44px 28px 80px}
+    .state{text-align:center;padding:80px 0;color:var(--muted)}
+    .state .c{font-family:var(--font-mono);color:var(--accent1)}
+
+    /* ── HOME CATALOG DASHBOARD ── */
+    .catalog-hero{margin-bottom:32px;padding:28px;border:1px solid var(--border);border-radius:16px;background:var(--hero-bg);position:relative;overflow:hidden}
+    .catalog-hero::before{content:"";position:absolute;inset:0;background:radial-gradient(ellipse 65% 75% at 100% 0%,var(--accent1-soft),transparent 65%);pointer-events:none}
+    .catalog-eyebrow{font-family:var(--font-mono);font-size:.7rem;letter-spacing:.16em;text-transform:uppercase;color:var(--accent2);margin-bottom:8px}
+    .catalog-hero h1{font-size:clamp(1.85rem,4vw,2.5rem);font-weight:800;letter-spacing:-.025em;line-height:1.15;background:linear-gradient(135deg,var(--hero-heading-start) 0%,var(--accent1) 55%,var(--accent2) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:10px}
+    .catalog-sub{color:var(--muted);font-size:.94rem;max-width:640px;margin-bottom:18px}
+    .catalog-controls{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
+    .catalog-stats{display:flex;gap:10px;flex-wrap:wrap}
+    .stat-pill{font-family:var(--font-mono);font-size:.72rem;padding:4px 11px;border-radius:999px;border:1px solid var(--accent1-border);background:var(--accent1-soft);color:var(--accent1)}
+    .stat-pill.g{border-color:var(--accent2-border);background:var(--accent2-soft);color:var(--accent2)}
+    .catalog-filter{flex:1;min-width:220px;max-width:320px;padding:8px 13px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text);font-family:var(--font-body);font-size:.86rem}
+    .catalog-filter::placeholder{color:var(--muted)}
+    .catalog-group{margin-bottom:34px}
+    .catalog-group-title{font-family:var(--font-mono);font-size:.75rem;letter-spacing:.14em;text-transform:uppercase;color:var(--accent2);margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+    .catalog-group-count{color:var(--muted);font-size:.7rem}
+    .course-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
+    .course-card{display:flex;flex-direction:column;gap:8px;padding:18px 20px;border:1px solid var(--border);border-radius:12px;background:var(--card);text-decoration:none;color:inherit;transition:border-color .18s,transform .18s,box-shadow .18s}
+    .course-card:hover{border-color:var(--accent1-border);transform:translateY(-2px);box-shadow:0 8px 28px var(--accent1-soft)}
+    .course-card-top{display:flex;align-items:center;justify-content:space-between;gap:8px}
+    .course-title{font-size:1rem;font-weight:700;color:var(--text)}
+    .course-count{font-family:var(--font-mono);font-size:.68rem;padding:2px 8px;border-radius:999px;background:var(--accent1-soft);color:var(--accent1);border:1px solid var(--accent1-border);white-space:nowrap}
+    .course-desc{font-size:.81rem;color:var(--muted);line-height:1.55}
+    .catalog-empty{text-align:center;padding:42px 20px;border:1px dashed var(--border);border-radius:12px;color:var(--muted);font-size:.9rem}
+
+    /* ── MARKDOWN BODY ── */
+    .md h1{font-size:clamp(1.7rem,4vw,2.4rem);font-weight:700;letter-spacing:-.02em;margin-bottom:24px;background:linear-gradient(90deg,var(--accent1),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.2}
+    .md h2{font-size:1.2rem;font-weight:600;color:var(--accent1);margin:36px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--border);scroll-margin-top:80px}
+    .md h3{font-size:1rem;font-weight:600;color:var(--accent2);margin:22px 0 6px;scroll-margin-top:80px}
+    .md h4,.md h5,.md h6{font-size:.8rem;font-weight:500;color:var(--muted);margin:14px 0 4px;letter-spacing:.04em;text-transform:uppercase;border:none}
+    .md p{margin-bottom:14px}
+    .md a{color:var(--accent1);text-decoration:none;border-bottom:1px solid var(--accent1-border);transition:color .15s,border-color .15s}
+    .md a:hover{color:var(--accent2);border-bottom-color:var(--accent2)}
+    .md>ul{list-style:disc;padding-left:24px;margin:8px 0 20px}
+    .md>ul>li{margin-bottom:6px;font-size:.95rem;color:var(--text)}
+    .md>ul>li>h3{margin:0;font-size:.95rem;font-weight:600;color:var(--accent2);text-transform:none;letter-spacing:normal;border:none;display:inline}
+    .md ul ul,.md ol{list-style:disc;padding-left:22px;margin-bottom:10px}
+    .md ol{list-style:decimal}
+    .md ul ul li,.md ol li{margin-bottom:3px;font-size:.9rem;color:var(--text)}
+    .md ul ul li a,.md ol li a{display:inline;padding:0;font-weight:400;color:var(--accent1);border-bottom:1px solid var(--accent1-border)}
+    .md code,.md pre,.md pre code,kbd{font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+    .md code{font-family:var(--font-mono);font-size:.85em;background:var(--accent1-soft);color:var(--accent2);padding:2px 6px;border-radius:4px}
+    .md pre{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px;overflow-x:auto;margin:18px 0}
+    .md pre code{background:none;padding:0;color:inherit;font-size:.83rem}
+    .md pre code.hljs{background:transparent;padding:0}
+    .md blockquote{border-left:3px solid var(--accent1);padding:10px 18px;margin:18px 0;background:var(--accent1-soft);border-radius:0 8px 8px 0;color:var(--muted);font-style:italic}
+    .md hr{border:none;height:1px;background:linear-gradient(90deg,transparent,var(--border),transparent);margin:28px 0}
+    .md table{width:100%;border-collapse:collapse;margin:18px 0;font-size:.86rem}
+    .md th{text-align:left;padding:9px 13px;background:var(--surface);color:var(--accent1);border:1px solid var(--border);font-weight:600}
+    .md td{padding:8px 13px;border:1px solid var(--border);color:var(--text)}
+    .md tr:nth-child(even) td{background:var(--table-stripe)}
+    .md img{max-width:100%;height:auto;display:block;margin:16px auto;border-radius:8px;border:1px solid var(--border)}
+    [data-theme="light"] .md img{filter:invert(1)}
+    [data-theme="reading"] .md img{filter:invert(1) sepia(.12) brightness(.98)}
+    .code-wrap{position:relative}
+    .copy-btn{position:absolute;top:10px;right:10px;background:var(--accent1-soft);color:var(--accent1);border:1px solid var(--accent1-border);border-radius:6px;padding:4px 10px;font-family:var(--font-mono);font-size:.72rem;cursor:pointer;opacity:0;transition:opacity .15s,background .15s,color .15s;line-height:1.6}
+    .code-wrap:hover .copy-btn,.copy-btn:focus-visible{opacity:1}
+    .copy-btn:hover{background:var(--accent1-border)}
+    .copy-btn.copied{color:var(--accent2);border-color:var(--accent2-border);background:var(--accent2-soft)}
+
+    /* ── CHAPTER TOC & PREV/NEXT NAV ── */
+    .toc-box{margin:0 0 28px;border:1px solid var(--border);border-radius:12px;background:var(--card);padding:14px 18px}
+    .toc-box summary{cursor:pointer;font-family:var(--font-mono);font-size:.76rem;letter-spacing:.08em;text-transform:uppercase;color:var(--accent2);font-weight:600;user-select:none}
+    .toc-list{margin:12px 0 0 18px;display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:6px 18px;list-style:decimal}
+    .toc-list li{font-size:.84rem;color:var(--muted)}
+    .toc-list a{color:var(--text);text-decoration:none;border-bottom:1px solid transparent}
+    .toc-list a:hover{color:var(--accent1);border-bottom-color:var(--accent1)}
+
+    .chapter-nav{display:grid;grid-template-columns:1fr auto 1fr;gap:12px;margin-top:44px;padding-top:24px;border-top:1px solid var(--border);align-items:stretch}
+    .chap-btn{display:flex;flex-direction:column;justify-content:center;gap:3px;padding:12px 16px;border-radius:10px;border:1px solid var(--border);background:var(--card);color:var(--text);text-decoration:none;transition:border-color .15s,background .15s}
+    .chap-btn:hover{border-color:var(--accent1);background:var(--accent1-soft);color:var(--text)}
+    .chap-btn.next{text-align:right;align-items:flex-end}
+    .chap-btn.index{text-align:center;align-items:center;font-family:var(--font-mono);font-size:.76rem;color:var(--accent1)}
+    .chap-btn.disabled{opacity:.38;pointer-events:none}
+    .chap-dir{font-family:var(--font-mono);font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;color:var(--accent2)}
+    .chap-name{font-size:.85rem;font-weight:600;color:var(--text)}
+
+    /* ── SEARCH MODAL ── */
+    .search-modal{position:fixed;inset:0;z-index:200;background:var(--modal-backdrop);backdrop-filter:blur(6px);display:none;align-items:flex-start;justify-content:center;padding:72px 18px 24px}
+    .search-modal.open{display:flex}
+    .search-panel{width:100%;max-width:660px;background:var(--card);border:1px solid var(--border);border-radius:14px;box-shadow:0 24px 64px rgba(0,0,0,.4);overflow:hidden;display:flex;flex-direction:column;max-height:78vh}
+    .search-head{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--border);background:var(--surface)}
+    .search-head input{flex:1;background:transparent;border:none;color:var(--text);font-family:var(--font-body);font-size:.95rem;outline:none}
+    .search-head input::placeholder{color:var(--muted)}
+    .search-close{background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:6px;padding:3px 9px;font-family:var(--font-mono);font-size:.7rem;cursor:pointer}
+    .search-close:hover{color:var(--text);border-color:var(--accent1)}
+    .search-results{overflow-y:auto;padding:8px;display:flex;flex-direction:column;gap:4px}
+    .search-status{padding:24px 16px;text-align:center;color:var(--muted);font-size:.86rem}
+    .search-item{display:flex;flex-direction:column;gap:2px;padding:10px 12px;border-radius:8px;text-decoration:none;color:inherit;border:1px solid transparent}
+    .search-item:hover,.search-item.active{background:var(--accent1-soft);border-color:var(--accent1-border)}
+    .search-item-meta{font-family:var(--font-mono);font-size:.68rem;color:var(--accent2);display:flex;align-items:center;gap:8px}
+    .search-item-title{font-size:.9rem;font-weight:600;color:var(--text)}
+
+    footer{text-align:center;padding:20px 28px;border-top:1px solid var(--border);font-size:.76rem;color:var(--muted);position:relative;z-index:1}
+    footer span{background:linear-gradient(90deg,var(--accent1),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-weight:600}
+    footer .footer-links{display:flex;justify-content:center;flex-wrap:wrap;gap:18px;margin-bottom:8px}
+    footer .footer-links a{color:var(--muted);text-decoration:none;font-size:.76rem;transition:color .15s}
+    footer .footer-links a:hover{color:var(--accent1)}
+
+    @media (hover:none),(max-width:640px){
+      .copy-btn{opacity:1}
+    }
+    @media (max-width:640px){
+      nav{padding:10px 16px}
+      .nav-title{font-size:.98rem}
+      .nav-bc{font-size:.72rem}
+      .nav-toggle{display:inline-flex}
+      .nav-utils{display:none;flex-direction:row;flex-wrap:wrap;gap:8px;width:100%;margin-left:0;padding-top:8px}
+      nav.nav-open .nav-utils{display:flex}
+      .nav-search-btn,.nav-theme-btn,.nav-site-link{flex:1;min-width:0;justify-content:center;text-align:center;padding:8px 10px}
+      .nav-site-link{display:inline-flex;align-items:center;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--text)}
+      .nav-search-btn kbd{display:none}
+      nav.nav-open .nav-drawer{display:flex;flex-direction:column;gap:12px;width:100%;max-height:calc(100vh - 130px);overflow-y:auto;padding-top:10px;margin-top:4px;border-top:1px solid var(--border)}
+      nav.nav-open .nav-toggle-bar:nth-child(1){transform:translateY(6px) rotate(45deg)}
+      nav.nav-open .nav-toggle-bar:nth-child(2){opacity:0}
+      nav.nav-open .nav-toggle-bar:nth-child(3){transform:translateY(-6px) rotate(-45deg)}
+      main{padding:28px 18px 60px}
+      .chapter-nav{grid-template-columns:1fr}
+      .chap-btn.next{text-align:left;align-items:flex-start}
+    }
+  </style>
+</head>
+<body>
+<div class="shell">
+  <nav>
+    <a class="nav-logo" id="studio-btn" href="../index.html" aria-label="Squared Studio home" title="Back to Squared Studio">
+      <img class="nav-icon" src="logo.png" alt="Squared Studio" />
+    </a>
+    <div class="nav-shell">
+      <span class="nav-bc"><span class="sep">&gt;</span></span>
+      <a class="nav-title" id="home-btn" href="#README.md">SkillVerse</a>
+      <div class="nav-bc" id="breadcrumb"></div>
+    </div>
+    <button class="nav-toggle" id="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-utils nav-drawer" aria-label="Toggle navigation">
+      <span class="nav-toggle-bar"></span>
+      <span class="nav-toggle-bar"></span>
+      <span class="nav-toggle-bar"></span>
+    </button>
+    <div class="nav-utils" id="nav-utils">
+      <button type="button" class="nav-search-btn" id="open-search" aria-label="Search SkillVerse">
+        <span>&#128269; Search</span>
+        <kbd>Ctrl K</kbd>
+      </button>
+      <button type="button" class="nav-theme-btn" id="theme-toggle" aria-label="Toggle color mode" title="Toggle Dark / Light / Reading mode">
+        <span class="theme-icon" id="theme-icon" aria-hidden="true">&#127769;</span>
+        <span class="theme-label" id="theme-label">Dark</span>
+      </button>
+      <a class="nav-site-link" href="../index.html">Main Site &#8599;</a>
+    </div>
+    <div class="nav-drawer" id="nav-drawer" aria-label="Courses and chapters navigation"></div>
+  </nav>
+
+  <main id="content"><div class="state">Loading&#8230;</div></main>
+
+  <footer>
+    <div class="footer-links">
+      <a href="../index.html">Home</a>
+      <a href="../about.html">About</a>
+      <a href="../people.html">People</a>
+      <a href="../contact.html">Contact</a>
+      <a href="https://github.com/squared-studio/SkillVerse" target="_blank" rel="noopener">GitHub</a>
+    </div>
+    <p>Copyright &copy; 2026 <span>squared-studio</span></p>
+  </footer>
+</div>
+
+<div class="search-modal" id="search-modal" role="dialog" aria-modal="true" aria-labelledby="search-input">
+  <div class="search-panel">
+    <div class="search-head">
+      <span aria-hidden="true">&#128269;</span>
+      <input type="search" id="search-input" placeholder="Search courses, chapters, and sections&#8230;" autocomplete="off" />
+      <button type="button" class="search-close" id="close-search">Esc</button>
+    </div>
+    <div class="search-results" id="search-results">
+      <div class="search-status">Type to search across all courses, chapters, and sections&#8230;</div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  const HOME = "README.md";
+  const VIEW_ROOT = new URL("./", location.href);
+  const THEME_STORAGE_KEY = "skillverse-theme";
+  const SITE_CFG = {
+    title: "SkillVerse",
+    brand: "Squared Studio",
+    copyrightOwner: "squared-studio",
+    eyebrow: "Open-Source Engineering Curriculum",
+    tagline: "Structured, chapter-based guides on RTL Design, SystemVerilog, UVM, Formal Verification, DFT, AMBA & OBI protocols, RISC-V, and everyday engineering tooling.",
+    defaultCategory: "other"
+  };
+  const THEME_MODES = [
+    { id: "dark", label: "Dark", icon: "\uD83C\uDF19", hljs: "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/github-dark.min.css" },
+    { id: "light", label: "Light", icon: "\u2600\uFE0F", hljs: "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/github.min.css" },
+    { id: "reading", label: "Reading", icon: "\uD83D\uDCD6", hljs: "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/github.min.css" }
+  ];
+  let currentThemeIndex = 0;
+  const mdCache = new Map();
+  const topicChaptersCache = new Map();
+  let searchEntries = null;
+  let searchBuildPromise = null;
+  let activeLoadId = 0;
+  let activeController = null;
+  let pendingSectionText = null;
+  let pendingAnchor = null;
+  let activeResultIndex = -1;
+
+  const CATEGORIES = [
+    { id: "pathways", title: "Start Here · Learning Pathways" },
+    { id: "rtl", title: "RTL Design & Verification" },
+    { id: "protocols", title: "Bus & Interconnect Protocols" },
+    { id: "arch", title: "Architecture, Silicon & EDA" },
+    { id: "tooling", title: "Software & Engineering Tooling" },
+    { id: "other", title: "Additional Courses" }
+  ];
+
+  const COURSE_CATALOG = {
+    Learning_Pathways: { cat: "pathways", chapters: 8, title: "Learning Pathways & Career Roadmaps", desc: "Role-by-role roadmaps for RTL Design, Design Verification, Formal, FPGA, DFT, and SoC Architects — wired directly to SkillVerse courses." },
+    SystemVerilog: { cat: "rtl", chapters: 23, title: "SystemVerilog", desc: "Hardware modeling, interfaces, OOP testbenches, randomization, and assertions." },
+    RTL_Design: { cat: "rtl", chapters: 10, title: "RTL Design", desc: "Synchronous digital design, microarchitecture, FSMs, pipelining, CDC, and synthesis." },
+    RTL_Design_Verification: { cat: "rtl", chapters: 8, title: "RTL Design Verification", desc: "Simulation methodologies, layered testbenches, coverage, and verification closure." },
+    uvm: { cat: "rtl", chapters: 6, title: "UVM", desc: "Universal Verification Methodology phases, agents, sequences, scoreboards, and RAL." },
+    UPF_CPF: { cat: "rtl", chapters: 12, title: "UPF / CPF Low-Power Design", desc: "IEEE 1801 UPF and Si2 CPF power domains, isolation, retention, level shifters, PSTs, and power-aware verification." },
+    CDC_RDC: { cat: "rtl", chapters: 12, title: "CDC / RDC (Clock & Reset Crossings)", desc: "Metastability, MTBF, 2-FF and pulse synchronizers, MCP/DMUX, Gray-code async FIFOs, reset trees, RDC isolation, and static/formal sign-off." },
+    GLS: { cat: "rtl", chapters: 12, title: "GLS (Gate-Level Simulation)", desc: "Standard-cell models, SDF back-annotation, zero-delay vs timing GLS, pulse filtering, X-propagation, timing debug, PG UPF, DFT/MBIST, and sign-off." },
+    Formal_Verification: { cat: "rtl", chapters: 8, title: "Formal Verification", desc: "SVA properties, bounded model checking, induction, and formal sign-off." },
+    DFT: { cat: "rtl", chapters: 8, title: "Design for Testability (DFT)", desc: "Scan chains, ATPG, BIST, boundary scan, and silicon test readiness." },
+    APB_Protocol: { cat: "protocols", chapters: 7, title: "APB Protocol", desc: "Advanced Peripheral Bus register access, transfers, and low-power interfaces." },
+    UART_Protocol: { cat: "protocols", chapters: 10, title: "UART Protocol", desc: "Asynchronous serial framing, baud generation, FIFO buffering, and verification." },
+    OBI: { cat: "protocols", chapters: 10, title: "OBI Protocol", desc: "Open Bus Interface handshake protocol used in open-source RISC-V cores." },
+    AXI_Protocol: { cat: "protocols", chapters: 10, title: "AXI Protocol", desc: "AMBA AXI4 burst transactions, channel handshakes, ordering, and VIP design." },
+    ACE_Protocol: { cat: "protocols", chapters: 10, title: "ACE Protocol", desc: "AXI Coherency Extensions, snoop channels, cache states, and barrier transactions." },
+    CHI_Protocol: { cat: "protocols", chapters: 10, title: "CHI Protocol", desc: "Coherent Hub Interface packetized fabric, RN/HN/SN nodes, and flit flows." },
+    RISC_V_Assembly: { cat: "tooling", chapters: 7, title: "RISC-V Assembly", desc: "RV32I/RV64I instruction formats, calling conventions, CSRs, and bare-metal code." },
+    Electronics: { cat: "arch", chapters: 9, title: "Electronics", desc: "Semiconductor physics, diodes, MOSFETs, BJTs, op-amps, and logic families." },
+    AMS: { cat: "arch", chapters: 12, title: "AMS (Analog & Mixed-Signal)", desc: "CMOS biasing, OTAs, comparators, DAC/ADC converters, PLLs, PMIC/LDOs, SerDes, SPICE, Verilog-A/SV-RNM, co-simulation, and analog layout sign-off." },
+    FPGA: { cat: "arch", chapters: 12, title: "FPGA Engineering & Architecture", desc: "CLB/LUT fabric, FPGA-friendly RTL, BRAM/URAM/DSP48, MMCM clocking, XDC timing closure, high-speed IO/transceivers, SoC FPGAs, DFX, prototyping, HLS, and ILA debug." },
+    Vivado: { cat: "tooling", chapters: 9, title: "Vivado", desc: "AMD/Xilinx FPGA synthesis, XDC constraints, simulation, ILA debug, and bitstreams." },
+    C: { cat: "tooling", chapters: 7, title: "C Programming", desc: "Pointers, memory layout, structs, bitwise operations, and systems-level C." },
+    Python: { cat: "tooling", chapters: 7, title: "Python", desc: "Scripting, automation, verification helpers, data structures, and tooling workflows." },
+    bash: { cat: "tooling", chapters: 9, title: "Bash", desc: "Shell scripting, text pipelines, job control, and regression automation." },
+    Unix_Terminal: { cat: "tooling", chapters: 10, title: "Unix Terminal", desc: "Filesystem navigation, permissions, processes, SSH, and CLI productivity." },
+    git: { cat: "tooling", chapters: 14, title: "Git & GitHub CI/CD", desc: "Branching, rebasing, conflict resolution, bisect, collaborative workflows, and GitHub Actions CI/CD pipelines." },
+    Makefile: { cat: "tooling", chapters: 7, title: "Makefile", desc: "Dependency graphs, pattern rules, variables, and simulation build automation." },
+    VIM: { cat: "tooling", chapters: 5, title: "VIM", desc: "Modal editing, motions, visual block macros, buffers, and HDL productivity." }
+  };
+
+  marked.setOptions({ gfm: true, breaks: false });
+
+  if (window.hljs && hljs.getLanguage("verilog")) {
+    hljs.registerAliases(["systemverilog", "sv"], { languageName: "verilog" });
+  }
+
+  function escapeHtml(str) {
+    return String(str)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+  }
+
+  function isEscaped(str, idx) {
+    let bs = 0;
+    for (let i = idx - 1; i >= 0 && str[i] === "\\"; i--) bs++;
+    return (bs % 2) === 1;
+  }
+
+  function normalizeMathText(tex) {
+    const cmdRe = /\\(?:text|textbf|textit|texttt|mathrm)\s*\{/g;
+    let out = "";
+    let pos = 0;
+    let m;
+    while ((m = cmdRe.exec(tex)) !== null) {
+      out += tex.slice(pos, m.index + m[0].length);
+      let i = m.index + m[0].length;
+      let depth = 1;
+      let inInnerMath = false;
+      let bs = 0;
+      while (i < tex.length && depth > 0) {
+        const ch = tex[i];
+        if (ch === "\\") {
+          bs++;
+          out += ch;
+        } else {
+          const escaped = (bs % 2) === 1;
+          bs = 0;
+          if (!escaped && ch === "$") {
+            inInnerMath = !inInnerMath;
+            out += ch;
+          } else if (!escaped && ch === "{") {
+            depth++;
+            out += ch;
+          } else if (!escaped && ch === "}") {
+            depth--;
+            out += ch;
+          } else if (!escaped && !inInnerMath && ch === "_") {
+            out += "\\_";
+          } else {
+            out += ch;
+          }
+        }
+        i++;
+      }
+      pos = i;
+      cmdRe.lastIndex = pos;
+    }
+    return out + tex.slice(pos);
+  }
+
+  function renderMarkdownWithMath(md) {
+    const codeSlots = [];
+    const mathSlots = [];
+
+    let work = md.replace(/(^|\r?\n)((?:[ \t]*>)*[ \t]*(`{3,}|~{3,})[^\r\n]*\r?\n(?:[\s\S]*?\r?\n)?(?:[ \t]*>)*[ \t]*\3[ \t]*(?=\r?\n|$))/g, (_, lead, block) => {
+      const idx = codeSlots.push(block) - 1;
+      return lead + "\uE000SVCODE" + idx + "\uE001";
+    });
+
+    let codeWork = "";
+    for (let i = 0; i < work.length; ) {
+      if (work[i] === "`") {
+        let len = 1;
+        while (work[i + len] === "`") len++;
+        const fence = work.slice(i, i + len);
+        let j = i + len;
+        let found = -1;
+        while (j < work.length) {
+          if (work[j] === "\n" && (work[j + 1] === "\n" || (work[j + 1] === "\r" && work[j + 2] === "\n"))) break;
+          if (work.startsWith(fence, j) && work[j - 1] !== "`" && work[j + len] !== "`") {
+            found = j + len;
+            break;
+          }
+          j++;
+        }
+        if (found !== -1) {
+          const idx = codeSlots.push(work.slice(i, found)) - 1;
+          codeWork += "\uE000SVCODE" + idx + "\uE001";
+          i = found;
+          continue;
+        }
+        codeWork += fence;
+        i += len;
+        continue;
+      }
+      codeWork += work[i];
+      i++;
+    }
+    work = codeWork;
+
+    let mathWork = "";
+    for (let i = 0; i < work.length; ) {
+      if (work[i] === "$" && !isEscaped(work, i)) {
+        if (work[i + 1] === "$") {
+          let j = i + 2;
+          let found = -1;
+          while (j < work.length - 1) {
+            if (work[j] === "$" && work[j + 1] === "$" && !isEscaped(work, j)) {
+              found = j;
+              break;
+            }
+            j++;
+          }
+          if (found !== -1) {
+            const raw = work.slice(i, found + 2);
+            const tex = normalizeMathText(work.slice(i + 2, found));
+            const idx = mathSlots.push({ tex, display: true, raw }) - 1;
+            mathWork += "\uE000SVMATH" + idx + "\uE001";
+            i = found + 2;
+            continue;
+          }
+        } else if (i + 1 < work.length && !/\s/.test(work[i + 1])) {
+          let j = i + 1;
+          let found = -1;
+          while (j < work.length && work[j] !== "\r" && work[j] !== "\n") {
+            if (work[j] === "\\") {
+              j += 2;
+              continue;
+            }
+            if (work[j] === "$") {
+              if (!/\s/.test(work[j - 1])) {
+                found = j;
+              }
+              break;
+            }
+            j++;
+          }
+          if (found !== -1) {
+            const raw = work.slice(i, found + 1);
+            const tex = normalizeMathText(work.slice(i + 1, found));
+            const idx = mathSlots.push({ tex, display: false, raw }) - 1;
+            mathWork += "\uE000SVMATH" + idx + "\uE001";
+            i = found + 1;
+            continue;
+          }
+        }
+      }
+      mathWork += work[i];
+      i++;
+    }
+    work = mathWork;
+
+    work = work.replace(/\uE000SVCODE(\d+)\uE001/g, (_, idx) => codeSlots[Number(idx)]);
+    const html = marked.parse(work);
+
+    return html.replace(/\uE000SVMATH(\d+)\uE001/g, (_, idx) => {
+      const slot = mathSlots[Number(idx)];
+      if (typeof katex !== "undefined" && typeof katex.renderToString === "function") {
+        return katex.renderToString(slot.tex, { displayMode: slot.display, throwOnError: false });
+      }
+      return escapeHtml(slot.raw);
+    });
+  }
+
+  function getHeadingPlainText(headingEl) {
+    const clone = headingEl.cloneNode(true);
+    clone.querySelectorAll(".katex").forEach((katexEl) => {
+      const ann = katexEl.querySelector('annotation[encoding="application/x-tex"]');
+      katexEl.replaceWith(document.createTextNode(ann ? ann.textContent : katexEl.textContent));
+    });
+    return clone.textContent.trim();
+  }
+
+  function slugify(text) {
+    return String(text)
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9_\s-]/g, "")
+      .replace(/\s/g, "-") || "section";
+  }
+
+  function getCourseKey(file) {
+    return String(file).replace(/\.md$/i, "").split("/")[0];
+  }
+
+  function getCourseMeta(key) {
+    if (COURSE_CATALOG[key]) return COURSE_CATALOG[key];
+    return {
+      cat: SITE_CFG.defaultCategory,
+      chapters: 0,
+      title: key.replace(/_/g, " "),
+      desc: "Structured chapters and practical notes."
+    };
+  }
+
+  function splitFileTarget(target) {
+    const raw = String(target || HOME);
+    const hashIdx = raw.indexOf("#");
+    if (hashIdx === -1) return { file: raw || HOME, anchor: "" };
+    return {
+      file: raw.slice(0, hashIdx) || HOME,
+      anchor: raw.slice(hashIdx + 1)
+    };
+  }
+
+  function currentTarget() {
+    const h = location.hash.slice(1);
+    return h ? decodeURIComponent(h) : HOME;
+  }
+
+  function currentFile() {
+    return splitFileTarget(currentTarget()).file;
+  }
+
+  function navigate(target, sectionText) {
+    const { file, anchor } = splitFileTarget(target);
+    pendingSectionText = sectionText || null;
+    pendingAnchor = anchor || null;
+    if (file === HOME) {
+      history.pushState(null, "", location.pathname);
+      load(HOME);
+      return;
+    }
+    const fullTarget = anchor ? file + "#" + anchor : file;
+    const nextHash = "#" + encodeURIComponent(fullTarget);
+    if (location.hash !== nextHash) {
+      location.hash = encodeURIComponent(fullTarget);
+      return;
+    }
+    load(fullTarget);
+  }
+
+  function label(s) {
+    return s.replace(/\.md$/i, "");
+  }
+
+  function updateBreadcrumb(file) {
+    const bc = document.getElementById("breadcrumb");
+    if (file === HOME) {
+      bc.innerHTML = "";
+      return;
+    }
+    const parts = file.split("/");
+    if (parts.length === 1) {
+      const meta = getCourseMeta(label(parts[0]));
+      bc.innerHTML = '<span class="sep">&gt;</span><span class="crumb">' + escapeHtml(meta.title) + "</span>";
+    } else {
+      const parentFile = parts[0] + ".md";
+      const meta = getCourseMeta(parts[0]);
+      const rest = parts.slice(1).join("/");
+      bc.innerHTML =
+        '<span class="sep">&gt;</span>' +
+        '<a class="crumb bc-link" href="#' + encodeURIComponent(parentFile) + '" data-file="' + escapeHtml(parentFile) + '">' + escapeHtml(meta.title) + "</a>" +
+        '<span class="sep">&gt;</span>' +
+        '<span class="crumb">' + escapeHtml(label(rest)) + "</span>";
+      const link = bc.querySelector(".bc-link");
+      link.addEventListener("click", (e) => {
+        if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+        e.preventDefault();
+        window.scrollTo(0, 0);
+        navigate(parentFile);
+      });
+    }
+  }
+
+  function resolveHref(href, base) {
+    if (!href || /^(?:[a-z]+:|\/\/)/i.test(href) || href.startsWith("#")) return null;
+    const baseUrl = new URL(base, VIEW_ROOT);
+    const resolvedUrl = new URL(href, baseUrl);
+    if (resolvedUrl.origin !== VIEW_ROOT.origin || !resolvedUrl.pathname.startsWith(VIEW_ROOT.pathname)) return null;
+    return decodeURIComponent(resolvedUrl.pathname.slice(VIEW_ROOT.pathname.length)) + resolvedUrl.search + resolvedUrl.hash;
+  }
+
+  function interceptLinks(container, base) {
+    container.querySelectorAll("a[href]").forEach((a) => {
+      const href = a.getAttribute("href");
+      if (href && href.startsWith("#")) {
+        const targetId = href.slice(1);
+        const target = targetId ? document.getElementById(targetId) : null;
+        if (target) {
+          a.addEventListener("click", (e) => {
+            e.preventDefault();
+            target.scrollIntoView({ behavior: "smooth" });
+          });
+        }
+        return;
+      }
+      const resolved = resolveHref(href, base);
+      if (!resolved || !/\.md(?:$|[?#])/i.test(resolved)) return;
+      a.setAttribute("href", "#" + encodeURIComponent(resolved));
+      a.addEventListener("click", (e) => {
+        if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+        e.preventDefault();
+        if (!resolved.includes("#")) window.scrollTo(0, 0);
+        navigate(resolved);
+      });
+    });
+  }
+
+  function rewriteImageSources(container, base) {
+    container.querySelectorAll("img[src]").forEach((img) => {
+      const src = img.getAttribute("src");
+      const resolved = resolveHref(src, base);
+      if (!resolved) return;
+      img.setAttribute("src", resolved);
+    });
+  }
+
+  function highlightCode(container) {
+    if (!window.hljs) return;
+    container.querySelectorAll("pre code").forEach((code) => {
+      if (!code.className.includes("language-")) return;
+      hljs.highlightElement(code);
+    });
+  }
+
+  function addCopyButtons(container) {
+    container.querySelectorAll("pre").forEach((pre) => {
+      const wrap = document.createElement("div");
+      wrap.className = "code-wrap";
+      pre.parentNode.insertBefore(wrap, pre);
+      wrap.appendChild(pre);
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "copy-btn";
+      btn.textContent = "copy";
+      btn.addEventListener("click", () => {
+        const text = pre.querySelector("code") ? pre.querySelector("code").innerText : pre.innerText;
+        navigator.clipboard.writeText(text).then(() => {
+          btn.textContent = "copied!";
+          btn.classList.add("copied");
+          setTimeout(() => { btn.textContent = "copy"; btn.classList.remove("copied"); }, 2000);
+        }).catch(() => {
+          btn.textContent = "error";
+          setTimeout(() => { btn.textContent = "copy"; }, 2000);
+        });
+      });
+      wrap.appendChild(btn);
+    });
+  }
+
+  async function fetchMarkdown(file, signal) {
+    if (mdCache.has(file)) return mdCache.get(file);
+    const res = await fetch(file, { cache: "no-cache", signal });
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    const raw = await res.text();
+    mdCache.set(file, raw);
+    return raw;
+  }
+
+  function parseTopicIndex(raw, topicFile) {
+    if (topicChaptersCache.has(topicFile)) return topicChaptersCache.get(topicFile);
+    const lines = raw.split(/\r?\n/);
+    const chapters = [];
+    let currentChap = null;
+
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i];
+      const chapMatch = line.match(/^##\s+(\d+)\.\s+\[([^\]]+)\]\(([^)]+)\)/);
+      if (chapMatch) {
+        currentChap = {
+          num: Number(chapMatch[1]),
+          title: chapMatch[2].trim(),
+          file: chapMatch[3].trim(),
+          sections: []
+        };
+        chapters.push(currentChap);
+        continue;
+      }
+      const secMatch = line.match(/^\s+-\s+(.+)/);
+      if (secMatch && currentChap) {
+        const rawSec = secMatch[1].trim();
+        const linkMatch = rawSec.match(/^\[((?:\\.|[^\]])+)\]\(([^)]+)\)$/);
+        if (linkMatch) {
+          currentChap.sections.push({
+            title: linkMatch[1].replace(/\\([\[\]])/g, "$1").trim(),
+            file: linkMatch[2].trim()
+          });
+        } else {
+          currentChap.sections.push({
+            title: rawSec,
+            file: currentChap.file
+          });
+        }
+      }
+    }
+
+    topicChaptersCache.set(topicFile, chapters);
+    return chapters;
+  }
+
+  function parseReadmeCourses(raw) {
+    const courses = [];
+    const regex = /\[([^\]]+)\]\(([^)]+\.md)\)/g;
+    let m;
+    while ((m = regex.exec(raw)) !== null) {
+      const file = m[2].trim();
+      const key = getCourseKey(file);
+      const meta = getCourseMeta(key);
+      courses.push({
+        key,
+        file,
+        cat: meta.cat,
+        chapters: meta.chapters || 0,
+        title: meta.title,
+        desc: meta.desc
+      });
+    }
+    const orderMap = new Map(Object.keys(COURSE_CATALOG).map((k, idx) => [k, idx]));
+    courses.sort((a, b) => {
+      const ia = orderMap.has(a.key) ? orderMap.get(a.key) : Number.MAX_SAFE_INTEGER;
+      const ib = orderMap.has(b.key) ? orderMap.get(b.key) : Number.MAX_SAFE_INTEGER;
+      return ia !== ib ? ia - ib : a.key.localeCompare(b.key);
+    });
+    return courses;
+  }
+
+  function renderHomeDashboard(el, rawReadme) {
+    const courses = parseReadmeCourses(rawReadme);
+    const byCat = new Map();
+    CATEGORIES.forEach((c) => byCat.set(c.id, []));
+    courses.forEach((c) => {
+      const list = byCat.get(c.cat) || byCat.get(SITE_CFG.defaultCategory) || (CATEGORIES[0] && byCat.get(CATEGORIES[0].id));
+      if (list) list.push(c);
+    });
+    const initialChaps = courses.reduce((acc, c) => acc + (c.chapters || 0), 0);
+
+    let html =
+      '<section class="catalog-hero">' +
+        '<p class="catalog-eyebrow">' + escapeHtml(SITE_CFG.eyebrow) + "</p>" +
+        "<h1>" + escapeHtml(SITE_CFG.title) + "</h1>" +
+        '<p class="catalog-sub">' + escapeHtml(SITE_CFG.tagline) + "</p>" +
+        '<div class="catalog-controls">' +
+          '<div class="catalog-stats">' +
+            '<span class="stat-pill">' + courses.length + " Courses</span>" +
+            '<span class="stat-pill g" id="stat-chapters">' + (initialChaps > 0 ? initialChaps + " Chapters" : "Loading chapters&#8230;") + "</span>" +
+          "</div>" +
+          '<input type="search" class="catalog-filter" id="home-filter" placeholder="Filter courses&#8230;" aria-label="Filter courses" />' +
+        "</div>" +
+      "</section>" +
+      '<div id="catalog-groups">';
+
+    CATEGORIES.forEach((cat) => {
+      const items = byCat.get(cat.id);
+      if (!items || items.length === 0) return;
+      html +=
+        '<section class="catalog-group" data-cat="' + cat.id + '">' +
+          '<div class="catalog-group-title">' +
+            "<span>" + escapeHtml(cat.title) + "</span>" +
+            '<span class="catalog-group-count">' + items.length + " courses</span>" +
+          "</div>" +
+          '<div class="course-grid">';
+      items.forEach((item) => {
+        const cachedChaps = topicChaptersCache.get(item.file);
+        const countLabel = cachedChaps ? cachedChaps.length + " ch" : (item.chapters ? item.chapters + " ch" : "Index");
+        html +=
+          '<a class="course-card" href="#' + encodeURIComponent(item.file) + '" data-file="' + escapeHtml(item.file) + '" data-search="' + escapeHtml((item.title + " " + item.desc + " " + cat.title).toLowerCase()) + '">' +
+            '<div class="course-card-top">' +
+              '<span class="course-title">' + escapeHtml(item.title) + "</span>" +
+              '<span class="course-count" data-topic-file="' + escapeHtml(item.file) + '">' + countLabel + "</span>" +
+            "</div>" +
+            '<p class="course-desc">' + escapeHtml(item.desc) + "</p>" +
+          "</a>";
+      });
+      html += "</div></section>";
+    });
+
+    html += "</div>";
+    el.innerHTML = html;
+
+    el.querySelectorAll(".course-card").forEach((card) => {
+      card.addEventListener("click", (e) => {
+        if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+        e.preventDefault();
+        window.scrollTo(0, 0);
+        navigate(card.getAttribute("data-file"));
+      });
+    });
+
+    const filterInput = document.getElementById("home-filter");
+    const groupsContainer = document.getElementById("catalog-groups");
+    filterInput.addEventListener("input", () => {
+      const q = filterInput.value.trim().toLowerCase();
+      let anyVisible = false;
+      groupsContainer.querySelectorAll(".catalog-group").forEach((grp) => {
+        let groupVisible = 0;
+        grp.querySelectorAll(".course-card").forEach((card) => {
+          const match = !q || card.getAttribute("data-search").includes(q);
+          card.style.display = match ? "" : "none";
+          if (match) groupVisible++;
+        });
+        grp.style.display = groupVisible > 0 ? "" : "none";
+        if (groupVisible > 0) anyVisible = true;
+      });
+      let emptyEl = document.getElementById("catalog-empty");
+      if (!anyVisible) {
+        if (!emptyEl) {
+          emptyEl = document.createElement("div");
+          emptyEl.id = "catalog-empty";
+          emptyEl.className = "catalog-empty";
+          emptyEl.textContent = "No matching courses found. Try Ctrl+K to search inside chapters and sections.";
+          groupsContainer.appendChild(emptyEl);
+        }
+      } else if (emptyEl) {
+        emptyEl.remove();
+      }
+    });
+
+    ensureSearchIndex().then(() => {
+      let totalChaps = 0;
+      courses.forEach((c) => {
+        const chaps = topicChaptersCache.get(c.file);
+        if (!chaps) return;
+        totalChaps += chaps.length;
+        const badge = el.querySelector('.course-count[data-topic-file="' + CSS.escape(c.file) + '"]');
+        if (badge) badge.textContent = chaps.length + " ch";
+      });
+      const statEl = document.getElementById("stat-chapters");
+      if (statEl && totalChaps > 0) {
+        statEl.textContent = totalChaps + " Chapters";
+      }
+    }).catch(() => {});
+  }
+
+  function injectChapterToc(mdEl) {
+    const h2s = Array.from(mdEl.querySelectorAll("h2"));
+    if (h2s.length === 0) return;
+
+    const usedIds = new Set();
+    const tocItems = h2s.map((h2) => {
+      const text = getHeadingPlainText(h2);
+      const base = slugify(text);
+      let id = base;
+      let suffix = 1;
+      while (usedIds.has(id) || document.getElementById(id)) {
+        id = base + "-" + suffix++;
+      }
+      usedIds.add(id);
+      h2.id = id;
+      return { id, text };
+    });
+
+    if (tocItems.length < 2) return;
+
+    const details = document.createElement("details");
+    details.className = "toc-box";
+    details.open = true;
+
+    const summary = document.createElement("summary");
+    summary.textContent = "On This Page (" + tocItems.length + " sections)";
+    details.appendChild(summary);
+
+    const ol = document.createElement("ol");
+    ol.className = "toc-list";
+    tocItems.forEach((item) => {
+      const li = document.createElement("li");
+      const a = document.createElement("a");
+      a.href = "#" + item.id;
+      a.textContent = item.text;
+      a.addEventListener("click", (e) => {
+        e.preventDefault();
+        document.getElementById(item.id)?.scrollIntoView({ behavior: "smooth" });
+      });
+      li.appendChild(a);
+      ol.appendChild(li);
+    });
+    details.appendChild(ol);
+
+    const firstH1 = mdEl.querySelector("h1");
+    if (firstH1 && firstH1.nextSibling) {
+      mdEl.insertBefore(details, firstH1.nextSibling);
+    } else {
+      mdEl.prepend(details);
+    }
+  }
+
+  async function appendChapterNav(mdEl, file, loadId) {
+    if (!file.includes("/")) return;
+    const topicName = file.split("/")[0];
+    const topicFile = topicName + ".md";
+
+    try {
+      const rawTopic = await fetchMarkdown(topicFile);
+      if (loadId !== activeLoadId) return;
+      const chapters = parseTopicIndex(rawTopic, topicFile);
+      const idx = chapters.findIndex((c) => c.file === file);
+      if (idx === -1) return;
+
+      const prev = idx > 0 ? chapters[idx - 1] : null;
+      const next = idx < chapters.length - 1 ? chapters[idx + 1] : null;
+      const courseTitle = getCourseMeta(topicName).title;
+
+      const navEl = document.createElement("nav");
+      navEl.className = "chapter-nav";
+      navEl.setAttribute("aria-label", "Chapter navigation");
+
+      const prevHtml = prev
+        ? '<a class="chap-btn prev" href="#' + encodeURIComponent(prev.file) + '" data-file="' + escapeHtml(prev.file) + '">' +
+            '<span class="chap-dir">&#8592; Previous Chapter</span>' +
+            '<span class="chap-name">' + prev.num + ". " + escapeHtml(prev.title) + "</span>" +
+          "</a>"
+        : '<span class="chap-btn prev disabled"><span class="chap-dir">&#8592; Start of Course</span><span class="chap-name">Chapter 1</span></span>';
+
+      const indexHtml =
+        '<a class="chap-btn index" href="#' + encodeURIComponent(topicFile) + '" data-file="' + escapeHtml(topicFile) + '">' +
+          '<span class="chap-dir">' + escapeHtml(courseTitle) + "</span>" +
+          '<span class="chap-name">Chapter ' + (idx + 1) + " of " + chapters.length + "</span>" +
+        "</a>";
+
+      const nextHtml = next
+        ? '<a class="chap-btn next" href="#' + encodeURIComponent(next.file) + '" data-file="' + escapeHtml(next.file) + '">' +
+            '<span class="chap-dir">Next Chapter &#8594;</span>' +
+            '<span class="chap-name">' + next.num + ". " + escapeHtml(next.title) + "</span>" +
+          "</a>"
+        : '<span class="chap-btn next disabled"><span class="chap-dir">End of Course &#8594;</span><span class="chap-name">All chapters complete</span></span>';
+
+      navEl.innerHTML = prevHtml + indexHtml + nextHtml;
+      navEl.querySelectorAll("a[data-file]").forEach((a) => {
+        a.addEventListener("click", (e) => {
+          if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+          e.preventDefault();
+          window.scrollTo(0, 0);
+          navigate(a.getAttribute("data-file"));
+        });
+      });
+
+      mdEl.appendChild(navEl);
+    } catch (_) {}
+  }
+
+  function scrollToPendingSection(mdEl) {
+    const anchor = pendingAnchor;
+    const sectionText = pendingSectionText;
+    pendingAnchor = null;
+    pendingSectionText = null;
+
+    let match = null;
+    if (anchor) {
+      let decodedAnchor = anchor;
+      try { decodedAnchor = decodeURIComponent(anchor); } catch (_) {}
+      match = document.getElementById(decodedAnchor);
+      if (!match) {
+        const normTarget = decodedAnchor.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+        const headings = Array.from(mdEl.querySelectorAll("h2, h3"));
+        match = headings.find((h) => {
+          const normId = (h.id || slugify(getHeadingPlainText(h))).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+          return normId === normTarget;
+        });
+      }
+    }
+    if (!match && sectionText) {
+      const needle = sectionText.toLowerCase();
+      const headings = Array.from(mdEl.querySelectorAll("h2, h3"));
+      match = headings.find((h) => getHeadingPlainText(h).toLowerCase().includes(needle) || h.textContent.trim().toLowerCase().includes(needle));
+    }
+    if (match) {
+      requestAnimationFrame(() => match.scrollIntoView({ behavior: "smooth" }));
+    }
+  }
+
+  async function ensureSearchIndex() {
+    if (searchEntries) return searchEntries;
+    if (searchBuildPromise) return searchBuildPromise;
+
+    searchBuildPromise = (async () => {
+      const readmeRaw = await fetchMarkdown(HOME);
+      const courses = parseReadmeCourses(readmeRaw);
+      const entries = [];
+
+      courses.forEach((c) => {
+        entries.push({
+          type: "Course",
+          title: c.title,
+          meta: c.cat,
+          file: c.file,
+          search: (c.title + " " + c.desc).toLowerCase()
+        });
+      });
+
+      await Promise.all(
+        courses.map(async (c) => {
+          try {
+            const topicRaw = await fetchMarkdown(c.file);
+            const chapters = parseTopicIndex(topicRaw, c.file);
+            chapters.forEach((ch) => {
+              entries.push({
+                type: "Chapter",
+                title: ch.num + ". " + ch.title,
+                meta: c.title,
+                file: ch.file,
+                search: (c.title + " " + ch.title).toLowerCase()
+              });
+              ch.sections.forEach((sec) => {
+                const secTitle = typeof sec === "string" ? sec : sec.title;
+                const secFile = typeof sec === "string" ? ch.file : sec.file;
+                entries.push({
+                  type: "Section",
+                  title: secTitle,
+                  meta: c.title + " · Ch " + ch.num + ": " + ch.title,
+                  file: secFile,
+                  section: secTitle,
+                  search: (c.title + " " + ch.title + " " + secTitle).toLowerCase()
+                });
+              });
+            });
+          } catch (_) {}
+        })
+      );
+
+      searchEntries = entries;
+      return entries;
+    })();
+
+    return searchBuildPromise;
+  }
+
+  /* ── MOBILE NAV ── */
+  const siteNav = document.querySelector(".shell > nav");
+  const navToggle = document.getElementById("nav-toggle");
+  const navUtils = document.getElementById("nav-utils");
+  const navDrawer = document.getElementById("nav-drawer");
+  let currentNavActiveFile = HOME;
+
+  function closeNav() {
+    if (!siteNav || !navToggle) return;
+    siteNav.classList.remove("nav-open");
+    navToggle.setAttribute("aria-expanded", "false");
+  }
+
+  async function populateCourseChapters(detailsEl, courseFile, activeFile) {
+    const listEl = detailsEl.querySelector(".nav-chap-list");
+    if (!listEl) return;
+
+    let chapters = topicChaptersCache.get(courseFile);
+    if (!chapters) {
+      if (detailsEl.dataset.loading === "1") return;
+      detailsEl.dataset.loading = "1";
+      listEl.innerHTML = '<div class="nav-chap-status">Loading chapters&#8230;</div>';
+      try {
+        const raw = await fetchMarkdown(courseFile);
+        chapters = parseTopicIndex(raw, courseFile);
+      } catch (_) {
+        detailsEl.dataset.loading = "";
+        listEl.innerHTML = '<div class="nav-chap-status">Could not load chapters.</div>';
+        return;
+      }
+      detailsEl.dataset.loading = "";
+      if (!detailsEl.open) return;
+    }
+
+    const targetFile = currentNavActiveFile || activeFile;
+    const overviewCls = targetFile === courseFile ? "nav-chap-link active" : "nav-chap-link";
+    let html =
+      '<a class="' + overviewCls + '" href="#' + encodeURIComponent(courseFile) + '" data-file="' + escapeHtml(courseFile) + '">' +
+        "Course Overview" +
+      "</a>";
+
+    chapters.forEach((ch) => {
+      const cls = targetFile === ch.file ? "nav-chap-link active" : "nav-chap-link";
+      html +=
+        '<a class="' + cls + '" href="#' + encodeURIComponent(ch.file) + '" data-file="' + escapeHtml(ch.file) + '">' +
+          ch.num + ". " + escapeHtml(ch.title) +
+        "</a>";
+    });
+
+    listEl.innerHTML = html;
+
+    if (siteNav && siteNav.classList.contains("nav-open") && detailsEl.classList.contains("active")) {
+      const activeChap = listEl.querySelector(".nav-chap-link.active");
+      if (activeChap) activeChap.scrollIntoView({ block: "nearest" });
+    }
+  }
+
+  function ensureNavDrawerBuilt() {
+    if (!navDrawer || navDrawer.dataset.built === "1") return;
+
+    const byCat = new Map();
+    CATEGORIES.forEach((c) => byCat.set(c.id, []));
+    Object.keys(COURSE_CATALOG).forEach((key) => {
+      const meta = COURSE_CATALOG[key];
+      const list = byCat.get(meta.cat) || byCat.get(SITE_CFG.defaultCategory) || (CATEGORIES[0] && byCat.get(CATEGORIES[0].id));
+      if (list) list.push({
+        key,
+        file: key + ".md",
+        title: meta.title,
+        chapters: meta.chapters || 0
+      });
+    });
+
+    let html =
+      '<a class="nav-drawer-home" href="#' + encodeURIComponent(HOME) + '" data-file="' + escapeHtml(HOME) + '">' +
+        "<span>All Courses &#183; " + escapeHtml(SITE_CFG.title) + " Home</span>" +
+      "</a>";
+
+    CATEGORIES.forEach((cat) => {
+      const items = byCat.get(cat.id);
+      if (!items || items.length === 0) return;
+      html +=
+        '<div class="nav-cat-group">' +
+          '<div class="nav-cat-title">' + escapeHtml(cat.title) + "</div>";
+      items.forEach((item) => {
+        const countText = item.chapters ? item.chapters + " ch" : "Index";
+        html +=
+          '<details class="nav-course" data-course-file="' + escapeHtml(item.file) + '">' +
+            "<summary>" +
+              '<span class="nav-course-name">' + escapeHtml(item.title) + "</span>" +
+              '<span class="nav-course-count">' + countText + "</span>" +
+            "</summary>" +
+            '<div class="nav-chap-list"></div>' +
+          "</details>";
+      });
+      html += "</div>";
+    });
+
+    navDrawer.innerHTML = html;
+    navDrawer.dataset.built = "1";
+
+    navDrawer.querySelectorAll(".nav-course").forEach((detailsEl) => {
+      detailsEl.addEventListener("toggle", () => {
+        if (detailsEl.open) {
+          populateCourseChapters(detailsEl, detailsEl.getAttribute("data-course-file"), currentNavActiveFile);
+        }
+      });
+    });
+
+    navDrawer.addEventListener("click", (e) => {
+      const link = e.target.closest("a[data-file]");
+      if (!link) return;
+      if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+      e.preventDefault();
+      closeNav();
+      window.scrollTo(0, 0);
+      navigate(link.getAttribute("data-file"));
+    });
+  }
+
+  function renderNavDrawer(activeFile) {
+    if (!navDrawer) return;
+    ensureNavDrawerBuilt();
+
+    currentNavActiveFile = activeFile || HOME;
+    const activeCourseKey = currentNavActiveFile !== HOME ? getCourseKey(currentNavActiveFile) : "";
+    const activeCourseFile = activeCourseKey ? activeCourseKey + ".md" : "";
+
+    const homeLink = navDrawer.querySelector(".nav-drawer-home");
+    if (homeLink) {
+      homeLink.classList.toggle("active", currentNavActiveFile === HOME);
+    }
+
+    navDrawer.querySelectorAll(".nav-course").forEach((detailsEl) => {
+      const courseFile = detailsEl.getAttribute("data-course-file");
+      const isActiveCourse = courseFile === activeCourseFile;
+      detailsEl.classList.toggle("active", isActiveCourse);
+      if (isActiveCourse) {
+        detailsEl.open = true;
+        populateCourseChapters(detailsEl, courseFile, currentNavActiveFile);
+      } else if (detailsEl.open) {
+        populateCourseChapters(detailsEl, courseFile, currentNavActiveFile);
+      }
+    });
+  }
+
+  if (siteNav && navToggle && navUtils) {
+    navToggle.addEventListener("click", () => {
+      const willOpen = !siteNav.classList.contains("nav-open");
+      if (willOpen) {
+        renderNavDrawer(currentFile());
+        ensureSearchIndex().catch(() => {});
+      }
+      siteNav.classList.toggle("nav-open", willOpen);
+      navToggle.setAttribute("aria-expanded", willOpen ? "true" : "false");
+      if (willOpen && navDrawer) {
+        requestAnimationFrame(() => {
+          const activeTarget = navDrawer.querySelector(".nav-chap-link.active, .nav-course.active > summary, .nav-drawer-home.active");
+          if (activeTarget) activeTarget.scrollIntoView({ block: "nearest" });
+        });
+      }
+    });
+
+    navUtils.addEventListener("click", (e) => {
+      if (e.target.closest("a")) closeNav();
+    });
+
+    window.addEventListener("resize", () => {
+      if (window.innerWidth > 640) closeNav();
+    });
+  }
+
+  /* ── SEARCH MODAL UI ── */
+  const searchModal = document.getElementById("search-modal");
+  const searchInput = document.getElementById("search-input");
+  const searchResults = document.getElementById("search-results");
+  let currentMatches = [];
+
+  function openSearchModal() {
+    closeNav();
+    searchModal.classList.add("open");
+    searchInput.value = "";
+    activeResultIndex = -1;
+    searchInput.focus();
+    searchResults.innerHTML = '<div class="search-status">Indexing courses&#8230;</div>';
+    ensureSearchIndex().then(() => {
+      renderSearchResults("");
+    }).catch(() => {
+      searchResults.innerHTML = '<div class="search-status">Could not load search index.</div>';
+    });
+  }
+
+  function closeSearchModal() {
+    searchModal.classList.remove("open");
+  }
+
+  function renderSearchResults(query) {
+    if (!searchEntries) return;
+    const q = query.trim().toLowerCase();
+    if (!q) {
+      currentMatches = searchEntries.filter((e) => e.type === "Course").slice(0, 12);
+    } else {
+      const terms = q.split(/\s+/);
+      currentMatches = searchEntries
+        .filter((e) => terms.every((t) => e.search.includes(t)))
+        .slice(0, 30);
+    }
+
+    activeResultIndex = currentMatches.length > 0 ? 0 : -1;
+
+    if (currentMatches.length === 0) {
+      searchResults.innerHTML = '<div class="search-status">No results for "' + escapeHtml(query) + '"</div>';
+      return;
+    }
+
+    searchResults.innerHTML = currentMatches
+      .map((item, idx) => {
+        const cls = idx === 0 ? "search-item active" : "search-item";
+        return (
+          '<a class="' + cls + '" href="#' + encodeURIComponent(item.file) + '" data-idx="' + idx + '">' +
+            '<span class="search-item-meta"><span>' + escapeHtml(item.type) + "</span><span>&#183;</span><span>" + escapeHtml(item.meta) + "</span></span>" +
+            '<span class="search-item-title">' + escapeHtml(item.title) + "</span>" +
+          "</a>"
+        );
+      })
+      .join("");
+
+    searchResults.querySelectorAll(".search-item").forEach((el) => {
+      el.addEventListener("click", (e) => {
+        if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+        e.preventDefault();
+        const item = currentMatches[Number(el.getAttribute("data-idx"))];
+        if (!item) return;
+        closeSearchModal();
+        if (!item.file.includes("#")) window.scrollTo(0, 0);
+        navigate(item.file, item.section || null);
+      });
+    });
+  }
+
+  function moveActiveResult(delta) {
+    if (currentMatches.length === 0) return;
+    const items = searchResults.querySelectorAll(".search-item");
+    if (activeResultIndex >= 0 && items[activeResultIndex]) {
+      items[activeResultIndex].classList.remove("active");
+    }
+    activeResultIndex = (activeResultIndex + delta + currentMatches.length) % currentMatches.length;
+    const nextEl = items[activeResultIndex];
+    if (nextEl) {
+      nextEl.classList.add("active");
+      nextEl.scrollIntoView({ block: "nearest" });
+    }
+  }
+
+  document.getElementById("open-search").addEventListener("click", openSearchModal);
+  document.getElementById("close-search").addEventListener("click", closeSearchModal);
+  searchModal.addEventListener("click", (e) => {
+    if (e.target === searchModal) closeSearchModal();
+  });
+  searchInput.addEventListener("input", () => renderSearchResults(searchInput.value));
+  searchInput.addEventListener("keydown", (e) => {
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      moveActiveResult(1);
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      moveActiveResult(-1);
+    } else if (e.key === "Enter" && activeResultIndex >= 0 && currentMatches[activeResultIndex]) {
+      e.preventDefault();
+      const item = currentMatches[activeResultIndex];
+      closeSearchModal();
+      if (!item.file.includes("#")) window.scrollTo(0, 0);
+      navigate(item.file, item.section || null);
+    }
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") {
+      e.preventDefault();
+      if (searchModal.classList.contains("open")) closeSearchModal();
+      else openSearchModal();
+      return;
+    }
+    if (e.key === "/" && !searchModal.classList.contains("open")) {
+      const tag = document.activeElement ? document.activeElement.tagName : "";
+      if (tag !== "INPUT" && tag !== "TEXTAREA") {
+        e.preventDefault();
+        openSearchModal();
+      }
+      return;
+    }
+    if (e.key === "Escape") {
+      if (searchModal.classList.contains("open")) {
+        e.preventDefault();
+        closeSearchModal();
+      } else if (siteNav && siteNav.classList.contains("nav-open")) {
+        e.preventDefault();
+        closeNav();
+        if (navToggle) navToggle.focus();
+      }
+    }
+  });
+
+  async function load(target) {
+    const { file, anchor } = splitFileTarget(target);
+    if (anchor) pendingAnchor = anchor;
+    closeNav();
+    renderNavDrawer(file);
+    const el = document.getElementById("content");
+    const loadId = ++activeLoadId;
+
+    if (activeController) activeController.abort();
+    activeController = new AbortController();
+
+    el.innerHTML = '<div class="state">Loading&#8230;</div>';
+    updateBreadcrumb(file);
+
+    const courseKey = getCourseKey(file);
+    const courseTitle = getCourseMeta(courseKey).title;
+    document.title = file === HOME
+      ? SITE_CFG.title + " \u2014 " + SITE_CFG.brand
+      : (file.includes("/") ? label(file.split("/").slice(1).join("/")) + " \u00B7 " + courseTitle : courseTitle) + " \u2014 " + SITE_CFG.title;
+
+    try {
+      const raw = await fetchMarkdown(file, activeController.signal);
+      if (loadId !== activeLoadId) return;
+
+      if (file === HOME) {
+        renderHomeDashboard(el, raw);
+        return;
+      }
+
+      const ownerEsc = SITE_CFG.copyrightOwner.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      const md = raw.replace(new RegExp("^#{1,6}\\s.*Copyright.*" + ownerEsc + ".*$", "m"), "").trimEnd();
+      el.innerHTML = '<div class="md">' + renderMarkdownWithMath(md) + "</div>";
+      const mdEl = el.querySelector(".md");
+
+      rewriteImageSources(mdEl, file);
+      highlightCode(mdEl);
+      addCopyButtons(mdEl);
+      interceptLinks(mdEl, file);
+
+      if (file.includes("/")) {
+        injectChapterToc(mdEl);
+        await appendChapterNav(mdEl, file, loadId);
+        if (loadId !== activeLoadId) return;
+        scrollToPendingSection(mdEl);
+      } else {
+        parseTopicIndex(raw, file);
+      }
+    } catch (err) {
+      if (err.name === "AbortError" || loadId !== activeLoadId) return;
+      el.innerHTML =
+        '<div class="state"><p>Could not load <span class="c">' + escapeHtml(file) +
+        '</span></p><p style="margin-top:8px;font-size:.8rem">' + escapeHtml(err.message) + "</p></div>";
+    } finally {
+      if (loadId === activeLoadId) activeController = null;
+    }
+  }
+
+  function applyTheme(modeId) {
+    let idx = THEME_MODES.findIndex((m) => m.id === modeId);
+    if (idx === -1) idx = 0;
+    currentThemeIndex = idx;
+    const mode = THEME_MODES[idx];
+    const nextMode = THEME_MODES[(idx + 1) % THEME_MODES.length];
+
+    document.documentElement.setAttribute("data-theme", mode.id);
+
+    const iconEl = document.getElementById("theme-icon");
+    const labelEl = document.getElementById("theme-label");
+    const toggleBtn = document.getElementById("theme-toggle");
+    if (iconEl) iconEl.textContent = mode.icon;
+    if (labelEl) labelEl.textContent = mode.label;
+    if (toggleBtn) {
+      const hint = "Mode: " + mode.label + " (click for " + nextMode.label + ")";
+      toggleBtn.title = hint;
+      toggleBtn.setAttribute("aria-label", hint);
+    }
+
+    const hljsLink = document.getElementById("hljs-theme");
+    if (hljsLink && hljsLink.getAttribute("href") !== mode.hljs) {
+      hljsLink.setAttribute("href", mode.hljs);
+    }
+
+    try {
+      localStorage.setItem(THEME_STORAGE_KEY, mode.id);
+    } catch (_) {}
+  }
+
+  (function initTheme() {
+    let saved = "dark";
+    try {
+      saved = localStorage.getItem(THEME_STORAGE_KEY) || "dark";
+    } catch (_) {}
+    applyTheme(saved);
+    const toggleBtn = document.getElementById("theme-toggle");
+    if (toggleBtn) {
+      toggleBtn.addEventListener("click", () => {
+        const nextMode = THEME_MODES[(currentThemeIndex + 1) % THEME_MODES.length];
+        applyTheme(nextMode.id);
+      });
+    }
+  })();
+
+  document.getElementById("home-btn").addEventListener("click", (e) => {
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+    e.preventDefault();
+    navigate(HOME);
+    window.scrollTo(0, 0);
+  });
+
+  window.addEventListener("hashchange", () => load(currentTarget()));
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", () => load(currentTarget()));
+  } else {
+    load(currentTarget());
+  }
+})();
+</script>
+</body>
+</html>

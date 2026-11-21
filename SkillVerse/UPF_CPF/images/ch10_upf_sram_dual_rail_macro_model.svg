@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 390" width="920" height="390">
+  <defs>
+    <style>
+      .bg { fill: #0f172a; }
+      .panel { fill: #1e293b; stroke-width: 1.5; rx: 10; ry: 10; }
+      .box { fill: #0f172a; stroke: #334155; stroke-width: 1.2; rx: 6; ry: 6; }
+      .title { font-family: 'Segoe UI', Arial, sans-serif; font-size: 18px; font-weight: 700; fill: #f8fafc; text-anchor: middle; }
+      .subtitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; fill: #94a3b8; text-anchor: middle; }
+      .ptitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 14px; font-weight: 700; }
+      .mono { font-family: Consolas, 'Courier New', monospace; font-size: 10.6px; fill: #e2e8f0; }
+      .note { font-family: 'Segoe UI', Arial, sans-serif; font-size: 10.5px; fill: #94a3b8; }
+      .badge { font-family: Consolas, 'Courier New', monospace; font-size: 11px; font-weight: 700; text-anchor: middle; }
+    </style>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="920" height="390" />
+  <text class="title" x="460" y="28">Dual-Rail Hard Macro &amp; SRAM PG-Pin Power Intent Modeling</text>
+  <text class="subtitle" x="460" y="48">Separating Switchable Peripheral Sense-Amp Logic (VDDP) from Deep-Sleep Array Retention Supply (VDDA / VDDCE)</text>
+
+  <!-- Left Panel: Hard SRAM Macro Physical PG Pins -->
+  <rect class="panel" x="20" y="64" width="430" height="308" stroke="#38bdf8" />
+  <text class="ptitle" x="36" y="88" fill="#38bdf8">Dual-Rail Retention SRAM Macro Anatomy</text>
+
+  <!-- Pins Top -->
+  <rect class="box" x="48" y="102" width="160" height="32" stroke="#f87171" />
+  <text class="badge" x="128" y="122" fill="#fca5a5">PG Pin: VDDP (Switched)</text>
+
+  <rect class="box" x="242" y="102" width="176" height="32" stroke="#34d399" />
+  <text class="badge" x="330" y="122" fill="#6ee7b7">PG Pin: VDDA (Array Ret)</text>
+
+  <!-- SRAM Macro Body -->
+  <rect class="box" x="36" y="148" width="398" height="148" stroke="#a78bfa" />
+  <text class="mono" x="48" y="168" fill="#c4b5fd">Hard Macro Instance: u_sram_64kx32</text>
+
+  <rect class="box" x="50" y="182" width="176" height="98" stroke="#f87171" />
+  <text class="badge" x="138" y="202" fill="#fca5a5">Peripheral Logic</text>
+  <text class="note" x="60" y="220">Decoders, sense amps,</text>
+  <text class="note" x="60" y="236">write drivers &amp; I/O regs.</text>
+  <text class="note" x="60" y="254" fill="#fca5a5">Powered OFF during</text>
+  <text class="note" x="60" y="269" fill="#fca5a5">Light/Deep Retention.</text>
+
+  <rect class="box" x="240" y="182" width="180" height="98" stroke="#34d399" />
+  <text class="badge" x="330" y="202" fill="#6ee7b7">6T Bitcell Array</text>
+  <text class="note" x="250" y="220">Lowered to retention</text>
+  <text class="note" x="250" y="236">voltage (e.g., 0.55V)</text>
+  <text class="note" x="250" y="254" fill="#6ee7b7">with SD / DS pins active</text>
+  <text class="note" x="250" y="269" fill="#6ee7b7">holding bit contents!</text>
+
+  <text class="note" x="36" y="320" fill="#e2e8f0">Liberty .lib defines pg_pin groups + related_power_pin on every pin,</text>
+  <text class="note" x="36" y="338">plus memory retention_pin / switch_function attributes.</text>
+  <text class="mono" x="36" y="358" fill="#7dd3fc">related_power_pin(Q[31:0]) --&gt; VDDP   (Isolated when DS=1)</text>
+
+  <!-- Right Panel: UPF PG Connection & Macro Model -->
+  <rect class="panel" x="470" y="64" width="430" height="308" stroke="#f59e0b" />
+  <text class="ptitle" x="486" y="88" fill="#f59e0b">Connecting Macro PG Pins in UPF</text>
+
+  <rect class="box" x="486" y="102" width="398" height="156" />
+  <text class="mono" x="498" y="121" fill="#fcd34d"># Map Liberty PG pins explicitly to SoC supply nets</text>
+  <text class="mono" x="498" y="140">connect_supply_net VDD_CPU_SW \</text>
+  <text class="mono" x="498" y="157">  -ports {u_sram_64kx32/VDDP}</text>
+  <text class="mono" x="498" y="177">connect_supply_net VDD_MEM_RET \</text>
+  <text class="mono" x="498" y="194">  -ports {u_sram_64kx32/VDDA}</text>
+  <text class="mono" x="498" y="214">connect_supply_net VSS \</text>
+  <text class="mono" x="498" y="231">  -ports {u_sram_64kx32/VSS}</text>
+  <text class="note" x="498" y="249" fill="#6ee7b7">(Or pass supply sets via set_design_attributes -macro_cells)</text>
+
+  <rect class="box" x="486" y="270" width="398" height="88" stroke="#a78bfa" />
+  <text class="mono" x="498" y="290" fill="#c4b5fd">UPF Macro &amp; Deep-Sleep Rules:</text>
+  <text class="note" x="498" y="309">1. Use -exclude_elements or load a macro UPF wrapper.</text>
+  <text class="note" x="498" y="326">2. Assert DS (Deep Sleep) / SD BEFORE gating VDDP.</text>
+  <text class="note" x="498" y="343">3. Hold CS_N / WEN clamped via internal or boundary ISO.</text>
+</svg>

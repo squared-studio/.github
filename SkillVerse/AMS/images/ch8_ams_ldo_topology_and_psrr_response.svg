@@ -1,0 +1,92 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 410" width="920" height="410">
+  <defs>
+    <style>
+      .bg { fill: #0f172a; }
+      .panel { fill: #1e293b; stroke: #334155; stroke-width: 1.5; rx: 10; ry: 10; }
+      .box { fill: #0f172a; stroke: #334155; stroke-width: 1.2; rx: 6; ry: 6; }
+      .title { font-family: 'Segoe UI', Arial, sans-serif; font-size: 18px; font-weight: 700; fill: #f8fafc; text-anchor: middle; }
+      .sub { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; fill: #94a3b8; text-anchor: middle; }
+      .hdr { font-family: 'Segoe UI', Arial, sans-serif; font-size: 13.5px; font-weight: 700; }
+      .mono { font-family: Consolas, 'Courier New', monospace; font-size: 10.5px; fill: #e2e8f0; }
+      .note { font-family: 'Segoe UI', Arial, sans-serif; font-size: 11px; fill: #cbd5e1; }
+    </style>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="920" height="410" />
+  <text class="title" x="460" y="28">PMOS LDO Regulator Architecture, PSRR Profile &amp; Load-Step Transient</text>
+  <text class="sub" x="460" y="48">Error Amplifier Loop, Miller / ESR Stability, High-Frequency Supply Rejection, and Load Droop</text>
+
+  <!-- Left Panel: PMOS LDO Schematic -->
+  <rect class="panel" x="20" y="64" width="430" height="328" />
+  <text class="hdr" x="38" y="88" fill="#38bdf8">1. Analog PMOS Low-Dropout Regulator</text>
+  <rect class="box" x="34" y="100" width="402" height="214" />
+
+  <text class="mono" x="52" y="132" fill="#f87171">VIN (+Ripple)</text>
+  <line x1="134" y1="128" x2="210" y2="128" stroke="#f87171" stroke-width="2" />
+  <!-- PMOS Pass FET -->
+  <rect x="210" y="110" width="84" height="40" fill="#1e293b" stroke="#f59e0b" rx="5" />
+  <text class="mono" x="252" y="134" fill="#fcd34d" text-anchor="middle">Pass PMOS</text>
+  <line x1="294" y1="128" x2="394" y2="128" stroke="#34d399" stroke-width="2" />
+  <text class="mono" x="398" y="132" fill="#6ee7b7">VOUT</text>
+
+  <!-- Error Amplifier -->
+  <polygon points="146,192 206,216 146,240" fill="#1e293b" stroke="#38bdf8" stroke-width="1.8" />
+  <text class="mono" x="152" y="211" fill="#7dd3fc">-</text>
+  <text class="mono" x="152" y="232" fill="#7dd3fc">+</text>
+  <polyline points="206,216 252,216 252,150" fill="none" stroke="#f59e0b" stroke-width="1.6" />
+  <text class="mono" x="256" y="182" fill="#fcd34d" font-size="9.5">Vg_pass (Big Cgs)</text>
+
+  <line x1="80" y1="205" x2="146" y2="205" stroke="#38bdf8" stroke-width="1.5" />
+  <text class="mono" x="48" y="209" fill="#7dd3fc">V_REF</text>
+
+  <!-- Feedback Divider R1 / R2 & Load CL -->
+  <circle cx="334" cy="128" r="3.5" fill="#34d399" />
+  <line x1="334" y1="128" x2="334" y2="176" stroke="#94a3b8" stroke-width="1.5" />
+  <rect x="322" y="176" width="24" height="38" fill="#0f172a" stroke="#38bdf8" rx="3" />
+  <text class="mono" x="310" y="200" fill="#7dd3fc" font-size="9.5">R1</text>
+  <line x1="334" y1="214" x2="334" y2="232" stroke="#94a3b8" stroke-width="1.5" />
+  <circle cx="334" cy="222" r="3" fill="#a78bfa" />
+  <polyline points="334,222 292,222 292,262 128,262 128,228 146,228" fill="none" stroke="#a78bfa" stroke-width="1.4" />
+  <rect x="322" y="232" width="24" height="38" fill="#0f172a" stroke="#38bdf8" rx="3" />
+  <text class="mono" x="310" y="255" fill="#7dd3fc" font-size="9.5">R2</text>
+  <line x1="334" y1="270" x2="334" y2="292" stroke="#64748b" stroke-width="1.5" />
+
+  <!-- CL + ESR -->
+  <line x1="384" y1="128" x2="384" y2="210" stroke="#94a3b8" stroke-width="1.5" />
+  <line x1="370" y1="210" x2="398" y2="210" stroke="#34d399" stroke-width="2.5" />
+  <line x1="370" y1="220" x2="398" y2="220" stroke="#34d399" stroke-width="2.5" />
+  <text class="mono" x="404" y="218" fill="#6ee7b7" font-size="9.5">C_out</text>
+  <rect x="374" y="232" width="20" height="34" fill="#0f172a" stroke="#f59e0b" rx="3" />
+  <text class="mono" x="400" y="252" fill="#fcd34d" font-size="9.5">R_esr</text>
+  <line x1="384" y1="220" x2="384" y2="232" stroke="#94a3b8" stroke-width="1.5" />
+  <line x1="384" y1="266" x2="384" y2="292" stroke="#64748b" stroke-width="1.5" />
+  <line x1="310" y1="292" x2="410" y2="292" stroke="#64748b" stroke-width="2" />
+
+  <rect class="box" x="34" y="322" width="402" height="56" />
+  <text class="mono" x="46" y="342" fill="#6ee7b7">VOUT = VREF * (1 + R1/R2) | V_DO = I_load * R_ds,on</text>
+  <text class="note" x="46" y="361">Capless LDOs avoid external C_out using internal Miller compensation.</text>
+
+  <!-- Right Panel: PSRR + Load Step -->
+  <rect class="panel" x="466" y="64" width="434" height="328" />
+  <text class="hdr" x="484" y="88" fill="#34d399">2. PSRR Response &amp; Load-Step Undershoot</text>
+
+  <!-- Top: PSRR vs Freq -->
+  <rect class="box" x="480" y="100" width="406" height="132" />
+  <text class="mono" x="492" y="118" fill="#7dd3fc">PSRR(f) = 20 log10( dVIN / dVOUT ) [dB]</text>
+  <line x1="516" y1="128" x2="516" y2="216" stroke="#64748b" stroke-width="1.2" />
+  <line x1="516" y1="216" x2="866" y2="216" stroke="#64748b" stroke-width="1.2" />
+  <path d="M 520 138 L 620 138 L 740 198 L 800 198 L 860 156" fill="none" stroke="#38bdf8" stroke-width="2.4" />
+  <text class="mono" x="526" y="152" fill="#6ee7b7" font-size="9.5">60-80dB DC Loop</text>
+  <text class="mono" x="692" y="178" fill="#fca5a5" font-size="9.5">UGF Dip</text>
+  <text class="mono" x="790" y="150" fill="#7dd3fc" font-size="9.5">C_out shunts HF!</text>
+
+  <!-- Bottom: Load Transient Droop -->
+  <rect class="box" x="480" y="242" width="406" height="136" />
+  <text class="mono" x="492" y="260" fill="#f59e0b">Load Step (1 mA -&gt; 100 mA in 5 ns):</text>
+  <!-- Load step current -->
+  <polyline points="516,306 588,306 592,282 860,282" fill="none" stroke="#f59e0b" stroke-width="1.8" />
+  <text class="mono" x="522" y="298" fill="#fcd34d" font-size="9">I_LOAD</text>
+  <!-- VOUT droop -->
+  <path d="M 516 332 L 588 332 Q 618 366 646 352 Q 690 330 740 334 L 860 334" fill="none" stroke="#34d399" stroke-width="2.4" />
+  <text class="mono" x="630" y="368" fill="#fca5a5" font-size="9.5">dV_droop = (I_max * dt_resp) / C_out + I*R_esr</text>
+</svg>

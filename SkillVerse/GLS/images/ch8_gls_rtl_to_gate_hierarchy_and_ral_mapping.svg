@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 390" width="920" height="390">
+  <defs>
+    <style>
+      .bg { fill: #0f172a; }
+      .panel { fill: #1e293b; stroke-width: 1.5; rx: 10; ry: 10; }
+      .box { fill: #0f172a; stroke: #334155; stroke-width: 1.2; rx: 6; ry: 6; }
+      .title { font-family: 'Segoe UI', Arial, sans-serif; font-size: 18px; font-weight: 700; fill: #f8fafc; text-anchor: middle; }
+      .subtitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; fill: #94a3b8; text-anchor: middle; }
+      .ptitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 14px; font-weight: 700; }
+      .mono { font-family: Consolas, 'Courier New', monospace; font-size: 10.6px; fill: #e2e8f0; }
+      .note { font-family: 'Segoe UI', Arial, sans-serif; font-size: 10.3px; fill: #94a3b8; }
+      .badge { font-family: Consolas, 'Courier New', monospace; font-size: 11px; font-weight: 700; text-anchor: middle; }
+    </style>
+    <marker id="arrSky" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#38bdf8" />
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="920" height="390" />
+  <text class="title" x="460" y="28">RTL-to-Gate Hierarchy Transformations &amp; UVM RAL Backdoor Mapping</text>
+  <text class="subtitle" x="460" y="48">Handling Synthesis Flattening, Vector Bit-Blasting, Escaped Identifiers, and VPI Path Remapping</text>
+
+  <!-- Left Panel: RTL vs Gate Names -->
+  <rect class="panel" x="20" y="64" width="465" height="308" stroke="#a78bfa" />
+  <text class="ptitle" x="36" y="88" fill="#a78bfa">Synthesis Hierarchy &amp; Signal Transformations</text>
+
+  <rect class="box" x="36" y="102" width="434" height="72" stroke="#38bdf8" />
+  <text class="mono" x="48" y="121" fill="#7dd3fc">1. Bit-Blasting Vectors &amp; Multidimensional Arrays:</text>
+  <text class="mono" x="48" y="140">RTL:  u_dma.u_csr.cfg_reg_q[31:0]  (32-bit packed vec)</text>
+  <text class="mono" x="48" y="158" fill="#fca5a5">Gate: u_dma.u_csr.\cfg_reg_q_reg[0]  .. \cfg_reg_q_reg[31] </text>
+
+  <rect class="box" x="36" y="184" width="434" height="82" stroke="#f59e0b" />
+  <text class="mono" x="48" y="203" fill="#fcd34d">2. Ungrouping, Flattening &amp; Active-Low Polarity Inversion:</text>
+  <text class="note" x="48" y="222">Synthesis may flatten sub-modules (`u_sub/sig` -&gt; `u_sub_sig`),</text>
+  <text class="note" x="48" y="238">replace `reg_q` with `reg_q_n` (`QN` Q-bar optimization!), or</text>
+  <text class="note" x="48" y="254">fold constant-zero bits away (`uvm_hdl_deposit` fails!).</text>
+
+  <rect class="box" x="36" y="276" width="434" height="82" stroke="#34d399" />
+  <text class="mono" x="48" y="295" fill="#6ee7b7">3. Clean Solutions for UVM Testbenches:</text>
+  <text class="note" x="48" y="314">- Guard internal RTL whitebox pokes with `` `ifndef GLS ``!</text>
+  <text class="note" x="48" y="330">- Use synthesis SVF/Name-Map + `+define+GLS` RAL path overrides</text>
+  <text class="note" x="48" y="346">  OR switch GLS regressions from backdoor reads to frontdoor AXI!</text>
+
+  <!-- Right Panel: Escaped Identifier & SRAM Preload -->
+  <rect class="panel" x="502" y="64" width="398" height="308" stroke="#34d399" />
+  <text class="ptitle" x="518" y="88" fill="#34d399">Backdoor RAL &amp; SRAM Memory Preloading</text>
+
+  <rect class="box" x="518" y="102" width="366" height="128" />
+  <text class="mono" x="530" y="122" fill="#6ee7b7">// UVM RAL HDL Path Switch Example:</text>
+  <text class="mono" x="530" y="142">`ifdef GLS</text>
+  <text class="mono" x="530" y="159">  add_hdl_path_slice("cfg_reg_q_reg[0].Q", 0, 1);</text>
+  <text class="mono" x="530" y="176">  ... // Or force frontdoor via REG_FRONTDOOR!</text>
+  <text class="mono" x="530" y="193">`else</text>
+  <text class="mono" x="530" y="210">  add_hdl_path_slice("cfg_reg_q", 0, 32); `endif</text>
+
+  <rect class="box" x="518" y="242" width="366" height="116" stroke="#38bdf8" />
+  <text class="mono" x="530" y="262" fill="#7dd3fc">Hard SRAM / ROM Macro Preloading:</text>
+  <text class="note" x="530" y="282">Because compiled SRAM macros keep exact hierarchy instance names</text>
+  <text class="note" x="530" y="298">in the netlist (`u_soc.u_l2_ram`), `$readmemh` still works cleanly</text>
+  <text class="note" x="530" y="314">across RTL &amp; GLS if pointing at the foundry macro's internal mem</text>
+  <text class="note" x="530" y="330">array name (or vendor `+PRELOAD` plusarg!).</text>
+</svg>

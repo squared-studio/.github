@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 390" width="920" height="390">
+  <defs>
+    <style>
+      .bg { fill: #0f172a; }
+      .panel { fill: #1e293b; stroke: #334155; stroke-width: 1.5; rx: 10; ry: 10; }
+      .box { fill: #0f172a; stroke: #334155; stroke-width: 1.2; rx: 6; ry: 6; }
+      .title { font-family: 'Segoe UI', Arial, sans-serif; font-size: 18px; font-weight: 700; fill: #f8fafc; text-anchor: middle; }
+      .sub { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; fill: #94a3b8; text-anchor: middle; }
+      .hdr { font-family: 'Segoe UI', Arial, sans-serif; font-size: 13.5px; font-weight: 700; }
+      .mono { font-family: Consolas, 'Courier New', monospace; font-size: 10.5px; fill: #e2e8f0; }
+      .note { font-family: 'Segoe UI', Arial, sans-serif; font-size: 11px; fill: #cbd5e1; }
+    </style>
+    <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8" />
+    </marker>
+    <marker id="arr-g" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#34d399" />
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="920" height="390" />
+  <text class="title" x="460" y="28">Zero-Copy AXI-Stream &amp; Scatter-Gather DMA Streaming Pipeline</text>
+  <text class="sub" x="460" y="48">Continuous Memory-to-Stream (MM2S) and Stream-to-Memory (S2MM) Accelerator Dataflow Without CPU Polling</text>
+
+  <!-- Main Streaming Loop Panel -->
+  <rect class="panel" x="20" y="64" width="880" height="230" stroke="#34d399" />
+
+  <!-- DDR Buffer Ring -->
+  <rect class="box" x="36" y="102" width="166" height="156" stroke="#38bdf8" />
+  <text class="hdr" x="119" y="128" fill="#38bdf8" text-anchor="middle">Shared DDR</text>
+  <rect x="48" y="142" width="142" height="44" fill="#1e293b" stroke="#38bdf8" rx="4" />
+  <text class="mono" x="119" y="162" fill="#7dd3fc" text-anchor="middle">Input Ring Buffers</text>
+  <text class="mono" x="119" y="178" fill="#94a3b8" text-anchor="middle">+ TX Desc Chain</text>
+  <rect x="48" y="198" width="142" height="44" fill="#1e293b" stroke="#34d399" rx="4" />
+  <text class="mono" x="119" y="218" fill="#6ee7b7" text-anchor="middle">Output Ring Buffers</text>
+  <text class="mono" x="119" y="234" fill="#94a3b8" text-anchor="middle">+ RX Desc Chain</text>
+
+  <!-- MM2S DMA Channel -->
+  <line x1="202" y1="158" x2="254" y2="158" stroke="#38bdf8" stroke-width="2" marker-end="url(#arr)" />
+  <text class="mono" x="228" y="146" fill="#7dd3fc" text-anchor="middle" font-size="9">AXI4</text>
+
+  <rect class="box" x="256" y="114" width="162" height="84" stroke="#f59e0b" />
+  <text class="mono" x="337" y="138" fill="#fcd34d" text-anchor="middle">DMA MM2S</text>
+  <text class="note" x="337" y="158" text-anchor="middle">Reads Burst Data</text>
+  <text class="note" x="337" y="174" text-anchor="middle">Packs AXI-Stream</text>
+
+  <!-- S2MM DMA Channel -->
+  <rect class="box" x="256" y="210" width="162" height="72" stroke="#f59e0b" />
+  <text class="mono" x="337" y="232" fill="#fcd34d" text-anchor="middle">DMA S2MM</text>
+  <text class="note" x="337" y="250" text-anchor="middle">Drains AXIS -&gt; DDR</text>
+  <text class="mono" x="337" y="268" fill="#6ee7b7" text-anchor="middle">Fires IRQ on TLAST</text>
+  <line x1="256" y1="234" x2="206" y2="234" stroke="#34d399" stroke-width="2" marker-end="url(#arr-g)" />
+
+  <!-- AXI-Stream Interface Forward & Return -->
+  <line x1="418" y1="156" x2="494" y2="156" stroke="#38bdf8" stroke-width="2.2" marker-end="url(#arr)" />
+  <text class="mono" x="456" y="140" fill="#7dd3fc" text-anchor="middle">AXIS Master</text>
+  <text class="mono" x="456" y="172" fill="#94a3b8" text-anchor="middle" font-size="9">TVALID/TREADY</text>
+
+  <rect class="box" x="496" y="110" width="186" height="172" stroke="#34d399" />
+  <text class="mono" x="589" y="134" fill="#6ee7b7" text-anchor="middle">PL Streaming Core</text>
+  <text class="note" x="589" y="156" text-anchor="middle">(FIR / FFT / AES / Video)</text>
+  <rect x="512" y="172" width="154" height="52" fill="#1e293b" stroke="#38bdf8" rx="4" />
+  <text class="mono" x="589" y="194" fill="#7dd3fc" text-anchor="middle">II = 1 Pipeline</text>
+  <text class="note" x="589" y="212" text-anchor="middle">Full Backpressure</text>
+  <text class="mono" x="589" y="248" fill="#fcd34d" text-anchor="middle">Propagates TLAST +</text>
+  <text class="mono" x="589" y="264" fill="#fcd34d" text-anchor="middle">TKEEP Byte Lanes</text>
+
+  <polyline points="682,246 422,246" fill="none" stroke="#34d399" stroke-width="2.2" marker-end="url(#arr-g)" />
+  <text class="mono" x="748" y="142" fill="#6ee7b7">Throughput Math:</text>
+  <text class="mono" x="700" y="166" fill="#e2e8f0">BW = W_data * F_clk</text>
+  <text class="note" x="700" y="188">256-bit @ 300 MHz</text>
+  <text class="mono" x="700" y="206" fill="#6ee7b7">= 9.6 GB/s per stream!</text>
+  <text class="note" x="700" y="232">Add AXIS Data FIFO</text>
+  <text class="note" x="700" y="248">to absorb DDR burst</text>
+  <text class="note" x="700" y="264">refresh stalls!</text>
+
+  <!-- Bottom Notes -->
+  <rect class="panel" x="20" y="306" width="880" height="72" />
+  <text class="mono" x="38" y="330" fill="#fca5a5">Critical S2MM Hang Rule:</text>
+  <text class="note" x="220" y="330">Never drop `TLAST` on S2MM streams! If your PL IP forgets `TLAST`, the DMA waits forever and never writes completion IRQ.</text>
+  <text class="mono" x="38" y="354" fill="#fcd34d">Scatter-Gather Advantage:</text>
+  <text class="note" x="234" y="354">Chains non-contiguous OS Linux `malloc`/page buffers seamlessly in DDR without halting streaming between frames!</text>
+</svg>

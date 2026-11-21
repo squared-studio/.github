@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 400" width="920" height="400">
+  <defs>
+    <style>
+      .bg { fill: #0f172a; }
+      .panel { fill: #1e293b; stroke-width: 1.5; rx: 10; ry: 10; }
+      .box { fill: #0f172a; stroke: #334155; stroke-width: 1.2; rx: 6; ry: 6; }
+      .gate { fill: #172554; stroke: #34d399; stroke-width: 1.6; rx: 6; ry: 6; }
+      .title { font-family: 'Segoe UI', Arial, sans-serif; font-size: 18px; font-weight: 700; fill: #f8fafc; text-anchor: middle; }
+      .subtitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; fill: #94a3b8; text-anchor: middle; }
+      .ptitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 14px; font-weight: 700; }
+      .mono { font-family: Consolas, 'Courier New', monospace; font-size: 11px; fill: #e2e8f0; }
+      .note { font-family: 'Segoe UI', Arial, sans-serif; font-size: 10.5px; fill: #94a3b8; }
+      .badge { font-family: Consolas, 'Courier New', monospace; font-size: 11px; font-weight: 700; text-anchor: middle; }
+    </style>
+    <marker id="arrRed" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#f87171" />
+    </marker>
+    <marker id="arrGreen" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#34d399" />
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="920" height="400" />
+  <text class="title" x="460" y="28">Crowbar Short-Circuit Hazard &amp; Standard Isolation Clamp Cells</text>
+  <text class="subtitle" x="460" y="48">Preventing Floating X-Propagation and Direct VDD-to-GND Shoot-Through Current Across Shutdown Boundaries</text>
+
+  <!-- Top Section: Unisolated Hazard -->
+  <rect class="panel" x="20" y="64" width="880" height="118" stroke="#f87171" />
+  <text class="ptitle" x="36" y="88" fill="#f87171">The Floating-Input Hazard (Missing Isolation Cell)</text>
+
+  <rect class="box" x="36" y="100" width="215" height="68" stroke="#f87171" />
+  <text class="badge" x="143" y="120" fill="#fca5a5">PD_SRC (Powered OFF = 0V)</text>
+  <text class="note" x="143" y="138" text-anchor="middle">Output driver turns Hi-Z / decays</text>
+  <text class="mono" x="143" y="156" text-anchor="middle" fill="#f87171">Float ~ 0.4V (Unknown 'X')</text>
+
+  <line x1="251" y1="134" x2="346" y2="134" stroke="#f87171" stroke-width="2.2" marker-end="url(#arrRed)" />
+  <text class="mono" x="298" y="124" text-anchor="middle" fill="#f87171">0.4V / X</text>
+
+  <rect class="box" x="350" y="100" width="534" height="68" stroke="#38bdf8" />
+  <text class="mono" x="364" y="120" fill="#7dd3fc">PD_DST Receiver Inverter (Powered ON = 0.8V):</text>
+  <text class="note" x="364" y="139" fill="#fca5a5">Intermediate gate voltage (~V_DD/2) turns BOTH PMOS &amp; NMOS partially ON simultaneously!</text>
+  <text class="note" x="364" y="156" fill="#fca5a5">Result: Continuous VDD-to-VSS Crowbar Current (burnout/reliability failure) + 'X' corrupts active FSMs.</text>
+
+  <!-- Bottom Section: 3 Clamp Cell Families -->
+  <rect class="panel" x="20" y="196" width="880" height="186" stroke="#34d399" />
+  <text class="ptitle" x="36" y="220" fill="#34d399">Standard Isolation Cell Types Placed on OFF -&gt; ON Domain Crossings</text>
+
+  <!-- Clamp 0 -->
+  <rect class="box" x="36" y="236" width="274" height="132" stroke="#34d399" />
+  <text class="badge" x="173" y="256" fill="#6ee7b7">Clamp-to-0 (AND Style)</text>
+  <rect class="gate" x="62" y="268" width="222" height="32" />
+  <text class="mono" x="173" y="288" text-anchor="middle">Y = IN &amp; (~ISO_EN)</text>
+  <text class="note" x="48" y="320">When ISO_EN=1 (active-high): forces Y = 0</text>
+  <text class="note" x="48" y="336">regardless of floating 'X' on IN pin.</text>
+  <text class="mono" x="48" y="356" fill="#7dd3fc">-clamp_value 0   (default low)</text>
+
+  <!-- Clamp 1 -->
+  <rect class="box" x="323" y="236" width="274" height="132" stroke="#38bdf8" />
+  <text class="badge" x="460" y="256" fill="#7dd3fc">Clamp-to-1 (OR Style)</text>
+  <rect class="gate" x="349" y="268" width="222" height="32" stroke="#38bdf8" />
+  <text class="mono" x="460" y="288" text-anchor="middle">Y = IN | ISO_EN</text>
+  <text class="note" x="335" y="320">Ideal for active-low control signals</text>
+  <text class="note" x="335" y="336">(e.g. rst_n, cs_n, req_n, ack_n).</text>
+  <text class="mono" x="335" y="356" fill="#7dd3fc">-clamp_value 1   (active-low safe)</text>
+
+  <!-- Clamp Latch -->
+  <rect class="box" x="610" y="236" width="274" height="132" stroke="#a78bfa" />
+  <text class="badge" x="747" y="256" fill="#c4b5fd">Clamp-to-Latch (Hold Value)</text>
+  <rect class="gate" x="636" y="268" width="222" height="32" stroke="#a78bfa" />
+  <text class="mono" x="747" y="288" text-anchor="middle">if (ISO_EN) Y &lt;= last(IN)</text>
+  <text class="note" x="622" y="320">Freezes output at its last valid pre-sleep</text>
+  <text class="note" x="622" y="336">value; used for static config buses.</text>
+  <text class="mono" x="622" y="356" fill="#c4b5fd">-clamp_value latch</text>
+</svg>

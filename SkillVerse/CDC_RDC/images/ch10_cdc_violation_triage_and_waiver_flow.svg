@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 400" width="920" height="400">
+  <defs>
+    <style>
+      .bg { fill: #0f172a; }
+      .panel { fill: #1e293b; stroke-width: 1.5; rx: 10; ry: 10; }
+      .box { fill: #0f172a; stroke: #334155; stroke-width: 1.2; rx: 6; ry: 6; }
+      .hdr { fill: #172554; stroke: #38bdf8; stroke-width: 1; }
+      .row { fill: #0f172a; stroke: #334155; stroke-width: 1; }
+      .title { font-family: 'Segoe UI', Arial, sans-serif; font-size: 18px; font-weight: 700; fill: #f8fafc; text-anchor: middle; }
+      .subtitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; fill: #94a3b8; text-anchor: middle; }
+      .colh { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12.5px; font-weight: 700; fill: #7dd3fc; }
+      .mono { font-family: Consolas, 'Courier New', monospace; font-size: 10.6px; fill: #fcd34d; }
+      .note { font-family: 'Segoe UI', Arial, sans-serif; font-size: 10.5px; fill: #cbd5e1; }
+      .fix { font-family: 'Segoe UI', Arial, sans-serif; font-size: 10.5px; fill: #6ee7b7; }
+    </style>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="920" height="400" />
+  <text class="title" x="460" y="28">Static CDC &amp; RDC Violation Triage, Constraint vs. RTL Fix Decision Matrix</text>
+  <text class="subtitle" x="460" y="48">Separating True Hardware Hazards That Demand RTL Fixes From Safe Structural Constraints &amp; Audited Waivers</text>
+
+  <rect class="panel" x="20" y="64" width="880" height="316" stroke="#a78bfa" />
+
+  <rect class="hdr" x="34" y="78" width="852" height="32" rx="4" />
+  <text class="colh" x="48" y="99">Violation Class</text>
+  <text class="colh" x="236" y="99">Root Cause</text>
+  <text class="colh" x="498" y="99">Action (Fix RTL vs. Constraint)</text>
+  <text class="colh" x="772" y="99">Waivable?</text>
+
+  <!-- Row 1 -->
+  <rect class="row" x="34" y="114" width="852" height="40" />
+  <text class="mono" x="48" y="138">Ac_unsync01/02</text>
+  <text class="note" x="236" y="138">Crossing with NO sync flip-flops</text>
+  <text class="fix" x="498" y="138">Fix RTL (2-FF/MCP/FIFO) OR quasi_static</text>
+  <text class="note" x="772" y="138" fill="#fca5a5">Never blindly</text>
+
+  <!-- Row 2 -->
+  <rect class="row" x="34" y="156" width="852" height="40" />
+  <text class="mono" x="48" y="180">Ac_glitch03</text>
+  <text class="note" x="236" y="180">Combinational logic before sync FF1</text>
+  <text class="fix" x="498" y="180">Fix RTL (Register launch output first)</text>
+  <text class="note" x="772" y="180" fill="#fca5a5">NO (Fix RTL)</text>
+
+  <!-- Row 3 -->
+  <rect class="row" x="34" y="198" width="852" height="40" />
+  <text class="mono" x="48" y="222">Ac_coherency06</text>
+  <text class="note" x="236" y="222">Multi-bit bus synced bit-by-bit</text>
+  <text class="fix" x="498" y="222">Fix RTL (DMUX/MCP/FIFO) OR prove Gray</text>
+  <text class="note" x="772" y="222" fill="#fcd34d">Only if Gray/1-hot</text>
+
+  <!-- Row 4 -->
+  <rect class="row" x="34" y="240" width="852" height="40" />
+  <text class="mono" x="48" y="264">Ac_conv01 / 02</text>
+  <text class="note" x="236" y="264">Two synced paths reconverge downstream</text>
+  <text class="fix" x="498" y="264">Sync once &amp; fanout / prove mutual excl</text>
+  <text class="note" x="772" y="264" fill="#fcd34d">With SVA proof</text>
+
+  <!-- Row 5 -->
+  <rect class="row" x="34" y="282" width="852" height="40" />
+  <text class="mono" x="48" y="306">Rdc_async_cross</text>
+  <text class="note" x="236" y="306">Async reset A crosses to reset B domain</text>
+  <text class="fix" x="498" y="306">Add RDC isolation/ICG OR reset order</text>
+  <text class="note" x="772" y="306" fill="#fcd34d">If ordered reset</text>
+
+  <!-- Footer Note -->
+  <rect class="box" x="34" y="332" width="852" height="36" stroke="#34d399" />
+  <text class="note" x="48" y="354" fill="#6ee7b7">Gold Standard: Declare clocks/resets + boot-only quasi_static registers cleanly in SGDC/Tcl FIRST; waive only justified structural exceptions!</text>
+</svg>

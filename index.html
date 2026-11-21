@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Squared Studio is an open-source learning platform focused on RTL Design &amp; Verification, SystemVerilog, UVM, AMBA protocols, RISC-V, and engineering toolchains." />
+  <meta property="og:title" content="Squared Studio — Open-Source Learning Platform" />
+  <meta property="og:description" content="Free, structured open-source courses covering RTL Design, SystemVerilog, UVM, Formal Verification, DFT, AXI/ACE/CHI, RISC-V, and Linux/EDA tooling." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://squared-studio.cc/" />
+  <meta property="og:image" content="https://squared-studio.cc/SkillVerse/logo.png" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Squared Studio — Open-Source Learning Platform" />
+  <meta name="twitter:description" content="Free, structured open-source learning resources for RTL Design, Verification, SystemVerilog, and hardware engineering." />
+  <meta name="twitter:image" content="https://squared-studio.cc/SkillVerse/logo.png" />
+  <title>Squared Studio — Open-Source Learning Platform</title>
+  <link rel="icon" type="image/png" href="SkillVerse/logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    main.home-main { max-width: none; padding: 0; }
+
+    /* ── HERO ── */
+    .hero { padding: 110px 40px 80px; text-align: center; max-width: 900px; margin: 0 auto; }
+    .hero-eyebrow { font-family: var(--font-mono); font-size: .75rem; letter-spacing: .18em; color: var(--accent2); text-transform: uppercase; margin-bottom: 20px; opacity: .9; }
+    .hero h1 { font-size: clamp(2.6rem, 6vw, 4rem); font-weight: 800; letter-spacing: -.03em; line-height: 1.1; margin-bottom: 26px; background: linear-gradient(135deg, #fff 0%, var(--accent1) 50%, var(--accent2) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .hero-sub { font-size: 1.08rem; color: var(--muted); max-width: 620px; margin: 0 auto 40px; line-height: 1.75; }
+    .hero-actions { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+
+    /* ── TOPICS STRIP ── */
+    .topics { padding: 0 40px 72px; max-width: 900px; margin: 0 auto; width: 100%; }
+    .topics-label { font-family: var(--font-mono); font-size: .68rem; letter-spacing: .16em; color: var(--muted); text-transform: uppercase; margin-bottom: 14px; text-align: center; }
+    .chips { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+    .chip { display: inline-flex; align-items: center; font-family: var(--font-mono); font-size: .75rem; padding: 5px 13px; border-radius: 20px; border: 1px solid var(--border); color: var(--muted); background: rgba(255, 255, 255, .02); letter-spacing: .03em; text-decoration: none; transition: color .15s, border-color .15s, background .15s, transform .15s; }
+    .chip:hover { color: var(--accent1); border-color: var(--accent1); background: rgba(0, 204, 255, .08); transform: translateY(-1px); }
+    .chip.hi { color: var(--accent1); border-color: rgba(0, 204, 255, .45); background: rgba(0, 204, 255, .06); }
+
+    /* ── SECTION ── */
+    .home-main section { max-width: 900px; width: 100%; margin: 0 auto; padding: 0 40px 80px; }
+    .section-header { margin-bottom: 36px; }
+    .home-main .section-title { font-size: 1.7rem; margin-bottom: 0; }
+    .home-main hr.divider { max-width: 900px; margin: 0 auto 80px; width: calc(100% - 80px); }
+
+    /* ── ABOUT ── */
+    .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .about-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 26px 28px; transition: border-color .2s; }
+    .about-card:hover { border-color: rgba(0, 204, 255, .3); }
+    .about-card .icon { font-size: 1.5rem; margin-bottom: 12px; }
+    .about-card h3 { font-size: .95rem; font-weight: 600; color: var(--accent1); margin-bottom: 6px; }
+    .about-card p { font-size: .86rem; color: var(--muted); line-height: 1.65; }
+
+    /* ── PROJECTS / FEATURED ── */
+    .repo-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 32px; transition: border-color .2s, box-shadow .2s; position: relative; overflow: hidden; }
+    .repo-card::before { content: ""; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(0, 204, 255, .04) 0%, transparent 60%); pointer-events: none; }
+    .repo-card:hover { border-color: rgba(0, 204, 255, .35); box-shadow: 0 0 36px rgba(0, 204, 255, .07); }
+    .repo-badge { display: inline-flex; align-items: center; gap: 6px; font-family: var(--font-mono); font-size: .68rem; letter-spacing: .1em; color: var(--accent2); background: rgba(0, 255, 204, .07); border: 1px solid rgba(0, 255, 204, .2); border-radius: 20px; padding: 3px 10px; margin-bottom: 14px; text-transform: uppercase; }
+    .repo-card h3 { font-size: 1.5rem; font-weight: 700; letter-spacing: -.015em; color: var(--text); margin-bottom: 10px; }
+    .repo-card p { font-size: .92rem; color: var(--muted); line-height: 1.7; margin-bottom: 22px; }
+    .repo-topics { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 26px; }
+    .repo-topic { display: inline-flex; align-items: center; font-family: var(--font-mono); font-size: .7rem; padding: 4px 10px; border-radius: 4px; background: rgba(0, 204, 255, .06); color: var(--accent1); border: 1px solid rgba(0, 204, 255, .18); text-decoration: none; transition: background .15s, border-color .15s, color .15s; }
+    .repo-topic:hover { background: rgba(0, 204, 255, .14); border-color: var(--accent1); color: var(--accent2); }
+    .repo-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+
+    /* ── UPCOMING TRACKS ── */
+    .track-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .track-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 24px 20px; display: flex; flex-direction: column; gap: 8px; transition: border-color .2s; }
+    .track-card:hover { border-color: rgba(0, 204, 255, .3); }
+    .track-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 4px; }
+    .track-icon { font-size: 1.35rem; }
+    .track-status { font-family: var(--font-mono); font-size: .65rem; letter-spacing: .08em; text-transform: uppercase; padding: 2px 8px; border-radius: 999px; color: var(--accent1); background: rgba(0, 204, 255, .07); border: 1px solid rgba(0, 204, 255, .2); }
+    .track-card h3 { font-size: .92rem; font-weight: 600; color: var(--text); }
+    .track-card p { font-size: .8rem; color: var(--muted); line-height: 1.6; }
+
+    @media (max-width: 760px) {
+      .track-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 640px) {
+      .hero { padding: 70px 20px 60px; }
+      .home-main section { padding: 0 20px 60px; }
+      .topics { padding: 0 20px 56px; }
+      .about-grid { grid-template-columns: 1fr; }
+      .home-main hr.divider { width: calc(100% - 40px); margin-bottom: 60px; }
+    }
+  </style>
+</head>
+<body>
+<div class="shell">
+
+  <!-- NAV (populated by common.js) -->
+  <nav></nav>
+
+  <main class="home-main">
+    <!-- HERO -->
+    <div class="hero">
+      <p class="hero-eyebrow">Open-Source · Community · Knowledge</p>
+      <h1>Learn. Build. Verify.</h1>
+      <p class="hero-sub">
+        Squared Studio is an open-source learning platform focused on RTL Design &amp; Verification, SystemVerilog, UVM, and the broader hardware &amp; software engineering stack.
+      </p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="SkillVerse/index.html">Explore SkillVerse</a>
+        <a class="btn btn-outline" href="about.html">About Us</a>
+      </div>
+    </div>
+
+    <!-- TOPICS STRIP -->
+    <div class="topics">
+      <p class="topics-label">22 Active Courses in SkillVerse</p>
+      <div class="chips">
+        <a class="chip hi" href="SkillVerse/#RTL_Design.md">RTL Design</a>
+        <a class="chip hi" href="SkillVerse/#RTL_Design_Verification.md">RTL Verification</a>
+        <a class="chip hi" href="SkillVerse/#SystemVerilog.md">SystemVerilog</a>
+        <a class="chip hi" href="SkillVerse/#uvm.md">UVM</a>
+        <a class="chip hi" href="SkillVerse/#Formal_Verification.md">Formal Verification</a>
+        <a class="chip hi" href="SkillVerse/#DFT.md">DFT</a>
+        <a class="chip" href="SkillVerse/#AXI_Protocol.md">AXI Protocol</a>
+        <a class="chip" href="SkillVerse/#ACE_Protocol.md">ACE Protocol</a>
+        <a class="chip" href="SkillVerse/#CHI_Protocol.md">CHI Protocol</a>
+        <a class="chip" href="SkillVerse/#APB_Protocol.md">APB Protocol</a>
+        <a class="chip" href="SkillVerse/#OBI.md">OBI Protocol</a>
+        <a class="chip" href="SkillVerse/#UART_Protocol.md">UART Protocol</a>
+        <a class="chip" href="SkillVerse/#RISC_V_Assembly.md">RISC-V Assembly</a>
+        <a class="chip" href="SkillVerse/#Electronics.md">Electronics</a>
+        <a class="chip" href="SkillVerse/#Vivado.md">Vivado</a>
+        <a class="chip" href="SkillVerse/#C.md">C</a>
+        <a class="chip" href="SkillVerse/#Python.md">Python</a>
+        <a class="chip" href="SkillVerse/#bash.md">Bash</a>
+        <a class="chip" href="SkillVerse/#Unix_Terminal.md">Unix Terminal</a>
+        <a class="chip" href="SkillVerse/#git.md">Git</a>
+        <a class="chip" href="SkillVerse/#Makefile.md">Makefile</a>
+        <a class="chip" href="SkillVerse/#VIM.md">VIM</a>
+      </div>
+    </div>
+
+    <hr class="divider" />
+
+    <!-- ABOUT HIGHLIGHT -->
+    <section>
+      <div class="section-header">
+        <p class="section-tag">What We Do</p>
+        <h2 class="section-title">Open-source education for engineers</h2>
+        <p class="section-desc">From digital logic to chip verification — structured, community-driven learning resources, free for everyone.</p>
+      </div>
+      <div class="about-grid">
+        <div class="about-card">
+          <div class="icon">🔬</div>
+          <h3>RTL Design &amp; Verification</h3>
+          <p>Deep-dive guides on writing synthesisable RTL, UVM testbenches, assertions, formal methods, DFT, coverage, and simulation using SystemVerilog.</p>
+        </div>
+        <div class="about-card">
+          <div class="icon">🧰</div>
+          <h3>Toolchain Mastery</h3>
+          <p>Practical references for the tools engineers use every day — Bash, Git, Make, VIM, Python, Unix terminal, Vivado, and RISC-V assembly.</p>
+        </div>
+        <div class="about-card">
+          <div class="icon">📡</div>
+          <h3>Protocols &amp; Interfaces</h3>
+          <p>Structured knowledge on AXI, ACE, CHI, APB, OBI, and UART protocols — with PCIe, DDR, USB, SPI, and I2C tracks in development.</p>
+        </div>
+        <div class="about-card">
+          <div class="icon">🌐</div>
+          <h3>Fully Open-Source</h3>
+          <p>All content lives on GitHub. Anyone can read, contribute, open issues, or suggest improvements — no paywalls, no accounts required.</p>
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider" />
+
+    <!-- FEATURED REPO: SKILLVERSE -->
+    <section>
+      <div class="section-header">
+        <p class="section-tag">Featured Repository</p>
+        <h2 class="section-title">Highlighted Projects</h2>
+        <p class="section-desc">Notable open-source repositories from the Squared Studio organisation.</p>
+      </div>
+      <div class="repo-card">
+        <h3>SkillVerse</h3>
+        <p>
+          A structured, chapter-based knowledge base covering RTL Design, SystemVerilog, UVM, Formal Verification, DFT, AMBA &amp; OBI Protocols, RISC-V Assembly, Bash, Git, Makefiles, Electronics, and more.
+          Rendered as a clean, fast single-page app — no frameworks, no build steps.
+        </p>
+        <div class="repo-topics">
+          <a class="repo-topic" href="SkillVerse/#RTL_Design.md">RTL Design</a>
+          <a class="repo-topic" href="SkillVerse/#SystemVerilog.md">SystemVerilog</a>
+          <a class="repo-topic" href="SkillVerse/#uvm.md">UVM</a>
+          <a class="repo-topic" href="SkillVerse/#Formal_Verification.md">Formal Verification</a>
+          <a class="repo-topic" href="SkillVerse/#DFT.md">DFT</a>
+          <a class="repo-topic" href="SkillVerse/#AXI_Protocol.md">AXI</a>
+          <a class="repo-topic" href="SkillVerse/#CHI_Protocol.md">CHI</a>
+          <a class="repo-topic" href="SkillVerse/#RISC_V_Assembly.md">RISC-V Assembly</a>
+          <a class="repo-topic" href="SkillVerse/#Electronics.md">Electronics</a>
+          <a class="repo-topic" href="SkillVerse/#Python.md">Python</a>
+          <a class="repo-topic" href="SkillVerse/#C.md">C</a>
+        </div>
+        <div class="repo-actions">
+          <a class="btn btn-primary" href="SkillVerse/index.html">Open SkillVerse</a>
+          <a class="btn btn-outline" href="https://github.com/squared-studio" target="_blank" rel="noopener">View on GitHub</a>
+        </div>
+      </div>
+    </section>
+
+  <!-- FOOTER (populated by common.js) -->
+  <footer></footer>
+
+</div>
+<script src="common.js"></script>
+</body>
+</html>

@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 390" width="920" height="390">
+  <defs>
+    <style>
+      .bg { fill: #0f172a; }
+      .panel { fill: #1e293b; stroke-width: 1.5; rx: 10; ry: 10; }
+      .box { fill: #0f172a; stroke: #334155; stroke-width: 1.2; rx: 6; ry: 6; }
+      .ff { fill: #172554; stroke: #38bdf8; stroke-width: 1.5; rx: 6; ry: 6; }
+      .title { font-family: 'Segoe UI', Arial, sans-serif; font-size: 18px; font-weight: 700; fill: #f8fafc; text-anchor: middle; }
+      .subtitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; fill: #94a3b8; text-anchor: middle; }
+      .ptitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 14px; font-weight: 700; }
+      .mono { font-family: Consolas, 'Courier New', monospace; font-size: 10.8px; fill: #e2e8f0; }
+      .note { font-family: 'Segoe UI', Arial, sans-serif; font-size: 10.5px; fill: #94a3b8; }
+      .badge { font-family: Consolas, 'Courier New', monospace; font-size: 11px; font-weight: 700; text-anchor: middle; }
+    </style>
+    <marker id="arrSky" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#38bdf8" />
+    </marker>
+    <marker id="arrGreen" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#34d399" />
+    </marker>
+    <marker id="arrAmb" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#f59e0b" />
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="920" height="390" />
+  <text class="title" x="460" y="28">DMUX (Data Multiplexer) Multi-Bit CDC Synchronizer Architecture</text>
+  <text class="subtitle" x="460" y="48">Synchronizing Only a Single Qualifier Control Signal While Holding the N-Bit Payload Stable Across the Crossing</text>
+
+  <!-- Schematic Panel -->
+  <rect class="panel" x="20" y="64" width="880" height="196" stroke="#34d399" />
+  <text class="ptitle" x="36" y="88" fill="#34d399">Structural DMUX Qualifier Topology (Control Synced, Data Direct-Captured on Load Enable)</text>
+
+  <!-- Source FFs -->
+  <rect class="ff" x="38" y="106" width="150" height="44" stroke="#f59e0b" />
+  <text class="badge" x="113" y="125" fill="#fcd34d">src_en_ff (1b)</text>
+  <text class="note" x="113" y="141" text-anchor="middle">src_clk domain</text>
+
+  <rect class="ff" x="38" y="180" width="150" height="58" stroke="#38bdf8" />
+  <text class="badge" x="113" y="204" fill="#7dd3fc">src_data_ff [N-1:0]</text>
+  <text class="note" x="113" y="222" text-anchor="middle">Held static until captured!</text>
+
+  <!-- Top Sync Path -->
+  <line x1="188" y1="128" x2="292" y2="128" stroke="#f59e0b" stroke-width="2" marker-end="url(#arrAmb)" />
+  <rect class="ff" x="296" y="104" width="224" height="48" stroke="#34d399" />
+  <text class="badge" x="408" y="125" fill="#6ee7b7">Pulse / Level 2-FF Sync</text>
+  <text class="note" x="408" y="142" text-anchor="middle">Produces clean 1-cycle dst_en</text>
+
+  <line x1="520" y1="128" x2="646" y2="128" stroke="#34d399" stroke-width="2" marker-end="url(#arrGreen)" />
+  <text class="mono" x="582" y="118" text-anchor="middle" fill="#6ee7b7">dst_load_en</text>
+  <line x1="650" y1="128" x2="650" y2="176" stroke="#34d399" stroke-width="2" marker-end="url(#arrGreen)" />
+
+  <!-- Bottom Unsynchronized Data Bus -->
+  <line x1="188" y1="209" x2="606" y2="209" stroke="#38bdf8" stroke-width="3" marker-end="url(#arrSky)" />
+  <text class="mono" x="408" y="199" text-anchor="middle" fill="#7dd3fc">Direct N-Bit Bus (Zero FF Latency Overhead!)</text>
+
+  <!-- Destination MUX + Capture FF -->
+  <rect class="box" x="610" y="180" width="84" height="58" stroke="#34d399" />
+  <text class="badge" x="652" y="204" fill="#6ee7b7">MUX 2:1</text>
+  <text class="note" x="652" y="222" text-anchor="middle">en ? src : q</text>
+
+  <line x1="694" y1="209" x2="728" y2="209" stroke="#38bdf8" stroke-width="2" marker-end="url(#arrSky)" />
+
+  <rect class="ff" x="732" y="180" width="148" height="58" stroke="#38bdf8" />
+  <text class="badge" x="806" y="204" fill="#7dd3fc">dst_data_ff [N-1:0]</text>
+  <text class="note" x="806" y="222" text-anchor="middle">Coherent atomic capture!</text>
+
+  <!-- Feedback hold line -->
+  <path d="M806,238 L806,250 L632,250 L632,238" fill="none" stroke="#64748b" stroke-width="1.4" />
+
+  <!-- Dashed CDC divider -->
+  <line x1="238" y1="98" x2="238" y2="246" stroke="#f87171" stroke-width="1.5" stroke-dasharray="5,4" />
+
+  <!-- Bottom Contract & Static Rule Cards -->
+  <rect class="panel" x="20" y="274" width="430" height="100" stroke="#f59e0b" />
+  <text class="ptitle" x="36" y="298" fill="#f59e0b">Mandatory Data Stability Contract</text>
+  <text class="note" x="36" y="318">1. src_data_ff MUST remain 100% unchanged from 1 src cycle before</text>
+  <text class="note" x="36" y="334">   src_en launches until AFTER dst_load_en captures it cleanly.</text>
+  <text class="note" x="36" y="352" fill="#6ee7b7">2. Saves (N - 1) dual-FF synchronizers &amp; skips FIFO RAM area!</text>
+
+  <rect class="panel" x="470" y="274" width="430" height="100" stroke="#a78bfa" />
+  <text class="ptitle" x="486" y="298" fill="#a78bfa">SDC Routing Skew Bounds for DMUX</text>
+  <text class="note" x="486" y="318">If src_data[N-1:0] wire delay exceeds the qualifier sync delay,</text>
+  <text class="note" x="486" y="334" fill="#fca5a5">dst_load_en fires BEFORE stale data settles at the MUX!</text>
+  <text class="mono" x="486" y="355" fill="#7dd3fc">Constraint: set_max_delay -datapath_only &lt; min(T_src, 2*T_dst)</text>
+</svg>

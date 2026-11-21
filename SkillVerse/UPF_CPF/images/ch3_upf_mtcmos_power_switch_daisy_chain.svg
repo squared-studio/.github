@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 400" width="920" height="400">
+  <defs>
+    <style>
+      .bg { fill: #0f172a; }
+      .panel { fill: #1e293b; stroke-width: 1.5; rx: 10; ry: 10; }
+      .box { fill: #0f172a; stroke: #334155; stroke-width: 1.2; rx: 6; ry: 6; }
+      .sw { fill: #172554; stroke: #38bdf8; stroke-width: 1.5; rx: 6; ry: 6; }
+      .title { font-family: 'Segoe UI', Arial, sans-serif; font-size: 18px; font-weight: 700; fill: #f8fafc; text-anchor: middle; }
+      .subtitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; fill: #94a3b8; text-anchor: middle; }
+      .ptitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 14px; font-weight: 700; }
+      .mono { font-family: Consolas, 'Courier New', monospace; font-size: 10.6px; fill: #e2e8f0; }
+      .note { font-family: 'Segoe UI', Arial, sans-serif; font-size: 10.5px; fill: #94a3b8; }
+      .badge { font-family: Consolas, 'Courier New', monospace; font-size: 11px; font-weight: 700; text-anchor: middle; }
+    </style>
+    <marker id="arrAmber" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#f59e0b" />
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="920" height="400" />
+  <text class="title" x="460" y="28">MTCMOS Power Switch Architecture &amp; Daisy-Chain Wakeup Sequencing</text>
+  <text class="subtitle" x="460" y="48">Coarse-Grain Header/Footer Switches Using High-V_th Devices and Staggered Turn-On to Suppress Inrush Current</text>
+
+  <!-- Left Panel: Header vs Footer Comparison -->
+  <rect class="panel" x="20" y="64" width="380" height="316" stroke="#38bdf8" />
+  <text class="ptitle" x="36" y="88" fill="#38bdf8">Header vs. Footer MTCMOS Topology</text>
+
+  <rect class="box" x="36" y="102" width="348" height="128" stroke="#34d399" />
+  <text class="mono" x="48" y="121" fill="#34d399">Header Switch (PMOS High-V_th) - Industry Default</text>
+  <line x1="56" y1="142" x2="360" y2="142" stroke="#f87171" stroke-width="2.5" />
+  <text class="mono" x="58" y="137" fill="#fca5a5">VDD_AON (Always-On Rail)</text>
+  <rect class="sw" x="155" y="148" width="106" height="26" />
+  <text class="badge" x="208" y="165" fill="#7dd3fc">PMOS HVT SW</text>
+  <line x1="56" y1="184" x2="360" y2="184" stroke="#38bdf8" stroke-width="2.5" />
+  <text class="mono" x="58" y="198" fill="#7dd3fc">VVDD_SW (Virtual VDD)  |  Solid VSS Ground</text>
+  <text class="note" x="48" y="218">Single solid VSS avoids noise &amp; eases level shifting.</text>
+
+  <rect class="box" x="36" y="242" width="348" height="124" stroke="#f59e0b" />
+  <text class="mono" x="48" y="261" fill="#fcd34d">Footer Switch (NMOS High-V_th) - Compact Area</text>
+  <line x1="56" y1="282" x2="360" y2="282" stroke="#38bdf8" stroke-width="2" />
+  <text class="mono" x="58" y="277" fill="#7dd3fc">Solid VDD  |  Virtual VSS_SW floats when OFF</text>
+  <rect class="sw" x="155" y="290" width="106" height="26" stroke="#f59e0b" />
+  <text class="badge" x="208" y="307" fill="#fcd34d">NMOS HVT SW</text>
+  <line x1="56" y1="326" x2="360" y2="326" stroke="#94a3b8" stroke-width="2.5" />
+  <text class="mono" x="58" y="340" fill="#cbd5e1">VSS (True System Ground)</text>
+  <text class="note" x="48" y="357">Higher drive per um^2, but virtual GND rises to VDD.</text>
+
+  <!-- Right Panel: Daisy-Chain Staggered Turn-On -->
+  <rect class="panel" x="418" y="64" width="482" height="316" stroke="#34d399" />
+  <text class="ptitle" x="434" y="88" fill="#34d399">Daisy-Chained Power Switch Inrush Mitigation</text>
+
+  <rect class="box" x="434" y="102" width="450" height="42" />
+  <text class="note" x="444" y="119" fill="#e2e8f0">Switching all cells at once creates huge dI/dt rail droop.</text>
+  <text class="note" x="444" y="135">Solution: Buffer sleep_req through staggered switch chains.</text>
+
+  <rect class="sw" x="444" y="156" width="112" height="58" />
+  <text class="badge" x="500" y="177" fill="#38bdf8">SW Cell #1</text>
+  <text class="note" x="500" y="193" text-anchor="middle">Trickle Pre-charge</text>
+  <text class="mono" x="500" y="207" text-anchor="middle" fill="#6ee7b7">ack_1</text>
+
+  <line x1="556" y1="185" x2="594" y2="185" stroke="#f59e0b" stroke-width="2" marker-end="url(#arrAmber)" />
+
+  <rect class="sw" x="598" y="156" width="112" height="58" />
+  <text class="badge" x="654" y="177" fill="#38bdf8">SW Cell #2</text>
+  <text class="note" x="654" y="193" text-anchor="middle">Main Grid Bank A</text>
+  <text class="mono" x="654" y="207" text-anchor="middle" fill="#6ee7b7">ack_2</text>
+
+  <line x1="710" y1="185" x2="748" y2="185" stroke="#f59e0b" stroke-width="2" marker-end="url(#arrAmber)" />
+
+  <rect class="sw" x="752" y="156" width="122" height="58" />
+  <text class="badge" x="813" y="177" fill="#38bdf8">SW Cell #N</text>
+  <text class="note" x="813" y="193" text-anchor="middle">Main Grid Bank N</text>
+  <text class="mono" x="813" y="207" text-anchor="middle" fill="#34d399">pwr_ack -&gt; PMC</text>
+
+  <text class="mono" x="444" y="236" fill="#fcd34d">PMC pwr_sw_en --&gt; SW #1 (chain delay --&gt; final pwr_ack)</text>
+
+  <!-- UPF Snippet -->
+  <rect class="box" x="434" y="248" width="450" height="118" />
+  <text class="mono" x="446" y="267" fill="#7dd3fc">create_power_switch SW_CPU -domain PD_CPU \</text>
+  <text class="mono" x="446" y="284">  -input_supply_port  {in  VDD_AON} \</text>
+  <text class="mono" x="446" y="301">  -output_supply_port {out VDD_CPU_SW} \</text>
+  <text class="mono" x="446" y="318">  -control_port       {ctrl pwr_sw_en} \</text>
+  <text class="mono" x="446" y="335">  -ack_port           {ack pwr_ack {ctrl}} \</text>
+  <text class="mono" x="446" y="352">  -on_state {ON in {ctrl}} -off_state {OFF {!ctrl}}</text>
+</svg>

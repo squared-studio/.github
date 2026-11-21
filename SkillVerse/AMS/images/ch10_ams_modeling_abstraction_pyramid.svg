@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 410" width="920" height="410">
+  <defs>
+    <style>
+      .bg { fill: #0f172a; }
+      .panel { fill: #1e293b; stroke: #334155; stroke-width: 1.5; rx: 10; ry: 10; }
+      .box { fill: #0f172a; stroke: #334155; stroke-width: 1.2; rx: 6; ry: 6; }
+      .title { font-family: 'Segoe UI', Arial, sans-serif; font-size: 18px; font-weight: 700; fill: #f8fafc; text-anchor: middle; }
+      .sub { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; fill: #94a3b8; text-anchor: middle; }
+      .hdr { font-family: 'Segoe UI', Arial, sans-serif; font-size: 13.5px; font-weight: 700; }
+      .mono { font-family: Consolas, 'Courier New', monospace; font-size: 10.5px; fill: #e2e8f0; }
+      .note { font-family: 'Segoe UI', Arial, sans-serif; font-size: 11px; fill: #cbd5e1; }
+    </style>
+    <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8" />
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="920" height="410" />
+  <text class="title" x="460" y="28">AMS Simulation Abstraction Pyramid: Speed vs. Physical Fidelity</text>
+  <text class="sub" x="460" y="48">Choosing the Right Modeling Layer from SoC Real-Number Regression Down to Post-Layout PEX SPICE</text>
+
+  <!-- Left Side: Pyramid Tiers (Stacked Trapezoids/Rectangles) -->
+  <rect class="panel" x="20" y="64" width="540" height="328" />
+  <text class="hdr" x="38" y="88" fill="#38bdf8">1. Five-Tier AMS Simulation Hierarchy</text>
+
+  <!-- Tier 1: Post-Layout PEX SPICE -->
+  <polygon points="210,104 370,104 398,150 182,150" fill="rgba(248,113,113,0.20)" stroke="#f87171" stroke-width="1.6" />
+  <text class="mono" x="290" y="124" fill="#fca5a5" text-anchor="middle" font-weight="bold">Post-Layout PEX SPICE</text>
+  <text class="mono" x="290" y="140" fill="#cbd5e1" text-anchor="middle" font-size="9.5">RC + Couple C + Aging (1x)</text>
+
+  <!-- Tier 2: Pre-Layout Schematic SPICE -->
+  <polygon points="182,156 398,156 426,204 154,204" fill="rgba(245,158,11,0.18)" stroke="#f59e0b" stroke-width="1.6" />
+  <text class="mono" x="290" y="176" fill="#fcd34d" text-anchor="middle" font-weight="bold">Schematic SPICE (Spectre / HSPICE)</text>
+  <text class="mono" x="290" y="192" fill="#cbd5e1" text-anchor="middle" font-size="9.5">BSIM4 / BSIM-CMG PVT + MC (5-10x)</text>
+
+  <!-- Tier 3: FastSPICE -->
+  <polygon points="154,210 426,210 454,258 126,258" fill="rgba(167,139,250,0.18)" stroke="#a78bfa" stroke-width="1.6" />
+  <text class="mono" x="290" y="230" fill="#c4b5fd" text-anchor="middle" font-weight="bold">FastSPICE (XA / FineSim / XPS)</text>
+  <text class="mono" x="290" y="246" fill="#cbd5e1" text-anchor="middle" font-size="9.5">Event-Partitioned Matrix Solver (50x)</text>
+
+  <!-- Tier 4: Verilog-A / Verilog-AMS -->
+  <polygon points="126,264 454,264 484,312 96,312" fill="rgba(56,189,248,0.18)" stroke="#38bdf8" stroke-width="1.6" />
+  <text class="mono" x="290" y="284" fill="#7dd3fc" text-anchor="middle" font-weight="bold">Behavioral Analog: Verilog-A / Verilog-AMS</text>
+  <text class="mono" x="290" y="300" fill="#cbd5e1" text-anchor="middle" font-size="9.5">Continuous KCL/KVL ODEs V(a,b) &lt;+ I (200x)</text>
+
+  <!-- Tier 5: SV-RNM (EEnet / real) -->
+  <polygon points="96,318 484,318 520,372 60,372" fill="rgba(52,211,153,0.22)" stroke="#34d399" stroke-width="2" />
+  <text class="mono" x="290" y="340" fill="#6ee7b7" text-anchor="middle" font-weight="bold">SystemVerilog RNM (wreal / EEnet nettype)</text>
+  <text class="mono" x="290" y="357" fill="#e2e8f0" text-anchor="middle" font-size="9.5">Pure Digital Event Kernel -&gt; 10,000x-100,000x Speed!</text>
+
+  <!-- Right Panel: Selection Matrix & Trade-offs -->
+  <rect class="panel" x="576" y="64" width="324" height="328" />
+  <text class="hdr" x="592" y="88" fill="#34d399">2. Verification Scope by Level</text>
+
+  <rect class="box" x="590" y="102" width="296" height="62" stroke="#f87171" />
+  <text class="mono" x="602" y="121" fill="#fca5a5">Circuit Sign-Off (SPICE / PEX)</text>
+  <text class="note" x="602" y="139">- Block-level gain, noise, offset, stability</text>
+  <text class="note" x="602" y="155">- SRAM, BGR, VCO, AFE, and IR/EM</text>
+
+  <rect class="box" x="590" y="172" width="296" height="62" stroke="#a78bfa" />
+  <text class="mono" x="602" y="191" fill="#c4b5fd">Mixed-Signal Bring-Up (AMS / FastSPICE)</text>
+  <text class="note" x="602" y="209">- Real transistors inside critical loops</text>
+  <text class="note" x="602" y="225">- Analog calibration + RTL FSM closure</text>
+
+  <rect class="box" x="590" y="242" width="296" height="64" stroke="#34d399" />
+  <text class="mono" x="602" y="261" fill="#6ee7b7">Full-SoC Regression (SV-RNM)</text>
+  <text class="note" x="602" y="279">- Zero analog matrix solver required!</text>
+  <text class="note" x="602" y="295">- Enables UVM, CI/CD, &amp; firmware boot</text>
+
+  <rect class="box" x="590" y="314" width="296" height="64" stroke="#38bdf8" />
+  <text class="mono" x="602" y="334" fill="#7dd3fc">Golden Correlation Rule (MVS)</text>
+  <text class="note" x="602" y="352">SV-RNM models MUST correlate against</text>
+  <text class="note" x="602" y="368">extracted SPICE across corner sweeps!</text>
+</svg>

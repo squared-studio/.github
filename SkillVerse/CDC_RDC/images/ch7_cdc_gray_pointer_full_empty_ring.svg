@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 400" width="920" height="400">
+  <defs>
+    <style>
+      .bg { fill: #0f172a; }
+      .panel { fill: #1e293b; stroke-width: 1.5; rx: 10; ry: 10; }
+      .box { fill: #0f172a; stroke: #334155; stroke-width: 1.2; rx: 6; ry: 6; }
+      .title { font-family: 'Segoe UI', Arial, sans-serif; font-size: 18px; font-weight: 700; fill: #f8fafc; text-anchor: middle; }
+      .subtitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; fill: #94a3b8; text-anchor: middle; }
+      .ptitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 14px; font-weight: 700; }
+      .mono { font-family: Consolas, 'Courier New', monospace; font-size: 10.8px; fill: #e2e8f0; }
+      .note { font-family: 'Segoe UI', Arial, sans-serif; font-size: 10.5px; fill: #94a3b8; }
+      .badge { font-family: Consolas, 'Courier New', monospace; font-size: 10.5px; font-weight: 700; text-anchor: middle; }
+    </style>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="920" height="400" />
+  <text class="title" x="460" y="28">4-Bit Gray Pointer Ring &amp; Full vs. Empty Flag Generation (8-Entry FIFO)</text>
+  <text class="subtitle" x="460" y="48">Solving Full vs. Empty Ambiguity Using an Extra MSB + Why Two Top Gray Bits Must Invert for Full</text>
+
+  <!-- Left Panel: Circular Gray Ring -->
+  <rect class="panel" x="20" y="64" width="430" height="316" stroke="#38bdf8" />
+  <text class="ptitle" x="36" y="88" fill="#38bdf8">16-State Gray Wheel for Depth-8 FIFO</text>
+
+  <!-- Outer Ring Circle -->
+  <circle cx="235" cy="222" r="102" fill="none" stroke="#334155" stroke-width="2" />
+  <!-- Vertical Quadrant Cut (MSB=0 Left? No: Top half = Lap 0 (MSB=0), Bottom = Lap 1? Actually mirrored!) -->
+  <line x1="235" y1="100" x2="235" y2="344" stroke="#f59e0b" stroke-width="1.4" stroke-dasharray="4,4" />
+  <line x1="115" y1="222" x2="355" y2="222" stroke="#334155" stroke-width="1.2" stroke-dasharray="4,4" />
+
+  <!-- Labels around circle (Top-Right Lap 0: 0000..0100, Bottom-Left Lap 1: 1100..1000) -->
+  <text class="badge" x="235" y="114" fill="#34d399">0: 0000</text>
+  <text class="badge" x="304" y="136" fill="#34d399">1: 0001</text>
+  <text class="badge" x="348" y="182" fill="#34d399">2: 0011</text>
+  <text class="badge" x="362" y="226" fill="#34d399">3: 0010</text>
+  <text class="badge" x="348" y="270" fill="#34d399">4: 0110</text>
+  <text class="badge" x="304" y="314" fill="#34d399">5: 0111</text>
+  <text class="badge" x="235" y="338" fill="#34d399">7: 0100</text>
+
+  <text class="badge" x="155" y="314" fill="#a78bfa">8: 1100</text>
+  <text class="badge" x="112" y="270" fill="#a78bfa">10: 1111</text>
+  <text class="badge" x="100" y="226" fill="#a78bfa">11: 1110</text>
+  <text class="badge" x="112" y="182" fill="#a78bfa">12: 1010</text>
+  <text class="badge" x="155" y="136" fill="#a78bfa">15: 1000</text>
+
+  <!-- Center Marker inside circle -->
+  <rect class="box" x="172" y="194" width="126" height="56" stroke="#f87171" />
+  <text class="badge" x="235" y="214" fill="#fca5a5">Example: R=2 (0011)</text>
+  <text class="badge" x="235" y="232" fill="#fcd34d">FULL at W=10 (1111)</text>
+  <text class="note" x="235" y="246" text-anchor="middle">Top 2 bits inverted!</text>
+
+  <text class="note" x="36" y="364" fill="#7dd3fc">Reflective symmetry: W=10 (1111) vs R=2 (0011) match lower [1:0] = 11!</text>
+
+  <!-- Right Panel: Why Invert 2 MSBs & Safe Pessimism -->
+  <rect class="panel" x="470" y="64" width="430" height="316" stroke="#a78bfa" />
+  <text class="ptitle" x="486" y="88" fill="#a78bfa">Why Full Inverts Two MSBs + Safe Pessimism</text>
+
+  <rect class="box" x="486" y="102" width="398" height="96" stroke="#34d399" />
+  <text class="mono" x="498" y="122" fill="#6ee7b7">1. Why TWO MSBs Invert (~rptr[N:N-1])?</text>
+  <text class="note" x="498" y="141">Binary pointer 2 (0_010) + depth 8 = 10 (1_010) differs only in MSB.</text>
+  <text class="note" x="498" y="157">After Binary-&gt;Gray XOR: G[N] = B[N], while G[N-1] = B[N] ^ B[N-1]!</text>
+  <text class="note" x="498" y="173">Inverting B[N] flips BOTH G[N] and G[N-1] (0011 &lt;-&gt; 1111), while</text>
+  <text class="note" x="498" y="189">leaving lower index bits [N-2:0] identical!</text>
+
+  <rect class="box" x="486" y="210" width="398" height="156" stroke="#f59e0b" />
+  <text class="mono" x="498" y="230" fill="#fcd34d">2. Conservative ("Pessimistic") Latency Behavior:</text>
+  <text class="note" x="498" y="250">Because pointers take 2 destination cycles to cross 2-FF syncs:</text>
+  <text class="note" x="498" y="268" fill="#fca5a5">- wclk sees a slightly STALE rptr -&gt; asserts wfull early (never overflows!).</text>
+  <text class="note" x="498" y="286" fill="#7dd3fc">- rclk sees a slightly STALE wptr -&gt; asserts rempty early (never underflows!).</text>
+  <text class="note" x="498" y="308" fill="#6ee7b7">Wait: Can false FULL deadlock? No! Once wclk stops writing,</text>
+  <text class="note" x="498" y="324" fill="#6ee7b7">rptr catches up within 2-3 wclk edges and clears wfull cleanly!</text>
+  <text class="mono" x="498" y="352" fill="#c4b5fd">Size for throughput: Depth &gt;= 2 * (Round-Trip Sync) to avoid bubbles.</text>
+</svg>

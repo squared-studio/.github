@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Get in touch with Squared Studio through GitHub Discussions, Issues, and Pull Requests, or read frequently asked questions about contributing." />
+  <meta property="og:title" content="Contact — Squared Studio" />
+  <meta property="og:description" content="Connect with Squared Studio via GitHub Issues, Discussions, and Pull Requests." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://squared-studio.cc/contact.html" />
+  <meta property="og:image" content="https://squared-studio.cc/SkillVerse/logo.png" />
+  <meta name="twitter:card" content="summary" />
+  <title>Contact — Squared Studio</title>
+  <link rel="icon" type="image/png" href="SkillVerse/logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    .section-title { margin-bottom: 24px; }
+
+    /* Contact channels grid */
+    .channels { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; margin-bottom: 56px; }
+    .channel-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 26px 22px; text-decoration: none; display: block; transition: border-color .2s, box-shadow .2s, transform .2s; position: relative; overflow: hidden; }
+    .channel-card::before { content: ""; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(0, 204, 255, .03) 0%, transparent 60%); pointer-events: none; }
+    .channel-card:hover { border-color: rgba(0, 204, 255, .35); box-shadow: 0 0 28px rgba(0, 204, 255, .07); transform: translateY(-2px); }
+    .channel-icon { font-size: 1.6rem; margin-bottom: 12px; }
+    .channel-name { font-size: .92rem; font-weight: 600; color: var(--text); margin-bottom: 5px; }
+    .channel-handle { font-family: var(--font-mono); font-size: .72rem; color: var(--accent1); margin-bottom: 8px; word-break: break-all; }
+    .channel-desc { font-size: .8rem; color: var(--muted); line-height: 1.6; }
+    .channel-arrow { position: absolute; top: 22px; right: 20px; font-size: .8rem; color: var(--muted); transition: color .2s; }
+    .channel-card:hover .channel-arrow { color: var(--accent1); }
+
+    /* FAQ / info section */
+    .faq { display: flex; flex-direction: column; gap: 14px; margin-bottom: 56px; }
+    .faq-item { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 20px 22px; }
+    .faq-item h3 { font-size: .9rem; font-weight: 600; color: var(--accent1); margin-bottom: 6px; }
+    .faq-item p { font-size: .84rem; color: var(--muted); line-height: 1.65; }
+    .faq-item p a { color: var(--accent1); text-decoration: none; border-bottom: 1px solid rgba(0, 204, 255, .3); }
+    .faq-item p a:hover { color: var(--accent2); }
+    .faq-item code { font-family: var(--font-mono); font-size: .85em; color: var(--accent2); }
+  </style>
+</head>
+<body>
+<div class="shell">
+
+  <!-- NAV (populated by common.js) -->
+  <nav></nav>
+
+  <div class="page-hero">
+    <p class="eyebrow">Contact</p>
+    <h1>Get in Touch</h1>
+    <p>Have a question, found a bug, want to contribute, or just want to say hello? Reach us through any of the channels below.</p>
+  </div>
+
+  <main>
+    <hr class="divider" />
+
+    <!-- CHANNELS -->
+    <p class="section-tag">Channels</p>
+    <h2 class="section-title">Where to Find Us</h2>
+    <div class="channels">
+
+      <a class="channel-card" href="https://github.com/squared-studio" target="_blank" rel="noopener">
+        <span class="channel-arrow">↗</span>
+        <div class="channel-icon">⚙️</div>
+        <div class="channel-name">GitHub Organisation</div>
+        <div class="channel-handle">github.com/squared-studio</div>
+        <div class="channel-desc">Browse all repositories, open issues, and contribute via pull requests.</div>
+      </a>
+
+      <a class="channel-card" href="https://github.com/squared-studio/SkillVerse/issues" target="_blank" rel="noopener">
+        <span class="channel-arrow">↗</span>
+        <div class="channel-icon">🐛</div>
+        <div class="channel-name">Issue Tracker</div>
+        <div class="channel-handle">SkillVerse Issues</div>
+        <div class="channel-desc">Report content errors, broken links, or suggest new topics for SkillVerse.</div>
+      </a>
+
+      <a class="channel-card" href="https://github.com/squared-studio/SkillVerse/discussions" target="_blank" rel="noopener">
+        <span class="channel-arrow">↗</span>
+        <div class="channel-icon">💬</div>
+        <div class="channel-name">Discussions</div>
+        <div class="channel-handle">GitHub Discussions</div>
+        <div class="channel-desc">Ask questions, share ideas, or start a conversation with the community.</div>
+      </a>
+
+      <a class="channel-card" href="https://github.com/squared-studio/SkillVerse/pulls" target="_blank" rel="noopener">
+        <span class="channel-arrow">↗</span>
+        <div class="channel-icon">🔀</div>
+        <div class="channel-name">Pull Requests</div>
+        <div class="channel-handle">Contribute Content</div>
+        <div class="channel-desc">Submit fixes, improvements, or entirely new chapters via pull requests.</div>
+      </a>
+
+    </div>
+
+    <hr class="divider" />
+
+    <!-- FAQ -->
+    <p class="section-tag">FAQ</p>
+    <h2 class="section-title">Common Questions</h2>
+    <div class="faq">
+
+      <div class="faq-item">
+        <h3>How do I report a mistake in the content?</h3>
+        <p>Open an issue on the relevant repository on <a href="https://github.com/squared-studio" target="_blank" rel="noopener">GitHub</a>. Please include the file name, a description of the error, and the correct information if you know it.</p>
+      </div>
+
+      <div class="faq-item">
+        <h3>How do I contribute new content?</h3>
+        <p>Fork the repository, make your changes in a new branch, then open a pull request. Check the <code>README.md</code> of the relevant repository for contribution guidelines.</p>
+      </div>
+
+      <div class="faq-item">
+        <h3>Can I use this content for my own courses or materials?</h3>
+        <p>Yes — all content is open-source. Check the <code>LICENSE</code> file in each repository for the specific terms. Generally, attribution is appreciated.</p>
+      </div>
+
+      <div class="faq-item">
+        <h3>Is there a roadmap for future topics?</h3>
+        <p>Planned topics are tracked in each repository's <code>plan.md</code> files and GitHub Issues. You can also suggest new topics by opening an issue or starting a Discussion.</p>
+      </div>
+
+      <div class="faq-item">
+        <h3>Who maintains this platform?</h3>
+        <p>Squared Studio is maintained by its contributors. See the <a href="people.html">People</a> page for the core team, and the GitHub organisation for all contributors.</p>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- FOOTER (populated by common.js) -->
+  <footer></footer>
+
+</div>
+<script src="common.js"></script>
+</body>
+</html>

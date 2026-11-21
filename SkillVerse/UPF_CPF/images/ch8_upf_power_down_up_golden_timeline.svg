@@ -1,0 +1,109 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 400" width="920" height="400">
+  <defs>
+    <style>
+      .bg { fill: #0f172a; }
+      .panel { fill: #1e293b; stroke-width: 1.5; rx: 10; ry: 10; }
+      .box { fill: #0f172a; stroke: #334155; stroke-width: 1.2; rx: 6; ry: 6; }
+      .title { font-family: 'Segoe UI', Arial, sans-serif; font-size: 18px; font-weight: 700; fill: #f8fafc; text-anchor: middle; }
+      .subtitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; fill: #94a3b8; text-anchor: middle; }
+      .step { font-family: Consolas, 'Courier New', monospace; font-size: 10.5px; font-weight: 700; text-anchor: middle; }
+      .note { font-family: 'Segoe UI', Arial, sans-serif; font-size: 10.2px; fill: #cbd5e1; }
+      .mono { font-family: Consolas, 'Courier New', monospace; font-size: 10.5px; fill: #e2e8f0; }
+    </style>
+    <marker id="arrSky" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L6,3 L0,6 Z" fill="#38bdf8" />
+    </marker>
+    <marker id="arrGreen" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L6,3 L0,6 Z" fill="#34d399" />
+    </marker>
+    <marker id="arrRed" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L6,3 L0,6 Z" fill="#f87171" />
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="920" height="400" />
+  <text class="title" x="460" y="28">Golden Power-Down and Power-Up Handshake Timeline</text>
+  <text class="subtitle" x="460" y="48">Symmetric Mirror-Image Sequencing Across CPU/Q-Channel, Clock/Reset Unit, Isolation/Retention, and MTCMOS Grid</text>
+
+  <!-- Power-Down Sequence Panel -->
+  <rect class="panel" x="20" y="64" width="880" height="154" stroke="#f87171" />
+  <text class="mono" x="36" y="86" fill="#fca5a5" font-weight="700">POWER-DOWN SEQUENCE (Left to Right: Outer Protection First, Power Cut Last)</text>
+
+  <rect class="box" x="34" y="100" width="130" height="72" stroke="#38bdf8" />
+  <text class="step" x="99" y="120" fill="#7dd3fc">1. Q-Channel</text>
+  <text class="note" x="44" y="138">qreqn -&gt; qacceptn</text>
+  <text class="note" x="44" y="155">Bus fabric idle</text>
+  <line x1="164" y1="136" x2="180" y2="136" stroke="#f87171" stroke-width="1.6" marker-end="url(#arrRed)" />
+
+  <rect class="box" x="184" y="100" width="130" height="72" stroke="#38bdf8" />
+  <text class="step" x="249" y="120" fill="#7dd3fc">2. Gate Clocks</text>
+  <text class="note" x="194" y="138">ICG stops CLK</text>
+  <text class="note" x="194" y="155">Zero dynamic toggle</text>
+  <line x1="314" y1="136" x2="330" y2="136" stroke="#f87171" stroke-width="1.6" marker-end="url(#arrRed)" />
+
+  <rect class="box" x="334" y="100" width="130" height="72" stroke="#a78bfa" />
+  <text class="step" x="399" y="120" fill="#c4b5fd">3. SAVE State</text>
+  <text class="note" x="344" y="138">Pulse SAVE = 1</text>
+  <text class="note" x="344" y="155">SRFF latches copy</text>
+  <line x1="464" y1="136" x2="480" y2="136" stroke="#f87171" stroke-width="1.6" marker-end="url(#arrRed)" />
+
+  <rect class="box" x="484" y="100" width="130" height="72" stroke="#f59e0b" />
+  <text class="step" x="549" y="120" fill="#fcd34d">4. Assert ISO</text>
+  <text class="note" x="494" y="138">iso_en = 1</text>
+  <text class="note" x="494" y="155">Outputs clamped</text>
+  <line x1="614" y1="136" x2="630" y2="136" stroke="#f87171" stroke-width="1.6" marker-end="url(#arrRed)" />
+
+  <rect class="box" x="634" y="100" width="120" height="72" stroke="#f59e0b" />
+  <text class="step" x="694" y="120" fill="#fcd34d">5. Hold Reset</text>
+  <text class="note" x="644" y="138">rst_n = 0</text>
+  <text class="note" x="644" y="155">Safe state entry</text>
+  <line x1="754" y1="136" x2="770" y2="136" stroke="#f87171" stroke-width="1.6" marker-end="url(#arrRed)" />
+
+  <rect class="box" x="774" y="100" width="112" height="72" stroke="#f87171" />
+  <text class="step" x="830" y="120" fill="#f87171">6. Cut Power</text>
+  <text class="note" x="782" y="138">pwr_en = 0</text>
+  <text class="note" x="782" y="155">Wait ack == 0</text>
+
+  <text class="note" x="34" y="202" fill="#fca5a5">Never skip Q-channel deny check (qdeny): if a bus DMA transaction starts mid-handshake, abort sleep cleanly!</text>
+
+  <!-- Power-Up Sequence Panel -->
+  <rect class="panel" x="20" y="232" width="880" height="154" stroke="#34d399" />
+  <text class="mono" x="36" y="254" fill="#6ee7b7" font-weight="700">POWER-UP SEQUENCE (Exact Reverse Symmetry: Power First, Restore State, Release Outer Boundaries Last)</text>
+
+  <rect class="box" x="34" y="268" width="130" height="72" stroke="#34d399" />
+  <text class="step" x="99" y="288" fill="#6ee7b7">1. Power On</text>
+  <text class="note" x="44" y="306">pwr_en = 1</text>
+  <text class="note" x="44" y="323">Wait pwr_ack==1</text>
+  <line x1="164" y1="304" x2="180" y2="304" stroke="#34d399" stroke-width="1.6" marker-end="url(#arrGreen)" />
+
+  <rect class="box" x="184" y="268" width="130" height="72" stroke="#a78bfa" />
+  <text class="step" x="249" y="288" fill="#c4b5fd">2. RESTORE</text>
+  <text class="note" x="194" y="306">Pulse RESTORE=1</text>
+  <text class="note" x="194" y="323">While CLK=0, RST=0</text>
+  <line x1="314" y1="304" x2="330" y2="304" stroke="#34d399" stroke-width="1.6" marker-end="url(#arrGreen)" />
+
+  <rect class="box" x="334" y="268" width="130" height="72" stroke="#38bdf8" />
+  <text class="step" x="399" y="288" fill="#7dd3fc">3. Release Rst</text>
+  <text class="note" x="344" y="306">rst_n = 1</text>
+  <text class="note" x="344" y="323">Non-ret flops clr</text>
+  <line x1="464" y1="304" x2="480" y2="304" stroke="#34d399" stroke-width="1.6" marker-end="url(#arrGreen)" />
+
+  <rect class="box" x="484" y="268" width="130" height="72" stroke="#34d399" />
+  <text class="step" x="549" y="288" fill="#6ee7b7">4. Clear ISO</text>
+  <text class="note" x="494" y="306">iso_en = 0</text>
+  <text class="note" x="494" y="323">Outputs valid</text>
+  <line x1="614" y1="304" x2="630" y2="304" stroke="#34d399" stroke-width="1.6" marker-end="url(#arrGreen)" />
+
+  <rect class="box" x="634" y="268" width="120" height="72" stroke="#34d399" />
+  <text class="step" x="694" y="288" fill="#6ee7b7">5. Enable CLK</text>
+  <text class="note" x="644" y="306">ICG un-gates CLK</text>
+  <text class="note" x="644" y="323">Logic resumes</text>
+  <line x1="754" y1="304" x2="770" y2="304" stroke="#34d399" stroke-width="1.6" marker-end="url(#arrGreen)" />
+
+  <rect class="box" x="774" y="268" width="112" height="72" stroke="#38bdf8" />
+  <text class="step" x="830" y="288" fill="#7dd3fc">6. Bus Active</text>
+  <text class="note" x="782" y="306">qreqn = 1</text>
+  <text class="note" x="782" y="323">NoC traffic live</text>
+
+  <text class="note" x="34" y="370" fill="#6ee7b7">Remember Reset Priority: If async reset collides with RESTORE, SRFF reset clears the retained value—hold or mask reset properly!</text>
+</svg>

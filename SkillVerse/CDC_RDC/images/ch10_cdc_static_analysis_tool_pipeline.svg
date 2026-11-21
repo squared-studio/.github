@@ -1,0 +1,95 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 400" width="920" height="400">
+  <defs>
+    <style>
+      .bg { fill: #0f172a; }
+      .panel { fill: #1e293b; stroke-width: 1.5; rx: 10; ry: 10; }
+      .box { fill: #0f172a; stroke: #334155; stroke-width: 1.2; rx: 6; ry: 6; }
+      .title { font-family: 'Segoe UI', Arial, sans-serif; font-size: 18px; font-weight: 700; fill: #f8fafc; text-anchor: middle; }
+      .subtitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; fill: #94a3b8; text-anchor: middle; }
+      .ptitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 14px; font-weight: 700; }
+      .mono { font-family: Consolas, 'Courier New', monospace; font-size: 10.6px; fill: #e2e8f0; }
+      .note { font-family: 'Segoe UI', Arial, sans-serif; font-size: 10.3px; fill: #94a3b8; }
+      .badge { font-family: Consolas, 'Courier New', monospace; font-size: 11px; font-weight: 700; text-anchor: middle; }
+    </style>
+    <marker id="arrSky" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#38bdf8" />
+    </marker>
+    <marker id="arrGreen" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#34d399" />
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="920" height="400" />
+  <text class="title" x="460" y="28">Static CDC &amp; RDC Verification Tool Pipeline (SpyGlass / Questa / VC SpyGlass)</text>
+  <text class="subtitle" x="460" y="48">Exhaustive Structural Clock/Reset Graph Analysis, Synchronizer Recognition, and Bottom-Up Hierarchical SAM Models</text>
+
+  <!-- Left: Inputs -->
+  <rect class="panel" x="20" y="64" width="218" height="316" stroke="#38bdf8" />
+  <text class="ptitle" x="34" y="88" fill="#38bdf8">1. Design &amp; Intent Inputs</text>
+
+  <rect class="box" x="34" y="102" width="190" height="78" />
+  <text class="badge" x="129" y="122" fill="#7dd3fc">RTL / PG Netlist</text>
+  <text class="note" x="44" y="140">SystemVerilog / Verilog</text>
+  <text class="note" x="44" y="156">Includes custom foundry</text>
+  <text class="note" x="44" y="170">sync/ICG macro wrappers</text>
+
+  <rect class="box" x="34" y="190" width="190" height="84" stroke="#f59e0b" />
+  <text class="badge" x="129" y="210" fill="#fcd34d">SDC + SGDC / Tcl</text>
+  <text class="mono" x="44" y="228">clock / reset decls</text>
+  <text class="mono" x="44" y="244">quasi_static signals</text>
+  <text class="mono" x="44" y="260">abstract_port (SAM)</text>
+
+  <rect class="box" x="34" y="284" width="190" height="82" stroke="#a78bfa" />
+  <text class="badge" x="129" y="304" fill="#c4b5fd">Approved Waivers</text>
+  <text class="note" x="44" y="322">waive -rule ... -comment</text>
+  <text class="note" x="44" y="338">Tracked per violation ID</text>
+  <text class="note" x="44" y="354">for sign-off traceability</text>
+
+  <line x1="238" y1="222" x2="266" y2="222" stroke="#38bdf8" stroke-width="2" marker-end="url(#arrSky)" />
+
+  <!-- Center: Static Engine Stages -->
+  <rect class="panel" x="270" y="64" width="388" height="316" stroke="#a78bfa" />
+  <text class="ptitle" x="286" y="88" fill="#a78bfa">2. Structural Analysis &amp; Inference Engine</text>
+
+  <rect class="box" x="286" y="102" width="356" height="58" stroke="#38bdf8" />
+  <text class="mono" x="298" y="122" fill="#7dd3fc">A. Clock &amp; Reset Tree Propagation</text>
+  <text class="note" x="298" y="140">Traces ICGs, MUXes, dividers, and PLLs to color every</text>
+  <text class="note" x="298" y="154">FF clock pin + async reset pin by effective domain ID.</text>
+
+  <rect class="box" x="286" y="170" width="356" height="62" stroke="#34d399" />
+  <text class="mono" x="298" y="190" fill="#6ee7b7">B. Synchronizer Pattern Recognition</text>
+  <text class="note" x="298" y="208">Identifies 2-FF chains, toggle pulse syncs, MCP qualifiers,</text>
+  <text class="note" x="298" y="222">Gray FIFO pointers, and reset bridges automatically.</text>
+
+  <rect class="box" x="286" y="242" width="356" height="62" stroke="#f59e0b" />
+  <text class="mono" x="298" y="262" fill="#fcd34d">C. Structural &amp; Functional Rule Checks</text>
+  <text class="note" x="298" y="280">Flags Ac_unsync, Combo before sync, Multi-bit skew,</text>
+  <text class="note" x="298" y="294">Reconvergence, and same/cross-clk Async RDC!</text>
+
+  <rect class="box" x="286" y="314" width="356" height="52" stroke="#a78bfa" />
+  <text class="mono" x="298" y="334" fill="#c4b5fd">D. Hierarchical SAM (Gray-Box) Export</text>
+  <text class="note" x="298" y="352">Captures block boundary sync/domain metadata for SoC top.</text>
+
+  <line x1="658" y1="222" x2="686" y2="222" stroke="#34d399" stroke-width="2" marker-end="url(#arrGreen)" />
+
+  <!-- Right: Sign-off Deliverables -->
+  <rect class="panel" x="690" y="64" width="210" height="316" stroke="#34d399" />
+  <text class="ptitle" x="704" y="88" fill="#34d399">3. Sign-Off Artifacts</text>
+
+  <rect class="box" x="704" y="102" width="182" height="80" />
+  <text class="badge" x="795" y="122" fill="#6ee7b7">Clean Rule Report</text>
+  <text class="note" x="714" y="140">Zero unwaived structural</text>
+  <text class="note" x="714" y="156">CDC &amp; RDC errors across</text>
+  <text class="note" x="714" y="172">100% of cross paths.</text>
+
+  <rect class="box" x="704" y="194" width="182" height="84" stroke="#38bdf8" />
+  <text class="badge" x="795" y="214" fill="#7dd3fc">Auto-Generated SVAs</text>
+  <text class="note" x="714" y="232">Formal/sim protocol</text>
+  <text class="note" x="714" y="248">checks emitted for MCP,</text>
+  <text class="note" x="714" y="264">Gray code, &amp; RDC iso.</text>
+
+  <rect class="box" x="704" y="290" width="182" height="76" stroke="#f59e0b" />
+  <text class="badge" x="795" y="310" fill="#fcd34d">SDC Skew Budget</text>
+  <text class="note" x="714" y="328">Audits set_max_delay &amp;</text>
+  <text class="note" x="714" y="344">bus skew vs clock period.</text>
+</svg>

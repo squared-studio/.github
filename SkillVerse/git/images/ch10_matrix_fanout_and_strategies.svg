@@ -1,0 +1,126 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 540" width="960" height="540">
+  <defs>
+    <style>
+      .bg { fill: #080c14; }
+      .title { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 20px; fill: #f8fafc; }
+      .subtitle { font-family: 'Inter', system-ui, sans-serif; font-size: 13px; fill: #94a3b8; }
+      .panel { fill: #0f172a; stroke-width: 1.6; rx: 10px; }
+      .cell { fill: #0b1120; stroke-width: 1.5; rx: 6px; }
+      .txt-hdr { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 13px; fill: #f8fafc; }
+      .txt-sub { font-family: 'Inter', system-ui, sans-serif; font-size: 11px; fill: #94a3b8; }
+      .mono { font-family: 'JetBrains Mono', Consolas, monospace; font-size: 10.5px; font-weight: 600; }
+      .edge { stroke-width: 2; fill: none; }
+    </style>
+    <marker id="arr-cyan" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8" />
+    </marker>
+    <marker id="arr-green" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#34d399" />
+    </marker>
+  </defs>
+
+  <rect width="960" height="540" class="bg" rx="14"/>
+  <text x="480" y="32" text-anchor="middle" class="title">Matrix Fan-Out, Dynamic Discovery &amp; Failure Strategies</text>
+  <text x="480" y="52" text-anchor="middle" class="subtitle">Generating parallel runner grids with include/exclude rules and runtime JSON matrices</text>
+
+  <!-- Top Left: Dynamic Generator Job -->
+  <g transform="translate(32, 82)">
+    <rect x="0" y="0" width="290" height="238" class="panel" stroke="#a855f7"/>
+    <text x="16" y="26" class="mono" fill="#d8b4fe">1. OPTIONAL DYNAMIC PLAN JOB</text>
+    <text x="16" y="48" class="txt-sub">Discovers tests / packages at runtime</text>
+
+    <rect x="14" y="64" width="262" height="100" class="cell" stroke="#a855f7"/>
+    <text x="24" y="84" class="mono" fill="#cbd5e1">id: plan</text>
+    <text x="24" y="102" class="mono" fill="#7dd3fc">JSON='{"suite":["alu","uart",</text>
+    <text x="24" y="118" class="mono" fill="#7dd3fc">  "axi","spi"]}'</text>
+    <text x="24" y="138" class="mono" fill="#34d399">echo "matrix=$JSON"</text>
+    <text x="24" y="154" class="mono" fill="#34d399">  &gt;&gt; "$GITHUB_OUTPUT"</text>
+
+    <text x="16" y="186" class="mono" fill="#fcd34d">matrix: ${{ fromJSON(</text>
+    <text x="16" y="202" class="mono" fill="#fcd34d">  needs.plan.outputs.matrix) }}</text>
+    <text x="16" y="222" class="txt-sub">Supports up to 256 jobs per workflow</text>
+  </g>
+
+  <path d="M 322 200 L 364 200" class="edge" stroke="#38bdf8" marker-end="url(#arr-cyan)"/>
+
+  <!-- Top Right: Cartesian Matrix Grid -->
+  <g transform="translate(368, 82)">
+    <rect x="0" y="0" width="560" height="238" class="panel" stroke="#38bdf8"/>
+    <text x="16" y="26" class="mono" fill="#38bdf8">2. CARTESIAN MATRIX + INCLUDE / EXCLUDE</text>
+    <text x="544" y="26" text-anchor="end" class="mono" fill="#94a3b8">os: [ubuntu, macos] x sim: [verilator, iverilog]</text>
+
+    <!-- Header Row -->
+    <text x="172" y="58" text-anchor="middle" class="mono" fill="#cbd5e1">sim: verilator</text>
+    <text x="336" y="58" text-anchor="middle" class="mono" fill="#cbd5e1">sim: iverilog</text>
+    <text x="486" y="58" text-anchor="middle" class="mono" fill="#f59e0b">+ include extra</text>
+
+    <!-- Row 1: ubuntu-latest -->
+    <text x="18" y="102" class="mono" fill="#7dd3fc">ubuntu-latest</text>
+    <g transform="translate(110, 72)">
+      <rect x="0" y="0" width="124" height="54" class="cell" stroke="#34d399"/>
+      <text x="62" y="24" text-anchor="middle" class="mono" fill="#34d399">Runner #1</text>
+      <text x="62" y="42" text-anchor="middle" class="txt-sub">ubuntu + verilator</text>
+    </g>
+    <g transform="translate(274, 72)">
+      <rect x="0" y="0" width="124" height="54" class="cell" stroke="#34d399"/>
+      <text x="62" y="24" text-anchor="middle" class="mono" fill="#34d399">Runner #2</text>
+      <text x="62" y="42" text-anchor="middle" class="txt-sub">ubuntu + iverilog</text>
+    </g>
+    <g transform="translate(426, 72)">
+      <rect x="0" y="0" width="118" height="54" class="cell" stroke="#f59e0b"/>
+      <text x="59" y="24" text-anchor="middle" class="mono" fill="#fcd34d">Runner #4</text>
+      <text x="59" y="42" text-anchor="middle" class="txt-sub">+ coverage: true</text>
+    </g>
+
+    <!-- Row 2: macos-latest -->
+    <text x="18" y="176" class="mono" fill="#7dd3fc">macos-latest</text>
+    <g transform="translate(110, 146)">
+      <rect x="0" y="0" width="124" height="54" class="cell" stroke="#34d399"/>
+      <text x="62" y="24" text-anchor="middle" class="mono" fill="#34d399">Runner #3</text>
+      <text x="62" y="42" text-anchor="middle" class="txt-sub">macos + verilator</text>
+    </g>
+    <g transform="translate(274, 146)">
+      <rect x="0" y="0" width="124" height="54" class="cell" stroke="#f43f5e" stroke-dasharray="4,3" fill="#1b1016"/>
+      <text x="62" y="24" text-anchor="middle" class="mono" fill="#f43f5e">EXCLUDED</text>
+      <text x="62" y="42" text-anchor="middle" class="txt-sub">macos + iverilog</text>
+    </g>
+    <g transform="translate(426, 146)">
+      <rect x="0" y="0" width="118" height="54" class="cell" stroke="#334155"/>
+      <text x="59" y="24" text-anchor="middle" class="mono" fill="#94a3b8">max-parallel</text>
+      <text x="59" y="42" text-anchor="middle" class="txt-sub">caps concurrency</text>
+    </g>
+
+    <text x="18" y="224" class="txt-sub">4 parallel jobs spawned; excluded combination skipped cleanly; include adds extra metadata keys.</text>
+  </g>
+
+  <!-- Bottom Left: fail-fast true vs false -->
+  <g transform="translate(32, 340)">
+    <rect x="0" y="0" width="440" height="176" class="panel" stroke="#f43f5e"/>
+    <text x="16" y="26" class="mono" fill="#f43f5e">fail-fast: true (Default) vs fail-fast: false</text>
+
+    <rect x="16" y="42" width="408" height="54" class="cell" stroke="#f43f5e"/>
+    <text x="26" y="62" class="mono" fill="#fda4af">fail-fast: true</text>
+    <text x="150" y="62" class="txt-sub">First failure cancels ALL sibling jobs</text>
+    <text x="26" y="82" class="txt-sub">Saves minutes, but hides whether Windows/macOS also broke.</text>
+
+    <rect x="16" y="106" width="408" height="54" class="cell" stroke="#34d399"/>
+    <text x="26" y="126" class="mono" fill="#6ee7b7">fail-fast: false</text>
+    <text x="150" y="126" class="txt-sub">Every matrix cell finishes independently</text>
+    <text x="26" y="146" class="txt-sub">Recommended for multi-OS / multi-compiler test matrices.</text>
+  </g>
+
+  <!-- Bottom Right: Test Sharding & Aggregator -->
+  <g transform="translate(492, 340)">
+    <rect x="0" y="0" width="436" height="176" class="panel" stroke="#84cc16"/>
+    <text x="16" y="26" class="mono" fill="#bef264">3. TEST SHARDING &amp; GATEKEEPER AGGREGATION</text>
+
+    <rect x="16" y="42" width="404" height="62" class="cell" stroke="#84cc16"/>
+    <text x="26" y="62" class="mono" fill="#bef264">shard: [1, 2, 3, 4]</text>
+    <text x="26" y="80" class="mono" fill="#cbd5e1">pytest --shard-id=${{ matrix.shard }} --total=4</text>
+    <text x="26" y="96" class="txt-sub">Splits 20-minute regression into four 5-minute parallel runners.</text>
+
+    <rect x="16" y="114" width="404" height="46" class="cell" stroke="#38bdf8"/>
+    <text x="26" y="133" class="mono" fill="#38bdf8">ci-gate (needs: test-matrix, if: always())</text>
+    <text x="26" y="149" class="txt-sub">Single required status check for dynamic/matrix branch rules.</text>
+  </g>
+</svg>

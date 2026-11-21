@@ -1,0 +1,108 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 540" width="960" height="540">
+  <defs>
+    <style>
+      .bg { fill: #080c14; }
+      .title { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 20px; fill: #f8fafc; }
+      .subtitle { font-family: 'Inter', system-ui, sans-serif; font-size: 13px; fill: #94a3b8; }
+      .panel { fill: #0f172a; stroke-width: 1.8; rx: 10px; }
+      .inner { fill: #0b1120; stroke-width: 1.4; rx: 6px; }
+      .txt-hdr { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 14px; fill: #f8fafc; }
+      .txt-sub { font-family: 'Inter', system-ui, sans-serif; font-size: 11px; fill: #94a3b8; }
+      .txt-body { font-family: 'Inter', system-ui, sans-serif; font-size: 11.5px; fill: #cbd5e1; }
+      .mono { font-family: 'JetBrains Mono', Consolas, monospace; font-size: 10.5px; font-weight: 600; }
+      .edge { stroke-width: 2; fill: none; }
+    </style>
+    <marker id="arr-cyan" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8" />
+    </marker>
+    <marker id="arr-amber" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#f59e0b" />
+    </marker>
+  </defs>
+
+  <rect width="960" height="540" class="bg" rx="14"/>
+  <text x="480" y="32" text-anchor="middle" class="title">Caching vs. Artifacts Lifecycle in GitHub Actions</text>
+  <text x="480" y="52" text-anchor="middle" class="subtitle">Cross-run dependency reuse (actions/cache) vs. cross-job &amp; downloadable build outputs (upload-artifact)</text>
+
+  <!-- Left Panel: Dependency Cache -->
+  <g transform="translate(32, 82)">
+    <rect x="0" y="0" width="438" height="432" class="panel" stroke="#38bdf8"/>
+    <text x="20" y="28" class="txt-hdr" fill="#38bdf8">1. Dependency Caching (actions/cache@v4)</text>
+    <text x="20" y="46" class="txt-sub">Speeds up repeated builds across workflow runs</text>
+
+    <rect x="18" y="64" width="402" height="74" class="inner" stroke="#38bdf8"/>
+    <text x="30" y="84" class="mono" fill="#7dd3fc">key: ${{ runner.os }}-pip-${{ hashFiles('**/lock') }}</text>
+    <text x="30" y="102" class="mono" fill="#cbd5e1">restore-keys: |</text>
+    <text x="30" y="118" class="mono" fill="#cbd5e1">  ${{ runner.os }}-pip-</text>
+
+    <!-- Flow boxes -->
+    <rect x="18" y="152" width="122" height="66" class="inner" stroke="#34d399"/>
+    <text x="79" y="174" text-anchor="middle" class="mono" fill="#34d399">Exact Hit</text>
+    <text x="79" y="192" text-anchor="middle" class="txt-sub">Skip install;</text>
+    <text x="79" y="207" text-anchor="middle" class="txt-sub">no re-upload</text>
+
+    <rect x="158" y="152" width="122" height="66" class="inner" stroke="#f59e0b"/>
+    <text x="219" y="174" text-anchor="middle" class="mono" fill="#fcd34d">Prefix Hit</text>
+    <text x="219" y="192" text-anchor="middle" class="txt-sub">Restores prior;</text>
+    <text x="219" y="207" text-anchor="middle" class="txt-sub">saves new key</text>
+
+    <rect x="298" y="152" width="122" height="66" class="inner" stroke="#f43f5e"/>
+    <text x="359" y="174" text-anchor="middle" class="mono" fill="#fda4af">Cache Miss</text>
+    <text x="359" y="192" text-anchor="middle" class="txt-sub">Full install;</text>
+    <text x="359" y="207" text-anchor="middle" class="txt-sub">saves at post</text>
+
+    <!-- Scoping Rules -->
+    <rect x="18" y="232" width="402" height="106" class="inner" stroke="#334155"/>
+    <text x="30" y="254" class="txt-hdr" font-size="12" fill="#38bdf8">Branch Scoping &amp; Isolation Rules</text>
+    <text x="30" y="274" class="txt-body">• Read access: current branch + base branch + main</text>
+    <text x="30" y="292" class="txt-body">• Sibling PR branches CANNOT read each other's cache</text>
+    <text x="30" y="310" class="txt-body">• 10 GB repo quota; unused keys evicted after 7 days</text>
+    <text x="30" y="328" class="txt-body">• Best for: node_modules, pip, Cargo, ccache</text>
+
+    <rect x="18" y="352" width="402" height="64" class="inner" stroke="#38bdf8" fill="#0d1e33"/>
+    <text x="219" y="376" text-anchor="middle" class="mono" fill="#7dd3fc">Lifetime: Across Runs (Ephemeral Optimization)</text>
+    <text x="219" y="398" text-anchor="middle" class="txt-sub">Workflow MUST still succeed on a cache miss</text>
+  </g>
+
+  <!-- Right Panel: Build Artifacts -->
+  <g transform="translate(490, 82)">
+    <rect x="0" y="0" width="438" height="432" class="panel" stroke="#f59e0b"/>
+    <text x="20" y="28" class="txt-hdr" fill="#fcd34d">2. Build Artifacts (upload / download-artifact@v4)</text>
+    <text x="20" y="46" class="txt-sub">Shares build outputs between jobs &amp; stores CI diagnostics</text>
+
+    <!-- Job 1 -> Storage -> Job 2 -->
+    <rect x="18" y="64" width="118" height="74" class="inner" stroke="#34d399"/>
+    <text x="77" y="88" text-anchor="middle" class="mono" fill="#34d399">build job</text>
+    <text x="77" y="106" text-anchor="middle" class="txt-sub">upload-artifact</text>
+    <text x="77" y="122" text-anchor="middle" class="mono" fill="#cbd5e1">dist/ *.fst</text>
+
+    <path d="M 136 101 L 160 101" class="edge" stroke="#f59e0b" marker-end="url(#arr-amber)"/>
+
+    <rect x="164" y="64" width="110" height="74" class="inner" stroke="#f59e0b" fill="#1e170a"/>
+    <text x="219" y="88" text-anchor="middle" class="mono" fill="#fcd34d">Run Store</text>
+    <text x="219" y="106" text-anchor="middle" class="txt-sub">Immutable ZIP</text>
+    <text x="219" y="122" text-anchor="middle" class="mono" fill="#f59e0b">1-90d TTL</text>
+
+    <path d="M 274 101 L 298 101" class="edge" stroke="#f59e0b" marker-end="url(#arr-amber)"/>
+
+    <rect x="302" y="64" width="118" height="74" class="inner" stroke="#a855f7"/>
+    <text x="361" y="88" text-anchor="middle" class="mono" fill="#d8b4fe">deploy / user</text>
+    <text x="361" y="106" text-anchor="middle" class="txt-sub">download-artifact</text>
+    <text x="361" y="122" text-anchor="middle" class="mono" fill="#cbd5e1">or UI ZIP</text>
+
+    <!-- v4 Mechanics -->
+    <rect x="18" y="152" width="402" height="186" class="inner" stroke="#334155"/>
+    <text x="30" y="174" class="txt-hdr" font-size="12" fill="#fcd34d">v4 Immutable Architecture &amp; Diagnostics</text>
+    <text x="30" y="196" class="txt-body">• Direct upload: up to 10x faster than v3</text>
+    <text x="30" y="216" class="txt-body">• Artifact names are IMMUTABLE per workflow run:</text>
+    <text x="30" y="234" class="mono" fill="#f59e0b">  name: wave-${{ matrix.test }}  # matrix-safe</text>
+    <text x="30" y="256" class="txt-body">• Use if: always() / if: failure() for crash logs,</text>
+    <text x="30" y="274" class="txt-body">  test reports, coverage HTML, and .fst waveforms</text>
+    <text x="30" y="294" class="txt-body">• Downloadable from GitHub UI &amp; REST API</text>
+    <text x="30" y="314" class="txt-body">• Configurable retention-days (default 90 days)</text>
+
+    <rect x="18" y="352" width="402" height="64" class="inner" stroke="#f59e0b" fill="#1d160b"/>
+    <text x="219" y="376" text-anchor="middle" class="mono" fill="#fcd34d">Lifetime: Within Single Run + Download Retention</text>
+    <text x="219" y="398" text-anchor="middle" class="txt-sub">Source of truth for downstream deploy &amp; triage</text>
+  </g>
+</svg>

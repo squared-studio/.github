@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 380" width="920" height="380">
+  <defs>
+    <style>
+      .bg { fill: #0f172a; }
+      .panel { fill: #1e293b; stroke-width: 1.5; rx: 10; ry: 10; }
+      .box { fill: #0f172a; stroke: #334155; stroke-width: 1.2; rx: 6; ry: 6; }
+      .title { font-family: 'Segoe UI', Arial, sans-serif; font-size: 18px; font-weight: 700; fill: #f8fafc; text-anchor: middle; }
+      .subtitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; fill: #94a3b8; text-anchor: middle; }
+      .ptitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 14px; font-weight: 700; }
+      .mono { font-family: Consolas, 'Courier New', monospace; font-size: 10.6px; fill: #e2e8f0; }
+      .note { font-family: 'Segoe UI', Arial, sans-serif; font-size: 10.3px; fill: #94a3b8; }
+      .badge { font-family: Consolas, 'Courier New', monospace; font-size: 11px; font-weight: 700; text-anchor: middle; }
+    </style>
+    <marker id="arrSky" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#38bdf8" />
+    </marker>
+    <marker id="arrGreen" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#34d399" />
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="920" height="380" />
+  <text class="title" x="460" y="28">5-Stage GLS Failure &amp; 'X'-Trace Triage Playbook</text>
+  <text class="subtitle" x="460" y="48">Systematic Root-Cause Workflow From First Scoreboard Mismatch or Timing Error to Verified Silicon Fix</text>
+
+  <!-- 5 Stage Flow Across Top -->
+  <rect class="panel" x="20" y="64" width="880" height="164" stroke="#38bdf8" />
+  <text class="ptitle" x="36" y="88" fill="#38bdf8">Closed-Loop GLS Debug Pipeline</text>
+
+  <rect class="box" x="34" y="106" width="152" height="104" stroke="#f87171" />
+  <text class="badge" x="110" y="126" fill="#fca5a5">1. Isolate First</text>
+  <text class="note" x="42" y="144">Find earliest 'X' or</text>
+  <text class="note" x="42" y="160">1st timing check in</text>
+  <text class="note" x="42" y="176">log (NEVER last!)</text>
+  <text class="mono" x="42" y="196" fill="#fca5a5">t_err = 12,450 ns</text>
+
+  <line x1="186" y1="158" x2="206" y2="158" stroke="#38bdf8" stroke-width="1.8" marker-end="url(#arrSky)" />
+
+  <rect class="box" x="210" y="106" width="152" height="104" stroke="#f59e0b" />
+  <text class="badge" x="286" y="126" fill="#fcd34d">2. Audit SDF</text>
+  <text class="note" x="218" y="144">Verify `sdf.log` has</text>
+  <text class="note" x="218" y="160">0 failed instances</text>
+  <text class="note" x="218" y="176">near failing path</text>
+  <text class="mono" x="218" y="196" fill="#fcd34d">+neg_tchk ON?</text>
+
+  <line x1="362" y1="158" x2="382" y2="158" stroke="#38bdf8" stroke-width="1.8" marker-end="url(#arrSky)" />
+
+  <rect class="box" x="386" y="106" width="152" height="104" stroke="#a78bfa" />
+  <text class="badge" x="462" y="126" fill="#c4b5fd">3. Trace Driver</text>
+  <text class="note" x="394" y="144">Use Verdi/SimVision</text>
+  <text class="note" x="394" y="160">trace-X backward</text>
+  <text class="note" x="394" y="176">D vs CK vs CLR vs</text>
+  <text class="mono" x="394" y="196" fill="#c4b5fd">notifier vs VDD!</text>
+
+  <line x1="538" y1="158" x2="558" y2="158" stroke="#38bdf8" stroke-width="1.8" marker-end="url(#arrSky)" />
+
+  <rect class="box" x="562" y="106" width="152" height="104" stroke="#38bdf8" />
+  <text class="badge" x="638" y="126" fill="#7dd3fc">4. Cross-Check</text>
+  <text class="note" x="570" y="144">Compare against</text>
+  <text class="note" x="570" y="160">STA report &amp; SDC</text>
+  <text class="note" x="570" y="176">exceptions + CDC</text>
+  <text class="mono" x="570" y="196" fill="#7dd3fc">sync database</text>
+
+  <line x1="714" y1="158" x2="734" y2="158" stroke="#34d399" stroke-width="1.8" marker-end="url(#arrGreen)" />
+
+  <rect class="box" x="738" y="106" width="148" height="104" stroke="#34d399" />
+  <text class="badge" x="812" y="126" fill="#6ee7b7">5. Fix &amp; SignOff</text>
+  <text class="note" x="746" y="144">Fix RTL / SDC / TB</text>
+  <text class="note" x="746" y="160">skew / tfile cleanly</text>
+  <text class="note" x="746" y="176">&amp; re-verify BOTH</text>
+  <text class="mono" x="746" y="196" fill="#6ee7b7">MAX + MIN SDF!</text>
+
+  <!-- Bottom Two Cards -->
+  <rect class="panel" x="20" y="242" width="430" height="122" stroke="#f59e0b" />
+  <text class="ptitle" x="36" y="266" fill="#f59e0b">How to Tell Reset `'X'` From Timing `'X'` in Waves</text>
+  <text class="note" x="36" y="286">- Timing `'X'` starts right on an active clock/reset edge with a</text>
+  <text class="note" x="36" y="302">  matching `$setuphold` / `$recrem` print + toggled `notifier` bit!</text>
+  <text class="note" x="36" y="322">- Uninitialized/Reset `'X'` exists right from `t = 0` (or right after</text>
+  <text class="note" x="36" y="338">  power switch OFF-&gt;ON) with ZERO timing violation messages!</text>
+
+  <rect class="panel" x="470" y="242" width="430" height="122" stroke="#34d399" />
+  <text class="ptitle" x="486" y="266" fill="#34d399">Check Pulse/Glitch Logs When Neither Applies</text>
+  <text class="note" x="486" y="286">If no timing violation and no missing reset triggered `'X'`, check</text>
+  <text class="note" x="486" y="302">1. `+pulse_e` glitch error messages (`PATHPULSE$` zone 2), OR</text>
+  <text class="note" x="486" y="318">2. Gate-level MUX `X`-pessimism on an un-reset branch (`S = 1'bx`</text>
+  <text class="note" x="486" y="334">   when both `A` and `B` were equal!), OR missing SRAM preload.</text>
+</svg>

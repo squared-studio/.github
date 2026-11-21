@@ -1,0 +1,113 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 400" width="920" height="400">
+  <defs>
+    <style>
+      .bg { fill: #0f172a; }
+      .panel { fill: #1e293b; stroke-width: 1.5; rx: 10; ry: 10; }
+      .box { fill: #0f172a; stroke: #334155; stroke-width: 1.2; rx: 6; ry: 6; }
+      .ff { fill: #172554; stroke: #38bdf8; stroke-width: 1.5; rx: 5; ry: 5; }
+      .gate { fill: #064e3b; stroke: #34d399; stroke-width: 1.5; rx: 6; ry: 6; }
+      .title { font-family: 'Segoe UI', Arial, sans-serif; font-size: 18px; font-weight: 700; fill: #f8fafc; text-anchor: middle; }
+      .subtitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; fill: #94a3b8; text-anchor: middle; }
+      .ptitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 14px; font-weight: 700; }
+      .mono { font-family: Consolas, 'Courier New', monospace; font-size: 10.8px; fill: #e2e8f0; }
+      .note { font-family: 'Segoe UI', Arial, sans-serif; font-size: 10.5px; fill: #94a3b8; }
+      .badge { font-family: Consolas, 'Courier New', monospace; font-size: 10.5px; font-weight: 700; text-anchor: middle; }
+    </style>
+    <marker id="arrSky" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L6,3 L0,6 Z" fill="#38bdf8" />
+    </marker>
+    <marker id="arrGreen" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L6,3 L0,6 Z" fill="#34d399" />
+    </marker>
+    <marker id="arrAmb" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L6,3 L0,6 Z" fill="#f59e0b" />
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="920" height="400" />
+  <text class="title" x="460" y="28">Glitch-Free Asynchronous Clock Multiplexer Architecture</text>
+  <text class="subtitle" x="460" y="48">Break-Before-Make Cross-Coupled Dual Synchronizers Eliminating Narrow Runt Clock Glitches During Switchover</text>
+
+  <!-- Main Schematic Panel -->
+  <rect class="panel" x="20" y="64" width="560" height="316" stroke="#38bdf8" />
+  <text class="ptitle" x="36" y="88" fill="#38bdf8">Cross-Coupled Negedge-Gated Clock Switch</text>
+
+  <!-- Top Branch: CLK0 -->
+  <text class="mono" x="36" y="138" fill="#7dd3fc">~sel &amp; ~en1</text>
+  <line x1="112" y1="134" x2="146" y2="134" stroke="#38bdf8" stroke-width="1.6" marker-end="url(#arrSky)" />
+  <rect class="ff" x="150" y="114" width="84" height="40" />
+  <text class="badge" x="192" y="132" fill="#7dd3fc">POS FF1</text>
+  <text class="note" x="192" y="147" text-anchor="middle">(clk0 +)</text>
+
+  <line x1="234" y1="134" x2="262" y2="134" stroke="#38bdf8" stroke-width="1.6" marker-end="url(#arrSky)" />
+
+  <rect class="ff" x="266" y="114" width="84" height="40" stroke="#f59e0b" />
+  <text class="badge" x="308" y="132" fill="#fcd34d">NEG FF2</text>
+  <text class="note" x="308" y="147" text-anchor="middle">(clk0 -)</text>
+
+  <line x1="350" y1="134" x2="394" y2="134" stroke="#f59e0b" stroke-width="1.6" marker-end="url(#arrAmb)" />
+  <text class="mono" x="372" y="124" text-anchor="middle" fill="#6ee7b7">en0</text>
+
+  <rect class="gate" x="398" y="114" width="76" height="44" />
+  <text class="badge" x="436" y="133" fill="#6ee7b7">AND0</text>
+  <text class="note" x="436" y="148" text-anchor="middle">clk0 &amp; en0</text>
+
+  <!-- Bottom Branch: CLK1 -->
+  <text class="mono" x="36" y="256" fill="#7dd3fc">sel &amp; ~en0</text>
+  <line x1="112" y1="252" x2="146" y2="252" stroke="#38bdf8" stroke-width="1.6" marker-end="url(#arrSky)" />
+  <rect class="ff" x="150" y="232" width="84" height="40" />
+  <text class="badge" x="192" y="250" fill="#7dd3fc">POS FF3</text>
+  <text class="note" x="192" y="265" text-anchor="middle">(clk1 +)</text>
+
+  <line x1="234" y1="252" x2="262" y2="252" stroke="#38bdf8" stroke-width="1.6" marker-end="url(#arrSky)" />
+
+  <rect class="ff" x="266" y="232" width="84" height="40" stroke="#f59e0b" />
+  <text class="badge" x="308" y="250" fill="#fcd34d">NEG FF4</text>
+  <text class="note" x="308" y="265" text-anchor="middle">(clk1 -)</text>
+
+  <line x1="350" y1="252" x2="394" y2="252" stroke="#f59e0b" stroke-width="1.6" marker-end="url(#arrAmb)" />
+  <text class="mono" x="372" y="242" text-anchor="middle" fill="#6ee7b7">en1</text>
+
+  <rect class="gate" x="398" y="232" width="76" height="44" />
+  <text class="badge" x="436" y="251" fill="#6ee7b7">AND1</text>
+  <text class="note" x="436" y="266" text-anchor="middle">clk1 &amp; en1</text>
+
+  <!-- Cross-coupled feedback dashed lines -->
+  <path d="M372,134 L372,184 L90,184 L90,238" fill="none" stroke="#a78bfa" stroke-width="1.5" stroke-dasharray="4,3" />
+  <path d="M372,252 L372,202 L104,202 L104,150" fill="none" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="4,3" />
+  <text class="note" x="235" y="196" text-anchor="middle" fill="#c4b5fd">Cross-Inhibit Interlock (en0 &amp; en1 never 1 together)</text>
+
+  <!-- Final OR gate -->
+  <line x1="474" y1="136" x2="508" y2="180" stroke="#34d399" stroke-width="1.8" marker-end="url(#arrGreen)" />
+  <line x1="474" y1="252" x2="508" y2="206" stroke="#34d399" stroke-width="1.8" marker-end="url(#arrGreen)" />
+  <rect class="gate" x="506" y="172" width="58" height="44" stroke="#38bdf8" />
+  <text class="badge" x="535" y="198" fill="#f8fafc">OR</text>
+
+  <text class="mono" x="488" y="302" fill="#34d399">clk_out (Glitch-Free!)</text>
+  <line x1="535" y1="216" x2="535" y2="282" stroke="#34d399" stroke-width="2" />
+
+  <text class="note" x="36" y="344" fill="#fca5a5">Danger of Simple 2:1 MUX (sel ? clk1 : clk0): Switching sel while clk0 != clk1 chops</text>
+  <text class="note" x="36" y="360" fill="#fca5a5">half-cycles into sub-nanosecond runt glitches that violate downstream flip-flop setup/hold!</text>
+
+  <!-- Right Panel: Sequence Breakdown -->
+  <rect class="panel" x="598" y="64" width="302" height="316" stroke="#34d399" />
+  <text class="ptitle" x="614" y="88" fill="#34d399">Break-Before-Make Sequence</text>
+
+  <rect class="box" x="614" y="104" width="270" height="60" />
+  <text class="mono" x="624" y="123" fill="#7dd3fc">Step 1: sel transitions 0 -&gt; 1</text>
+  <text class="note" x="624" y="140">POS FF1 captures ~sel=0 on clk0+;</text>
+  <text class="note" x="624" y="155">NEG FF2 waits for clk0 falling edge.</text>
+
+  <rect class="box" x="614" y="174" width="270" height="60" />
+  <text class="mono" x="624" y="193" fill="#fcd34d">Step 2: Safe Park State (en0=0, en1=0)</text>
+  <text class="note" x="624" y="210">en0 drops to 0 cleanly while clk0 is LOW.</text>
+  <text class="note" x="624" y="225">clk_out holds steady 0 (zero runt pulses).</text>
+
+  <rect class="box" x="614" y="244" width="270" height="60" stroke="#34d399" />
+  <text class="mono" x="624" y="263" fill="#6ee7b7">Step 3: clk1 Sync &amp; Enable</text>
+  <text class="note" x="624" y="280">~en0 releases FF3 -&gt; FF4 on clk1-,</text>
+  <text class="note" x="624" y="295">raising en1=1 safely while clk1 is LOW.</text>
+
+  <text class="note" x="614" y="334" fill="#fca5a5">Caution: Both clk0 and clk1 MUST be</text>
+  <text class="note" x="614" y="350" fill="#fca5a5">oscillating to advance the handover FSM!</text>
+</svg>

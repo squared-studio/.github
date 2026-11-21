@@ -1,0 +1,98 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 400" width="920" height="400">
+  <defs>
+    <style>
+      .bg { fill: #0f172a; }
+      .panel { fill: #1e293b; stroke-width: 1.5; rx: 10; ry: 10; }
+      .box { fill: #0f172a; stroke: #334155; stroke-width: 1.2; rx: 6; ry: 6; }
+      .ls { fill: #172554; stroke: #38bdf8; stroke-width: 1.8; rx: 8; ry: 8; }
+      .title { font-family: 'Segoe UI', Arial, sans-serif; font-size: 18px; font-weight: 700; fill: #f8fafc; text-anchor: middle; }
+      .subtitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; fill: #94a3b8; text-anchor: middle; }
+      .ptitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 14px; font-weight: 700; }
+      .mono { font-family: Consolas, 'Courier New', monospace; font-size: 10.8px; fill: #e2e8f0; }
+      .note { font-family: 'Segoe UI', Arial, sans-serif; font-size: 10.5px; fill: #94a3b8; }
+      .badge { font-family: Consolas, 'Courier New', monospace; font-size: 11px; font-weight: 700; text-anchor: middle; }
+    </style>
+    <marker id="arrSky" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#38bdf8" />
+    </marker>
+    <marker id="arrAmber" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#f59e0b" />
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="920" height="400" />
+  <text class="title" x="460" y="28">Low-to-High (Dual-Rail) vs. High-to-Low (Single-Rail) Level Shifters</text>
+  <text class="subtitle" x="460" y="48">Preventing Incomplete PMOS Turn-Off on L2H Crossings and Controlling Shifter Insertion with -rule and -threshold</text>
+
+  <!-- Left Panel: Low-to-High Level Shifter -->
+  <rect class="panel" x="20" y="64" width="430" height="316" stroke="#f87171" />
+  <text class="ptitle" x="36" y="88" fill="#f87171">Low-to-High (0.70V -&gt; 1.00V): Mandatory Dual-Rail Cell</text>
+
+  <rect class="box" x="36" y="102" width="110" height="90" stroke="#38bdf8" />
+  <text class="badge" x="91" y="124" fill="#7dd3fc">VDD_LOW</text>
+  <text class="mono" x="91" y="144" text-anchor="middle">0.70V</text>
+  <text class="note" x="91" y="164" text-anchor="middle">Logic '1'=0.70V</text>
+  <text class="note" x="91" y="180" text-anchor="middle">(Cannot turn OFF</text>
+
+  <line x1="146" y1="147" x2="178" y2="147" stroke="#38bdf8" stroke-width="2" marker-end="url(#arrSky)" />
+
+  <rect class="ls" x="182" y="102" width="128" height="90" stroke="#f59e0b" />
+  <text class="badge" x="246" y="124" fill="#fcd34d">L2H Cross-Coupled</text>
+  <text class="note" x="246" y="144" text-anchor="middle">Needs BOTH</text>
+  <text class="mono" x="246" y="162" text-anchor="middle" fill="#7dd3fc">VDD_LOW (0.7V)</text>
+  <text class="mono" x="246" y="179" text-anchor="middle" fill="#34d399">VDD_HIGH (1.0V)</text>
+
+  <line x1="310" y1="147" x2="338" y2="147" stroke="#f59e0b" stroke-width="2" marker-end="url(#arrAmber)" />
+
+  <rect class="box" x="342" y="102" width="92" height="90" stroke="#34d399" />
+  <text class="badge" x="388" y="124" fill="#6ee7b7">VDD_HIGH</text>
+  <text class="mono" x="388" y="144" text-anchor="middle">1.00V</text>
+  <text class="note" x="388" y="164" text-anchor="middle">Clean rail-to-</text>
+  <text class="note" x="388" y="180" text-anchor="middle">rail 1.00V</text>
+
+  <rect class="box" x="36" y="206" width="398" height="160" />
+  <text class="mono" x="48" y="226" fill="#fca5a5">Why Standard Inverter Fails on L2H:</text>
+  <text class="note" x="48" y="244">A 0.70V high at a 1.00V inverter input leaves |V_gs| = 0.30V across</text>
+  <text class="note" x="48" y="260">the PMOS (&gt; V_thp), keeping PMOS partially conducting and causing</text>
+  <text class="note" x="48" y="276">severe static crowbar current + degraded noise margins.</text>
+  <line x1="48" y1="290" x2="420" y2="290" stroke="#334155" stroke-width="1" />
+  <text class="mono" x="48" y="310" fill="#7dd3fc">set_level_shifter LS_L2H -domain PD_SRC \</text>
+  <text class="mono" x="48" y="328">  -rule low_to_high -location self \</text>
+  <text class="mono" x="48" y="346">  -input_supply_set SS_LOW -output_supply_set SS_HIGH</text>
+
+  <!-- Right Panel: High-to-Low Level Shifter -->
+  <rect class="panel" x="470" y="64" width="430" height="316" stroke="#34d399" />
+  <text class="ptitle" x="486" y="88" fill="#34d399">High-to-Low (1.00V -&gt; 0.70V): Single-Rail Buffer</text>
+
+  <rect class="box" x="486" y="102" width="106" height="90" stroke="#34d399" />
+  <text class="badge" x="539" y="124" fill="#6ee7b7">VDD_HIGH</text>
+  <text class="mono" x="539" y="144" text-anchor="middle">1.00V</text>
+  <text class="note" x="539" y="164" text-anchor="middle">Overdrives</text>
+  <text class="note" x="539" y="180" text-anchor="middle">receiver NMOS</text>
+
+  <line x1="592" y1="147" x2="624" y2="147" stroke="#f59e0b" stroke-width="2" marker-end="url(#arrAmber)" />
+
+  <rect class="ls" x="628" y="102" width="132" height="90" stroke="#34d399" />
+  <text class="badge" x="694" y="124" fill="#6ee7b7">H2L Shifter Cell</text>
+  <text class="note" x="694" y="144" text-anchor="middle">Single Supply Pin!</text>
+  <text class="mono" x="694" y="162" text-anchor="middle" fill="#38bdf8">VDD_LOW (0.70V)</text>
+  <text class="note" x="694" y="179" text-anchor="middle">(Thick/tolerant oxide)</text>
+
+  <line x1="760" y1="147" x2="788" y2="147" stroke="#38bdf8" stroke-width="2" marker-end="url(#arrSky)" />
+
+  <rect class="box" x="792" y="102" width="92" height="90" stroke="#38bdf8" />
+  <text class="badge" x="838" y="124" fill="#7dd3fc">VDD_LOW</text>
+  <text class="mono" x="838" y="144" text-anchor="middle">0.70V</text>
+  <text class="note" x="838" y="164" text-anchor="middle">Balanced duty</text>
+  <text class="note" x="838" y="180" text-anchor="middle">cycle + clamp</text>
+
+  <rect class="box" x="486" y="206" width="398" height="160" />
+  <text class="mono" x="498" y="226" fill="#6ee7b7">Why H2L Shifters Are Needed in Multi-Vdd Flows:</text>
+  <text class="note" x="498" y="244">1. Protects thin-oxide 0.70V transistors from 1.00V gate stress.</text>
+  <text class="note" x="498" y="260">2. Fixes severe rise/fall duty-cycle skew during STA characterization.</text>
+  <text class="note" x="498" y="276">3. Only needs receiver VDD_LOW rail when placed at fanout.</text>
+  <line x1="498" y1="290" x2="870" y2="290" stroke="#334155" stroke-width="1" />
+  <text class="mono" x="498" y="310" fill="#7dd3fc">set_level_shifter LS_BOTH -domain PD_DVFS \</text>
+  <text class="mono" x="498" y="328">  -rule both -threshold 0.05 -location parent</text>
+  <text class="note" x="498" y="349">(Inserts L2H/H2L whenever domain delta exceeds 50 mV in PST)</text>
+</svg>

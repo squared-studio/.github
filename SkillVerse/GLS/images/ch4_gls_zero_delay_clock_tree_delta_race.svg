@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 390" width="920" height="390">
+  <defs>
+    <style>
+      .bg { fill: #0f172a; }
+      .panel { fill: #1e293b; stroke-width: 1.5; rx: 10; ry: 10; }
+      .box { fill: #0f172a; stroke: #334155; stroke-width: 1.2; rx: 6; ry: 6; }
+      .ff { fill: #172554; stroke: #38bdf8; stroke-width: 1.5; rx: 6; ry: 6; }
+      .title { font-family: 'Segoe UI', Arial, sans-serif; font-size: 18px; font-weight: 700; fill: #f8fafc; text-anchor: middle; }
+      .subtitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; fill: #94a3b8; text-anchor: middle; }
+      .ptitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 14px; font-weight: 700; }
+      .mono { font-family: Consolas, 'Courier New', monospace; font-size: 10.6px; fill: #e2e8f0; }
+      .note { font-family: 'Segoe UI', Arial, sans-serif; font-size: 10.3px; fill: #94a3b8; }
+      .badge { font-family: Consolas, 'Courier New', monospace; font-size: 11px; font-weight: 700; text-anchor: middle; }
+    </style>
+    <marker id="arrRed" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#f87171" />
+    </marker>
+    <marker id="arrGreen" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#34d399" />
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="920" height="390" />
+  <text class="title" x="460" y="28">Zero-Delay Clock-Tree Delta-Cycle Race Hazard in Post-P&amp;R Netlists</text>
+  <text class="subtitle" x="460" y="48">How Unequal Clock Buffer Counts Create Zero-Time Shoot-Through Races—and How #1 / Unit Delay Fixes Them</text>
+
+  <!-- Top Panel: CTS Buffer Delta Mismatch -->
+  <rect class="panel" x="20" y="64" width="880" height="176" stroke="#f87171" />
+  <text class="ptitle" x="36" y="88" fill="#f87171">The Delta-Cycle Shoot-Through Failure (+delay_mode_zero)</text>
+
+  <!-- Root Clock -->
+  <rect class="box" x="36" y="114" width="96" height="90" stroke="#38bdf8" />
+  <text class="badge" x="84" y="156" fill="#7dd3fc">clk_root</text>
+  <text class="note" x="84" y="174" text-anchor="middle">0-&gt;1 at t=10ns</text>
+
+  <!-- Branch A (2 buffers) -> FF_A -->
+  <line x1="132" y1="134" x2="180" y2="134" stroke="#38bdf8" stroke-width="1.8" />
+  <rect class="box" x="184" y="114" width="144" height="38" stroke="#34d399" />
+  <text class="badge" x="256" y="137" fill="#6ee7b7">2 CTS Bufs (+2 delta)</text>
+  <line x1="328" y1="134" x2="380" y2="134" stroke="#34d399" stroke-width="1.8" />
+
+  <rect class="ff" x="384" y="110" width="120" height="48" stroke="#34d399" />
+  <text class="badge" x="444" y="131" fill="#6ee7b7">FF_A (0-&gt;1)</text>
+  <text class="note" x="444" y="148" text-anchor="middle">Q updates at delta 3</text>
+
+  <!-- Short wire from FF_A to FF_B.D -->
+  <line x1="504" y1="134" x2="626" y2="180" stroke="#f87171" stroke-width="2.2" marker-end="url(#arrRed)" />
+  <text class="mono" x="562" y="138" fill="#fca5a5">Q_A (+0ns, delta 4!)</text>
+
+  <!-- Branch B (6 buffers) -> FF_B -->
+  <line x1="132" y1="194" x2="180" y2="194" stroke="#f87171" stroke-width="1.8" />
+  <rect class="box" x="184" y="174" width="204" height="38" stroke="#f87171" />
+  <text class="badge" x="286" y="197" fill="#fca5a5">6 CTS Bufs (+6 deltas!)</text>
+  <line x1="388" y1="194" x2="626" y2="194" stroke="#f87171" stroke-width="1.8" marker-end="url(#arrRed)" />
+
+  <rect class="ff" x="630" y="160" width="252" height="58" stroke="#f87171" />
+  <text class="badge" x="756" y="182" fill="#fca5a5">FF_B Captures at Delta 6!</text>
+  <text class="note" x="756" y="202" text-anchor="middle">NEW Q_A (delta 4) beats clk_leaf_B (delta 6)!</text>
+
+  <!-- Bottom Two Fixes -->
+  <rect class="panel" x="20" y="254" width="430" height="120" stroke="#34d399" />
+  <text class="ptitle" x="36" y="278" fill="#34d399">Why Real Silicon Works (Hold Margin = Positive)</text>
+  <text class="note" x="36" y="298">In real silicon, those 6 smaller CTS buffers drive lighter RC load</text>
+  <text class="note" x="36" y="314">and actually arrive simultaneously with 2 heavy CTS buffers!</text>
+  <text class="note" x="36" y="332" fill="#6ee7b7">In zero-delay Verilog, ALL buffers cost 1 exact delta cycle per</text>
+  <text class="note" x="36" y="348" fill="#6ee7b7">gate regardless of physical fanout/RC—creating fake delta skew!</text>
+
+  <rect class="panel" x="470" y="254" width="430" height="120" stroke="#a78bfa" />
+  <text class="ptitle" x="486" y="278" fill="#a78bfa">Standard Zero-Delay Race Fixes</text>
+  <text class="note" x="486" y="298">1. Unit Delay on Flip-Flops ONLY (`+nba` / `#1` on DFF CK-&gt;Q)</text>
+  <text class="note" x="486" y="314">   holds Q_A until AFTER delta 6 settles cleanly.</text>
+  <text class="note" x="486" y="332">2. Simulator Zero-Delay Clock-Race Flags (e.g. VCS `+race=all` /</text>
+  <text class="note" x="486" y="348" fill="#7dd3fc">   Xcelium `-seq_udp_delay` / Questa `-t ps +delay_mode_unit`).</text>
+</svg>

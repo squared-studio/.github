@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 400" width="920" height="400">
+  <defs>
+    <style>
+      .bg { fill: #0f172a; }
+      .panel { fill: #1e293b; stroke-width: 1.5; rx: 10; ry: 10; }
+      .box { fill: #0f172a; stroke: #334155; stroke-width: 1.2; rx: 6; ry: 6; }
+      .title { font-family: 'Segoe UI', Arial, sans-serif; font-size: 18px; font-weight: 700; fill: #f8fafc; text-anchor: middle; }
+      .subtitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; fill: #94a3b8; text-anchor: middle; }
+      .ptitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 14px; font-weight: 700; }
+      .mono { font-family: Consolas, 'Courier New', monospace; font-size: 11px; fill: #e2e8f0; }
+      .note { font-family: 'Segoe UI', Arial, sans-serif; font-size: 10.8px; fill: #94a3b8; }
+      .badge { font-family: Consolas, 'Courier New', monospace; font-size: 10.5px; font-weight: 700; }
+    </style>
+    <marker id="arrSky" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#38bdf8" />
+    </marker>
+    <marker id="arrRed" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#f87171" />
+    </marker>
+    <marker id="arrGreen" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#34d399" />
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="920" height="400" />
+  <text class="title" x="460" y="28">Domain Assignment Precedence &amp; Upper / Lower Boundary Interfaces</text>
+  <text class="subtitle" x="460" y="48">Resolving Overlapping Domain Extent Rules and Pinning Boundary Policies at High/Low Hierarchy Edges</text>
+
+  <!-- Left Panel: Precedence Pyramid / Hierarchy -->
+  <rect class="panel" x="20" y="66" width="430" height="314" stroke="#a78bfa" />
+  <text class="ptitle" x="36" y="90" fill="#a78bfa">IEEE 1801 Element Assignment Precedence</text>
+
+  <rect class="box" x="36" y="104" width="398" height="58" stroke="#34d399" />
+  <text class="badge" x="48" y="123" fill="#34d399">Priority 1 (Highest): Explicit -elements on Leaf</text>
+  <text class="mono" x="48" y="142">create_power_domain PD_LEAF -elements {u_cpu/u_cache}</text>
+  <text class="note" x="48" y="156">Closest hierarchical explicit assignment wins over parent</text>
+
+  <rect class="box" x="36" y="174" width="398" height="58" stroke="#38bdf8" />
+  <text class="badge" x="48" y="193" fill="#38bdf8">Priority 2: Mid-Level Ancestor -elements</text>
+  <text class="mono" x="48" y="212">create_power_domain PD_CPU -elements {u_cpu}</text>
+  <text class="note" x="48" y="226">Covers u_cpu except instances carved out by Priority 1</text>
+
+  <rect class="box" x="36" y="244" width="398" height="58" stroke="#f59e0b" />
+  <text class="badge" x="48" y="263" fill="#f59e0b">Priority 3 (Lowest): Top-Level -include_scope</text>
+  <text class="mono" x="48" y="282">create_power_domain PD_TOP -include_scope</text>
+  <text class="note" x="48" y="296">Catch-all default for unassigned glue logic</text>
+
+  <rect class="box" x="36" y="314" width="398" height="52" stroke="#f87171" />
+  <text class="badge" x="48" y="333" fill="#fca5a5">Rule: Same-Scope Conflict &amp; -exclude_elements</text>
+  <text class="note" x="48" y="352">Two domains claiming the same instance in the same scope = Error.</text>
+
+  <!-- Right Panel: Upper vs Lower Boundary Interfaces -->
+  <rect class="panel" x="470" y="66" width="430" height="314" stroke="#38bdf8" />
+  <text class="ptitle" x="486" y="90" fill="#38bdf8">Upper vs. Lower Power Domain Boundaries</text>
+
+  <!-- Top ancestor box -->
+  <rect class="box" x="492" y="106" width="386" height="54" stroke="#64748b" />
+  <text class="mono" x="506" y="126" fill="#cbd5e1">Parent / Peer Logic (PD_TOP)</text>
+  <text class="note" x="506" y="144">External module inputs &amp; outputs outside PD_CPU</text>
+
+  <!-- Upper boundary dashed line -->
+  <line x1="486" y1="178" x2="884" y2="178" stroke="#38bdf8" stroke-width="1.5" stroke-dasharray="6,4" />
+  <text class="badge" x="685" y="173" text-anchor="middle" fill="#38bdf8">UPPER BOUNDARY (u_cpu top-level ports)</text>
+
+  <!-- PD_CPU middle box -->
+  <rect class="box" x="492" y="188" width="386" height="86" stroke="#34d399" />
+  <text class="mono" x="506" y="208" fill="#34d399">PD_CPU Boundary Instance (u_cpu)</text>
+  <text class="note" x="506" y="226">Logic belonging directly to PD_CPU sits between upper</text>
+  <text class="note" x="506" y="242">and lower boundaries; -applies_to outputs/inputs targets</text>
+  <text class="note" x="506" y="258">all boundary crossings leaving or entering PD_CPU.</text>
+
+  <!-- Lower boundary dashed line -->
+  <line x1="486" y1="292" x2="884" y2="292" stroke="#a78bfa" stroke-width="1.5" stroke-dasharray="6,4" />
+  <text class="badge" x="685" y="287" text-anchor="middle" fill="#c4b5fd">LOWER BOUNDARY (interface to child PD_L2_MEM)</text>
+
+  <!-- Child sub-domain box -->
+  <rect class="box" x="492" y="302" width="386" height="64" stroke="#a78bfa" />
+  <text class="mono" x="506" y="322" fill="#c4b5fd">Nested Sub-Domain (PD_L2_MEM = u_cpu/u_l2)</text>
+  <text class="note" x="506" y="340">Signals crossing between u_cpu and u_l2 cross the</text>
+  <text class="note" x="506" y="355">LOWER boundary of PD_CPU (and UPPER of PD_L2_MEM).</text>
+
+  <!-- Vertical boundary signal arrows -->
+  <line x1="840" y1="148" x2="840" y2="196" stroke="#f87171" stroke-width="2" marker-end="url(#arrRed)" />
+  <line x1="856" y1="196" x2="856" y2="148" stroke="#34d399" stroke-width="2" marker-end="url(#arrGreen)" />
+  <line x1="848" y1="264" x2="848" y2="310" stroke="#38bdf8" stroke-width="2" marker-end="url(#arrSky)" />
+</svg>

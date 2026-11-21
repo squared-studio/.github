@@ -1,0 +1,88 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 390" width="920" height="390">
+  <defs>
+    <style>
+      .bg { fill: #0f172a; }
+      .panel { fill: #1e293b; stroke: #334155; stroke-width: 1.5; rx: 10; ry: 10; }
+      .box { fill: #0f172a; stroke: #334155; stroke-width: 1.2; rx: 6; ry: 6; }
+      .title { font-family: 'Segoe UI', Arial, sans-serif; font-size: 18px; font-weight: 700; fill: #f8fafc; text-anchor: middle; }
+      .sub { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; fill: #94a3b8; text-anchor: middle; }
+      .hdr { font-family: 'Segoe UI', Arial, sans-serif; font-size: 13.5px; font-weight: 700; }
+      .mono { font-family: Consolas, 'Courier New', monospace; font-size: 10.5px; fill: #e2e8f0; }
+      .note { font-family: 'Segoe UI', Arial, sans-serif; font-size: 11px; fill: #cbd5e1; }
+    </style>
+    <marker id="arr-c" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8" />
+    </marker>
+    <marker id="arr-g" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#34d399" />
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="920" height="390" />
+  <text class="title" x="460" y="28">4-Tap Systolic FIR Filter Mapped Onto Cascaded DSP48E2 Slices</text>
+  <text class="sub" x="460" y="48">Zero Fabric Adder Trees &amp; Zero Broadcast Fanout Using Internal `AREG=2`, `ACOUT-&gt;ACIN`, and `PCOUT-&gt;PCIN` Tracks</text>
+
+  <!-- Main Systolic Chain Panel -->
+  <rect class="panel" x="20" y="64" width="880" height="236" stroke="#38bdf8" />
+  <text class="mono" x="34" y="114" fill="#7dd3fc">x[n]</text>
+  <line x1="64" y1="110" x2="94" y2="110" stroke="#38bdf8" stroke-width="2" marker-end="url(#arr-c)" />
+
+  <!-- DSP0 -->
+  <rect class="box" x="96" y="84" width="164" height="196" stroke="#38bdf8" />
+  <text class="mono" x="178" y="106" fill="#7dd3fc" text-anchor="middle" font-weight="bold">DSP48 Slice 0</text>
+  <text class="mono" x="178" y="128" fill="#e2e8f0" text-anchor="middle">2x AREG Delay Line</text>
+  <text class="mono" x="178" y="150" fill="#fcd34d" text-anchor="middle">Mult: x[n] * h[0]</text>
+  <text class="mono" x="178" y="172" fill="#e2e8f0" text-anchor="middle">MREG + PREG</text>
+  <text class="mono" x="178" y="206" fill="#6ee7b7" text-anchor="middle">P0 = x[n]*h[0]</text>
+  <text class="mono" x="178" y="256" fill="#94a3b8" text-anchor="middle">(ACIN=x, PCIN=0)</text>
+
+  <!-- Cascade 0 -> 1 -->
+  <line x1="260" y1="118" x2="294" y2="118" stroke="#38bdf8" stroke-width="2" marker-end="url(#arr-c)" />
+  <text class="mono" x="277" y="111" fill="#7dd3fc" text-anchor="middle" font-size="8.5">ACOUT</text>
+  <line x1="260" y1="210" x2="294" y2="210" stroke="#34d399" stroke-width="2" marker-end="url(#arr-g)" />
+  <text class="mono" x="277" y="203" fill="#6ee7b7" text-anchor="middle" font-size="8.5">PCOUT</text>
+
+  <!-- DSP1 -->
+  <rect class="box" x="296" y="84" width="164" height="196" stroke="#38bdf8" />
+  <text class="mono" x="378" y="106" fill="#7dd3fc" text-anchor="middle" font-weight="bold">DSP48 Slice 1</text>
+  <text class="mono" x="378" y="128" fill="#e2e8f0" text-anchor="middle">2x AREG (z^-1 vs P)</text>
+  <text class="mono" x="378" y="150" fill="#fcd34d" text-anchor="middle">Mult: x[n-1] * h[1]</text>
+  <text class="mono" x="378" y="172" fill="#e2e8f0" text-anchor="middle">+ PCIN in 48b ALU</text>
+  <text class="mono" x="378" y="206" fill="#6ee7b7" text-anchor="middle">P1 = P0_d + x*h1</text>
+  <text class="mono" x="378" y="256" fill="#94a3b8" text-anchor="middle">(Zero LUTs!)</text>
+
+  <!-- Cascade 1 -> 2 -->
+  <line x1="460" y1="118" x2="494" y2="118" stroke="#38bdf8" stroke-width="2" marker-end="url(#arr-c)" />
+  <line x1="460" y1="210" x2="494" y2="210" stroke="#34d399" stroke-width="2" marker-end="url(#arr-g)" />
+
+  <!-- DSP2 -->
+  <rect class="box" x="496" y="84" width="164" height="196" stroke="#38bdf8" />
+  <text class="mono" x="578" y="106" fill="#7dd3fc" text-anchor="middle" font-weight="bold">DSP48 Slice 2</text>
+  <text class="mono" x="578" y="128" fill="#e2e8f0" text-anchor="middle">2x AREG Chain</text>
+  <text class="mono" x="578" y="150" fill="#fcd34d" text-anchor="middle">Mult: x[n-2] * h[2]</text>
+  <text class="mono" x="578" y="172" fill="#e2e8f0" text-anchor="middle">+ PCIN in 48b ALU</text>
+  <text class="mono" x="578" y="206" fill="#6ee7b7" text-anchor="middle">P2 = P1_d + x*h2</text>
+  <text class="mono" x="578" y="256" fill="#94a3b8" text-anchor="middle">(Zero LUTs!)</text>
+
+  <!-- Cascade 2 -> 3 -->
+  <line x1="660" y1="118" x2="694" y2="118" stroke="#38bdf8" stroke-width="2" marker-end="url(#arr-c)" />
+  <line x1="660" y1="210" x2="694" y2="210" stroke="#34d399" stroke-width="2" marker-end="url(#arr-g)" />
+
+  <!-- DSP3 -->
+  <rect class="box" x="696" y="84" width="164" height="196" stroke="#34d399" />
+  <text class="mono" x="778" y="106" fill="#6ee7b7" text-anchor="middle" font-weight="bold">DSP48 Slice 3</text>
+  <text class="mono" x="778" y="128" fill="#e2e8f0" text-anchor="middle">2x AREG Chain</text>
+  <text class="mono" x="778" y="150" fill="#fcd34d" text-anchor="middle">Mult: x[n-3] * h[3]</text>
+  <text class="mono" x="778" y="172" fill="#e2e8f0" text-anchor="middle">+ PCIN + Round Const</text>
+  <text class="mono" x="778" y="206" fill="#6ee7b7" text-anchor="middle">P3 = Full FIR Sum</text>
+  <text class="mono" x="778" y="256" fill="#6ee7b7" text-anchor="middle">Outputs y[n] -&gt;</text>
+
+  <line x1="860" y1="210" x2="890" y2="210" stroke="#34d399" stroke-width="2" marker-end="url(#arr-g)" />
+
+  <!-- Bottom Advantage Strip -->
+  <rect class="panel" x="20" y="312" width="880" height="64" />
+  <text class="mono" x="38" y="335" fill="#6ee7b7">Why Transposed / Systolic FIR Beats Direct Form:</text>
+  <text class="note" x="358" y="335">Direct Form requires broadcasting `x[n]` + building a wide fabric adder tree (`y = sum(p_k)`), killing Fmax!</text>
+  <text class="mono" x="38" y="357" fill="#fcd34d">Symmetric Linear-Phase Trick:</text>
+  <text class="note" x="256" y="357">Use the 27-bit Pre-Adder `(x[n] + x[n-2N+1]) * h[k]` to double filter taps per DSP slice (2x throughput/slice)!</text>
+</svg>

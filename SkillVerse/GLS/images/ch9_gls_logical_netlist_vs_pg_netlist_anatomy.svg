@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 390" width="920" height="390">
+  <defs>
+    <style>
+      .bg { fill: #0f172a; }
+      .panel { fill: #1e293b; stroke-width: 1.5; rx: 10; ry: 10; }
+      .box { fill: #0f172a; stroke: #334155; stroke-width: 1.2; rx: 6; ry: 6; }
+      .title { font-family: 'Segoe UI', Arial, sans-serif; font-size: 18px; font-weight: 700; fill: #f8fafc; text-anchor: middle; }
+      .subtitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; fill: #94a3b8; text-anchor: middle; }
+      .ptitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 14px; font-weight: 700; }
+      .mono { font-family: Consolas, 'Courier New', monospace; font-size: 10.6px; fill: #e2e8f0; }
+      .note { font-family: 'Segoe UI', Arial, sans-serif; font-size: 10.3px; fill: #94a3b8; }
+    </style>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="920" height="390" />
+  <text class="title" x="460" y="28">Logical Gate Netlist vs. Physical Power-Ground (PG) Netlist Anatomy</text>
+  <text class="subtitle" x="460" y="48">Verifying Real Switch Cells, Secondary Retention Rails, Well Ties, and Isolation Hardware in PG+UPF'' GLS</text>
+
+  <!-- Left Panel: Logical Netlist -->
+  <rect class="panel" x="20" y="64" width="430" height="308" stroke="#38bdf8" />
+  <text class="ptitle" x="36" y="88" fill="#38bdf8">1. Logical Gate Netlist (`synth.v` + UPF')</text>
+
+  <rect class="box" x="36" y="102" width="398" height="122" />
+  <text class="mono" x="48" y="122" fill="#7dd3fc">// No VDD / VSS / VNW pins in Verilog ports!</text>
+  <text class="mono" x="48" y="142">RSDFFRQX1 u_csr_reg (</text>
+  <text class="mono" x="48" y="159">  .CK (clk),   .D (d_in),   .Q (q_out),</text>
+  <text class="mono" x="48" y="176">  .SAVE (cpu_save), .NRESTORE (cpu_rst_n)</text>
+  <text class="mono" x="48" y="193">);</text>
+  <text class="note" x="48" y="214">Simulator relies purely on UPF' virtual overlays for rails.</text>
+
+  <rect class="box" x="36" y="236" width="398" height="122" stroke="#f59e0b" />
+  <text class="mono" x="48" y="256" fill="#fcd34d">Capabilities &amp; Blind Spots (Logical GLS):</text>
+  <text class="note" x="48" y="276">+ Faster compile &amp; lower memory footprint than PG netlist.</text>
+  <text class="note" x="48" y="294">+ Validates inserted ISO/LS/SRFF timing arcs (`specify`).</text>
+  <text class="note" x="48" y="314" fill="#fca5a5">- Cannot catch P&amp;R mis-wired `.VDD`/`.VDD_BAK` rail hooks</text>
+  <text class="note" x="48" y="330" fill="#fca5a5">  or physical MTCMOS switch daisy-chain buffer polarity bugs!</text>
+
+  <!-- Right Panel: Physical PG Netlist -->
+  <rect class="panel" x="470" y="64" width="430" height="308" stroke="#34d399" />
+  <text class="ptitle" x="486" y="88" fill="#34d399">2. Physical PG Netlist (`pnr_pg.v` + UPF'')</text>
+
+  <rect class="box" x="486" y="102" width="398" height="136" stroke="#34d399" />
+  <text class="mono" x="498" y="122" fill="#6ee7b7">// Every stdcell &amp; switch wires explicit PG rails!</text>
+  <text class="mono" x="498" y="140">RSDFFRQX1 u_csr_reg (</text>
+  <text class="mono" x="498" y="157">  .CK (clk),   .D (d_in),   .Q (q_out),</text>
+  <text class="mono" x="498" y="174">  .SAVE (cpu_save), .NRESTORE (cpu_rst_n),</text>
+  <text class="mono" x="498" y="191" fill="#fcd34d">  .VDD (VDD_CPU_SW), .VDD_BAK (VDD_AON), .VSS (VSS)</text>
+  <text class="mono" x="498" y="208">);</text>
+  <text class="mono" x="498" y="226" fill="#7dd3fc">HDRSW_HVT u_sw_chain[120] (.NSLEEPIN(..), .VVDD(VDD_CPU_SW));</text>
+
+  <rect class="box" x="486" y="248" width="398" height="110" />
+  <text class="mono" x="498" y="268" fill="#6ee7b7">Mandatory PG Sign-Off Rules (`VCS-NLP` / `Xcelium`):</text>
+  <text class="note" x="498" y="288">- Use `-upf pnr.upf''` + PG netlist together + physical cell</text>
+  <text class="note" x="498" y="304">  Verilog PG behavioral models (`+define+USE_PG_PIN`)!</text>
+  <text class="note" x="498" y="322">- Verifies physical daisy-chain `pwr_ack` timing &amp; AON buffers!</text>
+  <text class="note" x="498" y="338" fill="#fcd34d">- Catches real inverted `SLEEP` / broken retention rail hooks.</text>
+</svg>

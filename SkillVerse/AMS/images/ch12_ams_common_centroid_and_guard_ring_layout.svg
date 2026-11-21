@@ -1,0 +1,97 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 410" width="920" height="410">
+  <defs>
+    <style>
+      .bg { fill: #0f172a; }
+      .panel { fill: #1e293b; stroke: #334155; stroke-width: 1.5; rx: 10; ry: 10; }
+      .box { fill: #0f172a; stroke: #334155; stroke-width: 1.2; rx: 6; ry: 6; }
+      .title { font-family: 'Segoe UI', Arial, sans-serif; font-size: 18px; font-weight: 700; fill: #f8fafc; text-anchor: middle; }
+      .sub { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; fill: #94a3b8; text-anchor: middle; }
+      .hdr { font-family: 'Segoe UI', Arial, sans-serif; font-size: 13.5px; font-weight: 700; }
+      .mono { font-family: Consolas, 'Courier New', monospace; font-size: 11px; font-weight: 700; fill: #f8fafc; text-anchor: middle; }
+      .note { font-family: 'Segoe UI', Arial, sans-serif; font-size: 11px; fill: #cbd5e1; }
+    </style>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="920" height="410" />
+  <text class="title" x="460" y="28">Precision Analog Layout: 2D Common-Centroid Array &amp; Substrate Isolation</text>
+  <text class="sub" x="460" y="48">Canceling Linear Process/Thermal Gradients with Dummies and Shielding Sensitive Nodes with Dual Guard Rings</text>
+
+  <!-- Left Panel: 2D Common Centroid + Dummies -->
+  <rect class="panel" x="20" y="64" width="430" height="328" stroke="#38bdf8" />
+  <text class="hdr" x="38" y="88" fill="#38bdf8">1. Cross-Coupled 2D Common-Centroid Array (M1 = A, M2 = B)</text>
+  <rect class="box" x="34" y="100" width="402" height="222" />
+
+  <!-- Row 1 (Top Dummies) -->
+  <rect x="64" y="114" width="52" height="36" fill="#334155" stroke="#64748b" rx="4" /><text class="mono" x="90" y="136">D</text>
+  <rect x="124" y="114" width="52" height="36" fill="#334155" stroke="#64748b" rx="4" /><text class="mono" x="150" y="136">D</text>
+  <rect x="184" y="114" width="52" height="36" fill="#334155" stroke="#64748b" rx="4" /><text class="mono" x="210" y="136">D</text>
+  <rect x="244" y="114" width="52" height="36" fill="#334155" stroke="#64748b" rx="4" /><text class="mono" x="270" y="136">D</text>
+  <rect x="304" y="114" width="52" height="36" fill="#334155" stroke="#64748b" rx="4" /><text class="mono" x="330" y="136">D</text>
+  <rect x="364" y="114" width="52" height="36" fill="#334155" stroke="#64748b" rx="4" /><text class="mono" x="390" y="136">D</text>
+
+  <!-- Row 2: D A B B A D -->
+  <rect x="64" y="158" width="52" height="36" fill="#334155" stroke="#64748b" rx="4" /><text class="mono" x="90" y="180">D</text>
+  <rect x="124" y="158" width="52" height="36" fill="#0c4a6e" stroke="#38bdf8" rx="4" /><text class="mono" x="150" y="180" fill="#7dd3fc">A</text>
+  <rect x="184" y="158" width="52" height="36" fill="#064e3b" stroke="#34d399" rx="4" /><text class="mono" x="210" y="180" fill="#6ee7b7">B</text>
+  <rect x="244" y="158" width="52" height="36" fill="#064e3b" stroke="#34d399" rx="4" /><text class="mono" x="270" y="180" fill="#6ee7b7">B</text>
+  <rect x="304" y="158" width="52" height="36" fill="#0c4a6e" stroke="#38bdf8" rx="4" /><text class="mono" x="330" y="180" fill="#7dd3fc">A</text>
+  <rect x="364" y="158" width="52" height="36" fill="#334155" stroke="#64748b" rx="4" /><text class="mono" x="390" y="180">D</text>
+
+  <!-- Row 3: D B A A B D -->
+  <rect x="64" y="202" width="52" height="36" fill="#334155" stroke="#64748b" rx="4" /><text class="mono" x="90" y="224">D</text>
+  <rect x="124" y="202" width="52" height="36" fill="#064e3b" stroke="#34d399" rx="4" /><text class="mono" x="150" y="224" fill="#6ee7b7">B</text>
+  <rect x="184" y="202" width="52" height="36" fill="#0c4a6e" stroke="#38bdf8" rx="4" /><text class="mono" x="210" y="224" fill="#7dd3fc">A</text>
+  <rect x="244" y="202" width="52" height="36" fill="#0c4a6e" stroke="#38bdf8" rx="4" /><text class="mono" x="270" y="224" fill="#7dd3fc">A</text>
+  <rect x="304" y="202" width="52" height="36" fill="#064e3b" stroke="#34d399" rx="4" /><text class="mono" x="330" y="224" fill="#6ee7b7">B</text>
+  <rect x="364" y="202" width="52" height="36" fill="#334155" stroke="#64748b" rx="4" /><text class="mono" x="390" y="224">D</text>
+
+  <!-- Row 4 (Bottom Dummies) -->
+  <rect x="64" y="246" width="52" height="36" fill="#334155" stroke="#64748b" rx="4" /><text class="mono" x="90" y="268">D</text>
+  <rect x="124" y="246" width="52" height="36" fill="#334155" stroke="#64748b" rx="4" /><text class="mono" x="150" y="268">D</text>
+  <rect x="184" y="246" width="52" height="36" fill="#334155" stroke="#64748b" rx="4" /><text class="mono" x="210" y="268">D</text>
+  <rect x="244" y="246" width="52" height="36" fill="#334155" stroke="#64748b" rx="4" /><text class="mono" x="270" y="268">D</text>
+  <rect x="304" y="246" width="52" height="36" fill="#334155" stroke="#64748b" rx="4" /><text class="mono" x="330" y="268">D</text>
+  <rect x="364" y="246" width="52" height="36" fill="#334155" stroke="#64748b" rx="4" /><text class="mono" x="390" y="268">D</text>
+
+  <circle cx="240" cy="198" r="4" fill="#f59e0b" />
+  <text class="mono" x="240" y="304" fill="#fcd34d" font-size="9.5">Shared Coincident Center + Identical Poly Environment (LOD/WPE)</text>
+
+  <rect class="box" x="34" y="330" width="402" height="48" />
+  <text class="note" x="46" y="350">- Symmetrical routing: equal wire R/C on A &amp; B gates/drains!</text>
+  <text class="note" x="46" y="366">- Dummies `D` must tie gates/sources to quiet rail, never float!</text>
+
+  <!-- Right Panel: Substrate Cross-Section & Guard Rings -->
+  <rect class="panel" x="466" y="64" width="434" height="328" stroke="#34d399" />
+  <text class="hdr" x="484" y="88" fill="#34d399">2. Deep N-Well &amp; Dual Guard Ring Substrate Shielding</text>
+  <rect class="box" x="480" y="100" width="406" height="222" />
+
+  <!-- Cross-section substrate layers -->
+  <rect x="494" y="244" width="378" height="64" fill="#1e293b" stroke="#64748b" />
+  <text class="mono" x="683" y="294" fill="#94a3b8" font-size="10">Common P-Substrate (Shared Noise Path!)</text>
+
+  <!-- Digital Aggressor Left -->
+  <rect x="504" y="130" width="110" height="114" fill="rgba(248,113,113,0.14)" stroke="#f87171" rx="4" />
+  <text class="mono" x="559" y="152" fill="#fca5a5" font-size="10">Noisy Digital</text>
+  <text class="note" x="559" y="172" text-anchor="middle">dv/dt switching</text>
+  <text class="note" x="559" y="188" text-anchor="middle">injects current</text>
+  <text class="note" x="559" y="204" text-anchor="middle">into P-sub</text>
+  <path d="M 560 220 Q 600 270 640 250" fill="none" stroke="#f87171" stroke-width="1.8" stroke-dasharray="3,2" />
+
+  <!-- Guard Rings -->
+  <rect x="626" y="160" width="22" height="84" fill="#334155" stroke="#f59e0b" />
+  <text class="mono" x="637" y="150" fill="#fcd34d" font-size="9">P+GR</text>
+  <rect x="654" y="140" width="22" height="116" fill="#064e3b" stroke="#34d399" />
+  <text class="mono" x="665" y="130" fill="#6ee7b7" font-size="9">N+GR</text>
+
+  <!-- Deep N-Well (DNW) Pocket holding quiet Analog -->
+  <rect x="686" y="130" width="176" height="132" fill="rgba(56,189,248,0.14)" stroke="#38bdf8" stroke-width="2" rx="6" />
+  <text class="mono" x="774" y="254" fill="#7dd3fc" font-size="9.5">Deep N-Well (DNW -&gt; Quiet VDD)</text>
+  <rect x="706" y="146" width="136" height="86" fill="#0f172a" stroke="#38bdf8" rx="4" />
+  <text class="mono" x="774" y="176" fill="#6ee7b7" font-size="10">Isolated P-Well</text>
+  <text class="note" x="774" y="196" text-anchor="middle">Quiet Analog NMOS</text>
+  <text class="note" x="774" y="212" text-anchor="middle">(Kelvin VSSA!)</text>
+
+  <rect class="box" x="480" y="330" width="406" height="48" />
+  <text class="mono" x="492" y="349" fill="#6ee7b7">Kelvin Ground Rule: Tie Guard Rings to dedicated dirty pad,</text>
+  <text class="note" x="492" y="366">NOT directly onto the clean analog signal ground (VSSA) inside block!</text>
+</svg>

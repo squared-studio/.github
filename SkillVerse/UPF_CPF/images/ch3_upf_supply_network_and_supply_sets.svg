@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 400" width="920" height="400">
+  <defs>
+    <style>
+      .bg { fill: #0f172a; }
+      .panel { fill: #1e293b; stroke-width: 1.5; rx: 10; ry: 10; }
+      .box { fill: #0f172a; stroke: #334155; stroke-width: 1.2; rx: 6; ry: 6; }
+      .title { font-family: 'Segoe UI', Arial, sans-serif; font-size: 18px; font-weight: 700; fill: #f8fafc; text-anchor: middle; }
+      .subtitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; fill: #94a3b8; text-anchor: middle; }
+      .ptitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 14px; font-weight: 700; }
+      .mono { font-family: Consolas, 'Courier New', monospace; font-size: 10.8px; fill: #e2e8f0; }
+      .note { font-family: 'Segoe UI', Arial, sans-serif; font-size: 10.5px; fill: #94a3b8; }
+      .badge { font-family: Consolas, 'Courier New', monospace; font-size: 10.8px; font-weight: 700; }
+    </style>
+    <marker id="arrCyan" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#38bdf8" />
+    </marker>
+    <marker id="arrPurple" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#a78bfa" />
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="920" height="400" />
+  <text class="title" x="460" y="28">UPF Supply Network Model: Explicit Nets/Ports vs. Abstract Supply Sets</text>
+  <text class="subtitle" x="460" y="48">Transitioning from Concrete UPF 1.0 Supply Nets to Portable UPF 2.1/3.1 Supply Sets and Implicit Handles</text>
+
+  <!-- Left Panel: UPF 1.0 Explicit Supply Network -->
+  <rect class="panel" x="20" y="64" width="430" height="316" stroke="#f59e0b" />
+  <text class="ptitle" x="36" y="88" fill="#f59e0b">Explicit Supply Network (UPF 1.0 Style)</text>
+
+  <rect class="box" x="36" y="102" width="128" height="44" stroke="#f59e0b" />
+  <text class="badge" x="100" y="121" text-anchor="middle" fill="#fcd34d">Supply Ports</text>
+  <text class="mono" x="100" y="137" text-anchor="middle">VDD   VSS</text>
+
+  <line x1="164" y1="124" x2="196" y2="124" stroke="#38bdf8" stroke-width="1.8" marker-end="url(#arrCyan)" />
+
+  <rect class="box" x="200" y="102" width="112" height="44" stroke="#38bdf8" />
+  <text class="badge" x="256" y="121" text-anchor="middle" fill="#7dd3fc">Supply Nets</text>
+  <text class="mono" x="256" y="137" text-anchor="middle">VDD_AON / VDD_SW</text>
+
+  <line x1="312" y1="124" x2="342" y2="124" stroke="#38bdf8" stroke-width="1.8" marker-end="url(#arrCyan)" />
+
+  <rect class="box" x="346" y="102" width="88" height="44" stroke="#34d399" />
+  <text class="badge" x="390" y="121" text-anchor="middle" fill="#6ee7b7">Domain</text>
+  <text class="mono" x="390" y="137" text-anchor="middle">Power Pins</text>
+
+  <rect class="box" x="36" y="160" width="398" height="206" />
+  <text class="mono" x="48" y="182" fill="#fcd34d"># Concrete top-down physical net wiring</text>
+  <text class="mono" x="48" y="202">create_supply_port VDD -direction in</text>
+  <text class="mono" x="48" y="220">create_supply_net  VDD -domain PD_TOP</text>
+  <text class="mono" x="48" y="238">connect_supply_net VDD -ports {VDD}</text>
+  <text class="mono" x="48" y="262">set_domain_supply_net PD_TOP \</text>
+  <text class="mono" x="48" y="280">  -primary_power_net  VDD \</text>
+  <text class="mono" x="48" y="298">  -primary_ground_net VSS</text>
+  <text class="note" x="48" y="328" fill="#fca5a5">Limitation: Hardcodes net names &amp; well connections;</text>
+  <text class="note" x="48" y="346" fill="#fca5a5">harder to reuse soft IP across different SoC power topologies.</text>
+
+  <!-- Right Panel: UPF 2.1+ Supply Sets -->
+  <rect class="panel" x="470" y="64" width="430" height="316" stroke="#34d399" />
+  <text class="ptitle" x="486" y="88" fill="#34d399">Abstract Supply Sets (UPF 2.1 / 3.1 Recommended)</text>
+
+  <rect class="box" x="486" y="102" width="398" height="106" stroke="#a78bfa" />
+  <text class="badge" x="498" y="122" fill="#c4b5fd">Supply Set Container (SS_CPU)</text>
+  <text class="mono" x="498" y="142">power  --&gt; VDD_CPU_SW     |   nwell --&gt; VDD_AON</text>
+  <text class="mono" x="498" y="160">ground --&gt; VSS            |   pwell --&gt; VSS</text>
+  <text class="note" x="498" y="182">Single handle passes power, ground, and body-bias</text>
+  <text class="note" x="498" y="198">together without exposing physical rail wiring early.</text>
+
+  <rect class="box" x="486" y="218" width="398" height="148" />
+  <text class="mono" x="498" y="238" fill="#6ee7b7">create_supply_set SS_CPU \</text>
+  <text class="mono" x="498" y="255">  -function {power VDD_CPU_SW} -function {ground VSS}</text>
+  <text class="mono" x="498" y="275" fill="#6ee7b7">create_power_domain PD_CPU \</text>
+  <text class="mono" x="498" y="292">  -elements {u_cpu} -supply {primary SS_CPU}</text>
+  <line x1="498" y1="306" x2="870" y2="306" stroke="#334155" stroke-width="1" />
+  <text class="badge" x="498" y="325" fill="#7dd3fc">Implicit Domain Handles Automatically Created:</text>
+  <text class="mono" x="498" y="344">PD_CPU.primary  |  PD_CPU.default_isolation  |  .default_retention</text>
+</svg>

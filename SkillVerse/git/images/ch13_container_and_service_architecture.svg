@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 520" width="960" height="520">
+  <defs>
+    <style>
+      .bg { fill: #080c14; }
+      .title { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 20px; fill: #f8fafc; }
+      .subtitle { font-family: 'Inter', system-ui, sans-serif; font-size: 13px; fill: #94a3b8; }
+      .panel { fill: #0f172a; stroke-width: 1.8; rx: 10px; }
+      .inner { fill: #0b1120; stroke-width: 1.4; rx: 8px; }
+      .txt-hdr { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 13px; fill: #f8fafc; }
+      .txt-sub { font-family: 'Inter', system-ui, sans-serif; font-size: 11px; fill: #94a3b8; }
+      .mono { font-family: 'JetBrains Mono', Consolas, monospace; font-size: 10.5px; font-weight: 600; }
+      .edge { stroke-width: 2; fill: none; }
+    </style>
+    <marker id="arr-cyan" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8" />
+    </marker>
+    <marker id="arr-amber" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#f59e0b" />
+    </marker>
+  </defs>
+
+  <rect width="960" height="520" class="bg" rx="14"/>
+  <text x="480" y="32" text-anchor="middle" class="title">Containerized Jobs &amp; Sidecar Service Containers</text>
+  <text x="480" y="52" text-anchor="middle" class="subtitle">Reproducible toolchain job containers communicating with health-checked sidecar databases over Docker bridge</text>
+
+  <!-- Outer Runner Host VM -->
+  <g transform="translate(32, 76)">
+    <rect x="0" y="0" width="896" height="418" class="panel" stroke="#334155"/>
+    <text x="20" y="26" class="mono" fill="#94a3b8">HOST RUNNER VM (runs-on: ubuntu-latest)</text>
+    <text x="876" y="26" text-anchor="end" class="mono" fill="#7dd3fc">Docker Bridge Network (shared service DNS)</text>
+
+    <!-- Bind-mounted workspace on host -->
+    <g transform="translate(24, 46)">
+      <rect x="0" y="0" width="848" height="58" class="inner" stroke="#f59e0b" fill="#17140d"/>
+      <text x="18" y="24" class="mono" fill="#fcd34d">Host Filesystem Workspace: /home/runner/work/repo/repo</text>
+      <text x="18" y="44" class="txt-sub">Automatically bind-mounted into the Job Container at /__w/repo/repo ($GITHUB_WORKSPACE) and /__e, /__t</text>
+    </g>
+
+    <path d="M 240 104 L 240 132" class="edge" stroke="#f59e0b" marker-end="url(#arr-amber)"/>
+
+    <!-- Left: Job Container -->
+    <g transform="translate(24, 136)">
+      <rect x="0" y="0" width="430" height="260" class="panel" stroke="#38bdf8"/>
+      <text x="18" y="26" class="mono" fill="#38bdf8">JOB CONTAINER (container:)</text>
+      <text x="412" y="26" text-anchor="end" class="mono" fill="#7dd3fc">ghcr.io/org/eda-ci@sha256:...</text>
+
+      <rect x="16" y="42" width="398" height="66" class="inner" stroke="#38bdf8"/>
+      <text x="26" y="62" class="mono" fill="#cbd5e1">Every run: &amp; uses: step executes INSIDE this container</text>
+      <text x="26" y="80" class="mono" fill="#6ee7b7">• Pinned compiler / Verilator / Yosys / Python versions</text>
+      <text x="26" y="96" class="mono" fill="#6ee7b7">• Identical locally and in CI (zero "works on my machine")</text>
+
+      <rect x="16" y="120" width="398" height="122" class="inner" stroke="#334155"/>
+      <text x="26" y="142" class="mono" fill="#7dd3fc">Connects to sidecars by service label hostname:</text>
+      <text x="26" y="164" class="mono" fill="#cbd5e1">DATABASE_URL=postgres://ci:ci@postgres:5432/app</text>
+      <text x="26" y="182" class="mono" fill="#cbd5e1">REDIS_URL=redis://redis:6379</text>
+      <text x="26" y="206" class="txt-sub">• Note: if job runs directly on host (no container:),</text>
+      <text x="26" y="224" class="txt-sub">  expose ports: ["5432:5432"] and connect via localhost</text>
+    </g>
+
+    <!-- Network connection arrows -->
+    <path d="M 454 220 L 520 200" class="edge" stroke="#38bdf8" marker-end="url(#arr-cyan)"/>
+    <path d="M 454 316 L 520 330" class="edge" stroke="#38bdf8" marker-end="url(#arr-cyan)"/>
+    <text x="488" y="196" text-anchor="middle" class="mono" fill="#7dd3fc" font-size="9.5">:5432</text>
+    <text x="488" y="308" text-anchor="middle" class="mono" fill="#7dd3fc" font-size="9.5">:6379</text>
+
+    <!-- Right: Sidecar Service Containers -->
+    <g transform="translate(524, 136)">
+      <rect x="0" y="0" width="348" height="122" class="panel" stroke="#34d399"/>
+      <text x="16" y="24" class="mono" fill="#34d399">SERVICE: postgres</text>
+      <text x="332" y="24" text-anchor="end" class="mono" fill="#6ee7b7">image: postgres:16</text>
+      <text x="16" y="48" class="mono" fill="#cbd5e1">env: POSTGRES_PASSWORD / DB</text>
+      <text x="16" y="68" class="mono" fill="#fcd34d">options: --health-cmd pg_isready</text>
+      <text x="16" y="86" class="mono" fill="#fcd34d">  --health-interval 10s --health-retries 5</text>
+      <text x="16" y="106" class="txt-sub">Runner waits for healthy status before Step 1 starts</text>
+    </g>
+
+    <g transform="translate(524, 274)">
+      <rect x="0" y="0" width="348" height="122" class="panel" stroke="#a855f7"/>
+      <text x="16" y="24" class="mono" fill="#d8b4fe">SERVICE: redis</text>
+      <text x="332" y="24" text-anchor="end" class="mono" fill="#d8b4fe">image: redis:7-alpine</text>
+      <text x="16" y="48" class="mono" fill="#cbd5e1">hostname: redis</text>
+      <text x="16" y="68" class="mono" fill="#fcd34d">options: --health-cmd "redis-cli ping"</text>
+      <text x="16" y="86" class="mono" fill="#fcd34d">  --health-interval 10s --health-retries 5</text>
+      <text x="16" y="106" class="txt-sub">Automatically torn down and destroyed after job finishes</text>
+    </g>
+  </g>
+</svg>

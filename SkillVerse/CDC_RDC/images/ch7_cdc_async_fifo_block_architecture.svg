@@ -1,0 +1,95 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 400" width="920" height="400">
+  <defs>
+    <style>
+      .bg { fill: #0f172a; }
+      .panel { fill: #1e293b; stroke-width: 1.5; rx: 10; ry: 10; }
+      .box { fill: #0f172a; stroke: #334155; stroke-width: 1.2; rx: 6; ry: 6; }
+      .ff { fill: #172554; stroke: #38bdf8; stroke-width: 1.5; rx: 6; ry: 6; }
+      .title { font-family: 'Segoe UI', Arial, sans-serif; font-size: 18px; font-weight: 700; fill: #f8fafc; text-anchor: middle; }
+      .subtitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; fill: #94a3b8; text-anchor: middle; }
+      .ptitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 13.5px; font-weight: 700; }
+      .mono { font-family: Consolas, 'Courier New', monospace; font-size: 10.6px; fill: #e2e8f0; }
+      .note { font-family: 'Segoe UI', Arial, sans-serif; font-size: 10.2px; fill: #94a3b8; }
+      .badge { font-family: Consolas, 'Courier New', monospace; font-size: 11px; font-weight: 700; text-anchor: middle; }
+    </style>
+    <marker id="arrSky" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L6,3 L0,6 Z" fill="#38bdf8" />
+    </marker>
+    <marker id="arrGreen" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L6,3 L0,6 Z" fill="#34d399" />
+    </marker>
+    <marker id="arrAmb" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L6,3 L0,6 Z" fill="#f59e0b" />
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="920" height="400" />
+  <text class="title" x="460" y="28">Cummings-Style Dual-Clock Asynchronous FIFO Architecture</text>
+  <text class="subtitle" x="460" y="48">Separating Binary Memory Addressing from Dual-Clock Gray Pointer Synchronization for Full/Empty Generation</text>
+
+  <!-- Write Domain Panel (Left) -->
+  <rect class="panel" x="20" y="64" width="320" height="316" stroke="#f59e0b" />
+  <text class="ptitle" x="36" y="88" fill="#f59e0b">Write Clock Domain (wclk)</text>
+
+  <rect class="box" x="36" y="186" width="288" height="72" stroke="#f59e0b" />
+  <text class="badge" x="180" y="206" fill="#fcd34d">wptr_full Module</text>
+  <text class="mono" x="48" y="226">wbin  &lt;= wbin + (winc &amp; ~wfull);</text>
+  <text class="mono" x="48" y="244">wgray &lt;= wbin_next ^ (wbin_next&gt;&gt;1);</text>
+
+  <rect class="box" x="36" y="274" width="288" height="90" stroke="#f87171" />
+  <text class="badge" x="180" y="294" fill="#fca5a5">Full Flag Comparator (wclk)</text>
+  <text class="mono" x="48" y="315">wfull_val = (wgray_next ==</text>
+  <text class="mono" x="48" y="332">  {~wq2_rptr[MSB:MSB-1],</text>
+  <text class="mono" x="48" y="349">    wq2_rptr[MSB-2:0]});</text>
+
+  <!-- Center RAM + Sync Bridges -->
+  <rect class="box" x="358" y="64" width="204" height="106" stroke="#38bdf8" />
+  <text class="badge" x="460" y="88" fill="#7dd3fc">Dual-Port FIFO Memory</text>
+  <text class="note" x="460" y="108" text-anchor="middle">2^N Entries (Power of 2)</text>
+  <text class="mono" x="370" y="130">waddr = wbin[N-1:0]  (wclk)</text>
+  <text class="mono" x="370" y="148">raddr = rbin[N-1:0]  (rclk)</text>
+  <text class="note" x="460" y="164" text-anchor="middle" fill="#6ee7b7">Async read / Sync write</text>
+
+  <!-- CDC Vertical Divider -->
+  <line x1="460" y1="176" x2="460" y2="380" stroke="#f87171" stroke-width="1.5" stroke-dasharray="5,4" />
+
+  <!-- Sync r2w (top sync) -->
+  <rect class="ff" x="366" y="190" width="188" height="60" stroke="#34d399" />
+  <text class="badge" x="460" y="212" fill="#6ee7b7">sync_r2w (wclk 2-FF)</text>
+  <text class="note" x="460" y="232" text-anchor="middle">rptr (Gray) --&gt; wq2_rptr</text>
+
+  <!-- Sync w2r (bottom sync) -->
+  <rect class="ff" x="366" y="280" width="188" height="60" stroke="#a78bfa" />
+  <text class="badge" x="460" y="302" fill="#c4b5fd">sync_w2r (rclk 2-FF)</text>
+  <text class="note" x="460" y="322" text-anchor="middle">wptr (Gray) --&gt; rq2_wptr</text>
+
+  <!-- Read Domain Panel (Right) -->
+  <rect class="panel" x="580" y="64" width="320" height="316" stroke="#34d399" />
+  <text class="ptitle" x="596" y="88" fill="#34d399">Read Clock Domain (rclk)</text>
+
+  <rect class="box" x="596" y="186" width="288" height="72" stroke="#34d399" />
+  <text class="badge" x="740" y="206" fill="#6ee7b7">rptr_empty Module</text>
+  <text class="mono" x="608" y="226">rbin  &lt;= rbin + (rinc &amp; ~rempty);</text>
+  <text class="mono" x="608" y="244">rgray &lt;= rbin_next ^ (rbin_next&gt;&gt;1);</text>
+
+  <rect class="box" x="596" y="274" width="288" height="90" stroke="#38bdf8" />
+  <text class="badge" x="740" y="294" fill="#7dd3fc">Empty Flag Comparator (rclk)</text>
+  <text class="mono" x="608" y="318">rempty_val =</text>
+  <text class="mono" x="608" y="336">  (rgray_next == rq2_wptr);</text>
+  <text class="note" x="608" y="354">Zero read hazard when empty=1</text>
+
+  <!-- Arrows -->
+  <line x1="180" y1="186" x2="180" y2="112" stroke="#f59e0b" stroke-width="1.6" />
+  <line x1="180" y1="112" x2="354" y2="112" stroke="#f59e0b" stroke-width="1.6" marker-end="url(#arrAmb)" />
+  <text class="mono" x="266" y="104" text-anchor="middle" fill="#fcd34d">wdata / waddr</text>
+
+  <line x1="562" y1="112" x2="740" y2="112" stroke="#34d399" stroke-width="1.6" />
+  <line x1="740" y1="112" x2="740" y2="182" stroke="#34d399" stroke-width="1.6" marker-end="url(#arrGreen)" />
+  <text class="mono" x="652" y="104" text-anchor="middle" fill="#6ee7b7">rdata / raddr</text>
+
+  <!-- Sync cross lines -->
+  <line x1="366" y1="220" x2="328" y2="306" stroke="#34d399" stroke-width="1.6" marker-end="url(#arrGreen)" />
+  <line x1="596" y1="220" x2="558" y2="220" stroke="#34d399" stroke-width="1.6" marker-end="url(#arrGreen)" />
+  <line x1="324" y1="236" x2="362" y2="310" stroke="#a78bfa" stroke-width="1.6" marker-end="url(#arrSky)" />
+  <line x1="554" y1="310" x2="592" y2="310" stroke="#a78bfa" stroke-width="1.6" marker-end="url(#arrSky)" />
+</svg>

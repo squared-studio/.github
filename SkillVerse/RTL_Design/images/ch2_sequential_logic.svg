@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 210" width="560" height="210" style="background-color: #ffffff; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+  <defs>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="1" dy="2" stdDeviation="2" flood-color="#0f172a" flood-opacity="0.08" />
+    </filter>
+    <marker id="arr-blue" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#2563eb" />
+    </marker>
+    <marker id="arr-slate" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#64748b" />
+    </marker>
+    <marker id="arr-green" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#10b981" />
+    </marker>
+    <marker id="arr-red" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#ef4444" />
+    </marker>
+    <marker id="arr-purple" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#8b5cf6" />
+    </marker>
+    <marker id="arr-amber" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#f59e0b" />
+    </marker>
+  </defs>
+
+  <rect x="15" y="15" width="530" height="180" rx="12" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2"/>
+  <text x="30" y="38" font-size="13" font-weight="700" fill="#0f172a">Sequential Logic: Memory Elements with Feedback</text>
+
+  <text x="35" y="95" font-size="11" font-weight="600" fill="#1e293b">Inputs</text>
+  <line x1="75" y1="90" x2="116" y2="90" stroke="#2563eb" stroke-width="2" marker-end="url(#arr-blue)"/>
+
+  <rect x="120" y="60" width="130" height="65" rx="8" fill="#f0fdf4" stroke="#10b981" stroke-width="2" filter="url(#shadow)"/>
+  <text x="185" y="87" font-size="11" font-weight="700" fill="#065f46" text-anchor="middle">Next-State Logic</text>
+  <text x="185" y="107" font-size="9" fill="#047857" text-anchor="middle">Combinational</text>
+
+  <line x1="250" y1="90" x2="306" y2="90" stroke="#10b981" stroke-width="2" marker-end="url(#arr-green)"/>
+  <text x="278" y="82" font-size="10" fill="#64748b" text-anchor="middle">D</text>
+
+  <rect x="310" y="55" width="110" height="75" rx="6" fill="#eff6ff" stroke="#3b82f6" stroke-width="2" filter="url(#shadow)"/>
+  <text x="365" y="85" font-size="11" font-weight="700" fill="#1e3a8a" text-anchor="middle">D Flip-Flop</text>
+  <path d="M 310 110 L 320 117 L 310 124 Z" fill="none" stroke="#3b82f6" stroke-width="1.5"/>
+  <line x1="310" y1="117" x2="280" y2="117" stroke="#8b5cf6" stroke-width="2"/>
+  <text x="255" y="121" font-size="10" font-weight="600" fill="#8b5cf6">CLK</text>
+
+  <line x1="420" y1="90" x2="490" y2="90" stroke="#2563eb" stroke-width="2" marker-end="url(#arr-blue)"/>
+  <circle cx="450" cy="90" r="3" fill="#2563eb"/>
+  <text x="495" y="95" font-size="11" font-weight="600" fill="#1e293b">Outputs (Q)</text>
+
+  <!-- Feedback path -->
+  <polyline points="450,90 450,165 185,165 185,129" fill="none" stroke="#2563eb" stroke-width="2" stroke-dasharray="4,3" marker-end="url(#arr-blue)"/>
+  <text x="320" y="180" font-size="10" font-weight="600" fill="#2563eb" text-anchor="middle">Stored State Feedback</text>
+
+</svg>

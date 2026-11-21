@@ -1,0 +1,95 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 400" width="920" height="400">
+  <defs>
+    <style>
+      .bg { fill: #0f172a; }
+      .panel { fill: #1e293b; stroke-width: 1.5; rx: 10; ry: 10; }
+      .box { fill: #0f172a; stroke: #334155; stroke-width: 1.2; rx: 6; ry: 6; }
+      .title { font-family: 'Segoe UI', Arial, sans-serif; font-size: 18px; font-weight: 700; fill: #f8fafc; text-anchor: middle; }
+      .subtitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; fill: #94a3b8; text-anchor: middle; }
+      .ptitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 14px; font-weight: 700; }
+      .mono { font-family: Consolas, 'Courier New', monospace; font-size: 10.8px; fill: #e2e8f0; }
+      .note { font-family: 'Segoe UI', Arial, sans-serif; font-size: 10.5px; fill: #94a3b8; }
+      .badge { font-family: Consolas, 'Courier New', monospace; font-size: 11px; font-weight: 700; text-anchor: middle; }
+    </style>
+    <marker id="arrSky" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#38bdf8" />
+    </marker>
+    <marker id="arrGreen" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#34d399" />
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="920" height="400" />
+  <text class="title" x="460" y="28">Power-Aware Simulation Kernel &amp; UPF Package Instrumentation</text>
+  <text class="subtitle" x="460" y="48">How Native Low-Power Simulators Overlay Corruption, Behavioral Isolation, and Retention Shadows onto Unmodified RTL</text>
+
+  <!-- Left Column: Inputs -->
+  <rect class="panel" x="20" y="64" width="236" height="316" stroke="#38bdf8" />
+  <text class="ptitle" x="34" y="88" fill="#38bdf8">1. Simulation Inputs</text>
+
+  <rect class="box" x="34" y="102" width="208" height="72" />
+  <text class="badge" x="138" y="122" fill="#7dd3fc">Unmodified RTL</text>
+  <text class="note" x="44" y="140">No power pins in RTL</text>
+  <text class="note" x="44" y="156">Pure functional logic +</text>
+  <text class="note" x="44" y="170">SV testbench / UVM env</text>
+
+  <rect class="box" x="34" y="186" width="208" height="78" stroke="#f59e0b" />
+  <text class="badge" x="138" y="206" fill="#fcd34d">UPF / CPF Sidecar</text>
+  <text class="note" x="44" y="224">Passed via tool flag</text>
+  <text class="mono" x="44" y="242" fill="#fcd34d">-upf soc_power.upf</text>
+  <text class="note" x="44" y="258">(VCS-NLP / Xcelium / Questa)</text>
+
+  <rect class="box" x="34" y="276" width="208" height="90" stroke="#34d399" />
+  <text class="badge" x="138" y="296" fill="#6ee7b7">import UPF::*;</text>
+  <text class="mono" x="44" y="315">supply_on("VDD", 0.8);</text>
+  <text class="mono" x="44" y="332">supply_off("VDD_SW");</text>
+  <text class="note" x="44" y="352">Drives external board rails</text>
+
+  <line x1="256" y1="222" x2="286" y2="222" stroke="#38bdf8" stroke-width="2" marker-end="url(#arrSky)" />
+
+  <!-- Center Panel: Power-Aware Elaborator & Virtual Overlay -->
+  <rect class="panel" x="290" y="64" width="366" height="316" stroke="#a78bfa" />
+  <text class="ptitle" x="306" y="88" fill="#a78bfa">2. Simulator Runtime Virtual Instrumentation</text>
+
+  <rect class="box" x="306" y="104" width="334" height="60" stroke="#38bdf8" />
+  <text class="mono" x="318" y="124" fill="#7dd3fc">A. Virtual Power Switch &amp; Supply Network</text>
+  <text class="note" x="318" y="142">Evaluates control_port + supply_expr dynamically</text>
+  <text class="note" x="318" y="156">Updates supply_net_type (OFF / FULL_ON / PARTIAL_ON)</text>
+
+  <rect class="box" x="306" y="174" width="334" height="62" stroke="#f87171" />
+  <text class="mono" x="318" y="194" fill="#fca5a5">B. Behavioral State Corruption Engine</text>
+  <text class="note" x="318" y="212">Forces all non-retained regs, latches, SRAMs,</text>
+  <text class="note" x="318" y="226">and wires in CORRUPT domain to 'X' immediately.</text>
+
+  <rect class="box" x="306" y="246" width="334" height="60" stroke="#34d399" />
+  <text class="mono" x="318" y="266" fill="#6ee7b7">C. Retention Shadow Memory</text>
+  <text class="note" x="318" y="284">Saves pre-off FF value on SAVE edge; injects</text>
+  <text class="note" x="318" y="298">retained value back onto FF on RESTORE edge.</text>
+
+  <rect class="box" x="306" y="314" width="334" height="54" stroke="#f59e0b" />
+  <text class="mono" x="318" y="333" fill="#fcd34d">D. Behavioral Isolation Wrapper</text>
+  <text class="note" x="318" y="350">Clamps outgoing port to 0/1/latch when iso_en active.</text>
+
+  <line x1="656" y1="222" x2="684" y2="222" stroke="#34d399" stroke-width="2" marker-end="url(#arrGreen)" />
+
+  <!-- Right Column: Verification Outputs -->
+  <rect class="panel" x="688" y="64" width="212" height="316" stroke="#34d399" />
+  <text class="ptitle" x="702" y="88" fill="#34d399">3. PA Sign-Off Checks</text>
+
+  <rect class="box" x="702" y="104" width="184" height="80" />
+  <text class="badge" x="794" y="124" fill="#6ee7b7">Dynamic SVA Checks</text>
+  <text class="note" x="712" y="142">Verify SAVE/RESTORE,</text>
+  <text class="note" x="712" y="158">ISO before PWR OFF,</text>
+  <text class="note" x="712" y="174">&amp; zero 'X' leaks</text>
+
+  <rect class="box" x="702" y="196" width="184" height="84" />
+  <text class="badge" x="794" y="216" fill="#7dd3fc">Power Coverage</text>
+  <text class="note" x="712" y="234">Tracks every PST state</text>
+  <text class="note" x="712" y="250">&amp; power state transition</text>
+  <text class="note" x="712" y="266">crosses hit in test</text>
+
+  <rect class="box" x="702" y="292" width="184" height="74" stroke="#f87171" />
+  <text class="badge" x="794" y="312" fill="#fca5a5">PA Runtime Errors</text>
+  <text class="note" x="712" y="330">Flags SAVE with AON off,</text>
+  <text class="note" x="712" y="346">or toggle in CORRUPT</text>
+</svg>

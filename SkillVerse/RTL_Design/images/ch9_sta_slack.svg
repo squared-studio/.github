@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 180" width="700" height="180" style="background-color: #ffffff; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+  <defs>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="1" dy="2" stdDeviation="2" flood-color="#0f172a" flood-opacity="0.08" />
+    </filter>
+    <marker id="arr-blue" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#2563eb" />
+    </marker>
+    <marker id="arr-green" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#10b981" />
+    </marker>
+    <marker id="arr-red" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#ef4444" />
+    </marker>
+    <marker id="arr-purple" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#8b5cf6" />
+    </marker>
+    <marker id="arr-amber" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#f59e0b" />
+    </marker>
+  </defs>
+
+  <rect x="15" y="15" width="670" height="150" rx="12" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2"/>
+  <text x="35" y="40" font-size="14" font-weight="700" fill="#0f172a">Static Timing Analysis (STA): Setup Slack Calculation</text>
+
+  <rect x="35" y="60" width="290" height="85" rx="6" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="50" y="85" font-size="11" font-weight="700" fill="#1e3a8a">Data Arrival Time</text>
+  <text x="50" y="105" font-size="10" fill="#1e40af">= Launch Clock Edge + Clock Latency</text>
+  <text x="50" y="122" font-size="10" fill="#1e40af">+ Source t_cq + Combinational Path Delay</text>
+
+  <rect x="345" y="60" width="310" height="85" rx="6" fill="#f0fdf4" stroke="#10b981" stroke-width="1.5"/>
+  <text x="360" y="85" font-size="11" font-weight="700" fill="#065f46">Data Required Time</text>
+  <text x="360" y="105" font-size="10" fill="#047857">= Capture Clock Edge + Capture Clock Latency</text>
+  <text x="360" y="122" font-size="10" fill="#047857">- t_setup - Clock Uncertainty</text>
+
+  <rect x="175" y="155" width="350" height="24" rx="4" fill="#faf5ff" stroke="#8b5cf6" stroke-width="1"/>
+  <text x="350" y="171" font-size="10.5" font-weight="800" fill="#5b21b6" text-anchor="middle">Setup Slack = Data Required Time - Data Arrival Time &gt;= 0</text>
+
+</svg>

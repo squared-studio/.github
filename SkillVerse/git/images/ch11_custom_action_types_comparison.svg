@@ -1,0 +1,100 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 520" width="960" height="520">
+  <defs>
+    <style>
+      .bg { fill: #080c14; }
+      .title { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 20px; fill: #f8fafc; }
+      .subtitle { font-family: 'Inter', system-ui, sans-serif; font-size: 13px; fill: #94a3b8; }
+      .panel { fill: #0f172a; stroke-width: 1.8; rx: 10px; }
+      .inner { fill: #0b1120; stroke-width: 1.3; rx: 6px; }
+      .txt-hdr { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 14px; fill: #f8fafc; }
+      .txt-sub { font-family: 'Inter', system-ui, sans-serif; font-size: 11px; fill: #94a3b8; }
+      .txt-body { font-family: 'Inter', system-ui, sans-serif; font-size: 11.5px; fill: #cbd5e1; }
+      .mono { font-family: 'JetBrains Mono', Consolas, monospace; font-size: 10.5px; font-weight: 600; }
+    </style>
+  </defs>
+
+  <rect width="960" height="520" class="bg" rx="14"/>
+  <text x="480" y="32" text-anchor="middle" class="title">The Three Custom GitHub Action Runtimes</text>
+  <text x="480" y="52" text-anchor="middle" class="subtitle">Comparing Composite, JavaScript (Node 20), and Docker Container action architectures</text>
+
+  <!-- 1. Composite -->
+  <g transform="translate(32, 82)">
+    <rect x="0" y="0" width="286" height="408" class="panel" stroke="#34d399"/>
+    <text x="143" y="28" text-anchor="middle" class="txt-hdr" fill="#34d399">1. Composite Action</text>
+    <text x="143" y="46" text-anchor="middle" class="mono" fill="#6ee7b7">runs.using: "composite"</text>
+
+    <rect x="16" y="64" width="254" height="110" class="inner" stroke="#34d399"/>
+    <text x="26" y="84" class="mono" fill="#cbd5e1">runs:</text>
+    <text x="26" y="100" class="mono" fill="#cbd5e1">  using: "composite"</text>
+    <text x="26" y="116" class="mono" fill="#cbd5e1">  steps:</text>
+    <text x="26" y="132" class="mono" fill="#6ee7b7">    - uses: actions/cache@v4</text>
+    <text x="26" y="148" class="mono" fill="#6ee7b7">    - run: ./build.sh</text>
+    <text x="26" y="164" class="mono" fill="#fcd34d">      shell: bash  # required</text>
+
+    <rect x="16" y="186" width="254" height="148" class="inner" stroke="#334155"/>
+    <text x="26" y="206" class="txt-hdr" font-size="12" fill="#34d399">Characteristics</text>
+    <text x="26" y="226" class="txt-body">• Runs on Linux, macOS, Windows</text>
+    <text x="26" y="244" class="txt-body">• Zero startup / build overhead</text>
+    <text x="26" y="262" class="txt-body">• Can invoke other uses: actions</text>
+    <text x="26" y="280" class="txt-body">• Shares runner shell &amp; $GITHUB_PATH</text>
+    <text x="26" y="298" class="txt-body">• No native pre:/post: cleanup hooks</text>
+    <text x="26" y="316" class="txt-body">• Ideal for bundling YAML + scripts</text>
+
+    <rect x="16" y="346" width="254" height="46" class="inner" stroke="#34d399" fill="#0d221c"/>
+    <text x="143" y="373" text-anchor="middle" class="mono" fill="#6ee7b7">Best for: Team Setup &amp; Tool Wrappers</text>
+  </g>
+
+  <!-- 2. JavaScript / TypeScript -->
+  <g transform="translate(337, 82)">
+    <rect x="0" y="0" width="286" height="408" class="panel" stroke="#38bdf8"/>
+    <text x="143" y="28" text-anchor="middle" class="txt-hdr" fill="#38bdf8">2. JavaScript Action</text>
+    <text x="143" y="46" text-anchor="middle" class="mono" fill="#7dd3fc">runs.using: "node20"</text>
+
+    <rect x="16" y="64" width="254" height="110" class="inner" stroke="#38bdf8"/>
+    <text x="26" y="84" class="mono" fill="#cbd5e1">runs:</text>
+    <text x="26" y="100" class="mono" fill="#cbd5e1">  using: "node20"</text>
+    <text x="26" y="116" class="mono" fill="#7dd3fc">  pre:  "dist/setup.js"</text>
+    <text x="26" y="132" class="mono" fill="#38bdf8">  main: "dist/index.js"</text>
+    <text x="26" y="148" class="mono" fill="#7dd3fc">  post: "dist/cleanup.js"</text>
+    <text x="26" y="164" class="mono" fill="#94a3b8">  post-if: "always()"</text>
+
+    <rect x="16" y="186" width="254" height="148" class="inner" stroke="#334155"/>
+    <text x="26" y="206" class="txt-hdr" font-size="12" fill="#38bdf8">Characteristics</text>
+    <text x="26" y="226" class="txt-body">• Runs directly on runner's Node.js</text>
+    <text x="26" y="244" class="txt-body">• Cross-platform (Linux/macOS/Win)</text>
+    <text x="26" y="262" class="txt-body">• Full @actions/core &amp; GitHub API</text>
+    <text x="26" y="280" class="txt-body">• Supports pre / main / post hooks</text>
+    <text x="26" y="298" class="txt-body">• Must commit bundled dist/ (ncc)</text>
+    <text x="26" y="316" class="txt-body">• Millisecond startup latency</text>
+
+    <rect x="16" y="346" width="254" height="46" class="inner" stroke="#38bdf8" fill="#0d1e33"/>
+    <text x="143" y="373" text-anchor="middle" class="mono" fill="#7dd3fc">Best for: API Logic &amp; Marketplace</text>
+  </g>
+
+  <!-- 3. Docker Container -->
+  <g transform="translate(642, 82)">
+    <rect x="0" y="0" width="286" height="408" class="panel" stroke="#a855f7"/>
+    <text x="143" y="28" text-anchor="middle" class="txt-hdr" fill="#d8b4fe">3. Docker Container Action</text>
+    <text x="143" y="46" text-anchor="middle" class="mono" fill="#d8b4fe">runs.using: "docker"</text>
+
+    <rect x="16" y="64" width="254" height="110" class="inner" stroke="#a855f7"/>
+    <text x="26" y="84" class="mono" fill="#cbd5e1">runs:</text>
+    <text x="26" y="100" class="mono" fill="#cbd5e1">  using: "docker"</text>
+    <text x="26" y="116" class="mono" fill="#d8b4fe">  image: "Dockerfile"</text>
+    <text x="26" y="132" class="mono" fill="#94a3b8">  # or docker://ghcr.io/...</text>
+    <text x="26" y="148" class="mono" fill="#cbd5e1">  args:</text>
+    <text x="26" y="164" class="mono" fill="#cbd5e1">    - ${{ inputs.target }}</text>
+
+    <rect x="16" y="186" width="254" height="148" class="inner" stroke="#334155"/>
+    <text x="26" y="206" class="txt-hdr" font-size="12" fill="#d8b4fe">Characteristics</text>
+    <text x="26" y="226" class="txt-body">• Completely pinned OS &amp; tool binaries</text>
+    <text x="26" y="244" class="txt-body">• Any language (Python, Rust, Go, C)</text>
+    <text x="26" y="262" class="txt-body">• Linux runners ONLY (no macOS/Win)</text>
+    <text x="26" y="280" class="txt-body">• Slower if Dockerfile builds on run</text>
+    <text x="26" y="298" class="txt-body">• Use pre-built GHCR image for speed</text>
+    <text x="26" y="316" class="txt-body">• Mounts $GITHUB_WORKSPACE at /github</text>
+
+    <rect x="16" y="346" width="254" height="46" class="inner" stroke="#a855f7" fill="#1b1029"/>
+    <text x="143" y="373" text-anchor="middle" class="mono" fill="#d8b4fe">Best for: Heavy Native Toolchains</text>
+  </g>
+</svg>

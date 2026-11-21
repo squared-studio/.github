@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 400" width="920" height="400">
+  <defs>
+    <style>
+      .bg { fill: #0f172a; }
+      .panel { fill: #1e293b; stroke-width: 1.5; rx: 10; ry: 10; }
+      .box { fill: #0f172a; stroke: #334155; stroke-width: 1.2; rx: 6; ry: 6; }
+      .title { font-family: 'Segoe UI', Arial, sans-serif; font-size: 18px; font-weight: 700; fill: #f8fafc; text-anchor: middle; }
+      .subtitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; fill: #94a3b8; text-anchor: middle; }
+      .ptitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 14px; font-weight: 700; }
+      .mono { font-family: Consolas, 'Courier New', monospace; font-size: 10.6px; fill: #e2e8f0; }
+      .note { font-family: 'Segoe UI', Arial, sans-serif; font-size: 10.5px; fill: #94a3b8; }
+      .badge { font-family: Consolas, 'Courier New', monospace; font-size: 11px; font-weight: 700; text-anchor: middle; }
+    </style>
+    <marker id="arrSky" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#38bdf8" />
+    </marker>
+    <marker id="arrGreen" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#34d399" />
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="920" height="400" />
+  <text class="title" x="460" y="28">Hierarchical IP Power Intent Composition via load_upf &amp; Supply Association</text>
+  <text class="subtitle" x="460" y="48">Bottom-Up IP Encapsulation, Port Supply Attribute Contracts, and SoC Top-Level Integration</text>
+
+  <!-- Left Panel: Block-Level IP UPF -->
+  <rect class="panel" x="20" y="64" width="380" height="316" stroke="#a78bfa" />
+  <text class="ptitle" x="36" y="88" fill="#a78bfa">1. Standalone Soft IP UPF (dsp_core.upf)</text>
+
+  <rect class="box" x="36" y="102" width="348" height="106" stroke="#7c3aed" />
+  <text class="mono" x="48" y="121" fill="#c4b5fd"># IP defines abstract supply ports/sets</text>
+  <text class="mono" x="48" y="139">create_supply_set SS_DSP</text>
+  <text class="mono" x="48" y="156">create_power_domain PD_DSP -include_scope \</text>
+  <text class="mono" x="48" y="173">  -supply {primary SS_DSP}</text>
+  <text class="mono" x="48" y="191">set_isolation ISO_DSP -domain PD_DSP ...</text>
+
+  <rect class="box" x="36" y="220" width="348" height="146" stroke="#38bdf8" />
+  <text class="mono" x="48" y="239" fill="#7dd3fc"># Port Supply Attributes (Boundary Contract)</text>
+  <text class="mono" x="48" y="257">set_port_attributes -ports {axi_aw* axi_w*} \</text>
+  <text class="mono" x="48" y="274">  -receiver_supply SS_DSP</text>
+  <text class="mono" x="48" y="294">set_port_attributes -ports {irq_out} \</text>
+  <text class="mono" x="48" y="311">  -driver_supply SS_DSP</text>
+  <text class="note" x="48" y="335">Enables block-level LP checking BEFORE</text>
+  <text class="note" x="48" y="351">full SoC top-level integration exists.</text>
+
+  <!-- Arrow connecting IP to SoC Top -->
+  <line x1="400" y1="210" x2="436" y2="210" stroke="#34d399" stroke-width="2.2" marker-end="url(#arrGreen)" />
+
+  <!-- Right Panel: SoC Top-Level Integration -->
+  <rect class="panel" x="440" y="64" width="460" height="316" stroke="#34d399" />
+  <text class="ptitle" x="456" y="88" fill="#34d399">2. SoC Top-Level Integration (soc_top.upf)</text>
+
+  <rect class="box" x="456" y="102" width="428" height="92" />
+  <text class="mono" x="468" y="121" fill="#6ee7b7"># Load soft IP UPF under target instance</text>
+  <text class="mono" x="468" y="140">load_upf ./ip/dsp/dsp_core.upf -scope u_dsp_0</text>
+  <text class="mono" x="468" y="158">load_upf ./ip/dsp/dsp_core.upf -scope u_dsp_1</text>
+  <text class="note" x="468" y="180">Same golden IP UPF instantiated twice cleanly!</text>
+
+  <rect class="box" x="456" y="206" width="428" height="160" stroke="#f59e0b" />
+  <text class="mono" x="468" y="226" fill="#fcd34d"># Associate Top-Level Switched Rails to IP Sets</text>
+  <text class="mono" x="468" y="246">associate_supply_set SS_SOC_DSP0 \</text>
+  <text class="mono" x="468" y="263">  -handle u_dsp_0/SS_DSP</text>
+  <text class="mono" x="468" y="283">associate_supply_set SS_SOC_DSP1 \</text>
+  <text class="mono" x="468" y="300">  -handle u_dsp_1/SS_DSP</text>
+  <text class="mono" x="468" y="322" fill="#7dd3fc">connect_supply_net VDD_AON -ports u_dsp_0/VDD_AON</text>
+  <text class="note" x="468" y="348">UPF constraint-level isolation merges cleanly without</text>
+  <text class="note" x="468" y="362">duplicating isolation/shifter hardware at the SoC edge.</text>
+</svg>

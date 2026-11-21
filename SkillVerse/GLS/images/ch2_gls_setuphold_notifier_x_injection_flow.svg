@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 380" width="920" height="380">
+  <defs>
+    <style>
+      .bg { fill: #0f172a; }
+      .panel { fill: #1e293b; stroke-width: 1.5; rx: 10; ry: 10; }
+      .box { fill: #0f172a; stroke: #334155; stroke-width: 1.2; rx: 6; ry: 6; }
+      .grid { stroke: #334155; stroke-width: 1; stroke-dasharray: 4,4; }
+      .title { font-family: 'Segoe UI', Arial, sans-serif; font-size: 18px; font-weight: 700; fill: #f8fafc; text-anchor: middle; }
+      .subtitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; fill: #94a3b8; text-anchor: middle; }
+      .ptitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 14px; font-weight: 700; }
+      .mono { font-family: Consolas, 'Courier New', monospace; font-size: 10.8px; fill: #e2e8f0; }
+      .note { font-family: 'Segoe UI', Arial, sans-serif; font-size: 10.5px; fill: #94a3b8; }
+    </style>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="920" height="380" />
+  <text class="title" x="460" y="28">Anatomy of a Timing Violation: $setuphold -&gt; notifier -&gt; X Injection</text>
+  <text class="subtitle" x="460" y="48">Tracing How Standard-Cell Timing Check Failures Propagate Corrupt 'X' Values Across Gate Logic</text>
+
+  <!-- Waveform Panel -->
+  <rect class="panel" x="20" y="64" width="880" height="196" stroke="#f87171" />
+  <text class="ptitle" x="36" y="88" fill="#f87171">Event Sequence Inside Simulator Kernel During Setup Violation</text>
+
+  <!-- Setup/Hold Aperture Highlight -->
+  <rect x="355" y="100" width="60" height="145" fill="#7f1d1d" opacity="0.45" />
+  <text class="mono" x="385" y="114" text-anchor="middle" fill="#fca5a5">[t_su, t_h]</text>
+
+  <line class="grid" x1="390" y1="118" x2="390" y2="245" />
+  <line class="grid" x1="590" y1="118" x2="590" y2="245" />
+
+  <!-- Signals -->
+  <text class="mono" x="36" y="138" fill="#38bdf8">CK</text>
+  <path d="M120,144 L390,144 L390,124 L590,124 L590,144 L870,144" fill="none" stroke="#38bdf8" stroke-width="2" />
+
+  <text class="mono" x="36" y="174" fill="#34d399">D_in</text>
+  <path d="M120,180 L372,180 L372,160 L870,160" fill="none" stroke="#34d399" stroke-width="2" />
+  <text class="note" x="275" y="174" fill="#fca5a5">D flips inside t_su!</text>
+
+  <text class="mono" x="36" y="210" fill="#fcd34d">notifier</text>
+  <path d="M120,216 L390,216 L390,196 L870,196" fill="none" stroke="#f59e0b" stroke-width="2" />
+  <text class="note" x="405" y="210" fill="#fcd34d">System task toggles notifier (0-&gt;1) at posedge CK!</text>
+
+  <text class="mono" x="36" y="242" fill="#f87171">Q_out</text>
+  <path d="M120,248 L430,248 L440,228 L595,228 L605,248 L870,248" fill="none" stroke="#f87171" stroke-width="2.2" />
+  <text class="mono" x="515" y="242" text-anchor="middle" fill="#fca5a5">1'bx (Unknown for 1+ cycle!)</text>
+  <text class="note" x="625" y="242" fill="#6ee7b7">Next clean CK edge recovers Q if D stable</text>
+
+  <!-- Bottom Recovery/Debugging Cards -->
+  <rect class="panel" x="20" y="274" width="430" height="90" stroke="#a78bfa" />
+  <text class="ptitle" x="36" y="298" fill="#a78bfa">Why Q Stays 'X' Across Multiple Cycles</text>
+  <text class="note" x="36" y="318">If Q feeds combinational next-state feedback back into its own D</text>
+  <text class="note" x="36" y="334">pin (e.g. FSM state, CRC, AXI valid counter), that single 'X' traps</text>
+  <text class="note" x="36" y="350" fill="#fca5a5">the module in an unrecoverable `'X'` avalanche until chip reset!</text>
+
+  <rect class="panel" x="470" y="274" width="430" height="90" stroke="#34d399" />
+  <text class="ptitle" x="486" y="298" fill="#34d399">First-Order Debug Principle</text>
+  <text class="note" x="486" y="318">Never debug the final 'X' symptom 50,000 cycles later! Always grep the</text>
+  <text class="note" x="486" y="334">simulation log for the VERY FIRST Timing Violation (`$setuphold` /</text>
+  <text class="note" x="486" y="350" fill="#6ee7b7">`$recrem`) timestamp—or trace `notifier` edges backwards in waves!</text>
+</svg>

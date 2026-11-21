@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 390" width="920" height="390">
+  <defs>
+    <style>
+      .bg { fill: #0f172a; }
+      .panel { fill: #1e293b; stroke-width: 1.5; rx: 10; ry: 10; }
+      .box { fill: #0f172a; stroke: #334155; stroke-width: 1.2; rx: 6; ry: 6; }
+      .title { font-family: 'Segoe UI', Arial, sans-serif; font-size: 18px; font-weight: 700; fill: #f8fafc; text-anchor: middle; }
+      .subtitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; fill: #94a3b8; text-anchor: middle; }
+      .ptitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 14px; font-weight: 700; }
+      .mono { font-family: Consolas, 'Courier New', monospace; font-size: 10.6px; fill: #e2e8f0; }
+      .note { font-family: 'Segoe UI', Arial, sans-serif; font-size: 10.5px; fill: #94a3b8; }
+      .badge { font-family: Consolas, 'Courier New', monospace; font-size: 11px; font-weight: 700; }
+    </style>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="920" height="390" />
+  <text class="title" x="460" y="28">SVA Protocol Assertions for Power Sequencing Safety</text>
+  <text class="subtitle" x="460" y="48">Formal and Dynamic Temporal Invariants Catching Isolation, Clock, Reset, and Retention Sequence Bugs</text>
+
+  <!-- Card 1 -->
+  <rect class="panel" x="20" y="64" width="430" height="148" stroke="#f59e0b" />
+  <text class="ptitle" x="36" y="88" fill="#f59e0b">1. Isolation Active Before Power Shutdown</text>
+  <rect class="box" x="36" y="100" width="398" height="98" />
+  <text class="mono" x="48" y="120" fill="#fcd34d">property p_iso_covers_power_off;</text>
+  <text class="mono" x="48" y="138">  @(posedge aon_clk) disable iff (!por_rst_n)</text>
+  <text class="mono" x="48" y="156">  (!pwr_sw_en) |-&gt; (iso_en == 1'b1);</text>
+  <text class="mono" x="48" y="174">endproperty</text>
+  <text class="note" x="48" y="191">Guarantees iso_en is already HIGH before power switch opens.</text>
+
+  <!-- Card 2 -->
+  <rect class="panel" x="470" y="64" width="430" height="148" stroke="#34d399" />
+  <text class="ptitle" x="486" y="88" fill="#34d399">2. Isolation Held Until Power Ack &amp; Restore</text>
+  <rect class="box" x="486" y="100" width="398" height="98" />
+  <text class="mono" x="498" y="120" fill="#6ee7b7">property p_no_early_deisolate;</text>
+  <text class="mono" x="498" y="138">  @(posedge aon_clk) disable iff (!por_rst_n)</text>
+  <text class="mono" x="498" y="156">  $fell(iso_en) |-&gt; (pwr_ack &amp;&amp; !ret_restore);</text>
+  <text class="mono" x="498" y="174">endproperty</text>
+  <text class="note" x="498" y="191">Forbids releasing isolation while rail ramps up or restoring.</text>
+
+  <!-- Card 3 -->
+  <rect class="panel" x="20" y="226" width="430" height="148" stroke="#a78bfa" />
+  <text class="ptitle" x="36" y="250" fill="#a78bfa">3. Clock Quiescent During SAVE / RESTORE</text>
+  <rect class="box" x="36" y="262" width="398" height="98" />
+  <text class="mono" x="48" y="282" fill="#c4b5fd">property p_clk_off_during_retention;</text>
+  <text class="mono" x="48" y="300">  @(posedge aon_clk) disable iff (!por_rst_n)</text>
+  <text class="mono" x="48" y="318">  (ret_save || ret_restore) |-&gt; $stable(dom_clk);</text>
+  <text class="mono" x="48" y="336">endproperty</text>
+  <text class="note" x="48" y="353">Prevents metastability/corruption in master-slave transfer.</text>
+
+  <!-- Card 4 -->
+  <rect class="panel" x="470" y="226" width="430" height="148" stroke="#38bdf8" />
+  <text class="ptitle" x="486" y="250" fill="#38bdf8">4. No Retention SAVE After Rail Collapse</text>
+  <rect class="box" x="486" y="262" width="398" height="98" />
+  <text class="mono" x="498" y="282" fill="#7dd3fc">property p_save_while_powered;</text>
+  <text class="mono" x="498" y="300">  @(posedge aon_clk) disable iff (!por_rst_n)</text>
+  <text class="mono" x="498" y="318">  $rose(ret_save) |-&gt; (pwr_sw_en &amp;&amp; pwr_ack);</text>
+  <text class="mono" x="498" y="336">endproperty</text>
+  <text class="note" x="498" y="353">Ensures primary domain flops still hold valid data at SAVE.</text>
+</svg>

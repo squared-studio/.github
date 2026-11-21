@@ -1,0 +1,104 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 520" width="960" height="520">
+  <defs>
+    <style>
+      .bg { fill: #080c14; }
+      .title { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 20px; fill: #f8fafc; }
+      .subtitle { font-family: 'Inter', system-ui, sans-serif; font-size: 13px; fill: #94a3b8; }
+      .panel { fill: #0f172a; stroke-width: 1.8; rx: 10px; }
+      .inner { fill: #0b1120; stroke-width: 1.3; rx: 6px; }
+      .txt-hdr { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 13px; fill: #f8fafc; }
+      .txt-sub { font-family: 'Inter', system-ui, sans-serif; font-size: 11px; fill: #94a3b8; }
+      .mono { font-family: 'JetBrains Mono', Consolas, monospace; font-size: 10.5px; font-weight: 600; }
+      .edge { stroke-width: 2.2; fill: none; }
+    </style>
+    <marker id="arr-cyan" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8" />
+    </marker>
+    <marker id="arr-amber" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#f59e0b" />
+    </marker>
+    <marker id="arr-green" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#34d399" />
+    </marker>
+  </defs>
+
+  <rect width="960" height="520" class="bg" rx="14"/>
+  <text x="480" y="32" text-anchor="middle" class="title">Keyless Cloud Authentication with OpenID Connect (OIDC)</text>
+  <text x="480" y="52" text-anchor="middle" class="subtitle">Replacing long-lived static cloud keys with short-lived, cryptographically signed JWT token exchange</text>
+
+  <!-- Actor 1: GitHub Runner -->
+  <g transform="translate(32, 84)">
+    <rect x="0" y="0" width="258" height="270" class="panel" stroke="#38bdf8"/>
+    <text x="129" y="26" text-anchor="middle" class="txt-hdr" fill="#38bdf8">GitHub Actions Runner</text>
+    <text x="129" y="44" text-anchor="middle" class="mono" fill="#7dd3fc">permissions: id-token: write</text>
+
+    <rect x="14" y="62" width="230" height="80" class="inner" stroke="#38bdf8"/>
+    <text x="24" y="82" class="mono" fill="#cbd5e1">1. Request OIDC Token</text>
+    <text x="24" y="100" class="mono" fill="#7dd3fc">ACTIONS_ID_TOKEN_REQUEST_URL</text>
+    <text x="24" y="118" class="txt-sub">Scoped to job, repo, and env</text>
+
+    <rect x="14" y="156" width="230" height="96" class="inner" stroke="#34d399"/>
+    <text x="24" y="176" class="mono" fill="#34d399">4. Deploy with Short-Lived</text>
+    <text x="24" y="194" class="mono" fill="#34d399">   Temporary Credentials</text>
+    <text x="24" y="214" class="txt-sub">• Valid ~15-60 minutes only</text>
+    <text x="24" y="232" class="txt-sub">• Auto-expires after job ends</text>
+  </g>
+
+  <!-- Actor 2: GitHub OIDC Provider -->
+  <g transform="translate(350, 84)">
+    <rect x="0" y="0" width="260" height="270" class="panel" stroke="#a855f7"/>
+    <text x="130" y="26" text-anchor="middle" class="txt-hdr" fill="#d8b4fe">GitHub OIDC IdP</text>
+    <text x="130" y="44" text-anchor="middle" class="mono" fill="#94a3b8">token.actions.githubusercontent.com</text>
+
+    <rect x="14" y="62" width="232" height="190" class="inner" stroke="#a855f7"/>
+    <text x="24" y="84" class="mono" fill="#d8b4fe">Signed OIDC JWT Claims:</text>
+    <text x="24" y="106" class="mono" fill="#cbd5e1">iss: "...githubusercontent.com"</text>
+    <text x="24" y="124" class="mono" fill="#cbd5e1">aud: "sts.amazonaws.com"</text>
+    <text x="24" y="144" class="mono" fill="#34d399">sub: "repo:org/app:</text>
+    <text x="24" y="160" class="mono" fill="#34d399">      environment:production"</text>
+    <text x="24" y="182" class="mono" fill="#7dd3fc">ref: "refs/heads/main"</text>
+    <text x="24" y="200" class="mono" fill="#7dd3fc">job_workflow_ref: "..."</text>
+    <text x="24" y="226" class="txt-sub">Signed with GitHub private RS256</text>
+    <text x="24" y="242" class="txt-sub">key; public JWKS exposed via HTTPS</text>
+  </g>
+
+  <!-- Actor 3: Cloud IAM / STS -->
+  <g transform="translate(670, 84)">
+    <rect x="0" y="0" width="258" height="270" class="panel" stroke="#f59e0b"/>
+    <text x="129" y="26" text-anchor="middle" class="txt-hdr" fill="#fcd34d">Cloud IAM (AWS / GCP / Azure)</text>
+    <text x="129" y="44" text-anchor="middle" class="mono" fill="#f59e0b">STS / Workload Identity Federation</text>
+
+    <rect x="14" y="62" width="230" height="92" class="inner" stroke="#f59e0b"/>
+    <text x="24" y="82" class="mono" fill="#fcd34d">2. Verify JWT via JWKS</text>
+    <text x="24" y="102" class="txt-sub">• Checks cryptographic signature</text>
+    <text x="24" y="118" class="txt-sub">• Evaluates Trust Policy on sub:</text>
+    <text x="24" y="136" class="mono" fill="#34d399">  repo:org/app:environment:prod</text>
+
+    <rect x="14" y="168" width="230" height="84" class="inner" stroke="#34d399"/>
+    <text x="24" y="188" class="mono" fill="#34d399">3. Mint Ephemeral Role Token</text>
+    <text x="24" y="208" class="txt-sub">Returns scoped STS / Access Token</text>
+    <text x="24" y="226" class="txt-sub">Rejects PRs or unapproved branches</text>
+  </g>
+
+  <!-- Sequence Arrows -->
+  <path d="M 290 144 L 346 144" class="edge" stroke="#38bdf8" marker-end="url(#arr-cyan)"/>
+  <text x="318" y="135" text-anchor="middle" class="mono" fill="#7dd3fc" font-size="9.5">1. Req</text>
+
+  <path d="M 610 156 L 666 156" class="edge" stroke="#f59e0b" marker-end="url(#arr-amber)"/>
+  <text x="638" y="147" text-anchor="middle" class="mono" fill="#fcd34d" font-size="9.5">2. JWT</text>
+
+  <path d="M 670 306 L 294 306" class="edge" stroke="#34d399" marker-end="url(#arr-green)"/>
+  <text x="480" y="297" text-anchor="middle" class="mono" fill="#6ee7b7" font-size="10">3. Short-Lived Scoped Cloud Credentials (Zero Static Secrets Stored!)</text>
+
+  <!-- Bottom Benefits Banner -->
+  <g transform="translate(32, 376)">
+    <rect x="0" y="0" width="896" height="118" class="panel" stroke="#34d399" fill="#0b1b18"/>
+    <text x="20" y="26" class="txt-hdr" fill="#34d399">Why OIDC Federation Replaces Static Cloud Access Keys</text>
+    <text x="20" y="50" class="mono" fill="#cbd5e1">✓ No Long-Lived Secrets:</text>
+    <text x="210" y="50" class="txt-sub">Eliminates AWS_ACCESS_KEY_ID or JSON service account keys sitting in GitHub Secrets.</text>
+    <text x="20" y="72" class="mono" fill="#cbd5e1">✓ Granular Trust Claims:</text>
+    <text x="210" y="72" class="txt-sub">Restrict role assumption strictly to main branch, release tags, or protected production environments.</text>
+    <text x="20" y="94" class="mono" fill="#cbd5e1">✓ Built-In Audit Trail:</text>
+    <text x="210" y="94" class="txt-sub">CloudTrail / Cloud Audit Logs record exact repository, workflow run ID, and commit SHA per session.</text>
+  </g>
+</svg>

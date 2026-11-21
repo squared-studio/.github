@@ -1,0 +1,147 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 520" width="960" height="520">
+  <defs>
+    <style>
+      .bg { fill: #080c14; }
+      .title { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 20px; fill: #f8fafc; }
+      .subtitle { font-family: 'Inter', system-ui, sans-serif; font-size: 13px; fill: #94a3b8; }
+      .panel { fill: #0f172a; stroke-width: 1.5; rx: 10px; }
+      .stage-card { fill: #0b1120; stroke-width: 1.8; rx: 8px; }
+      .txt-hdr { font-family: 'Inter', system-ui, sans-serif; font-weight: 700; font-size: 13px; fill: #f8fafc; }
+      .txt-sub { font-family: 'Inter', system-ui, sans-serif; font-size: 11px; fill: #94a3b8; }
+      .txt-body { font-family: 'Inter', system-ui, sans-serif; font-size: 11px; fill: #cbd5e1; }
+      .mono { font-family: 'JetBrains Mono', Consolas, monospace; font-size: 10px; font-weight: 600; }
+      .pill { rx: 4px; stroke-width: 1; }
+      .edge { stroke-width: 2; fill: none; }
+    </style>
+    <marker id="arr-cyan" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8" />
+    </marker>
+    <marker id="arr-green" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#34d399" />
+    </marker>
+    <marker id="arr-amber" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#f59e0b" />
+    </marker>
+    <marker id="arr-purple" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#a855f7" />
+    </marker>
+  </defs>
+
+  <rect width="960" height="520" class="bg" rx="14"/>
+
+  <text x="480" y="32" text-anchor="middle" class="title">CI/CD Pipeline Stages: Integration, Delivery, and Deployment</text>
+  <text x="480" y="52" text-anchor="middle" class="subtitle">Automated feedback from developer commit to verified production rollout</text>
+
+  <!-- Stage Pipeline Strip -->
+  <!-- 1. Commit -->
+  <g transform="translate(36, 95)">
+    <rect x="0" y="0" width="128" height="106" class="stage-card" stroke="#38bdf8"/>
+    <text x="64" y="24" text-anchor="middle" class="mono" fill="#38bdf8">1. COMMIT</text>
+    <text x="64" y="45" text-anchor="middle" class="txt-hdr" font-size="12">Push / PR</text>
+    <text x="64" y="65" text-anchor="middle" class="txt-sub">git push / PR</text>
+    <text x="64" y="82" text-anchor="middle" class="txt-sub">triggers hook</text>
+    <text x="64" y="96" text-anchor="middle" class="mono" fill="#7dd3fc">on: [push, pr]</text>
+  </g>
+  <path d="M 164 148 L 184 148" class="edge" stroke="#38bdf8" marker-end="url(#arr-cyan)"/>
+
+  <!-- 2. Lint & Static -->
+  <g transform="translate(186, 95)">
+    <rect x="0" y="0" width="132" height="106" class="stage-card" stroke="#38bdf8"/>
+    <text x="66" y="24" text-anchor="middle" class="mono" fill="#38bdf8">2. LINT &amp; SAST</text>
+    <text x="66" y="45" text-anchor="middle" class="txt-hdr" font-size="12">Static Checks</text>
+    <text x="66" y="65" text-anchor="middle" class="txt-sub">Formatting &amp; rules</text>
+    <text x="66" y="82" text-anchor="middle" class="txt-sub">Verilator / CodeQL</text>
+    <text x="66" y="96" text-anchor="middle" class="mono" fill="#7dd3fc">&lt; 1 min feedback</text>
+  </g>
+  <path d="M 318 148 L 338 148" class="edge" stroke="#38bdf8" marker-end="url(#arr-cyan)"/>
+
+  <!-- 3. Build & Unit Test -->
+  <g transform="translate(340, 95)">
+    <rect x="0" y="0" width="136" height="106" class="stage-card" stroke="#34d399"/>
+    <text x="68" y="24" text-anchor="middle" class="mono" fill="#34d399">3. BUILD &amp; TEST</text>
+    <text x="68" y="45" text-anchor="middle" class="txt-hdr" font-size="12">Compile &amp; Sim</text>
+    <text x="68" y="65" text-anchor="middle" class="txt-sub">Unit &amp; integration</text>
+    <text x="68" y="82" text-anchor="middle" class="txt-sub">Matrix OS / EDA</text>
+    <text x="68" y="96" text-anchor="middle" class="mono" fill="#6ee7b7">coverage &amp; logs</text>
+  </g>
+  <path d="M 476 148 L 496 148" class="edge" stroke="#34d399" marker-end="url(#arr-green)"/>
+
+  <!-- 4. Package Artifact -->
+  <g transform="translate(498, 95)">
+    <rect x="0" y="0" width="132" height="106" class="stage-card" stroke="#f59e0b"/>
+    <text x="66" y="24" text-anchor="middle" class="mono" fill="#f59e0b">4. PACKAGE</text>
+    <text x="66" y="45" text-anchor="middle" class="txt-hdr" font-size="12">Immutable Build</text>
+    <text x="66" y="65" text-anchor="middle" class="txt-sub">Docker / Release</text>
+    <text x="66" y="82" text-anchor="middle" class="txt-sub">SBOM &amp; SLSA sign</text>
+    <text x="66" y="96" text-anchor="middle" class="mono" fill="#fcd34d">artifact@sha256</text>
+  </g>
+  <path d="M 630 148 L 650 148" class="edge" stroke="#f59e0b" marker-end="url(#arr-amber)"/>
+
+  <!-- 5. Staging Gate -->
+  <g transform="translate(652, 95)">
+    <rect x="0" y="0" width="132" height="106" class="stage-card" stroke="#a855f7"/>
+    <text x="66" y="24" text-anchor="middle" class="mono" fill="#a855f7">5. STAGING</text>
+    <text x="66" y="45" text-anchor="middle" class="txt-hdr" font-size="12">Verify &amp; Gate</text>
+    <text x="66" y="65" text-anchor="middle" class="txt-sub">Smoke / E2E tests</text>
+    <text x="66" y="82" text-anchor="middle" class="txt-sub">Approval vs Auto</text>
+    <text x="66" y="96" text-anchor="middle" class="mono" fill="#d8b4fe">environment gate</text>
+  </g>
+  <path d="M 784 148 L 804 148" class="edge" stroke="#a855f7" marker-end="url(#arr-purple)"/>
+
+  <!-- 6. Production -->
+  <g transform="translate(806, 95)">
+    <rect x="0" y="0" width="118" height="106" class="stage-card" stroke="#84cc16"/>
+    <text x="59" y="24" text-anchor="middle" class="mono" fill="#84cc16">6. PROD</text>
+    <text x="59" y="45" text-anchor="middle" class="txt-hdr" font-size="12">Deploy &amp; Watch</text>
+    <text x="59" y="65" text-anchor="middle" class="txt-sub">OIDC federation</text>
+    <text x="59" y="82" text-anchor="middle" class="txt-sub">Canary &amp; health</text>
+    <text x="59" y="96" text-anchor="middle" class="mono" fill="#bef264">live telemetry</text>
+  </g>
+
+  <!-- Scope Brackets Below Pipeline -->
+  <!-- CI Bracket -->
+  <g transform="translate(36, 224)">
+    <rect x="0" y="0" width="440" height="34" class="pill" fill="#0d233a" stroke="#38bdf8"/>
+    <text x="220" y="21" text-anchor="middle" class="mono" fill="#38bdf8" font-size="11">CONTINUOUS INTEGRATION (CI) — Automated Merge Validation</text>
+  </g>
+
+  <!-- Continuous Delivery Bracket -->
+  <g transform="translate(36, 266)">
+    <rect x="0" y="0" width="748" height="34" class="pill" fill="#1e1532" stroke="#a855f7"/>
+    <text x="374" y="21" text-anchor="middle" class="mono" fill="#d8b4fe" font-size="11">CONTINUOUS DELIVERY — Always Releasable; Manual Gate Before Production</text>
+  </g>
+
+  <!-- Continuous Deployment Bracket -->
+  <g transform="translate(36, 308)">
+    <rect x="0" y="0" width="888" height="34" class="pill" fill="#152414" stroke="#84cc16"/>
+    <text x="444" y="21" text-anchor="middle" class="mono" fill="#bef264" font-size="11">CONTINUOUS DEPLOYMENT — Every Passing Commit Ships Automatically to Production</text>
+  </g>
+
+  <!-- Bottom Comparison Cards -->
+  <g transform="translate(36, 364)">
+    <rect x="0" y="0" width="286" height="130" class="panel" stroke="#38bdf8"/>
+    <text x="16" y="24" class="txt-hdr" fill="#38bdf8">Continuous Integration (CI)</text>
+    <text x="16" y="46" class="txt-body">• Merges code to main frequently</text>
+    <text x="16" y="64" class="txt-body">• Runs lint, compile, unit tests</text>
+    <text x="16" y="82" class="txt-body">• Blocks broken PRs via status checks</text>
+    <text x="16" y="106" class="mono" fill="#7dd3fc">Goal: Catch regressions in minutes</text>
+  </g>
+
+  <g transform="translate(337, 364)">
+    <rect x="0" y="0" width="286" height="130" class="panel" stroke="#a855f7"/>
+    <text x="16" y="24" class="txt-hdr" fill="#d8b4fe">Continuous Delivery (CD)</text>
+    <text x="16" y="46" class="txt-body">• Packages signed release artifacts</text>
+    <text x="16" y="64" class="txt-body">• Auto-deploys to dev / staging</text>
+    <text x="16" y="82" class="txt-body">• Human reviewer approves prod</text>
+    <text x="16" y="106" class="mono" fill="#d8b4fe">Goal: Deploy at the click of a button</text>
+  </g>
+
+  <g transform="translate(638, 364)">
+    <rect x="0" y="0" width="286" height="130" class="panel" stroke="#84cc16"/>
+    <text x="16" y="24" class="txt-hdr" fill="#bef264">Continuous Deployment</text>
+    <text x="16" y="46" class="txt-body">• Zero manual release gates</text>
+    <text x="16" y="64" class="txt-body">• Progressive canary &amp; health checks</text>
+    <text x="16" y="82" class="txt-body">• Auto-rollback on error-rate spike</text>
+    <text x="16" y="106" class="mono" fill="#bef264">Goal: Rapid, low-risk delivery cadence</text>
+  </g>
+</svg>

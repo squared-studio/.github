@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 390" width="920" height="390">
+  <defs>
+    <style>
+      .bg { fill: #0f172a; }
+      .panel { fill: #1e293b; stroke-width: 1.5; rx: 10; ry: 10; }
+      .box { fill: #0f172a; stroke: #334155; stroke-width: 1.2; rx: 6; ry: 6; }
+      .ff { fill: #172554; stroke: #f87171; stroke-width: 1.6; rx: 6; ry: 6; }
+      .title { font-family: 'Segoe UI', Arial, sans-serif; font-size: 18px; font-weight: 700; fill: #f8fafc; text-anchor: middle; }
+      .subtitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; fill: #94a3b8; text-anchor: middle; }
+      .ptitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 14px; font-weight: 700; }
+      .mono { font-family: Consolas, 'Courier New', monospace; font-size: 10.6px; fill: #e2e8f0; }
+      .note { font-family: 'Segoe UI', Arial, sans-serif; font-size: 10.3px; fill: #94a3b8; }
+      .badge { font-family: Consolas, 'Courier New', monospace; font-size: 11px; font-weight: 700; text-anchor: middle; }
+    </style>
+    <marker id="arrRed" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#f87171" />
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="920" height="390" />
+  <text class="title" x="460" y="28">Boot-Time `'X'` Avalanche Loops &amp; Selective Flop Initialization</text>
+  <text class="subtitle" x="460" y="48">Tracing Un-Reset Feedback Traps and Safely Applying `initreg` Only to Legitimate Silicon Non-Reset Structures</text>
+
+  <!-- Top Diagram: X Avalanche Loop -->
+  <rect class="panel" x="20" y="64" width="880" height="156" stroke="#f87171" />
+  <text class="ptitle" x="36" y="88" fill="#f87171">Classic Feedback `'X'` Trap Inside Synthesized Datapath</text>
+
+  <rect class="ff" x="40" y="106" width="144" height="58" />
+  <text class="badge" x="112" y="128" fill="#fca5a5">Un-Reset Flop Q='X'</text>
+  <text class="note" x="112" y="146" text-anchor="middle">(Missing async reset!)</text>
+
+  <line x1="184" y1="135" x2="236" y2="135" stroke="#f87171" stroke-width="2" marker-end="url(#arrRed)" />
+
+  <rect class="box" x="240" y="106" width="166" height="58" stroke="#f59e0b" />
+  <text class="badge" x="323" y="128" fill="#fcd34d">MUX / Adder Feedback</text>
+  <text class="mono" x="323" y="146" text-anchor="middle">even en==0: Q stays X!</text>
+
+  <line x1="406" y1="135" x2="458" y2="135" stroke="#f87171" stroke-width="2" marker-end="url(#arrRed)" />
+
+  <rect class="box" x="462" y="106" width="176" height="58" stroke="#f87171" />
+  <text class="badge" x="550" y="128" fill="#fca5a5">Control / Arbiter</text>
+  <text class="note" x="550" y="146" text-anchor="middle">Poisons valid/rready = X</text>
+
+  <line x1="638" y1="135" x2="690" y2="135" stroke="#f87171" stroke-width="2" marker-end="url(#arrRed)" />
+
+  <rect class="box" x="694" y="106" width="188" height="58" stroke="#f87171" />
+  <text class="badge" x="788" y="128" fill="#f87171">Whole SoC Hang!</text>
+  <text class="note" x="788" y="146" text-anchor="middle">UVM Scoreboard aborts</text>
+
+  <!-- Feedback arc -->
+  <path d="M323,164 L323,190 L112,190 L112,168" fill="none" stroke="#f87171" stroke-width="1.6" marker-end="url(#arrRed)" />
+  <text class="note" x="440" y="196" fill="#fca5a5">Notice: Even sync-reset flops fail to clear if gated clock stops during boot!</text>
+
+  <!-- Bottom Two Cards: Safe vs Unsafe Init -->
+  <rect class="panel" x="20" y="234" width="430" height="140" stroke="#f59e0b" />
+  <text class="ptitle" x="36" y="258" fill="#f59e0b">DANGER: Blanket `+vcs+initreg+0` Everywhere!</text>
+  <text class="note" x="36" y="278">- Pre-initializing 100% of chip registers to `0` at time t=0 masks real</text>
+  <text class="note" x="36" y="294">  uninitialized RTL bugs (missing reset, SRAM reads before write)!</text>
+  <text class="note" x="36" y="314" fill="#fca5a5">- Real silicon powers up with unpredictable physical 0/1 states—NOT 0!</text>
+  <text class="note" x="36" y="334" fill="#6ee7b7">- Alternative Test: Sweep BOTH `+initreg+random` (different seeds) &amp;</text>
+  <text class="note" x="36" y="350" fill="#6ee7b7">  leave real FFs as `'X'` during reset-verification runs!</text>
+
+  <rect class="panel" x="470" y="234" width="430" height="140" stroke="#34d399" />
+  <text class="ptitle" x="486" y="258" fill="#34d399">Safe Targeted `initreg.cfg` Whitelist</text>
+  <rect class="box" x="486" y="270" width="398" height="90" />
+  <text class="mono" x="498" y="289" fill="#6ee7b7"># Restrict initreg ONLY to architectural non-reset items:</text>
+  <text class="mono" x="498" y="307">instance {tb.dut.u_fifo.mem*}    random</text>
+  <text class="mono" x="498" y="324">instance {tb.dut.u_pipe_stage*}  0   // Data-only pipe!</text>
+  <text class="note" x="498" y="346" fill="#7dd3fc">Never whitelist control FSMs, valid flags, or reset bridges!</text>
+</svg>

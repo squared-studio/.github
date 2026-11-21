@@ -1,0 +1,104 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 410" width="920" height="410">
+  <defs>
+    <style>
+      .bg { fill: #0f172a; }
+      .panel { fill: #1e293b; stroke: #334155; stroke-width: 1.5; rx: 10; ry: 10; }
+      .subbox { fill: #0f172a; stroke: #334155; stroke-width: 1.1; rx: 6; ry: 6; }
+      .title { font-family: 'Segoe UI', Arial, sans-serif; font-size: 18px; font-weight: 700; fill: #f8fafc; text-anchor: middle; }
+      .subtitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; fill: #94a3b8; text-anchor: middle; }
+      .hdr { font-family: 'Segoe UI', Arial, sans-serif; font-size: 13.5px; font-weight: 700; }
+      .mono { font-family: Consolas, 'Courier New', monospace; font-size: 10.5px; fill: #e2e8f0; }
+      .note { font-family: 'Segoe UI', Arial, sans-serif; font-size: 11px; fill: #cbd5e1; }
+      .axis { stroke: #64748b; stroke-width: 1.3; }
+      .grid { stroke: #334155; stroke-width: 0.7; stroke-dasharray: 3,3; }
+    </style>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="920" height="410" />
+  <text class="title" x="460" y="28">Signal Domains &amp; Mixed-Signal Frequency-Domain Performance Metrics</text>
+  <text class="subtitle" x="460" y="48">From Continuous Analog Voltage to Sampled Discrete Time, Quantized Words, and Coherent FFT Analysis</text>
+
+  <!-- Left Panel: Time/Amplitude Discretization -->
+  <rect class="panel" x="20" y="64" width="420" height="328" />
+  <text class="hdr" x="38" y="88" fill="#38bdf8">1. Signal Representation Pipeline</text>
+
+  <!-- Stage 1: Continuous-time -->
+  <rect class="subbox" x="34" y="102" width="392" height="82" />
+  <text class="mono" x="46" y="120" fill="#38bdf8">A. Continuous-Time, Continuous-Amplitude x(t)</text>
+  <line class="axis" x1="50" y1="168" x2="260" y2="168" />
+  <path d="M 52 152 Q 80 116 108 152 T 164 152 T 220 152 T 256 138" fill="none" stroke="#38bdf8" stroke-width="2.2" />
+  <text class="note" x="275" y="142">Infinite time &amp;</text>
+  <text class="note" x="275" y="158">voltage resolution</text>
+  <text class="note" x="275" y="174">(kT/C + 1/f noise)</text>
+
+  <!-- Stage 2: Discrete-time sampled -->
+  <rect class="subbox" x="34" y="194" width="392" height="86" />
+  <text class="mono" x="46" y="212" fill="#f59e0b">B. Discrete-Time Sampled x[nT_s] (Sample &amp; Hold)</text>
+  <line class="axis" x1="50" y1="264" x2="260" y2="264" />
+  <path d="M 52 248 Q 80 212 108 248 T 164 248 T 220 248 T 256 234" fill="none" stroke="#475569" stroke-width="1.2" stroke-dasharray="3,2" />
+  <line x1="65" y1="264" x2="65" y2="233" stroke="#f59e0b" stroke-width="1.8" /><circle cx="65" cy="233" r="3" fill="#f59e0b" />
+  <line x1="90" y1="264" x2="90" y2="235" stroke="#f59e0b" stroke-width="1.8" /><circle cx="90" cy="235" r="3" fill="#f59e0b" />
+  <line x1="115" y1="264" x2="115" y2="255" stroke="#f59e0b" stroke-width="1.8" /><circle cx="115" cy="255" r="3" fill="#f59e0b" />
+  <line x1="140" y1="264" x2="140" y2="265" stroke="#f59e0b" stroke-width="1.8" /><circle cx="140" cy="265" r="3" fill="#f59e0b" />
+  <line x1="165" y1="264" x2="165" y2="246" stroke="#f59e0b" stroke-width="1.8" /><circle cx="165" cy="246" r="3" fill="#f59e0b" />
+  <line x1="190" y1="264" x2="190" y2="229" stroke="#f59e0b" stroke-width="1.8" /><circle cx="190" cy="229" r="3" fill="#f59e0b" />
+  <line x1="215" y1="264" x2="215" y2="244" stroke="#f59e0b" stroke-width="1.8" /><circle cx="215" cy="244" r="3" fill="#f59e0b" />
+  <line x1="240" y1="264" x2="240" y2="258" stroke="#f59e0b" stroke-width="1.8" /><circle cx="240" cy="258" r="3" fill="#f59e0b" />
+  <text class="note" x="275" y="238">Nyquist f_s &gt; 2 f_BW</text>
+  <text class="note" x="275" y="254">Aperture jitter error:</text>
+  <text class="mono" x="275" y="270" fill="#fcd34d">dv/dt * sigma_t</text>
+
+  <!-- Stage 3: Quantized -->
+  <rect class="subbox" x="34" y="290" width="392" height="88" />
+  <text class="mono" x="46" y="308" fill="#34d399">C. Digital Quantized Output D[n] (N-Bit Code)</text>
+  <line class="axis" x1="50" y1="364" x2="260" y2="364" />
+  <polyline points="52,350 75,350 75,332 100,332 100,342 125,342 125,360 150,360 150,350 175,350 175,326 200,326 200,344 225,344 225,356 250,356" fill="none" stroke="#34d399" stroke-width="2" />
+  <text class="note" x="275" y="330">LSB = V_FS / 2^N</text>
+  <text class="note" x="275" y="347">Ideal SQNR =</text>
+  <text class="mono" x="275" y="364" fill="#6ee7b7">6.02*N + 1.76 dB</text>
+
+  <!-- Right Panel: Coherent FFT Spectrum -->
+  <rect class="panel" x="456" y="64" width="444" height="328" />
+  <text class="hdr" x="474" y="88" fill="#34d399">2. Coherent FFT Spectrum &amp; Dynamic Metrics</text>
+
+  <!-- Plot Area -->
+  <rect class="subbox" x="474" y="102" width="408" height="202" />
+  <!-- Gridlines -->
+  <line class="grid" x1="514" y1="130" x2="866" y2="130" />
+  <line class="grid" x1="514" y1="180" x2="866" y2="180" />
+  <line class="grid" x1="514" y1="230" x2="866" y2="230" />
+  <line class="axis" x1="514" y1="116" x2="514" y2="278" />
+  <line class="axis" x1="514" y1="278" x2="868" y2="278" />
+  <text class="mono" x="480" y="133" font-size="9">0 dB</text>
+  <text class="mono" x="478" y="183" font-size="9">-40</text>
+  <text class="mono" x="478" y="233" font-size="9">-80</text>
+  <text class="mono" x="688" y="294" text-anchor="middle">Frequency (0 to f_s / 2)</text>
+
+  <!-- Noise floor + Fundamental + Harmonics -->
+  <polyline points="516,262 528,266 540,260 554,267 564,261 572,124 580,262 595,266 610,259 628,265 636,204 644,266 668,261 690,264 700,188 710,265 735,260 762,226 770,265 795,260 825,244 832,263 860,261" fill="none" stroke="#38bdf8" stroke-width="1.8" />
+
+  <!-- Annotations -->
+  <circle cx="572" cy="124" r="3.5" fill="#34d399" />
+  <text class="mono" x="582" y="122" fill="#34d399">f_in (Fund.)</text>
+
+  <circle cx="636" cy="204" r="3" fill="#f59e0b" />
+  <text class="mono" x="636" y="197" fill="#fcd34d" text-anchor="middle">HD2</text>
+
+  <circle cx="700" cy="188" r="3" fill="#f87171" />
+  <text class="mono" x="700" y="181" fill="#fca5a5" text-anchor="middle">HD3 (Peak Spur)</text>
+
+  <circle cx="762" cy="226" r="2.5" fill="#a78bfa" />
+  <text class="mono" x="762" y="219" fill="#c4b5fd" text-anchor="middle">HD4</text>
+
+  <!-- SFDR bracket -->
+  <line x1="726" y1="124" x2="742" y2="124" stroke="#f87171" stroke-width="1" />
+  <line x1="726" y1="188" x2="742" y2="188" stroke="#f87171" stroke-width="1" />
+  <line x1="734" y1="124" x2="734" y2="188" stroke="#f87171" stroke-width="1.3" />
+  <text class="mono" x="742" y="159" fill="#fca5a5">SFDR</text>
+
+  <!-- Summary Formula Box -->
+  <rect class="subbox" x="474" y="312" width="408" height="66" />
+  <text class="mono" x="488" y="331" fill="#7dd3fc">SNR   = 10 log10( P_sig / P_noise )</text>
+  <text class="mono" x="488" y="349" fill="#fcd34d">SNDR  = 10 log10( P_sig / (P_noise + P_dist) )</text>
+  <text class="mono" x="488" y="367" fill="#6ee7b7">ENOB  = (SNDR - 1.76) / 6.02   [bits]</text>
+</svg>

@@ -1,0 +1,84 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 390" width="920" height="390">
+  <defs>
+    <style>
+      .bg { fill: #0f172a; }
+      .panel { fill: #1e293b; stroke-width: 1.5; rx: 10; ry: 10; }
+      .box { fill: #0f172a; stroke: #334155; stroke-width: 1.2; rx: 6; ry: 6; }
+      .els { fill: #172554; stroke: #a78bfa; stroke-width: 2; rx: 8; ry: 8; }
+      .title { font-family: 'Segoe UI', Arial, sans-serif; font-size: 18px; font-weight: 700; fill: #f8fafc; text-anchor: middle; }
+      .subtitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; fill: #94a3b8; text-anchor: middle; }
+      .ptitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 14px; font-weight: 700; }
+      .mono { font-family: Consolas, 'Courier New', monospace; font-size: 10.8px; fill: #e2e8f0; }
+      .note { font-family: 'Segoe UI', Arial, sans-serif; font-size: 10.5px; fill: #94a3b8; }
+      .badge { font-family: Consolas, 'Courier New', monospace; font-size: 11px; font-weight: 700; text-anchor: middle; }
+    </style>
+    <marker id="arrSky" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#38bdf8" />
+    </marker>
+    <marker id="arrGreen" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#34d399" />
+    </marker>
+    <marker id="arrAmb" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#f59e0b" />
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="920" height="390" />
+  <text class="title" x="460" y="28">Combined Enable Level Shifter (ELS) Architecture &amp; Crossing Strategy</text>
+  <text class="subtitle" x="460" y="48">Simultaneously Shifting Voltage Swing (0.70V &lt;--&gt; 1.00V) and Isolating Output When Source Powers Down</text>
+
+  <!-- Top Pipeline Architecture -->
+  <rect class="panel" x="20" y="64" width="880" height="154" stroke="#a78bfa" />
+  <text class="ptitle" x="36" y="88" fill="#a78bfa">Why Use an ELS Cell Instead of Separate ISO + LS Cells?</text>
+
+  <rect class="box" x="36" y="102" width="190" height="98" stroke="#f87171" />
+  <text class="badge" x="131" y="124" fill="#fca5a5">PD_GPU (DVFS + Switchable)</text>
+  <text class="mono" x="131" y="144" text-anchor="middle">VDD_GPU: 0.70V or OFF</text>
+  <text class="note" x="131" y="164" text-anchor="middle">Output swings 0.7V when ON,</text>
+  <text class="note" x="131" y="180" text-anchor="middle">or floats to 'X' when OFF</text>
+
+  <line x1="226" y1="150" x2="278" y2="150" stroke="#38bdf8" stroke-width="2" marker-end="url(#arrSky)" />
+  <text class="mono" x="252" y="140" text-anchor="middle" fill="#7dd3fc">in_sig</text>
+
+  <!-- Combined ELS cell -->
+  <rect class="els" x="282" y="100" width="290" height="102" />
+  <text class="badge" x="427" y="122" fill="#ddd6fe">Enable Level Shifter (ELS)</text>
+  <rect class="box" x="298" y="132" width="122" height="56" stroke="#f59e0b" />
+  <text class="badge" x="359" y="152" fill="#fcd34d">1. Clamp Stage</text>
+  <text class="note" x="359" y="170" text-anchor="middle">ISO_EN forces 0/1</text>
+
+  <line x1="420" y1="160" x2="438" y2="160" stroke="#f59e0b" stroke-width="1.6" marker-end="url(#arrAmb)" />
+
+  <rect class="box" x="442" y="132" width="116" height="56" stroke="#38bdf8" />
+  <text class="badge" x="500" y="152" fill="#7dd3fc">2. Shift Stage</text>
+  <text class="note" x="500" y="170" text-anchor="middle">0.70V --&gt; 1.00V</text>
+
+  <line x1="572" y1="150" x2="624" y2="150" stroke="#34d399" stroke-width="2" marker-end="url(#arrGreen)" />
+  <text class="mono" x="598" y="140" text-anchor="middle" fill="#6ee7b7">out_1v</text>
+
+  <rect class="box" x="628" y="102" width="256" height="98" stroke="#34d399" />
+  <text class="badge" x="756" y="124" fill="#6ee7b7">PD_TOP (Always-On 1.00V)</text>
+  <text class="mono" x="756" y="144" text-anchor="middle">Clean 1.00V Clamped Logic</text>
+  <text class="note" x="756" y="164" text-anchor="middle">-35% delay &amp; -40% area vs.</text>
+  <text class="note" x="756" y="180" text-anchor="middle">two standalone ISO + LS cells</text>
+
+  <!-- Bottom Left: Supply Pin Ordering Hazard -->
+  <rect class="panel" x="20" y="232" width="430" height="142" stroke="#f59e0b" />
+  <text class="ptitle" x="36" y="256" fill="#f59e0b">Critical Rule: Input Clamp Before Level Shift</text>
+  <text class="note" x="36" y="278" fill="#e2e8f0">1. Never put a standalone Level Shifter BEFORE Isolation!</text>
+  <text class="note" x="36" y="295">   When PD_GPU powers down, the LS input floats, causing huge</text>
+  <text class="note" x="36" y="311">   cross-coupled crowbar current inside the LS itself.</text>
+  <text class="note" x="36" y="330" fill="#6ee7b7">2. ELS places the clamp transistor directly at the input stage,</text>
+  <text class="note" x="36" y="346">   keeping the 1.00V output driver crisp during power-down.</text>
+  <text class="note" x="36" y="362" fill="#7dd3fc">3. Note: ELS uses PD_TOP always-on rail as primary supply.</text>
+
+  <!-- Bottom Right: UPF & CPF Syntax -->
+  <rect class="panel" x="470" y="232" width="430" height="142" stroke="#38bdf8" />
+  <text class="ptitle" x="486" y="256" fill="#38bdf8">ELS Inference in UPF &amp; CPF</text>
+  <rect class="box" x="486" y="268" width="398" height="92" />
+  <text class="mono" x="498" y="287" fill="#7dd3fc"># Defining both isolation + level_shifter triggers ELS map:</text>
+  <text class="mono" x="498" y="305">set_isolation ISO_GPU -domain PD_GPU -clamp_value 0 \</text>
+  <text class="mono" x="498" y="322">  -isolation_signal gpu_iso_en -location parent</text>
+  <text class="mono" x="498" y="339">set_level_shifter LS_GPU -domain PD_GPU -rule low_to_high \</text>
+  <text class="mono" x="498" y="355">  -location parent   ;# Synthesis picks combined ELS cell!</text>
+</svg>

@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 400" width="920" height="400">
+  <defs>
+    <style>
+      .bg { fill: #0f172a; }
+      .panel { fill: #1e293b; stroke: #334155; stroke-width: 1.5; rx: 10; ry: 10; }
+      .box { fill: #0f172a; stroke: #334155; stroke-width: 1.2; rx: 6; ry: 6; }
+      .title { font-family: 'Segoe UI', Arial, sans-serif; font-size: 18px; font-weight: 700; fill: #f8fafc; text-anchor: middle; }
+      .sub { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; fill: #94a3b8; text-anchor: middle; }
+      .hdr { font-family: 'Segoe UI', Arial, sans-serif; font-size: 13.5px; font-weight: 700; }
+      .mono { font-family: Consolas, 'Courier New', monospace; font-size: 10.5px; fill: #e2e8f0; }
+      .note { font-family: 'Segoe UI', Arial, sans-serif; font-size: 11px; fill: #cbd5e1; }
+    </style>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="920" height="400" />
+  <text class="title" x="460" y="28">FPGA Power Breakdown, Thermal Budget &amp; Production Hardware Bring-Up</text>
+  <text class="sub" x="460" y="48">Vectorless vs. SAIF Toggle Power (`P = alpha*C*V^2*f`), Thermal Runaway Prevention, and 6-Step Lab Checklist</text>
+
+  <!-- Left Panel: Power & Thermal Math -->
+  <rect class="panel" x="20" y="64" width="430" height="318" stroke="#f59e0b" />
+  <text class="hdr" x="38" y="88" fill="#f59e0b">1. Power Estimation (`.saif`) &amp; Thermal Runaway</text>
+
+  <rect class="box" x="34" y="102" width="402" height="126" stroke="#38bdf8" />
+  <text class="mono" x="46" y="122" fill="#7dd3fc">P_total = P_dynamic + P_static(T_j)</text>
+  <!-- Bar breakdown -->
+  <rect x="46" y="134" width="110" height="22" fill="#0c4a6e" stroke="#38bdf8" rx="3" /><text class="mono" x="101" y="149" font-size="9" text-anchor="middle">Clocks (35%)</text>
+  <rect x="158" y="134" width="94" height="22" fill="#064e3b" stroke="#34d399" rx="3" /><text class="mono" x="205" y="149" font-size="9" text-anchor="middle">Logic/BRAM</text>
+  <rect x="254" y="134" width="84" height="22" fill="#451a03" stroke="#f59e0b" rx="3" /><text class="mono" x="296" y="149" font-size="9" text-anchor="middle">MGT/IO</text>
+  <rect x="340" y="134" width="84" height="22" fill="#7f1d1d" stroke="#f87171" rx="3" /><text class="mono" x="382" y="149" font-size="9" text-anchor="middle">Static</text>
+
+  <text class="note" x="46" y="178">- Default vectorless toggle rate (`12.5%`) under-predicts DSP/AI!</text>
+  <text class="note" x="46" y="196">- Always capture post-impl **`.saif`** toggle file (`report_power`)!</text>
+  <text class="mono" x="46" y="216" fill="#6ee7b7">- Cut dynamic power: `BUFGCE`, BRAM `EN` gating, NO_CHANGE!</text>
+
+  <rect class="box" x="34" y="238" width="402" height="130" stroke="#f87171" />
+  <text class="mono" x="46" y="258" fill="#fca5a5">Thermal Positive Feedback Hazard:</text>
+  <text class="mono" x="46" y="278" fill="#fcd34d">T_j = T_ambient + P_total * Theta_JA  (&lt;= 100 C / 125 C)</text>
+  <text class="note" x="46" y="298">- As die heats up, Subthreshold Leakage `P_static` doubles every ~15 C!</text>
+  <text class="note" x="46" y="316">- Without adequate heatsink/fan (`low Theta_JA`), rising static heat</text>
+  <text class="note" x="46" y="333">  triggers runaway -> read live die temp continuously via **SYSMON**!</text>
+  <text class="mono" x="46" y="354" fill="#fca5a5">- Size VCCINT VRM for inrush + peak switching step (`dI/dt`)!</text>
+
+  <!-- Right Panel: 6-Step Lab Bring-Up Sequence -->
+  <rect class="panel" x="466" y="64" width="434" height="318" stroke="#34d399" />
+  <text class="hdr" x="484" y="88" fill="#34d399">2. Six-Stage Lab Board Bring-Up Checklist</text>
+
+  <rect class="box" x="482" y="102" width="402" height="40" stroke="#38bdf8" />
+  <text class="mono" x="494" y="126" fill="#7dd3fc">1. Visual &amp; Rail Short Check -&gt; Verify PMIC Monotonic Sequencing</text>
+
+  <rect class="box" x="482" y="148" width="402" height="40" stroke="#38bdf8" />
+  <text class="mono" x="494" y="172" fill="#7dd3fc">2. JTAG Chain Detect + SYSMON Check (VCCINT/VCCO/Temp OK)</text>
+
+  <rect class="box" x="482" y="194" width="402" height="40" stroke="#f59e0b" />
+  <text class="mono" x="494" y="218" fill="#fcd34d">3. Load "Sanity Bitstream" (Blink Heartbeat LED + Check Refclks)</text>
+
+  <rect class="box" x="482" y="240" width="402" height="40" stroke="#a78bfa" />
+  <text class="mono" x="494" y="264" fill="#c4b5fd">4. Test Memory &amp; Peripherals (JTAG-to-AXI DDR4 Calib + UART)</text>
+
+  <rect class="box" x="482" y="286" width="402" height="40" stroke="#34d399" />
+  <text class="mono" x="494" y="310" fill="#6ee7b7">5. Enable ILA Triggers + IBERT SerDes Eye + PRBS Stress Test</text>
+
+  <rect class="box" x="482" y="332" width="402" height="38" stroke="#34d399" />
+  <text class="mono" x="494" y="355" fill="#6ee7b7">6. Flash QSPI Cold-Boot + Watchdog Multiboot Field Soak Test</text>
+</svg>

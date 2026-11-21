@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 400" width="920" height="400">
+  <defs>
+    <style>
+      .bg { fill: #0f172a; }
+      .panel { fill: #1e293b; stroke: #334155; stroke-width: 1.5; rx: 10; ry: 10; }
+      .box { fill: #0f172a; stroke: #334155; stroke-width: 1.2; rx: 6; ry: 6; }
+      .title { font-family: 'Segoe UI', Arial, sans-serif; font-size: 18px; font-weight: 700; fill: #f8fafc; text-anchor: middle; }
+      .sub { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; fill: #94a3b8; text-anchor: middle; }
+      .hdr { font-family: 'Segoe UI', Arial, sans-serif; font-size: 13.5px; font-weight: 700; }
+      .mono { font-family: Consolas, 'Courier New', monospace; font-size: 10.5px; fill: #e2e8f0; }
+      .note { font-family: 'Segoe UI', Arial, sans-serif; font-size: 11px; fill: #cbd5e1; }
+    </style>
+    <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8" />
+    </marker>
+    <marker id="arr-g" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#34d399" />
+    </marker>
+    <marker id="arr-r" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#f87171" />
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="920" height="400" />
+  <text class="title" x="460" y="28">Combinational LUT Clock Gating Hazards vs. CE &amp; BUFGCE on FPGA</text>
+  <text class="sub" x="460" y="48">Replacing Glitch-Prone Fabric `assign gclk = clk &amp; en` with Hard Slice Clock-Enable (CE) &amp; Global BUFGCE</text>
+
+  <!-- Left Panel: Broken Fabric Clock Gating -->
+  <rect class="panel" x="20" y="64" width="430" height="318" stroke="#f87171" />
+  <text class="hdr" x="38" y="88" fill="#f87171">1. Broken: `assign clk_g = clk &amp; en;` in LUT Fabric</text>
+
+  <rect class="box" x="34" y="102" width="402" height="162" stroke="#f87171" />
+  <text class="mono" x="48" y="130" fill="#7dd3fc">clk (BUFG)</text>
+  <line x1="120" y1="126" x2="174" y2="126" stroke="#38bdf8" stroke-width="1.8" marker-end="url(#arr)" />
+  <text class="mono" x="48" y="160" fill="#f59e0b">en (Logic)</text>
+  <line x1="120" y1="156" x2="174" y2="156" stroke="#f59e0b" stroke-width="1.8" marker-end="url(#arr)" />
+
+  <rect x="176" y="114" width="92" height="58" fill="#7f1d1d" stroke="#f87171" rx="5" />
+  <text class="mono" x="222" y="140" fill="#fca5a5" text-anchor="middle">LUT (AND)</text>
+  <text class="mono" x="222" y="157" fill="#fca5a5" text-anchor="middle">+ Fabric Route</text>
+
+  <line x1="268" y1="143" x2="314" y2="143" stroke="#f87171" stroke-width="2" marker-end="url(#arr-r)" />
+  <rect x="316" y="116" width="106" height="56" fill="#1e293b" stroke="#f87171" rx="5" />
+  <text class="mono" x="369" y="140" text-anchor="middle">FDRE Bank</text>
+  <text class="mono" x="369" y="157" fill="#fca5a5" text-anchor="middle">Clock Skew!</text>
+
+  <!-- Glitch waveform -->
+  <text class="mono" x="48" y="200" fill="#fca5a5">clk_g Waveform Shows Runt Glitches &amp; Skew:</text>
+  <polyline points="48,242 120,242 120,214 148,214 148,242 170,242 170,222 177,222 177,242 260,242 260,214 288,214 288,242 400,242" fill="none" stroke="#f87171" stroke-width="2" />
+  <text class="mono" x="188" y="220" fill="#fcd34d" font-size="9.5">Glitch triggers false FF!</text>
+
+  <rect class="box" x="34" y="274" width="402" height="94" />
+  <text class="mono" x="46" y="294" fill="#fca5a5">Why Fabric Gating Destroys FPGA Timing:</text>
+  <text class="note" x="46" y="313">1. Pulling `clk` off BUFG tree through LUT adds ~600 ps skew</text>
+  <text class="note" x="46" y="330">   between gated &amp; ungated flops -&gt; massive Hold violations (`WHS &lt; 0`)!</text>
+  <text class="note" x="46" y="348">2. LUT glitches on `en` double-clock FFs unpredictably.</text>
+
+  <!-- Right Panel: Clean FPGA Methods (CE + BUFGCE) -->
+  <rect class="panel" x="466" y="64" width="434" height="318" stroke="#34d399" />
+  <text class="hdr" x="484" y="88" fill="#34d399">2. Clean: Slice `CE` Pin + Hard `BUFGCE` Clock Gate</text>
+
+  <!-- Option A: Local FDRE CE -->
+  <rect class="box" x="480" y="102" width="406" height="122" stroke="#34d399" />
+  <text class="mono" x="494" y="122" fill="#6ee7b7">A. Per-Flop Clock Enable (`CE`) — Zero Clock Skew!</text>
+  <text class="mono" x="494" y="140" fill="#cbd5e1">always_ff @(posedge clk) if (en) q &lt;= d;</text>
+  <rect x="690" y="148" width="176" height="62" fill="#1e293b" stroke="#34d399" rx="5" />
+  <text class="mono" x="778" y="168" fill="#6ee7b7" text-anchor="middle">FDRE Hard CE Pin</text>
+  <text class="note" x="778" y="186" text-anchor="middle">`clk` stays on global BUFG</text>
+  <text class="note" x="778" y="201" text-anchor="middle">`en` checks clean Setup time</text>
+  <line x1="494" y1="168" x2="688" y2="168" stroke="#f59e0b" stroke-width="1.6" marker-end="url(#arr)" />
+  <text class="mono" x="590" y="162" fill="#fcd34d" text-anchor="middle">en -&gt; FDRE/CE</text>
+  <line x1="494" y1="196" x2="688" y2="196" stroke="#38bdf8" stroke-width="1.8" marker-end="url(#arr)" />
+  <text class="mono" x="590" y="190" fill="#7dd3fc" text-anchor="middle">Pure BUFG clk -&gt; CK</text>
+
+  <!-- Option B: Hard BUFGCE Block -->
+  <rect class="box" x="480" y="234" width="406" height="134" stroke="#38bdf8" />
+  <text class="mono" x="494" y="254" fill="#7dd3fc">B. Domain-Wide Dynamic Clock Gating: Hard `BUFGCE`</text>
+  <rect x="496" y="268" width="166" height="58" fill="#0c4a6e" stroke="#38bdf8" rx="5" />
+  <text class="mono" x="579" y="289" fill="#7dd3fc" text-anchor="middle">BUFGCE Primitive</text>
+  <text class="note" x="579" y="306" text-anchor="middle">Glitch-free internal latch</text>
+  <text class="note" x="579" y="319" text-anchor="middle">gates entire clock spine</text>
+
+  <text class="mono" x="680" y="284" fill="#6ee7b7">Cuts Clock Dynamic Power!</text>
+  <text class="note" x="680" y="302">- Stays on low-skew H-tree</text>
+  <text class="note" x="680" y="318">- Enable Vivado `-gated_clock_conversion auto`</text>
+  <text class="note" x="494" y="352">Note: ASIC ICGs auto-map cleanly to `FDRE/CE` via synthesis flags!</text>
+</svg>

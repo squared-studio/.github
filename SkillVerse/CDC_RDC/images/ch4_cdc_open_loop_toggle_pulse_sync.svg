@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 390" width="920" height="390">
+  <defs>
+    <style>
+      .bg { fill: #0f172a; }
+      .panel { fill: #1e293b; stroke-width: 1.5; rx: 10; ry: 10; }
+      .box { fill: #0f172a; stroke: #334155; stroke-width: 1.2; rx: 6; ry: 6; }
+      .ff { fill: #172554; stroke: #38bdf8; stroke-width: 1.5; rx: 6; ry: 6; }
+      .title { font-family: 'Segoe UI', Arial, sans-serif; font-size: 18px; font-weight: 700; fill: #f8fafc; text-anchor: middle; }
+      .subtitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; fill: #94a3b8; text-anchor: middle; }
+      .ptitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 14px; font-weight: 700; }
+      .mono { font-family: Consolas, 'Courier New', monospace; font-size: 10.8px; fill: #e2e8f0; }
+      .note { font-family: 'Segoe UI', Arial, sans-serif; font-size: 10.5px; fill: #94a3b8; }
+      .badge { font-family: Consolas, 'Courier New', monospace; font-size: 11px; font-weight: 700; text-anchor: middle; }
+    </style>
+    <marker id="arrSky" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#38bdf8" />
+    </marker>
+    <marker id="arrGreen" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#34d399" />
+    </marker>
+    <marker id="arrAmb" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#f59e0b" />
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="920" height="390" />
+  <text class="title" x="460" y="28">Open-Loop Toggle Pulse Synchronizer (Fast-to-Slow Safe)</text>
+  <text class="subtitle" x="460" y="48">Converting Narrow Single-Cycle Source Pulses Into Persistent Toggles Across Arbitrary Clock Boundaries</text>
+
+  <!-- Schematic Banner -->
+  <rect class="panel" x="20" y="64" width="880" height="164" stroke="#38bdf8" />
+  <text class="ptitle" x="36" y="88" fill="#38bdf8">Pulse -&gt; Toggle Conversion -&gt; 2-FF Sync -&gt; XOR Edge Detector</text>
+
+  <text class="mono" x="36" y="142" fill="#fcd34d">src_pulse</text>
+  <line x1="100" y1="138" x2="132" y2="138" stroke="#f59e0b" stroke-width="1.8" marker-end="url(#arrAmb)" />
+
+  <rect class="ff" x="136" y="108" width="128" height="60" stroke="#f59e0b" />
+  <text class="badge" x="200" y="130" fill="#fcd34d">Toggle FF</text>
+  <text class="note" x="200" y="147" text-anchor="middle">t &lt;= t ^ src_pulse</text>
+  <text class="note" x="200" y="161" text-anchor="middle">(src_clk domain)</text>
+
+  <line x1="264" y1="138" x2="328" y2="138" stroke="#38bdf8" stroke-width="2" marker-end="url(#arrSky)" />
+  <line x1="296" y1="98" x2="296" y2="196" stroke="#f87171" stroke-width="1.5" stroke-dasharray="5,4" />
+  <text class="mono" x="296" y="212" text-anchor="middle" fill="#fca5a5">CDC Level</text>
+
+  <rect class="ff" x="332" y="112" width="178" height="52" stroke="#34d399" />
+  <text class="badge" x="421" y="134" fill="#6ee7b7">2-FF Sync Stage</text>
+  <text class="note" x="421" y="152" text-anchor="middle">s1 -&gt; s2 (dst_clk)</text>
+
+  <line x1="510" y1="138" x2="554" y2="138" stroke="#34d399" stroke-width="2" marker-end="url(#arrGreen)" />
+
+  <rect class="ff" x="558" y="112" width="112" height="52" stroke="#a78bfa" />
+  <text class="badge" x="614" y="134" fill="#c4b5fd">Delay FF</text>
+  <text class="note" x="614" y="152" text-anchor="middle">s3 &lt;= s2 (dst)</text>
+
+  <line x1="670" y1="138" x2="722" y2="138" stroke="#a78bfa" stroke-width="1.8" marker-end="url(#arrGreen)" />
+  <path d="M532,138 L532,184 L748,184 L748,168" fill="none" stroke="#34d399" stroke-width="1.6" />
+
+  <rect class="box" x="726" y="112" width="90" height="54" stroke="#34d399" />
+  <text class="badge" x="771" y="134" fill="#34d399">XOR Gate</text>
+  <text class="note" x="771" y="152" text-anchor="middle">s2 ^ s3</text>
+
+  <line x1="816" y1="138" x2="836" y2="138" stroke="#34d399" stroke-width="2" marker-end="url(#arrGreen)" />
+  <text class="mono" x="842" y="142" fill="#34d399">dst_pls</text>
+
+  <!-- Bottom Left: Waveform -->
+  <rect class="panel" x="20" y="242" width="465" height="132" stroke="#a78bfa" />
+  <text class="ptitle" x="36" y="266" fill="#a78bfa">Level Persistence Eliminates Narrow-Pulse Loss</text>
+  <text class="mono" x="36" y="290" fill="#fcd34d">src_pulse (100MHz) : ___/-\_____________________</text>
+  <text class="mono" x="36" y="310" fill="#7dd3fc">src_toggle (level) : ____/----------------------</text>
+  <text class="mono" x="36" y="330" fill="#6ee7b7">dst_sync s2 (20MHz): _______________/-----------</text>
+  <text class="mono" x="36" y="350" fill="#c4b5fd">dst_pulse (s2^s3)  : _______________/----\______</text>
+
+  <!-- Bottom Right: Spacing Rule -->
+  <rect class="panel" x="502" y="242" width="398" height="132" stroke="#f87171" />
+  <text class="ptitle" x="518" y="266" fill="#f87171">Critical Spacing Constraint (Back-to-Back Hazard)</text>
+  <text class="note" x="518" y="288" fill="#e2e8f0">If TWO src_pulses arrive closer than 2 * T_dst_clk:</text>
+  <text class="note" x="518" y="306" fill="#fca5a5">t toggles 0 -&gt; 1 -&gt; 0 between adjacent dst_clk edges!</text>
+  <text class="note" x="518" y="324" fill="#fca5a5">Both edges cancel cleanly before FF_SYNC_1 samples = DROPPED!</text>
+  <text class="mono" x="518" y="352" fill="#fcd34d">Rule: Delta_t_pulses &gt;= 2 * T_dst_clk (else use Closed-Loop)</text>
+</svg>

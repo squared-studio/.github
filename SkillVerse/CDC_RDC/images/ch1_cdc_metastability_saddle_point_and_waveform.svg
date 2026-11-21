@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 400" width="920" height="400">
+  <defs>
+    <style>
+      .bg { fill: #0f172a; }
+      .panel { fill: #1e293b; stroke-width: 1.5; rx: 10; ry: 10; }
+      .box { fill: #0f172a; stroke: #334155; stroke-width: 1.2; rx: 6; ry: 6; }
+      .title { font-family: 'Segoe UI', Arial, sans-serif; font-size: 18px; font-weight: 700; fill: #f8fafc; text-anchor: middle; }
+      .subtitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; fill: #94a3b8; text-anchor: middle; }
+      .ptitle { font-family: 'Segoe UI', Arial, sans-serif; font-size: 14px; font-weight: 700; }
+      .mono { font-family: Consolas, 'Courier New', monospace; font-size: 10.8px; fill: #e2e8f0; }
+      .note { font-family: 'Segoe UI', Arial, sans-serif; font-size: 10.5px; fill: #94a3b8; }
+      .badge { font-family: Consolas, 'Courier New', monospace; font-size: 11px; font-weight: 700; text-anchor: middle; }
+    </style>
+    <marker id="arrRed" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#f87171" />
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="920" height="400" />
+  <text class="title" x="460" y="28">Metastability Physics: Setup/Hold Window Violation &amp; Saddle Equilibrium</text>
+  <text class="subtitle" x="460" y="48">Cross-Coupled Master-Latch Instability at VDD/2 and Exponential Resolution Waveform Beyond T_clk2q</text>
+
+  <!-- Left Panel: Saddle Equilibrium Hill Analogy -->
+  <rect class="panel" x="20" y="64" width="430" height="316" stroke="#a78bfa" />
+  <text class="ptitle" x="36" y="88" fill="#a78bfa">Mechanical Hill Analogy (Cross-Coupled Latch)</text>
+
+  <!-- Potential Energy Hill Curve -->
+  <path d="M55,215 Q125,215 170,155 Q235,100 300,155 Q345,215 415,215" fill="none" stroke="#38bdf8" stroke-width="2.5" />
+  <!-- Ball balanced right at saddle peak (x=235, y=116) -->
+  <circle cx="235" cy="116" r="12" fill="#f87171" stroke="#fca5a5" stroke-width="2" />
+  <text class="mono" x="235" y="98" text-anchor="middle" fill="#fca5a5">Unstable Peak (VDD / 2)</text>
+
+  <!-- Valleys -->
+  <text class="badge" x="86" y="232" fill="#34d399">Stable Logic '0'</text>
+  <text class="badge" x="384" y="232" fill="#34d399">Stable Logic '1'</text>
+
+  <!-- Exponential Resolution Box -->
+  <rect class="box" x="36" y="248" width="398" height="118" />
+  <text class="mono" x="48" y="268" fill="#c4b5fd">Exponential Positive Feedback Resolution:</text>
+  <text class="mono" x="48" y="288" fill="#7dd3fc">V_diff(t) = V_init * exp(t / tau)</text>
+  <text class="note" x="48" y="308">If D toggles inside [T_su, T_h], V_init ~ 0V (exact peak).</text>
+  <text class="note" x="48" y="325">Thermal noise kT eventually tips the latch randomly to 0 or 1,</text>
+  <text class="note" x="48" y="342" fill="#fca5a5">but settling time t is unbounded beyond nominal T_clk2q!</text>
+
+  <!-- Right Panel: Setup/Hold Violation Waveform -->
+  <rect class="panel" x="470" y="64" width="430" height="316" stroke="#f87171" />
+  <text class="ptitle" x="486" y="88" fill="#f87171">Metastable Q Waveform &amp; Fanout Splitting</text>
+
+  <rect class="box" x="486" y="102" width="398" height="172" />
+
+  <!-- Timing aperture highlight box -->
+  <rect x="650" y="110" width="44" height="156" fill="#7f1d1d" opacity="0.45" />
+  <text class="mono" x="672" y="124" text-anchor="middle" fill="#fca5a5">t_su+t_h</text>
+
+  <!-- CLK -->
+  <text class="mono" x="496" y="152" fill="#38bdf8">dst_clk</text>
+  <path d="M560,158 L672,158 L672,136 L770,136 L770,158 L866,158" fill="none" stroke="#38bdf8" stroke-width="2" />
+
+  <!-- Data D violating aperture at x=672 -->
+  <text class="mono" x="496" y="192" fill="#34d399">D_async</text>
+  <path d="M560,198 L670,198 L674,176 L866,176" fill="none" stroke="#34d399" stroke-width="2" />
+
+  <!-- Metastable Q -->
+  <text class="mono" x="496" y="238" fill="#f87171">FF.Q</text>
+  <path d="M560,246 L678,246 L686,232 L788,232 L802,218 L866,218" fill="none" stroke="#f87171" stroke-width="2.2" />
+  <path d="M686,232 L788,232 L802,246 L866,246" fill="none" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="4,3" />
+  <text class="mono" x="738" y="226" text-anchor="middle" fill="#fca5a5">~VDD/2 (Meta)</text>
+  <text class="note" x="780" y="262" fill="#fcd34d">Resolves late (0 or 1)</text>
+
+  <!-- Hazard explanation box -->
+  <rect class="box" x="486" y="284" width="398" height="82" stroke="#f59e0b" />
+  <text class="mono" x="498" y="303" fill="#fcd34d">Why Unsynchronized Fanout Destroys Logic:</text>
+  <text class="note" x="498" y="321">Two downstream gates see slightly different trip points V_th:</text>
+  <text class="note" x="498" y="337" fill="#fca5a5">Branch A treats mid-rail Q as '1'; Branch B treats Q as '0'!</text>
+  <text class="note" x="498" y="353">FSMs enter illegal states (one-hot = 2'b11 or 2'b00) silently.</text>
+</svg>

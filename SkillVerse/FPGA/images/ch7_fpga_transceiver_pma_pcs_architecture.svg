@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 400" width="920" height="400">
+  <defs>
+    <style>
+      .bg { fill: #0f172a; }
+      .panel { fill: #1e293b; stroke: #334155; stroke-width: 1.5; rx: 10; ry: 10; }
+      .box { fill: #0f172a; stroke: #334155; stroke-width: 1.2; rx: 6; ry: 6; }
+      .title { font-family: 'Segoe UI', Arial, sans-serif; font-size: 18px; font-weight: 700; fill: #f8fafc; text-anchor: middle; }
+      .sub { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; fill: #94a3b8; text-anchor: middle; }
+      .hdr { font-family: 'Segoe UI', Arial, sans-serif; font-size: 13.5px; font-weight: 700; }
+      .mono { font-family: Consolas, 'Courier New', monospace; font-size: 10.5px; fill: #e2e8f0; }
+      .note { font-family: 'Segoe UI', Arial, sans-serif; font-size: 11px; fill: #cbd5e1; }
+    </style>
+    <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8" />
+    </marker>
+    <marker id="arr-g" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#34d399" />
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="920" height="400" />
+  <text class="title" x="460" y="28">FPGA Multi-Gigabit Transceiver (GTY / GTM) Quad, PCS, and PMA Architecture</text>
+  <text class="sub" x="460" y="48">Bridging 16-64 Bit Fabric Words Through 8b/10b &amp; 64b/66b PCS Encoders Into Multi-GHz SerDes PMA Lanes</text>
+
+  <!-- Left: Fabric Interface -->
+  <rect class="panel" x="20" y="64" width="180" height="236" stroke="#38bdf8" />
+  <text class="hdr" x="110" y="88" fill="#38bdf8" text-anchor="middle">FPGA Fabric</text>
+  <rect class="box" x="34" y="106" width="152" height="80" />
+  <text class="mono" x="110" y="130" fill="#7dd3fc" text-anchor="middle">TXDATA[63:0]</text>
+  <text class="mono" x="110" y="150" fill="#e2e8f0" text-anchor="middle">@ TXUSRCLK2</text>
+  <text class="note" x="110" y="170" text-anchor="middle">(156-390 MHz)</text>
+  <rect class="box" x="34" y="200" width="152" height="80" />
+  <text class="mono" x="110" y="224" fill="#6ee7b7" text-anchor="middle">RXDATA[63:0]</text>
+  <text class="mono" x="110" y="244" fill="#e2e8f0" text-anchor="middle">@ RXUSRCLK2</text>
+  <text class="note" x="110" y="264" text-anchor="middle">Word Aligned</text>
+
+  <!-- Center: PCS Block -->
+  <rect class="panel" x="224" y="64" width="316" height="236" stroke="#a78bfa" />
+  <text class="hdr" x="382" y="88" fill="#a78bfa" text-anchor="middle">PCS (Physical Coding Sublayer)</text>
+
+  <rect class="box" x="238" y="106" width="288" height="80" stroke="#38bdf8" />
+  <text class="mono" x="382" y="128" fill="#7dd3fc" text-anchor="middle">TX PCS Datapath</text>
+  <text class="note" x="382" y="148" text-anchor="middle">8b/10b or 64b/66b Gearbox + Scrambler</text>
+  <text class="note" x="382" y="166" text-anchor="middle">+ TX Phase-Adjust FIFO (Clock Sync)</text>
+
+  <rect class="box" x="238" y="200" width="288" height="80" stroke="#34d399" />
+  <text class="mono" x="382" y="222" fill="#6ee7b7" text-anchor="middle">RX PCS Datapath</text>
+  <text class="note" x="382" y="242" text-anchor="middle">Comma / Header Sync + Descrambler</text>
+  <text class="note" x="382" y="260" text-anchor="middle">+ Elastic Buffer (PPM Clock Comp!)</text>
+
+  <line x1="200" y1="146" x2="234" y2="146" stroke="#38bdf8" stroke-width="1.8" marker-end="url(#arr)" />
+  <line x1="236" y1="240" x2="202" y2="240" stroke="#34d399" stroke-width="1.8" marker-end="url(#arr-g)" />
+
+  <!-- Right: PMA + Shared Quad PLL -->
+  <rect class="panel" x="564" y="64" width="336" height="236" stroke="#f59e0b" />
+  <text class="hdr" x="732" y="88" fill="#f59e0b" text-anchor="middle">PMA (Analog Front-End + Quad PLL)</text>
+
+  <rect class="box" x="578" y="106" width="194" height="80" stroke="#f59e0b" />
+  <text class="mono" x="675" y="128" fill="#fcd34d" text-anchor="middle">TX PISO + FFE Driver</text>
+  <text class="note" x="675" y="148" text-anchor="middle">Pre/Post-Cursor Emphasis</text>
+  <text class="note" x="675" y="166" text-anchor="middle">10G - 58G PAM4 / NRZ</text>
+
+  <rect class="box" x="578" y="200" width="194" height="80" stroke="#34d399" />
+  <text class="mono" x="675" y="222" fill="#6ee7b7" text-anchor="middle">RX CTLE + DFE + CDR</text>
+  <text class="note" x="675" y="242" text-anchor="middle">Adaptive Loop + Slicer</text>
+  <text class="note" x="675" y="260" text-anchor="middle">+ PRBS / IBERT Eye Scan</text>
+
+  <rect class="box" x="786" y="114" width="98" height="156" stroke="#f87171" />
+  <text class="mono" x="835" y="140" fill="#fca5a5" text-anchor="middle">Quad</text>
+  <text class="mono" x="835" y="158" fill="#fca5a5" text-anchor="middle">QPLL /</text>
+  <text class="mono" x="835" y="176" fill="#fca5a5" text-anchor="middle">CPLL</text>
+  <text class="note" x="835" y="206" text-anchor="middle">LC Tank</text>
+  <text class="note" x="835" y="224" text-anchor="middle">Low-Jitter</text>
+  <text class="note" x="835" y="242" text-anchor="middle">Refclk</text>
+
+  <line x1="540" y1="146" x2="574" y2="146" stroke="#38bdf8" stroke-width="1.8" marker-end="url(#arr)" />
+  <line x1="576" y1="240" x2="542" y2="240" stroke="#34d399" stroke-width="1.8" marker-end="url(#arr-g)" />
+
+  <!-- Bottom Notes -->
+  <rect class="panel" x="20" y="314" width="880" height="72" />
+  <text class="mono" x="38" y="338" fill="#6ee7b7">GT Quad Rule (4 Lanes per Bank):</text>
+  <text class="note" x="266" y="338">Every 4 transceivers share 1-2 QPLLs + dedicated MGTREFCLK pins! Can source clocks up/down 2 adjacent Quads.</text>
+  <text class="mono" x="38" y="362" fill="#fcd34d">PCS Bypass Mode:</text>
+  <text class="note" x="176" y="362">Custom protocols or ultra-low-latency links (HFT trading!) bypass PCS elastic buffers &amp; 8b/10b directly via Raw PMA mode.</text>
+</svg>
